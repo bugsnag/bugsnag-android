@@ -1,0 +1,71 @@
+<project default="package">
+    <property file="local.properties"/>
+    <property file="default.properties"/>
+
+    <!-- Package properties -->
+    <property name="package.name" value="bugsnag" />
+    <property name="package.version" value="1.0.0" />
+    <property name="package.packagename" value="com.bugsnag.android" />
+
+    <!-- Standard jar stuff -->
+    <property name="jarfile" value="${package.name}-${package.version}.jar" />
+    <property name="lib.dir" value="${sdk.dir}platforms/${target}" />
+    <property name="build.dir" value="./build"/>
+    <property name="classes.dir"  value="${build.dir}/classes"/>
+    <buildnumber file="build.num" />
+
+    <!-- Set up classpath -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar" />
+    </path>
+
+    <!-- Build javadoc -->
+    <target name="doc">
+        <javadoc 
+            classpathref="classpath"
+            sourcepath="gen:src"
+            destdir="doc"
+            packagenames="${package.packagename}"
+            linkoffline="http://d.android.com/reference ${sdk.dir}docs/reference" 
+            additionalparam="-author  -version"
+            />
+    </target>
+
+    <!-- Compile java files into classes -->
+    <target name="compile">
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${classes.dir}" />
+
+        <javac
+            srcdir="."
+            destdir="${classes.dir}"
+            classpathref="classpath"
+            debug="true"
+            debuglevel="lines,source" />
+    </target>
+
+    <!-- Package a jar from compiled class files -->
+    <target name="jar" depends="compile">
+        <delete dir="." includes="**/*.jar" />
+        <delete file="MANIFEST.MF" />
+        <manifest file="MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}" />
+            <attribute name="Implementation-Version" value="${version.num}-b${build.number}"/> 
+        </manifest>
+
+        <jar destfile="${jarfile}" basedir="${classes.dir}" includes="**/*.class" manifest="MANIFEST.MF" />
+    </target>
+
+    <!-- Clean out the build files -->
+    <target name="clean">
+        <delete dir="build" />
+        <delete dir="doc" />
+        <delete>
+            <fileset dir="." includes="*.jar"/>
+            <fileset file="MANIFEST.MF"/>
+        </delete>
+    </target>
+
+    <!-- Compile and package a jar -->
+    <target name="package" depends="compile,jar" />
+</project>
