@@ -48,8 +48,8 @@ public class Bugsnag {
     private static final String LOG_TAG = "Bugsnag";
 
     // Basic settings
-    private static final String BUGSNAG_ENDPOINT = "http://192.168.1.135:8000/notify";
-    // private static final String BUGSNAG_ENDPOINT = "http://api.bugsnag.com/notify";
+    private static final String BUGSNAG_ENDPOINT = "http://api.bugsnag.com/notify";
+    private static String bugsnagEndpoint = BUGSNAG_ENDPOINT;
 
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
     private static final String NOTIFIER_VERSION = "1.0.0";
@@ -172,6 +172,10 @@ public class Bugsnag {
         }
     }
 
+    public static void setEndpoint(String endpoint) {
+        bugsnagEndpoint = endpoint;
+    }
+
     private static void writeExceptionToDisk(Throwable e, final Map<String,String> metaData) {
         try {
             // Set up the output stream
@@ -261,7 +265,7 @@ public class Bugsnag {
 
     private static void sendExceptionData(File file) {
         try {
-            URL url = new URL(BUGSNAG_ENDPOINT);
+            URL url = new URL(bugsnagEndpoint);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try {
                 // Set up the connection
