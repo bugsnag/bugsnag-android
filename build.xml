@@ -37,7 +37,7 @@
         <mkdir dir="${classes.dir}" />
 
         <javac
-            srcdir="."
+            srcdir="src"
             destdir="${classes.dir}"
             classpathref="classpath"
             debug="true"

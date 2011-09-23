@@ -289,6 +289,7 @@ public class Bugsnag {
                 Log.d(LOG_TAG, "Sent exception file " + file.getName() + " to bugsnag. Got response code " + String.valueOf(response));
             } catch(Throwable ei) {
                 // Ignore any file stream issues
+                ei.printStackTrace();
             } finally {
                 // Delete file now we've sent the exceptions
                 file.delete();
@@ -297,6 +298,9 @@ public class Bugsnag {
         } catch(IOException e) {
             // Ignore any connection failure when trying to open the connection
             // We can try again next time
+            // TODO: Warn users they need to add the following permission to manifest:
+            // <uses-permission android:name="android.permission.INTERNET" /> 
+            e.printStackTrace();
         }
     }
 
