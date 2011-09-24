@@ -121,7 +121,7 @@ public class Bugsnag {
         // Load or generate a UUID to track unique users
         final SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         userId = settings.getString("userId", null);
-        if(userId.equals(null)) {
+        if(userId == null) {
             userId = UUID.randomUUID().toString();
 
             // Save if for future
@@ -239,6 +239,11 @@ public class Bugsnag {
                         line.put("method", el.getClassName() + "." + el.getMethodName());
                         line.put("file", el.getFileName() == null ? "Unknown" : el.getFileName());
                         line.put("lineNumber", el.getLineNumber());
+                        
+                        if(el.getClassName().startsWith(packageName)) {
+                            line.put("inProject", true);
+                        }
+                        
                         stacktrace.put(line);
                     } catch(Throwable lineEx) {
                         lineEx.printStackTrace();
