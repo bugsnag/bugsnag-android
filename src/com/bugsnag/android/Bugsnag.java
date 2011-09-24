@@ -31,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -38,6 +39,7 @@ import org.json.JSONArray;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -45,6 +47,7 @@ import android.util.Xml;
 
 
 public class Bugsnag {
+    private static final String PREFS_NAME = "Bugsnag";
     private static final String LOG_TAG = "Bugsnag";
 
     // Basic settings
@@ -74,6 +77,7 @@ public class Bugsnag {
     private static boolean notifyOnlyProduction = false;
     private static String filePath;
     private static boolean diskStorageEnabled = false;
+    private static String userId;
 
     // Wrapper class to send uncaught exceptions to bugsnag
     private static class BugsnagExceptionHandler implements UncaughtExceptionHandler {
@@ -113,6 +117,23 @@ public class Bugsnag {
 
         // Check which exception types to notify
         Bugsnag.notifyOnlyProduction = notifyOnlyProduction;
+
+        // Load or generate a UUID to track unique users
+        final SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        userId = settings.getString("userId", null);
+        if(userId.equals(null)) {
+            userId = UUID.randomUUID().toString();
+
+            // Save if for future
+            new AsyncTask <Void, Void, Void>() {
+                protected Void doInBackground(Void... voi) {
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString("userId", userId);
+                    editor.commit();
+                    return null;
+                }
+            }.execute();
+        }
 
         // Connect our default exception handler
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -197,6 +218,9 @@ public class Bugsnag {
             // Error
             JSONArray errors = new JSONArray();
             JSONObject error = new JSONObject();
+
+            // UserId
+            error.put("userId", userId);
 
             // Causes
             JSONArray causes = new JSONArray();
