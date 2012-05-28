@@ -11,9 +11,8 @@ public class ExampleApp extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        Bugsnag.register(this, "cbefb176c33de28d638d2b8002f26146");
-        Bugsnag.setEndpoint("http://192.168.1.115:8000/notify");
-        
+        Bugsnag.register(this, "08e525b9549090d8dea3ba8c418c5581");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         

@@ -1,6 +1,6 @@
 <project default="package">
     <property file="local.properties"/>
-    <property file="default.properties"/>
+    <property file="project.properties"/>
 
     <!-- Package properties -->
     <property name="package.name" value="bugsnag" />
@@ -9,7 +9,7 @@
 
     <!-- Standard jar stuff -->
     <property name="jarfile" value="${package.name}-${package.version}.jar" />
-    <property name="lib.dir" value="${sdk.dir}platforms/${target}" />
+    <property name="lib.dir" value="${sdk.dir}/platforms/${target}" />
     <property name="build.dir" value="./build"/>
     <property name="classes.dir"  value="${build.dir}/classes"/>
     <buildnumber file="build.num" />
@@ -53,7 +53,7 @@
             <attribute name="Implementation-Version" value="${version.num}-b${build.number}"/> 
         </manifest>
 
-        <jar destfile="${jarfile}" basedir="${classes.dir}" includes="**/*.class" manifest="MANIFEST.MF" />
+        <jar destfile="${jarfile}" basedir="build/classes" includes="com/bugsnag/android/**/*.class" manifest="MANIFEST.MF" />
     </target>
 
     <!-- Clean out the build files -->

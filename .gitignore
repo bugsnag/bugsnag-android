@@ -4,3 +4,5 @@ build
 build.num
 *.jar
 local.properties
+bin
+gen

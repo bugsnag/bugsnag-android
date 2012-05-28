@@ -197,7 +197,7 @@ public class Bugsnag {
         bugsnagEndpoint = endpoint;
     }
 
-    private static void writeExceptionToDisk(Throwable e, final Map<String,String> metaData) {
+    private static void writeExceptionToDisk(Throwable e, final Map<String,String> customData) {
         try {
             // Set up the output stream
             int random = new Random().nextInt(99999);
@@ -219,16 +219,18 @@ public class Bugsnag {
             JSONArray errors = new JSONArray();
             JSONObject error = new JSONObject();
 
-            // UserId
             error.put("userId", userId);
+            error.put("appVersion", versionName);
+            error.put("releaseStage", environmentName);
+            error.put("context", ""); // TODO
 
             // Causes
-            JSONArray causes = new JSONArray();
+            JSONArray exceptions = new JSONArray();
             Throwable currentEx = e;
             while(currentEx != null) {
-                JSONObject cause = new JSONObject();
-                cause.put("errorClass", e.getClass().getName());
-                cause.put("message", e.getLocalizedMessage());
+                JSONObject exception = new JSONObject();
+                exception.put("errorClass", e.getClass().getName());
+                exception.put("message", e.getLocalizedMessage());
 
                 // Stacktrace
                 JSONArray stacktrace = new JSONArray();
@@ -236,47 +238,50 @@ public class Bugsnag {
                 for(StackTraceElement el : stackTrace) {
                     try {
                         JSONObject line = new JSONObject();
-                        line.put("method", el.getClassName() + "." + el.getMethodName());
+                        line.put("method", el.getClassName().replace(packageName, "") + "." + el.getMethodName());
                         line.put("file", el.getFileName() == null ? "Unknown" : el.getFileName());
                         line.put("lineNumber", el.getLineNumber());
-                        
+
                         if(el.getClassName().startsWith(packageName)) {
                             line.put("inProject", true);
                         }
-                        
+
                         stacktrace.put(line);
                     } catch(Throwable lineEx) {
                         lineEx.printStackTrace();
                     }
                 }
-                cause.put("stacktrace", stacktrace);
+                exception.put("stacktrace", stacktrace);
 
                 currentEx = currentEx.getCause();
-                causes.put(cause);
+                exceptions.put(exception);
             }
-            error.put("causes", causes);
+            error.put("exceptions", exceptions);
 
-            // Application environment
-            JSONObject appEnvironment = new JSONObject();
-            appEnvironment.put("appVersion", versionName);
-            appEnvironment.put("releaseStage", environmentName);
-            appEnvironment.put("osVersion", androidVersion);
-            appEnvironment.put("device", phoneModel);
-            error.put("appEnvironment", appEnvironment);
+            // Create metadata object
+            JSONObject metaData = new JSONObject();
 
-            // Extra info, if present for metaData
-            JSONObject metaDataObj = new JSONObject();
+            // Device info
+            JSONObject device = new JSONObject();
+            device.put("osVersion", androidVersion);
+            device.put("device", phoneModel);
+            metaData.put("device", device);
+
+            // Custom data
+            JSONObject customDataObj = new JSONObject();
             if(extraData != null && !extraData.isEmpty()) {
                 for(Map.Entry<String,String> extra : extraData.entrySet()) {
-                    metaDataObj.put(extra.getKey(), extra.getValue());
+                    customDataObj.put(extra.getKey(), extra.getValue());
                 }
             }
-            if(metaData != null && !metaData.isEmpty()) {
-                for(Map.Entry<String,String> extra : metaData.entrySet()) {
-                    metaDataObj.put(extra.getKey(), extra.getValue());
+            if(customData != null && !customData.isEmpty()) {
+                for(Map.Entry<String,String> extra : customData.entrySet()) {
+                    customDataObj.put(extra.getKey(), extra.getValue());
                 }
             }
-            error.put("metaData", metaDataObj);
+            metaData.put("customData", customDataObj);
+
+            error.put("metaData", metaData);
 
             // Add the error to the errors list
             errors.put(error);
