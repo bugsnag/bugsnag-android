@@ -268,19 +268,19 @@ public class Bugsnag {
             metaData.put("device", device);
 
             // Custom data
-            JSONObject customDataObj = new JSONObject();
-            if(extraData != null && !extraData.isEmpty()) {
-                for(Map.Entry<String,String> extra : extraData.entrySet()) {
-                    customDataObj.put(extra.getKey(), extra.getValue());
+            if((extraData != null && !extraData.isEmpty()) || (customData != null && !customData.isEmpty())) {
+                JSONObject customDataObj = new JSONObject();
+                if(extraData != null && !extraData.isEmpty()) {
+                    for(Map.Entry<String,String> extra : extraData.entrySet()) {
+                        customDataObj.put(extra.getKey(), extra.getValue());
+                    }
                 }
-            }
-            if(customData != null && !customData.isEmpty()) {
-                for(Map.Entry<String,String> extra : customData.entrySet()) {
-                    customDataObj.put(extra.getKey(), extra.getValue());
+                if(customData != null && !customData.isEmpty()) {
+                    for(Map.Entry<String,String> extra : customData.entrySet()) {
+                        customDataObj.put(extra.getKey(), extra.getValue());
+                    }
                 }
-            }
 
-            if(!customDataObj.isEmpty()) {
                 metaData.put("customData", customDataObj);
             }
 
