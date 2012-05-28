@@ -17,8 +17,8 @@ public class ExampleApp extends Activity
         setContentView(R.layout.main);
         
         // Cause a NullPointerException
-        // Activity nullActivity = null;
-        // nullActivity.getApplication();
+        Activity nullActivity = null;
+        nullActivity.getApplication();
         
         // Cause a RuntimeException
         throw new RuntimeException("It broke");

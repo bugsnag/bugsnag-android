@@ -222,7 +222,7 @@ public class Bugsnag {
             error.put("userId", userId);
             error.put("appVersion", versionName);
             error.put("releaseStage", environmentName);
-            error.put("context", ""); // TODO
+            // error.put("context", ""); // TODO
 
             // Causes
             JSONArray exceptions = new JSONArray();
@@ -238,7 +238,7 @@ public class Bugsnag {
                 for(StackTraceElement el : stackTrace) {
                     try {
                         JSONObject line = new JSONObject();
-                        line.put("method", el.getClassName().replace(packageName, "") + "." + el.getMethodName());
+                        line.put("method", el.getClassName().replace(packageName + ".", "") + "." + el.getMethodName());
                         line.put("file", el.getFileName() == null ? "Unknown" : el.getFileName());
                         line.put("lineNumber", el.getLineNumber());
 
@@ -279,7 +279,10 @@ public class Bugsnag {
                     customDataObj.put(extra.getKey(), extra.getValue());
                 }
             }
-            metaData.put("customData", customDataObj);
+
+            if(!customDataObj.isEmpty()) {
+                metaData.put("customData", customDataObj);
+            }
 
             error.put("metaData", metaData);
 
