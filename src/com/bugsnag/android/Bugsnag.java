@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -47,62 +48,40 @@ import android.util.Xml;
 
 
 public class Bugsnag {
+    // Constants
     private static final String PREFS_NAME = "Bugsnag";
     private static final String LOG_TAG = "Bugsnag";
-
-    // Basic settings
-    private static final String BUGSNAG_ENDPOINT = "http://api.bugsnag.com/notify";
-    private static String bugsnagEndpoint = BUGSNAG_ENDPOINT;
-
+    private static final String DEFAULT_ENDPOINT = "api.bugsnag.com/notify";
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
     private static final String NOTIFIER_VERSION = "1.0.0";
     private static final String NOTIFIER_URL = "http://www.bugsnag.com";
-
     private static final String UNSENT_EXCEPTION_PATH = "/unsent_bugsnag_exceptions/";
 
-    // Exception meta-data
-    private static String environmentName = "production";
-    private static String packageName = "unknown";
-    private static String versionName = "unknown";
-    private static String phoneModel = android.os.Build.MODEL;
-    private static String androidVersion = android.os.Build.VERSION.RELEASE;
-
-    // Anything extra the app wants to add
-    private static Map<String, String> extraData;
-
-    // Bugsnag api key
+    // Properties
     private static String apiKey;
+    private static String context;
+    private static String userId;
+    private static String releaseStage = "production";
+    private static String[] notifyReleaseStages = new String[]{"production"};
+    private static boolean autoNotify = true;
+    private static Map<String, String> extraData;
+    private static boolean useSSL = false;
+    private static String endpoint = DEFAULT_ENDPOINT;
 
-    // Exception storage info
-    private static boolean notifyOnlyProduction = false;
+    // Other private vars
+    private static String packageName = "unknown";
+    private static String appVersion = "unknown";
     private static String filePath;
     private static boolean diskStorageEnabled = false;
-    private static String userId;
 
-    // Wrapper class to send uncaught exceptions to bugsnag
-    private static class BugsnagExceptionHandler implements UncaughtExceptionHandler {
-        private UncaughtExceptionHandler defaultExceptionHandler;
 
-        public BugsnagExceptionHandler(UncaughtExceptionHandler defaultExceptionHandlerIn) {
-            defaultExceptionHandler = defaultExceptionHandlerIn;
-        }
 
-        public void uncaughtException(Thread t, Throwable e) {
-            Bugsnag.notify(e);
-            defaultExceptionHandler.uncaughtException(t, e);
-        }
-    }
-
-    // Register to send exceptions to bugsnag
-    public static void register(Context context, String apiKey) {
-        register(context, apiKey, "production", true);
-    }
-
-    public static void register(Context context, String apiKey, String environmentName) {
-        register(context, apiKey, environmentName, true);
-    }
-
-    public static void register(Context context, String apiKey, String environmentName, boolean notifyOnlyProduction) {
+    /**
+     * Register to begin sending exception data to bugsnag
+     * @param context An android Context
+     * @param apiKey Your bugsnag.com project's api key
+     */
+    public static void register(final Context androidContext, String apiKey) {
         // Require a bugsnag api key
         if(apiKey != null) {
             Bugsnag.apiKey = apiKey;
@@ -110,16 +89,8 @@ public class Bugsnag {
             throw new RuntimeException("The Bugsnag Android Notifier requires a Bugsnag API key.");
         }
 
-        // Fill in environment name if passed
-        if(environmentName != null) {
-            Bugsnag.environmentName = environmentName;
-        }
-
-        // Check which exception types to notify
-        Bugsnag.notifyOnlyProduction = notifyOnlyProduction;
-
         // Load or generate a UUID to track unique users
-        final SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        final SharedPreferences settings = androidContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         userId = settings.getString("userId", null);
         if(userId == null) {
             userId = UUID.randomUUID().toString();
@@ -137,55 +108,60 @@ public class Bugsnag {
 
         // Connect our default exception handler
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
-        if(!(currentHandler instanceof BugsnagExceptionHandler) && (environmentName.equals("production") || !notifyOnlyProduction)) {
+        if(!(currentHandler instanceof BugsnagExceptionHandler)) {
             Thread.setDefaultUncaughtExceptionHandler(new BugsnagExceptionHandler(currentHandler));
         }
 
         // Load up current package name and version
         try {
-            packageName = context.getPackageName();
-            PackageInfo pi = context.getPackageManager().getPackageInfo(packageName, 0);
+            packageName = androidContext.getPackageName();
+            PackageInfo pi = androidContext.getPackageManager().getPackageInfo(packageName, 0);
             if(pi.versionName != null) {
-                versionName = pi.versionName;
+                appVersion = pi.versionName;
             }
         } catch (Exception e) {}
 
-        // Prepare the file storage location
-        // TODO: Does this need to be done in a background thread?
-        filePath = context.getFilesDir().getAbsolutePath() + UNSENT_EXCEPTION_PATH;
+        // Prepare the file storage location (this has to be done synchronously)
+        filePath = androidContext.getFilesDir().getAbsolutePath() + UNSENT_EXCEPTION_PATH;
         File outFile = new File(filePath);
         outFile.mkdirs();
         diskStorageEnabled = outFile.exists();
 
-        Log.d(LOG_TAG, "Registered and ready to handle exceptions.");
-
-        // Flush any existing exception info
         new AsyncTask <Void, Void, Void>() {
             protected Void doInBackground(Void... voi) {
+                // Flush any existing exception info
                 flushExceptions();
                 return null;
             }
         }.execute();
+
+        Log.d(LOG_TAG, "Registered and ready to handle exceptions.");
     }
 
     /**
-     * Add a custom set of key/value data that will be sent as session data with each notification
-     * @param extraData a Map of String -> String
+     * Fire an exception to bugsnag manually
+     * @param e The Throwable object to send
      */
-    public static void setExtraData(Map<String,String> extraData) {
-        Bugsnag.extraData = extraData;
-    }
-
-    // Fire an exception to bugsnag manually
     public static void notify(final Throwable e) {
         notify(e, null);
     }
 
+    /**
+     * Fire an exception to bugsnag manually, with some additional data
+     * @param e The Throwable object to send
+     * @param metaData a Map of String -> String to send with the exception
+     */
     public static void notify(final Throwable e, final Map<String,String> metaData) {
-        if(e != null && diskStorageEnabled) {
+        // Finalize copies of things that could change
+        final String exceptionUserId = userId;
+        final String exceptionContext = context;
+        final Map<String,String> exceptionExtraData = extraData;
+
+        // Write and flush the exceptions if we need to
+        if(e != null && diskStorageEnabled && Arrays.asList(notifyReleaseStages).contains(releaseStage)) {
             new AsyncTask <Void, Void, Void>() {
                  protected Void doInBackground(Void... voi) {
-                     writeExceptionToDisk(e, metaData);
+                     writeExceptionToDisk(e, metaData, exceptionExtraData, exceptionUserId, exceptionContext);
                      flushExceptions();
                      return null;
                  }
@@ -193,15 +169,93 @@ public class Bugsnag {
         }
     }
 
-    public static void setEndpoint(String endpoint) {
-        bugsnagEndpoint = endpoint;
+    /**
+     * Sets the current error "context", this is used to help with error grouping
+     * @param context A string representing the current state/context of the app
+     */
+    public static void setContext(String context) {
+        Bugsnag.context = context;
     }
 
-    private static void writeExceptionToDisk(Throwable e, final Map<String,String> customData) {
+    /**
+     * Sets the current "userId", this is used to identify how many users are
+     * affected by an error. If you don't set this yourself, we will
+     * automatically create and store a UUID for this device.
+     * @param userId A string representing a unique user or device
+     */
+    public static void setUserId(String userId) {
+        Bugsnag.userId = userId;
+    }
+
+    /**
+     * Sets the current release stage of the app, eg production, staging,
+     * or development. Defaults to "production".
+     * @param releaseStage A string representing the release stage
+     */
+    public static void setReleaseStage(String releaseStage) {
+        Bugsnag.releaseStage = releaseStage;
+    }
+
+    /**
+     * Sets the release stages for which we should send exceptions to
+     * bugsnag.com. Defaults to ["production"].
+     * @param notifyReleaseStages A series of one or more String parameters for each releaseStage
+     */
+    public static void setNotifyReleaseStages(String... notifyReleaseStages) {
+        Bugsnag.notifyReleaseStages = notifyReleaseStages;
+    }
+
+    /**
+     * Sets whether we should automatically notify bugsnag.com when we detect
+     * an exception. Defaults to true.
+     * @param automatically A boolean saying if we should automatically notify
+     */
+    public static void setAutoNotify(boolean autoNotify) {
+        Bugsnag.autoNotify = autoNotify;
+    }
+
+    /**
+     * Sets a custom map of key/value data that will be sent as custom data
+     * with every notification.
+     * @param extraData a Map of String -> String to send with all exceptions
+     */
+    public static void setExtraData(Map<String,String> extraData) {
+        Bugsnag.extraData = extraData;
+    }
+
+    /**
+     * Sets whether we should use SSL to communicate with bugsnag.com.
+     * Defaults to false.
+     * @param useSSL A boolean saying if we should use SSL for communication
+     */
+    // TODO: Re-enable this when we get our SSL keystore working
+    // http://stackoverflow.com/questions/2642777/trusting-all-certificates-using-httpclient-over-https/6378872#6378872
+    // public static void setUseSSL(boolean useSSL) {
+    //     Bugsnag.useSSL = useSSL;
+    // }
+
+    /**
+     * Sets the bugsnag endpoint to send exceptions to. Defaults to
+     * api.bugsnag.com/notify
+     * @param endpoint The endpoint to send exceptions to
+     */
+    public static void setEndpoint(String endpoint) {
+        Bugsnag.endpoint = endpoint;
+    }
+
+
+
+
+    // Private stuff
+    private static String getNotifyUrl() {
+        return (useSSL ? "https://" : "http://") + endpoint;
+    }
+
+    private static void writeExceptionToDisk(Throwable e, Map<String,String> customData, Map<String,String> exceptionExtraData, String exceptionUserId, String exceptionContext) {
         try {
             // Set up the output stream
             int random = new Random().nextInt(99999);
-            String filename = filePath + versionName + "-" + String.valueOf(random) + ".json";
+            String filename = filePath + appVersion + "-" + String.valueOf(random) + ".json";
             FileWriter writer = new FileWriter(filename);
 
             // Outer payload
@@ -219,10 +273,10 @@ public class Bugsnag {
             JSONArray errors = new JSONArray();
             JSONObject error = new JSONObject();
 
-            error.put("userId", userId);
-            error.put("appVersion", versionName);
-            error.put("releaseStage", environmentName);
-            // error.put("context", ""); // TODO
+            error.put("userId", exceptionUserId);
+            error.put("appVersion", appVersion);
+            error.put("releaseStage", releaseStage);
+            error.put("context", exceptionContext);
 
             // Causes
             JSONArray exceptions = new JSONArray();
@@ -263,15 +317,21 @@ public class Bugsnag {
 
             // Device info
             JSONObject device = new JSONObject();
-            device.put("osVersion", androidVersion);
-            device.put("device", phoneModel);
+            device.put("osVersion", android.os.Build.VERSION.RELEASE);
+            device.put("device", android.os.Build.MODEL);
             metaData.put("device", device);
 
+            // App info
+            JSONObject application = new JSONObject();
+            application.put("appVersion", appVersion);
+            application.put("packageName", packageName);
+            metaData.put("application", application);
+
             // Custom data
-            if((extraData != null && !extraData.isEmpty()) || (customData != null && !customData.isEmpty())) {
+            if((exceptionExtraData != null && !exceptionExtraData.isEmpty()) || (customData != null && !customData.isEmpty())) {
                 JSONObject customDataObj = new JSONObject();
-                if(extraData != null && !extraData.isEmpty()) {
-                    for(Map.Entry<String,String> extra : extraData.entrySet()) {
+                if(exceptionExtraData != null && !exceptionExtraData.isEmpty()) {
+                    for(Map.Entry<String,String> extra : exceptionExtraData.entrySet()) {
                         customDataObj.put(extra.getKey(), extra.getValue());
                     }
                 }
@@ -302,7 +362,8 @@ public class Bugsnag {
 
     private static void sendExceptionData(File file) {
         try {
-            URL url = new URL(bugsnagEndpoint);
+            String urlString = getNotifyUrl();
+            URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try {
                 // Set up the connection
@@ -323,7 +384,7 @@ public class Bugsnag {
 
                 // Flush the request through
                 int response = conn.getResponseCode();
-                Log.d(LOG_TAG, "Sent exception file " + file.getName() + " to bugsnag. Got response code " + String.valueOf(response));
+                Log.d(LOG_TAG, String.format("Sent exception file %s to %s. Got response code %d", file.getName(), urlString, response));
             } catch(Throwable ei) {
                 // Ignore any file stream issues
                 ei.printStackTrace();
@@ -336,12 +397,12 @@ public class Bugsnag {
             // Ignore any connection failure when trying to open the connection
             // We can try again next time
             // TODO: Warn users they need to add the following permission to manifest:
-            // <uses-permission android:name="android.permission.INTERNET" /> 
+            // <uses-permission android:name="android.permission.INTERNET" />
             e.printStackTrace();
         }
     }
 
-    private static void flushExceptions() {
+    private static synchronized void flushExceptions() {
         File exceptionDir = new File(filePath);
         if(exceptionDir.exists() && exceptionDir.isDirectory()) {
             File[] exceptions = exceptionDir.listFiles();
@@ -350,6 +411,23 @@ public class Bugsnag {
                     sendExceptionData(f);
                 }
             }
+        }
+    }
+
+    // Wrapper class to send uncaught exceptions to bugsnag
+    private static class BugsnagExceptionHandler implements UncaughtExceptionHandler {
+        private UncaughtExceptionHandler defaultExceptionHandler;
+
+        public BugsnagExceptionHandler(UncaughtExceptionHandler defaultExceptionHandlerIn) {
+            defaultExceptionHandler = defaultExceptionHandlerIn;
+        }
+
+        public void uncaughtException(Thread t, Throwable e) {
+            if(autoNotify) {
+                Bugsnag.notify(e);
+            }
+
+            defaultExceptionHandler.uncaughtException(t, e);
         }
     }
 }
