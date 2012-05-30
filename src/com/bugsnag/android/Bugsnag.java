@@ -1,6 +1,6 @@
 /*
     Bugsnag Notifier for Android
-    Copyright (c) 2011 Bugsnag
+    Copyright (c) 2012 Bugsnag
     http://www.bugsnag.com
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -46,11 +47,20 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
 
-
+/**
+ * The Bugsnag class is used to capture exception and/or notify bugsnag.com.
+ * <p>
+ * For example:
+ * <p>
+ * <pre>
+ * Bugsnag.register(this, "your-api-key-here");
+ * </pre>
+ */
 public class Bugsnag {
+    static final String LOG_TAG = "Bugsnag";
+
     // Constants
     private static final String PREFS_NAME = "Bugsnag";
-    private static final String LOG_TAG = "Bugsnag";
     private static final String DEFAULT_ENDPOINT = "api.bugsnag.com/notify";
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
     private static final String NOTIFIER_VERSION = "1.0.0";
@@ -71,6 +81,7 @@ public class Bugsnag {
     // Other private vars
     private static String packageName = "unknown";
     private static String appVersion = "unknown";
+    private static List<String> activityStack;
     private static String filePath;
     private static boolean diskStorageEnabled = false;
 
@@ -153,15 +164,18 @@ public class Bugsnag {
      */
     public static void notify(final Throwable e, final Map<String,String> metaData) {
         // Finalize copies of things that could change
+        // NOTE: We are using the mechanics of the AsyncTask closure to make 
+        // sure these variables are copied at this point
         final String exceptionUserId = userId;
         final String exceptionContext = context;
         final Map<String,String> exceptionExtraData = extraData;
+        final List<String> exceptionActivityStack = activityStack;
 
         // Write and flush the exceptions if we need to
         if(e != null && diskStorageEnabled && Arrays.asList(notifyReleaseStages).contains(releaseStage)) {
             new AsyncTask <Void, Void, Void>() {
                  protected Void doInBackground(Void... voi) {
-                     writeExceptionToDisk(e, metaData, exceptionExtraData, exceptionUserId, exceptionContext);
+                     writeExceptionToDisk(e, metaData, exceptionExtraData, exceptionUserId, exceptionContext, exceptionActivityStack);
                      flushExceptions();
                      return null;
                  }
@@ -245,13 +259,19 @@ public class Bugsnag {
 
 
 
+    // Package public
+    static void setActivityStack(List<String> activityStack) {
+        Bugsnag.activityStack = activityStack;
+    }
 
-    // Private stuff
+
+
+    // Private
     private static String getNotifyUrl() {
         return (useSSL ? "https://" : "http://") + endpoint;
     }
 
-    private static void writeExceptionToDisk(Throwable e, Map<String,String> customData, Map<String,String> exceptionExtraData, String exceptionUserId, String exceptionContext) {
+    private static void writeExceptionToDisk(Throwable e, Map<String,String> customData, Map<String,String> exceptionExtraData, String exceptionUserId, String exceptionContext, List<String> exceptionActivityStack) {
         try {
             // Set up the output stream
             int random = new Random().nextInt(99999);
@@ -325,6 +345,8 @@ public class Bugsnag {
             JSONObject application = new JSONObject();
             application.put("appVersion", appVersion);
             application.put("packageName", packageName);
+            application.put("topActivity", exceptionContext);
+            application.put("activityStack", new JSONArray(exceptionActivityStack));
             metaData.put("application", application);
 
             // Custom data
