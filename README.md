@@ -26,8 +26,6 @@ Features
 -   Automatic notification of uncaught exceptions
 -   Exceptions buffered to disk when no internet connection is available, and 
     sent later
--   Designed from the ground up to be robust, the notifier should not itself 
-    cause crashes or freezes
 -   Minimal cpu and memory footprint
 -   Send your own [non-fatal exceptions](#send-non-fatal-exceptions-to-bugsnag)
     to Bugsnag
@@ -42,8 +40,8 @@ Features
 Installation & Setup
 --------------------
 
-Download the latest .jar file from github and place it in your Android app's
-`lib/` folder.
+[Download the latest bugsnag.jar file](https://github.com/downloads/bugsnag/bugsnag-android/bugsnag-1.0.0.jar)
+and place it in your Android app's `libs/` folder.
 
 Import the `Bugsnag` package in your Activity.
 
@@ -51,7 +49,9 @@ Import the `Bugsnag` package in your Activity.
 import com.bugsnag.android.*;
 ```
 
-In your activity's `onCreate` function, register to begin capturing exceptions:
+In your first activity's `onCreate` function, register to begin capturing 
+exceptions:
+
 ```java
 Bugsnag.register(this, "your-api-key-goes-here");
 ```
@@ -62,8 +62,8 @@ Recommended: Inherit from BugsnagActivity
 
 To have additional useful data about exceptions sent to Bugsnag, you should
 also have each of your `Activity` classes inherit from `BugsnagActivity`.
-This will list of all the activities which were open at the time of
-any exception in your error dashboard.
+This will track which of your activities were open at the time of
+any exception, and present them in your Bugsnag error dashboard.
 
 ```java
 class MyActivity extends BugsnagActivity {
@@ -114,9 +114,9 @@ Bugsnag.setContext("MyActivity");
 ###setUserId
 
 Bugsnag helps you understand how many of your users are affected by each
-error, to do this, we send along a userId with every exception. By default
-we will generate a unique ID and send this ID along with every exception 
-from an individual device.
+error. In order to do this, we send along a userId with every exception. 
+By default we will generate a unique ID and send this ID along with every 
+exception from an individual device.
     
 If you would like to override this `userId`, for example to set it to be a
 username of your currently logged in user, you can call `setUserId`:
