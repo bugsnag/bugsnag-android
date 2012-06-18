@@ -61,7 +61,7 @@ public class Bugsnag {
 
     // Constants
     private static final String PREFS_NAME = "Bugsnag";
-    private static final String DEFAULT_ENDPOINT = "api.bugsnag.com/notify";
+    private static final String DEFAULT_ENDPOINT = "notify.bugsnag.com";
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
     private static final String NOTIFIER_VERSION = "1.0.0";
     private static final String NOTIFIER_URL = "http://www.bugsnag.com";
@@ -77,6 +77,7 @@ public class Bugsnag {
     private static Map<String, String> extraData;
     private static boolean useSSL = false;
     private static String endpoint = DEFAULT_ENDPOINT;
+    private static String[] filters = new String[]{"password"};
 
     // Other private vars
     private static String packageName = "unknown";
@@ -168,6 +169,11 @@ public class Bugsnag {
      * @param metaData a Map of String -> String to send with the exception
      */
     public static void notify(final Throwable e, final Map<String,String> metaData) {
+        if(apiKey == null) {
+            Log.e(LOG_TAG, "You must call register with an apiKey before we can notify of exceptions!");
+            return;
+        }
+
         // Finalize copies of things that could change
         // NOTE: We are using the mechanics of the AsyncTask closure to make 
         // sure these variables are copied at this point
@@ -247,19 +253,30 @@ public class Bugsnag {
      * Defaults to false.
      * @param useSSL A boolean saying if we should use SSL for communication
      */
-    // TODO: Re-enable this when we get our SSL keystore working
-    // http://stackoverflow.com/questions/2642777/trusting-all-certificates-using-httpclient-over-https/6378872#6378872
-    // public static void setUseSSL(boolean useSSL) {
-    //     Bugsnag.useSSL = useSSL;
-    // }
+     // TODO: Enable this when we implement SSL keystore
+     // http://stackoverflow.com/questions/2642777/trusting-all-certificates-using-httpclient-over-https/6378872#6378872
+     // public static void setUseSSL(boolean useSSL) {
+     //     Bugsnag.useSSL = useSSL;
+     // }
 
     /**
-     * Sets the bugsnag endpoint to send exceptions to. Defaults to
-     * api.bugsnag.com/notify
+     * Sets the bugsnag endpoint to send exceptions to. 
+     * Defaults to notify.bugsnag.com
      * @param endpoint The endpoint to send exceptions to
      */
     public static void setEndpoint(String endpoint) {
         Bugsnag.endpoint = endpoint;
+    }
+
+    /**
+     * Sets the strings to filter out from the "extra data" maps before sending
+     * them to bugsnag.com. Use this if you want to ensure you don't send 
+     * sensitive data such as passwords, and credit card numbers to our 
+     * servers. Any keys which contain these strings will be filtered.
+     * Defaults to new String[] {"password"};
+     */
+    public static void setFilters(String... filters) {
+          Bugsnag.filters = filters;
     }
 
 
@@ -327,7 +344,7 @@ public class Bugsnag {
 
                         stacktrace.put(line);
                     } catch(Throwable lineEx) {
-                        lineEx.printStackTrace();
+                        Log.w(LOG_TAG, lineEx);
                     }
                 }
                 exception.put("stacktrace", stacktrace);
@@ -351,23 +368,17 @@ public class Bugsnag {
             application.put("appVersion", appVersion);
             application.put("packageName", packageName);
             application.put("topActivity", exceptionContext);
-            application.put("activityStack", new JSONArray(exceptionActivityStack));
+            if(exceptionActivityStack != null) {
+                application.put("activityStack", new JSONArray(exceptionActivityStack));
+            }
             metaData.put("application", application);
 
-            // Custom data
-            if((exceptionExtraData != null && !exceptionExtraData.isEmpty()) || (customData != null && !customData.isEmpty())) {
-                JSONObject customDataObj = new JSONObject();
-                if(exceptionExtraData != null && !exceptionExtraData.isEmpty()) {
-                    for(Map.Entry<String,String> extra : exceptionExtraData.entrySet()) {
-                        customDataObj.put(extra.getKey(), extra.getValue());
-                    }
-                }
-                if(customData != null && !customData.isEmpty()) {
-                    for(Map.Entry<String,String> extra : customData.entrySet()) {
-                        customDataObj.put(extra.getKey(), extra.getValue());
-                    }
-                }
+            // Custom data (with filtering)
+            JSONObject customDataObj = new JSONObject();
+            mergeIntoJsonObject(customDataObj, exceptionExtraData);
+            mergeIntoJsonObject(customDataObj, customData);
 
+            if(customDataObj.length() > 0) {
                 metaData.put("customData", customDataObj);
             }
 
@@ -383,7 +394,7 @@ public class Bugsnag {
             writer.close();
             Log.d(LOG_TAG, "Writing new " + e.getClass().getName() + " exception to disk.");
         } catch (Exception writeEx) {
-            writeEx.printStackTrace();
+            Log.w(LOG_TAG, writeEx);
         }
     }
 
@@ -416,7 +427,7 @@ public class Bugsnag {
                 Log.d(LOG_TAG, String.format("Sent exception file %s to %s. Got response code %d", file.getName(), urlString, response));
             } catch(Throwable ei) {
                 // Ignore any file stream issues
-                ei.printStackTrace();
+                Log.w(LOG_TAG, ei);
             } finally {
                 // Delete file now we've sent the exceptions
                 if(sent) {
@@ -429,7 +440,7 @@ public class Bugsnag {
             // We can try again next time
             // TODO: Warn users they need to add the following permission to manifest:
             // <uses-permission android:name="android.permission.INTERNET" />
-            e.printStackTrace();
+            Log.w(LOG_TAG, e);
         }
     }
 
@@ -442,6 +453,36 @@ public class Bugsnag {
                     sendExceptionData(f);
                 }
             }
+        }
+    }
+
+    private static boolean shouldFilter(String key) {
+        if(filters == null || key == null) {
+            return false;
+        }
+
+        for(String filter : filters) {
+            if(key.contains(filter)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private static void mergeIntoJsonObject(JSONObject jobj, Map<String, String> extraData) {
+        try {
+            if(extraData != null && !extraData.isEmpty()) {
+                for(Map.Entry<String,String> extra : extraData.entrySet()) {
+                    if(shouldFilter(extra.getKey())) {
+                        jobj.put(extra.getKey(), "[FILTERED]");
+                    } else {
+                        jobj.put(extra.getKey(), extra.getValue());
+                    }
+                }
+            }
+        } catch(Exception e) {
+            Log.w(LOG_TAG, e);
         }
     }
 
