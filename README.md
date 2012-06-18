@@ -29,11 +29,14 @@ Features
 -   Designed from the ground up to be robust, the notifier should not itself 
     cause crashes or freezes
 -   Minimal cpu and memory footprint
--   Send your own non-fatal exceptions to Bugsnag
+-   Send your own [non-fatal exceptions](#send-non-fatal-exceptions-to-bugsnag)
+    to Bugsnag
 -   Track which activities were open at the time of the exception using the 
-    `BugsnagActivity` class
--   Send additional meta-data along with your exceptions using `setExtraData`
--   Filter sensitive data before sending exceptions with `setFilters`
+    [`BugsnagActivity`](#recommended-inherit-from-bugsnagactivity) class
+-   Send additional meta-data along with your exceptions using 
+    [`setExtraData`](#setextradata)
+-   Filter sensitive data before sending exceptions with
+    [`setFilters`](#setfilters)
 
 
 Installation & Setup
@@ -66,6 +69,27 @@ any exception in your error dashboard.
 class MyActivity extends BugsnagActivity {
     ...
 }
+```
+
+
+Send Non-Fatal Exceptions to Bugsnag
+------------------------------------
+
+If you would like to send non-fatal exceptions to Bugsnag, you can pass any
+`Throwable` onject to the `notify` method:
+
+```java
+Bugsnag.notify(new RuntimeException("Non-fatal"));
+```
+
+You can also send additional meta-data with your exception:
+
+```java
+Map<String,String> extraData = new HashMap<String,String>();
+extraData.put("username", "bob-hoskins");
+extraData.put("registered_user", "yes");
+
+Bugsnag.notify(new RuntimeException("Non-fatal"), extraData);
 ```
 
 
