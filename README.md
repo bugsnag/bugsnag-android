@@ -1,10 +1,6 @@
 Official Bugsnag Notifier for Android
 =====================================
 
-
-Overview
---------
-
 The Bugsnag Notifier for Android is designed to give you
 instant notification of exceptions thrown from your Android applications. 
 The notifier hooks into `Thread.UncaughtExceptionHandler`, which means any 
