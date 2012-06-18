@@ -100,6 +100,11 @@ public class Bugsnag {
             throw new RuntimeException("The Bugsnag Android Notifier requires a Bugsnag API key.");
         }
 
+        // Require an android context
+        if(androidContext == null) {
+            throw new RuntimeException("The Bugsnag Android Notifier requires a non-null android Context.");
+        }
+
         // Load or generate a UUID to track unique users
         final SharedPreferences settings = androidContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         userId = settings.getString("userId", null);
@@ -385,6 +390,7 @@ public class Bugsnag {
     private static void sendExceptionData(File file) {
         try {
             String urlString = getNotifyUrl();
+            boolean sent = false;
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try {
@@ -406,13 +412,16 @@ public class Bugsnag {
 
                 // Flush the request through
                 int response = conn.getResponseCode();
+                sent = true;
                 Log.d(LOG_TAG, String.format("Sent exception file %s to %s. Got response code %d", file.getName(), urlString, response));
             } catch(Throwable ei) {
                 // Ignore any file stream issues
                 ei.printStackTrace();
             } finally {
                 // Delete file now we've sent the exceptions
-                file.delete();
+                if(sent) {
+                  file.delete();
+                }
                 conn.disconnect();
             }
         } catch(IOException e) {
