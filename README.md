@@ -1,36 +1,16 @@
-Official Bugsnag Notifier for Android
-=====================================
+Bugsnag Notifier for Android
+============================
 
-The Bugsnag Notifier for Android is designed to give you
-instant notification of exceptions thrown from your Android applications. 
+The Bugsnag Notifier for Android gives you instant notification of exceptions
+thrown from your Android applications. 
 The notifier hooks into `Thread.UncaughtExceptionHandler`, which means any 
 uncaught exceptions will trigger a notification to be sent to your Bugsnag
 project.
 
-
-What is Bugsnag?
-----------------
-
 [Bugsnag](http://bugsnag.com) captures errors in real-time from your web, 
 mobile and desktop applications, helping you to understand and resolve them 
-as fast as possible. [Create a free account](http://bugsnag.com).
-
-
-Features
---------
-
--   Automatic notification of uncaught exceptions
--   Exceptions buffered to disk when no internet connection is available, and 
-    sent later
--   Minimal cpu and memory footprint
--   Send your own [non-fatal exceptions](#send-non-fatal-exceptions-to-bugsnag)
-    to Bugsnag
--   Track which activities were open at the time of the exception using the 
-    [`BugsnagActivity`](#recommended-inherit-from-bugsnagactivity) class
--   Send additional meta-data along with your exceptions using 
-    [`setExtraData`](#setextradata)
--   Filter sensitive data before sending exceptions with
-    [`setFilters`](#setfilters)
+as fast as possible. [Create a free account](http://bugsnag.com) to start 
+capturing exceptions from your applications.
 
 
 Installation & Setup
@@ -185,7 +165,7 @@ By default, `filters` is set to `new String[] {"password"};`
 Building from Source
 --------------------
 
-To build a `.jar` file from source, clone the bugsnag-android repository 
+To build a `.jar` file from source, clone the [bugsnag-android](https://github.com/bugsnag/bugsnag-android) repository 
 and run:
 
 ```bash
@@ -206,21 +186,15 @@ project here:
 
 Contributing
 ------------
- 
--   Check out the latest master to make sure the feature hasn't been 
-    implemented or the bug hasn't been fixed yet
--   Check out the issue tracker to make sure someone already hasn't requested
-    it and/or contributed it
--   Fork the project
--   Start a feature/bugfix branch
+
+-   [Fork](https://help.github.com/articles/fork-a-repo) the [notifier on github](https://github.com/bugsnag/bugsnag-android)
 -   Commit and push until you are happy with your contribution
+-   [Make a pull request](https://help.github.com/articles/using-pull-requests)
 -   Thanks!
 
 
 License
 -------
 
-The Bugsnag android notifier is released under the Android-friendly
-Apache License, Version 2.0. Read the full license here:
-
-<http://www.apache.org/licenses/LICENSE-2.0>
+The Bugsnag Android notifier is free software released under the MIT License. 
+See [LICENSE.txt](https://github.com/bugsnag/bugsnag-android/blob/master/LICENSE.txt) for details.
