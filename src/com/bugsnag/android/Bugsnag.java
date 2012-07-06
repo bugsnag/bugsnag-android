@@ -325,8 +325,8 @@ public class Bugsnag {
             Throwable currentEx = e;
             while(currentEx != null) {
                 JSONObject exception = new JSONObject();
-                exception.put("errorClass", e.getClass().getName());
-                exception.put("message", e.getLocalizedMessage());
+                exception.put("errorClass", currentEx.getClass().getName());
+                exception.put("message", currentEx.getLocalizedMessage());
 
                 // Stacktrace
                 JSONArray stacktrace = new JSONArray();
