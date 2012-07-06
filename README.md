@@ -16,7 +16,7 @@ capturing exceptions from your applications.
 Installation & Setup
 --------------------
 
-[Download the latest bugsnag.jar file](https://github.com/downloads/bugsnag/bugsnag-android/bugsnag-1.0.0.jar)
+[Download the latest bugsnag.jar file](https://github.com/downloads/bugsnag/bugsnag-android/bugsnag-1.0.1.jar)
 and place it in your Android app's `libs/` folder.
 
 Import the `Bugsnag` package in your Activity.
