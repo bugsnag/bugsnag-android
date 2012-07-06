@@ -72,7 +72,7 @@ Send Non-Fatal Exceptions to Bugsnag
 ------------------------------------
 
 If you would like to send non-fatal exceptions to Bugsnag, you can pass any
-`Throwable` onject to the `notify` method:
+`Throwable` object to the `notify` method:
 
 ```java
 Bugsnag.notify(new RuntimeException("Non-fatal"));
