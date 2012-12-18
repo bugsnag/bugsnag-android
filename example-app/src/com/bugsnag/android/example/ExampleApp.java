@@ -32,17 +32,19 @@ public class ExampleApp extends BugsnagActivity
         // Example of setting global extra data to send with every exception
         Bugsnag.addToTab("user", "name", "bob hoskins");
         Bugsnag.addToTab("user", "email", "test@example.com");
-
-        // Manual notification with metadata example
-        Map<String, Object> metaData = new HashMap<String,Object>();
-        metaData.put("example", "customdata");
-        metaData.put("more example", "more customdata");
-        Bugsnag.notify(new RuntimeException("Bugsnag Android Test Exception"), metaData);
         
         Map<String, Object> tabDict = new HashMap<String,Object>();
-        Map<String, String> tabData = new HashMap<String,String>();
-        tabData.put("tabKey", "tabValue");
-        tabDict.put("user", tabData);
+        Map<String, String> userData = new HashMap<String,String>();
+        userData.put("userKey", "userValue");
+        tabDict.put("user", userData);
+        Bugsnag.notify(new RuntimeException("Bugsnag Android Test Exception"), tabDict);
+        
+        Map<String, String> deviceData = new HashMap<String,String>();
+        deviceData.put("deviceKey", "deviceValue");
+        tabDict.put("device", deviceData);
+        Bugsnag.notify(new RuntimeException("Bugsnag Android Test Exception"), tabDict);
+
+        tabDict.put("customKey", "customValue");
         Bugsnag.notify(new RuntimeException("Bugsnag Android Test Exception"), tabDict);
 
         // Cause a RuntimeException
