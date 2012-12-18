@@ -68,7 +68,7 @@ public class Bugsnag {
     private static final String PREFS_NAME = "Bugsnag";
     private static final String DEFAULT_ENDPOINT = "notify.bugsnag.com";
     private static String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    private static final String NOTIFIER_VERSION = "1.0.0";
+    private static final String NOTIFIER_VERSION = "2.0.0";
     private static final String NOTIFIER_URL = "http://www.bugsnag.com";
     private static final String UNSENT_EXCEPTION_PATH = "/unsent_bugsnag_exceptions/";
 
