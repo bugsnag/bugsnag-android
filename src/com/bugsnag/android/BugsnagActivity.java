@@ -35,54 +35,20 @@ import android.util.Log;
  * Activity in your application.
  */
 public class BugsnagActivity extends Activity {
-    private static List<WeakReference<Context>> storedContexts = new LinkedList<WeakReference<Context>>();
-
-    private static String getActivityName(Object obj) {
-        String name = obj.getClass().getName();
-        return name.substring(name.lastIndexOf('.') + 1);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Store a weak reference to this context
-        storedContexts.add(new WeakReference<Context>(this));
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
 
         // Set that we are the current "top-most" activity
-        setCurrentActivity();
-
-        // Clear any dead references from the list of storedContexts
-        // This gives us an approximation of the current Activity stack
-        List<WeakReference<Context>> toRemove = new LinkedList<WeakReference<Context>>();
-        List<String> goodContexts = new LinkedList<String>();
-        for(WeakReference<Context> ref : storedContexts){
-            if(ref.get() == null){
-                toRemove.add(ref);
-            } else {
-                goodContexts.add(getActivityName(ref.get()));
-            }
-        }
-        storedContexts.removeAll(toRemove);
-        Bugsnag.setActivityStack(goodContexts);
+        Bugsnag.setContext(this);
+        Bugsnag.addActivity(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        clearCurrentActivity();
-    }
-
-    private void setCurrentActivity() {
-        Bugsnag.setContext(getActivityName(this));
-    }
-
-    private void clearCurrentActivity() {
-        Bugsnag.setContext(null);
+        
+        String context = null;
+        Bugsnag.setContext(context);
     }
 }

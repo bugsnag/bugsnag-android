@@ -28,9 +28,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.ref.WeakReference;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -38,6 +42,7 @@ import java.util.UUID;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
@@ -62,7 +67,7 @@ public class Bugsnag {
     // Constants
     private static final String PREFS_NAME = "Bugsnag";
     private static final String DEFAULT_ENDPOINT = "notify.bugsnag.com";
-    private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
+    private static String NOTIFIER_NAME = "Android Bugsnag Notifier";
     private static final String NOTIFIER_VERSION = "1.0.0";
     private static final String NOTIFIER_URL = "http://www.bugsnag.com";
     private static final String UNSENT_EXCEPTION_PATH = "/unsent_bugsnag_exceptions/";
@@ -74,19 +79,23 @@ public class Bugsnag {
     private static String releaseStage = "production";
     private static String[] notifyReleaseStages = new String[]{"production"};
     private static boolean autoNotify = true;
-    private static Map<String, String> extraData;
+    private static Map<String, Object> metaData;
     private static boolean useSSL = false;
     private static String endpoint = DEFAULT_ENDPOINT;
-    private static String[] filters = new String[]{"password"};
 
     // Other private vars
     private static String packageName = "unknown";
     private static String appVersion = "unknown";
-    private static List<String> activityStack;
+    private static String osVersion = android.os.Build.VERSION.RELEASE;
+    private static List<WeakReference<Context>> activityStack = new LinkedList<WeakReference<Context>>();
     private static String filePath;
     private static boolean diskStorageEnabled = false;
 
-
+    static {
+        metaData = new HashMap<String, Object>();
+        Bugsnag.addToTab("device", "OS Version", android.os.Build.VERSION.RELEASE);
+        Bugsnag.addToTab("device", "Device", android.os.Build.MODEL);
+    }
 
     /**
      * Register to begin sending exception data to bugsnag
@@ -173,20 +182,73 @@ public class Bugsnag {
             Log.e(LOG_TAG, "You must call register with an apiKey before we can notify of exceptions!");
             return;
         }
+        
+        if(e != null && diskStorageEnabled && Arrays.asList(notifyReleaseStages).contains(releaseStage)) {
+            try {
+                // Causes
+                JSONArray exceptions = new JSONArray();
+                Throwable currentEx = e;
+                while(currentEx != null) {
+                    JSONObject exception = new JSONObject();
+                    exception.put("errorClass", currentEx.getClass().getName());
+                    exception.put("message", currentEx.getLocalizedMessage());
+
+                    // Stacktrace
+                    JSONArray stacktrace = new JSONArray();
+                    StackTraceElement[] stackTrace = currentEx.getStackTrace();
+                    for(StackTraceElement el : stackTrace) {
+                        try {
+                            JSONObject line = new JSONObject();
+                            line.put("method", el.getClassName().replace(packageName + ".", "") + "." + el.getMethodName());
+                            line.put("file", el.getFileName() == null ? "Unknown" : el.getFileName());
+                            line.put("lineNumber", el.getLineNumber());
+
+                            if(el.getClassName().startsWith(packageName)) {
+                                line.put("inProject", true);
+                            }
+
+                            stacktrace.put(line);
+                        } catch(Throwable lineEx) {
+                            Log.w(LOG_TAG, lineEx);
+                        }
+                    }
+                    exception.put("stacktrace", stacktrace);
+
+                    currentEx = currentEx.getCause();
+                    exceptions.put(exception);
+                }
+                // Now call the next notify method
+                notify(exceptions, metaData);
+            } catch (Exception writeEx) {
+                Log.w(LOG_TAG, writeEx);
+            }
+        }
+    }
+    
+    /**
+     * Fire an exception to bugsnag manually, with some additional data
+     * @param e The Throwable object to send
+     * @param metaData a Map of String -> String to send with the exception
+     */
+    public static void notify(final JSONArray exceptions, final Map<String,String> metaData) {
+        if(apiKey == null) {
+            Log.e(LOG_TAG, "You must call register with an apiKey before we can notify of exceptions!");
+            return;
+        }
 
         // Finalize copies of things that could change
         // NOTE: We are using the mechanics of the AsyncTask closure to make 
         // sure these variables are copied at this point
-        final String exceptionUserId = userId;
-        final String exceptionContext = context;
-        final Map<String,String> exceptionExtraData = extraData;
-        final List<String> exceptionActivityStack = activityStack;
+        final String exceptionUserId = Bugsnag.userId;
+        final String exceptionContext = Bugsnag.context;
+        final Map<String,Object> exceptionMetaData = Bugsnag.metaData;
+        final List<String> exceptionActivityStack = Bugsnag.generateActivityStack();
 
         // Write and flush the exceptions if we need to
-        if(e != null && diskStorageEnabled && Arrays.asList(notifyReleaseStages).contains(releaseStage)) {
+        if(exceptions != null && exceptions.length() > 0 && diskStorageEnabled && Arrays.asList(notifyReleaseStages).contains(releaseStage)) {
             new AsyncTask <Void, Void, Void>() {
                  protected Void doInBackground(Void... voi) {
-                     writeExceptionToDisk(e, metaData, exceptionExtraData, exceptionUserId, exceptionContext, exceptionActivityStack);
+                     writeExceptionToDisk(exceptions, metaData, exceptionMetaData, exceptionUserId, exceptionContext, exceptionActivityStack);
                      flushExceptions();
                      return null;
                  }
@@ -200,6 +262,10 @@ public class Bugsnag {
      */
     public static void setContext(String context) {
         Bugsnag.context = context;
+    }
+    
+    public static void setContext(Activity context) {
+        Bugsnag.setContext(getActivityName(context));
     }
 
     /**
@@ -239,13 +305,21 @@ public class Bugsnag {
         Bugsnag.autoNotify = autoNotify;
     }
 
-    /**
-     * Sets a custom map of key/value data that will be sent as custom data
-     * with every notification.
-     * @param extraData a Map of String -> String to send with all exceptions
-     */
-    public static void setExtraData(Map<String,String> extraData) {
-        Bugsnag.extraData = extraData;
+    public static void addToTab(String tabName, String key, Object value) {
+        Object tab = Bugsnag.metaData.get(tabName);
+        if(tab == null || !(tab instanceof Map)) {
+            tab = new HashMap<String, Object>();
+            Bugsnag.metaData.put(tabName, tab);
+        }
+        if(value != null) {
+            ((Map)tab).put(key, value);
+        } else {
+            ((Map)tab).remove(key);
+        }
+    }
+    
+    public static void clearTab(String tabName){
+        Bugsnag.metaData.remove(tabName);
     }
 
     /**
@@ -267,33 +341,80 @@ public class Bugsnag {
     public static void setEndpoint(String endpoint) {
         Bugsnag.endpoint = endpoint;
     }
-
-    /**
-     * Sets the strings to filter out from the "extra data" maps before sending
-     * them to bugsnag.com. Use this if you want to ensure you don't send 
-     * sensitive data such as passwords, and credit card numbers to our 
-     * servers. Any keys which contain these strings will be filtered.
-     * Defaults to new String[] {"password"};
-     */
-    public static void setFilters(String... filters) {
-          Bugsnag.filters = filters;
+    
+    public static void addActivity(Activity activity) {
+        Bugsnag.pruneActivityStack();
+        Bugsnag.activityStack.add(new WeakReference<Context>(activity));
     }
-
-
+    
+    private static String getActivityName(Object obj) {
+        String name = obj.getClass().getName();
+        return name.substring(name.lastIndexOf('.') + 1);
+    }
 
     // Package public
-    static void setActivityStack(List<String> activityStack) {
-        Bugsnag.activityStack = activityStack;
+    static void pruneActivityStack() {
+        List<WeakReference<Context>> toRemove = new LinkedList<WeakReference<Context>>();
+        List<String> goodContexts = new LinkedList<String>();
+        for(WeakReference<Context> ref : Bugsnag.activityStack){
+            if(ref.get() == null){
+                toRemove.add(ref);
+            }
+        }
     }
-
-
+    
+    static List<String> generateActivityStack() {
+        Bugsnag.pruneActivityStack();
+        
+        List<String> goodContexts = new LinkedList<String>();
+        for(WeakReference<Context> ref : Bugsnag.activityStack){
+            if(ref.get() != null){
+                goodContexts.add(getActivityName(ref.get()));
+            }
+        }
+        return goodContexts;
+    }
+    
+    static void setUnityNotifier() {
+        NOTIFIER_NAME = "Bugsnag Unity Notifier";
+    }
 
     // Private
     private static String getNotifyUrl() {
         return (useSSL ? "https://" : "http://") + endpoint;
     }
-
-    private static void writeExceptionToDisk(Throwable e, Map<String,String> customData, Map<String,String> exceptionExtraData, String exceptionUserId, String exceptionContext, List<String> exceptionActivityStack) {
+    
+    private static JSONArray listToJSONArray(List<Object> source) {
+        JSONArray returnValue = new JSONArray();
+        for (Object value : source) {
+            if(value instanceof Map) {
+                returnValue.put(mapToJSONObject((Map<String,Object>)value));
+            } else if(value instanceof List) {
+                returnValue.put(listToJSONArray((List<Object>)value));
+            } else {
+                returnValue.put(value);
+            }
+        }
+        return returnValue;
+    }
+    
+    private static JSONObject mapToJSONObject(Map<String,Object> source) {
+        JSONObject returnValue = new JSONObject();
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if(value instanceof Map) {
+                try{returnValue.put(key, mapToJSONObject((Map<String,Object>)value));}catch(org.json.JSONException ex){}
+            } else if(value instanceof List) {
+                try{returnValue.put(key, listToJSONArray((List<Object>)value));}catch(org.json.JSONException ex){}
+            } else {
+                try{returnValue.put(key, value);}catch(org.json.JSONException ex){}
+            }
+        }
+        return returnValue;
+    }
+    
+    private static void writeExceptionToDisk(JSONArray exceptions, Map<String,String> exceptionCustomData, Map<String,Object> exceptionMetaData, String exceptionUserId, String exceptionContext, List<String> exceptionActivityStack) {
         try {
             // Set up the output stream
             int random = new Random().nextInt(99999);
@@ -317,82 +438,50 @@ public class Bugsnag {
 
             error.put("userId", exceptionUserId);
             error.put("appVersion", appVersion);
+            error.put("osVersion", osVersion);
             error.put("releaseStage", releaseStage);
             error.put("context", exceptionContext);
-
-            // Causes
-            JSONArray exceptions = new JSONArray();
-            Throwable currentEx = e;
-            while(currentEx != null) {
-                JSONObject exception = new JSONObject();
-                exception.put("errorClass", currentEx.getClass().getName());
-                exception.put("message", currentEx.getLocalizedMessage());
-
-                // Stacktrace
-                JSONArray stacktrace = new JSONArray();
-                StackTraceElement[] stackTrace = currentEx.getStackTrace();
-                for(StackTraceElement el : stackTrace) {
-                    try {
-                        JSONObject line = new JSONObject();
-                        line.put("method", el.getClassName().replace(packageName + ".", "") + "." + el.getMethodName());
-                        line.put("file", el.getFileName() == null ? "Unknown" : el.getFileName());
-                        line.put("lineNumber", el.getLineNumber());
-
-                        if(el.getClassName().startsWith(packageName)) {
-                            line.put("inProject", true);
-                        }
-
-                        stacktrace.put(line);
-                    } catch(Throwable lineEx) {
-                        Log.w(LOG_TAG, lineEx);
-                    }
-                }
-                exception.put("stacktrace", stacktrace);
-
-                currentEx = currentEx.getCause();
-                exceptions.put(exception);
-            }
             error.put("exceptions", exceptions);
 
             // Create metadata object
-            JSONObject metaData = new JSONObject();
+            JSONObject sentMetaData = mapToJSONObject(exceptionMetaData);
 
-            // Device info
-            JSONObject device = new JSONObject();
-            device.put("osVersion", android.os.Build.VERSION.RELEASE);
-            device.put("device", android.os.Build.MODEL);
-            metaData.put("device", device);
-
+            JSONObject application = sentMetaData.optJSONObject("application");
+            if(application == null) {
+                application = new JSONObject();
+                sentMetaData.put("application", application);
+            }
+            
             // App info
-            JSONObject application = new JSONObject();
-            application.put("appVersion", appVersion);
-            application.put("packageName", packageName);
-            application.put("topActivity", exceptionContext);
-            if(exceptionActivityStack != null) {
+            application.put("App Version", appVersion);
+            application.put("Package Name", packageName);
+            if(exceptionActivityStack != null && exceptionActivityStack.size() > 0) {
+                application.put("Top Activity", exceptionActivityStack.get(exceptionActivityStack.size() - 1));
                 application.put("activityStack", new JSONArray(exceptionActivityStack));
             }
-            metaData.put("application", application);
 
-            // Custom data (with filtering)
-            JSONObject customDataObj = new JSONObject();
-            mergeIntoJsonObject(customDataObj, exceptionExtraData);
-            mergeIntoJsonObject(customDataObj, customData);
-
-            if(customDataObj.length() > 0) {
-                metaData.put("customData", customDataObj);
+            JSONObject customData = sentMetaData.optJSONObject("customData");
+            if(customData == null) {
+                customData = new JSONObject();
+                sentMetaData.put("customData", customData);
+            }
+            
+            // Custom data
+            if(exceptionCustomData != null) {
+                mergeJSONObjects(customData, new JSONObject(exceptionCustomData));
             }
 
-            error.put("metaData", metaData);
+            error.put("metaData", sentMetaData);
 
             // Add the error to the errors list
             errors.put(error);
-            payload.put("errors", errors);
+            payload.put("events", errors);
 
             // Write the errors out to the file
             writer.write(payload.toString());
             writer.flush();
             writer.close();
-            Log.d(LOG_TAG, "Writing new " + e.getClass().getName() + " exception to disk.");
+            Log.d(LOG_TAG, "Writing new " + ((JSONObject)exceptions.get(0)).getString("errorClass") + " exception to disk.");
         } catch (Exception writeEx) {
             Log.w(LOG_TAG, writeEx);
         }
@@ -455,30 +544,15 @@ public class Bugsnag {
             }
         }
     }
-
-    private static boolean shouldFilter(String key) {
-        if(filters == null || key == null) {
-            return false;
-        }
-
-        for(String filter : filters) {
-            if(key.contains(filter)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
     
-    private static void mergeIntoJsonObject(JSONObject jobj, Map<String, String> extraData) {
+    private static void mergeJSONObjects(JSONObject dest, JSONObject source) {
         try {
-            if(extraData != null && !extraData.isEmpty()) {
-                for(Map.Entry<String,String> extra : extraData.entrySet()) {
-                    if(shouldFilter(extra.getKey())) {
-                        jobj.put(extra.getKey(), "[FILTERED]");
-                    } else {
-                        jobj.put(extra.getKey(), extra.getValue());
-                    }
+            if(source != null) {
+                Iterator<?> keys = source.keys();
+                
+                while( keys.hasNext() ){
+                    String key = (String)keys.next();
+                    dest.put(key, source.get(key));
                 }
             }
         } catch(Exception e) {

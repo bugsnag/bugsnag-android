@@ -19,7 +19,7 @@ public class ExampleApp extends BugsnagActivity
 
         // Register for automatic exception catching
         // In most apps, this is all you will need to do
-        Bugsnag.register(this, "89796ce420b9449134db69d973193724");
+        Bugsnag.register(this, "b306fbaec7befc68398cecd25d1c65a7");
 
         // Example of setting the release stage, and which release stages we should notify for
         Bugsnag.setReleaseStage("development");
@@ -30,11 +30,8 @@ public class ExampleApp extends BugsnagActivity
         Bugsnag.setContext(this.getClass().getSimpleName());
 
         // Example of setting global extra data to send with every exception
-        Map<String, String> extraData = new HashMap<String,String>();
-        extraData.put("users name", "bob hoskins");
-        extraData.put("users email", "test@example.com");
-        extraData.put("password", "should be filtered");
-        Bugsnag.setExtraData(extraData);
+        Bugsnag.addToTab("user", "name", "bob hoskins");
+        Bugsnag.addToTab("user", "email", "test@example.com");
 
         // Manual notification with metadata example
         Map<String, String> metaData = new HashMap<String,String>();
@@ -43,6 +40,6 @@ public class ExampleApp extends BugsnagActivity
         Bugsnag.notify(new RuntimeException("Bugsnag Android Test Exception"), metaData);
 
         // Cause a RuntimeException
-        throw new RuntimeException("It broke");
+        //throw new RuntimeException("It broke");
     }
 }
