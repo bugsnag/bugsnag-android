@@ -177,7 +177,7 @@ public class Bugsnag {
      * @param e The Throwable object to send
      * @param metaData a Map of String -> String to send with the exception
      */
-    public static void notify(final Throwable e, final Map<String,String> metaData) {
+    public static void notify(final Throwable e, final Map<String,Object> metaData) {
         if(apiKey == null) {
             Log.e(LOG_TAG, "You must call register with an apiKey before we can notify of exceptions!");
             return;
@@ -230,7 +230,7 @@ public class Bugsnag {
      * @param e The Throwable object to send
      * @param metaData a Map of String -> String to send with the exception
      */
-    public static void notify(final JSONArray exceptions, final Map<String,String> metaData) {
+    public static void notify(final JSONArray exceptions, final Map<String,Object> metaData) {
         if(apiKey == null) {
             Log.e(LOG_TAG, "You must call register with an apiKey before we can notify of exceptions!");
             return;
@@ -414,7 +414,7 @@ public class Bugsnag {
         return returnValue;
     }
     
-    private static void writeExceptionToDisk(JSONArray exceptions, Map<String,String> exceptionCustomData, Map<String,Object> exceptionMetaData, String exceptionUserId, String exceptionContext, List<String> exceptionActivityStack) {
+    private static void writeExceptionToDisk(JSONArray exceptions, Map<String,Object> exceptionCustomData, Map<String,Object> exceptionMetaData, String exceptionUserId, String exceptionContext, List<String> exceptionActivityStack) {
         try {
             // Set up the output stream
             int random = new Random().nextInt(99999);
@@ -444,12 +444,12 @@ public class Bugsnag {
             error.put("exceptions", exceptions);
 
             // Create metadata object
-            JSONObject sentMetaData = mapToJSONObject(exceptionMetaData);
+            JSONObject metaDataCopy = mapToJSONObject(exceptionMetaData);
 
-            JSONObject application = sentMetaData.optJSONObject("application");
+            JSONObject application = metaDataCopy.optJSONObject("application");
             if(application == null) {
                 application = new JSONObject();
-                sentMetaData.put("application", application);
+                metaDataCopy.put("application", application);
             }
             
             // App info
@@ -460,18 +460,41 @@ public class Bugsnag {
                 application.put("activityStack", new JSONArray(exceptionActivityStack));
             }
 
-            JSONObject customData = sentMetaData.optJSONObject("customData");
+            JSONObject customData = metaDataCopy.optJSONObject("customData");
             if(customData == null) {
                 customData = new JSONObject();
-                sentMetaData.put("customData", customData);
+                metaDataCopy.put("customData", customData);
             }
             
             // Custom data
             if(exceptionCustomData != null) {
-                mergeJSONObjects(customData, new JSONObject(exceptionCustomData));
+                for (Map.Entry<String, Object> entry : exceptionCustomData.entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    if(value instanceof Map) {
+                        try{
+                            JSONObject dest = metaDataCopy.optJSONObject(key);
+                            if(dest == null) {
+                                metaDataCopy.put(key, mapToJSONObject((Map<String,Object>)value));
+                            } else {
+                                mergeJSONObjects(dest, mapToJSONObject((Map<String,Object>)value));
+                            }
+                        }catch(org.json.JSONException ex){}
+                    } else {
+                        if(value instanceof List) {
+                            value = listToJSONArray((List<Object>)value);
+                        }
+                        JSONObject tab = metaDataCopy.optJSONObject("customData");
+                        if(tab == null) {
+                            tab = new JSONObject();
+                            metaDataCopy.put("customData", tab);
+                        }
+                        try{tab.put(key, value);}catch(org.json.JSONException ex){}
+                    }
+                }
             }
 
-            error.put("metaData", sentMetaData);
+            error.put("metaData", metaDataCopy);
 
             // Add the error to the errors list
             errors.put(error);
