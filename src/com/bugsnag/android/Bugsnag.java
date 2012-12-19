@@ -389,7 +389,7 @@ public class Bugsnag {
     }
     
     static void setUnityNotifier() {
-        NOTIFIER_NAME = "Bugsnag Unity Notifier";
+        NOTIFIER_NAME = "Android Unity Notifier";
     }
 
     // Private
@@ -490,7 +490,8 @@ public class Bugsnag {
             
             addMemoryInfo(device);
             addNetworkInfo(device);
-            device.put("GPS Enabled", gpsEnabled());
+            Boolean gpsEnabled = gpsEnabled();
+            if(gpsEnabled != null) device.put("GPS Enabled", gpsEnabled);
             device.put("Num CPU Cores", getNumCores());
             device.put("Time since boot", durationString((long)(SystemClock.elapsedRealtime()/1000)));
 
@@ -713,11 +714,14 @@ public class Bugsnag {
         }
     }
     
-    private static boolean gpsEnabled() {
+    private static Boolean gpsEnabled() {
         Context context = getContext();
-        ContentResolver cr = context.getContentResolver();
-        String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-        return providersAllowed != null && providersAllowed.length() > 0;
+        if(context != null) {
+            ContentResolver cr = context.getContentResolver();
+            String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return providersAllowed != null && providersAllowed.length() > 0;
+        }
+        return null;
     }
     
     private static Boolean isAppInForeground() {

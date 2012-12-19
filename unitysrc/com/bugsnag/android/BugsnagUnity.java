@@ -56,7 +56,7 @@ public class BugsnagUnity {
 
         // Stacktrace
         Pattern manualUnityNotifyPattern = Pattern.compile("at\\s(\\S+).+?(<filename unknown>|\\S+):(\\d*)\\s*");
-        Pattern autoUnityNotifyPattern = Pattern.compile("\\s*(\\S+)\\ \\(.*?(?:([\\\\\\/]\\S*?):(\\d*)|\\n)");
+        Pattern autoUnityNotifyPattern = Pattern.compile("\\s*(\\S+) \\(.*?(?:at (\\S*?):(\\d*)|\\n)");
         
         JSONArray stackTraceArray;
         
