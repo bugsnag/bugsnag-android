@@ -48,7 +48,6 @@ public class BugsnagActivity extends Activity {
     protected void onPause() {
         super.onPause();
         
-        String context = null;
-        Bugsnag.setContext(context);
+        Bugsnag.setContext((String)null);
     }
 }

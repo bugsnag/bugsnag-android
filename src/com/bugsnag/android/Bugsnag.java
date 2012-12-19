@@ -31,23 +31,33 @@ import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+import java.io.FileFilter;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 import java.util.UUID;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.SystemClock;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
@@ -90,10 +100,11 @@ public class Bugsnag {
     private static List<WeakReference<Context>> activityStack = new LinkedList<WeakReference<Context>>();
     private static String filePath;
     private static boolean diskStorageEnabled = false;
+    private static long startUptimeSeconds;
 
     static {
         metaData = new HashMap<String, Object>();
-        Bugsnag.addToTab("device", "OS Version", android.os.Build.VERSION.RELEASE);
+        Bugsnag.addToTab("device", "Android Version", android.os.Build.VERSION.RELEASE);
         Bugsnag.addToTab("device", "Device", android.os.Build.MODEL);
     }
 
@@ -114,6 +125,8 @@ public class Bugsnag {
         if(androidContext == null) {
             throw new RuntimeException("The Bugsnag Android Notifier requires a non-null android Context.");
         }
+        
+        startUptimeSeconds = (long)(SystemClock.elapsedRealtime()/1000);
 
         // Load or generate a UUID to track unique users
         final SharedPreferences settings = androidContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -459,6 +472,27 @@ public class Bugsnag {
                 application.put("Top Activity", exceptionActivityStack.get(exceptionActivityStack.size() - 1));
                 application.put("activityStack", new JSONArray(exceptionActivityStack));
             }
+            
+            JSONObject session = metaDataCopy.optJSONObject("session");
+            if(session == null) {
+                session = new JSONObject();
+                metaDataCopy.put("session", session);
+            }
+            Boolean isAppInForeground = isAppInForeground();
+            if(isAppInForeground != null) session.put("In Foreground", isAppInForeground);
+            session.put("Session Length", durationString((long)(SystemClock.elapsedRealtime()/1000) - startUptimeSeconds));
+            
+            JSONObject device = metaDataCopy.optJSONObject("device");
+            if(device == null) {
+                device = new JSONObject();
+                metaDataCopy.put("device", device);
+            }
+            
+            addMemoryInfo(device);
+            addNetworkInfo(device);
+            device.put("GPS Enabled", gpsEnabled());
+            device.put("Num CPU Cores", getNumCores());
+            device.put("Time since boot", durationString((long)(SystemClock.elapsedRealtime()/1000)));
 
             JSONObject customData = metaDataCopy.optJSONObject("customData");
             if(customData == null) {
@@ -553,6 +587,155 @@ public class Bugsnag {
             // TODO: Warn users they need to add the following permission to manifest:
             // <uses-permission android:name="android.permission.INTERNET" />
             Log.w(LOG_TAG, e);
+        }
+    }
+    
+    private static void addMemoryInfo(JSONObject device) {
+        try{
+            JSONObject memoryMap = new JSONObject();
+            Context context = getContext();
+            if(context != null) {
+                ActivityManager activityManager = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+                ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+                activityManager.getMemoryInfo(memInfo);
+                
+                long totalMem = Runtime.getRuntime().maxMemory();
+                long usedMem = Runtime.getRuntime().totalMemory();
+                long freeMem = totalMem - usedMem;
+                memoryMap.put("Total Available", humanReadableByteCount(totalMem));
+                memoryMap.put("Free", humanReadableByteCount(freeMem));
+                memoryMap.put("Used", humanReadableByteCount(usedMem));
+                memoryMap.put("Low Memory?", memInfo.lowMemory);
+            }
+        
+            if(memoryMap.length() > 0) device.put("Memory", memoryMap);
+        } catch(org.json.JSONException e){}
+    }
+    
+    private static void addNetworkInfo(JSONObject device) {
+        try {
+            Context context = getContext();
+            if(context == null) return;
+        
+            ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        
+            boolean connected = activeNetwork.isConnectedOrConnecting();
+            if(connected) {
+                switch(activeNetwork.getType()) {
+                    case ConnectivityManager.TYPE_WIFI:
+                        try{device.put("Network", "Reachable via WiFi");}catch(org.json.JSONException e){}
+                        break;
+                    case ConnectivityManager.TYPE_MOBILE:
+                        try{device.put("Network", "Reachable via Mobile");}catch(org.json.JSONException e){}
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                try{device.put("Network", "Not Reachable");}catch(org.json.JSONException e){}
+            }
+        } catch(SecurityException e) {}
+    }
+    
+    private static String humanReadableByteCount(long bytes) {
+        int unit = 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = "KMGTPE".charAt(exp-1) + "i";
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+    
+    private static String durationString(long durationSeconds) {
+        String returnValue = "";
+        int entries = 0;
+        long currentSeconds = durationSeconds;
+        long result;
+        
+        result = TimeUnit.SECONDS.toDays(currentSeconds);
+        if(result != 0) {
+            currentSeconds -= TimeUnit.DAYS.toSeconds(result);
+            returnValue += returnValue.format("%d Days", result);
+            entries++;
+        }
+        
+        result = TimeUnit.SECONDS.toHours(currentSeconds);
+        if(result != 0 && entries <= 1) {
+            if(entries == 1) returnValue += " and ";
+            currentSeconds -= TimeUnit.HOURS.toSeconds(result);
+            returnValue += returnValue.format("%d Hours", result);
+            entries++;
+        }
+        
+        result = TimeUnit.SECONDS.toMinutes(currentSeconds);
+        
+        if(result != 0 && entries <= 1) {
+            if(entries == 1) returnValue += " and ";
+            currentSeconds -= TimeUnit.MINUTES.toSeconds(result);
+            returnValue += returnValue.format("%d Minutes", result);
+            entries++;
+        }
+        
+        result = currentSeconds;
+        if(result != 0 && entries <= 1) {
+            if(entries == 1) returnValue += " and ";
+            returnValue += returnValue.format("%d Seconds", result);
+            entries++;
+        }
+        return returnValue;
+    }
+    
+    private static Context getContext() {
+        pruneActivityStack();
+        if(activityStack.size() > 0) {
+            return activityStack.get(0).get();
+        }
+        return null;
+    }
+    
+    private static int getNumCores() {
+        class CpuFilter implements FileFilter {
+            @Override
+            public boolean accept(File pathname) {
+                if(Pattern.matches("cpu[0-9]", pathname.getName())) {
+                    return true;
+                }
+                return false;
+            }      
+        }
+
+        try {
+            File dir = new File("/sys/devices/system/cpu/");
+            File[] files = dir.listFiles(new CpuFilter());
+            return files.length;
+        } catch(Exception e) {
+            return 1;
+        }
+    }
+    
+    private static boolean gpsEnabled() {
+        Context context = getContext();
+        ContentResolver cr = context.getContentResolver();
+        String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        return providersAllowed != null && providersAllowed.length() > 0;
+    }
+    
+    private static Boolean isAppInForeground() {
+        Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+            
+        try {
+            ActivityManager activityManager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+                
+            if (services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(context.getApplicationContext().getPackageName().toString())) {
+                return true;
+            }
+            return false;
+        } catch(SecurityException e) {
+            return null;
         }
     }
 
