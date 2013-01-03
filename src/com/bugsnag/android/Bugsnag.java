@@ -706,7 +706,7 @@ public class Bugsnag {
                     return true;
                 }
                 return false;
-            }      
+            }
         }
 
         try {
@@ -733,7 +733,7 @@ public class Bugsnag {
         if(context == null) {
             return null;
         }
-            
+        
         try {
             ActivityManager activityManager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
