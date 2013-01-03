@@ -55,7 +55,7 @@ public class BugsnagUnity {
         try {exception.put("message", errorMessage);} catch(org.json.JSONException ex){}
 
         // Stacktrace
-        Pattern unityNotifyPattern = Pattern.compile("(\\S+)\\s*\\(.*?\\)\\s*(?:(?:\\[.*\\]\\s*in|\\(at\\s*\\s*)(.*):(\\d+))?");
+        Pattern unityNotifyPattern = Pattern.compile("(\\S+)\\s*\\(.*?\\)\\s*(?:(?:\\[.*\\]\\s*in\\s|\\(at\\s*\\s*)(.*):(\\d+))?");
         JSONArray stackTraceArray = parseStackTrace(unityNotifyPattern, stackTrace);
         
         try {exception.put("stacktrace", stackTraceArray);} catch(org.json.JSONException ex){}
