@@ -68,6 +68,29 @@ extraData.put("registered_user", "yes");
 Bugsnag.notify(new RuntimeException("Non-fatal"), extraData);
 ```
 
+Adding Tabs to Bugsnag Error Reports
+------------------------------------
+
+If you want to add a tab to your Bugsnag error report, you can call the `addToTab` method:
+
+```java
+Bugsnag.addToTab("user", "username", "bob-hoskins");
+Bugsnag.addToTab("user", "registered_user", "yes");
+```
+
+This will add a user tab to the error report on bugsnag.com that contains the username and whether the user was registered or not.
+
+You can clear a single attribute on a tab by calling:
+
+```java
+Bugsnag.addToTab("user", "username", null);
+```
+
+or you can clear the entire tab:
+
+```java
+Bugsnag.clearTab("user");
+```
 
 Configuration
 -------------
@@ -147,20 +170,6 @@ extraData.put("registered_user", "yes");
 
 Bugsnag.setExtraData(extraData);
 ```
-
-###setFilters
-
-Sets the strings to filter out from the `extraData` maps before sending
-them to Bugsnag. Use this if you want to ensure you don't send 
-sensitive data such as passwords, and credit card numbers to our 
-servers. Any keys which contain these strings will be filtered.
-
-```java
-Bugsnag.setFilters(new String[]{"password", "credit_card_number"});
-```
-
-By default, `filters` is set to `new String[] {"password"};`
-
 
 Building from Source
 --------------------

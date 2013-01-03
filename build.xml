@@ -8,58 +8,88 @@
     <property name="package.packagename" value="com.bugsnag.android" />
 
     <!-- Standard jar stuff -->
-    <property name="jarfile" value="${package.name}-${package.version}.jar" />
+    <property name="jarfile_android" value="${package.name}-${package.version}-android.jar" />
+    <property name="jarfile_unity" value="${package.name}-${package.version}-unity.jar" />
     <property name="lib.dir" value="${sdk.dir}/platforms/${target}" />
+    <property name="3rdparty.dir" value="./lib" />
     <property name="build.dir" value="./build"/>
-    <property name="classes.dir"  value="${build.dir}/classes"/>
+    <property name="classes_android.dir"  value="${build.dir}/classes_android"/>
+    <property name="classes_unity.dir"  value="${build.dir}/classes_unity"/>
     <buildnumber file="build.num" />
 
     <!-- Set up classpath -->
-    <path id="classpath">
+    <path id="classpath_android">
         <fileset dir="${lib.dir}" includes="**/*.jar" />
     </path>
-
-    <!-- Build javadoc -->
-    <target name="doc">
-        <javadoc 
-            classpathref="classpath"
-            sourcepath="gen:src"
-            destdir="doc"
-            packagenames="${package.packagename}"
-            linkoffline="http://d.android.com/reference ${sdk.dir}docs/reference" 
-            additionalparam="-author  -version"
-            />
-    </target>
+    <path id="classpath_unity">
+        <fileset dir="${lib.dir}" includes="**/*.jar" />
+        <fileset dir="${3rdparty.dir}" includes="**/*.jar" />
+    </path>
 
     <!-- Compile java files into classes -->
-    <target name="compile">
+    <target name="compile_android">
         <mkdir dir="${build.dir}" />
-        <mkdir dir="${classes.dir}" />
+        <mkdir dir="${classes_android.dir}" />
 
         <javac
             srcdir="src"
-            destdir="${classes.dir}"
-            classpathref="classpath"
+            destdir="${classes_android.dir}"
+            classpathref="classpath_android"
+            debug="true"
+            debuglevel="lines,source" />
+    </target>
+    <target name="compile_unity">
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${classes_unity.dir}" />
+
+        <javac
+            srcdir="src:unitysrc"
+            destdir="${classes_unity.dir}"
+            classpathref="classpath_unity"
             debug="true"
             debuglevel="lines,source" />
     </target>
 
     <!-- Package a jar from compiled class files -->
-    <target name="jar" depends="compile">
-        <delete dir="." includes="**/*.jar" />
+    <target name="android" depends="compile_android">
+        <delete file="${jarfile_android}" />
         <delete file="MANIFEST.MF" />
         <manifest file="MANIFEST.MF">
             <attribute name="Built-By" value="${user.name}" />
             <attribute name="Implementation-Version" value="${version.num}-b${build.number}"/> 
         </manifest>
 
-        <jar destfile="${jarfile}" basedir="build/classes" includes="com/bugsnag/android/**/*.class" manifest="MANIFEST.MF" />
+        <jar destfile="${jarfile_android}" basedir="${classes_android.dir}" includes="com/bugsnag/android/**/*.class" manifest="MANIFEST.MF" />
+    </target>
+    <target name="unity" depends="compile_unity">
+        <delete file="${jarfile_unity}" />
+        <delete file="MANIFEST.MF" />
+        <manifest file="MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}" />
+            <attribute name="Implementation-Version" value="${version.num}-b${build.number}"/> 
+        </manifest>
+
+        <jar destfile="${jarfile_unity}" basedir="${classes_unity.dir}" includes="com/bugsnag/android/**/*.class" manifest="MANIFEST.MF" />
+    </target>
+    
+    <!-- Target for building the native .so -->
+    <target name="ndk">
+        <mkdir dir="${build.dir}/ndk" />
+        <exec executable="${ndk.dir}/ndk-build" dir="./ndk">
+            <arg value="NDK_PROJECT_PATH=." />
+            <arg value="NDK_APPLICATION_MK=./Application.mk" />
+        </exec>
+
+        <move todir="${build.dir}/libs" >
+            <fileset dir="ndk/libs" />
+        </move>
+
+        <delete dir="ndk/obj" />
     </target>
 
     <!-- Clean out the build files -->
     <target name="clean">
         <delete dir="build" />
-        <delete dir="doc" />
         <delete>
             <fileset dir="." includes="*.jar"/>
             <fileset file="MANIFEST.MF"/>
@@ -67,5 +97,5 @@
     </target>
 
     <!-- Compile and package a jar -->
-    <target name="package" depends="compile,jar" />
+    <target name="package" depends="android,unity,ndk" />
 </project>
