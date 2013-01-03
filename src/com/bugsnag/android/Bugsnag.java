@@ -368,11 +368,14 @@ public class Bugsnag {
     // Package public
     static void pruneActivityStack() {
         List<WeakReference<Context>> toRemove = new LinkedList<WeakReference<Context>>();
-        List<String> goodContexts = new LinkedList<String>();
         for(WeakReference<Context> ref : Bugsnag.activityStack){
             if(ref.get() == null){
                 toRemove.add(ref);
             }
+        }
+        
+        for(WeakReference<Context> ref : toRemove) {
+            Bugsnag.activityStack.remove(ref);
         }
     }
     
@@ -593,9 +596,10 @@ public class Bugsnag {
     
     private static void addMemoryInfo(JSONObject device) {
         try{
-            JSONObject memoryMap = new JSONObject();
             Context context = getContext();
             if(context != null) {
+                JSONObject memoryMap = new JSONObject();
+                
                 ActivityManager activityManager = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
                 ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
                 activityManager.getMemoryInfo(memInfo);
@@ -607,9 +611,9 @@ public class Bugsnag {
                 memoryMap.put("Free", humanReadableByteCount(freeMem));
                 memoryMap.put("Used", humanReadableByteCount(usedMem));
                 memoryMap.put("Low Memory?", memInfo.lowMemory);
+                
+                device.put("Memory", memoryMap);
             }
-        
-            if(memoryMap.length() > 0) device.put("Memory", memoryMap);
         } catch(org.json.JSONException e){}
     }
     

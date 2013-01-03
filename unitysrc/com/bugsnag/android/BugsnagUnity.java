@@ -55,19 +55,11 @@ public class BugsnagUnity {
         try {exception.put("message", errorMessage);} catch(org.json.JSONException ex){}
 
         // Stacktrace
-        Pattern manualUnityNotifyPattern = Pattern.compile("at\\s(\\S+).+?(<filename unknown>|\\S+):(\\d*)\\s*");
-        Pattern autoUnityNotifyPattern = Pattern.compile("\\s*(\\S+) \\(.*?(?:at (\\S*?):(\\d*)|\\n)");
+        Pattern unityNotifyPattern = Pattern.compile("(\\S+)\\s*\\(.*?\\)\\s*(?:(?:\\[.*\\]\\s*in|\\(at\\s*\\s*)(.*):(\\d+))?");
+        JSONArray stackTraceArray = parseStackTrace(unityNotifyPattern, stackTrace);
         
-        JSONArray stackTraceArray;
-        
-        if(stackTrace.startsWith("  at ")) {
-            stackTraceArray = parseStackTrace(manualUnityNotifyPattern, stackTrace);
-        } else {
-            stackTraceArray = parseStackTrace(autoUnityNotifyPattern, stackTrace);
-        }
-                
         try {exception.put("stacktrace", stackTraceArray);} catch(org.json.JSONException ex){}
-                
+        
         Bugsnag.notify(exceptions, null);
     }
     
@@ -83,7 +75,7 @@ public class BugsnagUnity {
             } catch(org.json.JSONException ex){}
             
             try {
-                String value = groupCount >= 2 && match.group(2) != null ? match.group(2) : "unknown file";
+                String value = groupCount >= 2 && match.group(2) != null && !match.group(2).equals("<filename unknown>") ? match.group(2) : "unknown file";
                 line.put("file", value.trim());
             } catch(org.json.JSONException ex){}
             
@@ -108,7 +100,9 @@ public class BugsnagUnity {
             @Override
             public void run() {
                 Bugsnag.register(UnityPlayer.currentActivity, apiKey);
+                Bugsnag.addActivity(UnityPlayer.currentActivity);
                 Bugsnag.setUnityNotifier();
+                Bugsnag.setNotifyReleaseStages(new String[]{"production", "development"});
             }
         });
     }
