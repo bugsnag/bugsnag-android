@@ -317,6 +317,7 @@ public class Bugsnag {
 
             error.put("userId", exceptionUserId);
             error.put("appVersion", appVersion);
+            error.put("osVersion", android.os.Build.VERSION.RELEASE);
             error.put("releaseStage", releaseStage);
             error.put("context", exceptionContext);
 
