@@ -4,7 +4,7 @@
 
     <!-- Package properties -->
     <property name="package.name" value="bugsnag" />
-    <property name="package.version" value="1.0.1" />
+    <property name="package.version" value="1.0.2" />
     <property name="package.packagename" value="com.bugsnag.android" />
 
     <!-- Standard jar stuff -->
