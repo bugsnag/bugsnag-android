@@ -295,11 +295,6 @@ public class Bugsnag {
 
     private static void writeExceptionToDisk(Throwable e, Map<String,String> customData, Map<String,String> exceptionExtraData, String exceptionUserId, String exceptionContext, List<String> exceptionActivityStack) {
         try {
-            // Set up the output stream
-            int random = new Random().nextInt(99999);
-            String filename = filePath + appVersion + "-" + String.valueOf(random) + ".json";
-            FileWriter writer = new FileWriter(filename);
-
             // Outer payload
             JSONObject payload = new JSONObject();
             payload.put("apiKey", apiKey);
@@ -389,11 +384,23 @@ public class Bugsnag {
             errors.put(error);
             payload.put("errors", errors);
 
+            // Set up the output stream
+            int random = new Random().nextInt(99999);
+            String filename = filePath + appVersion + "-" + String.valueOf(random) + ".json";
+
             // Write the errors out to the file
-            writer.write(payload.toString());
-            writer.flush();
-            writer.close();
-            Log.d(LOG_TAG, "Writing new " + e.getClass().getName() + " exception to disk.");
+            String payloadString = payload.toString();
+            if(!payloadString.isEmpty()) {
+                FileWriter writer = new FileWriter(filename);
+                try {
+                    Log.d(LOG_TAG, "Writing new " + e.getClass().getName() + " exception to disk.");
+
+                    writer.write(payloadString);
+                    writer.flush();
+                } finally {
+                    writer.close();
+                }
+            }
         } catch (Exception writeEx) {
             Log.w(LOG_TAG, writeEx);
         }
@@ -402,7 +409,7 @@ public class Bugsnag {
     private static void sendExceptionData(File file) {
         try {
             String urlString = getNotifyUrl();
-            boolean sent = false;
+            boolean shouldDelete = false;
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try {
@@ -424,14 +431,14 @@ public class Bugsnag {
 
                 // Flush the request through
                 int response = conn.getResponseCode();
-                sent = true;
+                shouldDelete = true;
                 Log.d(LOG_TAG, String.format("Sent exception file %s to %s. Got response code %d", file.getName(), urlString, response));
             } catch(Throwable ei) {
                 // Ignore any file stream issues
                 Log.w(LOG_TAG, ei);
             } finally {
                 // Delete file now we've sent the exceptions
-                if(sent) {
+                if(shouldDelete) {
                   file.delete();
                 }
                 conn.disconnect();
