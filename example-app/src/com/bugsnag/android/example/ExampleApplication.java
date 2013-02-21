@@ -17,7 +17,7 @@ public class ExampleApplication extends Application
 
 		// Register for automatic exception catching
 		// In most apps, this is all you will need to do
-		Bugsnag.register(this, "89796ce420b9449134db69d973193724");
+		Bugsnag.register(this, "8f5c0ec341d974b5e6fbdf16cb5cca3f");
 
 		// Example of setting the release stage, and which release stages we should notify for
 		Bugsnag.setReleaseStage("development");
