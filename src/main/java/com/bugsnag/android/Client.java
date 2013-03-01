@@ -101,8 +101,11 @@ public class Client extends com.bugsnag.Client {
         new Thread(new Runnable() {
             public void run() {
                 if(cachePath != null) {
+                    config.getLogger().debug("Flushing cached errors");
+
                     // Create a notification
                     Notification notif = new Notification(config);
+                    List<File> sentFiles = new LinkedList<File>();
 
                     // Look up all saved error files
                     File exceptionDir = new File(cachePath);
@@ -110,15 +113,32 @@ public class Client extends com.bugsnag.Client {
                         File[] errorFiles = exceptionDir.listFiles();
                         for(File errorFile : errorFiles) {
                             if(errorFile.exists() && errorFile.isFile()) {
-                                System.out.println("FOUND AN ERROR FILE!" + errorFile.getName());
-                                // TODO: Save filename in a "to delete" array
-                                // TODO: Add to notification
+                                // Save filename in a "to delete" array
+                                sentFiles.add(errorFile);
+                                System.out.println(String.format("DEBUG: File is %d bytes long", errorFile.length()));
+
+                                // Read file into string
+                                String errorString = Util.readFileAsString(errorFile);
+
+                                // Add errorString to notification
+                                notif.addError(errorString);
+
+                                config.getLogger().debug("Added error file to notification " + errorFile.getName());
                             }
                         }
                     }
 
-                    // TODO: Send the notification
-                    // TODO: Delete the files if notification worked
+                    // Send the notification
+                    boolean sent = notif.deliver();
+                    if(sent) {
+                        // Delete the files if notification worked
+                        for(File file : sentFiles) {
+                            config.getLogger().debug("Deleting error file " + file.getName());
+                            file.delete();
+                        }
+                    } else {
+                        config.getLogger().info("Could not deliver error notification, will try again later.");
+                    }
                 }
             }
         }).start();
@@ -224,6 +244,8 @@ public class Client extends com.bugsnag.Client {
                 writer = new FileWriter(filename);
                 writer.write(errorString);
                 writer.flush();
+
+                config.getLogger().debug("Wrote error file to disk: " + filename);
             } catch(IOException ex) {
                 config.getLogger().warn("Error when writing exception to disk.", ex);
             } finally {
