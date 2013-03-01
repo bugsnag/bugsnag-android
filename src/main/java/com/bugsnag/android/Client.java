@@ -1,9 +1,12 @@
 package com.bugsnag.android;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -27,7 +30,6 @@ public class Client extends com.bugsnag.Client {
     private String packageVersion;
     private String cachePath;
     private long startTime;
-    private List<WeakReference<Context>> activityStack = new LinkedList<WeakReference<Context>>();
 
     public Client(Context androidContext, String apiKey) {
         // Set the apiKey and logger
@@ -61,26 +63,32 @@ public class Client extends com.bugsnag.Client {
     }
 
     @Override
-    public void notify(final Throwable e, final MetaData metaData) {
-        // Add diagnostics to error
+    public void notify(final Throwable e, MetaData overrides) {
+        // Generate diagnostic data
+        MetaData diagnostics = generateDiagnostics();
+
+        // Merge local metaData into diagnostics
+        MetaData metaData = diagnostics.merge(overrides);
+
+        // Create the error object to send
         final Error error = new Error(e, metaData, config);
 
-        List<String> activityStackNames = generateActivityStack();
-        if(activityStackNames != null && activityStackNames.size() > 0) {
-            error.addToTab("Application", "Top Activity", activityStackNames.get(activityStackNames.size() - 1));
-            error.addToTab("Application", "Activity Stack", activityStackNames);
+        // Set the error's context
+        String topActivityName = ActivityStack.getTopActivityName();
+        if(topActivityName != null) {
+            error.setContext(topActivityName);
         }
-        
-        error.addToTab("Session", "Session Length", String.format("%d seconds", secondsSinceBoot() - startTime));
-        error.addToTab("Device", "Seconds Since Boot", String.format("%d seconds", secondsSinceBoot()));
 
         // Send the error
         new Thread(new Runnable() {
             public void run() {
                 Notification notif = new Notification(config, error);
                 boolean sent = notif.deliver();
-                if(!sent) {
-                    // TODO: Write error to disk for later sending
+
+                // Write error to disk for later sending
+                if(!sent && cachePath != null) {
+                    config.getLogger().info("Could not deliver error notification, saving to disk to send later.");
+                    writeErrorToDisk(error);
                 }
             }
         }).start();
@@ -90,7 +98,7 @@ public class Client extends com.bugsnag.Client {
     }
 
     public void setContext(Activity context) {
-        setContext(getActivityName(context));
+        setContext(Util.getContextName(context));
     }
 
     private void flush() {
@@ -171,41 +179,52 @@ public class Client extends com.bugsnag.Client {
         return (long)(SystemClock.elapsedRealtime()/1000);
     }
 
-    public void addActivity(Activity activity) {
-        System.out.println("addActivity: " + getActivityName(activity));
-        pruneActivityStack();
-        activityStack.add(new WeakReference<Context>(activity));
-    }
-    
-    private String getActivityName(Object obj) {
-        String name = obj.getClass().getName();
-        return name.substring(name.lastIndexOf('.') + 1);
+    private MetaData generateDiagnostics() {
+        MetaData diagnostics = new MetaData();
+
+        // Activity stack
+        String topActivityName = ActivityStack.getTopActivityName();
+        List<String> activityStackNames = ActivityStack.getNames();
+        if(activityStackNames.size() > 0) {
+            diagnostics.addToTab("Application", "Activity Stack", activityStackNames);
+        }
+
+        if(topActivityName != null) {
+            diagnostics.addToTab("Application", "Top Activity", topActivityName);
+        }
+ 
+        // Session information
+        diagnostics.addToTab("Session", "Session Length", String.format("%d seconds", secondsSinceBoot() - startTime));
+
+        // Device state
+        diagnostics.addToTab("Device", "Seconds Since Boot", String.format("%d seconds", secondsSinceBoot()));
+        diagnostics.addToTab("Device", "GPS State", "TODO");
+        diagnostics.addToTab("Device", "Network State", "TODO");
+        diagnostics.addToTab("Device", "Free Memory", "TODO");
+
+        return diagnostics;
     }
 
-    private void pruneActivityStack() {
-        List<WeakReference<Context>> toRemove = new LinkedList<WeakReference<Context>>();
-        for(WeakReference<Context> ref : activityStack){
-            if(ref.get() == null){
-                toRemove.add(ref);
+    private void writeErrorToDisk(Error error) {
+        String errorString = error.toString();
+        if(!errorString.isEmpty()) {
+            // Generate a random file name
+            int random = new Random().nextInt(99999);
+            String filename = String.format("%s%s-%d.json", cachePath, packageVersion, random);
+
+            // Write the error to disk
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(filename);
+                writer.write(errorString);
+                writer.flush();
+            } catch(IOException ex) {
+                config.getLogger().warn("Error when writing exception to disk.", ex);
+            } finally {
+                if(writer != null) {
+                    try { writer.close(); } catch(IOException e) {}
+                }
             }
         }
-        
-        for(WeakReference<Context> ref : toRemove) {
-            activityStack.remove(ref);
-        }
-    }
-    
-    private List<String> generateActivityStack() {
-        System.out.println("generateActivityStack");
-        pruneActivityStack();
-        
-        List<String> goodContexts = new LinkedList<String>();
-        for(WeakReference<Context> ref : activityStack){
-            if(ref.get() != null){
-                System.out.println("\t" + getActivityName(ref.get()));
-                goodContexts.add(getActivityName(ref.get()));
-            }
-        }
-        return goodContexts;
     }
 }

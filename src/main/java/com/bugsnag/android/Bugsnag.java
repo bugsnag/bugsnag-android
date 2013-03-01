@@ -57,8 +57,4 @@ public class Bugsnag {
     public static void setEndpoint(String endpoint) {
         client.setEndpoint(endpoint);
     }
-
-    public static void addActivity(Activity activity) {
-        client.addActivity(activity);
-    }
 }

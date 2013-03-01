@@ -7,18 +7,19 @@ public class BugsnagActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bugsnag.addActivity(this);
+        ActivityStack.add(this);
+        ActivityStack.setTopActivity(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Bugsnag.setContext(this);
+        ActivityStack.setTopActivity(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Bugsnag.setContext((String)null);
+        ActivityStack.clearTopActivity();
     }
 }

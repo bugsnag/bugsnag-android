@@ -87,6 +87,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.5.1</version>
         <configuration>
+          <compilerArgument>-Xlint</compilerArgument>
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
