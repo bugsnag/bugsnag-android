@@ -2,7 +2,7 @@ package com.bugsnag.android;
 
 import android.util.Log;
 
-public class Logger extends com.bugsnag.Logger {
+class Logger extends com.bugsnag.Logger {
     @Override
     public void debug(String message) {
         Log.d(LOG_PREFIX, message);

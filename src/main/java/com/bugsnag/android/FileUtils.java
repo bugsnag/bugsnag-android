@@ -5,7 +5,7 @@ import java.io.RandomAccessFile;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class FileUtils {
+class FileUtils {
     public static String readFileAsString(File file) throws IOException {
         RandomAccessFile f = new RandomAccessFile(file, "r");
         byte[] bytes = new byte[(int) f.length()];
