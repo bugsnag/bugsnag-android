@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -15,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 
 import com.bugsnag.Error;
 import com.bugsnag.Notification;
@@ -23,13 +21,12 @@ import com.bugsnag.MetaData;
 
 public class Client extends com.bugsnag.Client {
     private static final String PREFS_NAME = "Bugsnag";
-    private static final String UNSENT_ERROR_PATH = "/unsent_errors/";
+    private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
 
     private Context applicationContext;
     private String packageName;
     private String packageVersion;
     private String cachePath;
-    private long startTime;
 
     public Client(Context androidContext, String apiKey) {
         // Set the apiKey and logger
@@ -41,7 +38,6 @@ public class Client extends com.bugsnag.Client {
         packageName = getPackageName();
         packageVersion = getPackageVersion(packageName);
         cachePath = prepareCachePath();
-        startTime = secondsSinceBoot();
 
         // Set common meta-data
         setUserId(getUUID());
@@ -58,13 +54,13 @@ public class Client extends com.bugsnag.Client {
         // Flush any queued exceptions
         flush();
 
-        config.getLogger().info("Ready to handle exceptions.");
+        config.getLogger().info("Bugsnag is loaded and ready to handle exceptions");
     }
 
     @Override
     public void notify(final Throwable e, MetaData overrides) {
         // Generate diagnostic data
-        MetaData diagnostics = generateDiagnostics();
+        MetaData diagnostics = new Diagnostics(applicationContext);
 
         // Merge local metaData into diagnostics
         MetaData metaData = diagnostics.merge(overrides);
@@ -81,27 +77,29 @@ public class Client extends com.bugsnag.Client {
         // Send the error
         new Thread(new Runnable() {
             public void run() {
-                Notification notif = new Notification(config, error);
-                boolean sent = notif.deliver();
-
-                // Write error to disk for later sending
-                if(!sent && cachePath != null) {
-                    config.getLogger().info("Could not deliver error notification, saving to disk to send later.");
-                    writeErrorToDisk(error);
+                try {
+                    Notification notif = new Notification(config, error);
+                    notif.deliver();
+                } catch (IOException ex) {
+                    // Write error to disk for later sending
+                    if(cachePath != null) {
+                        config.getLogger().info("Could not send error(s) to Bugsnag, saving to disk to send later");
+                        writeErrorToDisk(error);
+                    }
                 }
             }
         }).start();
     }
 
     public void setContext(Activity context) {
-        setContext(Util.getContextName(context));
+        setContext(ActivityStack.getContextName(context));
     }
 
     private void flush() {
         new Thread(new Runnable() {
             public void run() {
                 if(cachePath != null) {
-                    config.getLogger().debug("Flushing cached errors");
+                    config.getLogger().debug("Flushing unsent errors (if any)");
 
                     // Create a notification
                     Notification notif = new Notification(config);
@@ -110,34 +108,35 @@ public class Client extends com.bugsnag.Client {
                     // Look up all saved error files
                     File exceptionDir = new File(cachePath);
                     if(exceptionDir.exists() && exceptionDir.isDirectory()) {
-                        File[] errorFiles = exceptionDir.listFiles();
-                        for(File errorFile : errorFiles) {
+                        for(File errorFile : exceptionDir.listFiles()) {
                             if(errorFile.exists() && errorFile.isFile()) {
                                 // Save filename in a "to delete" array
                                 sentFiles.add(errorFile);
-                                System.out.println(String.format("DEBUG: File is %d bytes long", errorFile.length()));
 
-                                // Read file into string
-                                String errorString = Util.readFileAsString(errorFile);
+                                try {
+                                    // Read error from disk and add to notification
+                                    String errorString = FileUtils.readFileAsString(errorFile);
+                                    notif.addError(errorString);
 
-                                // Add errorString to notification
-                                notif.addError(errorString);
-
-                                config.getLogger().debug("Added error file to notification " + errorFile.getName());
+                                    config.getLogger().debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
+                                } catch (IOException e) {
+                                    config.getLogger().warn("Problem reading unsent error from disk", e);
+                                }
                             }
                         }
                     }
 
                     // Send the notification
-                    boolean sent = notif.deliver();
-                    if(sent) {
+                    try {
+                        notif.deliver();
+
                         // Delete the files if notification worked
                         for(File file : sentFiles) {
-                            config.getLogger().debug("Deleting error file " + file.getName());
+                            config.getLogger().debug("Deleting unsent error file " + file.getName());
                             file.delete();
                         }
-                    } else {
-                        config.getLogger().info("Could not deliver error notification, will try again later.");
+                    } catch (IOException e) {
+                        config.getLogger().info("Could not send error(s) to Bugsnag, will try again later");
                     }
                 }
             }
@@ -145,6 +144,7 @@ public class Client extends com.bugsnag.Client {
     }
 
     private String getUUID() {
+
         final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String uuid = settings.getString("userId", null);
         if(uuid == null) {
@@ -190,68 +190,27 @@ public class Client extends com.bugsnag.Client {
             File outFile = new File(path);
             outFile.mkdirs();
             if(!outFile.exists()) {
-                config.getLogger().warn("Error preparing cache directory");
+                config.getLogger().warn("Could not prepare cache directory");
                 path = null;
             }
         } catch(Exception e) {
-            config.getLogger().warn("Error preparing cache directory", e);
+            config.getLogger().warn("Could not prepare cache directory", e);
             path = null;
         }
 
         return path;
     }
 
-    private long secondsSinceBoot() {
-        return (long)(SystemClock.elapsedRealtime()/1000);
-    }
-
-    private MetaData generateDiagnostics() {
-        MetaData diagnostics = new MetaData();
-
-        // Activity stack
-        String topActivityName = ActivityStack.getTopActivityName();
-        List<String> activityStackNames = ActivityStack.getNames();
-        if(activityStackNames.size() > 0) {
-            diagnostics.addToTab("Application", "Activity Stack", activityStackNames);
-        }
-
-        if(topActivityName != null) {
-            diagnostics.addToTab("Application", "Top Activity", topActivityName);
-        }
- 
-        // Session information
-        diagnostics.addToTab("Session", "Session Length", String.format("%d seconds", secondsSinceBoot() - startTime));
-
-        // Device state
-        diagnostics.addToTab("Device", "Seconds Since Boot", String.format("%d seconds", secondsSinceBoot()));
-        diagnostics.addToTab("Device", "GPS State", "TODO");
-        diagnostics.addToTab("Device", "Network State", "TODO");
-        diagnostics.addToTab("Device", "Free Memory", "TODO");
-
-        return diagnostics;
-    }
-
     private void writeErrorToDisk(Error error) {
         String errorString = error.toString();
         if(!errorString.isEmpty()) {
-            // Generate a random file name
-            int random = new Random().nextInt(99999);
-            String filename = String.format("%s%s-%d.json", cachePath, packageVersion, random);
-
             // Write the error to disk
-            FileWriter writer = null;
+            String filename = String.format("%s%d.json", cachePath, System.currentTimeMillis());
             try {
-                writer = new FileWriter(filename);
-                writer.write(errorString);
-                writer.flush();
-
-                config.getLogger().debug("Wrote error file to disk: " + filename);
-            } catch(IOException ex) {
-                config.getLogger().warn("Error when writing exception to disk.", ex);
-            } finally {
-                if(writer != null) {
-                    try { writer.close(); } catch(IOException e) {}
-                }
+                FileUtils.writeStringToFile(errorString, filename);
+                config.getLogger().debug(String.format("Saved unsent error to disk (%s) ", filename));
+            } catch (IOException e) {
+                config.getLogger().warn("Could not save error to disk", e);
             }
         }
     }

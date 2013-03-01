@@ -22,7 +22,7 @@ public class ActivityStack {
         List<String> goodContexts = new LinkedList<String>();
         for(WeakReference<Context> ref : storedContexts){
             if(ref.get() != null){
-                goodContexts.add(Util.getContextName(ref.get()));
+                goodContexts.add(getContextName(ref.get()));
             }
         }
         return goodContexts;
@@ -48,7 +48,7 @@ public class ActivityStack {
         String name = null;
         Context context = getTopActivity();
         if(context != null) {
-            name = Util.getContextName(context);
+            name = getContextName(context);
         }
         return name;
     }
@@ -64,5 +64,10 @@ public class ActivityStack {
         for(WeakReference<Context> ref : toRemove) {
             storedContexts.remove(ref);
         }
+    }
+
+    public static String getContextName(Context context) {
+        String name = context.getClass().getName();
+        return name.substring(name.lastIndexOf('.') + 1);
     }
 }
