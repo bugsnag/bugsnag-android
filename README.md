@@ -3,21 +3,20 @@ Bugsnag Notifier for Android
 
 The Bugsnag Notifier for Android gives you instant notification of exceptions
 thrown from your Android applications.
-The notifier hooks into `Thread.UncaughtExceptionHandler`, which means any
-uncaught exceptions will trigger a notification to be sent to your Bugsnag
-project.
+The notifier hooks into `Thread.UncaughtExceptionHandler`, so any
+uncaught exceptions in your app will be sent to your Bugsnag dashboard.
 
-[Bugsnag](http://bugsnag.com) captures errors in real-time from your web,
-mobile and desktop applications, helping you to understand and resolve them
-as fast as possible. [Create a free account](http://bugsnag.com) to start
-capturing exceptions from your applications.
+[Bugsnag](https://bugsnag.com) captures errors from your web and mobile 
+applications, helping you to understand and resolve them as fast as possible.
+[Create a free account](https://bugsnag.com) to start capturing exceptions
+from your applications.
 
 
 Installation & Setup
 --------------------
 
--   [Download the latest bugsnag-android.jar file](TODO) and place it in your app's
-    classpath.
+-   [Download the latest bugsnag-android.jar file](TODO) and place it in
+    your Android app's `libs/` folder.
 
     *Note: if your project uses [Maven](http://maven.apache.org/) you can 
     instead [add bugsnag-android as a dependency](http://mvnrepository.com/artifact/com.bugsnag/bugsnag-android)
