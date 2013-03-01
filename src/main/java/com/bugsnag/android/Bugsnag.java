@@ -6,10 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
@@ -20,19 +21,29 @@ import com.bugsnag.Client;
 import com.bugsnag.Error;
 import com.bugsnag.MetaData;
 import com.bugsnag.Notification;
+import com.bugsnag.http.HttpClient;
+import com.bugsnag.http.NetworkException;
+import com.bugsnag.http.BadResponseException;
+import com.bugsnag.utils.JSONUtils;
 
 public class Bugsnag {
     private static final String PREFS_NAME = "Bugsnag";
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
+    private static final String DEFAULT_METRICS_ENDPOINT = "notify.bugsnag.com/metrics";
 
     private static Context applicationContext;
-    private static String packageName;
-    private static String packageVersion;
     private static String cachePath;
     private static Logger logger;
     private static Client client;
+    private static String uuid;
+    private static boolean enableMetrics = false;
+    private static String metricsEndpoint = DEFAULT_METRICS_ENDPOINT;
 
     public static void register(Context androidContext, String apiKey) {
+        register(androidContext, apiKey, false);
+    }
+
+    public static void register(Context androidContext, String apiKey, boolean enableMetrics) {
         // Create a logger
         logger = new Logger();
 
@@ -42,12 +53,17 @@ public class Bugsnag {
 
         // Get the application context, many things need this
         applicationContext = androidContext.getApplicationContext();
-        packageName = getPackageName();
-        packageVersion = getPackageVersion(packageName);
         cachePath = prepareCachePath();
 
+        // Get the uuid for metrics and userId
+        String uuid = getUUID();
+
+        // Get package information
+        String packageName = getPackageName();
+        String packageVersion = getPackageVersion(packageName);
+
         // Set common meta-data
-        client.setUserId(getUUID());
+        client.setUserId(uuid);
         client.setOsVersion(android.os.Build.VERSION.RELEASE);
         client.setAppVersion(packageVersion);
         client.setProjectPackages(packageName);
@@ -57,6 +73,11 @@ public class Bugsnag {
 
         client.addToTab("Application", "Package Name", packageName);
         client.addToTab("Application", "Package Version", packageVersion);
+
+        // Send metrics data (DAU/MAU etc) if enabled
+        if(enableMetrics) {
+            makeMetricsRequest(uuid);
+        }
 
         // Flush any queued exceptions
         flushErrors();
@@ -95,10 +116,13 @@ public class Bugsnag {
                 try {
                     Notification notif = client.createNotification(error);
                     notif.deliver();
-                } catch (IOException ex) {
+                } catch (NetworkException ex) {
                     // Write error to disk for later sending
                     logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
                     writeErrorToDisk(error);
+                } catch (BadResponseException ex) {
+                    // The notification was delivered, but Bugsnag sent a non-200 response
+                    logger.warn(ex.getMessage());
                 }
 
                 return null;
@@ -137,6 +161,14 @@ public class Bugsnag {
 
     public static void setEndpoint(String endpoint) {
         client.setEndpoint(endpoint);
+    }
+
+    public static void setMetricsEndpoint(String metricsEndpoint) {
+        Bugsnag.metricsEndpoint = metricsEndpoint;
+    }
+
+    public static String getMetricsEndpoint() {
+        return (client.getUseSSL() ? "https://" : "http://") + metricsEndpoint;
     }
 
     private static void flushErrors() {
@@ -182,6 +214,9 @@ public class Bugsnag {
                     }
                 } catch (IOException e) {
                     logger.info("Could not flush error(s) to Bugsnag, will try again later");
+                } catch (BadResponseException ex) {
+                    // The notification was delivered, but Bugsnag sent a non-200 response
+                    logger.warn(ex.getMessage());
                 }
 
                 return null;
@@ -263,5 +298,26 @@ public class Bugsnag {
                 logger.warn("Could not save error to disk", e);
             }
         }
+    }
+
+    private static void makeMetricsRequest(final String userId) {
+        new AsyncTask <Void, Void, Void>() {
+            protected Void doInBackground(Void... voi) {
+                try {
+                    logger.debug(String.format("Sent metrics data to Bugsnag (%s) ", userId));
+
+                    // Build the post payload
+                    JSONObject payload = new JSONObject();
+                    payload.put("userId", userId);
+
+                    // Make the request
+                    HttpClient.post("http://notify.bugsnag.com/metrics", payload.toString(), "application/json");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+        }.execute();
     }
 }
