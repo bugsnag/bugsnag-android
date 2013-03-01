@@ -23,7 +23,7 @@ import com.bugsnag.MetaData;
 
 public class Client extends com.bugsnag.Client {
     private static final String PREFS_NAME = "Bugsnag";
-    private static final String UNSENT_ERROR_PATH = "/unsent_bugsnag_errors/";
+    private static final String UNSENT_ERROR_PATH = "/unsent_errors/";
 
     private Context applicationContext;
     private String packageName;
@@ -56,8 +56,7 @@ public class Client extends com.bugsnag.Client {
         addToTab("Application", "Package Version", packageVersion);
 
         // Flush any queued exceptions
-        // TODO: Async
-        // flush();
+        flush();
 
         config.getLogger().info("Ready to handle exceptions.");
     }
@@ -92,9 +91,6 @@ public class Client extends com.bugsnag.Client {
                 }
             }
         }).start();
-
-        // Flush any old errors
-        flush();
     }
 
     public void setContext(Activity context) {
@@ -104,16 +100,26 @@ public class Client extends com.bugsnag.Client {
     private void flush() {
         new Thread(new Runnable() {
             public void run() {
-                // Notification notif = new Notification(config);
+                if(cachePath != null) {
+                    // Create a notification
+                    Notification notif = new Notification(config);
 
-                // TODO: Load all error files, add to notif
-                
-                // boolean sent = notif.deliver();
-                // if(!sent) {
-                //     // TODO: Write error to disk for later sending
-                // }
+                    // Look up all saved error files
+                    File exceptionDir = new File(cachePath);
+                    if(exceptionDir.exists() && exceptionDir.isDirectory()) {
+                        File[] errorFiles = exceptionDir.listFiles();
+                        for(File errorFile : errorFiles) {
+                            if(errorFile.exists() && errorFile.isFile()) {
+                                System.out.println("FOUND AN ERROR FILE!" + errorFile.getName());
+                                // TODO: Save filename in a "to delete" array
+                                // TODO: Add to notification
+                            }
+                        }
+                    }
 
-                // TODO: Delete files if we sent ok
+                    // TODO: Send the notification
+                    // TODO: Delete the files if notification worked
+                }
             }
         }).start();
     }
