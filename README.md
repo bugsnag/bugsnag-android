@@ -16,37 +16,40 @@ capturing exceptions from your applications.
 Installation & Setup
 --------------------
 
-[Download the latest bugsnag.jar file](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-1.0.2.jar)
-and place it in your Android app's `libs/` folder.
+-   [Download the latest bugsnag-android.jar file](TODO) and place it in your app's
+    classpath.
 
-Import the `Bugsnag` package in your [Application](http://developer.android.com/reference/android/app/Application.html)
-subclass.
+    *Note: if your project uses [Maven](http://maven.apache.org/) you can 
+    instead [add bugsnag-android as a dependency](http://mvnrepository.com/artifact/com.bugsnag/bugsnag-android)
+    in your pom.xml.*
 
-```java
-import com.bugsnag.android.*;
-```
+-   Import the `Bugsnag` package in your [Application](http://developer.android.com/reference/android/app/Application.html)
+    subclass.
 
-In your application's `onCreate` function, register to begin capturing
-exceptions:
+    ```java
+    import com.bugsnag.android.*;
+    ```
 
-```java
-Bugsnag.register(this, "your-api-key-goes-here");
-```
+-   In your application's `onCreate` function, register to begin capturing
+    exceptions:
 
-Don't forget to register your Application subclass in your `AndroidManifest.xml`
-like this:
+    ```java
+    Bugsnag.register(this, "your-api-key-goes-here");
+    ```
 
-```xml
-<application android:name=".ExampleApplication">
-	[activity declarations and more...]
-</application>
-```
+-   Ensure you have the `android.permission.INTERNET` permission listed in
+    your `AndroidManifest.xml`.
+
+    For additional diagnostic information, add the
+    `android.permission.ACCESS_NETWORK_STATE` permission to your
+    `AndroidManifest.xml`.
+
 
 Recommended: Inherit from BugsnagActivity
 -----------------------------------------
 
-To have additional useful data about exceptions sent to Bugsnag, you should
-also have each of your `Activity` classes inherit from `BugsnagActivity`.
+To have additional diagnostic information, you should also have each of your 
+`Activity` classes inherit from `BugsnagActivity`.
 This will track which of your activities were open at the time of
 any exception, and present them in your Bugsnag error dashboard.
 
@@ -70,11 +73,13 @@ Bugsnag.notify(new RuntimeException("Non-fatal"));
 You can also send additional meta-data with your exception:
 
 ```java
-Map<String,String> extraData = new HashMap<String,String>();
-extraData.put("username", "bob-hoskins");
-extraData.put("registered_user", "yes");
+import com.bugsnag.MetaData;
 
-Bugsnag.notify(new RuntimeException("Non-fatal"), extraData);
+MetaData metaData = new MetaData();
+metaData.addToTab("User", "username", "bob-hoskins");
+metaData.addToTab("User", "email", "bob@example.com");
+
+Bugsnag.notify(new RuntimeException("Non-fatal"), metaData);
 ```
 
 
@@ -170,18 +175,34 @@ Bugsnag.setFilters(new String[]{"password", "credit_card_number"});
 
 By default, `filters` is set to `new String[] {"password"};`
 
+###setProjectPackages
+
+Sets which package names Bugsnag should consider as "inProject". We mark 
+stacktrace lines as in-project if they originate from any of these
+packages.
+
+```java
+bugsnag.setProjectPackages("com.company.package1", "com.company.package2");
+```
+
+By default, `projectPackages` is set to be the package you called
+`Bugsnag.register` from.
+
 
 Building from Source
 --------------------
 
-To build a `.jar` file from source, clone the [bugsnag-android](https://github.com/bugsnag/bugsnag-android) repository
-and run:
+To build a `.jar` file from source you'll need to use
+[Maven](http://maven.apache.org/).
+
+Clone the [bugsnag-android](https://github.com/bugsnag/bugsnag-android)
+repository, then run:
 
 ```bash
-ant package
+mvn clean package
 ```
 
-This will generate a file named `bugsnag.jar`.
+This will generate jar files in the `target` directory.
 
 
 Reporting Bugs or Feature Requests
