@@ -311,7 +311,7 @@ public class Bugsnag {
                     payload.put("userId", userId);
 
                     // Make the request
-                    HttpClient.post("http://notify.bugsnag.com/metrics", payload.toString(), "application/json");
+                    HttpClient.post("http://notify.bugsnag.com/metrics", payload);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
