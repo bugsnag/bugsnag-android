@@ -16,6 +16,7 @@ public class ActivityStack {
         storedContexts.add(new WeakReference<Context>(activity));
     }
 
+    // TODO:JS Remove duplicate contexts
     public static List<String> getNames() {
         prune();
 

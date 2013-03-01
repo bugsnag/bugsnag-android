@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
@@ -75,76 +74,79 @@ public class Client extends com.bugsnag.Client {
         }
 
         // Send the error
-        new Thread(new Runnable() {
-            public void run() {
+        new AsyncTask <Void, Void, Void>() {
+            protected Void doInBackground(Void... voi) {
                 try {
                     Notification notif = new Notification(config, error);
                     notif.deliver();
                 } catch (IOException ex) {
                     // Write error to disk for later sending
-                    if(cachePath != null) {
-                        config.getLogger().info("Could not send error(s) to Bugsnag, saving to disk to send later");
-                        writeErrorToDisk(error);
-                    }
+                    config.getLogger().info("Could not send error(s) to Bugsnag, saving to disk to send later");
+                    writeErrorToDisk(error);
                 }
+
+                return null;
             }
-        }).start();
+        }.execute();
     }
 
-    public void setContext(Activity context) {
+    public void setContext(Context context) {
         setContext(ActivityStack.getContextName(context));
     }
 
     private void flush() {
-        new Thread(new Runnable() {
-            public void run() {
-                if(cachePath != null) {
-                    config.getLogger().debug("Flushing unsent errors (if any)");
+        if(cachePath == null) return;
 
-                    // Create a notification
-                    Notification notif = new Notification(config);
-                    List<File> sentFiles = new LinkedList<File>();
+        new AsyncTask <Void, Void, Void>() {
+            protected Void doInBackground(Void... voi) {
+                config.getLogger().debug("Flushing unsent errors (if any)");
 
-                    // Look up all saved error files
-                    File exceptionDir = new File(cachePath);
-                    if(exceptionDir.exists() && exceptionDir.isDirectory()) {
-                        for(File errorFile : exceptionDir.listFiles()) {
-                            if(errorFile.exists() && errorFile.isFile()) {
-                                // Save filename in a "to delete" array
-                                sentFiles.add(errorFile);
+                // Create a notification
+                Notification notif = new Notification(config);
+                List<File> sentFiles = new LinkedList<File>();
 
-                                try {
-                                    // Read error from disk and add to notification
-                                    String errorString = FileUtils.readFileAsString(errorFile);
-                                    notif.addError(errorString);
+                // Look up all saved error files
+                File exceptionDir = new File(cachePath);
+                if(exceptionDir.exists() && exceptionDir.isDirectory()) {
+                    for(File errorFile : exceptionDir.listFiles()) {
+                        if(errorFile.exists() && errorFile.isFile()) {
+                            // Save filename in a "to delete" array
+                            sentFiles.add(errorFile);
 
-                                    config.getLogger().debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
-                                } catch (IOException e) {
-                                    config.getLogger().warn("Problem reading unsent error from disk", e);
-                                }
+                            try {
+                                // Read error from disk and add to notification
+                                String errorString = FileUtils.readFileAsString(errorFile);
+                                notif.addError(errorString);
+
+                                config.getLogger().debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
+                            } catch (IOException e) {
+                                config.getLogger().warn("Problem reading unsent error from disk", e);
                             }
                         }
                     }
-
-                    // Send the notification
-                    try {
-                        notif.deliver();
-
-                        // Delete the files if notification worked
-                        for(File file : sentFiles) {
-                            config.getLogger().debug("Deleting unsent error file " + file.getName());
-                            file.delete();
-                        }
-                    } catch (IOException e) {
-                        config.getLogger().info("Could not send error(s) to Bugsnag, will try again later");
-                    }
                 }
+
+                try {
+                    // Send the notification
+                    notif.deliver();
+
+                    // Delete the files if notification worked
+                    for(File file : sentFiles) {
+                        config.getLogger().debug("Deleting unsent error file " + file.getName());
+                        file.delete();
+                    }
+                } catch (IOException e) {
+                    config.getLogger().info("Could not send error(s) to Bugsnag, will try again later");
+                }
+
+                return null;
             }
-        }).start();
+        }.execute();
     }
 
+    // TODO:JS Avoid StrictMode violations caused by getSharedPreferences
+    // TODO:JS Avoid StrictMode violations caused by UUID.randomUUID
     private String getUUID() {
-
         final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String uuid = settings.getString("userId", null);
         if(uuid == null) {
@@ -157,6 +159,7 @@ public class Client extends com.bugsnag.Client {
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("userId", finalUuid);
                     editor.commit();
+
                     return null;
                 }
             }.execute();
@@ -202,6 +205,8 @@ public class Client extends com.bugsnag.Client {
     }
 
     private void writeErrorToDisk(Error error) {
+        if(cachePath == null) return;
+
         String errorString = error.toString();
         if(!errorString.isEmpty()) {
             // Write the error to disk
