@@ -1,0 +1,19 @@
+2.0.0
+-----
+-   Refactored to use the classes from `bugsnag-java`
+-   Added support for metrics tracking (MAU/DAU)
+-   Added additional diagnostic information (network status, memory usage, 
+    gps status, time since boot, time since app load) to every notification
+-   Fixed some issues which might have caused error sending to fail
+
+1.0.2
+-----
+-   Ensure empty exception files aren't created
+
+1.0.1
+-----
+-   Fix bug with incorrect "caused by" exception names and messages
+
+1.0.0
+-----
+-   Initial release
