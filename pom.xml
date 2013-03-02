@@ -62,9 +62,9 @@
 
   <!-- Use apache pom as parent, so we can release to the remote repo -->
   <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>10</version>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
   </parent>
 
   <!-- Build settings and plugins -->
@@ -100,9 +100,28 @@
         </configuration>
       </plugin>
 
+      <!-- Proguard -->
+      <plugin>
+        <groupId>com.pyx4me</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <proguardInclude>${basedir}/proguard.config</proguardInclude>
+        </configuration>
+      </plugin>
+
       <!-- Create additional jar with bugsnag-java included -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -119,36 +138,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <!-- Profiles -->
-  <profiles>
-    <!-- Sign packages for release -->
-    <profile>
-      <id>release-sign-artifacts</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.1</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
