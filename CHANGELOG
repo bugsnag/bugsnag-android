@@ -1,6 +1,7 @@
 2.0.0
 -----
 -   Refactored to use the classes from `bugsnag-java`
+-   Project is now available in Maven, and built using Maven
 -   Added support for metrics tracking (MAU/DAU)
 -   Added additional diagnostic information (network status, memory usage, 
     gps status, time since boot, time since app load) to every notification
