@@ -312,6 +312,10 @@ public class Bugsnag {
 
                     // Make the request
                     HttpClient.post("http://notify.bugsnag.com/metrics", payload);
+                } catch (NetworkException e) {
+                    // Meh
+                } catch (BadResponseException e) {
+                    // Meh
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
