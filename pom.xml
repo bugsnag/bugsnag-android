@@ -95,6 +95,7 @@
         <version>2.5.1</version>
         <configuration>
           <compilerArgument>-Xlint</compilerArgument>
+          <compilerArgument>-g:lines,source</compilerArgument>
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
