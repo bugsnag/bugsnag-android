@@ -31,6 +31,9 @@ public class Bugsnag {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
     private static final String DEFAULT_METRICS_ENDPOINT = "notify.bugsnag.com/metrics";
 
+    private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
+    private static final String NOTIFIER_VERSION = "2.0.0";
+
     private static Context applicationContext;
     private static String cachePath;
     private static Logger logger;
@@ -61,6 +64,10 @@ public class Bugsnag {
         // Get package information
         String packageName = getPackageName();
         String packageVersion = getPackageVersion(packageName);
+
+        // Set notifier info
+        client.setNotifierName(NOTIFIER_NAME);
+        client.setNotifierVersion(NOTIFIER_VERSION);
 
         // Set common meta-data
         client.setUserId(uuid);
