@@ -2,6 +2,7 @@
 -----
 -   Added `Bugsnag.addToTab` to replace `setExtraData` for sending meta-data
     with every exception
+-   Reduced jar size
 
 2.0.0
 -----
