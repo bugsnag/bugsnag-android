@@ -1,3 +1,8 @@
+2.0.1
+-----
+-   Added `Bugsnag.addToTab` to replace `setExtraData` for sending meta-data
+    with every exception
+
 2.0.0
 -----
 -   Refactored to use the classes from `bugsnag-java`
