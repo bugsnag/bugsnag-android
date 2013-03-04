@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import com.bugsnag.Client;
 import com.bugsnag.Error;
 import com.bugsnag.MetaData;
+import com.bugsnag.Metrics;
 import com.bugsnag.Notification;
 import com.bugsnag.http.HttpClient;
 import com.bugsnag.http.NetworkException;
@@ -315,18 +316,14 @@ public class Bugsnag {
         new AsyncTask <Void, Void, Void>() {
             protected Void doInBackground(Void... voi) {
                 try {
-                    logger.debug(String.format("Sent metrics data to Bugsnag (%s) ", userId));
-
-                    // Build the post payload
-                    JSONObject payload = new JSONObject();
-                    payload.put("userId", userId);
-
-                    // Make the request
-                    HttpClient.post("http://notify.bugsnag.com/metrics", payload);
-                } catch (NetworkException e) {
-                    // Meh
-                } catch (BadResponseException e) {
-                    // Meh
+                    Metrics metrics = client.createMetrics(userId);
+                    metrics.deliver();
+                } catch (NetworkException ex) {
+                    // Write error to disk for later sending
+                    logger.info("Could not send metrics to Bugsnag");
+                } catch (BadResponseException ex) {
+                    // The notification was delivered, but Bugsnag sent a non-200 response
+                    logger.warn(ex.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
