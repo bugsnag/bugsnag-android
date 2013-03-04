@@ -178,6 +178,10 @@ public class Bugsnag {
         return (client.getUseSSL() ? "https://" : "http://") + metricsEndpoint;
     }
 
+    public static String addToTab(String tab, String key, Object value) {
+        client.addToTab(tab, key, value);
+    }
+
     private static void flushErrors() {
         if(cachePath == null) return;
 

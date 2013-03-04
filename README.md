@@ -59,6 +59,20 @@ class MyActivity extends BugsnagActivity {
 ```
 
 
+Sending Custom Data With Exceptions
+-----------------------------------
+
+It is often useful to send additional meta-data about your app, such as
+information about the currently logged in user, along with any exceptions,
+to help debug problems. To add custom data to every exception you can
+use `addToTab`:
+
+```java
+Bugsnag.addToTab("User", "Name", "Bob Hoskins");
+Bugsnag.addToTab("User", "Paying Customer?", "Yes");
+```
+
+
 Send Non-Fatal Exceptions to Bugsnag
 ------------------------------------
 
@@ -69,7 +83,7 @@ If you would like to send non-fatal exceptions to Bugsnag, you can pass any
 Bugsnag.notify(new RuntimeException("Non-fatal"));
 ```
 
-You can also send additional meta-data with your exception:
+You can also send additional meta-data with this exception:
 
 ```java
 import com.bugsnag.MetaData;
@@ -145,20 +159,6 @@ in your application. If you want to stop this from happening, you can call
 
 ```java
 Bugsnag.setAutoNotify(false);
-```
-
-###setExtraData
-
-It if often very useful to send some extra application or user specific
-data along with every exception. To do this, you can call the
-`setExtraData` method:
-
-```java
-Map<String,String> extraData = new HashMap<String,String>();
-extraData.put("username", "bob-hoskins");
-extraData.put("registered_user", "yes");
-
-Bugsnag.setExtraData(extraData);
 ```
 
 ###setFilters
