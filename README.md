@@ -69,7 +69,7 @@ use `addToTab`:
 
 ```java
 Bugsnag.addToTab("User", "Name", "Bob Hoskins");
-Bugsnag.addToTab("User", "Paying Customer?", "Yes");
+Bugsnag.addToTab("User", "Paying Customer?", true);
 ```
 
 
