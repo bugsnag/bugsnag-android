@@ -178,7 +178,7 @@ public class Bugsnag {
         return (client.getUseSSL() ? "https://" : "http://") + metricsEndpoint;
     }
 
-    public static String addToTab(String tab, String key, Object value) {
+    public static void addToTab(String tab, String key, Object value) {
         client.addToTab(tab, key, value);
     }
 
