@@ -39,24 +39,21 @@ Installation & Setup
 -   Ensure you have the `android.permission.INTERNET` permission listed in
     your `AndroidManifest.xml`.
 
-    For additional diagnostic information, add the
-    `android.permission.ACCESS_NETWORK_STATE` permission to your
-    `AndroidManifest.xml`.
 
+Recommended: Enable Additional Diagnostic Information
+-----------------------------------------------------
 
-Recommended: Inherit from BugsnagActivity
------------------------------------------
+-   To track which of your activities were open at the time of any exception,
+    you should also have each of your `Activity` classes inherit from
+    `BugsnagActivity`:
 
-To have additional diagnostic information, you should also have each of your 
-`Activity` classes inherit from `BugsnagActivity`.
-This will track which of your activities were open at the time of
-any exception, and present them in your Bugsnag error dashboard.
+    ```java
+    class MyActivity extends BugsnagActivity { ... }
+    ```
 
-```java
-class MyActivity extends BugsnagActivity {
-    ...
-}
-```
+-   To enable network diagnostics for each device (internet connectivity, etc)
+    you should also add the `android.permission.ACCESS_NETWORK_STATE` 
+    permission to your `AndroidManifest.xml`.
 
 
 Sending Custom Data With Exceptions
