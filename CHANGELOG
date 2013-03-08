@@ -1,3 +1,7 @@
+2.0.3
+-----
+-   Fixed bug where session time wouldn't start counting until first exception
+
 2.0.2
 -----
 -   Fixed missing apiKey in metrics, use java notifier's metrics sending
