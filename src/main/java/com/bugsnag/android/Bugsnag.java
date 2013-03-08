@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.SharedPreferences;
@@ -77,6 +78,7 @@ public class Bugsnag {
         client.setOsVersion(android.os.Build.VERSION.RELEASE);
         client.setAppVersion(packageVersion);
         client.setProjectPackages(packageName);
+        client.setReleaseStage(guessReleaseStage());
 
         client.addToTab("Device", "Android Version", android.os.Build.VERSION.RELEASE);
         client.addToTab("Device", "Device Type", android.os.Build.MODEL);
@@ -253,6 +255,16 @@ public class Bugsnag {
         }
 
         return packageVersion;
+    }
+
+    private static String guessReleaseStage() {
+        int flags = applicationContext.getApplicationInfo().flags;
+        boolean debuggable = (flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        if(debuggable) {
+            return "development";
+        } else {
+            return "production";
+        }
     }
 
     private static String prepareCachePath() {
