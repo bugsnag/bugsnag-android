@@ -43,6 +43,8 @@ public class Bugsnag {
     private static boolean enableMetrics = false;
     private static String metricsEndpoint = DEFAULT_METRICS_ENDPOINT;
 
+    static long startTime = Utils.secondsSinceBoot();
+
     public static void register(Context androidContext, String apiKey) {
         register(androidContext, apiKey, false);
     }
@@ -204,7 +206,7 @@ public class Bugsnag {
 
                             try {
                                 // Read error from disk and add to notification
-                                String errorString = FileUtils.readFileAsString(errorFile);
+                                String errorString = Utils.readFileAsString(errorFile);
                                 notif.addError(errorString);
 
                                 logger.debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
@@ -304,7 +306,7 @@ public class Bugsnag {
             // Write the error to disk
             String filename = String.format("%s%d.json", cachePath, System.currentTimeMillis());
             try {
-                FileUtils.writeStringToFile(errorString, filename);
+                Utils.writeStringToFile(errorString, filename);
                 logger.debug(String.format("Saved unsent error to disk (%s) ", filename));
             } catch (IOException e) {
                 logger.warn("Could not save error to disk", e);

@@ -5,7 +5,9 @@ import java.io.RandomAccessFile;
 import java.io.FileWriter;
 import java.io.IOException;
 
-class FileUtils {
+import android.os.SystemClock;
+
+class Utils {
     public static String readFileAsString(File file) throws IOException {
         RandomAccessFile f = new RandomAccessFile(file, "r");
         byte[] bytes = new byte[(int) f.length()];
@@ -25,5 +27,9 @@ class FileUtils {
                 writer.close();
             }
         }
+    }
+
+    public static long secondsSinceBoot() {
+        return (long)(SystemClock.elapsedRealtime()/1000);
     }
 }

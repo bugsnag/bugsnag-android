@@ -10,7 +10,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.SystemClock;
 import android.provider.Settings;
 
 import com.bugsnag.MetaData;
@@ -24,8 +23,6 @@ class Diagnostics extends MetaData {
         7, // TYPE_BLUETOOTH
         9, // TYPE_ETHERNET
     };
-
-    private static long startTime = secondsSinceBoot();
 
     public Diagnostics(Context context) {
         // Activity stack
@@ -41,8 +38,8 @@ class Diagnostics extends MetaData {
         }
  
         // Time since boot and app start
-        addToTab("Session", "Session Length", durationString(secondsSinceBoot() - startTime));
-        addToTab("Device", "Seconds Since Boot", durationString(secondsSinceBoot()));
+        addToTab("Session", "Session Length", durationString(Utils.secondsSinceBoot() - Bugsnag.startTime));
+        addToTab("Device", "Seconds Since Boot", durationString(Utils.secondsSinceBoot()));
         
         // Network status
         String networkStatus = getNetworkStatus(context);
@@ -67,10 +64,6 @@ class Diagnostics extends MetaData {
         if(memoryInfo != null) {
             addToTab("Device", "Memory", memoryInfo);
         }
-    }
-
-    public static long secondsSinceBoot() {
-        return (long)(SystemClock.elapsedRealtime()/1000);
     }
 
     public static JSONObject getMemoryInfo(Context context) {
