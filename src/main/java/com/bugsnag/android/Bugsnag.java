@@ -79,6 +79,7 @@ public class Bugsnag {
         client.setAppVersion(packageVersion);
         client.setProjectPackages(packageName);
         client.setReleaseStage(guessReleaseStage());
+        client.setNotifyReleaseStages("production", "development");
 
         client.addToTab("Device", "Android Version", android.os.Build.VERSION.RELEASE);
         client.addToTab("Device", "Device Type", android.os.Build.MODEL);

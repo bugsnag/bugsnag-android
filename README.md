@@ -132,20 +132,22 @@ stages of the application release process (development, production, etc)
 you can set the `releaseStage` that is reported to Bugsnag.
 
 ```java
-Bugsnag.setReleaseStage("development");
+Bugsnag.setReleaseStage("testing");
 ```
 
-By default this is set to be "production".
+If you have the `android:debuggable="true"` flag set in your
+`AndroidManifest.xml`, we'll automatically set this to "development",
+otherwise it is set to "production".
 
 ###setNotifyReleaseStages
 
 By default, we will only notify Bugsnag of exceptions that happen when
-your `releaseStage` is set to be "production". If you would like to
-change which release stages notify Bugsnag of exceptions you can
-call `setNotifyReleaseStages`:
+your `releaseStage` is set to be "production" or "development".
+If you would like to change which release stages notify Bugsnag of exceptions
+you can call `setNotifyReleaseStages`:
 
 ```java
-Bugsnag.setNotifyReleaseStages(new String[]{"production", "development"});
+Bugsnag.setNotifyReleaseStages("production", "development", "testing");
 ```
 
 ###setAutoNotify
