@@ -1,3 +1,7 @@
+2.0.4-SNAPSHOT
+-----
+-   Attempt to automatically detect releaseStage from the debuggable flag
+
 2.0.3
 -----
 -   Fixed bug where session time wouldn't start counting until first exception
