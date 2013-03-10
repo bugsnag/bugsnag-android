@@ -80,7 +80,7 @@
           <resourceDirectory>${project.basedir}/res</resourceDirectory>
           <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
           <sdk>
-            <platform>7</platform>
+            <platform>3</platform>
           </sdk>
           <undeployBeforeDeploy>true</undeployBeforeDeploy>
         </configuration>
