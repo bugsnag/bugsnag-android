@@ -1,6 +1,7 @@
-2.0.4-SNAPSHOT
+2.0.4
 -----
 -   Attempt to automatically detect releaseStage from the debuggable flag
+-   Android backward compatibility fixes, now works on Android 1.5+
 
 2.0.3
 -----
