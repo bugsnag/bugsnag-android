@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 
 import com.bugsnag.Client;
 import com.bugsnag.Error;
@@ -44,7 +45,7 @@ public class Bugsnag {
     private static boolean enableMetrics = false;
     private static String metricsEndpoint = DEFAULT_METRICS_ENDPOINT;
 
-    static long startTime = Utils.secondsSinceBoot();
+    static long startTime = SystemClock.elapsedRealtime();
 
     public static void register(Context androidContext, String apiKey) {
         register(androidContext, apiKey, false);
@@ -78,7 +79,7 @@ public class Bugsnag {
         client.setOsVersion(android.os.Build.VERSION.RELEASE);
         client.setAppVersion(packageVersion);
         client.setProjectPackages(packageName);
-        client.setReleaseStage(guessReleaseStage());
+        client.setReleaseStage(guessReleaseStage(packageName));
         client.setNotifyReleaseStages("production", "development");
 
         client.addToTab("Device", "Android Version", android.os.Build.VERSION.RELEASE);
@@ -258,14 +259,20 @@ public class Bugsnag {
         return packageVersion;
     }
 
-    private static String guessReleaseStage() {
-        int flags = applicationContext.getApplicationInfo().flags;
-        boolean debuggable = (flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-        if(debuggable) {
-            return "development";
-        } else {
-            return "production";
+    private static String guessReleaseStage(String packageName) {
+        String releaseStage = "production";
+
+        try {
+            ApplicationInfo ai = applicationContext.getPackageManager().getApplicationInfo(packageName, 0);
+            boolean debuggable = (ai.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+            if(debuggable) {
+                releaseStage = "development";
+            }
+        } catch(Exception e) {
+            logger.warn("Could not guess release stage", e);
         }
+
+        return releaseStage;
     }
 
     private static String prepareCachePath() {
@@ -315,7 +322,7 @@ public class Bugsnag {
         if(cachePath == null) return;
 
         String errorString = error.toString();
-        if(!errorString.isEmpty()) {
+        if(errorString.length() > 0) {
             // Write the error to disk
             String filename = String.format("%s%d.json", cachePath, System.currentTimeMillis());
             try {
