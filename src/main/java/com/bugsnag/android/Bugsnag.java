@@ -35,7 +35,7 @@ public class Bugsnag {
     private static final String DEFAULT_METRICS_ENDPOINT = "notify.bugsnag.com/metrics";
 
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    private static final String NOTIFIER_VERSION = "2.0.0";
+    private static final String NOTIFIER_VERSION = "2.0.4";
 
     private static Context applicationContext;
     private static String cachePath;
