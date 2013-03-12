@@ -1,3 +1,8 @@
+2.0.5-SNAPSHOT
+-----
+-   Added support for `setIgnoreClasses` to set which exception classes 
+    should not be sent to Bugsnag.
+
 2.0.4
 -----
 -   Attempt to automatically detect releaseStage from the debuggable flag

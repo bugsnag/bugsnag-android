@@ -180,11 +180,19 @@ stacktrace lines as in-project if they originate from any of these
 packages.
 
 ```java
-bugsnag.setProjectPackages("com.company.package1", "com.company.package2");
+Bugsnag.setProjectPackages("com.company.package1", "com.company.package2");
 ```
 
 By default, `projectPackages` is set to be the package you called
 `Bugsnag.register` from.
+
+###setIgnoreClasses
+
+Sets for which exception classes we should not send exceptions to Bugsnag.
+
+```java
+Bugsnag.setIgnoreClasses("java.net.UnknownHostException", "com.example.Custom");
+```
 
 
 Building from Source

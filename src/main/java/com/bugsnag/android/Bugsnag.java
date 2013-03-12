@@ -32,8 +32,6 @@ import com.bugsnag.utils.JSONUtils;
 public class Bugsnag {
     private static final String PREFS_NAME = "Bugsnag";
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
-    private static final String DEFAULT_METRICS_ENDPOINT = "notify.bugsnag.com/metrics";
-
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
     private static final String NOTIFIER_VERSION = "2.0.4";
 
@@ -43,7 +41,6 @@ public class Bugsnag {
     private static Client client;
     private static String uuid;
     private static boolean enableMetrics = false;
-    private static String metricsEndpoint = DEFAULT_METRICS_ENDPOINT;
 
     static long startTime = SystemClock.elapsedRealtime();
 
@@ -177,12 +174,8 @@ public class Bugsnag {
         client.setEndpoint(endpoint);
     }
 
-    public static void setMetricsEndpoint(String metricsEndpoint) {
-        Bugsnag.metricsEndpoint = metricsEndpoint;
-    }
-
-    public static String getMetricsEndpoint() {
-        return (client.getUseSSL() ? "https://" : "http://") + metricsEndpoint;
+    public static void setIgnoreClasses(String... ignoreClasses) {
+        client.setIgnoreClasses(ignoreClasses);
     }
 
     public static void addToTab(String tab, String key, Object value) {
