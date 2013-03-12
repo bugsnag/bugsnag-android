@@ -33,7 +33,7 @@ public class Bugsnag {
     private static final String PREFS_NAME = "Bugsnag";
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    private static final String NOTIFIER_VERSION = "2.0.4";
+    private static final String NOTIFIER_VERSION = "2.0.5";
 
     private static Context applicationContext;
     private static String cachePath;
