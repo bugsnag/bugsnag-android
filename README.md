@@ -199,6 +199,17 @@ mvn clean package
 
 This will generate jar files in the `target` directory.
 
+Building on OSX
+---------------
+
+In order to build on OSX, run the following commands,
+
+```bash
+cd /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib
+sudo ln -s ../../Classes/classes.jar rt.jar
+sudo ln -s ../../Classes/jsse.jar .
+```
+
 
 Reporting Bugs or Feature Requests
 ----------------------------------
