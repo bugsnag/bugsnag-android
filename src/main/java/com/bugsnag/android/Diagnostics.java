@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
 
@@ -17,6 +16,14 @@ import com.bugsnag.MetaData;
 import com.bugsnag.utils.JSONUtils;
 
 class Diagnostics extends MetaData {
+    private final static long ONE_SECOND = 1000;
+    private final static long SECONDS = 60;
+    private final static long ONE_MINUTE = ONE_SECOND * 60;
+    private final static long MINUTES = 60;
+    private final static long ONE_HOUR = ONE_MINUTE * 60;
+    private final static long HOURS = 24;
+    private final static long ONE_DAY = ONE_HOUR * 24;
+
     private static final int[] INTERESTING_NETWORKS = new int[]{
         0, // TYPE_MOBILE
         1, // TYPE_WIFI
@@ -24,8 +31,6 @@ class Diagnostics extends MetaData {
         7, // TYPE_BLUETOOTH
         9, // TYPE_ETHERNET
     };
-
-    private static long startTime = secondsSinceBoot();
 
     public Diagnostics(Context context) {
         // Activity stack
@@ -41,8 +46,8 @@ class Diagnostics extends MetaData {
         }
  
         // Time since boot and app start
-        addToTab("Session", "Session Length", durationString(secondsSinceBoot() - startTime));
-        addToTab("Device", "Seconds Since Boot", durationString(secondsSinceBoot()));
+        addToTab("Session", "Session Length", durationString(SystemClock.elapsedRealtime() - Bugsnag.startTime));
+        addToTab("Device", "Time Since Boot", durationString(SystemClock.elapsedRealtime()));
         
         // Network status
         String networkStatus = getNetworkStatus(context);
@@ -67,10 +72,6 @@ class Diagnostics extends MetaData {
         if(memoryInfo != null) {
             addToTab("Device", "Memory", memoryInfo);
         }
-    }
-
-    public static long secondsSinceBoot() {
-        return (long)(SystemClock.elapsedRealtime()/1000);
     }
 
     public static JSONObject getMemoryInfo(Context context) {
@@ -181,47 +182,42 @@ class Diagnostics extends MetaData {
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
-    private static String durationString(long durationSeconds) {
-        String returnValue = "";
-        int entries = 0;
-        long currentSeconds = durationSeconds;
-        long result;
-        
-        result = TimeUnit.SECONDS.toDays(currentSeconds);
-        if(result != 0) {
-            currentSeconds -= TimeUnit.DAYS.toSeconds(result);
-            returnValue += returnValue.format("%d Days", result);
-            entries++;
-        }
-        
-        result = TimeUnit.SECONDS.toHours(currentSeconds);
-        if(result != 0 && entries <= 1) {
-            if(entries == 1) returnValue += " and ";
-            currentSeconds -= TimeUnit.HOURS.toSeconds(result);
-            returnValue += returnValue.format("%d Hours", result);
-            entries++;
-        }
-        
-        result = TimeUnit.SECONDS.toMinutes(currentSeconds);
-        
-        if(result != 0 && entries <= 1) {
-            if(entries == 1) returnValue += " and ";
-            currentSeconds -= TimeUnit.MINUTES.toSeconds(result);
-            returnValue += returnValue.format("%d Minutes", result);
-            entries++;
-        }
-        
-        result = currentSeconds;
-        if(result != 0 && entries <= 1) {
-            if(entries == 1) returnValue += " and ";
-            returnValue += returnValue.format("%d Seconds", result);
-            entries++;
-        }
+    public static String durationString(long duration) {
+        StringBuffer res = new StringBuffer();
+        long temp = 0;
+        if(duration >= ONE_SECOND) {
+            temp = duration / ONE_DAY;
+            if(temp > 0) {
+                duration -= temp * ONE_DAY;
+                res.append(temp).append(" day").append(temp > 1 ? "s" : "")
+                   .append(duration >= ONE_MINUTE ? ", " : "");
+            }
 
-        if(result == 0 && entries == 0) {
-            returnValue = "0 Seconds";
-        }
+            temp = duration / ONE_HOUR;
+            if(temp > 0) {
+                duration -= temp * ONE_HOUR;
+                res.append(temp).append(" hour").append(temp > 1 ? "s" : "")
+                   .append(duration >= ONE_MINUTE ? ", " : "");
+            }
 
-        return returnValue;
+            temp = duration / ONE_MINUTE;
+            if(temp > 0) {
+                duration -= temp * ONE_MINUTE;
+                res.append(temp).append(" minute").append(temp > 1 ? "s" : "");
+            }
+
+            if(!res.toString().equals("") && duration >= ONE_SECOND) {
+                res.append(" and ");
+            }
+
+            temp = duration / ONE_SECOND;
+            if(temp > 0) {
+                res.append(temp).append(" second").append(temp > 1 ? "s" : "");
+            }
+
+            return res.toString();
+        } else {
+            return "0 seconds";
+        }
     }
 }

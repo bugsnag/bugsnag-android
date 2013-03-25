@@ -12,14 +12,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 
 import com.bugsnag.Client;
 import com.bugsnag.Error;
 import com.bugsnag.MetaData;
+import com.bugsnag.Metrics;
 import com.bugsnag.Notification;
 import com.bugsnag.http.HttpClient;
 import com.bugsnag.http.NetworkException;
@@ -29,10 +32,8 @@ import com.bugsnag.utils.JSONUtils;
 public class Bugsnag {
     private static final String PREFS_NAME = "Bugsnag";
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
-    private static final String DEFAULT_METRICS_ENDPOINT = "notify.bugsnag.com/metrics";
-
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    private static final String NOTIFIER_VERSION = "2.0.0";
+    private static final String NOTIFIER_VERSION = "2.0.5";
 
     private static Context applicationContext;
     private static String cachePath;
@@ -40,7 +41,8 @@ public class Bugsnag {
     private static Client client;
     private static String uuid;
     private static boolean enableMetrics = false;
-    private static String metricsEndpoint = DEFAULT_METRICS_ENDPOINT;
+
+    static long startTime = SystemClock.elapsedRealtime();
 
     public static void register(Context androidContext, String apiKey) {
         register(androidContext, apiKey, false);
@@ -74,6 +76,8 @@ public class Bugsnag {
         client.setOsVersion(android.os.Build.VERSION.RELEASE);
         client.setAppVersion(packageVersion);
         client.setProjectPackages(packageName);
+        client.setReleaseStage(guessReleaseStage(packageName));
+        client.setNotifyReleaseStages("production", "development");
 
         client.addToTab("Device", "Android Version", android.os.Build.VERSION.RELEASE);
         client.addToTab("Device", "Device Type", android.os.Build.MODEL);
@@ -170,12 +174,12 @@ public class Bugsnag {
         client.setEndpoint(endpoint);
     }
 
-    public static void setMetricsEndpoint(String metricsEndpoint) {
-        Bugsnag.metricsEndpoint = metricsEndpoint;
+    public static void setIgnoreClasses(String... ignoreClasses) {
+        client.setIgnoreClasses(ignoreClasses);
     }
 
-    public static String getMetricsEndpoint() {
-        return (client.getUseSSL() ? "https://" : "http://") + metricsEndpoint;
+    public static void addToTab(String tab, String key, Object value) {
+        client.addToTab(tab, key, value);
     }
 
     private static void flushErrors() {
@@ -199,7 +203,7 @@ public class Bugsnag {
 
                             try {
                                 // Read error from disk and add to notification
-                                String errorString = FileUtils.readFileAsString(errorFile);
+                                String errorString = Utils.readFileAsString(errorFile);
                                 notif.addError(errorString);
 
                                 logger.debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
@@ -246,6 +250,22 @@ public class Bugsnag {
         }
 
         return packageVersion;
+    }
+
+    private static String guessReleaseStage(String packageName) {
+        String releaseStage = "production";
+
+        try {
+            ApplicationInfo ai = applicationContext.getPackageManager().getApplicationInfo(packageName, 0);
+            boolean debuggable = (ai.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+            if(debuggable) {
+                releaseStage = "development";
+            }
+        } catch(Exception e) {
+            logger.warn("Could not guess release stage", e);
+        }
+
+        return releaseStage;
     }
 
     private static String prepareCachePath() {
@@ -295,11 +315,11 @@ public class Bugsnag {
         if(cachePath == null) return;
 
         String errorString = error.toString();
-        if(!errorString.isEmpty()) {
+        if(errorString.length() > 0) {
             // Write the error to disk
             String filename = String.format("%s%d.json", cachePath, System.currentTimeMillis());
             try {
-                FileUtils.writeStringToFile(errorString, filename);
+                Utils.writeStringToFile(errorString, filename);
                 logger.debug(String.format("Saved unsent error to disk (%s) ", filename));
             } catch (IOException e) {
                 logger.warn("Could not save error to disk", e);
@@ -311,18 +331,14 @@ public class Bugsnag {
         new AsyncTask <Void, Void, Void>() {
             protected Void doInBackground(Void... voi) {
                 try {
-                    logger.debug(String.format("Sent metrics data to Bugsnag (%s) ", userId));
-
-                    // Build the post payload
-                    JSONObject payload = new JSONObject();
-                    payload.put("userId", userId);
-
-                    // Make the request
-                    HttpClient.post("http://notify.bugsnag.com/metrics", payload);
-                } catch (NetworkException e) {
-                    // Meh
-                } catch (BadResponseException e) {
-                    // Meh
+                    Metrics metrics = client.createMetrics(userId);
+                    metrics.deliver();
+                } catch (NetworkException ex) {
+                    // Write error to disk for later sending
+                    logger.info("Could not send metrics to Bugsnag");
+                } catch (BadResponseException ex) {
+                    // The notification was delivered, but Bugsnag sent a non-200 response
+                    logger.warn(ex.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

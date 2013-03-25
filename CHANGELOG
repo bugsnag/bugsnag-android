@@ -1,3 +1,27 @@
+2.0.5
+-----
+-   Added support for `setIgnoreClasses` to set which exception classes 
+    should not be sent to Bugsnag.
+
+2.0.4
+-----
+-   Attempt to automatically detect releaseStage from the debuggable flag
+-   Android backward compatibility fixes, now works on Android 1.5+
+
+2.0.3
+-----
+-   Fixed bug where session time wouldn't start counting until first exception
+
+2.0.2
+-----
+-   Fixed missing apiKey in metrics, use java notifier's metrics sending
+
+2.0.1
+-----
+-   Added `Bugsnag.addToTab` to replace `setExtraData` for sending meta-data
+    with every exception
+-   Reduced jar size
+
 2.0.0
 -----
 -   Refactored to use the classes from `bugsnag-java`

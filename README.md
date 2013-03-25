@@ -15,8 +15,12 @@ from your applications.
 Installation & Setup
 --------------------
 
--   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.0.0.jar)
+-   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.0.5.jar)
     and place it in your Android app's `libs/` folder.
+
+    *Note: if your project uses [Maven](http://maven.apache.org/) you can
+    instead [add bugsnag-android as a dependency](http://mvnrepository.com/artifact/com.bugsnag/bugsnag-android)
+    in your `pom.xml`.*
 
 -   Import the `Bugsnag` package in your [Application](http://developer.android.com/reference/android/app/Application.html)
     subclass.
@@ -35,23 +39,34 @@ Installation & Setup
 -   Ensure you have the `android.permission.INTERNET` permission listed in
     your `AndroidManifest.xml`.
 
-    For additional diagnostic information, add the
-    `android.permission.ACCESS_NETWORK_STATE` permission to your
-    `AndroidManifest.xml`.
+
+Recommended: Enable Additional Diagnostic Information
+-----------------------------------------------------
+
+-   To track which of your activities were open at the time of any exception,
+    you should also have each of your `Activity` classes inherit from
+    `BugsnagActivity`:
+
+    ```java
+    class MyActivity extends BugsnagActivity { ... }
+    ```
+
+-   To enable network diagnostics for each device (internet connectivity, etc)
+    you should also add the `android.permission.ACCESS_NETWORK_STATE` 
+    permission to your `AndroidManifest.xml`.
 
 
-Recommended: Inherit from BugsnagActivity
------------------------------------------
+Sending Custom Data With Exceptions
+-----------------------------------
 
-To have additional diagnostic information, you should also have each of your 
-`Activity` classes inherit from `BugsnagActivity`.
-This will track which of your activities were open at the time of
-any exception, and present them in your Bugsnag error dashboard.
+It is often useful to send additional meta-data about your app, such as
+information about the currently logged in user, along with any exceptions,
+to help debug problems. To add custom data to every exception you can
+use `addToTab`:
 
 ```java
-class MyActivity extends BugsnagActivity {
-    ...
-}
+Bugsnag.addToTab("User", "Name", "Bob Hoskins");
+Bugsnag.addToTab("User", "Paying Customer?", true);
 ```
 
 
@@ -65,7 +80,7 @@ If you would like to send non-fatal exceptions to Bugsnag, you can pass any
 Bugsnag.notify(new RuntimeException("Non-fatal"));
 ```
 
-You can also send additional meta-data with your exception:
+You can also send additional meta-data with this exception:
 
 ```java
 import com.bugsnag.MetaData;
@@ -117,20 +132,22 @@ stages of the application release process (development, production, etc)
 you can set the `releaseStage` that is reported to Bugsnag.
 
 ```java
-Bugsnag.setReleaseStage("development");
+Bugsnag.setReleaseStage("testing");
 ```
 
-By default this is set to be "production".
+If you have the `android:debuggable="true"` flag set in your
+`AndroidManifest.xml`, we'll automatically set this to "development",
+otherwise it is set to "production".
 
 ###setNotifyReleaseStages
 
 By default, we will only notify Bugsnag of exceptions that happen when
-your `releaseStage` is set to be "production". If you would like to
-change which release stages notify Bugsnag of exceptions you can
-call `setNotifyReleaseStages`:
+your `releaseStage` is set to be "production" or "development".
+If you would like to change which release stages notify Bugsnag of exceptions
+you can call `setNotifyReleaseStages`:
 
 ```java
-Bugsnag.setNotifyReleaseStages(new String[]{"production", "development"});
+Bugsnag.setNotifyReleaseStages("production", "development", "testing");
 ```
 
 ###setAutoNotify
@@ -141,20 +158,6 @@ in your application. If you want to stop this from happening, you can call
 
 ```java
 Bugsnag.setAutoNotify(false);
-```
-
-###setExtraData
-
-It if often very useful to send some extra application or user specific
-data along with every exception. To do this, you can call the
-`setExtraData` method:
-
-```java
-Map<String,String> extraData = new HashMap<String,String>();
-extraData.put("username", "bob-hoskins");
-extraData.put("registered_user", "yes");
-
-Bugsnag.setExtraData(extraData);
 ```
 
 ###setFilters
@@ -177,11 +180,19 @@ stacktrace lines as in-project if they originate from any of these
 packages.
 
 ```java
-bugsnag.setProjectPackages("com.company.package1", "com.company.package2");
+Bugsnag.setProjectPackages("com.company.package1", "com.company.package2");
 ```
 
 By default, `projectPackages` is set to be the package you called
 `Bugsnag.register` from.
+
+###setIgnoreClasses
+
+Sets for which exception classes we should not send exceptions to Bugsnag.
+
+```java
+Bugsnag.setIgnoreClasses("java.net.UnknownHostException", "com.example.Custom");
+```
 
 
 Building from Source
