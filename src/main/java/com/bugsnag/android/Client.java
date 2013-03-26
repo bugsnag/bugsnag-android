@@ -36,7 +36,6 @@ public class Client extends com.bugsnag.Client {
 
     private Context applicationContext;
     private String cachePath;
-    private String uuid;
 
     public Client(Context androidContext, String apiKey, boolean enableMetrics) {
         super(apiKey);
