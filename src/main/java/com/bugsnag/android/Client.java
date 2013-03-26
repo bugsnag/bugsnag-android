@@ -87,6 +87,7 @@ public class Client extends com.bugsnag.Client {
     public void notify(Throwable e, MetaData overrides) {
         try {
             if(!config.shouldNotify()) return;
+            if(config.shouldIgnore(e.getClass().getName())) return;
 
             // Generate diagnostic data
             MetaData diagnostics = new Diagnostics(applicationContext);
@@ -96,8 +97,6 @@ public class Client extends com.bugsnag.Client {
 
             // Create the error object to send
             final Error error = createError(e, metaData);
-
-            if(error.shouldIgnore()) return;
 
             // Set the error's context
             String topActivityName = ActivityStack.getTopActivityName();
