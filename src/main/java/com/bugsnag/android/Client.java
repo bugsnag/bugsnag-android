@@ -17,7 +17,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.provider.Settings.Secure;
 
 import com.bugsnag.Error;
