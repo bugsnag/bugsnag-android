@@ -1,32 +1,11 @@
 package com.bugsnag.android;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageInfo;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.util.Log;
 
-import com.bugsnag.Error;
 import com.bugsnag.MetaData;
-import com.bugsnag.Metrics;
-import com.bugsnag.Notification;
-import com.bugsnag.http.HttpClient;
-import com.bugsnag.http.NetworkException;
-import com.bugsnag.http.BadResponseException;
-import com.bugsnag.utils.JSONUtils;
 
 public class Bugsnag {
     private static Client client;
