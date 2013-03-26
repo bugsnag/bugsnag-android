@@ -41,6 +41,9 @@ public class Client extends com.bugsnag.Client {
     public Client(Context androidContext, String apiKey, boolean enableMetrics) {
         super(apiKey);
 
+        // Start the session timer
+        Diagnostics.startSessionTimer();
+
         // Create a logger
         logger = new Logger();
         setLogger(logger);
@@ -195,8 +198,6 @@ public class Client extends com.bugsnag.Client {
                 } catch (BadResponseException ex) {
                     // The notification was delivered, but Bugsnag sent a non-200 response
                     logger.warn(ex.getMessage());
-                } catch (SecurityException ex) {
-                    //TODO
                 }
             }
         });

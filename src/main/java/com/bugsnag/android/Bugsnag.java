@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.bugsnag.MetaData;
@@ -10,8 +9,6 @@ import com.bugsnag.MetaData;
 public class Bugsnag {
     private static Client client;
     private static final String TAG = "Bugsnag";
-
-    static long startTime = SystemClock.elapsedRealtime();
 
     public static void register(Context androidContext, String apiKey) {
         register(androidContext, apiKey, false);

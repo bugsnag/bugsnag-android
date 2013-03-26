@@ -32,6 +32,8 @@ class Diagnostics extends MetaData {
         9, // TYPE_ETHERNET
     };
 
+    private static Long startTime;
+
     public Diagnostics(Context context) {
         // Activity stack
         String topActivityName = ActivityStack.getTopActivityName();
@@ -46,7 +48,7 @@ class Diagnostics extends MetaData {
         }
  
         // Time since boot and app start
-        addToTab("Session", "Session Length", durationString(SystemClock.elapsedRealtime() - Bugsnag.startTime));
+        addToTab("Session", "Session Length", durationString(SystemClock.elapsedRealtime() - startTime));
         addToTab("Device", "Time Since Boot", durationString(SystemClock.elapsedRealtime()));
         
         // Network status
@@ -71,6 +73,12 @@ class Diagnostics extends MetaData {
         JSONObject memoryInfo = getMemoryInfo(context);
         if(memoryInfo != null) {
             addToTab("Device", "Memory", memoryInfo);
+        }
+    }
+
+    public static void startSessionTimer() {
+        if(startTime == null) {
+            startTime = SystemClock.elapsedRealtime();
         }
     }
 
