@@ -82,7 +82,7 @@ class Diagnostics extends MetaData {
         }
     }
 
-    public static JSONObject getMemoryInfo(Context context) {
+    private static JSONObject getMemoryInfo(Context context) {
         JSONObject memoryInfo = null;
 
         try {
@@ -106,7 +106,7 @@ class Diagnostics extends MetaData {
         return memoryInfo;
     }
 
-    public static String getNetworkStatus(Context context) {
+    private static String getNetworkStatus(Context context) {
         String networkStatus = "Unknown";
 
         try {
@@ -127,7 +127,7 @@ class Diagnostics extends MetaData {
         return networkStatus;
     }
 
-    public static JSONObject getNetworks(Context context) {
+    private static JSONObject getNetworks(Context context) {
         JSONObject networks = null;
 
         try {
@@ -190,7 +190,7 @@ class Diagnostics extends MetaData {
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
-    public static String durationString(long duration) {
+    private static String durationString(long duration) {
         StringBuffer res = new StringBuffer();
         long temp = 0;
         if(duration >= ONE_SECOND) {
