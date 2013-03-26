@@ -194,8 +194,6 @@ public class Client extends com.bugsnag.Client {
                 } catch (BadResponseException ex) {
                     // The notification was delivered, but Bugsnag sent a non-200 response
                     logger.warn(ex.getMessage());
-                } catch (SecurityException ex) {
-                    //TODO
                 }
             }
         });
