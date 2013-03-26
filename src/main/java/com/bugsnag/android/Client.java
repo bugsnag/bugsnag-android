@@ -246,6 +246,8 @@ public class Client extends com.bugsnag.Client {
         }
     }
 
+    // TODO:JS Avoid StrictMode violations caused by getSharedPreferences
+    // TODO:JS Avoid StrictMode violations caused by UUID.randomUUID
     private String getUUID() {
         final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String uuid = settings.getString("userId", null);
