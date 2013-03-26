@@ -41,6 +41,9 @@ public class Client extends com.bugsnag.Client {
     public Client(Context androidContext, String apiKey, boolean enableMetrics) {
         super(apiKey);
 
+        // Start the session timer
+        Diagnostics.startSessionTimer();
+
         // Create a logger
         logger = new Logger();
         setLogger(logger);
