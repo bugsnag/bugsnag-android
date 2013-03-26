@@ -107,8 +107,9 @@ public class Client extends com.bugsnag.Client {
             }
 
             // Send the error
-            safeAsync(new AnonymousDelegate(){
-                public void perform() {
+            safeAsync(new Runnable() {
+                @Override
+                public void run() {
                     try {
                         Notification notif = createNotification(error);
                         notif.deliver();
@@ -127,8 +128,9 @@ public class Client extends com.bugsnag.Client {
     private void flushErrors() {
         if(cachePath == null) return;
 
-        safeAsync(new AnonymousDelegate(){
-            public void perform() {
+        safeAsync(new Runnable() {
+            @Override
+            public void run() {
                 // Create a notification
                 Notification notif = createNotification();
                 List<File> sentFiles = new LinkedList<File>();
@@ -177,8 +179,9 @@ public class Client extends com.bugsnag.Client {
     }
 
     private void makeMetricsRequest(final String userId) {
-        safeAsync(new AnonymousDelegate(){
-            public void perform() {
+        safeAsync(new Runnable() {
+            @Override
+            public void run() {
                 try {
                     Metrics metrics = createMetrics(userId);
                     metrics.deliver();
@@ -258,8 +261,9 @@ public class Client extends com.bugsnag.Client {
                 // Save if for future
                 final String finalUuid = uuid;
 
-                safeAsync(new AnonymousDelegate(){
-                    public void perform() {
+                safeAsync(new Runnable() {
+                    @Override
+                    public void run() {
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString("userId", finalUuid);
                         editor.commit();
@@ -287,15 +291,11 @@ public class Client extends com.bugsnag.Client {
         return packageVersion;
     }
 
-    interface AnonymousDelegate {
-        void perform();
-    }
-
-    private void safeAsync(final AnonymousDelegate delegate) {
+    private void safeAsync(final Runnable delegate) {
         new AsyncTask <Void, Void, Void>() {
             protected Void doInBackground(Void... voi) {
                 try {
-                    delegate.perform();
+                    delegate.run();
                 } catch (Exception e) {
                     logger.warn("Error in bugsnag", e);
                 }

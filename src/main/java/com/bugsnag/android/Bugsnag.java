@@ -48,80 +48,90 @@ public class Bugsnag {
     }
 
     public static void setContext(final String context) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setContext(context);
             }
         });
     }
 
     public static void setContext(final Activity context) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setContext(context);
             }
         });
     }
 
     public static void setUserId(final String userId) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setUserId(userId);
             }
         });
     }
 
     public static void setReleaseStage(final String releaseStage) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setReleaseStage(releaseStage);
             }
         });
     }
 
     public static void setNotifyReleaseStages(final String... notifyReleaseStages) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setNotifyReleaseStages(notifyReleaseStages);
             }
         });
     }
 
     public static void setAutoNotify(final boolean autoNotify) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setAutoNotify(autoNotify);
             }
         });
     }
 
     public static void setUseSSL(final boolean useSSL) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setUseSSL(useSSL);
             }
         });
     }
 
     public static void setEndpoint(final String endpoint) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setEndpoint(endpoint);
             }
         });
     }
 
     public static void setIgnoreClasses(final String... ignoreClasses) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.setIgnoreClasses(ignoreClasses);
             }
         });
     }
 
     public static void addToTab(final String tab, final String key, final Object value) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.addToTab(tab, key, value);
             }
         });
@@ -132,21 +142,18 @@ public class Bugsnag {
     }
 
     public static void notify(final Throwable e, final MetaData overrides) {
-        performOnClient(new AnonymousDelegate(){
-            public void perform() {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
                 client.notify(e, overrides);
             }
         });
     }
 
-    interface AnonymousDelegate {
-        void perform();
-    }
-
-    private static void performOnClient(AnonymousDelegate delegate) {
+    private static void runOnClient(Runnable delegate) {
         if(client != null) {
             try {
-                delegate.perform();
+                delegate.run();
             } catch(Exception ex) {
                 Log.e(TAG, "Error in bugsnag.", ex);
             }
