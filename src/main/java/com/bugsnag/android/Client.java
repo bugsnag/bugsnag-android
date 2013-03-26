@@ -249,7 +249,7 @@ public class Client extends com.bugsnag.Client {
 
     private String getUUID() {
         final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        uuid = settings.getString("userId", null);
+        String uuid = settings.getString("userId", null);
         if(uuid == null) {
             uuid = UUID.randomUUID().toString();
 
