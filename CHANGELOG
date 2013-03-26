@@ -1,3 +1,9 @@
+2.0.6
+-----
+-   Fixed bug which caused notifications to be sent on the UI thread
+    in some situations.
+-   Fixed bug which meant `setIgnoreClasses` was not respected.
+
 2.0.5
 -----
 -   Added support for `setIgnoreClasses` to set which exception classes 
