@@ -91,6 +91,8 @@ public class Client extends com.bugsnag.Client {
 
     public void notify(Throwable e, MetaData overrides) {
         try {
+            if(!config.shouldNotify()) return;
+
             // Generate diagnostic data
             MetaData diagnostics = new Diagnostics(applicationContext);
 
@@ -99,6 +101,8 @@ public class Client extends com.bugsnag.Client {
 
             // Create the error object to send
             final Error error = createError(e, metaData);
+
+            if(error.shouldIgnore()) return;
 
             // Set the error's context
             String topActivityName = ActivityStack.getTopActivityName();
@@ -251,25 +255,22 @@ public class Client extends com.bugsnag.Client {
     }
 
     private String getUUID() {
-        String uuid = Secure.getString(applicationContext.getContentResolver(), Secure.ANDROID_ID);;
+        final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        uuid = settings.getString("userId", null);
         if(uuid == null) {
-            final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            uuid = settings.getString("userId", null);
-            if(uuid == null) {
-                uuid = UUID.randomUUID().toString();
+            uuid = UUID.randomUUID().toString();
 
-                // Save if for future
-                final String finalUuid = uuid;
+            // Save if for future
+            final String finalUuid = uuid;
 
-                safeAsync(new Runnable() {
-                    @Override
-                    public void run() {
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putString("userId", finalUuid);
-                        editor.commit();
-                    }
-                });
-            }
+            safeAsync(new Runnable() {
+                @Override
+                public void run() {
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString("userId", finalUuid);
+                    editor.commit();
+                }
+            });
         }
         return uuid;
     }
