@@ -34,6 +34,7 @@ public class Client extends com.bugsnag.Client {
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
     private static final String NOTIFIER_VERSION = "2.0.6";
 
+    private Logger logger;
     private Context applicationContext;
     private String cachePath;
 
@@ -81,7 +82,7 @@ public class Client extends com.bugsnag.Client {
         // Flush any queued exceptions
         flushErrors();
 
-        config.logger.info("Bugsnag is loaded and ready to handle exceptions");
+        logger.info("Bugsnag is loaded and ready to handle exceptions");
     }
 
     public void notify(Throwable e) {
@@ -113,13 +114,13 @@ public class Client extends com.bugsnag.Client {
                         notif.deliver();
                     } catch (NetworkException ex) {
                         // Write error to disk for later sending
-                        config.logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+                        logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
                         writeErrorToDisk(error);
                     }
                 }
             });
         } catch(Exception ex) {
-            config.logger.warn("Error notifying Bugsnag", ex);
+            logger.warn("Error notifying Bugsnag", ex);
         }
     }
 
@@ -146,9 +147,9 @@ public class Client extends com.bugsnag.Client {
                                 String errorString = Utils.readFileAsString(errorFile);
                                 notif.addError(errorString);
 
-                                config.logger.debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
+                                logger.debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
                             } catch (IOException e) {
-                                config.logger.warn("Problem reading unsent error from disk", e);
+                                logger.warn("Problem reading unsent error from disk", e);
                             }
                         }
                     }
@@ -160,11 +161,11 @@ public class Client extends com.bugsnag.Client {
 
                     // Delete the files if notification worked
                     for(File file : sentFiles) {
-                        config.logger.debug("Deleting unsent error file " + file.getName());
+                        logger.debug("Deleting unsent error file " + file.getName());
                         file.delete();
                     }
                 } catch (IOException e) {
-                    config.logger.info("Could not flush error(s) to Bugsnag, will try again later");
+                    logger.info("Could not flush error(s) to Bugsnag, will try again later");
                 }
             }
         });
@@ -183,10 +184,10 @@ public class Client extends com.bugsnag.Client {
                     metrics.deliver();
                 } catch (NetworkException ex) {
                     // Write error to disk for later sending
-                    config.logger.info("Could not send metrics to Bugsnag");
+                    logger.info("Could not send metrics to Bugsnag");
                 } catch (BadResponseException ex) {
                     // The notification was delivered, but Bugsnag sent a non-200 response
-                    config.logger.warn(ex.getMessage());
+                    logger.warn(ex.getMessage());
                 } catch (SecurityException ex) {
                     //TODO
                 }
@@ -204,7 +205,7 @@ public class Client extends com.bugsnag.Client {
                 releaseStage = "development";
             }
         } catch(Exception e) {
-            config.logger.warn("Could not guess release stage", e);
+            logger.warn("Could not guess release stage", e);
         }
 
         return releaseStage;
@@ -219,11 +220,11 @@ public class Client extends com.bugsnag.Client {
             File outFile = new File(path);
             outFile.mkdirs();
             if(!outFile.exists()) {
-                config.logger.warn("Could not prepare cache directory");
+                logger.warn("Could not prepare cache directory");
                 path = null;
             }
         } catch(Exception e) {
-            config.logger.warn("Could not prepare cache directory", e);
+            logger.warn("Could not prepare cache directory", e);
             path = null;
         }
 
@@ -239,9 +240,9 @@ public class Client extends com.bugsnag.Client {
             String filename = String.format("%s%d.json", cachePath, System.currentTimeMillis());
             try {
                 Utils.writeStringToFile(errorString, filename);
-                config.logger.debug(String.format("Saved unsent error to disk (%s) ", filename));
+                logger.debug(String.format("Saved unsent error to disk (%s) ", filename));
             } catch (IOException e) {
-                config.logger.warn("Could not save error to disk", e);
+                logger.warn("Could not save error to disk", e);
             }
         }
     }
@@ -280,7 +281,7 @@ public class Client extends com.bugsnag.Client {
             PackageInfo pi = applicationContext.getPackageManager().getPackageInfo(packageName, 0);
             packageVersion = pi.versionName;
         } catch(Exception e) {
-            config.logger.warn("Could not get package version", e);
+            logger.warn("Could not get package version", e);
         }
 
         return packageVersion;
@@ -296,7 +297,7 @@ public class Client extends com.bugsnag.Client {
                 try {
                     delegate.perform();
                 } catch (Exception e) {
-                    config.logger.warn("Error in bugsnag", e);
+                    logger.warn("Error in bugsnag", e);
                 }
 
                 return null;
