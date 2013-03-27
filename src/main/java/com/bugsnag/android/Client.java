@@ -144,7 +144,7 @@ public class Client extends com.bugsnag.Client {
                         } catch (NetworkException e) {
                             logger.warn("Could not send error(s) to Bugsnag, will try again later", e);
                         } catch (Exception e) {
-                            logger.warn("Problem reading unsent error from disk", e);
+                            logger.warn("Problem sending unsent error from disk", e);
                             errorFile.delete();
                         }
                     }
