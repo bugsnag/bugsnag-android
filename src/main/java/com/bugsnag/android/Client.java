@@ -113,7 +113,7 @@ public class Client extends com.bugsnag.Client {
                         notif.deliver();
                     } catch (NetworkException ex) {
                         // Write error to disk for later sending
-                        logger.warn("Could not send error(s) to Bugsnag, saving to disk to send later", ex);
+                        logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
                         writeErrorToDisk(error);
                     }
                 }
@@ -137,7 +137,7 @@ public class Client extends com.bugsnag.Client {
                     for(File errorFile : exceptionDir.listFiles()) {
                         try {
                             if(notif == null) notif = createNotification();
-                            notif.addError(errorFile);
+                            notif.setError(errorFile);
                             notif.deliver();
 
                             logger.debug("Deleting sent error file " + errorFile.getName());
