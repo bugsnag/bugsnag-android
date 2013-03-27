@@ -134,7 +134,7 @@ public class Bugsnag {
                 Log.e(TAG, "Error in bugsnag.", ex);
             }
         } else {
-            Log.e(TAG, "Method called on Bugsnag before register.");
+            Log.e(TAG, "You must call Bugsnag.register before any other Bugsnag methods.");
         }
     }
 }
