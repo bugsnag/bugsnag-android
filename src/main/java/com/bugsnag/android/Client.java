@@ -128,11 +128,11 @@ public class Client extends com.bugsnag.Client {
         safeAsync(new Runnable() {
             @Override
             public void run() {
-                Notification notif = null;
-
                 // Look up all saved error files
                 File exceptionDir = new File(cachePath);
                 if(exceptionDir.exists() && exceptionDir.isDirectory()) {
+                    Notification notif = null;
+
                     for(File errorFile : exceptionDir.listFiles()) {
                         try {
                             if(notif == null) notif = createNotification();
@@ -141,8 +141,11 @@ public class Client extends com.bugsnag.Client {
 
                             logger.debug("Deleting sent error file " + errorFile.getName());
                             errorFile.delete();
-                        } catch (IOException e) {
+                        } catch (NetworkException e) {
+                            logger.warn("Could not send error(s) to Bugsnag, will try again later", e);
+                        } catch (Exception e) {
                             logger.warn("Problem reading unsent error from disk", e);
+                            errorFile.delete();
                         }
                     }
                 }
