@@ -113,7 +113,7 @@ public class Client extends com.bugsnag.Client {
                         notif.deliver();
                     } catch (NetworkException ex) {
                         // Write error to disk for later sending
-                        logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+                        logger.warn("Could not send error(s) to Bugsnag, saving to disk to send later", ex);
                         writeErrorToDisk(error);
                     }
                 }
@@ -129,43 +129,23 @@ public class Client extends com.bugsnag.Client {
         safeAsync(new Runnable() {
             @Override
             public void run() {
-                // Create a notification
-                Notification notif = createNotification();
-                List<File> sentFiles = new LinkedList<File>();
+                Notification notif = null;
 
                 // Look up all saved error files
                 File exceptionDir = new File(cachePath);
                 if(exceptionDir.exists() && exceptionDir.isDirectory()) {
                     for(File errorFile : exceptionDir.listFiles()) {
-                        if(errorFile.exists() && errorFile.isFile()) {
+                        try {
+                            if(notif == null) notif = createNotification();
+                            notif.addError(errorFile);
+                            notif.deliver();
 
-                            // Save filename in a "to delete" array
-                            sentFiles.add(errorFile);
-
-                            try {
-                                // Read error from disk and add to notification
-                                String errorString = Utils.readFileAsString(errorFile);
-                                notif.addError(errorString);
-
-                                logger.debug(String.format("Added unsent error (%s) to notification", errorFile.getName()));
-                            } catch (IOException e) {
-                                logger.warn("Problem reading unsent error from disk", e);
-                            }
+                            logger.debug("Deleting sent error file " + errorFile.getName());
+                            errorFile.delete();
+                        } catch (IOException e) {
+                            logger.warn("Problem reading unsent error from disk", e);
                         }
                     }
-                }
-
-                try {
-                    // Send the notification
-                    notif.deliver();
-
-                    // Delete the files if notification worked
-                    for(File file : sentFiles) {
-                        logger.debug("Deleting unsent error file " + file.getName());
-                        file.delete();
-                    }
-                } catch (IOException e) {
-                    logger.info("Could not flush error(s) to Bugsnag, will try again later");
                 }
             }
         });
@@ -231,18 +211,12 @@ public class Client extends com.bugsnag.Client {
     }
 
     private void writeErrorToDisk(Error error) {
-        if(cachePath == null) return;
-
-        String errorString = error.toString();
-        if(errorString.length() > 0) {
-            // Write the error to disk
-            String filename = String.format("%s%d.json", cachePath, System.currentTimeMillis());
-            try {
-                Utils.writeStringToFile(errorString, filename);
-                logger.debug(String.format("Saved unsent error to disk (%s) ", filename));
-            } catch (IOException e) {
-                logger.warn("Could not save error to disk", e);
-            }
+        if(cachePath == null || error == null) return;
+        
+        try {
+            error.writeToFile(String.format("%s%d.json", cachePath, System.currentTimeMillis()));
+        } catch (IOException e) {
+            logger.warn("Unable to save bugsnag error", e);
         }
     }
 
