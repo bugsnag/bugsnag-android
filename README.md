@@ -141,10 +141,9 @@ otherwise it is set to "production".
 
 ###setNotifyReleaseStages
 
-By default, we will only notify Bugsnag of exceptions that happen when
-your `releaseStage` is set to be "production" or "development".
-If you would like to change which release stages notify Bugsnag of exceptions
-you can call `setNotifyReleaseStages`:
+By default, we will notify Bugsnag of exceptions that happen in any
+`releaseStage`. If you would like to change which release stages notify
+Bugsnag of exceptions you can call `setNotifyReleaseStages`:
 
 ```java
 Bugsnag.setNotifyReleaseStages("production", "development", "testing");
