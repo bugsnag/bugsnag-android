@@ -61,7 +61,6 @@ public class Client extends com.bugsnag.Client {
         setAppVersion(packageVersion);
         setProjectPackages(packageName);
         setReleaseStage(guessReleaseStage(packageName));
-        setNotifyReleaseStages("production", "development");
 
         addToTab("Device", "Android Version", android.os.Build.VERSION.RELEASE);
         addToTab("Device", "Device Type", android.os.Build.MODEL);
