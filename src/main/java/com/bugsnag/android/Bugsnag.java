@@ -126,6 +126,19 @@ public class Bugsnag {
         });
     }
 
+    public static void onActivityCreate(Activity activity) {
+        ActivityStack.add(activity);
+        ActivityStack.setTopActivity(activity);
+    }
+
+    public static void onActivityResume(Activity activity) {
+        ActivityStack.setTopActivity(activity);
+    }
+
+    public static void onActivityPause(Activity activity) {
+        ActivityStack.clearTopActivity();
+    }
+
     private static void runOnClient(Runnable delegate) {
         if(client != null) {
             try {

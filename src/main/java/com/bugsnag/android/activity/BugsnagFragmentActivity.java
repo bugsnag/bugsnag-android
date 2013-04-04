@@ -1,5 +1,6 @@
-package com.bugsnag.android;
+package com.bugsnag.android.activity;
 
+import com.bugsnag.android.Bugsnag;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -7,19 +8,18 @@ public class BugsnagFragmentActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityStack.add(this);
-        ActivityStack.setTopActivity(this);
+        Bugsnag.onActivityCreate(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ActivityStack.setTopActivity(this);
+        Bugsnag.onActivityCreate(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ActivityStack.clearTopActivity();
+        Bugsnag.onActivityCreate(this);
     }
 }

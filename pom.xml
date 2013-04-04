@@ -58,10 +58,18 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Optional dependencies for custom Bugsnag activities -->
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>support-v4</artifactId>
       <version>r6</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.actionbarsherlock</groupId>
+      <artifactId>actionbarsherlock</artifactId>
+      <version>4.2.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
