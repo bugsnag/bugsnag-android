@@ -1,3 +1,8 @@
+2.0.8
+-----
+-   Added additional `Activity` parent classes to help collect debug
+    information, added support for custom Activities.
+
 2.0.7
 -----
 -   Improved memory usage when sending exceptions that were previously
