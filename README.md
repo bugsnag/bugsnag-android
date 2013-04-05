@@ -218,7 +218,8 @@ should inherit from `BugsnagSherlockActivity` or
 If you have your own custom base `Activity`, you can add the Bugsnag 
 instrumentation manually by calling `Bugsnag.onActivityCreate` in `onCreate`,
 `Bugsnag.onActivityPause` in `onPause` and `Bugsnag.onActivityResume` in
-`onResume`.
+`onResume`. Each of these methods take one paramenter, the activity instance
+(usually `this`).
 
 
 Building from Source
