@@ -48,8 +48,14 @@ Recommended: Enable Additional Diagnostic Information
     `BugsnagActivity`:
 
     ```java
+    import com.bugsnag.android.activity.*;
     class MyActivity extends BugsnagActivity { ... }
     ```
+
+    Note: If you are using the
+    [Android Support Library](http://developer.android.com/tools/extras/support-library.html),
+    [ActionBarSherlock](http://actionbarsherlock.com/) or have a custom base Activity, see
+    [Instrumenting Custom Activities](#instrumenting-custom-activities) below.
 
 -   To enable network diagnostics for each device (internet connectivity, etc)
     you should also add the `android.permission.ACCESS_NETWORK_STATE` 
@@ -192,6 +198,27 @@ Sets for which exception classes we should not send exceptions to Bugsnag.
 ```java
 Bugsnag.setIgnoreClasses("java.net.UnknownHostException", "com.example.Custom");
 ```
+
+
+Instrumenting Custom Activities
+-------------------------------
+
+Bugsnag can add additional diagnostic information to each error by 
+instrumenting your `Activity` classes.
+
+If you are using `FragmentActivity` from the
+[Android Support Library](http://developer.android.com/tools/extras/support-library.html)
+your Activities should inherit from `BugsnagFragmentActivity`.
+
+Similarly, if you are using `SherlockActivity` or `SherlockFragmentActivity` 
+from [ActionBarSherlock](http://actionbarsherlock.com/), your Activities
+should inherit from `BugsnagSherlockActivity` or
+`BugsnagSherlockFragmentActivity`.
+
+If you have your own custom base `Activity`, you can add the Bugsnag 
+instrumentation manually by calling `Bugsnag.onActivityCreate` in `onCreate`,
+`Bugsnag.onActivityPause` in `onPause` and `Bugsnag.onActivityResume` in
+`onResume`.
 
 
 Building from Source
