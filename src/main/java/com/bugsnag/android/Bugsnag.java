@@ -104,6 +104,24 @@ public class Bugsnag {
         });
     }
 
+    public static void setProjectPackages(final String... projectPackages) {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
+                client.setProjectPackages(projectPackages);
+            }
+        });
+    }
+
+    public static void setFilters(final String... filters) {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
+                client.setFilters(filters);
+            }
+        });
+    }
+
     public static void addToTab(final String tab, final String key, final Object value) {
         runOnClient(new Runnable() {
             @Override
