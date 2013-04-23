@@ -1,3 +1,8 @@
+2.0.9
+-----
+-   Added missing `setProjectPackages` and `setFilters` static methods
+    to the `Bugsnag` class.
+
 2.0.8
 -----
 -   Added additional `Activity` parent classes to help collect debug
