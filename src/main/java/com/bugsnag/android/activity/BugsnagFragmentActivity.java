@@ -14,12 +14,12 @@ public class BugsnagFragmentActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Bugsnag.onActivityCreate(this);
+        Bugsnag.onActivityResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Bugsnag.onActivityCreate(this);
+        Bugsnag.onActivityPause(this);
     }
 }
