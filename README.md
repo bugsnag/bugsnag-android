@@ -15,7 +15,7 @@ from your applications.
 Installation & Setup
 --------------------
 
--   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.0.9.jar)
+-   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.0.10.jar)
     and place it in your Android app's `libs/` folder.
 
     *Note: if your project uses [Maven](http://maven.apache.org/) you can
