@@ -33,15 +33,15 @@ public class Client extends com.bugsnag.Client {
     public Client(Context androidContext, String apiKey, boolean enableMetrics) {
         super(apiKey);
 
-        // Start the session timer
-        Diagnostics.startSessionTimer();
-
         // Create a logger
         logger = new Logger();
         setLogger(logger);
 
         // Get the application context, many things need this
         applicationContext = androidContext.getApplicationContext();
+
+        this.diagnostics = new AndroidDiagnostics(config, applicationContext);
+        
         cachePath = prepareCachePath();
 
         // Get the uuid for metrics and userId
@@ -61,12 +61,6 @@ public class Client extends com.bugsnag.Client {
         setAppVersion(packageVersion);
         setProjectPackages(packageName);
         setReleaseStage(guessReleaseStage(packageName));
-
-        addToTab("Device", "Android Version", android.os.Build.VERSION.RELEASE);
-        addToTab("Device", "Device Type", android.os.Build.MODEL);
-
-        addToTab("Application", "Package Name", packageName);
-        addToTab("Application", "Package Version", packageVersion);
 
         // Send metrics data (DAU/MAU etc) if enabled
         if(enableMetrics) {
