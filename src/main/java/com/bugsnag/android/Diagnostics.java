@@ -25,36 +25,23 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     private static Long startTime;
     private Context applicationContext;
     private String packageName;
-    private Client client;
 
     public Diagnostics(Configuration config, Context context, Client client) {
         super(config);
 
-        this.client = client;
         applicationContext = context;
         Diagnostics.startSessionTimer();
 
         packageName = applicationContext.getPackageName();
 
         // Set up some defaults that people can change in config
-        client.setUser(getUUID(), null, null);
-        client.setOsVersion(android.os.Build.VERSION.RELEASE);
-        client.setAppVersion(getPackageVersion(packageName));
-        client.setReleaseStage(guessReleaseStage(packageName));
-        client.setProjectPackages(packageName);
-    }
+        config.setProjectPackages(packageName);
+        config.getOsVersion().setComputed(android.os.Build.VERSION.RELEASE);
+        config.getAppVersion().setComputed(getPackageVersion(packageName));
+        config.getReleaseStage().setComputed(guessReleaseStage(packageName));
 
-    public JSONObject getAppData() {
-        JSONUtils.safePutOpt(appData, "id", packageName);
-        JSONUtils.safePutOpt(appData, "packageName", packageName);
-        try {
-            JSONUtils.safePutOpt(appData, "name", applicationContext.getPackageManager().getApplicationInfo(packageName, 0).name);
-        } catch(Exception e) {
-            //ignore
-            e.printStackTrace();
-        }
-
-        return appData;
+        this.initialiseHostData();
+        this.initialiseAppData();
     }
 
     public JSONObject getAppState() {
@@ -80,18 +67,6 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return appState;
     }
 
-    public JSONObject getHostData() {
-        JSONUtils.safePutOpt(hostData, "model", android.os.Build.MODEL);
-
-        // Current memory status
-        long totalMemory = totalMemoryOnHost();
-        if(totalMemory != 0) {
-            JSONUtils.safePutOpt(hostData, "totalMemory", totalMemory);
-        }
-
-        return hostData;
-    }
-
     public JSONObject getHostState() {
         JSONObject hostState = super.getHostState();
 
@@ -112,9 +87,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     }
 
     public String getContext() {
-        if(config.context != null) return config.context;
-
-        return ActivityStack.getTopActivityName();
+        return config.getContext().get(ActivityStack.getTopActivityName());
     }
 
     public JSONObject getMetrics() {
@@ -130,6 +103,27 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     // Private functions
     //
     //
+
+    private void initialiseHostData() {
+        JSONUtils.safePutOpt(hostData, "model", android.os.Build.MODEL);
+
+        // Current memory status
+        long totalMemory = totalMemoryOnHost();
+        if(totalMemory != 0) {
+            JSONUtils.safePutOpt(hostData, "totalMemory", totalMemory);
+        }
+    }
+
+    private void initialiseAppData() {
+        JSONUtils.safePutOpt(appData, "id", packageName);
+        JSONUtils.safePutOpt(appData, "packageName", packageName);
+        try {
+            JSONUtils.safePutOpt(appData, "name", applicationContext.getPackageManager().getApplicationInfo(packageName, 0).name);
+        } catch(Exception e) {
+            //ignore
+            e.printStackTrace();
+        }
+    }
 
     private static void startSessionTimer() {
         if(startTime == null) {
