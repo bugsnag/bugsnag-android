@@ -117,18 +117,18 @@ If you would like to set the bugsnag context manually, you can call
 Bugsnag.setContext("MyActivity");
 ```
 
-###setUserId
+###setUser
 
 Bugsnag helps you understand how many of your users are affected by each
-error. In order to do this, we send along a userId with every exception.
-By default we will generate a unique ID and send this ID along with every
-exception from an individual device.
+error. In order to do this, we need to send along user information with every
+exception.
 
-If you would like to override this `userId`, for example to set it to be a
-username of your currently logged in user, you can call `setUserId`:
+If you would like to enable this, set the `user`. You can set the user id,
+which should be the unique id to represent that user across all your apps,
+the user's email address and the user's name:
 
 ```java
-Bugsnag.setUserId("leeroy-jenkins");
+Bugsnag.setUser("userId", "user@email.com", "User Name");
 ```
 
 ###setReleaseStage
