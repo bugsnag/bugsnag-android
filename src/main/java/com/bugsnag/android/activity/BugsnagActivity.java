@@ -6,12 +6,6 @@ import android.os.Bundle;
 
 public class BugsnagActivity extends Activity {
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bugsnag.onActivityCreate(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         Bugsnag.onActivityResume(this);

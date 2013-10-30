@@ -161,12 +161,8 @@ public class Bugsnag {
         });
     }
 
-    public static void onActivityCreate(Activity activity) {
-        ActivityStack.add(activity);
-        ActivityStack.setTopActivity(activity);
-    }
-
     public static void onActivityResume(Activity activity) {
+        ActivityStack.add(activity);
         ActivityStack.setTopActivity(activity);
     }
 
