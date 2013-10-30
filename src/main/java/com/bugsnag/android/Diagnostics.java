@@ -122,6 +122,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         }
     }
 
+    // We return the lowest disk space out of the internal and sd card storage
     private Long getFreeDiskSpace() {
         Long diskSpace = null;
 
@@ -270,6 +271,8 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return uuid;
     }
 
+    // This returns the maximum memory the VM can allocate which != the total
+    // memory on the phone.
     private Long totalMemoryAvailable() {
         Long totalMemory = null;
 
@@ -286,6 +289,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return totalMemory;
     }
 
+    // This is the amount of memory remaining that the VM can allocate.
     private Long totalFreeMemory() {
         Long freeMemory = null;
 
@@ -298,6 +302,8 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return freeMemory;
     }
 
+    // This is the actual memory used by the VM (which may not be the total used
+    // by the app in the case of NDK usage).
     private Long memoryUsedByApp() {
         Long memoryUsedByApp = null;
 
@@ -324,6 +330,8 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return lowMemory;
     }
 
+    // We might be able to improve this by checking for su, but i have seen
+    // some reports that su is on non rooted phones too
     private boolean checkIsRooted() {
         return checkTestKeysBuild() || checkSuperUserAPK();
     }
@@ -355,6 +363,8 @@ class Diagnostics extends com.bugsnag.Diagnostics {
                 } else if(activeNetwork.getType() == 9) {
                     networkStatus = "ethernet";
                 } else {
+                    // We default to cellular as the other enums are all cellular in some
+                    // form or another
                     networkStatus = "cellular";
                 }
             } else {

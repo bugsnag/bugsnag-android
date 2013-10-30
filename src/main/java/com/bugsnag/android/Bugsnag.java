@@ -41,6 +41,9 @@ public class Bugsnag {
         });
     }
 
+    /**
+    * @deprecated  Replaced by {@link #setUser()}
+    */
     public static void setUserId(final String userId) {
         runOnClient(new Runnable() {
             @Override
