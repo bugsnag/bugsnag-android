@@ -40,6 +40,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         super(config);
 
         applicationContext = context;
+
         Diagnostics.startSessionTimer();
 
         packageName = applicationContext.getPackageName();
@@ -200,8 +201,10 @@ class Diagnostics extends com.bugsnag.Diagnostics {
             switch(applicationContext.getResources().getConfiguration().orientation) {
                 case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
                     orientation = "landscape";
+                    break;
                 case android.content.res.Configuration.ORIENTATION_PORTRAIT:
                     orientation = "portrait";
+                    break;
             }
         } catch(Exception e) {
             config.logger.warn(e);

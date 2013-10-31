@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;;
+import android.content.Context;
+import android.os.SystemClock;
 
 import com.bugsnag.Error;
 import com.bugsnag.MetaData;
@@ -45,6 +46,7 @@ public class Client extends com.bugsnag.Client {
 
         // Send metrics data (DAU/MAU etc) if enabled
         if(enableMetrics) {
+            //TODO:SM We should prevent this sending on rotate
             makeMetricsRequest();
         }
 
@@ -131,7 +133,6 @@ public class Client extends com.bugsnag.Client {
                     Metrics metrics = createMetrics();
                     metrics.deliver();
                 } catch (NetworkException ex) {
-                    // Write error to disk for later sending
                     logger.info("Could not send metrics to Bugsnag");
                 } catch (BadResponseException ex) {
                     // The notification was delivered, but Bugsnag sent a non-200 response

@@ -216,8 +216,9 @@ should inherit from `BugsnagSherlockActivity` or
 `BugsnagSherlockFragmentActivity`.
 
 If you have your own custom base `Activity`, you can add the Bugsnag 
-instrumentation manually by calling `Bugsnag.onActivityPause` in `onPause` 
-and `Bugsnag.onActivityResume` in `onResume`. Each of these methods take 
+instrumentation manually by calling `Bugsnag.onActivityPause` in `onPause`,
+`Bugsnag.onActivityResume` in `onResume`, `Bugsnag.onActivityCreate` in `onCreate`
+and `Bugsnag.onActivityDestroy` in `onDestroy`. Each of these methods take 
 one paramenter, the activity instance (usually `this`).
 
 
