@@ -21,7 +21,18 @@ public class ActivityStack {
 
     public static void add(Activity activity) {
         prune();
-        if(!contains(activity)) storedContexts.add(new WeakReference<Context>(activity));
+        storedContexts.add(new WeakReference<Context>(activity));
+    }
+
+    public static void remove(Activity activity) {
+        prune();
+
+        for(WeakReference<Context> ref : storedContexts){
+            if(ref.get() == activity){
+                storedContexts.remove(ref);
+                break;
+            }
+        }
     }
 
     // TODO:JS Remove duplicate contexts
