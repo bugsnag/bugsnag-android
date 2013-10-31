@@ -74,11 +74,11 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     public JSONObject getDeviceState() {
         JSONObject deviceState = super.getDeviceState();
 
-        JSONUtils.safePutOpt(deviceData, "freeMemory", totalFreeMemory());
-        JSONUtils.safePutOpt(deviceData, "orientation", getOrientation());
-        JSONUtils.safePutOpt(deviceData, "batteryLevel", getChargeLevel());
-        JSONUtils.safePutOpt(deviceData, "freeDisk", getFreeDiskSpace());
-        JSONUtils.safePutOpt(deviceData, "charging", getCharging());
+        JSONUtils.safePutOpt(deviceState, "freeMemory", totalFreeMemory());
+        JSONUtils.safePutOpt(deviceState, "orientation", getOrientation());
+        JSONUtils.safePutOpt(deviceState, "batteryLevel", getChargeLevel());
+        JSONUtils.safePutOpt(deviceState, "freeDisk", getFreeDiskSpace());
+        JSONUtils.safePutOpt(deviceState, "charging", getCharging());
         JSONUtils.safePutOpt(deviceState, "locationStatus", getGpsAllowed());
         JSONUtils.safePutOpt(deviceState, "networkAccess", getNetworkStatus());
         
@@ -100,7 +100,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     public JSONObject getUser() {
         JSONObject user = super.getUser();
 
-        if(user.optString("id") == null) {
+        if(user.optString("id").equals("")) {
             JSONUtils.safePut(user, "id", getUUID());
         }
 
@@ -113,7 +113,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     //
     //
 
-    private void initialiseDeviceData() {
+    protected void initialiseDeviceData() {
         // osVersion is done by parent class
 
         JSONUtils.safePutOpt(deviceData, "manufacturer", android.os.Build.MANUFACTURER);
@@ -121,12 +121,13 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         JSONUtils.safePutOpt(deviceData, "screenDensity", applicationContext.getResources().getDisplayMetrics().density);
         JSONUtils.safePutOpt(deviceData, "screenResolution", getResolution());
         JSONUtils.safePutOpt(deviceData, "totalMemory", totalMemoryAvailable());
-        JSONUtils.safePutOpt(deviceData, "osName", getOsName());
+        JSONUtils.safePutOpt(deviceData, "osName", "android");
+        JSONUtils.safePutOpt(deviceData, "apiLevel", android.os.Build.VERSION.SDK_INT);
         JSONUtils.safePutOpt(deviceData, "jailbroken", checkIsRooted());
         JSONUtils.safePutOpt(deviceData, "locale", Locale.getDefault().toString());
     }
 
-    private void initialiseAppData() {
+    protected void initialiseAppData() {
         // Release stage and version added by parent class
 
         JSONUtils.safePutOpt(appData, "id", packageName);
@@ -134,14 +135,14 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         JSONUtils.safePutOpt(appData, "name", getAppName());
     }
 
-    private static void startSessionTimer() {
+    protected static void startSessionTimer() {
         if(startTime == null) {
             startTime = SystemClock.elapsedRealtime();
         }
     }
 
     // We return the lowest disk space out of the internal and sd card storage
-    private Long getFreeDiskSpace() {
+    protected Long getFreeDiskSpace() {
         Long diskSpace = null;
 
         try {
@@ -159,7 +160,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return diskSpace;
     }
 
-    private Boolean getCharging() {
+    protected Boolean getCharging() {
         Boolean isCharging = null;
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -175,7 +176,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return isCharging;
     }
 
-    private Float getChargeLevel() {
+    protected Float getChargeLevel() {
         Float chargeLevel = null;
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -192,31 +193,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return chargeLevel;
     }
 
-    private String getOsName() {
-        try {
-            Field[] fields = android.os.Build.VERSION_CODES.class.getFields();
-            for (Field field : fields) {
-                String fieldName = field.getName();
-                int fieldValue = -1;
-
-                try {
-                    fieldValue = field.getInt(new Object());
-                } catch (Exception e) {
-                    config.logger.warn(e);
-                }
-
-                if (fieldValue == android.os.Build.VERSION.SDK_INT) {
-                    return fieldName;
-                }
-            }
-        } catch (Exception e) {
-            config.logger.warn(e);
-        }
-
-        return null;
-    }
-
-    private String getOrientation() {
+    protected String getOrientation() {
         String orientation = null;
 
         try {
@@ -233,7 +210,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return orientation;
     }
 
-    private String getAppName() {
+    protected String getAppName() {
         String appName = null;
         try {
             appName = applicationContext.getPackageManager().getApplicationInfo(packageName, 0).name;
@@ -243,7 +220,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return appName;
     }
 
-    private String getResolution() {
+    protected String getResolution() {
         String resolution = null;
 
         try {
@@ -256,7 +233,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return resolution;
     }
 
-    private String getPackageVersion(String packageName) {
+    protected String getPackageVersion(String packageName) {
         String packageVersion = null;
 
         try {
@@ -269,7 +246,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return packageVersion;
     }
 
-    private String guessReleaseStage(String packageName) {
+    protected String guessReleaseStage(String packageName) {
         String releaseStage = "production";
 
         try {
@@ -285,7 +262,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return releaseStage;
     }
 
-    private synchronized String getUUID() {
+    protected synchronized String getUUID() {
         if(uuid != null) return uuid;
 
         final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -310,7 +287,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
 
     // This returns the maximum memory the VM can allocate which != the total
     // memory on the phone.
-    private Long totalMemoryAvailable() {
+    protected Long totalMemoryAvailable() {
         Long totalMemory = null;
 
         try {
@@ -327,7 +304,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     }
 
     // This is the amount of memory remaining that the VM can allocate.
-    private Long totalFreeMemory() {
+    protected Long totalFreeMemory() {
         Long freeMemory = null;
 
         try {
@@ -341,7 +318,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
 
     // This is the actual memory used by the VM (which may not be the total used
     // by the app in the case of NDK usage).
-    private Long memoryUsedByApp() {
+    protected Long memoryUsedByApp() {
         Long memoryUsedByApp = null;
 
         try {
@@ -353,7 +330,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return memoryUsedByApp;
     }
 
-    private Boolean lowMemoryState() {
+    protected Boolean lowMemoryState() {
         Boolean lowMemory = null;
         try {
             ActivityManager activityManager = (ActivityManager)applicationContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -369,16 +346,16 @@ class Diagnostics extends com.bugsnag.Diagnostics {
 
     // We might be able to improve this by checking for su, but i have seen
     // some reports that su is on non rooted phones too
-    private boolean checkIsRooted() {
+    protected boolean checkIsRooted() {
         return checkTestKeysBuild() || checkSuperUserAPK();
     }
 
-    private boolean checkTestKeysBuild() {
+    protected boolean checkTestKeysBuild() {
         String buildTags = android.os.Build.TAGS;
         return buildTags != null && buildTags.contains("test-keys");
     }
 
-    private boolean checkSuperUserAPK() {
+    protected boolean checkSuperUserAPK() {
         try {
             File file = new File("/system/app/Superuser.apk");
             return file.exists();
@@ -387,7 +364,8 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         }
     }
 
-    private String getNetworkStatus() {
+    // Requires android.permission.ACCESS_NETWORK_STATE
+    protected String getNetworkStatus() {
         String networkStatus = null;
 
         try {
@@ -407,8 +385,6 @@ class Diagnostics extends com.bugsnag.Diagnostics {
             } else {
                 networkStatus = "none";
             }
-        } catch(SecurityException e) {
-            // App doesn't have android.permission.ACCESS_NETWORK_STATE permission
         } catch(Exception e) {
             config.logger.warn(e);
         }
@@ -416,7 +392,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return networkStatus;
     }
 
-    private String getGpsAllowed() {
+    protected String getGpsAllowed() {
         String gpsAllowed = null;
 
         try {
