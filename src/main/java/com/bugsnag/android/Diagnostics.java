@@ -32,6 +32,7 @@ import com.bugsnag.android.utils.Async;
 class Diagnostics extends com.bugsnag.Diagnostics {
     private static final String PREFS_NAME = "Bugsnag";
     private static Long startTime;
+    private static String uuid;
     private Context applicationContext;
     private String packageName;
 
@@ -49,7 +50,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         config.getAppVersion().set(getPackageVersion(packageName));
         config.getReleaseStage().set(guessReleaseStage(packageName));
 
-        this.initialiseHostData();
+        this.initialiseDeviceData();
         this.initialiseAppData();
     }
 
@@ -70,21 +71,40 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return appState;
     }
 
-    public JSONObject getHostState() {
-        JSONObject hostState = super.getHostState();
+    public JSONObject getDeviceState() {
+        JSONObject deviceState = super.getDeviceState();
 
-        JSONUtils.safePutOpt(hostData, "freeMemory", totalFreeMemory());
-        JSONUtils.safePutOpt(hostData, "orientation", getOrientation());
-        JSONUtils.safePutOpt(hostData, "batteryLevel", getChargeLevel());
-        JSONUtils.safePutOpt(hostData, "charging", getCharging());
-        JSONUtils.safePutOpt(hostState, "locationStatus", getGpsAllowed());
-        JSONUtils.safePutOpt(hostState, "networkAccess", getNetworkStatus());
+        JSONUtils.safePutOpt(deviceData, "freeMemory", totalFreeMemory());
+        JSONUtils.safePutOpt(deviceData, "orientation", getOrientation());
+        JSONUtils.safePutOpt(deviceData, "batteryLevel", getChargeLevel());
+        JSONUtils.safePutOpt(deviceData, "freeDisk", getFreeDiskSpace());
+        JSONUtils.safePutOpt(deviceData, "charging", getCharging());
+        JSONUtils.safePutOpt(deviceState, "locationStatus", getGpsAllowed());
+        JSONUtils.safePutOpt(deviceState, "networkAccess", getNetworkStatus());
         
-        return hostState;
+        return deviceState;
+    }
+
+    public JSONObject getDeviceData() {
+        super.getDeviceData();
+
+        JSONUtils.safePutOpt(deviceData, "id", getUUID());
+
+        return deviceData;
     }
 
     public String getContext() {
         return config.getContext().get(ActivityStack.getTopActivityName());
+    }
+
+    public JSONObject getUser() {
+        JSONObject user = super.getUser();
+
+        if(user.optString("id") == null) {
+            JSONUtils.safePut(user, "id", getUUID());
+        }
+
+        return user;
     }
 
     //
@@ -93,19 +113,17 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     //
     //
 
-    private void initialiseHostData() {
+    private void initialiseDeviceData() {
         // osVersion is done by parent class
 
-        JSONUtils.safePutOpt(hostData, "id", getUUID());
-        JSONUtils.safePutOpt(hostData, "manufacturer", android.os.Build.MANUFACTURER);
-        JSONUtils.safePutOpt(hostData, "model", android.os.Build.MODEL);
-        JSONUtils.safePutOpt(hostData, "screenDensity", applicationContext.getResources().getDisplayMetrics().density);
-        JSONUtils.safePutOpt(hostData, "screenResolution", getResolution());
-        JSONUtils.safePutOpt(hostData, "totalMemory", totalMemoryAvailable());
-        JSONUtils.safePutOpt(hostData, "freeDisk", getFreeDiskSpace());
-        JSONUtils.safePutOpt(hostData, "osName", getOsName());
-        JSONUtils.safePutOpt(hostData, "jailbroken", checkIsRooted());
-        JSONUtils.safePutOpt(hostData, "locale", Locale.getDefault().toString());
+        JSONUtils.safePutOpt(deviceData, "manufacturer", android.os.Build.MANUFACTURER);
+        JSONUtils.safePutOpt(deviceData, "model", android.os.Build.MODEL);
+        JSONUtils.safePutOpt(deviceData, "screenDensity", applicationContext.getResources().getDisplayMetrics().density);
+        JSONUtils.safePutOpt(deviceData, "screenResolution", getResolution());
+        JSONUtils.safePutOpt(deviceData, "totalMemory", totalMemoryAvailable());
+        JSONUtils.safePutOpt(deviceData, "osName", getOsName());
+        JSONUtils.safePutOpt(deviceData, "jailbroken", checkIsRooted());
+        JSONUtils.safePutOpt(deviceData, "locale", Locale.getDefault().toString());
     }
 
     private void initialiseAppData() {
@@ -147,7 +165,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = applicationContext.registerReceiver(null, ifilter);
 
-            int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+            int status = batteryStatus.getIntExtra("status", -1);
             isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                          status == BatteryManager.BATTERY_STATUS_FULL;
         } catch (Exception e) {
@@ -163,8 +181,8 @@ class Diagnostics extends com.bugsnag.Diagnostics {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = applicationContext.registerReceiver(null, ifilter);
 
-            int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-            int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            int level = batteryStatus.getIntExtra("level", -1);
+            int scale = batteryStatus.getIntExtra("scale", -1);
 
             chargeLevel = level / (float)scale;
         } catch (Exception e) {
@@ -175,33 +193,44 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     }
 
     private String getOsName() {
-        Field[] fields = android.os.Build.VERSION_CODES.class.getFields();
-        for (Field field : fields) {
-            String fieldName = field.getName();
-            int fieldValue = -1;
+        try {
+            Field[] fields = android.os.Build.VERSION_CODES.class.getFields();
+            for (Field field : fields) {
+                String fieldName = field.getName();
+                int fieldValue = -1;
 
-            try {
-                fieldValue = field.getInt(new Object());
-            } catch (Exception e) {
-                config.logger.warn(e);
-            }
+                try {
+                    fieldValue = field.getInt(new Object());
+                } catch (Exception e) {
+                    config.logger.warn(e);
+                }
 
-            if (fieldValue == android.os.Build.VERSION.SDK_INT) {
-                return fieldName;
+                if (fieldValue == android.os.Build.VERSION.SDK_INT) {
+                    return fieldName;
+                }
             }
+        } catch (Exception e) {
+            config.logger.warn(e);
         }
+
         return null;
     }
 
     private String getOrientation() {
-        switch(applicationContext.getResources().getConfiguration().orientation) {
-            case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
-                return "landscape";
-            case android.content.res.Configuration.ORIENTATION_PORTRAIT:
-                return "portrait";
-            default:
-                return null;
+        String orientation = null;
+
+        try {
+            switch(applicationContext.getResources().getConfiguration().orientation) {
+                case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
+                    orientation = "landscape";
+                case android.content.res.Configuration.ORIENTATION_PORTRAIT:
+                    orientation = "portrait";
+            }
+        } catch(Exception e) {
+            config.logger.warn(e);
         }
+
+        return orientation;
     }
 
     private String getAppName() {
@@ -215,8 +244,16 @@ class Diagnostics extends com.bugsnag.Diagnostics {
     }
 
     private String getResolution() {
-        DisplayMetrics metrics = applicationContext.getResources().getDisplayMetrics();
-        return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
+        String resolution = null;
+
+        try {
+            DisplayMetrics metrics = applicationContext.getResources().getDisplayMetrics();
+            resolution = String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
+        } catch(Exception e) {
+            config.logger.warn(e);
+        }
+
+        return resolution;
     }
 
     private String getPackageVersion(String packageName) {
@@ -248,11 +285,11 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return releaseStage;
     }
 
-    // TODO:JS Avoid StrictMode violations caused by getSharedPreferences
-    // TODO:JS Avoid StrictMode violations caused by UUID.randomUUID
-    private String getUUID() {
+    private synchronized String getUUID() {
+        if(uuid != null) return uuid;
+
         final SharedPreferences settings = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String uuid = settings.getString("userId", null);
+        uuid = settings.getString("userId", null);
         if(uuid == null) {
             uuid = UUID.randomUUID().toString();
 

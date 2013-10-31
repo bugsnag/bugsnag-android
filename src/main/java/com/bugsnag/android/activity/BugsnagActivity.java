@@ -2,7 +2,6 @@ package com.bugsnag.android.activity;
 
 import com.bugsnag.android.Bugsnag;
 import android.app.Activity;
-import android.os.Bundle;
 
 public class BugsnagActivity extends Activity {
     @Override
