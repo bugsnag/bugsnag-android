@@ -11,7 +11,7 @@ public class Bugsnag {
     private static final String TAG = "Bugsnag";
 
     public static void register(Context androidContext, String apiKey) {
-        register(androidContext, apiKey, false);
+        register(androidContext, apiKey, true);
     }
 
     public static void register(Context androidContext, String apiKey, boolean enableMetrics) {
@@ -41,11 +41,23 @@ public class Bugsnag {
         });
     }
 
+    /**
+    * @deprecated  Replaced by {@link #setUser()}
+    */
     public static void setUserId(final String userId) {
         runOnClient(new Runnable() {
             @Override
             public void run() {
                 client.setUserId(userId);
+            }
+        });
+    }
+
+    public static void setUser(final String id, final String email, final String name) {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
+                client.setUser(id, email, name);
             }
         });
     }
@@ -132,21 +144,28 @@ public class Bugsnag {
     }
 
     public static void notify(Throwable e) {
-        notify(e, null);
+        notify(e, null, null);
     }
 
-    public static void notify(final Throwable e, final MetaData overrides) {
+    public static void notify(Throwable e, String severity) {
+        notify(e, severity, null);
+    }
+
+    public static void notify(Throwable e, MetaData overrides) {
+        notify(e, null, overrides);
+    }
+
+    public static void notify(final Throwable e, final String severity, final MetaData overrides) {
         runOnClient(new Runnable() {
             @Override
             public void run() {
-                client.notify(e, overrides);
+                client.notify(e, severity, overrides);
             }
         });
     }
 
     public static void onActivityCreate(Activity activity) {
         ActivityStack.add(activity);
-        ActivityStack.setTopActivity(activity);
     }
 
     public static void onActivityResume(Activity activity) {
@@ -155,6 +174,10 @@ public class Bugsnag {
 
     public static void onActivityPause(Activity activity) {
         ActivityStack.clearTopActivity();
+    }
+
+    public static void onActivityDestroy(Activity activity) {
+        ActivityStack.remove(activity);
     }
 
     private static void runOnClient(Runnable delegate) {

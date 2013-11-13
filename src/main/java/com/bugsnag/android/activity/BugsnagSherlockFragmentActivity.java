@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 public class BugsnagSherlockFragmentActivity extends SherlockFragmentActivity {
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bugsnag.onActivityCreate(this);
     }
@@ -21,5 +21,11 @@ public class BugsnagSherlockFragmentActivity extends SherlockFragmentActivity {
     protected void onPause() {
         super.onPause();
         Bugsnag.onActivityPause(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Bugsnag.onActivityDestroy(this);
     }
 }
