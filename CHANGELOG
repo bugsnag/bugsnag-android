@@ -1,12 +1,16 @@
+2.1.1
+-----
+-   Update bugsnag-java dependency, allows disabling of auto-notification
+
 2.1.0
 -----
-- Support severity
-- Better format of notification payload
-- Structure the data of notifications better
+-   Support severity
+-   Better format of notification payload
+-   Structure the data of notifications better
 
 2.0.10
 ------
-- Fixed bug in `BugsnagFragmentActivity` calling the wrong callbacks.
+-   Fixed bug in `BugsnagFragmentActivity` calling the wrong callbacks.
 
 2.0.9
 -----
@@ -32,7 +36,7 @@
 
 2.0.5
 -----
--   Added support for `setIgnoreClasses` to set which exception classes 
+-   Added support for `setIgnoreClasses` to set which exception classes
     should not be sent to Bugsnag.
 
 2.0.4
@@ -59,7 +63,7 @@
 -   Refactored to use the classes from `bugsnag-java`
 -   Project is now available in Maven, and built using Maven
 -   Added support for metrics tracking (MAU/DAU)
--   Added additional diagnostic information (network status, memory usage, 
+-   Added additional diagnostic information (network status, memory usage,
     gps status, time since boot, time since app load) to every notification
 -   Fixed some issues which might have caused error sending to fail
 

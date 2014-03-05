@@ -20,7 +20,7 @@ import com.bugsnag.android.utils.Async;
 public class Client extends com.bugsnag.Client {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    private static final String NOTIFIER_VERSION = "2.1.0";
+    private static final String NOTIFIER_VERSION = "2.1.1";
 
     private Logger logger;
     private Context applicationContext;
@@ -37,7 +37,7 @@ public class Client extends com.bugsnag.Client {
         applicationContext = androidContext.getApplicationContext();
 
         this.diagnostics = new Diagnostics(config, applicationContext, this);
-        
+
         cachePath = prepareCachePath();
 
         // Set notifier info
@@ -164,7 +164,7 @@ public class Client extends com.bugsnag.Client {
 
     private void writeErrorToDisk(Error error) {
         if(cachePath == null || error == null) return;
-        
+
         try {
             error.writeToFile(String.format("%s%d.json", cachePath, System.currentTimeMillis()));
         } catch (IOException e) {
