@@ -6,7 +6,7 @@ thrown from your Android applications.
 The notifier hooks into `Thread.UncaughtExceptionHandler`, so any
 uncaught exceptions in your app will be sent to your Bugsnag dashboard.
 
-[Bugsnag](https://bugsnag.com) captures errors from your web and mobile 
+[Bugsnag](https://bugsnag.com) captures errors from your web and mobile
 applications, helping you to understand and resolve them as fast as possible.
 [Create a free account](https://bugsnag.com) to start capturing exceptions
 from your applications.
@@ -15,7 +15,7 @@ from your applications.
 Installation & Setup
 --------------------
 
--   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.1.0.jar)
+-   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.1.1.jar)
     and place it in your Android app's `libs/` folder.
 
     *Note: if your project uses [Maven](http://maven.apache.org/) you can
@@ -58,7 +58,7 @@ Recommended: Enable Additional Diagnostic Information
     [Instrumenting Custom Activities](#instrumenting-custom-activities) below.
 
 -   To enable network diagnostics for each device (internet connectivity, etc)
-    you should also add the `android.permission.ACCESS_NETWORK_STATE` 
+    you should also add the `android.permission.ACCESS_NETWORK_STATE`
     permission to your `AndroidManifest.xml`.
 
 
@@ -180,7 +180,7 @@ By default, `filters` is set to `new String[] {"password"};`
 
 ###setProjectPackages
 
-Sets which package names Bugsnag should consider as "inProject". We mark 
+Sets which package names Bugsnag should consider as "inProject". We mark
 stacktrace lines as in-project if they originate from any of these
 packages.
 
@@ -203,22 +203,22 @@ Bugsnag.setIgnoreClasses("java.net.UnknownHostException", "com.example.Custom");
 Instrumenting Custom Activities
 -------------------------------
 
-Bugsnag can add additional diagnostic information to each error by 
+Bugsnag can add additional diagnostic information to each error by
 instrumenting your `Activity` classes.
 
 If you are using `FragmentActivity` from the
 [Android Support Library](http://developer.android.com/tools/extras/support-library.html)
 your Activities should inherit from `BugsnagFragmentActivity`.
 
-Similarly, if you are using `SherlockActivity` or `SherlockFragmentActivity` 
+Similarly, if you are using `SherlockActivity` or `SherlockFragmentActivity`
 from [ActionBarSherlock](http://actionbarsherlock.com/), your Activities
 should inherit from `BugsnagSherlockActivity` or
 `BugsnagSherlockFragmentActivity`.
 
-If you have your own custom base `Activity`, you can add the Bugsnag 
+If you have your own custom base `Activity`, you can add the Bugsnag
 instrumentation manually by calling `Bugsnag.onActivityPause` in `onPause`,
 `Bugsnag.onActivityResume` in `onResume`, `Bugsnag.onActivityCreate` in `onCreate`
-and `Bugsnag.onActivityDestroy` in `onDestroy`. Each of these methods take 
+and `Bugsnag.onActivityDestroy` in `onDestroy`. Each of these methods take
 one paramenter, the activity instance (usually `this`).
 
 
