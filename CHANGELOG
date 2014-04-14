@@ -1,3 +1,7 @@
+2.1.2
+-----
+-   Prepare 'severity' feature for release
+
 2.1.1
 -----
 -   Update bugsnag-java dependency, allows disabling of auto-notification
