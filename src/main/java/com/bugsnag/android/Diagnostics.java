@@ -48,7 +48,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         // Set up some defaults that people can change in config
         config.setProjectPackages(packageName);
         config.getOsVersion().set(android.os.Build.VERSION.RELEASE);
-        config.getAppVersion().set(getPackageVersion(packageName));
+        config.getAppVersion().set(getPackageVersionName(packageName));
         config.getReleaseStage().set(guessReleaseStage(packageName));
 
         this.initialiseDeviceData();
@@ -82,7 +82,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         JSONUtils.safePutOpt(deviceState, "charging", getCharging());
         JSONUtils.safePutOpt(deviceState, "locationStatus", getGpsAllowed());
         JSONUtils.safePutOpt(deviceState, "networkAccess", getNetworkStatus());
-        
+
         return deviceState;
     }
 
@@ -134,6 +134,8 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         JSONUtils.safePutOpt(appData, "id", packageName);
         JSONUtils.safePutOpt(appData, "packageName", packageName);
         JSONUtils.safePutOpt(appData, "name", getAppName());
+        JSONUtils.safePutOpt(appData, "versionName", getPackageVersionName(packageName));
+        JSONUtils.safePutOpt(appData, "versionCode", getPackageVersionCode(packageName));
     }
 
     protected static void startSessionTimer() {
@@ -236,14 +238,27 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         return resolution;
     }
 
-    protected String getPackageVersion(String packageName) {
+    protected int getPackageVersionCode(String packageName) {
+        int versionCode = 0;
+
+        try {
+            PackageInfo pi = applicationContext.getPackageManager().getPackageInfo(packageName, 0);
+            versionCode = pi.versionCode;
+        } catch(Exception e) {
+            config.logger.warn("Could not get package versionCode", e);
+        }
+
+        return versionCode;
+    }
+
+    protected String getPackageVersionName(String packageName) {
         String packageVersion = null;
 
         try {
             PackageInfo pi = applicationContext.getPackageManager().getPackageInfo(packageName, 0);
             packageVersion = pi.versionName;
         } catch(Exception e) {
-            config.logger.warn("Could not get package version", e);
+            config.logger.warn("Could not get package versionName", e);
         }
 
         return packageVersion;
