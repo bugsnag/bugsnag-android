@@ -23,6 +23,10 @@ public class Bugsnag {
         }
     }
 
+    public static void getClient() {
+        return client;
+    }
+
     public static void setContext(final String context) {
         runOnClient(new Runnable() {
             @Override
@@ -132,6 +136,15 @@ public class Bugsnag {
                 client.setFilters(filters);
             }
         });
+    }
+
+    public static void setAppVersion(final String appVersion) {
+        runOnClient(
+            @Override
+            public void run() {
+                client.setAppVersion(appVersion);
+            }
+        );
     }
 
     public static void addToTab(final String tab, final String key, final Object value) {
