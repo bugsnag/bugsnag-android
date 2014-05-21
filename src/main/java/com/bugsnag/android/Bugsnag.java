@@ -23,6 +23,10 @@ public class Bugsnag {
         }
     }
 
+    public static Client getClient() {
+        return client;
+    }
+
     public static void setContext(final String context) {
         runOnClient(new Runnable() {
             @Override
@@ -130,6 +134,15 @@ public class Bugsnag {
             @Override
             public void run() {
                 client.setFilters(filters);
+            }
+        });
+    }
+
+    public static void setAppVersion(final String appVersion) {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
+                client.setAppVersion(appVersion);
             }
         });
     }

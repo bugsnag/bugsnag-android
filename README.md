@@ -214,6 +214,19 @@ Sets for which exception classes we should not send exceptions to Bugsnag.
 Bugsnag.setIgnoreClasses("java.net.UnknownHostException", "com.example.Custom");
 ```
 
+###setAppVersion
+
+We'll automatically pull your app version from the `versionName` field in
+your `AndroidManifest.xml` file. If you'd like to override this you can call
+`setAppVersion`:
+
+```java
+Bugsnag.setAppVersion("1.0.0-alpha");
+```
+
+*Note: Bugsnag uses [Semantic Versioning](http://semver.org/) for app version
+sorting and filtering on the Bugsnag dashboard.*
+
 
 Instrumenting Custom Activities
 -------------------------------
