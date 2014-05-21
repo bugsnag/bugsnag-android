@@ -23,7 +23,7 @@ public class Bugsnag {
         }
     }
 
-    public static void getClient() {
+    public static Client getClient() {
         return client;
     }
 
@@ -139,12 +139,12 @@ public class Bugsnag {
     }
 
     public static void setAppVersion(final String appVersion) {
-        runOnClient(
+        runOnClient(new Runnable() {
             @Override
             public void run() {
                 client.setAppVersion(appVersion);
             }
-        );
+        });
     }
 
     public static void addToTab(final String tab, final String key, final Object value) {
