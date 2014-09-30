@@ -20,7 +20,7 @@ import com.bugsnag.android.utils.Async;
 public class Client extends com.bugsnag.Client {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
     private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    private static final String NOTIFIER_VERSION = "2.2.0";
+    private static final String NOTIFIER_VERSION = "2.2.1";
 
     private Logger logger;
     private Context applicationContext;

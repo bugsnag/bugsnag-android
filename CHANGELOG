@@ -1,3 +1,8 @@
+2.2.1
+-----
+-   Add support for beforeNotify callbacks
+-   Allow disabling of automatic exception handler
+
 2.2.0
 -----
 -   Add support for sending a custom app version with `setAppVersion`
