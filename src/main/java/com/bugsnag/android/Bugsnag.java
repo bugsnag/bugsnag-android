@@ -15,9 +15,13 @@ public class Bugsnag {
     }
 
     public static void register(Context androidContext, String apiKey, boolean enableMetrics) {
+        register(androidContext, apiKey, enableMetrics, true);
+    }
+
+    public static void register(Context androidContext, String apiKey, boolean enableMetrics, boolean installHandler) {
         // Create the bugsnag client
         try {
-            client = new Client(androidContext, apiKey, enableMetrics);
+            client = new Client(androidContext, apiKey, enableMetrics, installHandler);
         } catch(Exception ex) {
             Log.e(TAG, "Unable to register with bugsnag. ", ex);
         }
