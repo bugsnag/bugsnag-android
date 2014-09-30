@@ -64,6 +64,9 @@ public class Client extends com.bugsnag.Client {
             // Create the error object to send
             final Error error = createError(e, severity, overrides);
 
+            // Run beforeNotify callbacks
+            if(!beforeNotify(error)) return;
+
             // Send the error
             Async.safeAsync(new Runnable() {
                 @Override
