@@ -26,8 +26,8 @@ public class Client extends com.bugsnag.Client {
     private Context applicationContext;
     private String cachePath;
 
-    public Client(Context androidContext, String apiKey, boolean enableMetrics) {
-        super(apiKey);
+    public Client(Context androidContext, String apiKey, boolean enableMetrics, boolean installHandler) {
+        super(apiKey, installHandler);
 
         // Create a logger
         logger = new Logger();
@@ -54,6 +54,10 @@ public class Client extends com.bugsnag.Client {
         flushErrors();
 
         logger.info("Bugsnag is loaded and ready to handle exceptions");
+    }
+
+    public Client(Context androidContext, String apiKey, boolean enableMetrics) {
+        this(androidContext, apiKey, enableMetrics, true);
     }
 
     public void notify(Throwable e, String severity, MetaData overrides) {
