@@ -18,9 +18,9 @@ Installation & Setup
 -   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.2.1.jar)
     and place it in your Android app's `libs/` folder.
 
-    *Note: if your project uses [Maven](http://maven.apache.org/) you can
+    > Note: if your project uses [Maven](http://maven.apache.org/) you can
     instead [add bugsnag-android as a dependency](http://mvnrepository.com/artifact/com.bugsnag/bugsnag-android)
-    in your `pom.xml`.*
+    in your `pom.xml`.
 
 -   Import the `Bugsnag` package in your [Application](http://developer.android.com/reference/android/app/Application.html)
     subclass.
@@ -52,7 +52,7 @@ Recommended: Enable Additional Diagnostic Information
     class MyActivity extends BugsnagActivity { ... }
     ```
 
-    Note: If you are using the
+    > Note: If you are using the
     [Android Support Library](http://developer.android.com/tools/extras/support-library.html),
     [ActionBarSherlock](http://actionbarsherlock.com/) or have a custom base Activity, see
     [Instrumenting Custom Activities](#instrumenting-custom-activities) below.
@@ -224,8 +224,8 @@ your `AndroidManifest.xml` file. If you'd like to override this you can call
 Bugsnag.setAppVersion("1.0.0-alpha");
 ```
 
-*Note: Bugsnag uses [Semantic Versioning](http://semver.org/) for app version
-sorting and filtering on the Bugsnag dashboard.*
+> Note: Bugsnag uses [Semantic Versioning](http://semver.org/) for app version
+sorting and filtering on the Bugsnag dashboard.
 
 
 Instrumenting Custom Activities
