@@ -123,6 +123,7 @@ class Diagnostics extends com.bugsnag.Diagnostics {
         JSONUtils.safePutOpt(deviceData, "screenResolution", getResolution());
         JSONUtils.safePutOpt(deviceData, "totalMemory", totalMemoryAvailable());
         JSONUtils.safePutOpt(deviceData, "osName", "android");
+        JSONUtils.safePutOpt(deviceData, "osBuild", android.os.Build.DISPLAY);
         JSONUtils.safePutOpt(deviceData, "apiLevel", android.os.Build.VERSION.SDK_INT);
         JSONUtils.safePutOpt(deviceData, "jailbroken", checkIsRooted());
         JSONUtils.safePutOpt(deviceData, "locale", Locale.getDefault().toString());
