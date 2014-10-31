@@ -151,6 +151,15 @@ public class Bugsnag {
         });
     }
 
+    public static void setSendThreads(final boolean sendThread) {
+        runOnClient(new Runnable() {
+            @Override
+            public void run() {
+                client.setSendThreads(sendThread;
+            }
+        });
+    }
+
     public static void addToTab(final String tab, final String key, final Object value) {
         runOnClient(new Runnable() {
             @Override
