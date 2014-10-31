@@ -155,7 +155,7 @@ public class Bugsnag {
         runOnClient(new Runnable() {
             @Override
             public void run() {
-                client.setSendThreads(sendThread;
+                client.setSendThreads(sendThread);
             }
         });
     }
