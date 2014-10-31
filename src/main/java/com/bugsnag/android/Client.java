@@ -44,6 +44,9 @@ public class Client extends com.bugsnag.Client {
         setNotifierName(NOTIFIER_NAME);
         setNotifierVersion(NOTIFIER_VERSION);
 
+        // Enable thread-state collection by default
+        setSendThreads(true);
+
         // Send metrics data (DAU/MAU etc) if enabled
         if(enableMetrics) {
             //TODO:SM We should prevent this sending on rotate
