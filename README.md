@@ -227,6 +227,16 @@ Bugsnag.setAppVersion("1.0.0-alpha");
 > Note: Bugsnag uses [Semantic Versioning](http://semver.org/) for app version
 sorting and filtering on the Bugsnag dashboard.
 
+###setSendThreads
+
+Sets if we should collect and send thread state along with errors.
+
+Bt default `sendThreads` is set to `true`.
+
+```java
+Bugsnag.setSendThreads(false);
+```
+
 
 Instrumenting Custom Activities
 -------------------------------
