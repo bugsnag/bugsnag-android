@@ -1,184 +1,136 @@
 package com.bugsnag.android;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
-import android.os.SystemClock;
 
-import com.bugsnag.Error;
-import com.bugsnag.MetaData;
-import com.bugsnag.Metrics;
-import com.bugsnag.Notification;
-import com.bugsnag.http.NetworkException;
-import com.bugsnag.http.BadResponseException;
-import com.bugsnag.android.utils.Async;
+public class Client {
+    private Context appContext;
+    private Configuration config;
 
-public class Client extends com.bugsnag.Client {
-    private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
-    private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    private static final String NOTIFIER_VERSION = "2.2.3";
-
-    private Logger logger;
-    private Context applicationContext;
-    private String cachePath;
-
-    public Client(Context androidContext, String apiKey, boolean enableMetrics, boolean installHandler) {
-        super(apiKey, installHandler);
-
-        // Create a logger
-        logger = new Logger();
-        setLogger(logger);
-
-        // Get the application context, many things need this
-        applicationContext = androidContext.getApplicationContext();
-
-        this.diagnostics = new Diagnostics(config, applicationContext, this);
-
-        cachePath = prepareCachePath();
-
-        // Set notifier info
-        setNotifierName(NOTIFIER_NAME);
-        setNotifierVersion(NOTIFIER_VERSION);
-
-        // Enable thread-state collection by default
-        setSendThreads(true);
-
-        // Send metrics data (DAU/MAU etc) if enabled
-        if(enableMetrics) {
-            //TODO:SM We should prevent this sending on rotate
-            makeMetricsRequest();
-        }
-
-        // Flush any queued exceptions
-        flushErrors();
-
-        logger.info("Bugsnag is loaded and ready to handle exceptions");
+    public Client(Context androidContext, String apiKey) {
+        this(androidContext, apiKey, true, true);
     }
 
     public Client(Context androidContext, String apiKey, boolean enableMetrics) {
         this(androidContext, apiKey, enableMetrics, true);
     }
 
-    public void notify(Throwable e, String severity, MetaData overrides) {
-        try {
-            if(!config.shouldNotify()) return;
-            if(config.shouldIgnore(e.getClass().getName())) return;
-
-            // Create the error object to send
-            final Error error = createError(e, severity, overrides);
-
-            // Run beforeNotify callbacks
-            if(!beforeNotify(error)) return;
-
-            // Send the error
-            Async.safeAsync(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Notification notif = createNotification(error);
-                        notif.deliver();
-                    } catch (NetworkException ex) {
-                        // Write error to disk for later sending
-                        logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
-                        logger.info(ex.toString());
-                        writeErrorToDisk(error);
-                    }
-                }
-            });
-        } catch(Exception ex) {
-            logger.warn("Error notifying Bugsnag", ex);
+    public Client(Context androidContext, String apiKey, boolean enableMetrics, boolean installHandler) {
+        if(androidContext == null) {
+            throw new RuntimeException("You must provide a non-null android Context");
         }
+
+        if(apiKey == null) {
+            throw new RuntimeException("You must provide a Bugsnag API key");
+        }
+
+        // Build a configuration object
+        config = new Configuration(apiKey);
+
+        // Get the application context, many things need this
+        appContext = androidContext.getApplicationContext();
+
+        // Install a default exception handler with this client
+        if(installHandler) {
+            ExceptionHandler.install(this);
+        }
+
+        // TODO: Make metrics request
     }
 
-    private void flushErrors() {
-        if(cachePath == null) return;
+    public void setAppVersion(String appVersion) {
+        config.appVersion = appVersion;
+    }
 
-        Async.safeAsync(new Runnable() {
+    public void setAutoNotify(boolean autoNotify) {
+        config.autoNotify = autoNotify;
+    }
+
+    public void setContext(String context) {
+        config.context = context;
+    }
+
+    public void setEndpoint(String endpoint) {
+        config.endpoint = endpoint;
+    }
+
+    public void setFilters(String... filters) {
+        config.filters = filters;
+    }
+
+    public void setIgnoreClasses(String... ignoreClasses) {
+        config.ignoreClasses = ignoreClasses;
+    }
+
+    public void setNotifyReleaseStages(String... notifyReleaseStages) {
+        config.notifyReleaseStages = notifyReleaseStages;
+    }
+
+    public void setProjectPackages(String... projectPackages) {
+        config.projectPackages = projectPackages;
+    }
+
+    public void setReleaseStage(String releaseStage) {
+        config.releaseStage = releaseStage;
+    }
+
+    public void setSendThreads(boolean sendThreads) {
+        config.sendThreads = sendThreads;
+    }
+
+    public void setUser(String id, String email, String name) {
+        config.setUser(id, email, name);
+    }
+
+    public void addBeforeNotify(BeforeNotify beforeNotify) {
+        config.addBeforeNotify(beforeNotify);
+    }
+
+    public void notify(Throwable e) {
+        notify(e, null, null);
+    }
+
+    public void notify(Throwable e, Severity severity) {
+        notify(e, severity, null);
+    }
+
+    public void notify(Throwable e, MetaData metaData) {
+        notify(e, null, metaData);
+    }
+
+    public void notify(Throwable exception, Severity severity, MetaData metaData) {
+        final Error error = new Error(config, exception, severity, metaData);
+        if(error.shouldIgnore()) return;
+
+        // TODO: Run beforeNotify callbacks
+
+        Notification notification = new Notification(config);
+        notification.addError(error);
+        notification.deliver(new HttpClient.ResponseHandler () {
             @Override
-            public void run() {
-                // Look up all saved error files
-                File exceptionDir = new File(cachePath);
-                if(exceptionDir.exists() && exceptionDir.isDirectory()) {
-                    Notification notif = null;
+            public void onSuccess() {
+                Logger.info("Sent error(s) to Bugsnag");
+            }
 
-                    for(File errorFile : exceptionDir.listFiles()) {
-                        try {
-                            if(notif == null) notif = createNotification();
-                            notif.setError(errorFile);
-                            notif.deliver();
-
-                            logger.debug("Deleting sent error file " + errorFile.getName());
-                            errorFile.delete();
-                        } catch (NetworkException e) {
-                            logger.warn("Could not send error(s) to Bugsnag, will try again later", e);
-                        } catch (Exception e) {
-                            logger.warn("Problem sending unsent error from disk", e);
-                            errorFile.delete();
-                        }
-                    }
-                }
+            @Override
+            public void onFailure(Throwable e) {
+                Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+                // TODO: Actually save error
             }
         });
     }
 
-    public void setContext(Activity context) {
-        String contextString = ActivityStack.getContextName(context);
-        setContext(contextString);
-    }
-
-    public void setLogger(Logger logger) {
-        super.setLogger(logger);
-        Async.logger = logger;
-    }
-
-    private void makeMetricsRequest() {
-        Async.safeAsync(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Metrics metrics = createMetrics();
-                    metrics.deliver();
-                } catch (NetworkException ex) {
-                    logger.info("Could not send metrics to Bugsnag");
-                } catch (BadResponseException ex) {
-                    // The notification was delivered, but Bugsnag sent a non-200 response
-                    logger.warn(ex.getMessage());
-                }
-            }
-        });
-    }
-
-    private String prepareCachePath() {
-        String path = null;
-
-        try {
-            path = applicationContext.getCacheDir().getAbsolutePath() + UNSENT_ERROR_PATH;
-
-            File outFile = new File(path);
-            outFile.mkdirs();
-            if(!outFile.exists()) {
-                logger.warn("Could not prepare cache directory");
-                path = null;
-            }
-        } catch(Exception e) {
-            logger.warn("Could not prepare cache directory", e);
-            path = null;
+    public void autoNotify(Throwable e) {
+        if(config.autoNotify) {
+            notify(e, Severity.ERROR);
         }
-
-        return path;
     }
 
-    private void writeErrorToDisk(Error error) {
-        if(cachePath == null || error == null) return;
+    public void addToTab(String tab, String key, Object value) {
+        config.addToTab(tab, key, value);
+    }
 
-        try {
-            error.writeToFile(String.format("%s%d.json", cachePath, System.currentTimeMillis()));
-        } catch (IOException e) {
-            logger.warn("Unable to save bugsnag error", e);
-        }
+    public void clearTab(String tab) {
+        config.clearTab(tab);
     }
 }
