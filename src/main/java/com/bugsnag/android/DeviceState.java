@@ -28,36 +28,37 @@ class DeviceState implements JsonStream.Streamable {
 
     public void toStream(JsonStream writer) {
         writer.beginObject()
-            .name("freeMemory").value(freeMemory.get())
-            .name("orientation").value(orientation.get())
-            .name("batteryLevel").value(batteryLevel.get())
-            .name("freeDisk").value(freeDisk.get())
-            .name("charging").value(charging.get())
-            .name("locationStatus").value(locationStatus.get())
-            .name("networkAccess").value(networkAccess.get())
+            .name("freeMemory").value(getFreeMemory())
+            .name("orientation").value(getOrientation())
+            .name("batteryLevel").value(getBatteryLevel())
+            .name("freeDisk").value(getFreeDisk())
+            .name("charging").value(isCharging())
+            .name("locationStatus").value(getLocationStatus())
+            .name("networkAccess").value(getNetworkAccess())
         .endObject();
     }
 
     /**
      * This is the amount of memory remaining that the VM can allocate
      */
-    private SafeValue<Long> freeMemory = new SafeValue<Long>("DeviceState.freeMemory") {
-        @Override
-        public Long calc() {
+    private Long getFreeMemory() {
+        try {
             if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
                 return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
             } else {
                 return Runtime.getRuntime().freeMemory();
             }
+        } catch (Exception e) {
+            Logger.warn("Could not get freeMemory");
         }
-    };
+        return null;
+    }
 
     /**
      * Get the device orientation
      */
-    private SafeValue<String> orientation = new SafeValue<String>("DeviceState.orientation") {
-        @Override
-        public String calc() {
+    private String getOrientation() {
+        try {
             String orientation = null;
             switch(appContext.getResources().getConfiguration().orientation) {
                 case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
@@ -66,28 +67,32 @@ class DeviceState implements JsonStream.Streamable {
                     orientation = "portrait";
             }
             return orientation;
+        } catch (Exception e) {
+            Logger.warn("Could not get orientation");
         }
-    };
+        return null;
+    }
 
     /**
      * Get the battery charge level
      */
-    private SafeValue<Float> batteryLevel = new SafeValue<Float>("DeviceState.batteryLevel") {
-        @Override
-        public Float calc() {
+    private Float getBatteryLevel() {
+        try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
             return batteryStatus.getIntExtra("level", -1) / (float)batteryStatus.getIntExtra("scale", -1);
+        } catch (Exception e) {
+            Logger.warn("Could not get batteryLevel");
         }
-    };
+        return null;
+    }
 
     /**
      * Get the free disk space on the smallest disk
      */
-    private SafeValue<Long> freeDisk = new SafeValue<Long>("DeviceState.freeDisk") {
-        @Override
-        public Long calc() {
+    private Long getFreeDisk() {
+        try {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
             long externalBytesAvailable = (long)externalStat.getBlockSize() * (long)externalStat.getBlockCount();
 
@@ -95,29 +100,33 @@ class DeviceState implements JsonStream.Streamable {
             long internalBytesAvailable = (long)internalStat.getBlockSize() * (long)internalStat.getBlockCount();
 
             return Math.min(internalBytesAvailable, externalBytesAvailable);
+        } catch (Exception e) {
+            Logger.warn("Could not get freeDisk");
         }
-    };
+        return null;
+    }
 
     /**
      * Is the device currently charging/full batter?
      */
-    private SafeValue<Boolean> charging = new SafeValue<Boolean>("DeviceState.charging") {
-        @Override
-        public Boolean calc() {
+    private Boolean isCharging() {
+        try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
             int status = batteryStatus.getIntExtra("status", -1);
             return (status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL);
+        } catch (Exception e) {
+            Logger.warn("Could not get charging status");
         }
-    };
+        return null;
+    }
 
     /**
      * Get the current status of location services
      */
-    private SafeValue<String> locationStatus = new SafeValue<String>("DeviceState.locationStatus") {
-        @Override
-        public String calc() {
+    private String getLocationStatus() {
+        try {
             ContentResolver cr = appContext.getContentResolver();
             String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             if(providersAllowed != null && providersAllowed.length() > 0) {
@@ -125,15 +134,17 @@ class DeviceState implements JsonStream.Streamable {
             } else {
                 return "disallowed";
             }
+        } catch (Exception e) {
+            Logger.warn("Could not get locationStatus");
         }
-    };
+        return null;
+    }
 
     /**
      * Get the current status of network access
      */
-    private SafeValue<String> networkAccess = new SafeValue<String>("DeviceState.networkAccess") {
-        @Override
-        public String calc() {
+    private String getNetworkAccess() {
+        try {
             ConnectivityManager cm = (ConnectivityManager)appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             if(activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
@@ -149,6 +160,9 @@ class DeviceState implements JsonStream.Streamable {
             } else {
                 return "none";
             }
+        } catch (Exception e) {
+            Logger.warn("Could not get network access information, we recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
         }
-    };
+        return null;
+    }
 }

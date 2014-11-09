@@ -13,66 +13,81 @@ class AppData implements JsonStream.Streamable {
     private Context appContext;
     private String packageName;
 
+    private String appName;
+    private Integer versionCode;
+    private String versionName;
+    private String releaseStage;
+
     AppData(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
+        this.packageName = appContext.getPackageName();
 
-        packageName = appContext.getPackageName();
+        appName = getAppName();
+        versionCode = getVersionCode();
+        versionName = getVersionName();
+        releaseStage = getReleaseStage();
     }
 
     public void toStream(JsonStream writer) {
         writer.beginObject()
             .name("id").value(packageName)
-            .name("name").value(appName.get())
+            .name("name").value(appName)
             .name("packageName").value(packageName)
-            .name("versionName").value(versionName.get())
-            .name("versionCode").value(versionCode.get());
+            .name("versionName").value(versionName)
+            .name("versionCode").value(versionCode);
 
         if(config.appVersion != null) {
             writer.name("version").value(config.appVersion);
         } else {
-            writer.name("version").value(versionName.get());
+            writer.name("version").value(versionName);
         }
 
         if(config.releaseStage != null) {
             writer.name("releaseStage").value(config.releaseStage);
         } else {
-            writer.name("releaseStage").value(releaseStage.get());
+            writer.name("releaseStage").value(releaseStage);
         }
 
         writer.endObject();
     }
 
-    private CachedValue<String> appName = new CachedValue<String>("AppData.appName") {
-        @Override
-        public String calc() throws Exception {
+    private String getAppName() {
+        try {
             return appContext.getPackageManager().getApplicationInfo(packageName, 0).name;
+        } catch (Exception e) {
+            Logger.warn("Could not get appName");
         }
-    };
+        return null;
+    }
 
-    private CachedValue<String> versionName = new CachedValue<String>("AppData.versionName") {
-        @Override
-        public String calc() throws Exception {
-            return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
-        }
-    };
-
-    private CachedValue<Integer> versionCode = new CachedValue<Integer>("AppData.versionCode") {
-        @Override
-        public Integer calc() throws Exception {
+    private Integer getVersionCode() {
+        try {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionCode;
+        } catch (Exception e) {
+            Logger.warn("Could not get versionCode");
         }
-    };
+        return null;
+    }
 
-    private CachedValue<String> releaseStage = new CachedValue<String>("AppData.releaseStage") {
-        @Override
-        public String calc() throws Exception {
+    private String getVersionName() {
+        try {
+            return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
+        } catch (Exception e) {
+            Logger.warn("Could not get versionName");
+        }
+        return null;
+    }
+
+    private String getReleaseStage() {
+        try {
             int appFlags = appContext.getPackageManager().getApplicationInfo(packageName, 0).flags;
             if((appFlags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
                 return "development";
             }
-
-            return "production";
+        } catch (Exception e) {
+            Logger.warn("Could not get releaseStage");
         }
-    };
+        return "production";
+    }
 }

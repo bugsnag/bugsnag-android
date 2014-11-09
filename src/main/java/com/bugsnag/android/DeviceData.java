@@ -16,48 +16,62 @@ class DeviceData implements JsonStream.Streamable {
     private Context appContext;
     private String packageName;
 
+    private Float screenDensity;
+    private String screenResolution;
+    private Long totalMemory;
+    private Boolean rooted;
+    private String locale;
+
     DeviceData(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
+        this.packageName = appContext.getPackageName();
 
-        packageName = appContext.getPackageName();
+        screenDensity = getScreenDensity();
+        screenResolution = getScreenResolution();
+        totalMemory = getTotalMemory();
+        rooted = isRooted();
+        locale = getLocale();
     }
 
     public void toStream(JsonStream writer) {
         writer.beginObject()
             .name("manufacturer").value(android.os.Build.MANUFACTURER)
             .name("model").value(android.os.Build.MODEL)
-            .name("screenDensity").value(screenDensity.get())
-            .name("screenResolution").value(screenResolution.get())
-            .name("totalMemory").value(totalMemory.get())
+            .name("screenDensity").value(screenDensity)
+            .name("screenResolution").value(screenResolution)
+            .name("totalMemory").value(totalMemory)
             .name("osName").value("android")
             .name("osBuild").value(android.os.Build.DISPLAY)
             .name("apiLevel").value(android.os.Build.VERSION.SDK_INT)
-            .name("jailbroken").value(rooted.get())
-            .name("locale").value(locale.get())
+            .name("jailbroken").value(rooted)
+            .name("locale").value(locale)
             .name("osVersion").value(android.os.Build.VERSION.RELEASE)
             .name("id").value("TODO")
         .endObject();
     }
 
-    private CachedValue<Float> screenDensity = new CachedValue<Float>("DeviceData.screenDensity") {
-        @Override
-        public Float calc() {
+    private Float getScreenDensity() {
+        try {
             return appContext.getResources().getDisplayMetrics().density;
+        } catch (Exception e) {
+            Logger.warn("Could not get screenDensity");
         }
-    };
+        return null;
+    }
 
-    private CachedValue<String> screenResolution = new CachedValue<String>("DeviceData.screenResolution") {
-        @Override
-        public String calc() {
+    private String getScreenResolution() {
+        try {
             DisplayMetrics metrics = appContext.getResources().getDisplayMetrics();
             return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
+        } catch (Exception e) {
+            Logger.warn("Could not get screenResolution");
         }
-    };
+        return null;
+    }
 
-    private CachedValue<Long> totalMemory = new CachedValue<Long>("DeviceData.totalMemory") {
-        @Override
-        public Long calc() {
+    private Long getTotalMemory() {
+        try {
             Long totalMemory = null;
             if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
                 totalMemory = Runtime.getRuntime().maxMemory();
@@ -65,12 +79,14 @@ class DeviceData implements JsonStream.Streamable {
                 totalMemory = Runtime.getRuntime().totalMemory();
             }
             return totalMemory;
+        } catch (Exception e) {
+            Logger.warn("Could not get totalMemory");
         }
-    };
+        return null;
+    }
 
-    private CachedValue<Boolean> rooted = new CachedValue<Boolean>("DeviceData.rooted") {
-        @Override
-        public Boolean calc() {
+    private Boolean isRooted() {
+        try {
             boolean hasTestKeys = android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys");
             boolean hasSuperUserApk = false;
             try {
@@ -79,13 +95,13 @@ class DeviceData implements JsonStream.Streamable {
             } catch (Exception e) { }
 
             return hasTestKeys || hasSuperUserApk;
+        } catch (Exception e) {
+            Logger.warn("Could not check if rooted");
         }
-    };
+        return null;
+    }
 
-    private CachedValue<String> locale = new CachedValue<String>("DeviceData.locale") {
-        @Override
-        public String calc() {
-            return Locale.getDefault().toString();
-        }
-    };
+    private String getLocale() {
+        return Locale.getDefault().toString();
+    }
 }

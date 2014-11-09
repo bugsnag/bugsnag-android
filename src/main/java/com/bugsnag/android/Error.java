@@ -30,7 +30,7 @@ public class Error implements JsonStream.Streamable {
             .name("severity").value(severity);
 
         // Write exceptions
-        writer.beginArray();
+        writer.name("exceptions").beginArray();
         Throwable currentEx = exception;
         while(currentEx != null) {
             Stacktrace stacktrace = new Stacktrace(config, currentEx.getStackTrace());

@@ -27,8 +27,8 @@ class AppState implements JsonStream.Streamable {
             .name("inForeground").value("TODO: Requires activity instrumentation")
             .name("screenStack").value("TODO: Requires activity instrumentation")
             .name("activeScreen").value("TODO: Requires activity instrumentation")
-            .name("memoryUsage").value(memoryUsage.get())
-            .name("lowMemory").value(lowMemory.get())
+            .name("memoryUsage").value(getMemoryUsage())
+            .name("lowMemory").value(isLowMemory())
         .endObject();
     }
 
@@ -36,24 +36,28 @@ class AppState implements JsonStream.Streamable {
      * Get the actual memory used by the VM (which may not be the total used
      * by the app in the case of NDK usage).
      */
-    private SafeValue<Long> memoryUsage = new SafeValue<Long>("AppState.memoryUsage") {
-        @Override
-        public Long calc() {
+    private Long getMemoryUsage() {
+        try {
             return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        } catch (Exception e) {
+            Logger.warn("Could not get memoryUsage");
         }
-    };
+        return null;
+    }
 
     /**
      * Check if the device is currently running low on memory.
      */
-    private SafeValue<Boolean> lowMemory = new SafeValue<Boolean>("AppState.lowMemory") {
-        @Override
-        public Boolean calc() {
+    private Boolean isLowMemory() {
+        try {
             ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
             activityManager.getMemoryInfo(memInfo);
 
             return memInfo.lowMemory;
+        } catch (Exception e) {
+            Logger.warn("Could not check lowMemory status");
         }
-    };
+        return null;
+    }
 }
