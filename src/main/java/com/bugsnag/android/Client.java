@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Context;
 
@@ -104,18 +106,21 @@ public class Client {
 
         // TODO: Run beforeNotify callbacks
 
-        Notification notification = new Notification(config);
+        // Build the notification
+        final Notification notification = new Notification(config);
         notification.addError(error);
-        notification.deliver(new HttpClient.ResponseHandler () {
-            @Override
-            public void onSuccess() {
-                Logger.info("Sent error(s) to Bugsnag");
-            }
 
+        // Attempt to send the notification in the background
+        Async.run(new Runnable() {
             @Override
-            public void onFailure(Throwable e) {
-                Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
-                // TODO: Actually save error
+            public void run() {
+                try {
+                    notification.deliver();
+                    Logger.info("Sent error(s) to Bugsnag");
+                } catch (IOException e) {
+                    Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+                    // TODO: Save to disk
+                }
             }
         });
     }

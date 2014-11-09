@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-class User implements JsonStreamer.Streamable {
+class User implements JsonStream.Streamable {
     private String id;
     private String email;
     private String name;
@@ -11,8 +11,8 @@ class User implements JsonStreamer.Streamable {
         this.name = name;
     }
 
-    public void toStream(JsonStreamer writer) {
-        writer.beginObject()
+    public void toStream(JsonStream writer) {
+        writer.object()
             .name("id").value(id)
             .name("email").value(email)
             .name("name").value(name)

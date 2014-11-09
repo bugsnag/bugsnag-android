@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MetaData implements JsonStreamer.Streamable {
+public class MetaData implements JsonStream.Streamable {
     Map store = new HashMap();
 
     public void addToTab(String tabName, String key, Object value) {
@@ -34,7 +34,7 @@ public class MetaData implements JsonStreamer.Streamable {
         return this;
     }
 
-    public void toStream(JsonStreamer writer) {
+    public void toStream(JsonStream writer) {
         // TODO
     }
 

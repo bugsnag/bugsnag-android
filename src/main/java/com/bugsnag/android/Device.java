@@ -11,7 +11,7 @@ import android.util.DisplayMetrics;
  * not change over time. Device information in this class should be cached
  * for fast subsequent lookups.
  */
-class Device implements JsonStreamer.Streamable {
+class Device implements JsonStream.Streamable {
     private Configuration config;
     private Context appContext;
     private String packageName;
@@ -23,8 +23,8 @@ class Device implements JsonStreamer.Streamable {
         packageName = appContext.getPackageName();
     }
 
-    public void toStream(JsonStreamer writer) {
-        writer.beginObject()
+    public void toStream(JsonStream writer) {
+        writer.object()
             .name("manufacturer").value(android.os.Build.MANUFACTURER)
             .name("model").value(android.os.Build.MODEL)
             .name("screenDensity").value(screenDensity.get())

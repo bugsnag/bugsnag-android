@@ -15,7 +15,7 @@ import android.provider.Settings;
  * This class contains information about the curremt device which changes
  * over time.
  */
-class DeviceState implements JsonStreamer.Streamable {
+class DeviceState implements JsonStream.Streamable {
     private Configuration config;
     private Context appContext;
     private String packageName;
@@ -26,8 +26,8 @@ class DeviceState implements JsonStreamer.Streamable {
         this.packageName = appContext.getPackageName();
     }
 
-    public void toStream(JsonStreamer writer) {
-        writer.beginObject()
+    public void toStream(JsonStream writer) {
+        writer.object()
             .name("freeMemory").value(freeMemory.get())
             .name("orientation").value(orientation.get())
             .name("batteryLevel").value(batteryLevel.get())

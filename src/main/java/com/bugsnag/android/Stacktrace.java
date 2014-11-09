@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-class Stacktrace implements JsonStreamer.Streamable {
+class Stacktrace implements JsonStream.Streamable {
     Configuration config;
     StackTraceElement[] stacktrace;
 
@@ -9,12 +9,12 @@ class Stacktrace implements JsonStreamer.Streamable {
         this.stacktrace = stacktrace;
     }
 
-    public void toStream(JsonStreamer writer) {
-        writer.beginArray();
+    public void toStream(JsonStream writer) {
+        writer.array();
 
         for(StackTraceElement el : stacktrace) {
             try {
-                writer.beginObject()
+                writer.object()
                     .name("method").value(el.getClassName() + "." + el.getMethodName())
                     .name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName())
                     .name("lineNumber").value(el.getLineNumber());

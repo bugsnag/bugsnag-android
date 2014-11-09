@@ -9,7 +9,7 @@ import android.os.SystemClock;
  * This class contains information about the current app which changes
  * over time, including memory usage.
  */
-class AppState implements JsonStreamer.Streamable {
+class AppState implements JsonStream.Streamable {
     private Configuration config;
     private Context appContext;
     private static Long startTime;
@@ -20,8 +20,8 @@ class AppState implements JsonStreamer.Streamable {
         this.startTime = SystemClock.elapsedRealtime();
     }
 
-    public void toStream(JsonStreamer writer) {
-        writer.beginObject()
+    public void toStream(JsonStream writer) {
+        writer.object()
             .name("duration").value(SystemClock.elapsedRealtime() - startTime)
             .name("durationInForeground").value("TODO: Requires activity instrumentation")
             .name("inForeground").value("TODO: Requires activity instrumentation")

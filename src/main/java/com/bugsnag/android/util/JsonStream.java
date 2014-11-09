@@ -4,107 +4,120 @@ import java.io.Writer;
 
 import android.util.JsonWriter;
 
-class JsonStreamer extends JsonWriter {
+class JsonStream {
     static interface Streamable {
-        public void toStream(JsonStreamer writer);
+        public void toStream(JsonStream stream);
     }
 
-    public JsonStreamer(Writer w) {
-        super(w);
+    private JsonWriter writer;
+    private Writer out;
+
+    public JsonStream(Writer w) {
+        out = w;
+        writer = new JsonWriter(w);
+        writer.setIndent("  ");
     }
 
-    public JsonStreamer beginObject() {
+    public JsonStream object() {
         try {
-            super.beginObject();
+            writer.beginObject();
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer endObject() {
+    public JsonStream endObject() {
         try {
-            super.beginObject();
+            writer.endObject();
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer beginArray() {
+    public JsonStream array() {
         try {
-            super.beginArray();
+            writer.beginArray();
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer endArray() {
+    public JsonStream endArray() {
         try {
-            super.endArray();
+            writer.endArray();
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer name(String name) {
+    public JsonStream name(String name) {
         try {
-            super.name(name);
+            writer.name(name);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer value(double value) {
+    public JsonStream value(double value) {
         try {
-            super.value(value);
+            writer.value(value);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer value(long value) {
+    public JsonStream value(long value) {
         try {
-            super.value(value);
+            writer.value(value);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer value(Number value) {
+    public JsonStream value(Number value) {
         try {
-            super.value(value);
+            writer.value(value);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer value(boolean value) {
+    public JsonStream value(boolean value) {
         try {
-            super.value(value);
+            writer.value(value);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer value(String value) {
+    public JsonStream value(String value) {
         try {
-            super.value(value);
+            writer.value(value);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public JsonStreamer value(Streamable streamable) {
+    public JsonStream value(Streamable streamable) {
         streamable.toStream(this);
         return this;
+    }
+
+    public void close() {
+        try {
+            writer.close();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 }

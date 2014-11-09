@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-public class Error implements JsonStreamer.Streamable {
+public class Error implements JsonStream.Streamable {
     private static String PAYLOAD_VERSION = "2";
 
     private Configuration config;
@@ -49,17 +49,14 @@ public class Error implements JsonStreamer.Streamable {
         return !config.shouldNotify() || config.shouldIgnore(exception.getClass().getName());
     }
 
-    public void toStream(JsonStreamer writer) {
-        MetaData filteredMergedMetaData = config.metaData.merge(metaData).filter(config.filters);
-
-        writer.beginObject()
+    public void toStream(JsonStream writer) {
+        writer.object()
             .name("context").value(getContext())
             .name("exceptions").value(new ExceptionStack(config, exception))
-            .name("groupingHash").value(groupingHash)
-            .name("metaData").value(filteredMergedMetaData)
             .name("payloadVersion").value(PAYLOAD_VERSION)
             .name("severity").value(severity);
 
+        // TODO: metaData
         // TODO: user
         // TODO: diagnostics (app, appState, device, deviceState)
 

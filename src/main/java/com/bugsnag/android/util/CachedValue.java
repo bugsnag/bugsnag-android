@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-abstract public class CachedValue<V> {
+abstract class CachedValue<V> {
     private V value;
 
     public V get() {

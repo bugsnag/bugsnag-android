@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
-class ThreadState implements JsonStreamer.Streamable {
+class ThreadState implements JsonStream.Streamable {
     Configuration config;
 
     public ThreadState(Configuration config) {
         this.config = config;
     }
 
-    public void toStream(JsonStreamer writer) {
+    public void toStream(JsonStream writer) {
         long currentId = Thread.currentThread().getId();
         Map<Thread,StackTraceElement[]> liveThreads = Thread.getAllStackTraces();
 
@@ -22,7 +22,7 @@ class ThreadState implements JsonStreamer.Streamable {
             }
         });
 
-        writer.beginArray();
+        writer.array();
         for(int i = 0; i < keys.length; i++) {
             Thread thread = (Thread)keys[i];
 
@@ -31,7 +31,7 @@ class ThreadState implements JsonStreamer.Streamable {
             if (thread.getId() != currentId) {
                 StackTraceElement[] stacktrace = liveThreads.get(thread);
 
-                writer.beginObject()
+                writer.object()
                     .name("id").value(thread.getId())
                     .name("name").value(thread.getName())
                     .name("stacktrace").value(new Stacktrace(config, stacktrace))

@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-abstract public class SafeValue<V> {
+abstract class SafeValue<V> {
     public V get() {
         V value = null;
         try {

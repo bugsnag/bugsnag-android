@@ -2,7 +2,7 @@ package com.bugsnag.android;
 
 import android.util.Log;
 
-public class Logger {
+class Logger {
     protected static final String LOG_PREFIX = "Bugsnag";
 
     public static void debug(String message) {

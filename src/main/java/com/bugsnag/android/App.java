@@ -8,7 +8,7 @@ import android.content.pm.ApplicationInfo;;
  * not change over time. App information in this class should be cached
  * for fast subsequent lookups.
  */
-class App implements JsonStreamer.Streamable {
+class App implements JsonStream.Streamable {
     private Configuration config;
     private Context appContext;
     private String packageName;
@@ -20,8 +20,8 @@ class App implements JsonStreamer.Streamable {
         packageName = appContext.getPackageName();
     }
 
-    public void toStream(JsonStreamer writer) {
-        writer.beginObject()
+    public void toStream(JsonStream writer) {
+        writer.object()
             .name("id").value(packageName)
             .name("name").value(appName.get())
             .name("packageName").value(packageName)

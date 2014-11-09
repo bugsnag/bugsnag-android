@@ -1,9 +1,9 @@
 package com.bugsnag.android;
 
-public enum Severity implements JsonStreamer.Streamable {
+public enum Severity implements JsonStream.Streamable {
     ERROR, WARNING, INFO;
 
-    public void toStream(JsonStreamer writer) {
+    public void toStream(JsonStream writer) {
         switch(this) {
             case ERROR:
                 writer.value("error");
