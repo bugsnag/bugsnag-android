@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.util.List;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -23,10 +25,10 @@ class AppState implements JsonStream.Streamable {
     public void toStream(JsonStream writer) {
         writer.beginObject()
             .name("duration").value(SystemClock.elapsedRealtime() - startTime)
-            .name("durationInForeground").value("TODO: Requires activity instrumentation")
-            .name("inForeground").value("TODO: Requires activity instrumentation")
-            .name("screenStack").value("TODO: Requires activity instrumentation")
-            .name("activeScreen").value("TODO: Requires activity instrumentation")
+            .name("durationInForeground").value("TODO: Remove?")
+            .name("inForeground").value(isInForeground())
+            .name("screenStack").value("TODO: Replace with breadcrumbs?")
+            .name("activeScreen").value(getActiveScreen())
             .name("memoryUsage").value(getMemoryUsage())
             .name("lowMemory").value(isLowMemory())
         .endObject();
@@ -58,6 +60,35 @@ class AppState implements JsonStream.Streamable {
         } catch (Exception e) {
             Logger.warn("Could not check lowMemory status");
         }
+        return null;
+    }
+
+    private String getActiveScreen() {
+        try {
+            ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
+            ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
+            return runningTask.topActivity.getClassName();
+        } catch (Exception e) {
+            Logger.warn("Could not get active screen information, we recommend granting the 'android.permission.GET_TASKS' permission");
+        }
+        return null;
+    }
+
+    private Boolean isInForeground() {
+        try {
+            ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
+            if (tasks.isEmpty()) {
+                return false;
+            }
+
+            ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
+            return runningTask.topActivity.getPackageName().equalsIgnoreCase(appContext.getPackageName());
+        } catch (Exception e) {
+            Logger.warn("Could not check if app is in the foregrouns, we recommend granting the 'android.permission.GET_TASKS' permission");
+        }
+
         return null;
     }
 }
