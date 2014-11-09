@@ -49,7 +49,19 @@ public class Client {
             ExceptionHandler.install(this);
         }
 
-        // TODO: Make metrics request
+        // Make metrics request
+        new Metrics(config, diagnostics).print();
+        Async.run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new Metrics(config, diagnostics).deliver();
+                    Logger.info("Sent metrics to Bugsnag");
+                } catch (IOException e) {
+                    Logger.info("Could not send metrics to Bugsnag");
+                }
+            }
+        });
     }
 
     public void setAppVersion(String appVersion) {

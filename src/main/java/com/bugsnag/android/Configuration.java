@@ -7,10 +7,6 @@ import java.util.List;
 class Configuration {
     static final String DEFAULT_ENDPOINT = "http://notify.bugsnag.com";
 
-    static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    static final String NOTIFIER_VERSION = "3.0.0";
-    static final String NOTIFIER_URL = "https://bugsnag.com";
-
     String apiKey;
     String appVersion;
     boolean autoNotify = true;

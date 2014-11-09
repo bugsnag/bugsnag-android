@@ -25,11 +25,7 @@ class Notification implements HttpClient.Streamable {
         writer.name("apiKey").value(config.apiKey);
 
         // Write the notifier info
-        writer.name("notifier").beginObject()
-            .name("name").value(Configuration.NOTIFIER_NAME)
-            .name("version").value(Configuration.NOTIFIER_VERSION)
-            .name("url").value(Configuration.NOTIFIER_URL)
-        .endObject();
+        writer.name("notifier").value(Notifier.getInstance());
 
         // Start events array
         writer.name("events").beginArray();

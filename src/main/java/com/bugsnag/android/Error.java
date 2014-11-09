@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
 public class Error implements JsonStream.Streamable {
-    private static String PAYLOAD_VERSION = "2";
+    private static final String PAYLOAD_VERSION = "2";
 
     private Configuration config;
     private Diagnostics diagnostics;
