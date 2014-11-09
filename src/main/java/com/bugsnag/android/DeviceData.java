@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Locale;
 
 import android.content.Context;
+import android.content.ContentResolver;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 
@@ -21,6 +22,7 @@ class DeviceData implements JsonStream.Streamable {
     private Long totalMemory;
     private Boolean rooted;
     private String locale;
+    private String id;
 
     DeviceData(Context appContext) {
         this.appContext = appContext;
@@ -31,6 +33,7 @@ class DeviceData implements JsonStream.Streamable {
         totalMemory = getTotalMemory();
         rooted = isRooted();
         locale = getLocale();
+        id = getAndroidId();
     }
 
     public void toStream(JsonStream writer) {
@@ -46,7 +49,7 @@ class DeviceData implements JsonStream.Streamable {
             .name("jailbroken").value(rooted)
             .name("locale").value(locale)
             .name("osVersion").value(android.os.Build.VERSION.RELEASE)
-            .name("id").value(Settings.Secure.ANDROID_ID)
+            .name("id").value(id)
         .endObject();
     }
 
@@ -102,5 +105,15 @@ class DeviceData implements JsonStream.Streamable {
 
     private String getLocale() {
         return Locale.getDefault().toString();
+    }
+
+    private String getAndroidId() {
+        try {
+            ContentResolver cr = appContext.getContentResolver();
+            return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
+        } catch (Exception e) {
+            Logger.warn("Could not get androidId");
+        }
+        return null;
     }
 }
