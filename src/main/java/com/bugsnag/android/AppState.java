@@ -61,6 +61,10 @@ class AppState implements JsonStream.Streamable {
         return null;
     }
 
+    /**
+     * Get the name of the top-most activity. Requires the GET_TASKS permission,
+     * which defaults to true in Android 5.0+.
+     */
     private String getActiveScreen() {
         try {
             ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -73,6 +77,10 @@ class AppState implements JsonStream.Streamable {
         return null;
     }
 
+    /**
+     * Get the name of the top-most activity. Requires the GET_TASKS permission,
+     * which defaults to true in Android 5.0+.
+     */
     private Boolean isInForeground() {
         try {
             ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
