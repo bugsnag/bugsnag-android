@@ -7,7 +7,11 @@ class Async {
         new AsyncTask <Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voi) {
-                task.run();
+                try {
+                    task.run();
+                } catch (Exception e) {
+                    Logger.warn("Error running async task", e);
+                }
                 return null;
             }
         }.execute();
