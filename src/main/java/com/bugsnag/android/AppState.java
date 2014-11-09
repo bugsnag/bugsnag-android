@@ -25,9 +25,7 @@ class AppState implements JsonStream.Streamable {
     public void toStream(JsonStream writer) {
         writer.beginObject()
             .name("duration").value(SystemClock.elapsedRealtime() - startTime)
-            .name("durationInForeground").value("TODO: Remove?")
             .name("inForeground").value(isInForeground())
-            .name("screenStack").value("TODO: Replace with breadcrumbs?")
             .name("activeScreen").value(getActiveScreen())
             .name("memoryUsage").value(getMemoryUsage())
             .name("lowMemory").value(isLowMemory())
@@ -86,7 +84,7 @@ class AppState implements JsonStream.Streamable {
             ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
             return runningTask.topActivity.getPackageName().equalsIgnoreCase(appContext.getPackageName());
         } catch (Exception e) {
-            Logger.warn("Could not check if app is in the foregrouns, we recommend granting the 'android.permission.GET_TASKS' permission");
+            Logger.warn("Could not check if app is in the foreground, we recommend granting the 'android.permission.GET_TASKS' permission");
         }
 
         return null;
