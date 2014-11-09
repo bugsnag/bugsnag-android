@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Map;
+import java.util.List;
 
 import android.util.JsonWriter;
 
@@ -64,51 +66,6 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream value(double value) {
-        try {
-            writer.value(value);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
-
-    public JsonStream value(long value) {
-        try {
-            writer.value(value);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
-
-    public JsonStream value(Number value) {
-        try {
-            writer.value(value);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
-
-    public JsonStream value(boolean value) {
-        try {
-            writer.value(value);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
-
-    public JsonStream value(String value) {
-        try {
-            writer.value(value);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
-
     public JsonStream value(Streamable streamable) {
         streamable.toStream(this);
         return this;
@@ -122,6 +79,51 @@ class JsonStream {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return this;
+    }
+
+    public JsonStream value(Map<String, Object> map) {
+        object();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            name(entry.getKey());
+            value(entry.getValue());
+        }
+        endObject();
+
+        return this;
+    }
+
+    public JsonStream value(List list) {
+        array();
+        for(Object el : list) {
+            value(el);
+        }
+        endArray();
+
+        return this;
+    }
+
+    public JsonStream value(Object val) {
+        try {
+            if(val == null) {
+                writer.nullValue();
+            } else if(val instanceof String) {
+                writer.value((String)val);
+            } else if(val instanceof Number) {
+                writer.value((Number)val);
+            } else if(val instanceof Boolean) {
+                writer.value((Boolean)val);
+            } else if(val instanceof Map) {
+                value((Map)val);
+            } else if(val instanceof List) {
+                value((List)val);
+            } else {
+                writer.value("[object]");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return this;
     }
 

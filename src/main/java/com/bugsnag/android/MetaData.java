@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MetaData implements JsonStream.Streamable {
-    Map store = new HashMap();
+    Map<String, Object> store = new HashMap<String, Object>();
 
     public void addToTab(String tabName, String key, Object value) {
         Map tab = getTab(tabName);
@@ -35,7 +35,7 @@ public class MetaData implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        // TODO
+        writer.value(store);
     }
 
     private Map getTab(String tabName) {

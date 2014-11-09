@@ -69,7 +69,11 @@ public class Error implements JsonStream.Streamable {
             .name("device").value(diagnostics.getDeviceData())
             .name("deviceState").value(diagnostics.getDeviceState());
 
-        // TODO: metaData
+        // Write metaData
+        // TODO: Merge config.metaData with error.metaData
+        // TODO: Apply filters
+        writer.name("metaData").value(metaData);
+
         // TODO: user
 
         if(groupingHash != null) {
