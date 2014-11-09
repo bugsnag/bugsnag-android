@@ -9,6 +9,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 class HttpClient {
+    public static class NetworkException extends IOException {
+        public NetworkException(String url, Exception ex) {
+            super(String.format("Network error when posting to %s", url), ex);
+        }
+    }
+
     public interface Streamable {
         public void toStream(Writer out);
     }
@@ -38,7 +44,7 @@ class HttpClient {
                 throw new IOException(String.format("Got non-200 response code (%d) from %s", status, urlString));
             }
         } catch (IOException e) {
-            throw new IOException(String.format("Network error when posting to %s", urlString), e);
+            throw new NetworkException(urlString, e);
         } finally {
             if(conn != null) {
                 conn.disconnect();

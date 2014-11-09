@@ -33,8 +33,9 @@ class Notification implements HttpClient.Streamable {
         System.out.println();
     }
 
-    public void deliver() throws java.io.IOException {
+    public int deliver() throws java.io.IOException {
         HttpClient.post(config.getNotifyEndpoint(), this);
+        return errors.size() + errorFiles.size();
     }
 
     public void toStream(Writer out) {
@@ -61,7 +62,7 @@ class Notification implements HttpClient.Streamable {
 
         // Write any on-disk events
         for(File errorFile : errorFiles) {
-            // TODO: Write file to json stream
+            writer.value(errorFile);
         }
 
         // End events array

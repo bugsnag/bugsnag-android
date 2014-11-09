@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Writer;
 
 import android.util.JsonWriter;
@@ -15,13 +17,12 @@ class JsonStream {
     public JsonStream(Writer w) {
         out = w;
         writer = new JsonWriter(w);
-        writer.setIndent("  ");
     }
 
     public JsonStream object() {
         try {
             writer.beginObject();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -30,7 +31,7 @@ class JsonStream {
     public JsonStream endObject() {
         try {
             writer.endObject();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -39,7 +40,7 @@ class JsonStream {
     public JsonStream array() {
         try {
             writer.beginArray();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -48,7 +49,7 @@ class JsonStream {
     public JsonStream endArray() {
         try {
             writer.endArray();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -57,7 +58,7 @@ class JsonStream {
     public JsonStream name(String name) {
         try {
             writer.name(name);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -66,7 +67,7 @@ class JsonStream {
     public JsonStream value(double value) {
         try {
             writer.value(value);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -75,7 +76,7 @@ class JsonStream {
     public JsonStream value(long value) {
         try {
             writer.value(value);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -84,7 +85,7 @@ class JsonStream {
     public JsonStream value(Number value) {
         try {
             writer.value(value);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -93,7 +94,7 @@ class JsonStream {
     public JsonStream value(boolean value) {
         try {
             writer.value(value);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -102,7 +103,7 @@ class JsonStream {
     public JsonStream value(String value) {
         try {
             writer.value(value);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
@@ -113,11 +114,18 @@ class JsonStream {
         return this;
     }
 
-    public void close() {
+    public JsonStream value(File file) {
         try {
-            writer.close();
-        } catch (java.io.IOException e) {
+            writer.flush();
+            IOUtils.copy(file, out);
+            out.flush();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        return this;
+    }
+
+    public void close() {
+        IOUtils.close(writer);
     }
 }

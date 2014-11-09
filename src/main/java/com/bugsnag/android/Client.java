@@ -9,6 +9,7 @@ public class Client {
     private Context appContext;
     private Configuration config;
     private Diagnostics diagnostics;
+    private ErrorStore errorStore;
 
     public Client(Context androidContext, String apiKey) {
         this(androidContext, apiKey, true, true);
@@ -38,6 +39,10 @@ public class Client {
 
         // Set up diagnostics collection
         diagnostics = new Diagnostics(config, appContext);
+
+        // Set up the error store
+        errorStore = new ErrorStore(config, appContext);
+        errorStore.flush();
 
         // Install a default exception handler with this client
         if(installHandler) {
@@ -128,11 +133,13 @@ public class Client {
             @Override
             public void run() {
                 try {
-                    notification.deliver();
-                    Logger.info("Sent error(s) to Bugsnag");
+                    int errorCount = notification.deliver();
+                    Logger.info(String.format("Sent %d new error(s) to Bugsnag", errorCount));
                 } catch (IOException e) {
                     Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
-                    // TODO: Save to disk
+
+                    // Save error to disk for later sending
+                    errorStore.write(error);
                 }
             }
         });
