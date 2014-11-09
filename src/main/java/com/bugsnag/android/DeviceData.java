@@ -24,7 +24,7 @@ class DeviceData implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.object()
+        writer.beginObject()
             .name("manufacturer").value(android.os.Build.MANUFACTURER)
             .name("model").value(android.os.Build.MODEL)
             .name("screenDensity").value(screenDensity.get())

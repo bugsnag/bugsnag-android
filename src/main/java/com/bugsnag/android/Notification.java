@@ -19,20 +19,20 @@ class Notification implements HttpClient.Streamable {
 
     public void toStream(Writer out) {
         // Create a JSON stream and top-level object
-        JsonStream writer = new JsonStream(out).object();
+        JsonStream writer = new JsonStream(out).beginObject();
 
         // Write the API key
         writer.name("apiKey").value(config.apiKey);
 
         // Write the notifier info
-        writer.name("notifier").object()
+        writer.name("notifier").beginObject()
             .name("name").value(Configuration.NOTIFIER_NAME)
             .name("version").value(Configuration.NOTIFIER_VERSION)
             .name("url").value(Configuration.NOTIFIER_URL)
         .endObject();
 
         // Start events array
-        writer.name("events").array();
+        writer.name("events").beginArray();
 
         // Write any in-memory events
         for(Error error : errors) {

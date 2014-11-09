@@ -22,7 +22,7 @@ class ThreadState implements JsonStream.Streamable {
             }
         });
 
-        writer.array();
+        writer.beginArray();
         for(int i = 0; i < keys.length; i++) {
             Thread thread = (Thread)keys[i];
 
@@ -31,7 +31,7 @@ class ThreadState implements JsonStream.Streamable {
             if (thread.getId() != currentId) {
                 StackTraceElement[] stacktrace = liveThreads.get(thread);
 
-                writer.object()
+                writer.beginObject()
                     .name("id").value(thread.getId())
                     .name("name").value(thread.getName())
                     .name("stacktrace").value(new Stacktrace(config, stacktrace))

@@ -12,7 +12,7 @@ class User implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.object()
+        writer.beginObject()
             .name("id").value(id)
             .name("email").value(email)
             .name("name").value(name)

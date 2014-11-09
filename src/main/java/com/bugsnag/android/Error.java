@@ -24,17 +24,17 @@ public class Error implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.object()
+        writer.beginObject()
             .name("context").value(getContext())
             .name("payloadVersion").value(PAYLOAD_VERSION)
             .name("severity").value(severity);
 
         // Write exceptions
-        writer.array();
+        writer.beginArray();
         Throwable currentEx = exception;
         while(currentEx != null) {
             Stacktrace stacktrace = new Stacktrace(config, currentEx.getStackTrace());
-            writer.object()
+            writer.beginObject()
                 .name("errorClass").value(currentEx.getClass().getName())
                 .name("message").value(currentEx.getLocalizedMessage())
                 .name("stacktrace").value(stacktrace)

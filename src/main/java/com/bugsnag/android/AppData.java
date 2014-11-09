@@ -21,7 +21,7 @@ class AppData implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.object()
+        writer.beginObject()
             .name("id").value(packageName)
             .name("name").value(appName.get())
             .name("packageName").value(packageName)

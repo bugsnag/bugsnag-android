@@ -21,7 +21,7 @@ class JsonStream {
         writer = new JsonWriter(w);
     }
 
-    JsonStream object() {
+    JsonStream beginObject() {
         try {
             writer.beginObject();
         } catch (IOException e) {
@@ -39,7 +39,7 @@ class JsonStream {
         return this;
     }
 
-    JsonStream array() {
+    JsonStream beginArray() {
         try {
             writer.beginArray();
         } catch (IOException e) {
@@ -83,7 +83,7 @@ class JsonStream {
     }
 
     JsonStream value(Map<String, Object> map) {
-        object();
+        beginObject();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             name(entry.getKey());
             value(entry.getValue());
@@ -94,7 +94,7 @@ class JsonStream {
     }
 
     JsonStream value(List list) {
-        array();
+        beginArray();
         for(Object el : list) {
             value(el);
         }

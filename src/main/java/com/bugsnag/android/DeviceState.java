@@ -27,7 +27,7 @@ class DeviceState implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.object()
+        writer.beginObject()
             .name("freeMemory").value(freeMemory.get())
             .name("orientation").value(orientation.get())
             .name("batteryLevel").value(batteryLevel.get())

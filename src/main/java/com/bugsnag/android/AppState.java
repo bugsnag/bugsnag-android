@@ -21,7 +21,7 @@ class AppState implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.object()
+        writer.beginObject()
             .name("duration").value(SystemClock.elapsedRealtime() - startTime)
             .name("durationInForeground").value("TODO: Requires activity instrumentation")
             .name("inForeground").value("TODO: Requires activity instrumentation")
