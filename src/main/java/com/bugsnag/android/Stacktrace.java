@@ -19,7 +19,7 @@ class Stacktrace implements JsonStream.Streamable {
                     .name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName())
                     .name("lineNumber").value(el.getLineNumber());
 
-                if(config.classInProject(el.getClassName())) {
+                if(config.inProject(el.getClassName())) {
                     writer.name("inProject").value(true);
                 }
 

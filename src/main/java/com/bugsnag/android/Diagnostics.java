@@ -23,16 +23,16 @@ class Diagnostics {
 
     DeviceData getDeviceData() {
         if(deviceData == null) {
-            deviceData = new DeviceData(config, appContext);
+            deviceData = new DeviceData(appContext);
         }
         return deviceData;
     }
 
     AppState getAppState() {
-        return new AppState(config, appContext);
+        return new AppState(appContext);
     }
 
     DeviceState getDeviceState() {
-        return new DeviceState(config, appContext);
+        return new DeviceState(appContext);
     }
 }

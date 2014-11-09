@@ -12,12 +12,10 @@ import android.os.SystemClock;
  * over time, including memory usage.
  */
 class AppState implements JsonStream.Streamable {
-    private Configuration config;
     private Context appContext;
     private static Long startTime;
 
-    AppState(Configuration config, Context appContext) {
-        this.config = config;
+    AppState(Context appContext) {
         this.appContext = appContext;
         this.startTime = SystemClock.elapsedRealtime();
     }

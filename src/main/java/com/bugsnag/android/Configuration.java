@@ -77,7 +77,7 @@ class Configuration {
         this.beforeNotifyTasks.add(beforeNotify);
     }
 
-    boolean classInProject(String className) {
+    boolean inProject(String className) {
         if(projectPackages != null) {
             for(String packageName : projectPackages) {
                 if(packageName != null && className.startsWith(packageName)) {

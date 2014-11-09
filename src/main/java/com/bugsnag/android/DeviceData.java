@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Locale;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 
 /**
@@ -12,7 +13,6 @@ import android.util.DisplayMetrics;
  * for fast subsequent lookups.
  */
 class DeviceData implements JsonStream.Streamable {
-    private Configuration config;
     private Context appContext;
     private String packageName;
 
@@ -22,8 +22,7 @@ class DeviceData implements JsonStream.Streamable {
     private Boolean rooted;
     private String locale;
 
-    DeviceData(Configuration config, Context appContext) {
-        this.config = config;
+    DeviceData(Context appContext) {
         this.appContext = appContext;
         this.packageName = appContext.getPackageName();
 
@@ -47,7 +46,7 @@ class DeviceData implements JsonStream.Streamable {
             .name("jailbroken").value(rooted)
             .name("locale").value(locale)
             .name("osVersion").value(android.os.Build.VERSION.RELEASE)
-            .name("id").value("TODO")
+            .name("id").value(Settings.Secure.ANDROID_ID)
         .endObject();
     }
 

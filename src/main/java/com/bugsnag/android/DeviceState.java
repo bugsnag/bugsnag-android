@@ -16,12 +16,10 @@ import android.provider.Settings;
  * over time.
  */
 class DeviceState implements JsonStream.Streamable {
-    private Configuration config;
     private Context appContext;
     private String packageName;
 
-    DeviceState(Configuration config, Context appContext) {
-        this.config = config;
+    DeviceState(Context appContext) {
         this.appContext = appContext;
         this.packageName = appContext.getPackageName();
     }

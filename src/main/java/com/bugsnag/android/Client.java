@@ -34,13 +34,13 @@ public class Client {
         // Get the application context, many things need this
         appContext = androidContext.getApplicationContext();
 
-        // Set the default package name
+        // Set up in-project detection
         setProjectPackages(appContext.getPackageName());
 
         // Set up diagnostics collection
         diagnostics = new Diagnostics(config, appContext);
 
-        // Set up the error store
+        // Flush any on-disk errors
         errorStore = new ErrorStore(config, appContext);
         errorStore.flush();
 
@@ -50,7 +50,6 @@ public class Client {
         }
 
         // Make metrics request
-        new Metrics(config, diagnostics).print();
         Async.run(new Runnable() {
             @Override
             public void run() {
