@@ -11,12 +11,12 @@ import android.util.DisplayMetrics;
  * not change over time. Device information in this class should be cached
  * for fast subsequent lookups.
  */
-class Device implements JsonStream.Streamable {
+class DeviceData implements JsonStream.Streamable {
     private Configuration config;
     private Context appContext;
     private String packageName;
 
-    public Device(Configuration config, Context appContext) {
+    public DeviceData(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
 
@@ -40,14 +40,14 @@ class Device implements JsonStream.Streamable {
         .endObject();
     }
 
-    private CachedValue<Float> screenDensity = new CachedValue<Float>() {
+    private CachedValue<Float> screenDensity = new CachedValue<Float>("DeviceData.screenDensity") {
         @Override
         public Float calc() {
             return appContext.getResources().getDisplayMetrics().density;
         }
     };
 
-    private CachedValue<String> screenResolution = new CachedValue<String>() {
+    private CachedValue<String> screenResolution = new CachedValue<String>("DeviceData.screenResolution") {
         @Override
         public String calc() {
             DisplayMetrics metrics = appContext.getResources().getDisplayMetrics();
@@ -55,7 +55,7 @@ class Device implements JsonStream.Streamable {
         }
     };
 
-    private CachedValue<Long> totalMemory = new CachedValue<Long>() {
+    private CachedValue<Long> totalMemory = new CachedValue<Long>("DeviceData.totalMemory") {
         @Override
         public Long calc() {
             Long totalMemory = null;
@@ -68,7 +68,7 @@ class Device implements JsonStream.Streamable {
         }
     };
 
-    private CachedValue<Boolean> rooted = new CachedValue<Boolean>() {
+    private CachedValue<Boolean> rooted = new CachedValue<Boolean>("DeviceData.rooted") {
         @Override
         public Boolean calc() {
             boolean hasTestKeys = android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys");
@@ -82,7 +82,7 @@ class Device implements JsonStream.Streamable {
         }
     };
 
-    private CachedValue<String> locale = new CachedValue<String>() {
+    private CachedValue<String> locale = new CachedValue<String>("DeviceData.locale") {
         @Override
         public String calc() {
             return Locale.getDefault().toString();

@@ -4,14 +4,16 @@ public class Error implements JsonStream.Streamable {
     private static String PAYLOAD_VERSION = "2";
 
     private Configuration config;
+    private Diagnostics diagnostics;
     private Throwable exception;
-    private String groupingHash;
     private Severity severity;
-    private String context;
     private MetaData metaData;
+    private String groupingHash;
+    private String context;
 
-    Error(Configuration config, Throwable exception, Severity severity, MetaData metaData) {
+    Error(Configuration config, Diagnostics diagnostics, Throwable exception, Severity severity, MetaData metaData) {
         this.config = config;
+        this.diagnostics = diagnostics;
         this.exception = exception;
         this.severity = severity;
         this.metaData = metaData;
@@ -45,8 +47,12 @@ public class Error implements JsonStream.Streamable {
         metaData.clearTab(tabName);
     }
 
-    boolean shouldIgnore() {
-        return !config.shouldNotify() || config.shouldIgnore(exception.getClass().getName());
+    public String getExceptionName() {
+        return exception.getClass().getName();
+    }
+
+    public String getExceptionMessage() {
+        return exception.getLocalizedMessage();
     }
 
     public void toStream(JsonStream writer) {
@@ -56,9 +62,15 @@ public class Error implements JsonStream.Streamable {
             .name("payloadVersion").value(PAYLOAD_VERSION)
             .name("severity").value(severity);
 
+        // Write diagnostics
+        writer
+            .name("app").value(diagnostics.getAppData())
+            .name("appState").value(diagnostics.getAppState())
+            .name("device").value(diagnostics.getDeviceData())
+            .name("deviceState").value(diagnostics.getDeviceState());
+
         // TODO: metaData
         // TODO: user
-        // TODO: diagnostics (app, appState, device, deviceState)
 
         if(groupingHash != null) {
             writer.name("groupingHash").value(groupingHash);
@@ -69,6 +81,10 @@ public class Error implements JsonStream.Streamable {
         }
 
         writer.endObject();
+    }
+
+    boolean shouldIgnore() {
+        return !config.shouldNotify() || config.shouldIgnore(exception.getClass().getName());
     }
 
     private String getContext() {

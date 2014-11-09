@@ -8,6 +8,7 @@ import android.content.Context;
 public class Client {
     private Context appContext;
     private Configuration config;
+    private Diagnostics diagnostics;
 
     public Client(Context androidContext, String apiKey) {
         this(androidContext, apiKey, true, true);
@@ -31,6 +32,12 @@ public class Client {
 
         // Get the application context, many things need this
         appContext = androidContext.getApplicationContext();
+
+        // Set the default package name
+        setProjectPackages(appContext.getPackageName());
+
+        // Set up diagnostics collection
+        diagnostics = new Diagnostics(config, appContext);
 
         // Install a default exception handler with this client
         if(installHandler) {
@@ -101,10 +108,16 @@ public class Client {
     }
 
     public void notify(Throwable exception, Severity severity, MetaData metaData) {
-        final Error error = new Error(config, exception, severity, metaData);
+        final Error error = new Error(config, diagnostics, exception, severity, metaData);
+
+        // Don't notify if this error class should be ignored or release stage is blocked
         if(error.shouldIgnore()) return;
 
-        // TODO: Run beforeNotify callbacks
+        // Run beforeNotify tasks, don't notify if any return true
+        if(!config.runBeforeNotify(error)) {
+            Logger.info("Skipping notification - beforeNotify task returned false");
+            return;
+        }
 
         // Build the notification
         final Notification notification = new Notification(config);

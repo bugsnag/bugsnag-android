@@ -8,12 +8,12 @@ import android.content.pm.ApplicationInfo;;
  * not change over time. App information in this class should be cached
  * for fast subsequent lookups.
  */
-class App implements JsonStream.Streamable {
+class AppData implements JsonStream.Streamable {
     private Configuration config;
     private Context appContext;
     private String packageName;
 
-    public App(Configuration config, Context appContext) {
+    public AppData(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
 
@@ -43,28 +43,28 @@ class App implements JsonStream.Streamable {
         writer.endObject();
     }
 
-    private CachedValue<String> appName = new CachedValue<String>() {
+    private CachedValue<String> appName = new CachedValue<String>("AppData.appName") {
         @Override
         public String calc() throws Exception {
             return appContext.getPackageManager().getApplicationInfo(packageName, 0).name;
         }
     };
 
-    private CachedValue<String> versionName = new CachedValue<String>() {
+    private CachedValue<String> versionName = new CachedValue<String>("AppData.versionName") {
         @Override
         public String calc() throws Exception {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
         }
     };
 
-    private CachedValue<Integer> versionCode = new CachedValue<Integer>() {
+    private CachedValue<Integer> versionCode = new CachedValue<Integer>("AppData.versionCode") {
         @Override
         public Integer calc() throws Exception {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionCode;
         }
     };
 
-    private CachedValue<String> releaseStage = new CachedValue<String>() {
+    private CachedValue<String> releaseStage = new CachedValue<String>("AppData.releaseStage") {
         @Override
         public String calc() throws Exception {
             int appFlags = appContext.getPackageManager().getApplicationInfo(packageName, 0).flags;

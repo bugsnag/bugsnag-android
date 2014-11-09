@@ -1,15 +1,15 @@
 package com.bugsnag.android;
 
-abstract class CachedValue<V> {
+abstract class CachedValue<V> extends SafeValue<V> {
     private V value;
+
+    CachedValue(String name) {
+        super(name);
+    }
 
     public V get() {
         if (value == null) {
-            try {
-                value = calc();
-            } catch(Exception e) {
-                Logger.warn("Could not get value", e);
-            }
+            value = super.get();
         }
         return value;
     }

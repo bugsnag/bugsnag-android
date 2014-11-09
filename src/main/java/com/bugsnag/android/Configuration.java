@@ -24,7 +24,7 @@ class Configuration {
     boolean sendThreads = true;
 
     MetaData metaData;
-    List<BeforeNotify> beforeNotify = new LinkedList<BeforeNotify>();
+    List<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
 
     public Configuration(String apiKey) {
         this.apiKey = apiKey;
@@ -62,11 +62,26 @@ class Configuration {
         return classes.contains(className);
     }
 
+    public boolean runBeforeNotify(Error error) {
+        for (BeforeNotify beforeNotify : beforeNotifyTasks) {
+            try {
+                if (!beforeNotify.run(error)) {
+                    return false;
+                }
+            } catch (Throwable ex) {
+                Logger.warn("BeforeNotify threw an Exception", ex);
+            }
+        }
+
+        // By default, allow the error to be sent if there were no objections
+        return true;
+    }
+
     public void setUser(String id, String email, String name) {
         // TODO
     }
 
     public void addBeforeNotify(BeforeNotify beforeNotify) {
-        this.beforeNotify.add(beforeNotify);
+        this.beforeNotifyTasks.add(beforeNotify);
     }
 }

@@ -41,7 +41,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * This is the amount of memory remaining that the VM can allocate
      */
-    private SafeValue<Long> freeMemory = new SafeValue<Long>() {
+    private SafeValue<Long> freeMemory = new SafeValue<Long>("DeviceState.freeMemory") {
         @Override
         public Long calc() {
             if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
@@ -55,7 +55,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the device orientation
      */
-    private SafeValue<String> orientation = new SafeValue<String>() {
+    private SafeValue<String> orientation = new SafeValue<String>("DeviceState.orientation") {
         @Override
         public String calc() {
             String orientation = null;
@@ -72,7 +72,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the battery charge level
      */
-    private SafeValue<Float> batteryLevel = new SafeValue<Float>() {
+    private SafeValue<Float> batteryLevel = new SafeValue<Float>("DeviceState.batteryLevel") {
         @Override
         public Float calc() {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -85,7 +85,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the free disk space on the smallest disk
      */
-    private SafeValue<Long> freeDisk = new SafeValue<Long>() {
+    private SafeValue<Long> freeDisk = new SafeValue<Long>("DeviceState.freeDisk") {
         @Override
         public Long calc() {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
@@ -101,7 +101,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Is the device currently charging/full batter?
      */
-    private SafeValue<Boolean> charging = new SafeValue<Boolean>() {
+    private SafeValue<Boolean> charging = new SafeValue<Boolean>("DeviceState.charging") {
         @Override
         public Boolean calc() {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -115,7 +115,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the current status of location services
      */
-    private SafeValue<String> locationStatus = new SafeValue<String>() {
+    private SafeValue<String> locationStatus = new SafeValue<String>("DeviceState.locationStatus") {
         @Override
         public String calc() {
             ContentResolver cr = appContext.getContentResolver();
@@ -131,7 +131,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the current status of network access
      */
-    private SafeValue<String> networkAccess = new SafeValue<String>() {
+    private SafeValue<String> networkAccess = new SafeValue<String>("DeviceState.networkAccess") {
         @Override
         public String calc() {
             ConnectivityManager cm = (ConnectivityManager)appContext.getSystemService(Context.CONNECTIVITY_SERVICE);

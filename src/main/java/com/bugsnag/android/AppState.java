@@ -36,7 +36,7 @@ class AppState implements JsonStream.Streamable {
      * Get the actual memory used by the VM (which may not be the total used
      * by the app in the case of NDK usage).
      */
-    private SafeValue<Long> memoryUsage = new SafeValue<Long>() {
+    private SafeValue<Long> memoryUsage = new SafeValue<Long>("AppState.memoryUsage") {
         @Override
         public Long calc() {
             return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -46,7 +46,7 @@ class AppState implements JsonStream.Streamable {
     /**
      * Check if the device is currently running low on memory.
      */
-    private SafeValue<Boolean> lowMemory = new SafeValue<Boolean>() {
+    private SafeValue<Boolean> lowMemory = new SafeValue<Boolean>("AppState.lowMemory") {
         @Override
         public Boolean calc() {
             ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
