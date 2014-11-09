@@ -38,25 +38,25 @@ class ErrorStore {
             public void run() {
                 // Look up all saved error files
                 File exceptionDir = new File(path);
-                if(exceptionDir.exists() && exceptionDir.isDirectory()) {
-                    File[] errorFiles = exceptionDir.listFiles();
-                    if(errorFiles.length > 0) {
-                        Logger.info(String.format("Sending %d saved error(s) to Bugsnag", errorFiles.length));
+                if(!exceptionDir.exists() || !exceptionDir.isDirectory()) return;
 
-                        for(File errorFile : errorFiles) {
-                            try {
-                                Notification notif = new Notification(config);
-                                notif.addError(errorFile);
-                                notif.deliver();
+                File[] errorFiles = exceptionDir.listFiles();
+                if(errorFiles.length > 0) {
+                    Logger.info(String.format("Sending %d saved error(s) to Bugsnag", errorFiles.length));
 
-                                Logger.debug("Deleting sent error file " + errorFile.getName());
-                                errorFile.delete();
-                            } catch (HttpClient.NetworkException e) {
-                                Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
-                            } catch (Exception e) {
-                                Logger.warn("Problem sending unsent error from disk", e);
-                                errorFile.delete();
-                            }
+                    for(File errorFile : errorFiles) {
+                        try {
+                            Notification notif = new Notification(config);
+                            notif.addError(errorFile);
+                            notif.deliver();
+
+                            Logger.debug("Deleting sent error file " + errorFile.getName());
+                            errorFile.delete();
+                        } catch (HttpClient.NetworkException e) {
+                            Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
+                        } catch (Exception e) {
+                            Logger.warn("Problem sending unsent error from disk", e);
+                            errorFile.delete();
                         }
                     }
                 }
@@ -65,8 +65,9 @@ class ErrorStore {
     }
 
     void write(Error error) {
-        String filename = String.format("%s%d.json", path, System.currentTimeMillis());
+        if(path == null) return;
 
+        String filename = String.format("%s%d.json", path, System.currentTimeMillis());
         try {
             Writer out = new FileWriter(filename);
             new JsonStream(out).value(error).close();

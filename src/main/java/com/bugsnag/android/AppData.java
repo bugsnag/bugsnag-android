@@ -37,17 +37,19 @@ class AppData implements JsonStream.Streamable {
             .name("versionName").value(versionName)
             .name("versionCode").value(versionCode);
 
-        if(config.appVersion != null) {
-            writer.name("version").value(config.appVersion);
-        } else {
-            writer.name("version").value(versionName);
-        }
+            // Prefer user-configured appVersion
+            if(config.appVersion != null) {
+                writer.name("version").value(config.appVersion);
+            } else {
+                writer.name("version").value(versionName);
+            }
 
-        if(config.releaseStage != null) {
-            writer.name("releaseStage").value(config.releaseStage);
-        } else {
-            writer.name("releaseStage").value(releaseStage);
-        }
+            // Prefer user-configured releaseStage
+            if(config.releaseStage != null) {
+                writer.name("releaseStage").value(config.releaseStage);
+            } else {
+                writer.name("releaseStage").value(releaseStage);
+            }
 
         writer.endObject();
     }

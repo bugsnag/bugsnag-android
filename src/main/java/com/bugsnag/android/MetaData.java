@@ -6,6 +6,10 @@ import java.util.Map;
 public class MetaData implements JsonStream.Streamable {
     Map<String, Object> store = new HashMap<String, Object>();
 
+    public void toStream(JsonStream writer) {
+        writer.value(store);
+    }
+
     public void addToTab(String tabName, String key, Object value) {
         Map tab = getTab(tabName);
         if(value != null) {
@@ -19,25 +23,6 @@ public class MetaData implements JsonStream.Streamable {
         store.remove(tabName);
     }
 
-    public MetaData copy() {
-        // TODO
-        return new MetaData();
-    }
-
-    public MetaData merge(MetaData source) {
-        // TODO
-        return this;
-    }
-
-    public MetaData filter(String[] filters) {
-        // TODO
-        return this;
-    }
-
-    public void toStream(JsonStream writer) {
-        writer.value(store);
-    }
-
     private Map getTab(String tabName) {
         Object tab = store.get(tabName);
 
@@ -48,5 +33,4 @@ public class MetaData implements JsonStream.Streamable {
 
         return (Map)tab;
     }
-
 }

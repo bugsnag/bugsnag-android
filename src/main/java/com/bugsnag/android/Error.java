@@ -25,46 +25,31 @@ public class Error implements JsonStream.Streamable {
 
     public void toStream(JsonStream writer) {
         writer.beginObject()
-            .name("context").value(getContext())
+            // Write exceptions
             .name("payloadVersion").value(PAYLOAD_VERSION)
-            .name("severity").value(severity);
+            .name("exceptions").value(new ExceptionStack(config, exception))
+            .name("context").value(getContext())
+            .name("severity").value(severity)
 
-        // Write exceptions
-        writer.name("exceptions").beginArray();
-        Throwable currentEx = exception;
-        while(currentEx != null) {
-            Stacktrace stacktrace = new Stacktrace(config, currentEx.getStackTrace());
-            writer.beginObject()
-                .name("errorClass").value(currentEx.getClass().getName())
-                .name("message").value(currentEx.getLocalizedMessage())
-                .name("stacktrace").value(stacktrace)
-            .endObject();
-
-            currentEx = currentEx.getCause();
-        }
-        writer.endArray();
-
-        // Write diagnostics
-        writer
+            // Write diagnostics
             .name("app").value(diagnostics.getAppData())
             .name("appState").value(diagnostics.getAppState())
             .name("device").value(diagnostics.getDeviceData())
-            .name("deviceState").value(diagnostics.getDeviceState());
+            .name("deviceState").value(diagnostics.getDeviceState())
 
-        // Write metaData
-        // TODO: Merge config.metaData with error.metaData
-        // TODO: Apply filters
-        writer.name("metaData").value(metaData);
+            // Write metaData (TODO: Merge config.metaData + error.metaData, apply filters)
+            .name("metaData").value(metaData)
 
-        // TODO: user
+            // Write user information
+            .name("user").value("TODO");
 
-        if(groupingHash != null) {
-            writer.name("groupingHash").value(groupingHash);
-        }
+            if(groupingHash != null) {
+                writer.name("groupingHash").value(groupingHash);
+            }
 
-        if(config.sendThreads) {
-            writer.name("threads").value(new ThreadState(config));
-        }
+            if(config.sendThreads) {
+                writer.name("threads").value(new ThreadState(config));
+            }
 
         writer.endObject();
     }

@@ -77,10 +77,6 @@ class Configuration {
         return true;
     }
 
-    void setUser(String id, String email, String name) {
-        // TODO
-    }
-
     void addBeforeNotify(BeforeNotify beforeNotify) {
         this.beforeNotifyTasks.add(beforeNotify);
     }

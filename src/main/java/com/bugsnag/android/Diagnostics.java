@@ -12,16 +12,19 @@ class Diagnostics {
     Diagnostics(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
-
-        this.appData = new AppData(config, appContext);
-        this.deviceData = new DeviceData(config, appContext);
     }
 
     AppData getAppData() {
+        if(appData == null) {
+            appData = new AppData(config, appContext);
+        }
         return appData;
     }
 
     DeviceData getDeviceData() {
+        if(deviceData == null) {
+            deviceData = new DeviceData(config, appContext);
+        }
         return deviceData;
     }
 

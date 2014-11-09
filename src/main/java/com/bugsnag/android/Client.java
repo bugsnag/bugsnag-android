@@ -93,7 +93,7 @@ public class Client {
     }
 
     public void setUser(String id, String email, String name) {
-        config.setUser(id, email, name);
+        // TODO
     }
 
     public void addBeforeNotify(BeforeNotify beforeNotify) {

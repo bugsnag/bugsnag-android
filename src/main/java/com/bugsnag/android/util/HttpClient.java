@@ -33,9 +33,7 @@ class HttpClient {
                 out = conn.getOutputStream();
                 payload.toStream(new OutputStreamWriter(out));
             } finally {
-                if(out != null) {
-                    out.close();
-                }
+                IOUtils.close(out);
             }
 
             // End the request, get the response code
