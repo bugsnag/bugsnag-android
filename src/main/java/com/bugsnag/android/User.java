@@ -5,7 +5,7 @@ class User implements JsonStream.Streamable {
     private String email;
     private String name;
 
-    public User(String id, String email, String name) {
+    User(String id, String email, String name) {
         this.id = id;
         this.email = email;
         this.name = name;

@@ -4,7 +4,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
 
 class IOUtils {
@@ -19,10 +18,7 @@ class IOUtils {
     }
 
     static int copy(File file, Writer output) throws IOException {
-        return copy(new FileReader(file), output);
-    }
-
-    static int copy(Reader input, Writer output) throws IOException {
+        FileReader input = new FileReader(file);
         char[] buffer = new char[1024 * 4];
         int count = 0;
         int n = 0;

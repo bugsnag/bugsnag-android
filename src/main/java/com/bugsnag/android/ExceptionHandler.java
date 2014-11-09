@@ -6,7 +6,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     private UncaughtExceptionHandler originalHandler;
     private Client client;
 
-    public static void install(Client client) {
+    static void install(Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         if(currentHandler instanceof ExceptionHandler) {
             currentHandler = ((ExceptionHandler)currentHandler).originalHandler;
@@ -15,7 +15,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, client));
     }
 
-    public static void remove() {
+    static void remove() {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         if(currentHandler instanceof ExceptionHandler) {
             Thread.setDefaultUncaughtExceptionHandler(((ExceptionHandler)currentHandler).originalHandler);

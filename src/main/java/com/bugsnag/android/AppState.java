@@ -14,7 +14,7 @@ class AppState implements JsonStream.Streamable {
     private Context appContext;
     private static Long startTime;
 
-    public AppState(Configuration config, Context appContext) {
+    AppState(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
         this.startTime = SystemClock.elapsedRealtime();

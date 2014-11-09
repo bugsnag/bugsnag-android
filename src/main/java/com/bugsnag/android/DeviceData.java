@@ -16,7 +16,7 @@ class DeviceData implements JsonStream.Streamable {
     private Context appContext;
     private String packageName;
 
-    public DeviceData(Configuration config, Context appContext) {
+    DeviceData(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
 

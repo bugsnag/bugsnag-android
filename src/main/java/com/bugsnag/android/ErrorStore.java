@@ -12,7 +12,7 @@ class ErrorStore {
     private Configuration config;
     private String path;
 
-    public ErrorStore(Configuration config, Context appContext) {
+    ErrorStore(Configuration config, Context appContext) {
         this.config = config;
 
         try {
@@ -30,7 +30,7 @@ class ErrorStore {
         }
     }
 
-    public void flush() {
+    void flush() {
         if(path == null) return;
 
         Async.run(new Runnable() {
@@ -64,7 +64,7 @@ class ErrorStore {
         });
     }
 
-    public void write(Error error) {
+    void write(Error error) {
         String filename = String.format("%s%d.json", path, System.currentTimeMillis());
 
         try {

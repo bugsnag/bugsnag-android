@@ -9,17 +9,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 class HttpClient {
-    public static class NetworkException extends IOException {
+    static class NetworkException extends IOException {
         public NetworkException(String url, Exception ex) {
             super(String.format("Network error when posting to %s", url), ex);
         }
     }
 
-    public interface Streamable {
+    interface Streamable {
         public void toStream(Writer out);
     }
 
-    public static void post(String urlString, Streamable payload) throws IOException {
+    static void post(String urlString, Streamable payload) throws IOException {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(urlString);

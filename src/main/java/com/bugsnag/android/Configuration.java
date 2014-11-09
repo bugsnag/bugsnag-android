@@ -26,27 +26,27 @@ class Configuration {
     MetaData metaData;
     List<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
 
-    public Configuration(String apiKey) {
+    Configuration(String apiKey) {
         this.apiKey = apiKey;
     }
 
-    public String getNotifyEndpoint() {
+    String getNotifyEndpoint() {
         return endpoint;
     }
 
-    public String getMetricsEndpoint() {
+    String getMetricsEndpoint() {
         return String.format("%s/metrics", endpoint);
     }
 
-    public void addToTab(String tabName, String key, Object value) {
+    void addToTab(String tabName, String key, Object value) {
         metaData.addToTab(tabName, key, value);
     }
 
-    public void clearTab(String tabName){
+    void clearTab(String tabName){
         metaData.clearTab(tabName);
     }
 
-    public boolean shouldNotify() {
+    boolean shouldNotify() {
         if(this.notifyReleaseStages == null)
             return true;
 
@@ -54,7 +54,7 @@ class Configuration {
         return stages.contains(this.releaseStage);
     }
 
-    public boolean shouldIgnore(String className) {
+    boolean shouldIgnore(String className) {
         if(this.ignoreClasses == null)
             return false;
 
@@ -62,7 +62,7 @@ class Configuration {
         return classes.contains(className);
     }
 
-    public boolean runBeforeNotify(Error error) {
+    boolean runBeforeNotify(Error error) {
         for (BeforeNotify beforeNotify : beforeNotifyTasks) {
             try {
                 if (!beforeNotify.run(error)) {
@@ -77,11 +77,23 @@ class Configuration {
         return true;
     }
 
-    public void setUser(String id, String email, String name) {
+    void setUser(String id, String email, String name) {
         // TODO
     }
 
-    public void addBeforeNotify(BeforeNotify beforeNotify) {
+    void addBeforeNotify(BeforeNotify beforeNotify) {
         this.beforeNotifyTasks.add(beforeNotify);
+    }
+
+    boolean classInProject(String className) {
+        if(projectPackages != null) {
+            for(String packageName : projectPackages) {
+                if(packageName != null && className.startsWith(packageName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

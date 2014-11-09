@@ -7,7 +7,7 @@ abstract class SafeValue<V> {
         this.name = name;
     }
 
-    public V get() {
+    V get() {
         V value = null;
         try {
             value = calc();
@@ -17,5 +17,5 @@ abstract class SafeValue<V> {
         return value;
     }
 
-    public abstract V calc() throws Exception;
+    abstract V calc() throws Exception;
 }

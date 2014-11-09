@@ -4,7 +4,7 @@ class Stacktrace implements JsonStream.Streamable {
     Configuration config;
     StackTraceElement[] stacktrace;
 
-    public Stacktrace(Configuration config, StackTraceElement[] stacktrace) {
+    Stacktrace(Configuration config, StackTraceElement[] stacktrace) {
         this.config = config;
         this.stacktrace = stacktrace;
     }
@@ -19,14 +19,8 @@ class Stacktrace implements JsonStream.Streamable {
                     .name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName())
                     .name("lineNumber").value(el.getLineNumber());
 
-                // Check if line is inProject
-                if(config.projectPackages != null) {
-                    for(String packageName : config.projectPackages) {
-                        if(packageName != null && el.getClassName().startsWith(packageName)) {
-                            writer.name("inProject").value(true);
-                            break;
-                        }
-                    }
+                if(config.classInProject(el.getClassName())) {
+                    writer.name("inProject").value(true);
                 }
 
                 writer.endObject();

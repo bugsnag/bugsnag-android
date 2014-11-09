@@ -7,12 +7,12 @@ abstract class CachedValue<V> extends SafeValue<V> {
         super(name);
     }
 
-    public V get() {
+    V get() {
         if (value == null) {
             value = super.get();
         }
         return value;
     }
 
-    public abstract V calc() throws Exception;
+    abstract V calc() throws Exception;
 }

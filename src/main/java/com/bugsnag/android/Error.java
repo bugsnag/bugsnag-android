@@ -23,6 +23,52 @@ public class Error implements JsonStream.Streamable {
         }
     }
 
+    public void toStream(JsonStream writer) {
+        writer.object()
+            .name("context").value(getContext())
+            .name("payloadVersion").value(PAYLOAD_VERSION)
+            .name("severity").value(severity);
+
+        // Write exceptions
+        writer.array();
+        Throwable currentEx = exception;
+        while(currentEx != null) {
+            Stacktrace stacktrace = new Stacktrace(config, currentEx.getStackTrace());
+            writer.object()
+                .name("errorClass").value(currentEx.getClass().getName())
+                .name("message").value(currentEx.getLocalizedMessage())
+                .name("stacktrace").value(stacktrace)
+            .endObject();
+
+            currentEx = currentEx.getCause();
+        }
+        writer.endArray();
+
+        // Write diagnostics
+        writer
+            .name("app").value(diagnostics.getAppData())
+            .name("appState").value(diagnostics.getAppState())
+            .name("device").value(diagnostics.getDeviceData())
+            .name("deviceState").value(diagnostics.getDeviceState());
+
+        // Write metaData
+        // TODO: Merge config.metaData with error.metaData
+        // TODO: Apply filters
+        writer.name("metaData").value(metaData);
+
+        // TODO: user
+
+        if(groupingHash != null) {
+            writer.name("groupingHash").value(groupingHash);
+        }
+
+        if(config.sendThreads) {
+            writer.name("threads").value(new ThreadState(config));
+        }
+
+        writer.endObject();
+    }
+
     public void setContext(String context) {
         this.context = context;
     }
@@ -53,38 +99,6 @@ public class Error implements JsonStream.Streamable {
 
     public String getExceptionMessage() {
         return exception.getLocalizedMessage();
-    }
-
-    public void toStream(JsonStream writer) {
-        writer.object()
-            .name("context").value(getContext())
-            .name("exceptions").value(new ExceptionStack(config, exception))
-            .name("payloadVersion").value(PAYLOAD_VERSION)
-            .name("severity").value(severity);
-
-        // Write diagnostics
-        writer
-            .name("app").value(diagnostics.getAppData())
-            .name("appState").value(diagnostics.getAppState())
-            .name("device").value(diagnostics.getDeviceData())
-            .name("deviceState").value(diagnostics.getDeviceState());
-
-        // Write metaData
-        // TODO: Merge config.metaData with error.metaData
-        // TODO: Apply filters
-        writer.name("metaData").value(metaData);
-
-        // TODO: user
-
-        if(groupingHash != null) {
-            writer.name("groupingHash").value(groupingHash);
-        }
-
-        if(config.sendThreads) {
-            writer.name("threads").value(new ThreadState(config));
-        }
-
-        writer.endObject();
     }
 
     boolean shouldIgnore() {

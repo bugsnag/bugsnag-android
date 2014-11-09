@@ -7,7 +7,7 @@ import java.util.Map;
 class ThreadState implements JsonStream.Streamable {
     Configuration config;
 
-    public ThreadState(Configuration config) {
+    ThreadState(Configuration config) {
         this.config = config;
     }
 

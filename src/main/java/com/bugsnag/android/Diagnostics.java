@@ -9,7 +9,7 @@ class Diagnostics {
     private AppData appData;
     private DeviceData deviceData;
 
-    public Diagnostics(Configuration config, Context appContext) {
+    Diagnostics(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
 
@@ -17,19 +17,19 @@ class Diagnostics {
         this.deviceData = new DeviceData(config, appContext);
     }
 
-    public AppData getAppData() {
+    AppData getAppData() {
         return appData;
     }
 
-    public DeviceData getDeviceData() {
+    DeviceData getDeviceData() {
         return deviceData;
     }
 
-    public AppState getAppState() {
+    AppState getAppState() {
         return new AppState(config, appContext);
     }
 
-    public DeviceState getDeviceState() {
+    DeviceState getDeviceState() {
         return new DeviceState(config, appContext);
     }
 }

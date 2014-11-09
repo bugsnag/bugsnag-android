@@ -20,7 +20,7 @@ class DeviceState implements JsonStream.Streamable {
     private Context appContext;
     private String packageName;
 
-    public DeviceState(Configuration config, Context appContext) {
+    DeviceState(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
         this.packageName = appContext.getPackageName();

@@ -10,18 +10,18 @@ import android.util.JsonWriter;
 
 class JsonStream {
     static interface Streamable {
-        public void toStream(JsonStream stream);
+        void toStream(JsonStream stream);
     }
 
     private JsonWriter writer;
     private Writer out;
 
-    public JsonStream(Writer w) {
+    JsonStream(Writer w) {
         out = w;
         writer = new JsonWriter(w);
     }
 
-    public JsonStream object() {
+    JsonStream object() {
         try {
             writer.beginObject();
         } catch (IOException e) {
@@ -30,7 +30,7 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream endObject() {
+    JsonStream endObject() {
         try {
             writer.endObject();
         } catch (IOException e) {
@@ -39,7 +39,7 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream array() {
+    JsonStream array() {
         try {
             writer.beginArray();
         } catch (IOException e) {
@@ -48,7 +48,7 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream endArray() {
+    JsonStream endArray() {
         try {
             writer.endArray();
         } catch (IOException e) {
@@ -57,7 +57,7 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream name(String name) {
+    JsonStream name(String name) {
         try {
             writer.name(name);
         } catch (IOException e) {
@@ -66,12 +66,12 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream value(Streamable streamable) {
+    JsonStream value(Streamable streamable) {
         streamable.toStream(this);
         return this;
     }
 
-    public JsonStream value(File file) {
+    JsonStream value(File file) {
         try {
             writer.flush();
             IOUtils.copy(file, out);
@@ -82,7 +82,7 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream value(Map<String, Object> map) {
+    JsonStream value(Map<String, Object> map) {
         object();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             name(entry.getKey());
@@ -93,7 +93,7 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream value(List list) {
+    JsonStream value(List list) {
         array();
         for(Object el : list) {
             value(el);
@@ -103,7 +103,7 @@ class JsonStream {
         return this;
     }
 
-    public JsonStream value(Object val) {
+    JsonStream value(Object val) {
         try {
             if(val == null) {
                 writer.nullValue();
@@ -127,7 +127,7 @@ class JsonStream {
         return this;
     }
 
-    public void close() {
+    void close() {
         IOUtils.close(writer);
     }
 }

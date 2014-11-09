@@ -11,31 +11,10 @@ class Notification implements HttpClient.Streamable {
     private List<Error> errors;
     private List<File> errorFiles;
 
-    public Notification(Configuration config) {
+    Notification(Configuration config) {
         this.config = config;
         this.errors = new LinkedList<Error>();
         this.errorFiles = new LinkedList<File>();
-    }
-
-    public void addError(Error error) {
-        this.errors.add(error);
-    }
-
-    public void addError(File errorFile) {
-        this.errorFiles.add(errorFile);
-    }
-
-    public void print() {
-        // Write the notification to System.out
-        toStream(new OutputStreamWriter(System.out));
-
-        // Flush System.out
-        System.out.println();
-    }
-
-    public int deliver() throws java.io.IOException {
-        HttpClient.post(config.getNotifyEndpoint(), this);
-        return errors.size() + errorFiles.size();
     }
 
     public void toStream(Writer out) {
@@ -70,5 +49,26 @@ class Notification implements HttpClient.Streamable {
 
         // End the main JSON object
         writer.endObject().close();
+    }
+
+    void addError(Error error) {
+        this.errors.add(error);
+    }
+
+    void addError(File errorFile) {
+        this.errorFiles.add(errorFile);
+    }
+
+    void print() {
+        // Write the notification to System.out
+        toStream(new OutputStreamWriter(System.out));
+
+        // Flush System.out
+        System.out.println();
+    }
+
+    int deliver() throws java.io.IOException {
+        HttpClient.post(config.getNotifyEndpoint(), this);
+        return errors.size() + errorFiles.size();
     }
 }
