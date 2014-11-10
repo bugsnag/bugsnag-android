@@ -19,7 +19,7 @@ class Configuration {
     String releaseStage;
     boolean sendThreads = true;
 
-    MetaData metaData;
+    MetaData metaData = new MetaData();
     List<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
 
     Configuration(String apiKey) {

@@ -24,6 +24,8 @@ public class Error implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
+        MetaData filteredMetaData = config.metaData.mergeAndFilter(metaData, config.filters);
+
         writer.beginObject()
             // Write exceptions
             .name("payloadVersion").value(PAYLOAD_VERSION)
@@ -37,8 +39,8 @@ public class Error implements JsonStream.Streamable {
             .name("device").value(diagnostics.getDeviceData())
             .name("deviceState").value(diagnostics.getDeviceState())
 
-            // Write metaData (TODO: Merge config.metaData + error.metaData, apply filters)
-            .name("metaData").value(metaData)
+            // Write metaData
+            .name("metaData").value(filteredMetaData)
 
             // Write user information
             .name("user").value("TODO");
