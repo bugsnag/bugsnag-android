@@ -10,6 +10,7 @@
 
   <modules>
     <module>library</module>
+    <module>tests</module>
   </modules>
 
   <properties>
