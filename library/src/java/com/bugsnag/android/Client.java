@@ -113,21 +113,31 @@ public class Client {
         config.addBeforeNotify(beforeNotify);
     }
 
-    public void notify(Throwable e) {
-        notify(e, null, null);
+    public void notify(Throwable exception) {
+        Error error = new Error(config, exception);
+        notify(error);
     }
 
-    public void notify(Throwable e, Severity severity) {
-        notify(e, severity, null);
+    public void notify(Throwable exception, Severity severity) {
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        notify(error);
     }
 
-    public void notify(Throwable e, MetaData metaData) {
-        notify(e, null, metaData);
+    public void notify(Throwable exception, MetaData metaData) {
+        Error error = new Error(config, exception);
+        error.setMetaData(metaData);
+        notify(error);
     }
 
     public void notify(Throwable exception, Severity severity, MetaData metaData) {
-        final Error error = new Error(config, diagnostics, exception, severity, metaData);
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error);
+    }
 
+    public void notify(final Error error) {
         // Don't notify if this error class should be ignored or release stage is blocked
         if(error.shouldIgnore()) return;
 
@@ -136,6 +146,9 @@ public class Client {
             Logger.info("Skipping notification - beforeNotify task returned false");
             return;
         }
+
+        // Attach diagnostic info to the error
+        error.setDiagnostics(diagnostics);
 
         // Build the notification
         final Notification notification = new Notification(config);

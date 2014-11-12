@@ -6,44 +6,37 @@ public class Error implements JsonStream.Streamable {
     private Configuration config;
     private Diagnostics diagnostics;
     private Throwable exception;
-    private Severity severity;
-    private MetaData metaData;
+    private Severity severity = Severity.WARNING;
+    private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
 
-    Error(Configuration config, Diagnostics diagnostics, Throwable exception, Severity severity, MetaData metaData) {
+    Error(Configuration config, Throwable exception) {
         this.config = config;
-        this.diagnostics = diagnostics;
         this.exception = exception;
-        this.severity = severity;
-        this.metaData = metaData;
-
-        if(this.metaData == null) {
-            this.metaData = new MetaData();
-        }
     }
 
     public void toStream(JsonStream writer) {
         MetaData filteredMetaData = config.metaData.mergeAndFilter(metaData, config.filters);
+        User user = new User("TODO", "TODO", "TODO");
 
+        // Write error basics
         writer.beginObject()
-            // Write exceptions
             .name("payloadVersion").value(PAYLOAD_VERSION)
             .name("exceptions").value(new ExceptionStack(config, exception))
             .name("context").value(getContext())
             .name("severity").value(severity)
+            .name("metaData").value(filteredMetaData)
+            .name("user").value(user);
 
             // Write diagnostics
-            .name("app").value(diagnostics.getAppData())
-            .name("appState").value(diagnostics.getAppState())
-            .name("device").value(diagnostics.getDeviceData())
-            .name("deviceState").value(diagnostics.getDeviceState())
-
-            // Write metaData
-            .name("metaData").value(filteredMetaData)
-
-            // Write user information
-            .name("user").value("TODO");
+            if(diagnostics != null) {
+                writer
+                    .name("app").value(diagnostics.getAppData())
+                    .name("appState").value(diagnostics.getAppState())
+                    .name("device").value(diagnostics.getDeviceData())
+                    .name("deviceState").value(diagnostics.getDeviceState());
+            }
 
             if(groupingHash != null) {
                 writer.name("groupingHash").value(groupingHash);
@@ -58,6 +51,14 @@ public class Error implements JsonStream.Streamable {
 
     public void setContext(String context) {
         this.context = context;
+    }
+
+    public String getContext() {
+        if(context != null) {
+            return context;
+        } else {
+            return config.context;
+        }
     }
 
     public void setGroupingHash(String groupingHash) {
@@ -88,15 +89,11 @@ public class Error implements JsonStream.Streamable {
         return exception.getLocalizedMessage();
     }
 
-    boolean shouldIgnore() {
-        return !config.shouldNotify() || config.shouldIgnore(exception.getClass().getName());
+    void setDiagnostics(Diagnostics diagnostics) {
+        this.diagnostics = diagnostics;
     }
 
-    private String getContext() {
-        if(context != null) {
-            return context;
-        } else {
-            return config.context;
-        }
+    boolean shouldIgnore() {
+        return !config.shouldNotify() || config.shouldIgnore(exception.getClass().getName());
     }
 }
