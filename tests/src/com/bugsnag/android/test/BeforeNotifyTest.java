@@ -18,11 +18,6 @@ public class BeforeNotifyTest extends BugsnagTestCase {
         }
     };
 
-    @Override
-    protected void setUp() {
-
-    }
-
     public void testRunModifiesError() {
         BeforeNotify beforeNotify = new BeforeNotify() {
             @Override
