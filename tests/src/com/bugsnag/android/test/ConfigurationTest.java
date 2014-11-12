@@ -2,8 +2,9 @@ package com.bugsnag.android;
 
 import android.test.AndroidTestCase;
 
+import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.Client;
+import com.bugsnag.android.Error;
 
 public class ConfigurationTest extends AndroidTestCase {
     @Override
@@ -47,6 +48,25 @@ public class ConfigurationTest extends AndroidTestCase {
 
     public void testShouldIgnore() {
         Configuration config = new Configuration("api-key");
+
+        // Should not ignore by default
+        assertFalse(config.shouldIgnore("java.io.IOException"));
+
+        // Should ignore when added to ignoreClasses
+        config.ignoreClasses = new String[] {"java.io.IOException"};
+        assertTrue(config.shouldIgnore("java.io.IOException"));
+    }
+
+    public void testBeforeNotify() {
+        Configuration config = new Configuration("api-key");
+        BeforeNotify beforeNotify = new BeforeNotify() {
+            @Override
+            public boolean run(Error error) {
+                return false;
+            }
+        };
+
+
 
         // Should not ignore by default
         assertFalse(config.shouldIgnore("java.io.IOException"));
