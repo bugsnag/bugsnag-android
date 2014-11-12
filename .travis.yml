@@ -2,7 +2,14 @@ language: android
 
 android:
   components:
-    - sys-img-armeabi-v7a-android-19
+     - build-tools-21.1
+     - platform-tools
+     - tools
+     - extra
+     - sys-img-armeabi-v7a-android-19
+
+  licenses:
+     - 'android-sdk-license-.+'
 
 # Emulator Management: Create, Start, Wait & Unlock
 before_script:
@@ -11,4 +18,4 @@ before_script:
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
-script: mvn install -B -e -X
+script: mvn install -B -e
