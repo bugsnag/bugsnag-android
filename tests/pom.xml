@@ -6,12 +6,6 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- <parent>
-    <groupId>com.activeandroid</groupId>
-    <artifactId>activeandroid-parent</artifactId>
-    <version>3.1-SNAPSHOT</version>
-  </parent> -->
-
   <groupId>com.bugsnag</groupId>
   <artifactId>bugsnag-android-tests</artifactId>
   <version>3.0.0-SNAPSHOT</version>

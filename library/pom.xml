@@ -21,12 +21,6 @@
     </license>
   </licenses>
 
-  <parent>
-    <groupId>com.bugsnag</groupId>
-    <artifactId>bugsnag-android-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
-
   <scm>
     <connection>scm:git:git@github.com:bugsnag/bugsnag-android.git</connection>
     <developerConnection>scm:git:git@github.com:bugsnag/bugsnag-android.git</developerConnection>
