@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ class Configuration {
     boolean sendThreads = true;
 
     MetaData metaData = new MetaData();
-    List<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
+    Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
 
     Configuration(String apiKey) {
         this.apiKey = apiKey;
@@ -56,21 +57,6 @@ class Configuration {
 
         List<String> classes = Arrays.asList(this.ignoreClasses);
         return classes.contains(className);
-    }
-
-    boolean runBeforeNotify(Error error) {
-        for (BeforeNotify beforeNotify : beforeNotifyTasks) {
-            try {
-                if (!beforeNotify.run(error)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeNotify threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the error to be sent if there were no objections
-        return true;
     }
 
     void addBeforeNotify(BeforeNotify beforeNotify) {

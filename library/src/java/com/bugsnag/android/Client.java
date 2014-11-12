@@ -40,6 +40,8 @@ public class Client {
         // Set up diagnostics collection
         diagnostics = new Diagnostics(config, appContext);
 
+        // TODO: Set the default release stage in config
+
         // Flush any on-disk errors
         errorStore = new ErrorStore(config, appContext);
         errorStore.flush();
@@ -130,7 +132,7 @@ public class Client {
         if(error.shouldIgnore()) return;
 
         // Run beforeNotify tasks, don't notify if any return true
-        if(!config.runBeforeNotify(error)) {
+        if(!BeforeNotify.runAll(config.beforeNotifyTasks, error)) {
             Logger.info("Skipping notification - beforeNotify task returned false");
             return;
         }
