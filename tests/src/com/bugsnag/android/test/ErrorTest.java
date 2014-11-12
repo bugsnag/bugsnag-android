@@ -1,19 +1,11 @@
 package com.bugsnag.android;
 
-import android.test.AndroidTestCase;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
+import org.json.JSONObject;
 
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Error;
 
-public class ErrorTest extends AndroidTestCase {
-    @Override
-    protected void setUp() {
-
-    }
-
+public class ErrorTest extends BugsnagTestCase {
     public void testShouldIgnore() {
         Configuration config = new Configuration("api-key");
         config.ignoreClasses = new String[] {"java.io.IOException"};
@@ -39,5 +31,13 @@ public class ErrorTest extends AndroidTestCase {
 
         Error error = new Error(config, new RuntimeException("Example message"));
         assertEquals(error.getExceptionMessage(), "Example message");
+    }
+
+    public void testToStream() throws org.json.JSONException {
+        Configuration config = new Configuration("api-key");
+        Error error = new Error(config, new RuntimeException("Example message"));
+
+        JSONObject errorJson = streamableToJson(error);
+        assertEquals(errorJson.get("severity"), "warning");
     }
 }

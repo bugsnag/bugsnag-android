@@ -1,13 +1,9 @@
 package com.bugsnag.android;
 
-import android.test.AndroidTestCase;
-
-import java.util.ArrayList;
-
 import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.Error;
 
-public class BeforeNotifyTest extends AndroidTestCase {
+public class BeforeNotifyTest extends BugsnagTestCase {
     BeforeNotify beforeNotify = new BeforeNotify() {
         @Override
         public boolean run(Error error) {

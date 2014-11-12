@@ -1,17 +1,8 @@
 package com.bugsnag.android;
 
-import android.test.AndroidTestCase;
-
-import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.Error;
 
-public class ConfigurationTest extends AndroidTestCase {
-    @Override
-    protected void setUp() {
-
-    }
-
+public class ConfigurationTest extends BugsnagTestCase {
     public void testEndpoints() {
         Configuration config = new Configuration("api-key");
 

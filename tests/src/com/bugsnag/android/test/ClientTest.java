@@ -1,15 +1,8 @@
 package com.bugsnag.android;
 
-import android.test.AndroidTestCase;
-
 import com.bugsnag.android.Client;
 
-public class ClientTest extends AndroidTestCase {
-    @Override
-    protected void setUp() {
-
-    }
-
+public class ClientTest extends BugsnagTestCase {
     public void testConstructor() {
         // Should not allow creating a client with a null Context
         try {
