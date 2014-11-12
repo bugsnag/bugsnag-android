@@ -1,5 +1,9 @@
 language: android
 
+android:
+  components:
+    - sys-img-armeabi-v7a-android-19
+
 # Emulator Management: Create, Start, Wait & Unlock
 before_script:
   - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
