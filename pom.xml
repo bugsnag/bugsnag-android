@@ -1,119 +1,37 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.bugsnag</groupId>
-  <artifactId>bugsnag-android</artifactId>
+  <artifactId>bugsnag-android-parent</artifactId>
   <version>3.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
+  <name>Bugsnag Android - Parent</name>
 
-  <name>bugsnag-android</name>
-  <description>Official Bugsnag notifier for Android applications</description>
-  <url>https://bugsnag.com</url>
+  <modules>
+    <module>library</module>
+  </modules>
 
-  <licenses>
-    <license>
-      <name>MIT</name>
-      <url>http://opensource.org/licenses/MIT</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+  <properties>
+    <java.version>1.6</java.version>
+    <platform.sdk>16</platform.sdk>
+    <platform.version>4.1.1.4</platform.version>
+    <platform.support-version>r7</platform.support-version>
+  </properties>
 
-  <scm>
-    <url>https://github.com/bugsnag/bugsnag-android</url>
-    <connection>scm:git:git@github.com:bugsnag/bugsnag-android.git</connection>
-    <developerConnection>scm:git:git@github.com:bugsnag/bugsnag-android.git</developerConnection>
-  </scm>
-
-  <developers>
-    <developer>
-      <id>james</id>
-      <name>James Smith</name>
-      <email>james@bugsnag.com</email>
-    </developer>
-  </developers>
-
-  <!-- Dependencies -->
-  <dependencies>
-    <dependency>
-      <groupId>com.google.android</groupId>
-      <artifactId>android</artifactId>
-      <version>2.1.2</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20090211</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Optional dependencies for custom Bugsnag activities -->
-    <dependency>
-      <groupId>com.google.android</groupId>
-      <artifactId>support-v4</artifactId>
-      <version>r6</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.actionbarsherlock</groupId>
-      <artifactId>actionbarsherlock</artifactId>
-      <version>4.2.0</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-  <!-- Use apache pom as parent, so we can release to the remote repo -->
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>
-
-  <!-- Build settings and plugins -->
   <build>
-    <plugins>
-      <!-- Android Plugin-->
-      <plugin>
-        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-        <artifactId>android-maven-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <sdk>
-            <platform>19</platform>
-          </sdk>
-        </configuration>
-      </plugin>
-
-      <!-- Require Java 1.6+ -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
-        <configuration>
-          <compilerArgument>-Xlint</compilerArgument>
-          <compilerArgument>-g:lines,source</compilerArgument>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-
-      <!-- Proguard -->
-      <plugin>
-        <groupId>com.pyx4me</groupId>
-        <artifactId>proguard-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>proguard</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <proguardInclude>${basedir}/proguard.cfg</proguardInclude>
-        </configuration>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+          <artifactId>android-maven-plugin</artifactId>
+          <version>3.8.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
