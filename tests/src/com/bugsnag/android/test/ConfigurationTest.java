@@ -57,22 +57,18 @@ public class ConfigurationTest extends AndroidTestCase {
         assertTrue(config.shouldIgnore("java.io.IOException"));
     }
 
-    public void testBeforeNotify() {
+    public void testInProject() {
         Configuration config = new Configuration("api-key");
-        BeforeNotify beforeNotify = new BeforeNotify() {
-            @Override
-            public boolean run(Error error) {
-                return false;
-            }
-        };
 
+        // Shouldn't be inProject if projectPackages hasn't been set
+        assertFalse(config.inProject("com.bugsnag.android.Example"));
 
+        // Should be inProject if class in projectPackages
+        config.projectPackages = new String[] {"com.bugsnag.android"};
+        assertTrue(config.inProject("com.bugsnag.android.Example"));
 
-        // Should not ignore by default
-        assertFalse(config.shouldIgnore("java.io.IOException"));
-
-        // Should ignore when added to ignoreClasses
-        config.ignoreClasses = new String[] {"java.io.IOException"};
-        assertTrue(config.shouldIgnore("java.io.IOException"));
+        // Shouldn't be inProject if class not in projectPackages
+        config.projectPackages = new String[] {"com.bugsnag.android"};
+        assertFalse(config.inProject("java.io.IOException"));
     }
 }
