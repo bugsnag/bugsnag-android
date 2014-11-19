@@ -32,8 +32,7 @@
   </developers>
 
   <properties>
-    <platform.version> 2.1.2
-    </platform.version>
+    <platform.version>2.1.2</platform.version>
   </properties>
 
   <!-- Dependencies -->
@@ -49,13 +48,6 @@
       <groupId>com.bugsnag</groupId>
       <artifactId>bugsnag</artifactId>
       <version>[1.2.8,2)</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20090211</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Optional dependencies for custom Bugsnag activities -->
