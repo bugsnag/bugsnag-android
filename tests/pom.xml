@@ -53,7 +53,6 @@
           <sdk>
             <platform>${platform.sdk}</platform>
           </sdk>
-          <undeployBeforeDeploy>true</undeployBeforeDeploy>
           <test>
             <createReport>true</createReport>
           </test>
