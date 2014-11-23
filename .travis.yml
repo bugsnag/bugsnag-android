@@ -6,7 +6,7 @@ env:
 
 android:
   components:
-     - build-tools-21.1
+     - build-tools-21.1.0
 
 before_script:
   # Create and start emulator

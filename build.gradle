@@ -9,7 +9,7 @@ buildscript {
 apply plugin: 'android-library'
 
 android {
-    compileSdkVersion 'Google Inc.:Google APIs:21'
+    compileSdkVersion 21
     buildToolsVersion '21.1.0'
 
     buildTypes {
