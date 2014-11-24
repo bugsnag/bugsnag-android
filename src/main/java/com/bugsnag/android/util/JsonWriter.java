@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.util;
+package com.bugsnag.android;
 
 import java.io.Closeable;
 import java.io.IOException;

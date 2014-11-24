@@ -6,8 +6,6 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.List;
 
-import android.util.JsonWriter;
-
 class JsonStream {
     static interface Streamable {
         void toStream(JsonStream stream);

@@ -11,7 +11,8 @@ import java.net.URL;
 class HttpClient {
     static class NetworkException extends IOException {
         public NetworkException(String url, Exception ex) {
-            super(String.format("Network error when posting to %s", url), ex);
+            super(String.format("Network error when posting to %s", url));
+            initCause(ex);
         }
     }
 

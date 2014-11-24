@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.util;
+package com.bugsnag.android;
 
 /**
  * Lexical scoping elements within a JSON reader or writer.
