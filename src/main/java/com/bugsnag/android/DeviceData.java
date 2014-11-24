@@ -53,7 +53,7 @@ class DeviceData implements JsonStream.Streamable {
         .endObject();
     }
 
-    private Float getScreenDensity() {
+    public Float getScreenDensity() {
         try {
             return appContext.getResources().getDisplayMetrics().density;
         } catch (Exception e) {
@@ -62,7 +62,7 @@ class DeviceData implements JsonStream.Streamable {
         return null;
     }
 
-    private String getScreenResolution() {
+    public String getScreenResolution() {
         try {
             DisplayMetrics metrics = appContext.getResources().getDisplayMetrics();
             return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
@@ -72,7 +72,7 @@ class DeviceData implements JsonStream.Streamable {
         return null;
     }
 
-    private Long getTotalMemory() {
+    public Long getTotalMemory() {
         try {
             Long totalMemory = null;
             if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
@@ -87,7 +87,7 @@ class DeviceData implements JsonStream.Streamable {
         return null;
     }
 
-    private Boolean isRooted() {
+    public Boolean isRooted() {
         try {
             boolean hasTestKeys = android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys");
             boolean hasSuperUserApk = false;
@@ -103,11 +103,11 @@ class DeviceData implements JsonStream.Streamable {
         return null;
     }
 
-    private String getLocale() {
+    public String getLocale() {
         return Locale.getDefault().toString();
     }
 
-    private String getAndroidId() {
+    public String getAndroidId() {
         try {
             ContentResolver cr = appContext.getContentResolver();
             return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
