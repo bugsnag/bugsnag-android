@@ -1,0 +1,8 @@
+- Make sure getActiveScreen and isInForeground work, and check old/new android (GET_TASKS)
+- Make sure appVersion and releaseStage overriding work
+- Set default releaseStage in config using AppData (this is used for shouldNotify)
+- Finish/test MetaData merging and filtering
+- Implement/test "setUser"
+- Re-add "Bugsnag" static access class (Bugsnag.register, etc)
+- Add missing tests
+- Update README
