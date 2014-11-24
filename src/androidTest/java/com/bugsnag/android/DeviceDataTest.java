@@ -13,6 +13,10 @@ public class DeviceDataTest extends BugsnagTestCase {
         assertNotNull(deviceData.getTotalMemory());
         assertNotNull(deviceData.isRooted());
         assertNotNull(deviceData.getLocale());
-        assertNotNull(deviceData.getAndroidId());
+
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO) {
+            // Emulators returned null for android id before android 2.2
+            assertNotNull(deviceData.getAndroidId());
+        }
     }
 }
