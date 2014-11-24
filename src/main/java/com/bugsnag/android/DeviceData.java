@@ -15,18 +15,16 @@ import android.util.DisplayMetrics;
  */
 class DeviceData implements JsonStream.Streamable {
     private Context appContext;
-    private String packageName;
 
-    private Float screenDensity;
+    private float screenDensity;
     private String screenResolution;
-    private Long totalMemory;
-    private Boolean rooted;
+    private long totalMemory;
+    private boolean rooted;
     private String locale;
     private String id;
 
     DeviceData(Context appContext) {
         this.appContext = appContext;
-        this.packageName = appContext.getPackageName();
 
         screenDensity = getScreenDensity();
         screenResolution = getScreenResolution();
@@ -53,54 +51,32 @@ class DeviceData implements JsonStream.Streamable {
         .endObject();
     }
 
-    public Float getScreenDensity() {
-        try {
-            return appContext.getResources().getDisplayMetrics().density;
-        } catch (Exception e) {
-            Logger.warn("Could not get screenDensity");
-        }
-        return null;
+    public float getScreenDensity() {
+        return appContext.getResources().getDisplayMetrics().density;
     }
 
     public String getScreenResolution() {
-        try {
-            DisplayMetrics metrics = appContext.getResources().getDisplayMetrics();
-            return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
-        } catch (Exception e) {
-            Logger.warn("Could not get screenResolution");
-        }
-        return null;
+        DisplayMetrics metrics = appContext.getResources().getDisplayMetrics();
+        return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
     }
 
-    public Long getTotalMemory() {
-        try {
-            Long totalMemory = null;
-            if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
-                totalMemory = Runtime.getRuntime().maxMemory();
-            } else {
-                totalMemory = Runtime.getRuntime().totalMemory();
-            }
-            return totalMemory;
-        } catch (Exception e) {
-            Logger.warn("Could not get totalMemory");
+    public long getTotalMemory() {
+        if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
+            return Runtime.getRuntime().maxMemory();
+        } else {
+            return Runtime.getRuntime().totalMemory();
         }
-        return null;
     }
 
-    public Boolean isRooted() {
+    public boolean isRooted() {
+        boolean hasTestKeys = android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys");
+        boolean hasSuperUserApk = false;
         try {
-            boolean hasTestKeys = android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys");
-            boolean hasSuperUserApk = false;
-            try {
-                File file = new File("/system/app/Superuser.apk");
-                hasSuperUserApk = file.exists();
-            } catch (Exception e) { }
+            File file = new File("/system/app/Superuser.apk");
+            hasSuperUserApk = file.exists();
+        } catch (Exception e) { }
 
-            return hasTestKeys || hasSuperUserApk;
-        } catch (Exception e) {
-            Logger.warn("Could not check if rooted");
-        }
-        return null;
+        return hasTestKeys || hasSuperUserApk;
     }
 
     public String getLocale() {
@@ -108,12 +84,7 @@ class DeviceData implements JsonStream.Streamable {
     }
 
     public String getAndroidId() {
-        try {
-            ContentResolver cr = appContext.getContentResolver();
-            return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
-        } catch (Exception e) {
-            Logger.warn("Could not get androidId");
-        }
-        return null;
+        ContentResolver cr = appContext.getContentResolver();
+        return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
     }
 }

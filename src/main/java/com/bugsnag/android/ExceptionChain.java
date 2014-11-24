@@ -1,10 +1,10 @@
 package com.bugsnag.android;
 
-class ExceptionStack implements JsonStream.Streamable {
+class ExceptionChain implements JsonStream.Streamable {
     private Configuration config;
     private Throwable exception;
 
-    ExceptionStack(Configuration config, Throwable exception) {
+    ExceptionChain(Configuration config, Throwable exception) {
         this.config = config;
         this.exception = exception;
     }

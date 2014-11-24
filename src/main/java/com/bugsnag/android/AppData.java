@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;;
+import android.content.pm.PackageManager;
 
 /**
  * This class contains information about the current app which should
@@ -11,8 +12,8 @@ import android.content.pm.ApplicationInfo;;
 class AppData implements JsonStream.Streamable {
     private Configuration config;
     private Context appContext;
-    private String packageName;
 
+    private String packageName;
     private String appName;
     private Integer versionCode;
     private String versionName;
@@ -21,8 +22,8 @@ class AppData implements JsonStream.Streamable {
     AppData(Configuration config, Context appContext) {
         this.config = config;
         this.appContext = appContext;
-        this.packageName = appContext.getPackageName();
 
+        packageName = getPackageName();
         appName = getAppName();
         versionCode = getVersionCode();
         versionName = getVersionName();
@@ -54,40 +55,48 @@ class AppData implements JsonStream.Streamable {
         writer.endObject();
     }
 
-    private String getAppName() {
+    public String getPackageName() {
+        return appContext.getPackageName();
+    }
+
+    public String getAppName() {
         try {
-            return appContext.getPackageManager().getApplicationInfo(packageName, 0).name;
-        } catch (Exception e) {
-            Logger.warn("Could not get appName");
+            PackageManager packageManager = appContext.getPackageManager();
+            ApplicationInfo appInfo = packageManager.getApplicationInfo(packageName, 0);
+
+            return (String)packageManager.getApplicationLabel(appInfo);
+        } catch (PackageManager.NameNotFoundException e) {
+            Logger.warn("Could not get app name");
         }
+
         return null;
     }
 
-    private Integer getVersionCode() {
+    public Integer getVersionCode() {
         try {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionCode;
-        } catch (Exception e) {
+        } catch (PackageManager.NameNotFoundException e) {
             Logger.warn("Could not get versionCode");
         }
         return null;
     }
 
-    private String getVersionName() {
+    public String getVersionName() {
         try {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
-        } catch (Exception e) {
+        } catch (PackageManager.NameNotFoundException e) {
             Logger.warn("Could not get versionName");
         }
         return null;
     }
 
-    private String getReleaseStage() {
+    public String getReleaseStage() {
         try {
             int appFlags = appContext.getPackageManager().getApplicationInfo(packageName, 0).flags;
             if((appFlags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
                 return "development";
             }
-        } catch (Exception e) {
+        } catch (PackageManager.NameNotFoundException e) {
             Logger.warn("Could not get releaseStage");
         }
         return "production";

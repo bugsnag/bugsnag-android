@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import java.io.StringWriter;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,6 +29,18 @@ public class BugsnagTestCase extends AndroidTestCase {
 
         try {
             return new JSONObject(streamableToString(streamable));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
+
+    protected JSONArray streamableToJsonArray(JsonStream.Streamable streamable) {
+        JSONArray json = null;
+
+        try {
+            return new JSONArray(streamableToString(streamable));
         } catch (JSONException e) {
             e.printStackTrace();
         }

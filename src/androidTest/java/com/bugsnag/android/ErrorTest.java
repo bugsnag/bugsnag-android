@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.bugsnag.android.Configuration;
@@ -23,21 +24,22 @@ public class ErrorTest extends BugsnagTestCase {
         Configuration config = new Configuration("api-key");
 
         Error error = new Error(config, new RuntimeException("Test"));
-        assertEquals(error.getExceptionName(), "java.lang.RuntimeException");
+        assertEquals("java.lang.RuntimeException", error.getExceptionName());
     }
 
     public void testGetExceptionMessage() {
         Configuration config = new Configuration("api-key");
 
         Error error = new Error(config, new RuntimeException("Example message"));
-        assertEquals(error.getExceptionMessage(), "Example message");
+        assertEquals("Example message", error.getExceptionMessage());
     }
 
-    public void testToStream() throws org.json.JSONException {
+    public void testToStream() throws JSONException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
 
         JSONObject errorJson = streamableToJson(error);
-        assertEquals(errorJson.get("severity"), "warning");
+        assertEquals("warning", errorJson.get("severity"));
+        // TODO: Test all other fields are correct
     }
 }

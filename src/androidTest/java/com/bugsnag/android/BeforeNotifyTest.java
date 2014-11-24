@@ -31,7 +31,7 @@ public class BeforeNotifyTest extends BugsnagTestCase {
         Error error = new Error(config, new RuntimeException("Test"));
         beforeNotify.run(error);
 
-        assertEquals(error.getContext(), "new-context");
+        assertEquals("new-context", error.getContext());
     }
 
     public void testRunAll() {

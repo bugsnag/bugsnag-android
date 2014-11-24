@@ -23,7 +23,7 @@ public class Error implements JsonStream.Streamable {
         // Write error basics
         writer.beginObject()
             .name("payloadVersion").value(PAYLOAD_VERSION)
-            .name("exceptions").value(new ExceptionStack(config, exception))
+            .name("exceptions").value(new ExceptionChain(config, exception))
             .name("context").value(getContext())
             .name("severity").value(severity)
             .name("metaData").value(filteredMetaData)

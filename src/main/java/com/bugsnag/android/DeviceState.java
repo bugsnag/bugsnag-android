@@ -17,11 +17,9 @@ import android.provider.Settings;
  */
 class DeviceState implements JsonStream.Streamable {
     private Context appContext;
-    private String packageName;
 
     DeviceState(Context appContext) {
         this.appContext = appContext;
-        this.packageName = appContext.getPackageName();
     }
 
     public void toStream(JsonStream writer) {
@@ -39,36 +37,26 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * This is the amount of memory remaining that the VM can allocate
      */
-    public Long getFreeMemory() {
-        try {
-            if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
-                return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
-            } else {
-                return Runtime.getRuntime().freeMemory();
-            }
-        } catch (Exception e) {
-            Logger.warn("Could not get freeMemory");
+    public long getFreeMemory() {
+        if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
+            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
+        } else {
+            return Runtime.getRuntime().freeMemory();
         }
-        return null;
     }
 
     /**
      * Get the device orientation
      */
     public String getOrientation() {
-        try {
-            String orientation = null;
-            switch(appContext.getResources().getConfiguration().orientation) {
-                case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
-                    orientation = "landscape";
-                case android.content.res.Configuration.ORIENTATION_PORTRAIT:
-                    orientation = "portrait";
-            }
-            return orientation;
-        } catch (Exception e) {
-            Logger.warn("Could not get orientation");
+        String orientation = null;
+        switch(appContext.getResources().getConfiguration().orientation) {
+            case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
+                orientation = "landscape";
+            case android.content.res.Configuration.ORIENTATION_PORTRAIT:
+                orientation = "portrait";
         }
-        return null;
+        return orientation;
     }
 
     /**

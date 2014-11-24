@@ -7,13 +7,13 @@ public class ConfigurationTest extends BugsnagTestCase {
         Configuration config = new Configuration("api-key");
 
         // Default endpoints
-        assertEquals(config.getNotifyEndpoint(), "http://notify.bugsnag.com");
-        assertEquals(config.getMetricsEndpoint(), "http://notify.bugsnag.com/metrics");
+        assertEquals("http://notify.bugsnag.com", config.getNotifyEndpoint());
+        assertEquals("http://notify.bugsnag.com/metrics", config.getMetricsEndpoint());
 
         // Setting an endpoint
         config.endpoint = "http://localhost:8000";
-        assertEquals(config.getNotifyEndpoint(), "http://localhost:8000");
-        assertEquals(config.getMetricsEndpoint(), "http://localhost:8000/metrics");
+        assertEquals("http://localhost:8000", config.getNotifyEndpoint());
+        assertEquals("http://localhost:8000/metrics", config.getMetricsEndpoint());
     }
 
     public void testShouldNotify() {
