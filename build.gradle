@@ -10,7 +10,7 @@ apply plugin: 'android-library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.0'
+    buildToolsVersion '21.0.2'
 
     buildTypes {
         release {
