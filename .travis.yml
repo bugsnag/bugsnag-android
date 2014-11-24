@@ -1,8 +1,10 @@
 language: android
 
 env:
+  global:
+    - TERM=dumb
   matrix:
-    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
+    - ANDROID_SDKS=android-19 ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
 
 before_script:
   # Create and start emulator
