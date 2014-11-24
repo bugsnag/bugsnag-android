@@ -2,19 +2,37 @@ buildscript {
     repositories {
         mavenCentral()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.14.4'
+        classpath 'com.android.tools.build:gradle:0.14.+'
     }
 }
+
+// Tasks to build and test the android library
 apply plugin: 'android-library'
-
 android {
-    compileSdkVersion 19
-    buildToolsVersion '21.0.2'
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
-    buildTypes {
-        release {
-            proguardFile 'proguard.txt'
-        }
+    defaultConfig {
+        minSdkVersion 4
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+    }
+
+    // TODO:JS Fix lint errors and remove this
+    lintOptions {
+        abortOnError false
     }
 }
+
+// Build a .jar file
+android.libraryVariants.all { variant ->
+    def name = variant.buildType.name
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    task.dependsOn variant.javaCompile
+    task.from variant.javaCompile.destinationDir
+    artifacts.add('archives', task);
+}
+
+// Tasks to release the library to maven central
+apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
