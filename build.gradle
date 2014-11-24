@@ -29,11 +29,6 @@ android {
     lintOptions {
         disable 'DefaultLocale'
     }
-
-    // TODO:JS Fix lint errors and remove this
-    // lintOptions {
-    //     abortOnError false
-    // }
 }
 
 // Tasks to release the library to maven central
