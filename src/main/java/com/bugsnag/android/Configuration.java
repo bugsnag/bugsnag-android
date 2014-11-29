@@ -30,7 +30,7 @@ class Configuration {
         return endpoint;
     }
 
-    String getMetricsEndpoint() {
+    String getAnalyticsEndpoint() {
         return String.format("%s/metrics", endpoint);
     }
 

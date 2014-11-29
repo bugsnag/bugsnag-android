@@ -183,7 +183,7 @@ public class Client {
             @Override
             public void run() {
                 try {
-                    new Metrics(config, diagnostics).deliver();
+                    new Analytics(config, diagnostics).deliver();
                     Logger.info("Sent analytics data to Bugsnag");
                 } catch (IOException e) {
                     Logger.info("Could not send analytics data to Bugsnag");

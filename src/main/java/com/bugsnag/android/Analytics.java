@@ -3,11 +3,11 @@ package com.bugsnag.android;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 
-class Metrics implements HttpClient.Streamable {
+class Analytics implements HttpClient.Streamable {
     private Configuration config;
     private Diagnostics diagnostics;
 
-    Metrics(Configuration config, Diagnostics diagnostics) {
+    Analytics(Configuration config, Diagnostics diagnostics) {
         this.config = config;
         this.diagnostics = diagnostics;
     }
@@ -26,6 +26,8 @@ class Metrics implements HttpClient.Streamable {
             writer.name("app").value(diagnostics.getAppData());
             writer.name("device").value(diagnostics.getDeviceData());
 
+            // TODO: Write user info
+
         // End the main JSON object
         writer.endObject().close();
     }
@@ -39,6 +41,6 @@ class Metrics implements HttpClient.Streamable {
     }
 
     void deliver() throws java.io.IOException {
-        HttpClient.post(config.getMetricsEndpoint(), this);
+        HttpClient.post(config.getAnalyticsEndpoint(), this);
     }
 }
