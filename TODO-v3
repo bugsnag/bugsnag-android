@@ -1,24 +1,27 @@
+Blockers
 - Finish/test MetaData merging and filtering
-- Check strict mode
 - Add missing tests
-- Re-add jar building (for maven and adding to libs/)
 - Update README
+
+Nice-to-have
+- Re-enable proguard on .jar
+- Add strict mode checks to tests
 
 
 Build/test/release instructions
 -------------------------------
 
-Build a new .jar file:
+Run tests on device or emulator
 
-    TODO
+    gradle :connectedCheck
 
-Build a new .aar file:
+Build a new jar/aar files:
 
-    gradle build
+    gradle :build
 
 Build and release a new version to maven central:
 
-    gradle uploadArchives
+    gradle :uploadArchives
 
 Build and install the example app:
 
