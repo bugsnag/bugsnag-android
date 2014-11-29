@@ -26,8 +26,12 @@ public class Error implements JsonStream.Streamable {
             .name("exceptions").value(new ExceptionChain(config, exception))
             .name("context").value(getContext())
             .name("severity").value(severity)
-            .name("metaData").value(filteredMetaData)
-            .name("user").value(user);
+            .name("metaData").value(filteredMetaData);
+
+            // Write user info
+            if(user != null) {
+                writer.name("user").value(user);
+            }
 
             // Write diagnostics
             if(diagnostics != null) {

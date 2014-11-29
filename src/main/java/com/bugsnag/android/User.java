@@ -6,11 +6,21 @@ class User implements JsonStream.Streamable {
     private String name;
 
     public void toStream(JsonStream writer) {
-        writer.beginObject()
-            .name("id").value(id)
-            .name("email").value(email)
-            .name("name").value(name)
-        .endObject();
+        writer.beginObject();
+
+        if(id != null) {
+            writer.name("id").value(id);
+        }
+
+        if(email != null) {
+            writer.name("email").value(email);
+        }
+
+        if(name != null) {
+            writer.name("name").value(name);
+        }
+
+        writer.endObject();
     }
 
     public void setId(String id) {
