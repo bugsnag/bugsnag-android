@@ -120,7 +120,7 @@ import java.util.List;
  * @author Jesse Wilson
  * @since 1.6
  */
-public class JsonWriter implements Closeable {
+class JsonWriter implements Closeable {
 
   /*
    * From RFC 4627, "All Unicode characters may be placed within the
