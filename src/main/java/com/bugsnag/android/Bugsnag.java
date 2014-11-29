@@ -13,6 +13,7 @@ import android.content.Context;
  */
 public final class Bugsnag {
     private static Client client;
+    private Bugsnag() {}
 
     /**
      * Initialize the static Bugsnag client
