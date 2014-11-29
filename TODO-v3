@@ -1,6 +1,5 @@
-- Finish/test MetaData merging and filtering
-- Implement/test "setUser"
 - Re-add "Bugsnag" static access class (Bugsnag.register, etc)
+- Finish/test MetaData merging and filtering
 - Check strict mode
 - Add missing tests
 - Re-add jar building (for maven and adding to libs/)

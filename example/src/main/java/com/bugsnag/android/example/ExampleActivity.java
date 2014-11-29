@@ -19,6 +19,7 @@ import com.bugsnag.android.Severity;
 
 public class ExampleActivity extends Activity
 {
+    private static String BUGSNAG_API_KEY = "066f5ad3590596f9aa8d601ea89af845";
     private Client bugsnag;
 
     /** Called when the activity is first created. */
@@ -28,7 +29,10 @@ public class ExampleActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        bugsnag = new Client(this, "066f5ad3590596f9aa8d601ea89af845");
+        // Create a bugsnag client
+        bugsnag = new Client(this, BUGSNAG_API_KEY);
+
+        // Execute some code before every bugsnag notification
         bugsnag.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(Error error) {
@@ -36,6 +40,13 @@ public class ExampleActivity extends Activity
                 return true;
             }
         });
+
+        // Set the user information
+        bugsnag.setUser("123456", "james@example.com", "James Smith");
+
+        // Add some global metaData
+        bugsnag.addToTab("user", "age", 31);
+        bugsnag.addToTab("custom", "account", "something");
     }
 
     public void sendError(View view) {
@@ -58,12 +69,7 @@ public class ExampleActivity extends Activity
         nested.put("normalkey", "normalvalue");
         nested.put("password", "s3cr3t");
 
-        bugsnag.addToTab("user", "name", "james");
-        bugsnag.addToTab("user", "age", 31);
-        bugsnag.addToTab("custom", "account", "something");
-
         MetaData metaData = new MetaData();
-        metaData.addToTab("user", "name", "James Smith");
         metaData.addToTab("user", "payingCustomer", true);
         metaData.addToTab("user", "password", "p4ssw0rd");
         metaData.addToTab("user", "credentials", nested);
