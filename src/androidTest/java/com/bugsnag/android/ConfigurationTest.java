@@ -8,44 +8,42 @@ public class ConfigurationTest extends BugsnagTestCase {
 
         // Default endpoints
         assertEquals("http://notify.bugsnag.com", config.getNotifyEndpoint());
-        assertEquals("http://notify.bugsnag.com/metrics", config.getMetricsEndpoint());
+        assertEquals("http://notify.bugsnag.com/metrics", config.getAnalyticsEndpoint());
 
         // Setting an endpoint
         config.endpoint = "http://localhost:8000";
         assertEquals("http://localhost:8000", config.getNotifyEndpoint());
-        assertEquals("http://localhost:8000/metrics", config.getMetricsEndpoint());
+        assertEquals("http://localhost:8000/metrics", config.getAnalyticsEndpoint());
     }
 
     public void testShouldNotify() {
         Configuration config = new Configuration("api-key");
 
         // Should notify if notifyReleaseStages is null
-        assertTrue(config.shouldNotify());
+        assertTrue(config.shouldNotifyForReleaseStage("development"));
 
         // Shouldn't notify if notifyReleaseStages is set and releaseStage is null
         config.notifyReleaseStages = new String[] {"example"};
-        assertFalse(config.shouldNotify());
+        assertFalse(config.shouldNotifyForReleaseStage(null));
 
         // Shouldn't notify if releaseStage not in notifyReleaseStages
         config.notifyReleaseStages = new String[] {"production"};
-        config.releaseStage = "not-production";
-        assertFalse(config.shouldNotify());
+        assertFalse(config.shouldNotifyForReleaseStage("not-production"));
 
         // Should notify if releaseStage in notifyReleaseStages
         config.notifyReleaseStages = new String[] {"production"};
-        config.releaseStage = "production";
-        assertTrue(config.shouldNotify());
+        assertTrue(config.shouldNotifyForReleaseStage("production"));
     }
 
     public void testShouldIgnore() {
         Configuration config = new Configuration("api-key");
 
         // Should not ignore by default
-        assertFalse(config.shouldIgnore("java.io.IOException"));
+        assertFalse(config.shouldIgnoreClass("java.io.IOException"));
 
         // Should ignore when added to ignoreClasses
         config.ignoreClasses = new String[] {"java.io.IOException"};
-        assertTrue(config.shouldIgnore("java.io.IOException"));
+        assertTrue(config.shouldIgnoreClass("java.io.IOException"));
     }
 
     public void testInProject() {

@@ -9,7 +9,7 @@ import com.bugsnag.android.Configuration;
 public class AppDataTest extends BugsnagTestCase {
     public void testManifestData() throws JSONException {
         Configuration config = new Configuration("some-api-key");
-        AppData appData = new AppData(config, getContext());
+        AppData appData = new AppData(getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
@@ -25,7 +25,7 @@ public class AppDataTest extends BugsnagTestCase {
         Configuration config = new Configuration("some-api-key");
         config.appVersion = "1.2.3";
 
-        AppData appData = new AppData(config, getContext());
+        AppData appData = new AppData(getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals("1.2.3", appDataJson.get("version"));
@@ -35,7 +35,7 @@ public class AppDataTest extends BugsnagTestCase {
         Configuration config = new Configuration("some-api-key");
         config.releaseStage = "test-stage";
 
-        AppData appData = new AppData(config, getContext());
+        AppData appData = new AppData(getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals("test-stage", appDataJson.get("releaseStage"));

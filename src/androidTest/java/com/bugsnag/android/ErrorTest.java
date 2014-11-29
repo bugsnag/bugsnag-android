@@ -13,11 +13,11 @@ public class ErrorTest extends BugsnagTestCase {
 
         // Shouldn't ignore classes not in ignoreClasses
         Error error = new Error(config, new RuntimeException("Test"));
-        assertFalse(error.shouldIgnore());
+        assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
         error = new Error(config, new java.io.IOException("Test"));
-        assertTrue(error.shouldIgnore());
+        assertTrue(error.shouldIgnoreClass());
     }
 
     public void testGetExceptionName() {
