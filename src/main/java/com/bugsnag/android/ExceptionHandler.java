@@ -1,34 +1,55 @@
 package com.bugsnag.android;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.HashSet;
+import java.util.Set;
 
 class ExceptionHandler implements UncaughtExceptionHandler {
     private UncaughtExceptionHandler originalHandler;
-    private Client client;
+    private Set<Client> clients = new HashSet<Client>();
 
-    static void install(Client client) {
+    static void enable(Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
+
+        // Find or create the Bugsnag ExceptionHandler
+        ExceptionHandler bugsnagHandler;
         if(currentHandler instanceof ExceptionHandler) {
-            currentHandler = ((ExceptionHandler)currentHandler).originalHandler;
+            bugsnagHandler = (ExceptionHandler)currentHandler;
+        } else {
+            bugsnagHandler = new ExceptionHandler(currentHandler);
+            Thread.setDefaultUncaughtExceptionHandler(bugsnagHandler);
         }
 
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, client));
+        // Subscribe this client to uncaught exceptions
+        bugsnagHandler.clients.add(client);
     }
 
-    static void remove() {
+    static void disable(Client client) {
+        // Find tje Bugsnag ExceptionHandler
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         if(currentHandler instanceof ExceptionHandler) {
-            Thread.setDefaultUncaughtExceptionHandler(((ExceptionHandler)currentHandler).originalHandler);
+            // Unsubscribe this client from uncaught exceptions
+            ExceptionHandler bugsnagHandler = (ExceptionHandler)currentHandler;
+            bugsnagHandler.clients.remove(client);
+
+            // Remove the Bugsnag ExceptionHandler if no clients are subscribed
+            if(bugsnagHandler.clients.size() == 0) {
+                Thread.setDefaultUncaughtExceptionHandler(bugsnagHandler.originalHandler);
+            }
         }
     }
 
-    public ExceptionHandler(UncaughtExceptionHandler originalHandler, Client client) {
+    public ExceptionHandler(UncaughtExceptionHandler originalHandler) {
         this.originalHandler = originalHandler;
-        this.client = client;
     }
 
     public void uncaughtException(Thread t, Throwable e) {
-        client.autoNotify(e);
+        // Notify any subscribed clients of the uncaught exception
+        for(Client client : clients) {
+            client.notify(e, Severity.ERROR);
+        }
+
+        // Pass exception on to original exception handler
         if(originalHandler != null) {
             originalHandler.uncaughtException(t, e);
         } else {
