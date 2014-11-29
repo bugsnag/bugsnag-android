@@ -264,8 +264,9 @@ public class Client {
      * For example:
      *
      *     client.addBeforeNotify(new BeforeNotify() {
-     *         public void run(Error error) {
+     *         public boolean run(Error error) {
      *             error.setSeverity(Severity.INFO);
+     *             return true;
      *         }
      *     })
      *

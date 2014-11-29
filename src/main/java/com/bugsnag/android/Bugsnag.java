@@ -274,9 +274,10 @@ public final class Bugsnag {
      *
      * For example:
      *
-     *     client.addBeforeNotify(new BeforeNotify() {
-     *         public void run(Error error) {
+     *     Bugsnag.addBeforeNotify(new BeforeNotify() {
+     *         public boolean run(Error error) {
      *             error.setSeverity(Severity.INFO);
+     *             return true;
      *         }
      *     })
      *

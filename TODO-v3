@@ -1,29 +1,8 @@
 Blockers
 - Finish/test MetaData merging and filtering
 - Add missing tests
-- Update README
 
 Nice-to-have
 - Re-enable proguard on .jar
 - Add strict mode checks to tests
 - Add more javadoc comments to public classes/methods (Error, MetaData, Severity)
-
-
-Build/test/release instructions
--------------------------------
-
-Run tests on device or emulator
-
-    gradle :connectedCheck
-
-Build a new jar/aar files:
-
-    gradle :build
-
-Build and release a new version to maven central:
-
-    gradle :uploadArchives
-
-Build and install the example app:
-
-    gradle example:installDebug
