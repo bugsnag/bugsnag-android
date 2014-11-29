@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import java.util.Collection;
 
 public abstract class BeforeNotify {
-    abstract boolean run(Error error);
+    public abstract boolean run(Error error);
 
     static boolean runAll(Collection<BeforeNotify> beforeNotifyTasks, Error error) {
         for (BeforeNotify beforeNotify : beforeNotifyTasks) {
