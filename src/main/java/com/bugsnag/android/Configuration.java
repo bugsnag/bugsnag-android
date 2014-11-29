@@ -10,7 +10,6 @@ class Configuration {
 
     String apiKey;
     String appVersion;
-    boolean autoNotify = true;
     String context;
     String endpoint = DEFAULT_ENDPOINT;
     String[] filters = new String[]{"password"};
@@ -43,15 +42,15 @@ class Configuration {
         metaData.clearTab(tabName);
     }
 
-    boolean shouldNotify() {
+    boolean shouldNotifyForReleaseStage(String releaseStage) {
         if(this.notifyReleaseStages == null)
             return true;
 
         List<String> stages = Arrays.asList(this.notifyReleaseStages);
-        return stages.contains(this.releaseStage);
+        return stages.contains(releaseStage);
     }
 
-    boolean shouldIgnore(String className) {
+    boolean shouldIgnoreClass(String className) {
         if(this.ignoreClasses == null)
             return false;
 

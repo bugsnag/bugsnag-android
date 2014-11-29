@@ -93,7 +93,7 @@ public class Error implements JsonStream.Streamable {
         this.diagnostics = diagnostics;
     }
 
-    boolean shouldIgnore() {
-        return !config.shouldNotify() || config.shouldIgnore(exception.getClass().getName());
+    boolean shouldIgnoreClass() {
+        return config.shouldIgnoreClass(exception.getClass().getName());
     }
 }

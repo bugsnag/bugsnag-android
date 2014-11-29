@@ -6,20 +6,20 @@ import android.app.Activity;
 import android.content.Context;
 
 public class Client {
-    private Context appContext;
     private Configuration config;
     private Diagnostics diagnostics;
     private ErrorStore errorStore;
+    private boolean sentAnalytics = false;
 
     public Client(Context androidContext, String apiKey) {
         this(androidContext, apiKey, true, true);
     }
 
-    public Client(Context androidContext, String apiKey, boolean enableMetrics) {
-        this(androidContext, apiKey, enableMetrics, true);
+    public Client(Context androidContext, String apiKey, boolean sendAnalytics) {
+        this(androidContext, apiKey, sendAnalytics, true);
     }
 
-    public Client(Context androidContext, String apiKey, boolean enableMetrics, boolean installHandler) {
+    public Client(Context androidContext, String apiKey, boolean sendAnalytics, boolean enableExceptionHandler) {
         if(androidContext == null) {
             throw new RuntimeException("You must provide a non-null android Context");
         }
@@ -32,7 +32,7 @@ public class Client {
         config = new Configuration(apiKey);
 
         // Get the application context, many things need this
-        appContext = androidContext.getApplicationContext();
+        Context appContext = androidContext.getApplicationContext();
 
         // Set up in-project detection
         setProjectPackages(appContext.getPackageName());
@@ -40,37 +40,23 @@ public class Client {
         // Set up diagnostics collection
         diagnostics = new Diagnostics(config, appContext);
 
-        // TODO: Set the default release stage in config
-
         // Flush any on-disk errors
         errorStore = new ErrorStore(config, appContext);
         errorStore.flush();
 
         // Install a default exception handler with this client
-        if(installHandler) {
-            ExceptionHandler.install(this);
+        if(enableExceptionHandler) {
+            enableExceptionHandler();
         }
 
-        // Make metrics request
-        Async.run(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    new Metrics(config, diagnostics).deliver();
-                    Logger.info("Sent metrics to Bugsnag");
-                } catch (IOException e) {
-                    Logger.info("Could not send metrics to Bugsnag");
-                }
-            }
-        });
+        // Make analytics request
+        if(sendAnalytics) {
+            sendAnalytics();
+        }
     }
 
     public void setAppVersion(String appVersion) {
         config.appVersion = appVersion;
-    }
-
-    public void setAutoNotify(boolean autoNotify) {
-        config.autoNotify = autoNotify;
     }
 
     public void setContext(String context) {
@@ -138,8 +124,15 @@ public class Client {
     }
 
     public void notify(final Error error) {
-        // Don't notify if this error class should be ignored or release stage is blocked
-        if(error.shouldIgnore()) return;
+        // Don't notify if this error class should be ignored
+        if(error.shouldIgnoreClass()) {
+            return;
+        }
+
+        // Don't notify unless releaseStage is in notifyReleaseStages
+        if(!config.shouldNotifyForReleaseStage(diagnostics.getReleaseStage())) {
+            return;
+        }
 
         // Run beforeNotify tasks, don't notify if any return true
         if(!BeforeNotify.runAll(config.beforeNotifyTasks, error)) {
@@ -171,17 +164,41 @@ public class Client {
         });
     }
 
-    public void autoNotify(Throwable e) {
-        if(config.autoNotify) {
-            notify(e, Severity.ERROR);
-        }
-    }
-
     public void addToTab(String tab, String key, Object value) {
         config.addToTab(tab, key, value);
     }
 
     public void clearTab(String tab) {
         config.clearTab(tab);
+    }
+
+    public void sendAnalytics() {
+        // Never send analytics twice per session
+        if(sentAnalytics) {
+            return;
+        }
+
+        // Make the analytics request in the background
+        Async.run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new Metrics(config, diagnostics).deliver();
+                    Logger.info("Sent analytics data to Bugsnag");
+                } catch (IOException e) {
+                    Logger.info("Could not send analytics data to Bugsnag");
+                }
+            }
+        });
+
+        sentAnalytics = true;
+    }
+
+    public void enableExceptionHandler() {
+        ExceptionHandler.enable(this);
+    }
+
+    public void disableExceptionHandler() {
+        ExceptionHandler.disable(this);
     }
 }

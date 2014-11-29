@@ -1,10 +1,27 @@
-- Make sure getActiveScreen and isInForeground work, and check old/new android (GET_TASKS)
-- Make sure appVersion and releaseStage overriding work
-- Set default releaseStage in config using AppData (this is used for shouldNotify)
 - Finish/test MetaData merging and filtering
 - Implement/test "setUser"
 - Re-add "Bugsnag" static access class (Bugsnag.register, etc)
 - Check strict mode
 - Add missing tests
-- Re-add jar building
+- Re-add jar building (for maven and adding to libs/)
 - Update README
+
+
+Build/test/release instructions
+-------------------------------
+
+Build a new .jar file:
+
+    TODO
+
+Build a new .aar file:
+
+    gradle build
+
+Build and release a new version to maven central:
+
+    gradle uploadArchives
+
+Build and install the example app:
+
+    gradle example:installDebug

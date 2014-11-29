@@ -4,35 +4,42 @@ import android.content.Context;
 
 class Diagnostics {
     private Configuration config;
-    private Context appContext;
 
     private AppData appData;
+    private AppState appState;
     private DeviceData deviceData;
+    private DeviceState deviceState;
 
     Diagnostics(Configuration config, Context appContext) {
         this.config = config;
-        this.appContext = appContext;
+
+        appData = new AppData(appContext, config);
+        appState = new AppState(appContext);
+        deviceData = new DeviceData(appContext);
+        deviceState = new DeviceState(appContext);
     }
 
     AppData getAppData() {
-        if(appData == null) {
-            appData = new AppData(config, appContext);
-        }
         return appData;
     }
 
     DeviceData getDeviceData() {
-        if(deviceData == null) {
-            deviceData = new DeviceData(appContext);
-        }
         return deviceData;
     }
 
     AppState getAppState() {
-        return new AppState(appContext);
+        return appState;
     }
 
     DeviceState getDeviceState() {
-        return new DeviceState(appContext);
+        return deviceState;
+    }
+
+    String getReleaseStage() {
+        if(config.releaseStage != null) {
+            return config.releaseStage;
+        } else {
+            return appData.getReleaseStage();
+        }
     }
 }

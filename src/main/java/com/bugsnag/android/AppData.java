@@ -19,7 +19,7 @@ class AppData implements JsonStream.Streamable {
     private String versionName;
     private String releaseStage;
 
-    AppData(Configuration config, Context appContext) {
+    AppData(Context appContext, Configuration config) {
         this.config = config;
         this.appContext = appContext;
 
