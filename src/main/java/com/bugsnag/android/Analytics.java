@@ -6,10 +6,12 @@ import java.io.OutputStreamWriter;
 class Analytics implements HttpClient.Streamable {
     private Configuration config;
     private Diagnostics diagnostics;
+    private User user;
 
-    Analytics(Configuration config, Diagnostics diagnostics) {
+    Analytics(Configuration config, Diagnostics diagnostics, User user) {
         this.config = config;
         this.diagnostics = diagnostics;
+        this.user = user;
     }
 
     public void toStream(Writer out) {
@@ -26,7 +28,8 @@ class Analytics implements HttpClient.Streamable {
             writer.name("app").value(diagnostics.getAppData());
             writer.name("device").value(diagnostics.getDeviceData());
 
-            // TODO: Write user info
+            // Write user info
+            writer.name("user").value(user);
 
         // End the main JSON object
         writer.endObject().close();

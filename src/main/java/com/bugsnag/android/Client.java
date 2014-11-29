@@ -8,6 +8,7 @@ import android.content.Context;
 public class Client {
     private Configuration config;
     private Diagnostics diagnostics;
+    private User user;
     private ErrorStore errorStore;
     private boolean sentAnalytics = false;
 
@@ -39,6 +40,10 @@ public class Client {
 
         // Set up diagnostics collection
         diagnostics = new Diagnostics(config, appContext);
+
+        // Create a user object
+        user = new User();
+        user.setId(diagnostics.getDeviceId());
 
         // Flush any on-disk errors
         errorStore = new ErrorStore(config, appContext);
@@ -92,7 +97,21 @@ public class Client {
     }
 
     public void setUser(String id, String email, String name) {
-        // TODO
+        user.setId(id);
+        user.setEmail(email);
+        user.setName(name);
+    }
+
+    public void setUserId(String id) {
+        user.setId(id);
+    }
+
+    public void setUserEmail(String email) {
+        user.setEmail(email);
+    }
+
+    public void setUserName(String name) {
+        user.setName(name);
     }
 
     public void addBeforeNotify(BeforeNotify beforeNotify) {
@@ -140,8 +159,9 @@ public class Client {
             return;
         }
 
-        // Attach diagnostic info to the error
+        // Attach diagnostic + user info to the error
         error.setDiagnostics(diagnostics);
+        error.setUser(user);
 
         // Build the notification
         final Notification notification = new Notification(config);
@@ -183,7 +203,7 @@ public class Client {
             @Override
             public void run() {
                 try {
-                    new Analytics(config, diagnostics).deliver();
+                    new Analytics(config, diagnostics, user).deliver();
                     Logger.info("Sent analytics data to Bugsnag");
                 } catch (IOException e) {
                     Logger.info("Could not send analytics data to Bugsnag");

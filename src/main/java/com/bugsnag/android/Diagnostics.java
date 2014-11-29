@@ -42,4 +42,8 @@ class Diagnostics {
             return appData.getReleaseStage();
         }
     }
+
+    String getDeviceId() {
+        return deviceData.getAndroidId();
+    }
 }

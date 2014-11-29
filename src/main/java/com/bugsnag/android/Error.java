@@ -5,6 +5,7 @@ public class Error implements JsonStream.Streamable {
 
     private Configuration config;
     private Diagnostics diagnostics;
+    private User user;
     private Throwable exception;
     private Severity severity = Severity.WARNING;
     private MetaData metaData = new MetaData();
@@ -18,7 +19,6 @@ public class Error implements JsonStream.Streamable {
 
     public void toStream(JsonStream writer) {
         MetaData filteredMetaData = config.metaData.mergeAndFilter(metaData, config.filters);
-        User user = new User("TODO", "TODO", "TODO");
 
         // Write error basics
         writer.beginObject()
@@ -91,6 +91,10 @@ public class Error implements JsonStream.Streamable {
 
     void setDiagnostics(Diagnostics diagnostics) {
         this.diagnostics = diagnostics;
+    }
+
+    void setUser(User user) {
+        this.user = user;
     }
 
     boolean shouldIgnoreClass() {
