@@ -4,7 +4,7 @@ Bugsnag Notifier for Android
 The Bugsnag Notifier for Android gives you instant notification of exceptions
 thrown from your Android applications.
 The notifier hooks into `Thread.UncaughtExceptionHandler`, so any
-uncaught exceptions in your app will be sent to your Bugsnag dashboard.
+unhandled exceptions in your app will be sent to your Bugsnag dashboard.
 
 [Bugsnag](https://bugsnag.com) captures errors from your web and mobile
 applications, helping you to understand and resolve them as fast as possible.
@@ -12,28 +12,50 @@ applications, helping you to understand and resolve them as fast as possible.
 from your applications.
 
 
-Installation & Setup
---------------------
+Installation
+------------
+
+### Using Android Studio
+
+Add this line to the "dependencies" section in your `build.gradle`:
+
+```gradle
+compile 'com.bugsnag:bugsnag-android:+'
+```
+
+### Using Maven
+
+Add Bugsnag as a dependency in your `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>com.bugsnag</groupId>
+    <artifactId>bugsnag-android</artifactId>
+    <version>LATEST</version>
+</dependency>
+```
+
+### Using a Jar
 
 -   Download the [latest bugsnag-android.jar](https://s3.amazonaws.com/bugsnagcdn/bugsnag-android/bugsnag-android-2.2.3.jar)
-    and place it in your Android app's `libs/` folder.
+-   Place it in your Android app's `libs/` folder
 
-    > Note: if your project uses [Maven](http://maven.apache.org/) you can
-    instead [add bugsnag-android as a dependency](http://mvnrepository.com/artifact/com.bugsnag/bugsnag-android)
-    in your `pom.xml`.r
+
+Configuration
+-------------
 
 -   Import the `Bugsnag` package in your [Application](http://developer.android.com/reference/android/app/Application.html)
-    subclass.
+    subclass:
 
     ```java
     import com.bugsnag.android.*;
     ```
 
--   In your application's `onCreate` function, register to begin capturing
-    exceptions:
+-   In your application's `onCreate` function, initialize Bugsnag to begin
+    capturing exceptions:
 
     ```java
-    Bugsnag.register(this, "your-api-key-goes-here");
+    Bugsnag.init(this, "your-api-key-goes-here");
     ```
 
 -   Ensure you have the `android.permission.INTERNET` permission listed in
@@ -43,19 +65,9 @@ Installation & Setup
 Recommended: Enable Additional Diagnostic Information
 -----------------------------------------------------
 
--   To track which of your activities were open at the time of any exception,
-    you should also have each of your `Activity` classes inherit from
-    `BugsnagActivity`:
-
-    ```java
-    import com.bugsnag.android.activity.*;
-    class MyActivity extends BugsnagActivity { ... }
-    ```
-
-    > Note: If you are using the
-    [Android Support Library](http://developer.android.com/tools/extras/support-library.html),
-    [ActionBarSherlock](http://actionbarsherlock.com/) or have a custom base Activity, see
-    [Instrumenting Custom Activities](#instrumenting-custom-activities) below.
+-   To see which activity was active at the time of a crash, you shoudl also
+    add the `android.permission.GET_TASKS` permission to your
+    `AndroidManifest.xml`.
 
 -   To enable network diagnostics for each device (internet connectivity, etc)
     you should also add the `android.permission.ACCESS_NETWORK_STATE`
@@ -75,9 +87,13 @@ Bugsnag.addToTab("User", "Name", "Bob Hoskins");
 Bugsnag.addToTab("User", "Paying Customer?", true);
 ```
 
+You can also add custom data or modify error information before each exception
+is sent to Bugsnag using `BeforeNotify` callbacks. See
+[addBeforeNotify](#addBeforeNotify) below for details.
 
-Send Non-Fatal Exceptions to Bugsnag
-------------------------------------
+
+Sending Handled Exceptions
+--------------------------
 
 If you would like to send non-fatal exceptions to Bugsnag, you can pass any
 `Throwable` object to the `notify` method:
@@ -104,14 +120,14 @@ You can set the severity of an error in Bugsnag by including the severity option
 notifying bugsnag of the error,
 
 ```java
-Bugsnag.notify(new RuntimeException("Non-fatal"), "error")
+Bugsnag.notify(new RuntimeException("Non-fatal"), Severity.INFO)
 ```
 
-Valid severities are `error`, `warning` and `info`.
+Valid severities are `Severity.ERROR`, `Severity.WARNING` and `Severity.INFO`.
 
 Severity is displayed in the dashboard and can be used to filter the error list.
-By default all crashes (or unhandled exceptions) are set to `error` and all
-`Bugsnag.notify` calls default to `warning`.
+By default all crashes (or unhandled exceptions) are set to `Bugsnag.ERROR` and all
+`Bugsnag.notify` calls default to `Bugsnag.WARNING`.
 
 
 Configuration
@@ -124,7 +140,7 @@ errors. Contexts represent what was happening in your application at the
 time an error occurs. In an android app, it is useful to set this to be
 your currently active `Activity`.
 
-If you are using `BugsnagActivity` then this is set automatically for you.
+If you enable the `GET_TASKS` permission, then this is set automatically for you.
 If you would like to set the bugsnag context manually, you can call
 `setContext`:
 
@@ -156,8 +172,7 @@ you can set the `releaseStage` that is reported to Bugsnag.
 Bugsnag.setReleaseStage("testing");
 ```
 
-If you have the `android:debuggable="true"` flag set in your
-`AndroidManifest.xml`, we'll automatically set this to "development",
+If you are running a debug build, we'll automatically set this to "development",
 otherwise it is set to "production".
 
 ###setNotifyReleaseStages
@@ -168,16 +183,6 @@ Bugsnag of exceptions you can call `setNotifyReleaseStages`:
 
 ```java
 Bugsnag.setNotifyReleaseStages("production", "development", "testing");
-```
-
-###setAutoNotify
-
-By default, we will automatically notify Bugsnag of any fatal exceptions
-in your application. If you want to stop this from happening, you can call
-`setAutoNotify`:
-
-```java
-Bugsnag.setAutoNotify(false);
 ```
 
 ###setFilters
@@ -204,7 +209,7 @@ Bugsnag.setProjectPackages("com.company.package1", "com.company.package2");
 ```
 
 By default, `projectPackages` is set to be the package you called
-`Bugsnag.register` from.
+`Bugsnag.init` from.
 
 ###setIgnoreClasses
 
@@ -237,53 +242,30 @@ Bt default `sendThreads` is set to `true`.
 Bugsnag.setSendThreads(false);
 ```
 
+###setEndpoint
 
-Instrumenting Custom Activities
--------------------------------
+Set the endpoint to send data to. By default we'll send reports to the standard `https://notify.bugsnag.com` endpoint, but you can override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoint:
 
-Bugsnag can add additional diagnostic information to each error by
-instrumenting your `Activity` classes.
-
-If you are using `FragmentActivity` from the
-[Android Support Library](http://developer.android.com/tools/extras/support-library.html)
-your Activities should inherit from `BugsnagFragmentActivity`.
-
-Similarly, if you are using `SherlockActivity` or `SherlockFragmentActivity`
-from [ActionBarSherlock](http://actionbarsherlock.com/), your Activities
-should inherit from `BugsnagSherlockActivity` or
-`BugsnagSherlockFragmentActivity`.
-
-If you have your own custom base `Activity`, you can add the Bugsnag
-instrumentation manually by calling `Bugsnag.onActivityPause` in `onPause`,
-`Bugsnag.onActivityResume` in `onResume`, `Bugsnag.onActivityCreate` in `onCreate`
-and `Bugsnag.onActivityDestroy` in `onDestroy`. Each of these methods take
-one paramenter, the activity instance (usually `this`).
-
-
-Building from Source
---------------------
-
-To build a `.jar` file from source you'll need to use
-[Maven](http://maven.apache.org/).
-
-Clone the [bugsnag-android](https://github.com/bugsnag/bugsnag-android)
-repository, then run:
-
-```bash
-mvn clean package
+```java
+Bugsnag.setEndpoint("http://bugsnag.internal.example.com");
 ```
 
-This will generate jar files in the `target` directory.
+##addBeforeNotify
 
-Building on OSX
----------------
+Add a "before notify" callback, to execute code before every
+notification to Bugsnag.
 
-In order to build on OSX, run the following commands,
+You can use this to add or modify information attached to an error
+before it is sent to your dashboard. You can also return
+`false` from any callback to halt execution.
 
-```bash
-cd /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib
-sudo ln -s ../../Classes/classes.jar rt.jar
-sudo ln -s ../../Classes/jsse.jar .
+```java
+Bugsnag.addBeforeNotify(new BeforeNotify() {
+    public boolean run(Error error) {
+        error.setSeverity(Severity.INFO);
+        return true;
+    }
+});
 ```
 
 
@@ -299,10 +281,8 @@ project here:
 Contributing
 ------------
 
--   [Fork](https://help.github.com/articles/fork-a-repo) the [notifier on github](https://github.com/bugsnag/bugsnag-android)
--   Commit and push until you are happy with your contribution
--   [Make a pull request](https://help.github.com/articles/using-pull-requests)
--   Thanks!
+We'd love to see your contributions! For information on how to build, test
+and releease `bugsnag-android`, see our [contributing guide](CONTRIBUTING.md).
 
 
 License
