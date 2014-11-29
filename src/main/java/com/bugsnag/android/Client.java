@@ -412,7 +412,7 @@ public class Client {
         error.setContext(diagnostics.getContext());
 
         // Run beforeNotify tasks, don't notify if any return true
-        if(!BeforeNotify.runAll(config.beforeNotifyTasks, error)) {
+        if(!runBeforeNotifyTasks(error)) {
             Logger.info("Skipping notification - beforeNotify task returned false");
             return;
         }
@@ -440,5 +440,20 @@ public class Client {
                 }
             }
         });
+    }
+
+    private boolean runBeforeNotifyTasks(Error error) {
+        for (BeforeNotify beforeNotify : config.beforeNotifyTasks) {
+            try {
+                if (!beforeNotify.run(error)) {
+                    return false;
+                }
+            } catch (Throwable ex) {
+                Logger.warn("BeforeNotify threw an Exception", ex);
+            }
+        }
+
+        // By default, allow the error to be sent if there were no objections
+        return true;
     }
 }

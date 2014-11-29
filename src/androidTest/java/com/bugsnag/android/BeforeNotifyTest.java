@@ -33,14 +33,4 @@ public class BeforeNotifyTest extends BugsnagTestCase {
 
         assertEquals("new-context", error.getContext());
     }
-
-    public void testRunAll() {
-        // Any false beforeNotify should return false
-        Configuration config = new Configuration("api-key");
-        config.addBeforeNotify(beforeNotify);
-        config.addBeforeNotify(beforeNotifySkip);
-
-        Error error = new Error(config, new RuntimeException("Test"));
-        assertFalse(BeforeNotify.runAll(config.beforeNotifyTasks, error));
-    }
 }
