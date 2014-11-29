@@ -46,4 +46,17 @@ class Diagnostics {
     String getDeviceId() {
         return deviceData.getAndroidId();
     }
+
+    String getContext() {
+        if(config.context != null) {
+            return config.context;
+        } else {
+            String activeScreen = appState.getActiveScreen();
+            if(activeScreen != null) {
+                return activeScreen.substring(activeScreen.lastIndexOf('.') + 1);
+            } else {
+                return null;
+            }
+        }
+    }
 }

@@ -408,6 +408,9 @@ public class Client {
             return;
         }
 
+        // Set the default context, based on the active screen
+        error.setContext(diagnostics.getContext());
+
         // Run beforeNotify tasks, don't notify if any return true
         if(!BeforeNotify.runAll(config.beforeNotifyTasks, error)) {
             Logger.info("Skipping notification - beforeNotify task returned false");

@@ -1,5 +1,4 @@
 - Finish/test MetaData merging and filtering
-- Automatically set context using top activity
 - Check strict mode
 - Add missing tests
 - Re-add jar building (for maven and adding to libs/)
