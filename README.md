@@ -17,7 +17,7 @@ Installation
 
 ### Using Android Studio
 
-Add this line to the "dependencies" section in your `build.gradle`:
+Add `bugsnag-android` to the `dependencies` section in your `build.gradle`:
 
 ```gradle
 compile 'com.bugsnag:bugsnag-android:+'
@@ -25,7 +25,7 @@ compile 'com.bugsnag:bugsnag-android:+'
 
 ### Using Maven
 
-Add Bugsnag as a dependency in your `pom.xml`:
+Add `bugsnag-android` as a dependency in your `pom.xml`:
 
 ```xml
 <dependency>
