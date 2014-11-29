@@ -53,8 +53,6 @@ class AppState implements JsonStream.Streamable {
         return null;
     }
 
-    // TODO: Make sure getActiveScreen and isInForeground work, and check old/new android
-
     /**
      * Get the name of the top-most activity. Requires the GET_TASKS permission,
      * which defaults to true in Android 5.0+.
