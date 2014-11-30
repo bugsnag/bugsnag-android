@@ -2,7 +2,7 @@ package com.bugsnag.android.example;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
+import java.util.Collection;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -68,10 +68,14 @@ public class ExampleActivity extends Activity
         nested.put("normalkey", "normalvalue");
         nested.put("password", "s3cr3t");
 
+        Collection list = new ArrayList();
+        list.add(nested);
+
         MetaData metaData = new MetaData();
         metaData.addToTab("user", "payingCustomer", true);
         metaData.addToTab("user", "password", "p4ssw0rd");
         metaData.addToTab("user", "credentials", nested);
+        metaData.addToTab("user", "more", list);
 
         Bugsnag.notify(new RuntimeException("Non-fatal error with metaData"), Severity.ERROR, metaData);
         Toast.makeText(this, "Sent error with metaData", 1000).show();
