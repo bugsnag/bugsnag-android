@@ -1,5 +1,4 @@
 Blockers
-- Finish/test MetaData merging and filtering
 - Add missing tests
 
 Nice-to-have

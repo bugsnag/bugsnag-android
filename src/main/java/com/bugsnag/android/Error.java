@@ -18,7 +18,8 @@ public class Error implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        MetaData filteredMetaData = config.metaData.mergeAndFilter(metaData, config.filters);
+        // Merge error metaData into global metadata and apply filters
+        MetaData mergedMetaData = config.metaData.merge(metaData).filter(config.filters);
 
         // Write error basics
         writer.beginObject()
@@ -26,7 +27,7 @@ public class Error implements JsonStream.Streamable {
             .name("exceptions").value(new ExceptionChain(config, exception))
             .name("context").value(getContext())
             .name("severity").value(severity)
-            .name("metaData").value(filteredMetaData);
+            .name("metaData").value(mergedMetaData);
 
             // Write user info
             if(user != null) {
