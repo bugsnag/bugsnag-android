@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 
-class Analytics implements HttpClient.Streamable {
+class Analytics implements JsonStream.Streamable {
     private Configuration config;
     private Diagnostics diagnostics;
     private User user;
@@ -14,9 +14,9 @@ class Analytics implements HttpClient.Streamable {
         this.user = user;
     }
 
-    public void toStream(Writer out) {
+    public void toStream(JsonStream writer) {
         // Create a JSON stream and top-level object
-        JsonStream writer = new JsonStream(out).beginObject();
+        writer.beginObject();
 
             // Write the API key
             writer.name("apiKey").value(config.apiKey);
@@ -33,14 +33,6 @@ class Analytics implements HttpClient.Streamable {
 
         // End the main JSON object
         writer.endObject().close();
-    }
-
-    void print() {
-        // Write the notification to System.out
-        toStream(new OutputStreamWriter(System.out));
-
-        // Flush System.out
-        System.out.println();
     }
 
     void deliver() throws java.io.IOException {

@@ -16,11 +16,7 @@ class HttpClient {
         }
     }
 
-    interface Streamable {
-        public void toStream(Writer out);
-    }
-
-    static void post(String urlString, Streamable payload) throws IOException {
+    static void post(String urlString, JsonStream.Streamable payload) throws IOException {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(urlString);
@@ -32,7 +28,10 @@ class HttpClient {
             OutputStream out = null;
             try {
                 out = conn.getOutputStream();
-                payload.toStream(new OutputStreamWriter(out));
+
+                JsonStream stream = new JsonStream(new OutputStreamWriter(out));
+                payload.toStream(stream);
+                stream.close();
             } finally {
                 IOUtils.close(out);
             }
