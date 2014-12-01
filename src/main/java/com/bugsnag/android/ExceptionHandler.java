@@ -1,12 +1,13 @@
 package com.bugsnag.android;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 class ExceptionHandler implements UncaughtExceptionHandler {
     private UncaughtExceptionHandler originalHandler;
-    private Set<Client> clients = new HashSet<Client>();
+    Set<Client> clients = Collections.newSetFromMap(new WeakHashMap<Client, Boolean>());
 
     static void enable(Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
