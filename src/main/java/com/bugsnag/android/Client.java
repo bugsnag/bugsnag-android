@@ -345,6 +345,24 @@ public class Client {
     }
 
     /**
+    * Get the global diagnostic information currently stored in MetaData.
+    *
+    * @see  MetaData
+    */
+    public MetaData getMetaData() {
+        return config.metaData;
+    }
+
+    /**
+    * Set the global diagnostic information to be send with every error.
+    *
+    * @see  MetaData
+    */
+    public void setMetaData(MetaData metaData) {
+        config.metaData = metaData;
+    }
+
+    /**
      * Send session analytics information to Bugsnag.
      * By default this is automatically sent in the constructor.
      */

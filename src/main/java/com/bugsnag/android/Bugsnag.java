@@ -56,11 +56,7 @@ public final class Bugsnag {
      * @param  appVersion  the app version to send
      */
     public static void setAppVersion(final String appVersion) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setAppVersion(appVersion);
-            }
-        });
+        getClient().setAppVersion(appVersion);
     }
 
     /**
@@ -71,11 +67,7 @@ public final class Bugsnag {
      * @param  context  set what was happening at the time of a crash
      */
     public static void setContext(final String context) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setContext(context);
-            }
-        });
+        getClient().setContext(context);
     }
 
     /**
@@ -87,11 +79,7 @@ public final class Bugsnag {
      * @param  endpoint  the custom endpoint to send notifications to
      */
     public static void setEndpoint(final String endpoint) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setEndpoint(endpoint);
-            }
-        });
+        getClient().setEndpoint(endpoint);
     }
 
     /**
@@ -108,11 +96,7 @@ public final class Bugsnag {
      * @param  filters  a list of keys to filter from metaData
      */
     public static void setFilters(final String... filters) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setFilters(filters);
-            }
-        });
+        getClient().setFilters(filters);
     }
 
     /**
@@ -125,11 +109,7 @@ public final class Bugsnag {
      * @param  ignoreClasses  a list of exception classes to ignore
      */
     public static void setIgnoreClasses(final String... ignoreClasses) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setIgnoreClasses(ignoreClasses);
-            }
-        });
+        getClient().setIgnoreClasses(ignoreClasses);
     }
 
     /**
@@ -144,11 +124,7 @@ public final class Bugsnag {
      * @see    #setReleaseStage
      */
     public static void setNotifyReleaseStages(final String... notifyReleaseStages) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setNotifyReleaseStages(notifyReleaseStages);
-            }
-        });
+        getClient().setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
@@ -164,11 +140,7 @@ public final class Bugsnag {
      * @param  projectPackages  a list of package names
      */
     public static void setProjectPackages(final String... projectPackages) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setProjectPackages(projectPackages);
-            }
-        });
+        getClient().setProjectPackages(projectPackages);
     }
 
     /**
@@ -180,11 +152,7 @@ public final class Bugsnag {
      * @see    #setNotifyReleaseStages
      */
     public static void setReleaseStage(final String releaseStage) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setReleaseStage(releaseStage);
-            }
-        });
+        getClient().setReleaseStage(releaseStage);
     }
 
     /**
@@ -194,11 +162,7 @@ public final class Bugsnag {
      * @param  sendThreads  should we send thread-state with notifications?
      */
     public static void setSendThreads(final boolean sendThreads) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setSendThreads(sendThreads);
-            }
-        });
+        getClient().setSendThreads(sendThreads);
     }
 
     /**
@@ -214,11 +178,7 @@ public final class Bugsnag {
      * @param  name   the name of the current user
      */
     public static void setUser(final String id, final String email, final String name) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setUser(id, email, name);
-            }
-        });
+        getClient().setUser(id, email, name);
     }
 
     /**
@@ -229,11 +189,7 @@ public final class Bugsnag {
      * @param  id  a unique identifier of the current user
      */
     public static void setUserId(final String id) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setUserId(id);
-            }
-        });
+        getClient().setUserId(id);
     }
 
     /**
@@ -243,11 +199,7 @@ public final class Bugsnag {
      * @param  email  the email address of the current user
      */
     public static void setUserEmail(final String email) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setUserEmail(email);
-            }
-        });
+        getClient().setUserEmail(email);
     }
 
     /**
@@ -257,11 +209,7 @@ public final class Bugsnag {
      * @param  name   the name of the current user
      */
     public static void setUserName(final String name) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.setUserName(name);
-            }
-        });
+        getClient().setUserName(name);
     }
 
     /**
@@ -285,11 +233,7 @@ public final class Bugsnag {
      * @see    BeforeNotify
      */
     public static void addBeforeNotify(final BeforeNotify beforeNotify) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.addBeforeNotify(beforeNotify);
-            }
-        });
+        getClient().addBeforeNotify(beforeNotify);
     }
 
     /**
@@ -298,11 +242,7 @@ public final class Bugsnag {
      * @param  exception  the exception to send to Bugsnag
      */
     public static void notify(final Throwable exception) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.notify(exception);
-            }
-        });
+        getClient().notify(exception);
     }
 
     /**
@@ -313,11 +253,7 @@ public final class Bugsnag {
      *                    Severity.WARNING or Severity.INFO
      */
     public static void notify(final Throwable exception, final Severity severity) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.notify(exception, severity);
-            }
-        });
+        getClient().notify(exception, severity);
     }
 
     /**
@@ -327,11 +263,7 @@ public final class Bugsnag {
      * @param  metaData   additional information to send with the exception
      */
     public static void notify(final Throwable exception, final MetaData metaData) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.notify(exception, metaData);
-            }
-        });
+        getClient().notify(exception, metaData);
     }
 
     /**
@@ -343,11 +275,7 @@ public final class Bugsnag {
      * @param  metaData   additional information to send with the exception
      */
     public static void notify(final Throwable exception, final Severity severity, final MetaData metaData) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.notify(exception, severity, metaData);
-            }
-        });
+        getClient().notify(exception, severity, metaData);
     }
 
     /**
@@ -364,11 +292,25 @@ public final class Bugsnag {
      * @param  value  the contents of the diagnostic information
      */
     public static void addToTab(final String tab, final String key, final Object value) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.addToTab(tab, key, value);
-            }
-        });
+        getClient().addToTab(tab, key, value);
+    }
+
+    /**
+    * Get the global diagnostic information currently stored in MetaData.
+    *
+    * @see  MetaData
+    */
+    public static MetaData getMetaData() {
+        return getClient().getMetaData();
+    }
+
+    /**
+    * Set the global diagnostic information to be send with every error.
+    *
+    * @see  MetaData
+    */
+    public static void setMetaData(final MetaData metaData) {
+        getClient().setMetaData(metaData);
     }
 
     /**
@@ -376,11 +318,7 @@ public final class Bugsnag {
      * By default this is automatically sent in Bugsnag.init
      */
     public static void sendAnalytics() {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.sendAnalytics();
-            }
-        });
+        getClient().sendAnalytics();
     }
 
     /**
@@ -388,29 +326,24 @@ public final class Bugsnag {
      * By default, this is automatically enabled in the constructor.
      */
     public static void enableExceptionHandler() {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.enableExceptionHandler();
-            }
-        });
+        getClient().enableExceptionHandler();
     }
 
     /**
      * Disable automatic reporting of unhandled exceptions.
      */
     public void disableExceptionHandler() {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.disableExceptionHandler();
-            }
-        });
+        getClient().disableExceptionHandler();
     }
 
-    private static void runOnClient(Runnable task) {
-        if(client != null) {
-            task.run();
-        } else {
-            Logger.warn("You must call Bugsnag.init before any other Bugsnag methods");
+    /**
+     * Get the current Bugsnag Client instance.
+     */
+    public static Client getClient() {
+        if(client == null) {
+            throw new IllegalStateException("You must call Bugsnag.init before any other Bugsnag methods");
         }
+
+        return client;
     }
 }
