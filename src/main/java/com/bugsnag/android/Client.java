@@ -53,11 +53,11 @@ public class Client {
      */
     public Client(Context androidContext, String apiKey, boolean sendAnalytics, boolean enableExceptionHandler) {
         if(androidContext == null) {
-            throw new RuntimeException("You must provide a non-null android Context");
+            throw new NullPointerException("You must provide a non-null android Context");
         }
 
         if(apiKey == null) {
-            throw new RuntimeException("You must provide a Bugsnag API key");
+            throw new NullPointerException("You must provide a Bugsnag API key");
         }
 
         // Build a configuration object

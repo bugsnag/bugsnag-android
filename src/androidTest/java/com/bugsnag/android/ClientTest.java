@@ -1,19 +1,21 @@
 package com.bugsnag.android;
 
 public class ClientTest extends BugsnagTestCase {
-    public void testConstructor() {
-        // Should not allow creating a client with a null Context
+    public void testNullContext() {
         try {
             Client client = new Client(null, "api-key");
             fail("Should throw for null Contexts");
-        } catch(RuntimeException e) { }
+        } catch(NullPointerException e) { }
+    }
 
-        // Should not allow creating a client with a null apiKey
+    public void testNullApiKey() {
         try {
             Client client = new Client(getContext(), null);
-            fail("Should throw for null api key");
-        } catch(RuntimeException e) { }
+            fail("Should throw for null Contexts");
+        } catch(NullPointerException e) { }
+    }
 
+    public void testNotify() {
         // Notify should not crash
         Client client = new Client(getContext(), "api-key");
         client.notify(new RuntimeException("Testing"));
