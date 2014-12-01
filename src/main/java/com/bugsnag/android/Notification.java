@@ -55,7 +55,7 @@ class Notification implements JsonStream.Streamable {
         this.errorFiles.add(errorFile);
     }
 
-    int deliver() throws java.io.IOException {
+    int deliver() throws HttpClient.NetworkException, HttpClient.BadResponseException {
         HttpClient.post(config.getNotifyEndpoint(), this);
         return errors.size() + errorFiles.size();
     }

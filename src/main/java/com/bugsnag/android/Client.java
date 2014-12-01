@@ -379,8 +379,10 @@ public class Client {
                 try {
                     new Analytics(config, diagnostics, user).deliver();
                     Logger.info("Sent analytics data to Bugsnag");
-                } catch (IOException e) {
-                    Logger.info("Could not send analytics data to Bugsnag");
+                } catch (HttpClient.NetworkException e) {
+                    Logger.info("Network exception when sending analytics data to Bugsnag");
+                } catch (HttpClient.BadResponseException e) {
+                    Logger.info("Bad response when sending analytics data to Bugsnag");
                 }
             }
         });
@@ -438,11 +440,13 @@ public class Client {
                 try {
                     int errorCount = notification.deliver();
                     Logger.info(String.format("Sent %d new error(s) to Bugsnag", errorCount));
-                } catch (IOException e) {
+                } catch (HttpClient.NetworkException e) {
                     Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
                     // Save error to disk for later sending
                     errorStore.write(error);
+                } catch (HttpClient.BadResponseException e) {
+                    Logger.info("Bad response when sending analytics data to Bugsnag");
                 }
             }
         });

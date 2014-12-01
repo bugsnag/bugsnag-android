@@ -35,7 +35,7 @@ class Analytics implements JsonStream.Streamable {
         writer.endObject();
     }
 
-    void deliver() throws java.io.IOException {
+    void deliver() throws HttpClient.NetworkException, HttpClient.BadResponseException {
         HttpClient.post(config.getAnalyticsEndpoint(), this);
     }
 }
