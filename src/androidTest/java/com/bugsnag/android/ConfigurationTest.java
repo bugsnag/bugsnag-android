@@ -5,8 +5,8 @@ public class ConfigurationTest extends BugsnagTestCase {
         Configuration config = new Configuration("api-key");
 
         // Default endpoints
-        assertEquals("http://notify.bugsnag.com", config.getNotifyEndpoint());
-        assertEquals("http://notify.bugsnag.com/metrics", config.getAnalyticsEndpoint());
+        assertEquals("https://notify.bugsnag.com", config.getNotifyEndpoint());
+        assertEquals("https://notify.bugsnag.com/metrics", config.getAnalyticsEndpoint());
 
         // Setting an endpoint
         config.endpoint = "http://localhost:8000";

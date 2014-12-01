@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 class Configuration {
-    static final String DEFAULT_ENDPOINT = "http://notify.bugsnag.com";
+    static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
 
     String apiKey;
     String appVersion;
@@ -18,6 +18,7 @@ class Configuration {
     String[] projectPackages;
     String releaseStage;
     boolean sendThreads = true;
+    boolean synchronous = false;
 
     MetaData metaData = new MetaData();
     Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
