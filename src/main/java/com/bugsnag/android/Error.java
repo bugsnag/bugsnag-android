@@ -112,18 +112,18 @@ public class Error implements JsonStream.Streamable {
     }
 
     /**
-    * Add additional diagnostic information to send with this Error.
-    * Diagnostic information is collected in "tabs" on your dashboard.
-    *
-    * For example:
-    *
-    *     error.addToTab("account", "name", "Acme Co.");
-    *     error.addToTab("account", "payingCustomer", true);
-    *
-    * @param  tab    the dashboard tab to add diagnostic data to
-    * @param  key    the name of the diagnostic information
-    * @param  value  the contents of the diagnostic information
-    */
+     * Add additional diagnostic information to send with this Error.
+     * Diagnostic information is collected in "tabs" on your dashboard.
+     *
+     * For example:
+     *
+     *     error.addToTab("account", "name", "Acme Co.");
+     *     error.addToTab("account", "payingCustomer", true);
+     *
+     * @param  tab    the dashboard tab to add diagnostic data to
+     * @param  key    the name of the diagnostic information
+     * @param  value  the contents of the diagnostic information
+     */
     public void addToTab(String tabName, String key, Object value) {
         metaData.addToTab(tabName, key, value);
     }

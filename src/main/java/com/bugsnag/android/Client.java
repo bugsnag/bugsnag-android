@@ -3,16 +3,16 @@ package com.bugsnag.android;
 import android.content.Context;
 
 /**
-* A Bugsnag Client instance allows you to use Bugsnag in your Android app.
-* Typically you'd instead use the static access provided in the Bugsnag class.
-*
-* Example usage:
-*
-*     Client client = new Client(this, "your-api-key");
-*     client.notify(new RuntimeException("something broke!"));
-*
-* @see Bugsnag
-*/
+ * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
+ * Typically you'd instead use the static access provided in the Bugsnag class.
+ *
+ * Example usage:
+ *
+ *     Client client = new Client(this, "your-api-key");
+ *     client.notify(new RuntimeException("something broke!"));
+ *
+ * @see Bugsnag
+ */
 public class Client {
     private Configuration config;
     private Diagnostics diagnostics;
@@ -120,18 +120,18 @@ public class Client {
     }
 
     /**
-    * Set which keys should be filtered when sending metaData to Bugsnag.
-    * Use this when you want to ensure sensitive information, such as passwords
-    * or credit card information is stripped from metaData you send to Bugsnag.
-    * Any keys in metaData which contain these strings will be marked as
-    * [FILTERED] when send to Bugsnag.
-    *
-    * For example:
-    *
-    *     client.setFilters("password", "credit_card");
-    *
-    * @param  filters  a list of keys to filter from metaData
-    */
+     * Set which keys should be filtered when sending metaData to Bugsnag.
+     * Use this when you want to ensure sensitive information, such as passwords
+     * or credit card information is stripped from metaData you send to Bugsnag.
+     * Any keys in metaData which contain these strings will be marked as
+     * [FILTERED] when send to Bugsnag.
+     *
+     * For example:
+     *
+     *     client.setFilters("password", "credit_card");
+     *
+     * @param  filters  a list of keys to filter from metaData
+     */
     public void setFilters(String... filters) {
         config.filters = filters;
     }
@@ -165,17 +165,17 @@ public class Client {
     }
 
     /**
-    * Set which packages should be considered part of your application.
-    * Bugsnag uses this to help with error grouping, and stacktrace display.
-    *
-    * For example:
-    *
-    *     client.setProjectPackages("com.example.myapp");
-    *
-    * By default, we'll mark the current package name as part of you app.
-    *
-    * @param  projectPackages  a list of package names
-    */
+     * Set which packages should be considered part of your application.
+     * Bugsnag uses this to help with error grouping, and stacktrace display.
+     *
+     * For example:
+     *
+     *     client.setProjectPackages("com.example.myapp");
+     *
+     * By default, we'll mark the current package name as part of you app.
+     *
+     * @param  projectPackages  a list of package names
+     */
     public void setProjectPackages(String... projectPackages) {
         config.projectPackages = projectPackages;
     }
@@ -343,19 +343,19 @@ public class Client {
     }
 
     /**
-    * Get the global diagnostic information currently stored in MetaData.
-    *
-    * @see  MetaData
-    */
+     * Get the global diagnostic information currently stored in MetaData.
+     *
+     * @see  MetaData
+     */
     public MetaData getMetaData() {
         return config.metaData;
     }
 
     /**
-    * Set the global diagnostic information to be send with every error.
-    *
-    * @see  MetaData
-    */
+     * Set the global diagnostic information to be send with every error.
+     *
+     * @see  MetaData
+     */
     public void setMetaData(MetaData metaData) {
         config.metaData = metaData;
     }

@@ -296,19 +296,19 @@ public final class Bugsnag {
     }
 
     /**
-    * Get the global diagnostic information currently stored in MetaData.
-    *
-    * @see  MetaData
-    */
+     * Get the global diagnostic information currently stored in MetaData.
+     *
+     * @see  MetaData
+     */
     public static MetaData getMetaData() {
         return getClient().getMetaData();
     }
 
     /**
-    * Set the global diagnostic information to be send with every error.
-    *
-    * @see  MetaData
-    */
+     * Set the global diagnostic information to be send with every error.
+     *
+     * @see  MetaData
+     */
     public static void setMetaData(final MetaData metaData) {
         getClient().setMetaData(metaData);
     }
