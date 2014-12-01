@@ -6,7 +6,7 @@ import android.content.Context;
 * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
 * Typically you'd instead use the static access provided in the Bugsnag class.
 *
-* For example:
+* Example usage:
 *
 *     Client client = new Client(this, "your-api-key");
 *     client.notify(new RuntimeException("something broke!"));

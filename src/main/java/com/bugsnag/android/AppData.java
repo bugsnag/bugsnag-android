@@ -5,9 +5,11 @@ import android.content.pm.ApplicationInfo;;
 import android.content.pm.PackageManager;
 
 /**
- * This class contains information about the current app which should
- * not change over time. App information in this class should be cached
- * for fast subsequent lookups.
+ * Information about the running Android app which doesn't change over time,
+ * including app name, version and release stage.
+ *
+ * App information in this class is cached during construction for faster
+ * subsequent lookups and to reduce GC overhead.
  */
 class AppData implements JsonStream.Streamable {
     private Configuration config;
@@ -31,12 +33,12 @@ class AppData implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.beginObject()
-            .name("id").value(packageName)
-            .name("name").value(appName)
-            .name("packageName").value(packageName)
-            .name("versionName").value(versionName)
-            .name("versionCode").value(versionCode);
+        writer.beginObject();
+            writer.name("id").value(packageName);
+            writer.name("name").value(appName);
+            writer.name("packageName").value(packageName);
+            writer.name("versionName").value(versionName);
+            writer.name("versionCode").value(versionCode);
 
             // Prefer user-configured appVersion
             if(config.appVersion != null) {
@@ -55,10 +57,17 @@ class AppData implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    /**
+     * The package name of the running Android app, eg: com.example.myapp
+     */
     public String getPackageName() {
         return appContext.getPackageName();
     }
 
+    /**
+     * The name of the running Android app, from android:label in
+     * AndroidManifest.xml
+     */
     public String getAppName() {
         try {
             PackageManager packageManager = appContext.getPackageManager();
@@ -72,6 +81,10 @@ class AppData implements JsonStream.Streamable {
         return null;
     }
 
+    /**
+     * The version code of the running Android app, from android:versionCode
+     * in AndroidManifest.xml
+     */
     public Integer getVersionCode() {
         try {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionCode;
@@ -81,6 +94,10 @@ class AppData implements JsonStream.Streamable {
         return null;
     }
 
+    /**
+     * The version code of the running Android app, from android:versionName
+     * in AndroidManifest.xml
+     */
     public String getVersionName() {
         try {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
@@ -90,6 +107,10 @@ class AppData implements JsonStream.Streamable {
         return null;
     }
 
+    /**
+     * Guess the release stage of the running Android app by checking the
+     * android:debuggable flag from AndroidManifest.xml
+     */
     public String getReleaseStage() {
         try {
             int appFlags = appContext.getPackageManager().getApplicationInfo(packageName, 0).flags;

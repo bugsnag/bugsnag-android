@@ -5,17 +5,32 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A container for additional diagnostic information you'd like to send with
+ * every error report.
+ *
+ * Diagnostic information is presented on your Bugsnag dashboard in tabs.
+ *
+ * MetaData is a subclass of Map<String, Map<String, Object> so you can any
+ * methods defined on Map to interact with the data contained within
+ */
 public class MetaData extends HashMap<String, Object> implements JsonStream.Streamable {
     private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
     private String[] filters;
 
+    /**
+     * Create an empty MetaData object.
+     */
     public MetaData() {}
+
+    /**
+     * Create a MetaData with values copied from an existing Map
+     */
     public MetaData(Map<String, Object> m) {
         super(m);
     }
@@ -24,6 +39,18 @@ public class MetaData extends HashMap<String, Object> implements JsonStream.Stre
         objectToStream(this, writer);
     }
 
+    /**
+     * Add diagnostic information to a tab of this MetaData.
+     *
+     * For example:
+     *
+     *     metaData.addToTab("account", "name", "Acme Co.");
+     *     metaData.addToTab("account", "payingCustomer", true);
+     *
+     * @param  tab    the dashboard tab to add diagnostic data to
+     * @param  key    the name of the diagnostic information
+     * @param  value  the contents of the diagnostic information
+     */
     public void addToTab(String tabName, String key, Object value) {
         Map<String, Object> tab = (Map<String, Object>)get(tabName);
 

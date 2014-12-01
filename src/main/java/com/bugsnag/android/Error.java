@@ -1,5 +1,14 @@
 package com.bugsnag.android;
 
+/**
+ * Information and associated diagnostics relating to a handled or unhandled
+ * Exception.
+ *
+ * <p>This object is made available in BeforeNotify callbacks, so you can
+ * inspect and modify it before it is delivered to Bugsnag.
+ *
+ * @see BeforeNotify
+ */
 public class Error implements JsonStream.Streamable {
     private static final String PAYLOAD_VERSION = "2";
 
@@ -23,12 +32,12 @@ public class Error implements JsonStream.Streamable {
         mergedMetaData.setFilters(config.filters);
 
         // Write error basics
-        writer.beginObject()
-            .name("payloadVersion").value(PAYLOAD_VERSION)
-            .name("exceptions").value(new ExceptionChain(config, exception))
-            .name("context").value(getContext())
-            .name("severity").value(severity)
-            .name("metaData").value(mergedMetaData);
+        writer.beginObject();
+            writer.name("payloadVersion").value(PAYLOAD_VERSION);
+            writer.name("exceptions").value(new ExceptionChain(config, exception));
+            writer.name("context").value(getContext());
+            writer.name("severity").value(severity);
+            writer.name("metaData").value(mergedMetaData);
 
             // Write user info
             if(user != null) {
@@ -37,11 +46,10 @@ public class Error implements JsonStream.Streamable {
 
             // Write diagnostics
             if(diagnostics != null) {
-                writer
-                    .name("app").value(diagnostics.getAppData())
-                    .name("appState").value(diagnostics.getAppState())
-                    .name("device").value(diagnostics.getDeviceData())
-                    .name("deviceState").value(diagnostics.getDeviceState());
+                writer.name("app").value(diagnostics.getAppData());
+                writer.name("appState").value(diagnostics.getAppState());
+                writer.name("device").value(diagnostics.getDeviceData());
+                writer.name("deviceState").value(diagnostics.getDeviceState());
             }
 
             if(groupingHash != null) {
@@ -55,10 +63,21 @@ public class Error implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    /**
+     * Override the context sent to Bugsnag with this Error. By default we'll
+     * attempt to detect the name of the top-most Activity when this error
+     * occurred, and use this as the context, but sometimes this is not
+     * possible.
+     *
+     * @param  context  what was happening at the time of a crash
+     */
     public void setContext(String context) {
         this.context = context;
     }
 
+    /**
+     * Get the context associated with this Error.
+     */
     public String getContext() {
         if(context != null) {
             return context;
@@ -67,26 +86,85 @@ public class Error implements JsonStream.Streamable {
         }
     }
 
+    /**
+     * Set a custom grouping hash to use when grouping this Error on the
+     * Bugsnag dashboard. By default, we use a combination of error class
+     * and top-most stacktrace line to calculate this, and we do not recommend
+     * you override this.
+     *
+     * @param  groupingHash  a string to use when grouping errors
+     */
     public void setGroupingHash(String groupingHash) {
         this.groupingHash = groupingHash;
     }
 
-    public void setMetaData(MetaData metaData) {
-        this.metaData = metaData;
-    }
-
+    /**
+     * Set the Severity of this Error.
+     *
+     * By default, unhandled exceptions will be Severity.ERROR and handled
+     * exceptions sent with bugsnag.notify will be Severity.WARNING.
+     *
+     * @param  severity  the severity of this error
+     * @see    Severity
+     */
     public void setSeverity(Severity severity) {
         this.severity = severity;
     }
 
+    /**
+    * Add additional diagnostic information to send with this Error.
+    * Diagnostic information is collected in "tabs" on your dashboard.
+    *
+    * For example:
+    *
+    *     error.addToTab("account", "name", "Acme Co.");
+    *     error.addToTab("account", "payingCustomer", true);
+    *
+    * @param  tab    the dashboard tab to add diagnostic data to
+    * @param  key    the name of the diagnostic information
+    * @param  value  the contents of the diagnostic information
+    */
     public void addToTab(String tabName, String key, Object value) {
         metaData.addToTab(tabName, key, value);
     }
 
+    /**
+     * Get any additional diagnostic MetaData currently attached to this Error.
+     *
+     * This will contain any MetaData set by setMetaData or addToTab.
+     *
+     * @see Error#setMetaData
+     * @see Error#addToTab
+     */
+    public MetaData getMetaData() {
+        return metaData;
+    }
+
+    /**
+     * Set additional diagnostic MetaData to send with this Error. This will
+     * be merged with any global MetaData you set on the Client.
+     *
+     * Note: This will overwrite any MetaData you provided using
+     * Bugsnag.notify, so it is recommended to use addToTab instead.
+     *
+     * @param  metaData  additional diagnostic data to send with this Error
+     * @see    Error#addToTab
+     * @see    Error#getMetaData
+     */
+    public void setMetaData(MetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    /**
+     * Get the class name from the exception contained in this Error report.
+     */
     public String getExceptionName() {
         return exception.getClass().getName();
     }
 
+    /**
+     * Get the message from the exception contained in this Error report.
+     */
     public String getExceptionMessage() {
         return exception.getLocalizedMessage();
     }

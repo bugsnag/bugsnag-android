@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * User-specified configuration storage object, contains information
+ * specified at the client level, api-key and endpoint configuration.
+ */
 class Configuration {
     static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
 

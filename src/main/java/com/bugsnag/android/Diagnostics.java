@@ -2,6 +2,9 @@ package com.bugsnag.android;
 
 import android.content.Context;
 
+/**
+ * Device and application diagnostic information.
+ */
 class Diagnostics {
     private Configuration config;
 

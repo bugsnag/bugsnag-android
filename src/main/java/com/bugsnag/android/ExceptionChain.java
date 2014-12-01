@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+/**
+ * Unwrap and serialize exception information and any "cause" exceptions.
+ */
 class ExceptionChain implements JsonStream.Streamable {
     private Configuration config;
     private Throwable exception;
@@ -14,13 +17,15 @@ class ExceptionChain implements JsonStream.Streamable {
 
         Throwable currentEx = exception;
         while(currentEx != null) {
+            // Write the current exception
             Stacktrace stacktrace = new Stacktrace(config, currentEx.getStackTrace());
-            writer.beginObject()
-                .name("errorClass").value(currentEx.getClass().getName())
-                .name("message").value(currentEx.getLocalizedMessage())
-                .name("stacktrace").value(stacktrace)
-            .endObject();
+            writer.beginObject();
+                writer.name("errorClass").value(currentEx.getClass().getName());
+                writer.name("message").value(currentEx.getLocalizedMessage());
+                writer.name("stacktrace").value(stacktrace);
+            writer.endObject();
 
+            // Get the next "cause" exception
             currentEx = currentEx.getCause();
         }
 

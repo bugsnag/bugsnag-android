@@ -1,8 +1,11 @@
 package com.bugsnag.android;
 
-import java.io.Writer;
-import java.io.OutputStreamWriter;
-
+/**
+ * Session analytics tracking payload.
+ *
+ * This payload helps Bugsnag track app loads and provide you with "crashes
+ * per session" metrics.
+ */
 class Analytics implements JsonStream.Streamable {
     private Configuration config;
     private Diagnostics diagnostics;

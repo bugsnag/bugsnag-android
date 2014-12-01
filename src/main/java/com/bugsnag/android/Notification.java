@@ -1,11 +1,15 @@
 package com.bugsnag.android;
 
 import java.io.File;
-import java.io.Writer;
-import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * An error notification payload.
+ *
+ * This payload contains an error report and identifies the source application
+ * using your API key.
+ */
 class Notification implements JsonStream.Streamable {
     private Configuration config;
     private Collection<Error> errors;

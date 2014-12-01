@@ -6,6 +6,10 @@ import java.io.Writer;
 
 import android.content.Context;
 
+/**
+ * Store and flush Error reports which couldn't be sent immediately due to
+ * lack of network connectivity.
+ */
 class ErrorStore {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
 
@@ -30,6 +34,7 @@ class ErrorStore {
         }
     }
 
+    // Flush any on-disk errors to Bugsnag
     void flush() {
         if(path == null) return;
 
@@ -64,6 +69,7 @@ class ErrorStore {
         }, config.synchronous);
     }
 
+    // Write an error to disk, for later sending
     void write(Error error) {
         if(path == null) return;
 

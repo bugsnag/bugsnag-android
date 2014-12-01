@@ -1,10 +1,11 @@
 package com.bugsnag.android;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Collections;
-import java.util.Set;
 import java.util.WeakHashMap;
 
+/**
+ * Provides automatic notification hooks for unhandled exceptions.
+ */
 class ExceptionHandler implements UncaughtExceptionHandler {
     private UncaughtExceptionHandler originalHandler;
     WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();

@@ -12,8 +12,11 @@ import android.os.StatFs;
 import android.provider.Settings;
 
 /**
- * This class contains information about the curremt device which changes
- * over time.
+ * Information about the current Android device which can change over time,
+ * including free memory, sensor status and orientatus.
+ *
+ * App information in this class is not cached, and is recalcuated every
+ * time toStream is called.
  */
 class DeviceState implements JsonStream.Streamable {
     private Context appContext;
@@ -23,19 +26,19 @@ class DeviceState implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.beginObject()
-            .name("freeMemory").value(getFreeMemory())
-            .name("orientation").value(getOrientation())
-            .name("batteryLevel").value(getBatteryLevel())
-            .name("freeDisk").value(getFreeDisk())
-            .name("charging").value(isCharging())
-            .name("locationStatus").value(getLocationStatus())
-            .name("networkAccess").value(getNetworkAccess())
-        .endObject();
+        writer.beginObject();
+            writer.name("freeMemory").value(getFreeMemory());
+            writer.name("orientation").value(getOrientation());
+            writer.name("batteryLevel").value(getBatteryLevel());
+            writer.name("freeDisk").value(getFreeDisk());
+            writer.name("charging").value(isCharging());
+            writer.name("locationStatus").value(getLocationStatus());
+            writer.name("networkAccess").value(getNetworkAccess());
+        writer.endObject();
     }
 
     /**
-     * This is the amount of memory remaining that the VM can allocate
+     * Get the amount of memory remaining that the VM can allocate
      */
     public long getFreeMemory() {
         if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
@@ -46,7 +49,7 @@ class DeviceState implements JsonStream.Streamable {
     }
 
     /**
-     * Get the device orientation
+     * Get the device orientation, eg. "landscape"
      */
     public String getOrientation() {
         String orientation = null;
@@ -60,7 +63,7 @@ class DeviceState implements JsonStream.Streamable {
     }
 
     /**
-     * Get the battery charge level
+     * Get the current battery charge level, eg 0.3
      */
     public Float getBatteryLevel() {
         try {
@@ -93,7 +96,7 @@ class DeviceState implements JsonStream.Streamable {
     }
 
     /**
-     * Is the device currently charging/full batter?
+     * Is the device currently charging/full battery?
      */
     public Boolean isCharging() {
         try {
@@ -127,7 +130,7 @@ class DeviceState implements JsonStream.Streamable {
     }
 
     /**
-     * Get the current status of network access
+     * Get the current status of network access, eg "cellular"
      */
     public String getNetworkAccess() {
         try {

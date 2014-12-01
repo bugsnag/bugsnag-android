@@ -8,8 +8,11 @@ import android.content.pm.ApplicationInfo;
 import android.os.SystemClock;
 
 /**
- * This class contains information about the current app which changes
- * over time, including memory usage.
+ * Information about the running Android app which can change over time,
+ * including memory usage and active screen information.
+ *
+ * App information in this class is not cached, and is recalcuated every
+ * time toStream is called.
  */
 class AppState implements JsonStream.Streamable {
     private static Long startTime = SystemClock.elapsedRealtime();
@@ -20,13 +23,13 @@ class AppState implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.beginObject()
-            .name("duration").value(SystemClock.elapsedRealtime() - startTime)
-            .name("inForeground").value(isInForeground())
-            .name("activeScreen").value(getActiveScreen())
-            .name("memoryUsage").value(getMemoryUsage())
-            .name("lowMemory").value(isLowMemory())
-        .endObject();
+        writer.beginObject();
+            writer.name("duration").value(SystemClock.elapsedRealtime() - startTime);
+            writer.name("inForeground").value(isInForeground());
+            writer.name("activeScreen").value(getActiveScreen());
+            writer.name("memoryUsage").value(getMemoryUsage());
+            writer.name("lowMemory").value(isLowMemory());
+        writer.endObject();
     }
 
     /**

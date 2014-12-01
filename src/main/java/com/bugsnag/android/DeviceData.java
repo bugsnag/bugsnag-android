@@ -9,9 +9,11 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 
 /**
- * This class contains information about the current device which should
- * not change over time. Device information in this class should be cached
- * for fast subsequent lookups.
+ * Information about the current Android device which doesn't change over time,
+ * including screen and locale information.
+ *
+ * App information in this class is cached during construction for faster
+ * subsequent lookups and to reduce GC overhead.
  */
 class DeviceData implements JsonStream.Streamable {
     private Context appContext;
@@ -35,32 +37,41 @@ class DeviceData implements JsonStream.Streamable {
     }
 
     public void toStream(JsonStream writer) {
-        writer.beginObject()
-            .name("manufacturer").value(android.os.Build.MANUFACTURER)
-            .name("brand").value(os.android.Build.BRAND)
-            .name("model").value(android.os.Build.MODEL)
-            .name("screenDensity").value(screenDensity)
-            .name("screenResolution").value(screenResolution)
-            .name("totalMemory").value(totalMemory)
-            .name("osName").value("android")
-            .name("osBuild").value(android.os.Build.DISPLAY)
-            .name("apiLevel").value(android.os.Build.VERSION.SDK_INT)
-            .name("jailbroken").value(rooted)
-            .name("locale").value(locale)
-            .name("osVersion").value(android.os.Build.VERSION.RELEASE)
-            .name("id").value(id)
-        .endObject();
+        writer.beginObject();
+            writer.name("manufacturer").value(android.os.Build.MANUFACTURER);
+            writer.name("brand").value(android.os.Build.BRAND);
+            writer.name("model").value(android.os.Build.MODEL);
+            writer.name("screenDensity").value(screenDensity);
+            writer.name("screenResolution").value(screenResolution);
+            writer.name("totalMemory").value(totalMemory);
+            writer.name("osName").value("android");
+            writer.name("osBuild").value(android.os.Build.DISPLAY);
+            writer.name("apiLevel").value(android.os.Build.VERSION.SDK_INT);
+            writer.name("jailbroken").value(rooted);
+            writer.name("locale").value(locale);
+            writer.name("osVersion").value(android.os.Build.VERSION.RELEASE);
+            writer.name("id").value(id);
+        writer.endObject();
     }
 
+    /**
+     * The screen density of the current Android device in dpi, eg. 320
+     */
     public float getScreenDensity() {
         return appContext.getResources().getDisplayMetrics().density;
     }
 
+    /**
+     * The screen resolution of the current Android device in px, eg. 1920x1080
+     */
     public String getScreenResolution() {
         DisplayMetrics metrics = appContext.getResources().getDisplayMetrics();
         return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
     }
 
+    /**
+     * Get the total memory available on the current Android device, in bytes
+     */
     public long getTotalMemory() {
         if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
             return Runtime.getRuntime().maxMemory();
@@ -69,6 +80,9 @@ class DeviceData implements JsonStream.Streamable {
         }
     }
 
+    /**
+     * Check if the current Android device is rooted
+     */
     public boolean isRooted() {
         boolean hasTestKeys = android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys");
         boolean hasSuperUserApk = false;
@@ -80,10 +94,16 @@ class DeviceData implements JsonStream.Streamable {
         return hasTestKeys || hasSuperUserApk;
     }
 
+    /**
+     * Get the locale of the current Android device, eg en_US
+     */
     public String getLocale() {
         return Locale.getDefault().toString();
     }
 
+    /**
+     * Get the unique device id for the current Android device
+     */
     public String getAndroidId() {
         ContentResolver cr = appContext.getContentResolver();
         return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);

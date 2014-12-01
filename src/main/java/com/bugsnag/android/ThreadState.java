@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+/**
+ * Capture and serialize the state of all threads at the time of an exception.
+ */
 class ThreadState implements JsonStream.Streamable {
     Configuration config;
 
@@ -31,11 +34,11 @@ class ThreadState implements JsonStream.Streamable {
             if (thread.getId() != currentId) {
                 StackTraceElement[] stacktrace = liveThreads.get(thread);
 
-                writer.beginObject()
-                    .name("id").value(thread.getId())
-                    .name("name").value(thread.getName())
-                    .name("stacktrace").value(new Stacktrace(config, stacktrace))
-                .endObject();
+                writer.beginObject();
+                    writer.name("id").value(thread.getId());
+                    writer.name("name").value(thread.getName());
+                    writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
+                writer.endObject();
             }
         }
         writer.endArray();
