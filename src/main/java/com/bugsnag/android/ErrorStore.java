@@ -50,7 +50,7 @@ class ErrorStore {
                             notif.addError(errorFile);
                             notif.deliver();
 
-                            Logger.debug("Deleting sent error file " + errorFile.getName());
+                            Logger.info("Deleting sent error file " + errorFile.getName());
                             errorFile.delete();
                         } catch (HttpClient.NetworkException e) {
                             Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
@@ -72,7 +72,7 @@ class ErrorStore {
             Writer out = new FileWriter(filename);
             new JsonStream(out).value(error).close();
 
-            Logger.debug(String.format("Saved unsent error to disk (%s) ", filename));
+            Logger.info(String.format("Saved unsent error to disk (%s) ", filename));
         } catch (Exception e) {
             Logger.warn(String.format("Couldn't save unsent error to disk (%s) ", filename), e);
         }
