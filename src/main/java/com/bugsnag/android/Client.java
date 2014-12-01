@@ -381,9 +381,11 @@ public class Client {
                     Logger.info("Network exception when sending analytics data to Bugsnag");
                 } catch (HttpClient.BadResponseException e) {
                     Logger.info("Bad response when sending analytics data to Bugsnag");
+                } catch (Exception e) {
+                    Logger.warn("Problem sending analytics data to Bugsnag", e);
                 }
             }
-        });
+        }, config.synchronous);
 
         sentAnalytics = true;
     }
@@ -445,9 +447,11 @@ public class Client {
                     errorStore.write(error);
                 } catch (HttpClient.BadResponseException e) {
                     Logger.info("Bad response when sending analytics data to Bugsnag");
+                } catch (Exception e) {
+                    Logger.warn("Problem sending error to Bugsnag", e);
                 }
             }
-        });
+        }, config.synchronous);
     }
 
     private boolean runBeforeNotifyTasks(Error error) {

@@ -61,7 +61,7 @@ class ErrorStore {
                     }
                 }
             }
-        });
+        }, config.synchronous);
     }
 
     void write(Error error) {
