@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
-
 import android.content.Context;
 
 /**
