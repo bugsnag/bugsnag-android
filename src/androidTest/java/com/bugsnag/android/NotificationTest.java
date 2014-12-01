@@ -3,9 +3,6 @@ package com.bugsnag.android;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.bugsnag.android.Configuration;
-import com.bugsnag.android.Notification;
-
 public class NotificationTest extends BugsnagTestCase {
     public void testInMemoryError() throws JSONException {
         Configuration config = new Configuration("example-api-key");

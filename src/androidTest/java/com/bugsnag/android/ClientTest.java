@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.Client;
-
 public class ClientTest extends BugsnagTestCase {
     public void testConstructor() {
         // Should not allow creating a client with a null Context

@@ -1,8 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.BeforeNotify;
-import com.bugsnag.android.Error;
-
 public class BeforeNotifyTest extends BugsnagTestCase {
     BeforeNotify beforeNotify = new BeforeNotify() {
         @Override

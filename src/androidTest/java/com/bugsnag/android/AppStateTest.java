@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.AppState;
-
 public class AppStateTest extends BugsnagTestCase {
     public void testSaneValues() {
         AppState appState = new AppState(getContext());

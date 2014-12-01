@@ -2,8 +2,6 @@ package com.bugsnag.android;
 
 import org.json.JSONObject;
 
-import com.bugsnag.android.DeviceData;
-
 public class DeviceDataTest extends BugsnagTestCase {
     public void testSaneValues() {
         DeviceData deviceData = new DeviceData(getContext());

@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.Configuration;
-
 public class ConfigurationTest extends BugsnagTestCase {
     public void testEndpoints() {
         Configuration config = new Configuration("api-key");

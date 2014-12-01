@@ -10,8 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.bugsnag.android.ExceptionChain;
-
 public class MetaDataTest extends BugsnagTestCase {
     public void testBasicSerialization() throws JSONException {
         MetaData metaData = new MetaData();

@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.DeviceState;
-
 public class DeviceStateTest extends BugsnagTestCase {
     public void testSaneValues() {
         DeviceState deviceState = new DeviceState(getContext());

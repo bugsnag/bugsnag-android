@@ -3,9 +3,6 @@ package com.bugsnag.android;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.bugsnag.android.AppData;
-import com.bugsnag.android.Configuration;
-
 public class AppDataTest extends BugsnagTestCase {
     public void testManifestData() throws JSONException {
         Configuration config = new Configuration("some-api-key");

@@ -4,8 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.bugsnag.android.ExceptionChain;
-
 public class ExceptionChainTest extends BugsnagTestCase {
     public void testBasicException() throws JSONException {
         Configuration config = new Configuration("api-key");
