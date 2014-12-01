@@ -39,7 +39,7 @@ public class MetaData extends HashMap<String, Object> implements JsonStream.Stre
         }
     }
 
-    void setFilters(String[] filters) {
+    void setFilters(String... filters) {
         this.filters = filters;
     }
 

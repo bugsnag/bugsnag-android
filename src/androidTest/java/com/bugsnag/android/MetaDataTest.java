@@ -87,4 +87,86 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("james", childListJson.get(0));
         assertEquals("test", childListJson.get(1));
     }
+
+    public void testBasicMerge() {
+        MetaData base = new MetaData();
+        base.addToTab("example", "name", "bob");
+        base.addToTab("example", "awesome", false);
+
+        MetaData overrides = new MetaData();
+        base.addToTab("example", "age", 30);
+        base.addToTab("example", "awesome", true);
+
+        MetaData merged = MetaData.merge(base, overrides);
+        Map<String, Object> tab = (Map<String, Object>)merged.get("example");
+        assertEquals("bob", tab.get("name"));
+        assertEquals(30, tab.get("age"));
+        assertEquals(true, tab.get("awesome"));
+    }
+
+    public void testNullMerge() {
+        MetaData base = new MetaData();
+        base.addToTab("example", "name", "bob");
+
+        MetaData merged = MetaData.merge(base, null);
+        Map<String, Object> tab = (Map<String, Object>)merged.get("example");
+        assertEquals("bob", tab.get("name"));
+
+        merged = MetaData.merge(null, base);
+        tab = (Map<String, Object>)merged.get("example");
+        assertEquals("bob", tab.get("name"));
+    }
+
+    public void testDeepMerge() {
+        Map<String, String> baseMap = new HashMap<String, String>();
+        baseMap.put("key", "fromBase");
+        MetaData base = new MetaData();
+        base.addToTab("example", "map", baseMap);
+
+        Map<String, String> overridesMap = new HashMap<String, String>();
+        baseMap.put("key", "fromOverrides");
+        MetaData overrides = new MetaData();
+        overrides.addToTab("example", "map", overridesMap);
+
+        MetaData merged = MetaData.merge(base, overrides);
+        Map<String, Object> tab = (Map<String, Object>)merged.get("example");
+        Map<String, String> mergedMap = (Map<String, String>)tab.get("map");
+        assertEquals("fromOverrides", mergedMap.get("key"));
+    }
+
+    public void testBasicFiltering() throws JSONException {
+        MetaData metaData = new MetaData();
+        metaData.setFilters("password");
+        metaData.addToTab("example", "password", "p4ssw0rd");
+        metaData.addToTab("example", "confirm_password", "p4ssw0rd");
+        metaData.addToTab("example", "normal", "safe");
+
+        JSONObject metaDataJson = streamableToJson(metaData);
+        assertTrue(metaDataJson.has("example"));
+
+        JSONObject tabJson = metaDataJson.getJSONObject("example");
+        assertEquals("[FILTERED]", tabJson.getString("password"));
+        assertEquals("[FILTERED]", tabJson.getString("confirm_password"));
+        assertEquals("safe", tabJson.getString("normal"));
+    }
+
+    public void testNestedFiltering() throws JSONException  {
+        Map<String, String> sensitiveMap = new HashMap<String, String>();
+        sensitiveMap.put("password", "p4ssw0rd");
+        sensitiveMap.put("confirm_password", "p4ssw0rd");
+        sensitiveMap.put("normal", "safe");
+
+        MetaData metaData = new MetaData();
+        metaData.setFilters("password");
+        metaData.addToTab("example", "sensitiveMap", sensitiveMap);
+
+        JSONObject metaDataJson = streamableToJson(metaData);
+        assertTrue(metaDataJson.has("example"));
+
+        JSONObject tabJson = metaDataJson.getJSONObject("example");
+        JSONObject sensitiveMapJson = tabJson.getJSONObject("sensitiveMap");
+        assertEquals("[FILTERED]", sensitiveMapJson.getString("password"));
+        assertEquals("[FILTERED]", sensitiveMapJson.getString("confirm_password"));
+        assertEquals("safe", sensitiveMapJson.getString("normal"));
+    }
 }
