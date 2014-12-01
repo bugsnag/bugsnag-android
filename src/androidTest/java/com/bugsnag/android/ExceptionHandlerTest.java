@@ -24,6 +24,6 @@ public class ExceptionHandlerTest extends BugsnagTestCase {
         assertTrue(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
         ExceptionHandler bugsnagHandler = (ExceptionHandler)Thread.getDefaultUncaughtExceptionHandler();
 
-        assertEquals(2, bugsnagHandler.clients.size());
+        assertEquals(2, bugsnagHandler.clientMap.size());
     }
 }

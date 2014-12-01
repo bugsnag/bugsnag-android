@@ -7,7 +7,7 @@ import java.util.WeakHashMap;
 
 class ExceptionHandler implements UncaughtExceptionHandler {
     private UncaughtExceptionHandler originalHandler;
-    Set<Client> clients = Collections.newSetFromMap(new WeakHashMap<Client, Boolean>());
+    WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
 
     static void enable(Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -22,7 +22,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         }
 
         // Subscribe this client to uncaught exceptions
-        bugsnagHandler.clients.add(client);
+        bugsnagHandler.clientMap.put(client, true);
     }
 
     static void disable(Client client) {
@@ -31,10 +31,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         if(currentHandler instanceof ExceptionHandler) {
             // Unsubscribe this client from uncaught exceptions
             ExceptionHandler bugsnagHandler = (ExceptionHandler)currentHandler;
-            bugsnagHandler.clients.remove(client);
+            bugsnagHandler.clientMap.remove(client);
 
             // Remove the Bugsnag ExceptionHandler if no clients are subscribed
-            if(bugsnagHandler.clients.size() == 0) {
+            if(bugsnagHandler.clientMap.size() == 0) {
                 Thread.setDefaultUncaughtExceptionHandler(bugsnagHandler.originalHandler);
             }
         }
@@ -46,7 +46,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
     public void uncaughtException(Thread t, Throwable e) {
         // Notify any subscribed clients of the uncaught exception
-        for(Client client : clients) {
+        for(Client client : clientMap.keySet()) {
             client.notify(e, Severity.ERROR);
         }
 
