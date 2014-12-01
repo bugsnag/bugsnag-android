@@ -341,20 +341,7 @@ public class Client {
      * @param  value  the contents of the diagnostic information
      */
     public void addToTab(String tab, String key, Object value) {
-        config.addToTab(tab, key, value);
-    }
-
-    /**
-     * Clear a tab of diagnostic information from error reports.
-     *
-     * For example:
-     *
-     *     client.clearTab("account");
-     *
-     * @param  tab  the dashboard tab to clear diagnostic data from
-     */
-    public void clearTab(String tab) {
-        config.clearTab(tab);
+        config.metaData.addToTab(tab, key, value);
     }
 
     /**

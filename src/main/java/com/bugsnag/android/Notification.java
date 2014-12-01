@@ -3,13 +3,13 @@ package com.bugsnag.android;
 import java.io.File;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
-import java.util.List;
+import java.util.Collection;
 import java.util.LinkedList;
 
 class Notification implements JsonStream.Streamable {
     private Configuration config;
-    private List<Error> errors;
-    private List<File> errorFiles;
+    private Collection<Error> errors;
+    private Collection<File> errorFiles;
 
     Notification(Configuration config) {
         this.config = config;

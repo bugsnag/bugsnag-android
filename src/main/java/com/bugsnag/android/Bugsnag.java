@@ -21,8 +21,8 @@ public final class Bugsnag {
      * @param  androidContext  an Android context, usually <code>this</code>
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      */
-    public static void init(Context androidContext, String apiKey) {
-        init(androidContext, apiKey, true);
+    public static Client init(Context androidContext, String apiKey) {
+        return init(androidContext, apiKey, true);
     }
 
     /**
@@ -32,8 +32,8 @@ public final class Bugsnag {
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      * @param  sendAnalytics   should we send session analytics?
      */
-    public static void init(Context androidContext, String apiKey, boolean sendAnalytics) {
-        init(androidContext, apiKey, sendAnalytics, true);
+    public static Client init(Context androidContext, String apiKey, boolean sendAnalytics) {
+        return init(androidContext, apiKey, sendAnalytics, true);
     }
 
     /**
@@ -367,23 +367,6 @@ public final class Bugsnag {
         runOnClient(new Runnable() {
             public void run() {
                 client.addToTab(tab, key, value);
-            }
-        });
-    }
-
-    /**
-     * Clear a tab of diagnostic information from error reports.
-     *
-     * For example:
-     *
-     *     Bugsnag.clearTab("account");
-     *
-     * @param  tab  the dashboard tab to clear diagnostic data from
-     */
-    public static void clearTab(final String tab) {
-        runOnClient(new Runnable() {
-            public void run() {
-                client.clearTab(tab);
             }
         });
     }

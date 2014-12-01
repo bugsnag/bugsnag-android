@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import java.util.Collection;
-
 /**
  * A callback to be run before every notification to Bugsnag.
  *

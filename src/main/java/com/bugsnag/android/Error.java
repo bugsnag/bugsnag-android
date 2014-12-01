@@ -19,7 +19,8 @@ public class Error implements JsonStream.Streamable {
 
     public void toStream(JsonStream writer) {
         // Merge error metaData into global metadata and apply filters
-        MetaData mergedMetaData = config.metaData.merge(metaData).filter(config.filters);
+        MetaData mergedMetaData = MetaData.merge(config.metaData, metaData);
+        mergedMetaData.setFilters(config.filters);
 
         // Write error basics
         writer.beginObject()
@@ -80,10 +81,6 @@ public class Error implements JsonStream.Streamable {
 
     public void addToTab(String tabName, String key, Object value) {
         metaData.addToTab(tabName, key, value);
-    }
-
-    public void clearTab(String tabName) {
-        metaData.clearTab(tabName);
     }
 
     public String getExceptionName() {

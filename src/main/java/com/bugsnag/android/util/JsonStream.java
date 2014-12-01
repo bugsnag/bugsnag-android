@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import java.lang.reflect.Array;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -18,7 +17,7 @@ class JsonStream {
         this.out = out;
     }
 
-    // Wrap JsonWriter methods to swallow exceptions
+    // Wrap JsonWriter methods to swallow exceptions and allow chaining
     JsonStream beginObject() {
         try {
             writer.beginObject();

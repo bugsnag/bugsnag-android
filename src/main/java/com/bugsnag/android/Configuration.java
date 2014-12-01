@@ -34,14 +34,6 @@ class Configuration {
         return String.format("%s/metrics", endpoint);
     }
 
-    void addToTab(String tabName, String key, Object value) {
-        metaData.addToTab(tabName, key, value);
-    }
-
-    void clearTab(String tabName){
-        metaData.clearTab(tabName);
-    }
-
     boolean shouldNotifyForReleaseStage(String releaseStage) {
         if(this.notifyReleaseStages == null)
             return true;

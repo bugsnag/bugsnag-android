@@ -32,7 +32,7 @@ class Analytics implements JsonStream.Streamable {
             writer.name("user").value(user);
 
         // End the main JSON object
-        writer.endObject().close();
+        writer.endObject();
     }
 
     void deliver() throws java.io.IOException {
