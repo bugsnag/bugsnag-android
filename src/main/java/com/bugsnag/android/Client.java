@@ -18,7 +18,6 @@ public class Client {
     private Diagnostics diagnostics;
     private User user = new User();
     private ErrorStore errorStore;
-    private boolean sentAnalytics = false;
 
     /**
      * Initialize a Bugsnag client
@@ -33,23 +32,11 @@ public class Client {
     /**
      * Initialize a Bugsnag client
      *
-     * @param  androidContext  an Android context, usually <code>this</code>
-     * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
-     * @param  sendAnalytics   should we send session analytics?
-     */
-    public Client(Context androidContext, String apiKey, boolean sendAnalytics) {
-        this(androidContext, apiKey, sendAnalytics, true);
-    }
-
-    /**
-     * Initialize a Bugsnag client
-     *
      * @param  androidContext          an Android context, usually <code>this</code>
      * @param  apiKey                  your Bugsnag API key from your Bugsnag dashboard
-     * @param  sendAnalytics           should we send session analytics?
      * @param  enableExceptionHandler  should we automatically handle uncaught exceptions?
      */
-    public Client(Context androidContext, String apiKey, boolean sendAnalytics, boolean enableExceptionHandler) {
+    public Client(Context androidContext, String apiKey, boolean enableExceptionHandler) {
         if(androidContext == null) {
             throw new NullPointerException("You must provide a non-null android Context");
         }
@@ -78,11 +65,6 @@ public class Client {
         // Install a default exception handler with this client
         if(enableExceptionHandler) {
             enableExceptionHandler();
-        }
-
-        // Make analytics request
-        if(sendAnalytics) {
-            sendAnalytics();
         }
     }
 
@@ -361,36 +343,6 @@ public class Client {
     }
 
     /**
-     * Send session analytics information to Bugsnag.
-     * By default this is automatically sent in the constructor.
-     */
-    public void sendAnalytics() {
-        // Never send analytics twice per session
-        if(sentAnalytics) {
-            return;
-        }
-
-        // Make the analytics request in the background
-        Async.run(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    new Analytics(config, diagnostics, user).deliver();
-                    Logger.info("Sent analytics data to Bugsnag");
-                } catch (HttpClient.NetworkException e) {
-                    Logger.info("Network exception when sending analytics data to Bugsnag");
-                } catch (HttpClient.BadResponseException e) {
-                    Logger.info("Bad response when sending analytics data to Bugsnag");
-                } catch (Exception e) {
-                    Logger.warn("Problem sending analytics data to Bugsnag", e);
-                }
-            }
-        }, config.synchronous);
-
-        sentAnalytics = true;
-    }
-
-    /**
      * Enable automatic reporting of unhandled exceptions.
      * By default, this is automatically enabled in the constructor.
      */
@@ -446,7 +398,7 @@ public class Client {
                     // Save error to disk for later sending
                     errorStore.write(error);
                 } catch (HttpClient.BadResponseException e) {
-                    Logger.info("Bad response when sending analytics data to Bugsnag");
+                    Logger.info("Bad response when sending data to Bugsnag");
                 } catch (Exception e) {
                     Logger.warn("Problem sending error to Bugsnag", e);
                 }
