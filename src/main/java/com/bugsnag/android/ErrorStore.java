@@ -66,7 +66,7 @@ class ErrorStore {
                     }
                 }
             }
-        }, config.synchronous);
+        });
     }
 
     // Write an error to disk, for later sending

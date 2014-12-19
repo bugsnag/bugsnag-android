@@ -26,7 +26,7 @@ public class Client {
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      */
     public Client(Context androidContext, String apiKey) {
-        this(androidContext, apiKey, true, true);
+        this(androidContext, apiKey, true);
     }
 
     /**
@@ -403,7 +403,7 @@ public class Client {
                     Logger.warn("Problem sending error to Bugsnag", e);
                 }
             }
-        }, config.synchronous);
+        });
     }
 
     private boolean runBeforeNotifyTasks(Error error) {

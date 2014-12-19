@@ -22,7 +22,6 @@ class Configuration {
     String[] projectPackages;
     String releaseStage;
     boolean sendThreads = true;
-    boolean synchronous = false;
 
     MetaData metaData = new MetaData();
     Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
