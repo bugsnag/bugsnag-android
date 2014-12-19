@@ -50,7 +50,7 @@ class Configuration {
         return classes.contains(className);
     }
 
-    void addBeforeNotify(BeforeNotify beforeNotify) {
+    void beforeNotify(BeforeNotify beforeNotify) {
         this.beforeNotifyTasks.add(beforeNotify);
     }
 

@@ -210,7 +210,7 @@ public final class Bugsnag {
      *
      * For example:
      *
-     *     Bugsnag.addBeforeNotify(new BeforeNotify() {
+     *     Bugsnag.beforeNotify(new BeforeNotify() {
      *         public boolean run(Error error) {
      *             error.setSeverity(Severity.INFO);
      *             return true;
@@ -220,8 +220,8 @@ public final class Bugsnag {
      * @param  beforeNotify  a callback to run before sending errors to Bugsnag
      * @see    BeforeNotify
      */
-    public static void addBeforeNotify(final BeforeNotify beforeNotify) {
-        getClient().addBeforeNotify(beforeNotify);
+    public static void beforeNotify(final BeforeNotify beforeNotify) {
+        getClient().beforeNotify(beforeNotify);
     }
 
     /**

@@ -89,7 +89,7 @@ Bugsnag.addToTab("User", "Paying Customer?", true);
 
 You can also add custom data or modify error information before each exception
 is sent to Bugsnag using `BeforeNotify` callbacks. See
-[addBeforeNotify](#addBeforeNotify) below for details.
+[beforeNotify](#beforeNotify) below for details.
 
 
 Sending Handled Exceptions
@@ -250,7 +250,7 @@ Set the endpoint to send data to. By default we'll send reports to the standard 
 Bugsnag.setEndpoint("http://bugsnag.internal.example.com");
 ```
 
-##addBeforeNotify
+##beforeNotify
 
 Add a "before notify" callback, to execute code before every
 notification to Bugsnag.
@@ -260,7 +260,7 @@ before it is sent to your dashboard. You can also return
 `false` from any callback to halt execution.
 
 ```java
-Bugsnag.addBeforeNotify(new BeforeNotify() {
+Bugsnag.beforeNotify(new BeforeNotify() {
     public boolean run(Error error) {
         error.setSeverity(Severity.INFO);
         return true;

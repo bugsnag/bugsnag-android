@@ -245,7 +245,7 @@ public class Client {
      *
      * For example:
      *
-     *     client.addBeforeNotify(new BeforeNotify() {
+     *     client.beforeNotify(new BeforeNotify() {
      *         public boolean run(Error error) {
      *             error.setSeverity(Severity.INFO);
      *             return true;
@@ -255,8 +255,8 @@ public class Client {
      * @param  beforeNotify  a callback to run before sending errors to Bugsnag
      * @see    BeforeNotify
      */
-    public void addBeforeNotify(BeforeNotify beforeNotify) {
-        config.addBeforeNotify(beforeNotify);
+    public void beforeNotify(BeforeNotify beforeNotify) {
+        config.beforeNotify(beforeNotify);
     }
 
     /**
@@ -372,7 +372,7 @@ public class Client {
 
         // Set the default context, based on the active screen
         error.setContext(diagnostics.getContext());
-        
+
         // Attach diagnostic + user info to the error
         error.setDiagnostics(diagnostics);
         error.setUser(user);

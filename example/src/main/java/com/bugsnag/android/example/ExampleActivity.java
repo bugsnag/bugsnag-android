@@ -32,7 +32,7 @@ public class ExampleActivity extends Activity
         Bugsnag.init(this, BUGSNAG_API_KEY);
 
         // Execute some code before every bugsnag notification
-        Bugsnag.addBeforeNotify(new BeforeNotify() {
+        Bugsnag.beforeNotify(new BeforeNotify() {
             @Override
             public boolean run(Error error) {
                 System.out.println(String.format("In beforeNotify - %s", error.getExceptionName()));
