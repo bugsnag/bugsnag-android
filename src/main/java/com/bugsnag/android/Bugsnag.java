@@ -28,24 +28,12 @@ public final class Bugsnag {
     /**
      * Initialize the static Bugsnag client
      *
-     * @param  androidContext  an Android context, usually <code>this</code>
-     * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
-     * @param  sendAnalytics   should we send session analytics?
-     */
-    public static Client init(Context androidContext, String apiKey, boolean sendAnalytics) {
-        return init(androidContext, apiKey, sendAnalytics, true);
-    }
-
-    /**
-     * Initialize the static Bugsnag client
-     *
      * @param  androidContext          an Android context, usually <code>this</code>
      * @param  apiKey                  your Bugsnag API key from your Bugsnag dashboard
-     * @param  sendAnalytics           should we send session analytics?
      * @param  enableExceptionHandler  should we automatically handle uncaught exceptions?
      */
-    public static Client init(Context androidContext, String apiKey, boolean sendAnalytics, boolean enableExceptionHandler) {
-        client = new Client(androidContext, apiKey, sendAnalytics, enableExceptionHandler);
+    public static Client init(Context androidContext, String apiKey, boolean enableExceptionHandler) {
+        client = new Client(androidContext, apiKey, enableExceptionHandler);
         return client;
     }
 
@@ -311,14 +299,6 @@ public final class Bugsnag {
      */
     public static void setMetaData(final MetaData metaData) {
         getClient().setMetaData(metaData);
-    }
-
-    /**
-     * Send session analytics information to Bugsnag.
-     * By default this is automatically sent in Bugsnag.init
-     */
-    public static void sendAnalytics() {
-        getClient().sendAnalytics();
     }
 
     /**

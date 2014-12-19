@@ -6,12 +6,10 @@ public class ConfigurationTest extends BugsnagTestCase {
 
         // Default endpoints
         assertEquals("https://notify.bugsnag.com", config.getNotifyEndpoint());
-        assertEquals("https://notify.bugsnag.com/metrics", config.getAnalyticsEndpoint());
 
         // Setting an endpoint
         config.endpoint = "http://localhost:8000";
         assertEquals("http://localhost:8000", config.getNotifyEndpoint());
-        assertEquals("http://localhost:8000/metrics", config.getAnalyticsEndpoint());
     }
 
     public void testShouldNotify() {

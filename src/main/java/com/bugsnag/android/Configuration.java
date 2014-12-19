@@ -35,10 +35,6 @@ class Configuration {
         return endpoint;
     }
 
-    String getAnalyticsEndpoint() {
-        return String.format("%s/metrics", endpoint);
-    }
-
     boolean shouldNotifyForReleaseStage(String releaseStage) {
         if(this.notifyReleaseStages == null)
             return true;
