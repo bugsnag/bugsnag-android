@@ -27,7 +27,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     static void disable(Client client) {
-        // Find tje Bugsnag ExceptionHandler
+        // Find the Bugsnag ExceptionHandler
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         if(currentHandler instanceof ExceptionHandler) {
             // Unsubscribe this client from uncaught exceptions

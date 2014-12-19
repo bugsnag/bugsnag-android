@@ -58,14 +58,16 @@ public class Client {
         setProjectPackages(appContext.getPackageName());
         setUserId(diagnostics.getDeviceId());
 
-        // Flush any on-disk errors
+        // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext);
-        errorStore.flush();
 
         // Install a default exception handler with this client
         if(enableExceptionHandler) {
             enableExceptionHandler();
         }
+
+        // Flush any on-disk errors
+        errorStore.flush();
     }
 
     /**
@@ -370,16 +372,16 @@ public class Client {
 
         // Set the default context, based on the active screen
         error.setContext(diagnostics.getContext());
+        
+        // Attach diagnostic + user info to the error
+        error.setDiagnostics(diagnostics);
+        error.setUser(user);
 
         // Run beforeNotify tasks, don't notify if any return true
         if(!runBeforeNotifyTasks(error)) {
             Logger.info("Skipping notification - beforeNotify task returned false");
             return;
         }
-
-        // Attach diagnostic + user info to the error
-        error.setDiagnostics(diagnostics);
-        error.setUser(user);
 
         // Build the notification
         final Notification notification = new Notification(config);
