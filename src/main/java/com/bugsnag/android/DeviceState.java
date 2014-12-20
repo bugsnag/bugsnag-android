@@ -31,9 +31,7 @@ class DeviceState implements JsonStream.Streamable {
 
     DeviceState(Context appContext) {
         this.appContext = appContext;
-    }
 
-    public void calculate() {
         freeMemory = getFreeMemory();
         orientation = getOrientation();
         batteryLevel = getBatteryLevel();
@@ -58,7 +56,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the amount of memory remaining that the VM can allocate
      */
-    public long getFreeMemory() {
+    private long getFreeMemory() {
         if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
             return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
         } else {
@@ -69,7 +67,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the device orientation, eg. "landscape"
      */
-    public String getOrientation() {
+    private String getOrientation() {
         String orientation = null;
         switch(appContext.getResources().getConfiguration().orientation) {
             case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
@@ -83,7 +81,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the current battery charge level, eg 0.3
      */
-    public Float getBatteryLevel() {
+    private Float getBatteryLevel() {
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
@@ -98,7 +96,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the free disk space on the smallest disk
      */
-    public Long getFreeDisk() {
+    private Long getFreeDisk() {
         try {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
             long externalBytesAvailable = (long)externalStat.getBlockSize() * (long)externalStat.getBlockCount();
@@ -116,7 +114,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Is the device currently charging/full battery?
      */
-    public Boolean isCharging() {
+    private Boolean isCharging() {
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
@@ -132,7 +130,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the current status of location services
      */
-    public String getLocationStatus() {
+    private String getLocationStatus() {
         try {
             ContentResolver cr = appContext.getContentResolver();
             String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
@@ -150,7 +148,7 @@ class DeviceState implements JsonStream.Streamable {
     /**
      * Get the current status of network access, eg "cellular"
      */
-    public String getNetworkAccess() {
+    private String getNetworkAccess() {
         try {
             ConnectivityManager cm = (ConnectivityManager)appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();

@@ -24,12 +24,12 @@ class AppState implements JsonStream.Streamable {
     private Long memoryUsage;
     private Boolean lowMemory;
 
+    static void init() {}
+
     AppState(Context appContext) {
         this.appContext = appContext;
-    }
 
-    public void calculate() {
-        duration = SystemClock.elapsedRealtime() - startTime;
+        duration = getDuration();
         inForeground = isInForeground();
         activeScreen = getActiveScreen();
         memoryUsage = getMemoryUsage();
@@ -46,18 +46,26 @@ class AppState implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    public String getActiveScreenClass() {
+        if(activeScreen != null) {
+            return activeScreen.substring(activeScreen.lastIndexOf('.') + 1);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Get the actual memory used by the VM (which may not be the total used
      * by the app in the case of NDK usage).
      */
-    public long getMemoryUsage() {
+    private long getMemoryUsage() {
         return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
     }
 
     /**
      * Check if the device is currently running low on memory.
      */
-    public Boolean isLowMemory() {
+    private Boolean isLowMemory() {
         try {
             ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
@@ -74,7 +82,7 @@ class AppState implements JsonStream.Streamable {
      * Get the name of the top-most activity. Requires the GET_TASKS permission,
      * which defaults to true in Android 5.0+.
      */
-    public String getActiveScreen() {
+    private String getActiveScreen() {
         try {
             ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
@@ -90,7 +98,7 @@ class AppState implements JsonStream.Streamable {
      * Get the name of the top-most activity. Requires the GET_TASKS permission,
      * which defaults to true in Android 5.0+.
      */
-    public Boolean isInForeground() {
+    private Boolean isInForeground() {
         try {
             ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
@@ -105,5 +113,13 @@ class AppState implements JsonStream.Streamable {
         }
 
         return null;
+    }
+
+    /**
+     * Get the time in milliseconds since Bugsnag was initialized, which is a
+     * good approximation for how long the app has been running.
+     */
+    private Long getDuration() {
+        return SystemClock.elapsedRealtime() - startTime;
     }
 }

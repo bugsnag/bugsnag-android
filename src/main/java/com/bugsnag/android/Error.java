@@ -13,7 +13,10 @@ public class Error implements JsonStream.Streamable {
     private static final String PAYLOAD_VERSION = "2";
 
     private Configuration config;
-    private Diagnostics diagnostics;
+    private AppData appData;
+    private DeviceData deviceData;
+    private AppState appState;
+    private DeviceState deviceState;
     private User user;
     private Throwable exception;
     private Severity severity = Severity.WARNING;
@@ -45,11 +48,20 @@ public class Error implements JsonStream.Streamable {
             }
 
             // Write diagnostics
-            if(diagnostics != null) {
-                writer.name("app").value(diagnostics.getAppData());
-                writer.name("appState").value(diagnostics.getAppState());
-                writer.name("device").value(diagnostics.getDeviceData());
-                writer.name("deviceState").value(diagnostics.getDeviceState());
+            if(appData != null) {
+                writer.name("app").value(appData);
+            }
+
+            if(appState != null) {
+                writer.name("appState").value(appState);
+            }
+
+            if(deviceData != null) {
+                writer.name("device").value(deviceData);
+            }
+
+            if(deviceState != null) {
+                writer.name("deviceState").value(deviceState);
             }
 
             if(groupingHash != null) {
@@ -81,8 +93,12 @@ public class Error implements JsonStream.Streamable {
     public String getContext() {
         if(context != null) {
             return context;
-        } else {
+        } else if (config.context != null) {
             return config.context;
+        } else if (appState != null){
+            return appState.getActiveScreenClass();
+        } else {
+            return null;
         }
     }
 
@@ -219,9 +235,20 @@ public class Error implements JsonStream.Streamable {
         return exception.getLocalizedMessage();
     }
 
-    void setDiagnostics(Diagnostics diagnostics) {
-        this.diagnostics = diagnostics;
-        this.diagnostics.calculateState();
+    void setAppData(AppData appData) {
+        this.appData = appData;
+    }
+
+    void setDeviceData(DeviceData deviceData) {
+        this.deviceData = deviceData;
+    }
+
+    void setAppState(AppState appState) {
+        this.appState = appState;
+    }
+
+    void setDeviceState(DeviceState deviceState) {
+        this.deviceState = deviceState;
     }
 
     void setUser(User user) {

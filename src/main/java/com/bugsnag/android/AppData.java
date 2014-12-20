@@ -19,7 +19,7 @@ class AppData implements JsonStream.Streamable {
     private String appName;
     private Integer versionCode;
     private String versionName;
-    private String releaseStage;
+    private String guessedReleaseStage;
 
     AppData(Context appContext, Configuration config) {
         this.config = config;
@@ -29,7 +29,7 @@ class AppData implements JsonStream.Streamable {
         appName = getAppName();
         versionCode = getVersionCode();
         versionName = getVersionName();
-        releaseStage = getReleaseStage();
+        guessedReleaseStage = guessReleaseStage();
     }
 
     public void toStream(JsonStream writer) {
@@ -40,27 +40,33 @@ class AppData implements JsonStream.Streamable {
             writer.name("versionName").value(versionName);
             writer.name("versionCode").value(versionCode);
 
-            // Prefer user-configured appVersion
-            if(config.appVersion != null) {
-                writer.name("version").value(config.appVersion);
-            } else {
-                writer.name("version").value(versionName);
-            }
-
-            // Prefer user-configured releaseStage
-            if(config.releaseStage != null) {
-                writer.name("releaseStage").value(config.releaseStage);
-            } else {
-                writer.name("releaseStage").value(releaseStage);
-            }
+            // Prefer user-configured appVersion + releaseStage
+            writer.name("version").value(getAppVersion());
+            writer.name("releaseStage").value(getReleaseStage());
 
         writer.endObject();
+    }
+
+    public String getReleaseStage() {
+        if(config.releaseStage != null) {
+            return config.releaseStage;
+        } else {
+            return guessedReleaseStage;
+        }
+    }
+
+    public String getAppVersion() {
+        if(config.appVersion != null) {
+            return config.appVersion;
+        } else {
+            return versionName;
+        }
     }
 
     /**
      * The package name of the running Android app, eg: com.example.myapp
      */
-    public String getPackageName() {
+    private String getPackageName() {
         return appContext.getPackageName();
     }
 
@@ -68,7 +74,7 @@ class AppData implements JsonStream.Streamable {
      * The name of the running Android app, from android:label in
      * AndroidManifest.xml
      */
-    public String getAppName() {
+    private String getAppName() {
         try {
             PackageManager packageManager = appContext.getPackageManager();
             ApplicationInfo appInfo = packageManager.getApplicationInfo(packageName, 0);
@@ -85,7 +91,7 @@ class AppData implements JsonStream.Streamable {
      * The version code of the running Android app, from android:versionCode
      * in AndroidManifest.xml
      */
-    public Integer getVersionCode() {
+    private Integer getVersionCode() {
         try {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
@@ -98,7 +104,7 @@ class AppData implements JsonStream.Streamable {
      * The version code of the running Android app, from android:versionName
      * in AndroidManifest.xml
      */
-    public String getVersionName() {
+    private String getVersionName() {
         try {
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
@@ -111,7 +117,7 @@ class AppData implements JsonStream.Streamable {
      * Guess the release stage of the running Android app by checking the
      * android:debuggable flag from AndroidManifest.xml
      */
-    public String getReleaseStage() {
+    private String guessReleaseStage() {
         try {
             int appFlags = appContext.getPackageManager().getApplicationInfo(packageName, 0).flags;
             if((appFlags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {

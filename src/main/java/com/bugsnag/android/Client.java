@@ -15,7 +15,9 @@ import android.content.Context;
  */
 public class Client {
     private Configuration config;
-    private Diagnostics diagnostics;
+    private Context appContext;
+    private AppData appData;
+    private DeviceData deviceData;
     private User user = new User();
     private ErrorStore errorStore;
 
@@ -49,14 +51,16 @@ public class Client {
         config = new Configuration(apiKey);
 
         // Get the application context, many things need this
-        Context appContext = androidContext.getApplicationContext();
+        appContext = androidContext.getApplicationContext();
 
-        // Set up diagnostics collection
-        diagnostics = new Diagnostics(config, appContext);
+        // Set up and collect constant app and device diagnostics
+        appData = new AppData(appContext, config);
+        deviceData = new DeviceData(appContext);
+        AppState.init();
 
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
-        setUserId(diagnostics.getDeviceId());
+        setUserId(deviceData.getUserId());
 
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext);
@@ -375,15 +379,17 @@ public class Client {
         }
 
         // Don't notify unless releaseStage is in notifyReleaseStages
-        if(!config.shouldNotifyForReleaseStage(diagnostics.getReleaseStage())) {
+        if(!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
             return;
         }
 
-        // Set the default context, based on the active screen
-        error.setContext(diagnostics.getContext());
+        // Capture the state of the app and device and attach diagnostics to the error
+        error.setAppData(appData);
+        error.setDeviceData(deviceData);
+        error.setAppState(new AppState(appContext));
+        error.setDeviceState(new DeviceState(appContext));
 
-        // Attach diagnostic + user info to the error
-        error.setDiagnostics(diagnostics);
+        // Attach user info to the error
         error.setUser(user);
 
         // Run beforeNotify tasks, don't notify if any return true
