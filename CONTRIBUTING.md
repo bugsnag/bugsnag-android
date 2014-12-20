@@ -7,6 +7,15 @@ Contributing
 -   [Make a pull request](https://help.github.com/articles/using-pull-requests)
 -   Thanks!
 
+Running `./gradlew` installs both the gradle build system and the Android SDK,
+but you'll need to make sure that the `adb` tool installed as part of the
+Android SDK is available in your `$PATH` before building, eg:
+
+```
+export PATH=$PATH:~/.android-sdk/platform-tools
+```
+
+
 Building the Libarary
 ---------------------
 
