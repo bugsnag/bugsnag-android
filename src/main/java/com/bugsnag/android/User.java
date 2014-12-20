@@ -8,6 +8,18 @@ class User implements JsonStream.Streamable {
     private String email;
     private String name;
 
+    User() {}
+
+    User(String id, String email, String name) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+    }
+
+    User(User u) {
+        this(u.id, u.email, u.name);
+    }
+
     public void toStream(JsonStream writer) {
         writer.beginObject();
 

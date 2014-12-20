@@ -112,6 +112,47 @@ public class Error implements JsonStream.Streamable {
     }
 
     /**
+     * Set user information associated with this Error
+     *
+     * @param  id     the id of the user
+     * @param  email  the email address of the user
+     * @param  name   the name of the user
+     */
+    public void setUser(String id, String email, String name) {
+        this.user = new User(id, email, name);
+    }
+
+    /**
+     * Set user id associated with this Error
+     *
+     * @param  id  the id of the user
+     */
+    public void setUserId(String id) {
+        this.user = new User(this.user);
+        this.user.setId(id);
+    }
+
+    /**
+     * Set user email address associated with this Error
+     *
+     * @param  email  the email address of the user
+     */
+    public void setUserEmail(String email) {
+        this.user = new User(this.user);
+        this.user.setEmail(email);
+    }
+
+    /**
+     * Set user name associated with this Error
+     *
+     * @param  name  the name of the user
+     */
+    public void setUserName(String name) {
+        this.user = new User(this.user);
+        this.user.setName(name);
+    }
+
+    /**
      * Add additional diagnostic information to send with this Error.
      * Diagnostic information is collected in "tabs" on your dashboard.
      *
