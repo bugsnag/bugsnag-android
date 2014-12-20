@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,30 +14,30 @@ import java.util.Set;
  * every error report.
  *
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
- *
- * MetaData is a subclass of Map<String, Map<String, Object> so you can any
- * methods defined on Map to interact with the data contained within
  */
-public class MetaData extends HashMap<String, Object> implements JsonStream.Streamable {
+public class MetaData implements JsonStream.Streamable {
     private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
     private String[] filters;
+    private HashMap<String, Object> store;
 
     /**
      * Create an empty MetaData object.
      */
-    public MetaData() {}
+    public MetaData() {
+        store = new HashMap<String, Object>();
+    }
 
     /**
      * Create a MetaData with values copied from an existing Map
      */
     public MetaData(Map<String, Object> m) {
-        super(m);
+        store = new HashMap<String, Object>(m);
     }
 
     public void toStream(JsonStream writer) {
-        objectToStream(this, writer);
+        objectToStream(store, writer);
     }
 
     /**
@@ -47,17 +48,12 @@ public class MetaData extends HashMap<String, Object> implements JsonStream.Stre
      *     metaData.addToTab("account", "name", "Acme Co.");
      *     metaData.addToTab("account", "payingCustomer", true);
      *
-     * @param  tab    the dashboard tab to add diagnostic data to
-     * @param  key    the name of the diagnostic information
-     * @param  value  the contents of the diagnostic information
+     * @param  tabName  the dashboard tab to add diagnostic data to
+     * @param  key      the name of the diagnostic information
+     * @param  value    the contents of the diagnostic information
      */
     public void addToTab(String tabName, String key, Object value) {
-        Map<String, Object> tab = (Map<String, Object>)get(tabName);
-
-        if(tab == null) {
-            tab = new HashMap<String, Object>();
-            put(tabName, tab);
-        }
+        Map<String, Object> tab = getTab(tabName);
 
         if(value != null) {
             tab.put(key, value);
@@ -66,12 +62,39 @@ public class MetaData extends HashMap<String, Object> implements JsonStream.Stre
         }
     }
 
+    /**
+     * Remove a tab of diagnostic information from this MetaData.
+     *
+     * @param  tabName  the dashboard tab to remove diagnostic data from
+     */
+    public void clearTab(String tabName) {
+        store.remove(tabName);
+    }
+
+    Map<String, Object> getTab(String tabName) {
+        Map<String, Object> tab = (Map<String, Object>)store.get(tabName);
+
+        if(tab == null) {
+            tab = new HashMap<String, Object>();
+            store.put(tabName, tab);
+        }
+
+        return tab;
+    }
+
     void setFilters(String... filters) {
         this.filters = filters;
     }
 
     static MetaData merge(MetaData... metaDataList) {
-        return new MetaData(mergeMaps(metaDataList));
+        ArrayList<Map<String, Object>> stores = new ArrayList<Map<String, Object>>();
+        for(MetaData metaData : metaDataList) {
+            if(metaData != null) {
+                stores.add(metaData.store);
+            }
+        }
+
+        return new MetaData(mergeMaps(stores.toArray(new Map[0])));
     }
 
     private static Map<String, Object> mergeMaps(Map<String, Object>... maps) {

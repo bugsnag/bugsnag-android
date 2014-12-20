@@ -96,7 +96,7 @@ public class MetaDataTest extends BugsnagTestCase {
         base.addToTab("example", "awesome", true);
 
         MetaData merged = MetaData.merge(base, overrides);
-        Map<String, Object> tab = (Map<String, Object>)merged.get("example");
+        Map<String, Object> tab = merged.getTab("example");
         assertEquals("bob", tab.get("name"));
         assertEquals(30, tab.get("age"));
         assertEquals(true, tab.get("awesome"));
@@ -107,11 +107,11 @@ public class MetaDataTest extends BugsnagTestCase {
         base.addToTab("example", "name", "bob");
 
         MetaData merged = MetaData.merge(base, null);
-        Map<String, Object> tab = (Map<String, Object>)merged.get("example");
+        Map<String, Object> tab = merged.getTab("example");
         assertEquals("bob", tab.get("name"));
 
         merged = MetaData.merge(null, base);
-        tab = (Map<String, Object>)merged.get("example");
+        tab = merged.getTab("example");
         assertEquals("bob", tab.get("name"));
     }
 
@@ -127,7 +127,7 @@ public class MetaDataTest extends BugsnagTestCase {
         overrides.addToTab("example", "map", overridesMap);
 
         MetaData merged = MetaData.merge(base, overrides);
-        Map<String, Object> tab = (Map<String, Object>)merged.get("example");
+        Map<String, Object> tab = merged.getTab("example");
         Map<String, String> mergedMap = (Map<String, String>)tab.get("map");
         assertEquals("fromOverrides", mergedMap.get("key"));
     }

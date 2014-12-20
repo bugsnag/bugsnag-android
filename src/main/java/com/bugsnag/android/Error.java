@@ -129,6 +129,15 @@ public class Error implements JsonStream.Streamable {
     }
 
     /**
+     * Remove a tab of app-wide diagnostic information from this Error
+     *
+     * @param  tabName  the dashboard tab to remove diagnostic data from
+     */
+    public void clearTab(String tabName) {
+        metaData.clearTab(tabName);
+    }
+
+    /**
      * Get any additional diagnostic MetaData currently attached to this Error.
      *
      * This will contain any MetaData set by setMetaData or addToTab.

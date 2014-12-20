@@ -284,6 +284,15 @@ public final class Bugsnag {
     }
 
     /**
+     * Remove a tab of app-wide diagnostic information
+     *
+     * @param  tabName  the dashboard tab to remove diagnostic data from
+     */
+    public void clearTab(String tabName) {
+        getClient().clearTab(tabName);
+    }
+
+    /**
      * Get the global diagnostic information currently stored in MetaData.
      *
      * @see  MetaData
