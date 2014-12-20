@@ -21,19 +21,37 @@ import android.provider.Settings;
 class DeviceState implements JsonStream.Streamable {
     private Context appContext;
 
+    private Long freeMemory;
+    private String orientation;
+    private Float batteryLevel;
+    private Long freeDisk;
+    private Boolean charging;
+    private String locationStatus;
+    private String networkAccess;
+
     DeviceState(Context appContext) {
         this.appContext = appContext;
     }
 
+    public void calculate() {
+        freeMemory = getFreeMemory();
+        orientation = getOrientation();
+        batteryLevel = getBatteryLevel();
+        freeDisk = getFreeDisk();
+        charging = isCharging();
+        locationStatus = getLocationStatus();
+        networkAccess = getNetworkAccess();
+    }
+
     public void toStream(JsonStream writer) {
         writer.beginObject();
-            writer.name("freeMemory").value(getFreeMemory());
-            writer.name("orientation").value(getOrientation());
-            writer.name("batteryLevel").value(getBatteryLevel());
-            writer.name("freeDisk").value(getFreeDisk());
-            writer.name("charging").value(isCharging());
-            writer.name("locationStatus").value(getLocationStatus());
-            writer.name("networkAccess").value(getNetworkAccess());
+            writer.name("freeMemory").value(freeMemory);
+            writer.name("orientation").value(orientation);
+            writer.name("batteryLevel").value(batteryLevel);
+            writer.name("freeDisk").value(freeDisk);
+            writer.name("charging").value(charging);
+            writer.name("locationStatus").value(locationStatus);
+            writer.name("networkAccess").value(networkAccess);
         writer.endObject();
     }
 

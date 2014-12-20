@@ -18,17 +18,31 @@ class AppState implements JsonStream.Streamable {
     private static Long startTime = SystemClock.elapsedRealtime();
     private Context appContext;
 
+    private Long duration;
+    private Boolean inForeground;
+    private String activeScreen;
+    private Long memoryUsage;
+    private Boolean lowMemory;
+
     AppState(Context appContext) {
         this.appContext = appContext;
     }
 
+    public void calculate() {
+        duration = SystemClock.elapsedRealtime() - startTime;
+        inForeground = isInForeground();
+        activeScreen = getActiveScreen();
+        memoryUsage = getMemoryUsage();
+        lowMemory = isLowMemory();
+    }
+
     public void toStream(JsonStream writer) {
         writer.beginObject();
-            writer.name("duration").value(SystemClock.elapsedRealtime() - startTime);
-            writer.name("inForeground").value(isInForeground());
-            writer.name("activeScreen").value(getActiveScreen());
-            writer.name("memoryUsage").value(getMemoryUsage());
-            writer.name("lowMemory").value(isLowMemory());
+            writer.name("duration").value(duration);
+            writer.name("inForeground").value(inForeground);
+            writer.name("activeScreen").value(activeScreen);
+            writer.name("memoryUsage").value(memoryUsage);
+            writer.name("lowMemory").value(lowMemory);
         writer.endObject();
     }
 

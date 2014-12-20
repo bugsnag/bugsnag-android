@@ -221,6 +221,7 @@ public class Error implements JsonStream.Streamable {
 
     void setDiagnostics(Diagnostics diagnostics) {
         this.diagnostics = diagnostics;
+        this.diagnostics.calculateState();
     }
 
     void setUser(User user) {

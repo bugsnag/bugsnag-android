@@ -22,6 +22,11 @@ class Diagnostics {
         deviceState = new DeviceState(appContext);
     }
 
+    void calculateState() {
+        appState.calculate();
+        deviceState.calculate();
+    }
+
     AppData getAppData() {
         return appData;
     }
