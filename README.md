@@ -290,20 +290,23 @@ Bugsnag.setSendThreads(false);
 
 ###setEndpoint
 
-Set the endpoint to send data to. By default we'll send reports to the standard `https://notify.bugsnag.com` endpoint, but you can override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoint:
+Set the endpoint to send data to. By default we'll send reports to our
+standard `https://notify.bugsnag.com` endpoint, but you can override this if
+you are using [Bugsnag Enterprise](https://bugsnag.com/enterprise), to point
+to your own Bugsnag endpoint:
 
 ```java
 Bugsnag.setEndpoint("http://bugsnag.internal.example.com");
 ```
 
-##beforeNotify
+###beforeNotify
 
-Add a "before notify" callback, to execute code before every
-notification to Bugsnag.
+Add a "before notify" callback, to execute code before every notification to
+Bugsnag.
 
-You can use this to add or modify information attached to an error
-before it is sent to your dashboard. You can also return
-`false` from any callback to halt execution.
+You can use this to add or modify information attached to an error before it
+is sent to your dashboard. You can also return `false` from any callback to
+halt execution.
 
 ```java
 Bugsnag.beforeNotify(new BeforeNotify() {
@@ -335,4 +338,5 @@ License
 -------
 
 The Bugsnag Android notifier is free software released under the MIT License.
-See [LICENSE.txt](https://github.com/bugsnag/bugsnag-android/blob/master/LICENSE.txt) for details.
+See [LICENSE.txt](https://github.com/bugsnag/bugsnag-android/blob/master/LICENSE.txt)
+for details.
