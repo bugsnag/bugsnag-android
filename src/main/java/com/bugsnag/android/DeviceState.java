@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import java.util.Date;
 
 import android.content.ContentResolver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
