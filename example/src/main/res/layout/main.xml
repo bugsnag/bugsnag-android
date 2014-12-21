@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:gravity="center"
+    >
+
+    <!-- Trigger unhandled exceptions -->
+    <TextView
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="10dp"
+      android:text="Unhandled Exceptions"
+      android:textSize="18sp"
+      android:textStyle="bold"
+      android:gravity="center"/>
+    <Button
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:text="Crash App"
+      android:onClick="crash"
+      />
+
+    <!-- Separator -->
+    <View android:layout_width="fill_parent" android:layout_height="20dp" />
+
+    <!-- Trigger handled exceptions -->
+    <TextView
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="10dp"
+      android:text="Handled Exceptions"
+      android:textSize="18sp"
+      android:textStyle="bold"
+      android:gravity="center"/>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Severity: Error"
+        android:onClick="sendError"
+        />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Severity: Warning"
+        android:onClick="sendWarning"
+        />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Severity: Info"
+        android:onClick="sendInfo"
+        />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="With MetaData"
+        android:onClick="sendErrorWithMetaData"
+        />
+</LinearLayout>

@@ -1,3 +1,16 @@
+3.0.0
+-----
+-   Removed dependency on `bugsnag-java`
+-   Reduced memory usage, using lazy-loading and streaming
+-   Easier "top activity" tracking
+-   Device brand information is now collected (eg. "Samsung")
+-   SSL enabled by default
+-   Adding custom diagnostics (MetaData) is now easier to use
+-   Fixed app name detection
+-   Uses Android's new build system (gradle based)
+-   Added unit tests, automatically run on travis.ci
+-   Severity is now an Enum for type-safety
+
 2.2.3
 -----
 -   Bump bugsnag-java dependency to fix prototype mismatch bug
