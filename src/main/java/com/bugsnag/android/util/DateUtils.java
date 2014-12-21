@@ -10,7 +10,7 @@ class DateUtils {
 
     static {
         TimeZone tz = TimeZone.getTimeZone("UTC");
-        iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
+        iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         iso8601.setTimeZone(tz);
     }
 
