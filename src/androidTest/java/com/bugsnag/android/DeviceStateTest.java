@@ -15,5 +15,6 @@ public class DeviceStateTest extends BugsnagTestCase {
         assertTrue(deviceStateJson.getBoolean("charging"));
         assertEquals("allowed", deviceStateJson.getString("locationStatus"));
         assertNotNull(deviceStateJson.get("networkAccess"));
+        assertNotNull(deviceStateJson.get("time"));
     }
 }

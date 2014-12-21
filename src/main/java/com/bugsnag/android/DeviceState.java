@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.util.Date;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +30,7 @@ class DeviceState implements JsonStream.Streamable {
     private Boolean charging;
     private String locationStatus;
     private String networkAccess;
+    private String time;
 
     DeviceState(Context appContext) {
         this.appContext = appContext;
@@ -39,6 +42,7 @@ class DeviceState implements JsonStream.Streamable {
         charging = isCharging();
         locationStatus = getLocationStatus();
         networkAccess = getNetworkAccess();
+        time = getTime();
     }
 
     public void toStream(JsonStream writer) {
@@ -50,6 +54,7 @@ class DeviceState implements JsonStream.Streamable {
             writer.name("charging").value(charging);
             writer.name("locationStatus").value(locationStatus);
             writer.name("networkAccess").value(networkAccess);
+            writer.name("time").value(time);
         writer.endObject();
     }
 
@@ -169,5 +174,12 @@ class DeviceState implements JsonStream.Streamable {
             Logger.warn("Could not get network access information, we recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
         }
         return null;
+    }
+
+    /**
+     * Get the current time on the device, in ISO8601 format.
+     */
+    private String getTime() {
+        return DateUtils.toISO8601(new Date());
     }
 }

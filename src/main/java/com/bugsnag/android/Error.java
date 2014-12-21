@@ -17,6 +17,7 @@ public class Error implements JsonStream.Streamable {
     private DeviceData deviceData;
     private AppState appState;
     private DeviceState deviceState;
+    private Breadcrumbs breadcrumbs;
     private User user;
     private Throwable exception;
     private Severity severity = Severity.WARNING;
@@ -62,6 +63,10 @@ public class Error implements JsonStream.Streamable {
 
             if(deviceState != null) {
                 writer.name("deviceState").value(deviceState);
+            }
+
+            if(breadcrumbs != null) {
+                writer.name("breadcrumbs").value(breadcrumbs);
             }
 
             if(groupingHash != null) {
@@ -253,6 +258,10 @@ public class Error implements JsonStream.Streamable {
 
     void setUser(User user) {
         this.user = user;
+    }
+
+    void setBreadcrumbs(Breadcrumbs breadcrumbs) {
+        this.breadcrumbs = breadcrumbs;
     }
 
     boolean shouldIgnoreClass() {

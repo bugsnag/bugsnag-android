@@ -92,6 +92,32 @@ is sent to Bugsnag using `BeforeNotify` callbacks. See
 [beforeNotify](#beforeNotify) below for details.
 
 
+Logging Breadcrumbs
+-------------------
+
+Bugsnag allows you to leave developer-defined log messages called "breadcrumbs"
+to help understand exactly what was happening in your application in the time
+before each crash.
+
+When logging a breadcrumb, we'll keep track of the timestamp associated with
+the log message, and show both the message and timestamp on your dashboard.
+
+To leave breadcrumbs, you can use `leaveBreadcrumb`:
+
+```java
+Bugsnag.leaveBreadcrumb("App loaded");
+Bugsnag.leaveBreadcrumb("User clicked a button");
+```
+
+By default, we'll store and send the last 20 breadcrumbs you leave before
+errors are sent to Bugsnag. If you'd like to increase this number, you can
+call `setMaxBreadcrumbs`:
+
+```java
+Bugsnag.setMaxBreadcrumbs(50);
+```
+
+
 Sending Handled Exceptions
 --------------------------
 

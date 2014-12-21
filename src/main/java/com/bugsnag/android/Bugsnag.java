@@ -311,6 +311,34 @@ public final class Bugsnag {
     }
 
     /**
+     * Leave a "breadcrumb" log message, representing an action that occurred
+     * in your app, to aid with debugging.
+     *
+     * @param  message  the log message to leave (max 140 chars)
+     */
+    public static void leaveBreadcrumb(String message) {
+        getClient().leaveBreadcrumb(message);
+    }
+
+    /**
+     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
+     * By default, we'll keep and send the 20 most recent breadcrumb log
+     * messages.
+     *
+     * @param  numBreadcrumbs  number of breadcrumb log messages to send
+     */
+    public void setMaxBreadcrumbs(int numBreadcrumbs) {
+        getClient().setMaxBreadcrumbs(numBreadcrumbs);
+    }
+
+    /**
+     * Clear any breadcrumbs that have been left so far.
+     */
+    public void clearBreadcrumbs() {
+        getClient().clearBreadcrumbs();
+    }
+
+    /**
      * Enable automatic reporting of unhandled exceptions.
      * By default, this is automatically enabled in the constructor.
      */

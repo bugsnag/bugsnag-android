@@ -18,6 +18,7 @@ public class Client {
     private Context appContext;
     private AppData appData;
     private DeviceData deviceData;
+    private Breadcrumbs breadcrumbs;
     private User user = new User();
     private ErrorStore errorStore;
 
@@ -57,6 +58,9 @@ public class Client {
         appData = new AppData(appContext, config);
         deviceData = new DeviceData(appContext);
         AppState.init();
+
+        // Set up breadcrumbs
+        breadcrumbs = new Breadcrumbs();
 
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
@@ -358,6 +362,34 @@ public class Client {
     }
 
     /**
+     * Leave a "breadcrumb" log message, representing an action that occurred
+     * in your app, to aid with debugging.
+     *
+     * @param  breadcrumb  the log message to leave (max 140 chars)
+     */
+    public void leaveBreadcrumb(String breadcrumb) {
+        breadcrumbs.add(breadcrumb);
+    }
+
+    /**
+     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
+     * By default, we'll keep and send the 20 most recent breadcrumb log
+     * messages.
+     *
+     * @param  numBreadcrumbs  number of breadcrumb log messages to send
+     */
+    public void setMaxBreadcrumbs(int numBreadcrumbs) {
+        breadcrumbs.setSize(numBreadcrumbs);
+    }
+
+    /**
+     * Clear any breadcrumbs that have been left so far.
+     */
+    public void clearBreadcrumbs() {
+        breadcrumbs.clear();
+    }
+
+    /**
      * Enable automatic reporting of unhandled exceptions.
      * By default, this is automatically enabled in the constructor.
      */
@@ -388,6 +420,9 @@ public class Client {
         error.setDeviceData(deviceData);
         error.setAppState(new AppState(appContext));
         error.setDeviceState(new DeviceState(appContext));
+
+        // Attach breadcrumbs to the error
+        error.setBreadcrumbs(breadcrumbs);
 
         // Attach user info to the error
         error.setUser(user);
