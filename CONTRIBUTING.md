@@ -22,7 +22,7 @@ Building the Libarary
 You can build new `.jar` and `.aar` files as follows:
 
 ```shell
-./gradlew :build
+./gradlew clean :build
 ```
 
 Jar files are generated into `build/libs` and Aar files are generated into
@@ -35,7 +35,7 @@ Building the Example App
 You can build and install the example app to as follows:
 
 ```shell
-./gradlew example:installDebug
+./gradlew clean example:installDebug
 ```
 
 This builds the latest version of the library and installs an app onto your
@@ -50,7 +50,7 @@ Running the test suite requires a connected android device or emulator.
 You can run the test suite on a device/emulator as follows:
 
 ```shell
-./gradlew :connectedCheck
+./gradlew clean :connectedCheck
 ```
 
 
@@ -81,5 +81,5 @@ bugsnag-android to maven central as follows:
 -   Build and upload the new version
 
     ```shell
-    ./gradlew :uploadArchives
+    ./gradlew clean :uploadArchives
     ```
