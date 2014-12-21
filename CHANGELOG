@@ -1,3 +1,9 @@
+3.1.0
+-----
+-   Add support for leaving developer-defined log messages called "breadcrumbs"
+    to help understand what was happening in your application before each
+    crash
+
 3.0.0
 -----
 -   Removed dependency on `bugsnag-java`
