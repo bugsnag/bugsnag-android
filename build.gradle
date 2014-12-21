@@ -33,13 +33,20 @@ android {
     }
 }
 
-// Generate .jar files when building archives
-android.libraryVariants.all { variant ->
-    def task = project.tasks.create "jar${variant.buildType.name.capitalize()}", Jar
-    task.dependsOn variant.javaCompile
-    task.from variant.javaCompile.destinationDir
-    artifacts.add('archives', task);
+// Task to generate a .jar file
+task jarRelease(type: Copy) {
+    def jarFile = POM_ARTIFACT_ID + '-' + VERSION_NAME + '.jar'
+
+    from 'build/intermediates/bundles/release/'
+    into 'build/outputs/jar'
+    include 'classes.jar'
+    rename('classes.jar', jarFile)
+
+    artifacts.add('archives', file('build/outputs/jar/' + jarFile));
 }
+
+// Generate .jar files when assembling release builds
+assembleRelease.dependsOn(jarRelease)
 
 // Tasks to release the library to maven central
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

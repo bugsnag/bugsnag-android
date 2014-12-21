@@ -25,7 +25,7 @@ You can build new `.jar` and `.aar` files as follows:
 ./gradlew clean :build
 ```
 
-Jar files are generated into `build/libs` and Aar files are generated into
+Jar files are generated into `build/outputs/jar` and Aar files are generated into
 `build/outputs/aar`.
 
 
