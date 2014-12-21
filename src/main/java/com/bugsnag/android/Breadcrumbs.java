@@ -1,27 +1,17 @@
 package com.bugsnag.android;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 class Breadcrumbs implements JsonStream.Streamable {
     private static class Breadcrumb {
         private static final int MAX_MESSAGE_LENGTH = 140;
-        private static DateFormat iso8601;
         private String timestamp;
         private String message;
 
-        static {
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
-            iso8601.setTimeZone(tz);
-        }
-
         Breadcrumb(String message) {
-            this.timestamp = iso8601.format(new Date());
+            this.timestamp = DateUtils.toISO8601(new Date());
             this.message = message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH));
         }
     }
