@@ -96,8 +96,8 @@ Logging Breadcrumbs
 -------------------
 
 Bugsnag allows you to leave developer-defined log messages called "breadcrumbs"
-to help understand exactly what was happening in your application at the time
-of a crash.
+to help understand exactly what was happening in your application in the time
+before each crash.
 
 When logging a breadcrumb, we'll keep track of the timestamp associated with
 the log message, and show both the message and timestamp on your dashboard.

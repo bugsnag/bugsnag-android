@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +17,7 @@ class Breadcrumbs implements JsonStream.Streamable {
     }
 
     private static final int DEFAULT_MAX_SIZE = 20;
-    private List<Breadcrumb> store = new ArrayList<Breadcrumb>();
+    private List<Breadcrumb> store = new LinkedList<Breadcrumb>();
     private int maxSize = DEFAULT_MAX_SIZE;
 
     public void toStream(JsonStream writer) {
