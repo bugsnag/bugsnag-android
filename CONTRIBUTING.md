@@ -60,7 +60,9 @@ Releasing a New Version
 If you are a project maintainer, you can build and release a new version of
 `bugsnag-android` as follows:
 
-### 1. Update and tag version
+### 1. Prepare for release
+
+-   Update the `CHANGELOG` and `README.md` with any new features
 
 -   Update the version numbers in `gradle.properties` and `src/main/java/com/bugsnag/android/Notifier.java`
 
@@ -93,7 +95,7 @@ If you are a project maintainer, you can build and release a new version of
     ./gradlew clean :uploadArchives
     ```
 
--   Promote the release build
+-   "Promote" the release build on Maven Central
 
     -   Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     -   Click “Staging Repositories”
