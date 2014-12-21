@@ -58,19 +58,17 @@ Releasing a New Version
 -----------------------
 
 If you are a project maintainer, you can build and release a new version of
-bugsnag-android to maven central as follows:
+`bugsnag-android` as follows:
 
-### 1. Update version
+### 1. Update and tag version
 
--   Update the version numbers in `gradle.properties` and `src/main/java/com/bugsnag/android/Notifier.java`.
-
-    > Append `-SNAPSHOT` to the version number if performing a test build.
+-   Update the version numbers in `gradle.properties` and `src/main/java/com/bugsnag/android/Notifier.java`
 
 -   Commit and tag the release
 
-    ```
-    git commit -am "vx.y.z"
-    git tag vx.y.z
+    ```shell
+    git commit -am "v3.x.x"
+    git tag v3.x.x
     git push origin master && git push --tags
     ```
 
@@ -109,4 +107,4 @@ bugsnag-android to maven central as follows:
 ### 3. Upload the .jar file to GitHub
 
 -   Create a "release" from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
--   Upload the generated `.jar` file from `build/outputs/jar/bugsnag-android-x.y.z.jar` to the new release
+-   Upload the generated `.jar` file from `build/outputs/jar/bugsnag-android-x.y.z.jar` on the "edit tag" page for this release tag
