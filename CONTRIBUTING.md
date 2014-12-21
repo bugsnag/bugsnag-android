@@ -54,11 +54,27 @@ You can run the test suite on a device/emulator as follows:
 ```
 
 
-Releasing to Maven Central
---------------------------
+Releasing a New Version
+-----------------------
 
 If you are a project maintainer, you can build and release a new version of
 bugsnag-android to maven central as follows:
+
+### 1. Update version
+
+-   Update the version numbers in `gradle.properties` and `src/main/java/com/bugsnag/android/Notifier.java`.
+
+    > Append `-SNAPSHOT` to the version number if performing a test build.
+
+-   Commit and tag the release
+
+    ```
+    git commit -am "vx.y.z"
+    git tag vx.y.z
+    git push origin master && git push --tags
+    ```
+
+### 2. Release to Maven Central
 
 -   Create a file `~/.gradle/gradle.properties` with the following contents:
 
@@ -73,13 +89,24 @@ bugsnag-android to maven central as follows:
     signing.secretKeyRingFile=/Users/james/.gnupg/secring.gpg
     ```
 
--   Update the version numbers in `gradle.properties` and
-    `src/main/java/com/bugsnag/android/Notifier.java`.
-
-    Append `-SNAPSHOT` to the version number if performing a test build.
-
 -   Build and upload the new version
 
     ```shell
     ./gradlew clean :uploadArchives
     ```
+
+-   Promote the release build
+
+    -   Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
+    -   Click “Staging Repositories”
+    -   Click the search box at the top right, and type “com.bugsnag”
+    -   Select the com.bugsnag staging repository
+    -   Click the “close” button in the toolbar, no message
+    -   Click the “refresh” button
+    -   Select the com.bugsnag closed repository
+    -   Click the “release” button in the toolbar
+
+### 3. Upload the .jar file to GitHub
+
+-   Create a "release" from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
+-   Upload the generated `.jar` file from `build/outputs/jar/bugsnag-android-x.y.z.jar` to the new release
