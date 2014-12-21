@@ -46,7 +46,11 @@ task jarRelease(type: Copy) {
 }
 
 // Generate .jar files when assembling release builds
-assembleRelease.dependsOn(jarRelease)
+tasks.whenTaskAdded { task ->
+    if (task.name == 'signArchives') {
+        task.dependsOn jarRelease
+    }
+}
 
 // Tasks to release the library to maven central
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
