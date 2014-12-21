@@ -41,8 +41,25 @@ Add `bugsnag-android` as a dependency in your `pom.xml`:
 -   Place it in your Android app's `libs/` folder
 
 
-Configuration
--------------
+Configuring Your Manifest
+-------------------------
+
+-   Ensure you have the `android.permission.INTERNET` permission listed in
+    your `AndroidManifest.xml`. This is required to send crash reports to
+    Bugsnag
+
+-   To enable network diagnostics for each device (internet connectivity, etc)
+    you should also add the `android.permission.ACCESS_NETWORK_STATE`
+    permission to your `AndroidManifest.xml`.
+
+-   To see which activity was active at the time of a crash, you shoudl also
+    add the `android.permission.GET_TASKS` permission to your
+    `AndroidManifest.xml`. If you are targeting API level 21+ (Android 5.0+)
+    this is not required.
+
+
+Initializing Bugsnag
+--------------------
 
 -   Import the `Bugsnag` package in your [Application](http://developer.android.com/reference/android/app/Application.html)
     subclass:
@@ -57,21 +74,6 @@ Configuration
     ```java
     Bugsnag.init(this, "your-api-key-goes-here");
     ```
-
--   Ensure you have the `android.permission.INTERNET` permission listed in
-    your `AndroidManifest.xml`.
-
-
-Recommended: Enable Additional Diagnostic Information
------------------------------------------------------
-
--   To see which activity was active at the time of a crash, you shoudl also
-    add the `android.permission.GET_TASKS` permission to your
-    `AndroidManifest.xml`.
-
--   To enable network diagnostics for each device (internet connectivity, etc)
-    you should also add the `android.permission.ACCESS_NETWORK_STATE`
-    permission to your `AndroidManifest.xml`.
 
 
 Sending Custom Data With Exceptions
@@ -89,7 +91,7 @@ Bugsnag.addToTab("User", "Paying Customer?", true);
 
 You can also add custom data or modify error information before each exception
 is sent to Bugsnag using `BeforeNotify` callbacks. See
-[beforeNotify](#beforeNotify) below for details.
+[beforeNotify](#beforenotify) below for details.
 
 
 Logging Breadcrumbs
@@ -125,28 +127,32 @@ If you would like to send non-fatal exceptions to Bugsnag, you can pass any
 `Throwable` object to the `notify` method:
 
 ```java
-Bugsnag.notify(new RuntimeException("Non-fatal"));
+Bugsnag.notify(new Exception("Non-fatal"));
 ```
+
+### With Custom Data
 
 You can also send additional meta-data with this exception:
 
 ```java
-import com.bugsnag.MetaData;
+import com.bugsnag.android.MetaData;
 
 MetaData metaData = new MetaData();
 metaData.addToTab("User", "username", "bob-hoskins");
 metaData.addToTab("User", "email", "bob@example.com");
 
-Bugsnag.notify(new RuntimeException("Non-fatal"), metaData);
+Bugsnag.notify(new Exception("Non-fatal"), metaData);
 ```
 
-### Severity
+### With a Severity
 
 You can set the severity of an error in Bugsnag by including the severity option when
 notifying bugsnag of the error,
 
 ```java
-Bugsnag.notify(new RuntimeException("Non-fatal"), Severity.INFO)
+import com.bugsnag.android.Severity;
+
+Bugsnag.notify(new Exception("Non-fatal"), Severity.INFO)
 ```
 
 Valid severities are `Severity.ERROR`, `Severity.WARNING` and `Severity.INFO`.
@@ -154,6 +160,20 @@ Valid severities are `Severity.ERROR`, `Severity.WARNING` and `Severity.INFO`.
 Severity is displayed in the dashboard and can be used to filter the error list.
 By default all crashes (or unhandled exceptions) are set to `Bugsnag.ERROR` and all
 `Bugsnag.notify` calls default to `Bugsnag.WARNING`.
+
+
+### With Custom Data and Severity
+
+You can send handled exceptions with both custom data and severity as follows:
+
+```java
+import com.bugsnag.android.*;
+
+MetaData metaData = new MetaData();
+metaData.addToTab("User", "username", "bob-hoskins");
+
+Bugsnag.notify(new Exception("Non-fatal"), Severity.INFO, metaData);
+```
 
 
 Configuration
@@ -213,10 +233,10 @@ Bugsnag.setNotifyReleaseStages("production", "development", "testing");
 
 ###setFilters
 
-Sets the strings to filter out from the `extraData` maps before sending
-them to Bugsnag. Use this if you want to ensure you don't send
-sensitive data such as passwords, and credit card numbers to our
-servers. Any keys which contain these strings will be filtered.
+Sets which values should be removed from any `MetaData` objects before sending
+them to Bugsnag. Use this if you want to ensure you don't send sensitive data
+such as passwords, and credit card numbers to our servers. Any keys which
+contain these strings will be filtered.
 
 ```java
 Bugsnag.setFilters(new String[]{"password", "credit_card_number"});
