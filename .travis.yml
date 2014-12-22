@@ -7,8 +7,6 @@ android:
     - android-19
 
 env:
-  global:
-    - TERM=dumb
   matrix:
     - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
