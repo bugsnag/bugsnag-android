@@ -1,3 +1,7 @@
+3.1.1
+-----
+-   Re-add `Error#getException` to allow access to exception in callbacks
+
 3.1.0
 -----
 -   Add support for leaving developer-defined log messages called "breadcrumbs"
