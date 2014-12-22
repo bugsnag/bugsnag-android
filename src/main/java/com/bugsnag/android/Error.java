@@ -239,6 +239,13 @@ public class Error implements JsonStream.Streamable {
     public String getExceptionMessage() {
         return exception.getLocalizedMessage();
     }
+    
+    /**
+     * The {@linkplain Throwable exception} which triggered this Error report.
+     */
+    public Throwable getException() {
+        return exception;
+    }
 
     void setAppData(AppData appData) {
         this.appData = appData;
