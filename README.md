@@ -12,7 +12,7 @@ from your applications.
 Installation
 ------------
 
-### Using Android Studio
+### Using Android Studio or Gradle
 
 Add `bugsnag-android` to the `dependencies` section in your `build.gradle`:
 
