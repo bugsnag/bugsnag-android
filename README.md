@@ -1,13 +1,10 @@
 Bugsnag Notifier for Android
 ============================
 
-The Bugsnag Notifier for Android gives you instant notification of exceptions
-thrown from your Android applications.
-The notifier hooks into `Thread.UncaughtExceptionHandler`, so any
-unhandled exceptions in your app will be sent to your Bugsnag dashboard.
+[Bugsnag](https://bugsnag.com) for Android automatically detects crashes in
+your Android apps, collecting diagnostic information and immediately notifying
+your development team.
 
-[Bugsnag](https://bugsnag.com) captures errors from your web and mobile
-applications, helping you to understand and resolve them as fast as possible.
 [Create a free account](https://bugsnag.com) to start capturing exceptions
 from your applications.
 
@@ -52,7 +49,7 @@ Configuring Your Manifest
     you should also add the `android.permission.ACCESS_NETWORK_STATE`
     permission to your `AndroidManifest.xml`.
 
--   To see which activity was active at the time of a crash, you shoudl also
+-   To see which activity was active at the time of a crash, you should also
     add the `android.permission.GET_TASKS` permission to your
     `AndroidManifest.xml`. If you are targeting API level 21+ (Android 5.0+)
     this is not required.
