@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;;
+import android.content.pm.PackageManager;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -26,6 +28,15 @@ public class Client {
      * Initialize a Bugsnag client
      *
      * @param  androidContext  an Android context, usually <code>this</code>
+     */
+    public Client(Context androidContext) {
+        this(androidContext, null);
+    }
+
+    /**
+     * Initialize a Bugsnag client
+     *
+     * @param  androidContext  an Android context, usually <code>this</code>
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      */
     public Client(Context androidContext, String apiKey) {
@@ -44,15 +55,21 @@ public class Client {
             throw new NullPointerException("You must provide a non-null android Context");
         }
 
+        // Get the application context, many things need this
+        appContext = androidContext.getApplicationContext();
+
+        // Attempt to load API key from AndroidManifest.xml
+        try {
+            ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+            apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+        } catch (Exception e) { }
+
         if(apiKey == null) {
             throw new NullPointerException("You must provide a Bugsnag API key");
         }
 
         // Build a configuration object
         config = new Configuration(apiKey);
-
-        // Get the application context, many things need this
-        appContext = androidContext.getApplicationContext();
 
         // Set up and collect constant app and device diagnostics
         appData = new AppData(appContext, config);
