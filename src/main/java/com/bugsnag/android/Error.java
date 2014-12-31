@@ -182,9 +182,9 @@ public class Error implements JsonStream.Streamable {
      *     error.addToTab("account", "name", "Acme Co.");
      *     error.addToTab("account", "payingCustomer", true);
      *
-     * @param  tab    the dashboard tab to add diagnostic data to
-     * @param  key    the name of the diagnostic information
-     * @param  value  the contents of the diagnostic information
+     * @param  tabName  the dashboard tab to add diagnostic data to
+     * @param  key      the name of the diagnostic information
+     * @param  value    the contents of the diagnostic information
      */
     public void addToTab(String tabName, String key, Object value) {
         metaData.addToTab(tabName, key, value);
@@ -239,7 +239,7 @@ public class Error implements JsonStream.Streamable {
     public String getExceptionMessage() {
         return exception.getLocalizedMessage();
     }
-    
+
     /**
      * The {@linkplain Throwable exception} which triggered this Error report.
      */
