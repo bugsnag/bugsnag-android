@@ -38,8 +38,8 @@ Add `bugsnag-android` as a dependency in your `pom.xml`:
 -   Place it in your Android app's `libs/` folder
 
 
-Configuring Your `AndroidManifest.xml`
---------------------------------------
+Configuring Your AndroidManifest
+--------------------------------
 
 -   Configure your Bugsnag API key as `meta-data` in your manifest's `<application>` tag:
 
