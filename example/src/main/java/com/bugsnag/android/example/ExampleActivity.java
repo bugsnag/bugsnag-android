@@ -19,8 +19,6 @@ import com.bugsnag.android.Severity;
 
 public class ExampleActivity extends Activity
 {
-    private static String BUGSNAG_API_KEY = "066f5ad3590596f9aa8d601ea89af845";
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -29,7 +27,7 @@ public class ExampleActivity extends Activity
         setContentView(R.layout.main);
 
         // Initialize the Bugsnag client
-        Bugsnag.init(this, BUGSNAG_API_KEY);
+        Bugsnag.init(this);
 
         // Execute some code before every bugsnag notification
         Bugsnag.beforeNotify(new BeforeNotify() {

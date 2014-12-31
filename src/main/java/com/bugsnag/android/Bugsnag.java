@@ -19,10 +19,21 @@ public final class Bugsnag {
      * Initialize the static Bugsnag client
      *
      * @param  androidContext  an Android context, usually <code>this</code>
+     */
+    public static Client init(Context androidContext) {
+        client = new Client(androidContext);
+        return client;
+    }
+
+    /**
+     * Initialize the static Bugsnag client
+     *
+     * @param  androidContext  an Android context, usually <code>this</code>
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      */
     public static Client init(Context androidContext, String apiKey) {
-        return init(androidContext, apiKey, true);
+        client = new Client(androidContext, apiKey);
+        return client;
     }
 
     /**

@@ -38,21 +38,30 @@ Add `bugsnag-android` as a dependency in your `pom.xml`:
 -   Place it in your Android app's `libs/` folder
 
 
-Configuring Your Manifest
--------------------------
+Configuring Your `AndroidManifest.xml`
+--------------------------------------
 
--   Ensure you have the `android.permission.INTERNET` permission listed in
-    your `AndroidManifest.xml`. This is required to send crash reports to
-    Bugsnag
+-   Configure your Bugsnag API key as `meta-data` in your manifest's `<application>` tag:
 
--   To enable network diagnostics for each device (internet connectivity, etc)
-    you should also add the `android.permission.ACCESS_NETWORK_STATE`
-    permission to your `AndroidManifest.xml`.
+    ```xml
+    <application ...>
+        <meta-data android:name="com.bugsnag.android.API_KEY" android:value="your-api-key-here"/>
+    </application>
+    ```
 
--   To see which activity was active at the time of a crash, you should also
-    add the `android.permission.GET_TASKS` permission to your
-    `AndroidManifest.xml`. If you are targeting API level 21+ (Android 5.0+)
-    this is not required.
+-   Enable the `INTERNET`, `ACCESS_NETWORK_STATE` and `GET_TASKS` permissions:
+
+    ```xml
+    <!-- Required: Used to deliver Bugsnag crash reports -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Optional: To provide network connectivity information to Bugsnag -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Optional: To see which Activity was active at the time of a crash -->
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    ```
+
+For a full example, see our [example AndroidManifest.xml](https://raw.githubusercontent.com/bugsnag/bugsnag-android/master/example/src/main/AndroidManifest.xml).
+
 
 
 Initializing Bugsnag
@@ -69,7 +78,7 @@ Initializing Bugsnag
     capturing exceptions:
 
     ```java
-    Bugsnag.init(this, "your-api-key-goes-here");
+    Bugsnag.init(this);
     ```
 
 
