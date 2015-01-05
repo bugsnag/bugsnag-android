@@ -7,9 +7,16 @@ Contributing
 -   [Make a pull request](https://help.github.com/articles/using-pull-requests)
 -   Thanks!
 
-Running `./gradlew` installs both the gradle build system and the Android SDK,
-but you'll need to make sure that the `adb` tool installed as part of the
-Android SDK is available in your `$PATH` before building, eg:
+
+Installing the Android SDK
+--------------------------
+
+Running `./gradlew` automatically installs both the Gradle build system
+and the Android SDK.
+
+You'll need to make sure that the `adb`, `android` and `emulator` tools
+installed as part of the Android SDK is available in your `$PATH` before
+building as follows:
 
 ```
 export PATH=$PATH:~/.android-sdk/platform-tools:~/.android-sdk/tools
