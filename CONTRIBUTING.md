@@ -12,7 +12,7 @@ but you'll need to make sure that the `adb` tool installed as part of the
 Android SDK is available in your `$PATH` before building, eg:
 
 ```
-export PATH=$PATH:~/.android-sdk/platform-tools
+export PATH=$PATH:~/.android-sdk/platform-tools:~/.android-sdk/tools
 ```
 
 
