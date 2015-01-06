@@ -93,7 +93,11 @@ class JsonStream {
 
     JsonStream value(Boolean val) {
         try {
-            writer.value(val);
+            if (val == null) {
+                writer.nullValue();
+            } else {
+                writer.value(val);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
