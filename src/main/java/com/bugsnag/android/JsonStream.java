@@ -23,6 +23,15 @@ class JsonStream extends JsonWriter {
         return this;
     }
 
+    // Add null-protection
+    public void value(Boolean value) throws IOException {
+        if (value == null) {
+            nullValue();
+        } else {
+            super.value(value);
+        }
+    }
+
     // Add support for Streamable values
     public void value(Streamable streamable) throws IOException {
         streamable.toStream(this);
@@ -33,11 +42,22 @@ class JsonStream extends JsonWriter {
         super.flush();
 
         // Buffer the file contents onto the stream
-        FileReader input = new FileReader(file);
-        char[] buffer = new char[1024 * 4];
-        int n = 0;
-        while (-1 != (n = input.read(buffer))) {
-            out.write(buffer, 0, n);
+        FileReader input = null;
+        try {
+            input = new FileReader(file);
+            char[] buffer = new char[1024 * 4];
+            int n = 0;
+            while (-1 != (n = input.read(buffer))) {
+                out.write(buffer, 0, n);
+            }
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         out.flush();

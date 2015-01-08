@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 
 import android.content.Context;
@@ -74,8 +75,9 @@ class ErrorStore {
         if(path == null) return;
 
         String filename = String.format("%s%d.json", path, System.currentTimeMillis());
+        Writer out = null;
         try {
-            Writer out = new FileWriter(filename);
+            out = new FileWriter(filename);
             JsonStream stream = new JsonStream(out);
             stream.value(error);
             stream.close();
@@ -83,6 +85,14 @@ class ErrorStore {
             Logger.info(String.format("Saved unsent error to disk (%s) ", filename));
         } catch (Exception e) {
             Logger.warn(String.format("Couldn't save unsent error to disk (%s) ", filename), e);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

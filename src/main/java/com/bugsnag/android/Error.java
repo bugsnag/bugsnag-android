@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 /**
  * Information and associated diagnostics relating to a handled or unhandled
  * Exception.
@@ -30,7 +32,7 @@ public class Error implements JsonStream.Streamable {
         this.exception = exception;
     }
 
-    public void toStream(JsonStream writer) throws java.io.IOException {
+    public void toStream(JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.metaData, metaData);
         mergedMetaData.setFilters(config.filters);

@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 /**
  * Information about this library, including name and version.
  */
@@ -13,7 +15,7 @@ class Notifier implements JsonStream.Streamable {
         return instance;
     }
 
-    public void toStream(JsonStream writer) throws java.io.IOException {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginObject();
             writer.name("name").value(NOTIFIER_NAME);
             writer.name("version").value(NOTIFIER_VERSION);

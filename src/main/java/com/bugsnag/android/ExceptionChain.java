@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
@@ -12,7 +14,7 @@ class ExceptionChain implements JsonStream.Streamable {
         this.exception = exception;
     }
 
-    public void toStream(JsonStream writer) throws java.io.IOException {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginArray();
 
         Throwable currentEx = exception;

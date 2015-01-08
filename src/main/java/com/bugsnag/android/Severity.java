@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 /**
  * The severity of an Error, one of "error", "warning" or "info".
  *
@@ -17,7 +19,7 @@ public enum Severity implements JsonStream.Streamable {
         this.name = name;
     }
 
-    public void toStream(JsonStream writer) throws java.io.IOException {
+    public void toStream(JsonStream writer) throws IOException {
         writer.value(name);
     }
 }
