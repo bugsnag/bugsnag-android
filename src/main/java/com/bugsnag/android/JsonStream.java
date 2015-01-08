@@ -12,7 +12,7 @@ class JsonStream extends JsonWriter {
 
     private Writer out;
 
-    public JsonStream(Writer out) {
+    JsonStream(Writer out) {
         super(out);
         this.out = out;
     }
@@ -24,7 +24,7 @@ class JsonStream extends JsonWriter {
     }
 
     // Add null-protection
-    public void value(Boolean value) throws IOException {
+    void value(Boolean value) throws IOException {
         if (value == null) {
             nullValue();
         } else {
@@ -33,12 +33,12 @@ class JsonStream extends JsonWriter {
     }
 
     // Add support for Streamable values
-    public void value(Streamable streamable) throws IOException {
+    void value(Streamable streamable) throws IOException {
         streamable.toStream(this);
     }
 
     // Add support for File values
-    public void value(File file) throws IOException {
+    void value(File file) throws IOException {
         super.flush();
 
         // Buffer the file contents onto the stream
