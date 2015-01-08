@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
