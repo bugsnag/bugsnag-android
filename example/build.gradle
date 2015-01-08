@@ -1,9 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
+        // mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.14.4'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:0.1.0'
     }
 }
 apply plugin: 'android'
@@ -25,4 +27,9 @@ android {
 
 dependencies {
     compile rootProject
+}
+
+apply plugin: 'bugsnag'
+bugsnag {
+    endpoint 'http://requestb.in/1ejxgp91'
 }
