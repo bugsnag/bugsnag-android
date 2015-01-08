@@ -1,3 +1,7 @@
+3.2.1
+-----
+-   Fix NPE when unboxing in JsonStream (thanks @mattprecious)
+
 3.2.0
 -----
 -   Allow setting Bugsnag API key in your AndroidManifest.xml
