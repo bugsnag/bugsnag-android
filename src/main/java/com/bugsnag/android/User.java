@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 /**
  * Information about the current user of your application.
  */
@@ -20,7 +22,7 @@ class User implements JsonStream.Streamable {
         this(u.id, u.email, u.name);
     }
 
-    public void toStream(JsonStream writer) throws java.io.IOException {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginObject();
 
             if(id != null) {
