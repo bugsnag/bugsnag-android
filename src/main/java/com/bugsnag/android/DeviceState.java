@@ -45,7 +45,7 @@ class DeviceState implements JsonStream.Streamable {
         time = getTime();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginObject();
             writer.name("freeMemory").value(freeMemory);
             writer.name("orientation").value(orientation);

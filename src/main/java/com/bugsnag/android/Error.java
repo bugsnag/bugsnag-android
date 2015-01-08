@@ -30,7 +30,7 @@ public class Error implements JsonStream.Streamable {
         this.exception = exception;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.metaData, metaData);
         mergedMetaData.setFilters(config.filters);

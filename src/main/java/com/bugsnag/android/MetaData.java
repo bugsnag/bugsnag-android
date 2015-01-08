@@ -36,7 +36,7 @@ public class MetaData implements JsonStream.Streamable {
         store = new HashMap<String, Object>(m);
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         objectToStream(store, writer);
     }
 
@@ -129,7 +129,7 @@ public class MetaData implements JsonStream.Streamable {
     }
 
     // Write complex/nested values to a JsonStreamer
-    private void objectToStream(Object obj, JsonStream writer) {
+    private void objectToStream(Object obj, JsonStream writer) throws java.io.IOException {
         if(obj == null) {
             writer.nullValue();
         } else if(obj instanceof String) {

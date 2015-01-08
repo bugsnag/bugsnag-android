@@ -12,7 +12,7 @@ class ExceptionChain implements JsonStream.Streamable {
         this.exception = exception;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginArray();
 
         Throwable currentEx = exception;

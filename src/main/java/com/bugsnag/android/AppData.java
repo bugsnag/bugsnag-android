@@ -32,7 +32,7 @@ class AppData implements JsonStream.Streamable {
         guessedReleaseStage = guessReleaseStage();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginObject();
             writer.name("id").value(packageName);
             writer.name("name").value(appName);

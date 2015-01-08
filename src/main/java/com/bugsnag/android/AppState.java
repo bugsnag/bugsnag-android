@@ -36,7 +36,7 @@ class AppState implements JsonStream.Streamable {
         lowMemory = isLowMemory();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginObject();
             writer.name("duration").value(duration);
             writer.name("inForeground").value(inForeground);

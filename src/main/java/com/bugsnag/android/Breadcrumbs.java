@@ -20,7 +20,7 @@ class Breadcrumbs implements JsonStream.Streamable {
     private List<Breadcrumb> store = new LinkedList<Breadcrumb>();
     private int maxSize = DEFAULT_MAX_SIZE;
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginArray();
 
         for(Breadcrumb breadcrumb : store) {

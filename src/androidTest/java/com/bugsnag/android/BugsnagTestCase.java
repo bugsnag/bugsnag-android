@@ -13,7 +13,9 @@ public class BugsnagTestCase extends AndroidTestCase {
         StringWriter writer = new StringWriter();
         JsonStream jsonStream = new JsonStream(writer);
 
-        streamable.toStream(jsonStream);
+        try {
+            streamable.toStream(jsonStream);
+        } catch(java.io.IOException e) {}
 
         return writer.toString();
     }

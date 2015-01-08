@@ -76,7 +76,9 @@ class ErrorStore {
         String filename = String.format("%s%d.json", path, System.currentTimeMillis());
         try {
             Writer out = new FileWriter(filename);
-            new JsonStream(out).value(error).close();
+            JsonStream stream = new JsonStream(out);
+            stream.value(error);
+            stream.close();
 
             Logger.info(String.format("Saved unsent error to disk (%s) ", filename));
         } catch (Exception e) {

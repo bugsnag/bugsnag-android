@@ -14,7 +14,7 @@ class ThreadState implements JsonStream.Streamable {
         this.config = config;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         long currentId = Thread.currentThread().getId();
         Map<Thread,StackTraceElement[]> liveThreads = Thread.getAllStackTraces();
 

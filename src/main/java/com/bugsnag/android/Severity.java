@@ -17,7 +17,7 @@ public enum Severity implements JsonStream.Streamable {
         this.name = name;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.value(name);
     }
 }

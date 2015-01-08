@@ -105,7 +105,6 @@ If you are a project maintainer, you can build and release a new version of
 -   "Promote" the release build on Maven Central
 
     -   Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
-    -   Click “Staging Repositories”
     -   Click the search box at the top right, and type “com.bugsnag”
     -   Select the com.bugsnag staging repository
     -   Click the “close” button in the toolbar, no message

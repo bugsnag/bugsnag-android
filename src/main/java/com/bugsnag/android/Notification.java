@@ -21,7 +21,7 @@ class Notification implements JsonStream.Streamable {
         this.errorFiles = new LinkedList<File>();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         // Create a JSON stream and top-level object
         writer.beginObject();
 

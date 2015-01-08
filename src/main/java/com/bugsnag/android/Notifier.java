@@ -13,7 +13,7 @@ class Notifier implements JsonStream.Streamable {
         return instance;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginObject();
             writer.name("name").value(NOTIFIER_NAME);
             writer.name("version").value(NOTIFIER_VERSION);

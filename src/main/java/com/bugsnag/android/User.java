@@ -20,7 +20,7 @@ class User implements JsonStream.Streamable {
         this(u.id, u.email, u.name);
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginObject();
 
             if(id != null) {

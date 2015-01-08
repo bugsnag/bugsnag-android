@@ -13,7 +13,7 @@ class Stacktrace implements JsonStream.Streamable {
         this.stacktrace = stacktrace;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws java.io.IOException {
         writer.beginArray();
 
         for(StackTraceElement el : stacktrace) {
