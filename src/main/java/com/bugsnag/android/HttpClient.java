@@ -38,13 +38,7 @@ class HttpClient {
                 payload.toStream(stream);
                 stream.close();
             } finally {
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                FileUtils.close(out);
             }
 
             // End the request, get the response code

@@ -86,13 +86,7 @@ class ErrorStore {
         } catch (Exception e) {
             Logger.warn(String.format("Couldn't save unsent error to disk (%s) ", filename), e);
         } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            FileUtils.close(out);
         }
     }
 }

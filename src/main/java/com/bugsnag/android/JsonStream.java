@@ -51,13 +51,7 @@ class JsonStream extends JsonWriter {
                 out.write(buffer, 0, n);
             }
         } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            FileUtils.close(input);
         }
 
         out.flush();
