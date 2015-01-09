@@ -11,16 +11,22 @@ Contributing
 Installing the Android SDK
 --------------------------
 
-Running `./gradlew` automatically installs both the Gradle build system
+Running `./gradlew` can automatically install both the Gradle build system
 and the Android SDK.
 
-You'll need to make sure that the `adb`, `android` and `emulator` tools
-installed as part of the Android SDK is available in your `$PATH` before
-building as follows:
+If you already have the Android SDK installed, make sure to export the
+`ANDROID_HOME` environment variable, for example:
 
+```shell
+export ANDROID_HOME=/usr/local/Cellar/android-sdk/23.0.2
 ```
-export PATH=$PATH:~/.android-sdk/platform-tools:~/.android-sdk/tools
-```
+
+If you don't already have the Android SDK installed, it will be automatically
+installed to `~/.android-sdk`.
+
+> Note: You'll need to make sure that the `adb`, `android` and `emulator` tools
+> installed as part of the Android SDK are available in your `$PATH` before
+> building.
 
 
 Building the Libarary
@@ -32,8 +38,19 @@ You can build new `.jar` and `.aar` files as follows:
 ./gradlew clean :build
 ```
 
-Jar files are generated into `build/outputs/jar` and Aar files are generated into
-`build/outputs/aar`.
+Files are generated into `build/outputs/jar` and `build/outputs/aar`.
+
+
+Running Tests
+-------------
+
+Running the test suite requires a connected android device or emulator.
+
+You can run the test suite on a device/emulator as follows:
+
+```shell
+./gradlew clean :connectedCheck
+```
 
 
 Building the Example App
@@ -47,18 +64,6 @@ You can build and install the example app to as follows:
 
 This builds the latest version of the library and installs an app onto your
 device/emulator.
-
-
-Running Tests
--------------
-
-Running the test suite requires a connected android device or emulator.
-
-You can run the test suite on a device/emulator as follows:
-
-```shell
-./gradlew clean :connectedCheck
-```
 
 
 Releasing a New Version
