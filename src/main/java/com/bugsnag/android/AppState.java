@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -36,7 +37,7 @@ class AppState implements JsonStream.Streamable {
         lowMemory = isLowMemory();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginObject();
             writer.name("duration").value(duration);
             writer.name("inForeground").value(inForeground);

@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
 import android.content.Context;
@@ -38,7 +39,7 @@ class DeviceData implements JsonStream.Streamable {
         id = getAndroidId();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginObject();
             writer.name("manufacturer").value(android.os.Build.MANUFACTURER);
             writer.name("brand").value(android.os.Build.BRAND);

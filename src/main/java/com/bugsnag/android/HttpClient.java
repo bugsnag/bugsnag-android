@@ -38,13 +38,7 @@ class HttpClient {
                 payload.toStream(stream);
                 stream.close();
             } finally {
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                IOUtils.closeQuietly(out);
             }
 
             // End the request, get the response code
@@ -55,9 +49,7 @@ class HttpClient {
         } catch (IOException e) {
             throw new NetworkException(urlString, e);
         } finally {
-            if(conn != null) {
-                conn.disconnect();
-            }
+            IOUtils.close(conn);
         }
     }
 }

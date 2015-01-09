@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
@@ -14,7 +15,7 @@ class ThreadState implements JsonStream.Streamable {
         this.config = config;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         long currentId = Thread.currentThread().getId();
         Map<Thread,StackTraceElement[]> liveThreads = Thread.getAllStackTraces();
 

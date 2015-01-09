@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
 import org.json.JSONArray;
@@ -9,10 +10,9 @@ import org.json.JSONObject;
 import android.test.AndroidTestCase;
 
 public class BugsnagTestCase extends AndroidTestCase {
-    protected String streamableToString(JsonStream.Streamable streamable) {
+    protected String streamableToString(JsonStream.Streamable streamable) throws IOException {
         StringWriter writer = new StringWriter();
         JsonStream jsonStream = new JsonStream(writer);
-
         streamable.toStream(jsonStream);
 
         return writer.toString();
@@ -23,7 +23,7 @@ public class BugsnagTestCase extends AndroidTestCase {
 
         try {
             return new JSONObject(streamableToString(streamable));
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -35,7 +35,7 @@ public class BugsnagTestCase extends AndroidTestCase {
 
         try {
             return new JSONArray(streamableToString(streamable));
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

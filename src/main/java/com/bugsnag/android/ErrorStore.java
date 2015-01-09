@@ -74,13 +74,19 @@ class ErrorStore {
         if(path == null) return;
 
         String filename = String.format("%s%d.json", path, System.currentTimeMillis());
+        Writer out = null;
         try {
-            Writer out = new FileWriter(filename);
-            new JsonStream(out).value(error).close();
+            out = new FileWriter(filename);
+
+            JsonStream stream = new JsonStream(out);
+            stream.value(error);
+            stream.close();
 
             Logger.info(String.format("Saved unsent error to disk (%s) ", filename));
         } catch (Exception e) {
             Logger.warn(String.format("Couldn't save unsent error to disk (%s) ", filename), e);
+        } finally {
+            IOUtils.closeQuietly(out);
         }
     }
 }

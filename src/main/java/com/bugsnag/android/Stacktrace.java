@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 /**
  * Serialize an exception stacktrace and mark frames as "in-project"
  * where appropriate.
@@ -13,7 +15,7 @@ class Stacktrace implements JsonStream.Streamable {
         this.stacktrace = stacktrace;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginArray();
 
         for(StackTraceElement el : stacktrace) {

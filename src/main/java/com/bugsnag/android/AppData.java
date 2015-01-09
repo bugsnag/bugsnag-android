@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import android.content.Context;
 import android.content.pm.ApplicationInfo;;
 import android.content.pm.PackageManager;
@@ -32,7 +34,7 @@ class AppData implements JsonStream.Streamable {
         guessedReleaseStage = guessReleaseStage();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginObject();
             writer.name("id").value(packageName);
             writer.name("name").value(appName);

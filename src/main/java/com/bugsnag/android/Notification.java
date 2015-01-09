@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -21,7 +22,7 @@ class Notification implements JsonStream.Streamable {
         this.errorFiles = new LinkedList<File>();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         // Create a JSON stream and top-level object
         writer.beginObject();
 

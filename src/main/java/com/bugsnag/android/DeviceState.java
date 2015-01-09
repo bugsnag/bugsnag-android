@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
 import java.util.Date;
 
 import android.content.ContentResolver;
@@ -45,7 +46,7 @@ class DeviceState implements JsonStream.Streamable {
         time = getTime();
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginObject();
             writer.name("freeMemory").value(freeMemory);
             writer.name("orientation").value(orientation);
