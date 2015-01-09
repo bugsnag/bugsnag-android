@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -58,11 +59,13 @@ public class Client {
         // Get the application context, many things need this
         appContext = androidContext.getApplicationContext();
 
-        // Attempt to load API key from AndroidManifest.xml
-        try {
-            ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-            apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
-        } catch (Exception e) { }
+        // Attempt to load API key from AndroidManifest.xml if not passed in
+        if (TextUtils.isEmpty(apiKey)) {
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+            } catch (Exception e) { }
+        }
 
         if(apiKey == null) {
             throw new NullPointerException("You must provide a Bugsnag API key");
