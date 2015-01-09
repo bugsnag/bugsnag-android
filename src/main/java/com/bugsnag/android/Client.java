@@ -59,14 +59,13 @@ public class Client {
         // Get the application context, many things need this
         appContext = androidContext.getApplicationContext();
 
-        // Attempt to load API key from AndroidManifest.xml
-        try {
-            ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-            String manifestApiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
-            if(!TextUtils.isEmpty(manifestApiKey)) {
-                apiKey = manifestApiKey;
-            }
-        } catch (Exception e) { }
+        // Attempt to load API key from AndroidManifest.xml if not passed in
+        if (TextUtils.isEmpty(apiKey)) {
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+            } catch (Exception e) { }
+        }
 
         if(apiKey == null) {
             throw new NullPointerException("You must provide a Bugsnag API key");
