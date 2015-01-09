@@ -78,6 +78,7 @@ class ErrorStore {
         Writer out = null;
         try {
             out = new FileWriter(filename);
+
             JsonStream stream = new JsonStream(out);
             stream.value(error);
             stream.close();
@@ -86,7 +87,7 @@ class ErrorStore {
         } catch (Exception e) {
             Logger.warn(String.format("Couldn't save unsent error to disk (%s) ", filename), e);
         } finally {
-            FileUtils.close(out);
+            IOUtils.closeQuietly(out);
         }
     }
 }

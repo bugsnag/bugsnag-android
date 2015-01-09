@@ -41,17 +41,13 @@ class JsonStream extends JsonWriter {
     void value(File file) throws IOException {
         super.flush();
 
-        // Buffer the file contents onto the stream
+        // Copy the file contents onto the stream
         FileReader input = null;
         try {
             input = new FileReader(file);
-            char[] buffer = new char[1024 * 4];
-            int n = 0;
-            while (-1 != (n = input.read(buffer))) {
-                out.write(buffer, 0, n);
-            }
+            IOUtils.copy(input, out);
         } finally {
-            FileUtils.close(input);
+            IOUtils.closeQuietly(input);
         }
 
         out.flush();
