@@ -278,6 +278,20 @@ public final class Bugsnag {
     }
 
     /**
+      * Notify Bugsnag of an error
+      *
+      * @param  name        the error name or class
+      * @param  message     the error message
+      * @param  stacktrace  the stackframes associated with the error
+      * @param  severity    the severity of the error, one of Severity.ERROR,
+      *                     Severity.WARNING or Severity.INFO
+      * @param  metaData    additional information to send with the exception
+      */
+    public static void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        getClient().notify(name, message, stacktrace, severity, metaData);
+    }
+
+    /**
      * Add diagnostic information to every error report.
      * Diagnostic information is collected in "tabs" on your dashboard.
      *

@@ -347,8 +347,10 @@ public class Client {
      *                     Severity.WARNING or Severity.INFO
      * @param  metaData    additional information to send with the exception
      */
-    public void notify(String name, String message, StackTraceElement[] stacktrace) {
+    public void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
         notify(error);
     }
 
