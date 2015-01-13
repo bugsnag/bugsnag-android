@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
@@ -22,7 +24,7 @@ class Exceptions implements JsonStream.Streamable {
         this.frames = frames;
     }
 
-    public void toStream(JsonStream writer) {
+    public void toStream(JsonStream writer) throws IOException {
         writer.beginArray();
 
         if(exception != null) {
@@ -39,7 +41,7 @@ class Exceptions implements JsonStream.Streamable {
         writer.endArray();
     }
 
-    private void exceptionToStream(JsonStream writer, String name, String message, StackTraceElement[] frames) {
+    private void exceptionToStream(JsonStream writer, String name, String message, StackTraceElement[] frames) throws IOException {
         Stacktrace stacktrace = new Stacktrace(config, frames);
         writer.beginObject();
             writer.name("errorClass").value(name);
