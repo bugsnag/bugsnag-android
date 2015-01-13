@@ -4,11 +4,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.14.4'
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
     }
 }
 apply plugin: 'android'
-apply plugin: 'bugsnag'
 
 android {
     compileSdkVersion 19
@@ -23,11 +21,6 @@ android {
     defaultConfig {
         minSdkVersion 4
     }
-}
-
-bugsnag {
-    apiKey '386a563f753a807877e3d8743fc1d771'
-    endpoint 'http://localhost:9000/'
 }
 
 dependencies {
