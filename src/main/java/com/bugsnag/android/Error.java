@@ -26,10 +26,20 @@ public class Error implements JsonStream.Streamable {
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
+    private String name;
+    private String message;
+    private StackTraceElement[] frames;
 
     Error(Configuration config, Throwable exception) {
         this.config = config;
         this.exception = exception;
+    }
+
+    Error(Configuration config, String name, String message, StackTraceElement[] frames) {
+        this.config = config;
+        this.name = name;
+        this.message = message;
+        this.frames = frames;
     }
 
     public void toStream(JsonStream writer) throws IOException {
@@ -40,10 +50,16 @@ public class Error implements JsonStream.Streamable {
         // Write error basics
         writer.beginObject();
             writer.name("payloadVersion").value(PAYLOAD_VERSION);
-            writer.name("exceptions").value(new ExceptionChain(config, exception));
             writer.name("context").value(getContext());
             writer.name("severity").value(severity);
             writer.name("metaData").value(mergedMetaData);
+
+            // Write exception info
+            if(exception != null) {
+                writer.name("exceptions").value(new Exceptions(config, exception));
+            } else {
+                writer.name("exceptions").value(new Exceptions(config, name, message, frames));
+            }
 
             // Write user info
             if(user != null) {
@@ -131,7 +147,18 @@ public class Error implements JsonStream.Streamable {
      * @see    Severity
      */
     public void setSeverity(Severity severity) {
-        this.severity = severity;
+        if(severity != null) {
+            this.severity = severity;
+        }
+    }
+
+    /**
+     * Get the Severity of this Error.
+     *
+     * @see  Severity
+     */
+    public Severity getSeverity() {
+        return severity;
     }
 
     /**
@@ -232,14 +259,22 @@ public class Error implements JsonStream.Streamable {
      * Get the class name from the exception contained in this Error report.
      */
     public String getExceptionName() {
-        return exception.getClass().getName();
+        if(exception != null) {
+            return exception.getClass().getName();
+        } else {
+            return name;
+        }
     }
 
     /**
      * Get the message from the exception contained in this Error report.
      */
     public String getExceptionMessage() {
-        return exception.getLocalizedMessage();
+        if(exception != null) {
+            return exception.getLocalizedMessage();
+        } else {
+            return message;
+        }
     }
 
     /**
@@ -274,6 +309,6 @@ public class Error implements JsonStream.Streamable {
     }
 
     boolean shouldIgnoreClass() {
-        return config.shouldIgnoreClass(exception.getClass().getName());
+        return config.shouldIgnoreClass(getExceptionName());
     }
 }

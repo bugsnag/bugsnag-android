@@ -338,6 +338,23 @@ public class Client {
     }
 
     /**
+     * Notify Bugsnag of an error
+     *
+     * @param  name        the error name or class
+     * @param  message     the error message
+     * @param  stacktrace  the stackframes associated with the error
+     * @param  severity    the severity of the error, one of Severity.ERROR,
+     *                     Severity.WARNING or Severity.INFO
+     * @param  metaData    additional information to send with the exception
+     */
+    public void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error);
+    }
+
+    /**
      * Add diagnostic information to every error report.
      * Diagnostic information is collected in "tabs" on your dashboard.
      *
