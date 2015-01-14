@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 class DateUtils {
@@ -10,7 +11,7 @@ class DateUtils {
 
     static {
         TimeZone tz = TimeZone.getTimeZone("UTC");
-        iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         iso8601.setTimeZone(tz);
     }
 
