@@ -1,9 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.14.4'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
     }
 }
 apply plugin: 'android'
@@ -13,8 +15,16 @@ android {
     buildToolsVersion '21.1.1'
 
     buildTypes {
+
+        debug {
+            minifyEnabled true
+            proguardFile 'proguard.pro'
+            applicationIdSuffix ".debug"
+        }
+
         release {
             minifyEnabled true
+            proguardFile 'proguard.pro'
         }
     }
 
@@ -26,3 +36,5 @@ android {
 dependencies {
     compile rootProject
 }
+
+apply plugin: 'bugsnag'

@@ -1,0 +1,2 @@
+-keepattributes LineNumberTable,SourceFile
+-dontoptimize

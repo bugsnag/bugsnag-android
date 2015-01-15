@@ -44,14 +44,38 @@ public class ExampleActivity extends Activity
         // Add some global metaData
         Bugsnag.addToTab("user", "age", 31);
         Bugsnag.addToTab("custom", "account", "something");
+
+        Bugsnag.leaveBreadcrumb("onCreate");
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    sleepSoundly();
+                } catch (java.lang.InterruptedException e) {
+
+                }
+            }
+
+            private void sleepSoundly() throws java.lang.InterruptedException {
+                Thread.sleep(100000);
+            }
+        }).start();
     }
 
     public void sendError(View view) {
+        actuallySendError();
+    }
+
+    private void actuallySendError() {
         Bugsnag.notify(new RuntimeException("Non-fatal error"), Severity.ERROR);
         Toast.makeText(this, "Sent error", 1000).show();
     }
 
     public void sendWarning(View view) {
+        actuallySendWarning();
+    }
+
+    private void actuallySendWarning() {
         Bugsnag.notify(new RuntimeException("Non-fatal warning"), Severity.WARNING);
         Toast.makeText(this, "Sent warning", 1000).show();
     }
