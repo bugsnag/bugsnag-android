@@ -323,6 +323,14 @@ Bugsnag.beforeNotify(new BeforeNotify() {
 });
 ```
 
+Proguard
+--------
+
+Bugsnag supports retracing Proguard stacktraces. This can be configured to work
+automatically using the
+[bugsnag-android-gradle-plugin](https://github.com/bugsnag/bugsnag-android-gradle-plugin),
+or manually using the [Bugsnag Proguard API](https://bugsnag.com/docs/notifiers/android/proguard).
+
 
 Reporting Bugs or Feature Requests
 ----------------------------------
