@@ -313,7 +313,7 @@ public final class Bugsnag {
      *
      * @param  tabName  the dashboard tab to remove diagnostic data from
      */
-    public void clearTab(String tabName) {
+    public static void clearTab(String tabName) {
         getClient().clearTab(tabName);
     }
 
