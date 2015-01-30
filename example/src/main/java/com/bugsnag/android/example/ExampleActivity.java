@@ -17,6 +17,8 @@ import com.bugsnag.android.MetaData;
 import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.Severity;
 
+import com.bugsnag.android.other.Other;
+
 public class ExampleActivity extends Activity
 {
     /** Called when the activity is first created. */
@@ -40,6 +42,8 @@ public class ExampleActivity extends Activity
 
         // Set the user information
         Bugsnag.setUser("123456", "james@example.com", "James Smith");
+
+        Bugsnag.setProjectPackages("com.bugsnag.android.example", "com.bugsnag.android.other");
 
         // Add some global metaData
         Bugsnag.addToTab("user", "age", 31);
@@ -104,6 +108,7 @@ public class ExampleActivity extends Activity
     }
 
     public void crash(View view) {
-        throw new RuntimeException("Something broke!");
+        Other other = new Other();
+        other.meow();
     }
 }
