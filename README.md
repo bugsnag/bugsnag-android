@@ -345,7 +345,7 @@ Contributing
 ------------
 
 We'd love to see your contributions! For information on how to build, test
-and releease `bugsnag-android`, see our [contributing guide](CONTRIBUTING.md).
+and release `bugsnag-android`, see our [contributing guide](CONTRIBUTING.md).
 
 
 License
