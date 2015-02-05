@@ -23,3 +23,8 @@ before_script:
 script: ./gradlew --info connectedAndroidTest
 
 sudo: false
+
+notifications:
+  hipchat:
+    rooms:
+      secure: cv5V8ivZExOywKL9n0CODnxy9m5u4rQ5ZMYK8XHPIoqQKkvH9DQOeb2ItW2aM2kxeupJEcQEy1Eu4sYMGhyzKUNdqbFtQBhDYxRwSAgTRIkGlHQCnznyExHWZbGfDB8y/m11HiZ1wuPuqs8ZZ+VccNb4bwJKbhPTbf1RZ+GPeU8=
