@@ -1,12 +1,14 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.DisplayMetrics;
 
 public class DeviceDataTest extends BugsnagTestCase {
-    public void testSaneValues() throws JSONException {
+    public void testSaneValues() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
         DeviceData deviceData = new DeviceData(getContext());
         JSONObject deviceDataJson = streamableToJson(deviceData);

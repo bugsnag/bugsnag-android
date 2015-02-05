@@ -1,10 +1,12 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DeviceStateTest extends BugsnagTestCase {
-    public void testSaneValues() throws JSONException {
+    public void testSaneValues() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
         DeviceState deviceState = new DeviceState(getContext());
         JSONObject deviceStateJson = streamableToJson(deviceState);

@@ -18,27 +18,11 @@ public class BugsnagTestCase extends AndroidTestCase {
         return writer.toString();
     }
 
-    protected JSONObject streamableToJson(JsonStream.Streamable streamable) {
-        JSONObject json = null;
-
-        try {
-            return new JSONObject(streamableToString(streamable));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return json;
+    protected JSONObject streamableToJson(JsonStream.Streamable streamable) throws JSONException, IOException {
+        return new JSONObject(streamableToString(streamable));
     }
 
-    protected JSONArray streamableToJsonArray(JsonStream.Streamable streamable) {
-        JSONArray json = null;
-
-        try {
-            return new JSONArray(streamableToString(streamable));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return json;
+    protected JSONArray streamableToJsonArray(JsonStream.Streamable streamable) throws JSONException, IOException  {
+        return new JSONArray(streamableToString(streamable));
     }
 }

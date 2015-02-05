@@ -1,10 +1,12 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONArray;
 
 public class BreadcrumbsTest extends BugsnagTestCase {
-    public void testSerialization() throws JSONException {
+    public void testSerialization() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("Started app");
         breadcrumbs.add("Clicked a button");
@@ -15,7 +17,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim", breadcrumbsJson.getJSONArray(2).get(1));
     }
 
-    public void testSizeLimit() throws JSONException {
+    public void testSizeLimit() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.setSize(5);
         breadcrumbs.add("1");
@@ -31,7 +33,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("6", breadcrumbsJson.getJSONArray(4).get(1));
     }
 
-    public void testResize() throws JSONException {
+    public void testResize() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
         breadcrumbs.add("2");
@@ -47,7 +49,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("6", breadcrumbsJson.getJSONArray(4).get(1));
     }
 
-    public void testClear() throws JSONException {
+    public void testClear() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
         breadcrumbs.add("2");

@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,7 +33,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertEquals("Example message", error.getExceptionMessage());
     }
 
-    public void testBasicSerialization() throws JSONException {
+    public void testBasicSerialization() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
 
@@ -43,7 +45,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertNotNull(errorJson.get("threads"));
     }
 
-    public void testSetContext() throws JSONException {
+    public void testSetContext() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
         error.setContext("ExampleContext");
@@ -52,7 +54,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertEquals("ExampleContext", errorJson.get("context"));
     }
 
-    public void testSetGroupingHash() throws JSONException {
+    public void testSetGroupingHash() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
         error.setGroupingHash("herpderp");
@@ -61,7 +63,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertEquals("herpderp", errorJson.get("groupingHash"));
     }
 
-    public void testSetSeverity() throws JSONException {
+    public void testSetSeverity() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
         error.setSeverity(Severity.INFO);
