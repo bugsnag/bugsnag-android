@@ -1,11 +1,13 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ExceptionsTest extends BugsnagTestCase {
-    public void testBasicException() throws JSONException {
+    public void testBasicException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Exceptions exceptions = new Exceptions(config, new RuntimeException("oops"));
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
@@ -18,7 +20,7 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertNotNull(firstException.get("stacktrace"));
     }
 
-    public void testCauseException() throws JSONException {
+    public void testCauseException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Throwable ex = new RuntimeException("oops", new Exception("cause"));
         Exceptions exceptions = new Exceptions(config, ex);
@@ -37,7 +39,7 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertNotNull(causeException.get("stacktrace"));
     }
 
-    public void testNamedException() throws JSONException {
+    public void testNamedException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
 
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);

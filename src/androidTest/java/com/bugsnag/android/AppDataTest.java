@@ -1,10 +1,12 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AppDataTest extends BugsnagTestCase {
-    public void testManifestData() throws JSONException {
+    public void testManifestData() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
         AppData appData = new AppData(getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
@@ -18,7 +20,7 @@ public class AppDataTest extends BugsnagTestCase {
         assertEquals("development", appDataJson.get("releaseStage"));
     }
 
-    public void testAppVersionOverride() throws JSONException {
+    public void testAppVersionOverride() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
         config.appVersion = "1.2.3";
 
@@ -28,7 +30,7 @@ public class AppDataTest extends BugsnagTestCase {
         assertEquals("1.2.3", appDataJson.get("version"));
     }
 
-    public void testReleaseStageOverride() throws JSONException {
+    public void testReleaseStageOverride() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
         config.releaseStage = "test-stage";
 

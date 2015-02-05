@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MetaDataTest extends BugsnagTestCase {
-    public void testBasicSerialization() throws JSONException {
+    public void testBasicSerialization() throws JSONException, IOException {
         MetaData metaData = new MetaData();
         metaData.addToTab("example", "string", "value");
         metaData.addToTab("example", "integer", 123);
@@ -49,7 +51,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("value", mapJson.getString("key"));
     }
 
-    public void testNestedMapSerialization() throws JSONException {
+    public void testNestedMapSerialization() throws JSONException, IOException {
         Map<String, String> childMap = new HashMap<String, String>();
         childMap.put("key", "value");
 
@@ -66,7 +68,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("value", childMapJson.getString("key"));
     }
 
-    public void testNestedCollectionSerialization() throws JSONException {
+    public void testNestedCollectionSerialization() throws JSONException, IOException {
         Collection childList = new LinkedList<String>();
         childList.add("james");
         childList.add("test");
@@ -132,7 +134,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("fromOverrides", mergedMap.get("key"));
     }
 
-    public void testBasicFiltering() throws JSONException {
+    public void testBasicFiltering() throws JSONException, IOException {
         MetaData metaData = new MetaData();
         metaData.setFilters("password");
         metaData.addToTab("example", "password", "p4ssw0rd");
@@ -148,7 +150,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("safe", tabJson.getString("normal"));
     }
 
-    public void testNestedFiltering() throws JSONException  {
+    public void testNestedFiltering() throws JSONException, IOException  {
         Map<String, String> sensitiveMap = new HashMap<String, String>();
         sensitiveMap.put("password", "p4ssw0rd");
         sensitiveMap.put("confirm_password", "p4ssw0rd");

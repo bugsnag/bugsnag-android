@@ -54,11 +54,13 @@ public class Error implements JsonStream.Streamable {
             writer.name("severity").value(severity);
             writer.name("metaData").value(mergedMetaData);
 
-            writer.name("projectPackages").beginArray();
-                for (String projectPackage : config.projectPackages) {
-                    writer.value(projectPackage);
-                }
-            writer.endArray();
+            if(config.projectPackages != null) {
+                writer.name("projectPackages").beginArray();
+                    for (String projectPackage : config.projectPackages) {
+                        writer.value(projectPackage);
+                    }
+                writer.endArray();
+            }
 
             // Write exception info
             if(exception != null) {
