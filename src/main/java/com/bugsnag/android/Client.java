@@ -59,11 +59,14 @@ public class Client {
         // Get the application context, many things need this
         appContext = androidContext.getApplicationContext();
 
+        String buildUUID = null;
+
         // Attempt to load API key from AndroidManifest.xml if not passed in
         if (TextUtils.isEmpty(apiKey)) {
             try {
                 ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
                 apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+                buildUUID = ai.metaData.getString("com.bugsnag.android.BUILD_UUID");
             } catch (Exception e) { }
         }
 
@@ -73,6 +76,10 @@ public class Client {
 
         // Build a configuration object
         config = new Configuration(apiKey);
+
+        if (buildUUID != null) {
+            config.buildUUID = buildUUID;
+        }
 
         // Set up and collect constant app and device diagnostics
         appData = new AppData(appContext, config);
@@ -130,6 +137,19 @@ public class Client {
     public void setEndpoint(String endpoint) {
         config.endpoint = endpoint;
     }
+
+    /**
+     * Set the buildUUID to your own value. This is used to identify proguard
+     * mapping files in the case that you publish multiple different apps with
+     * the same appId and versionCode. The default value is read from the
+     * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
+     *
+     * @param  buildUUID  the buildUUID.
+     */
+    public void setBuildUUID(final String buildUUID) {
+        config.buildUUID = buildUUID;
+    }
+
 
     /**
      * Set which keys should be filtered when sending metaData to Bugsnag.

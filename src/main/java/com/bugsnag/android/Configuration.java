@@ -13,6 +13,7 @@ class Configuration {
     static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
 
     String apiKey;
+    String buildUUID;
     String appVersion;
     String context;
     String endpoint = DEFAULT_ENDPOINT;
