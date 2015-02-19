@@ -1,3 +1,7 @@
+3.2.5
+-----
+-   Silence harmless proguard warning
+
 3.2.4
 -----
 -   Support buildUUID to distinguish between multiple builds with the same appId and versionCode
