@@ -8,6 +8,10 @@
     public protected *;
 }
 
+-keep class com.bugsnag.android.Async {
+    static void run(java.lang.Runnable);
+}
+
 -keepclassmembernames class * {
     java.lang.Class class$(java.lang.String);
     java.lang.Class class$(java.lang.String, boolean);
