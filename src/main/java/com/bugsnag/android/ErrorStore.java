@@ -46,7 +46,7 @@ class ErrorStore {
                 if(!exceptionDir.exists() || !exceptionDir.isDirectory()) return;
 
                 File[] errorFiles = exceptionDir.listFiles();
-                if(errorFiles.length > 0) {
+                if(errorFiles != null && errorFiles.length > 0) {
                     Logger.info(String.format("Sending %d saved error(s) to Bugsnag", errorFiles.length));
 
                     for(File errorFile : errorFiles) {
