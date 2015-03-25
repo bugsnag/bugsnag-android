@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import java.io.IOException;
+import android.text.TextUtils;
 
 /**
  * Information and associated diagnostics relating to a handled or unhandled
@@ -122,7 +123,7 @@ public class Error implements JsonStream.Streamable {
      * Get the context associated with this Error.
      */
     public String getContext() {
-        if(context != null && !context.isEmpty()) {
+        if(context != null && !TextUtils.isEmpty(context)) {
             return context;
         } else if (config.context != null) {
             return config.context;
