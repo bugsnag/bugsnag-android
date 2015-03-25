@@ -122,7 +122,7 @@ public class Error implements JsonStream.Streamable {
      * Get the context associated with this Error.
      */
     public String getContext() {
-        if(context != null) {
+        if(context != null && !context.isEmpty()) {
             return context;
         } else if (config.context != null) {
             return config.context;
