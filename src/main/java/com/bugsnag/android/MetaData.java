@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A container for additional diagnostic information you'd like to send with
@@ -21,20 +21,20 @@ public class MetaData implements JsonStream.Streamable {
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
     private String[] filters;
-    private HashMap<String, Object> store;
+    private final Map<String, Object> store;
 
     /**
      * Create an empty MetaData object.
      */
     public MetaData() {
-        store = new HashMap<String, Object>();
+        store = new ConcurrentHashMap<String, Object>();
     }
 
     /**
      * Create a MetaData with values copied from an existing Map
      */
     public MetaData(Map<String, Object> m) {
-        store = new HashMap<String, Object>(m);
+        store = new ConcurrentHashMap<String, Object>(m);
     }
 
     public void toStream(JsonStream writer) throws IOException {
@@ -76,7 +76,7 @@ public class MetaData implements JsonStream.Streamable {
         Map<String, Object> tab = (Map<String, Object>)store.get(tabName);
 
         if(tab == null) {
-            tab = new HashMap<String, Object>();
+            tab = new ConcurrentHashMap<String, Object>();
             store.put(tabName, tab);
         }
 
@@ -99,7 +99,7 @@ public class MetaData implements JsonStream.Streamable {
     }
 
     private static Map<String, Object> mergeMaps(Map<String, Object>... maps) {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new ConcurrentHashMap<String, Object>();
 
         for(Map<String, Object> map : maps) {
             if(map == null) continue;
