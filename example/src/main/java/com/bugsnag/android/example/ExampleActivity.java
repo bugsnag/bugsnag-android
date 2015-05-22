@@ -1,23 +1,21 @@
 package com.bugsnag.android.example;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collection;
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
+import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Error;
 import com.bugsnag.android.MetaData;
-import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.Severity;
-
 import com.bugsnag.android.other.Other;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 public class ExampleActivity extends Activity
 {
@@ -72,7 +70,7 @@ public class ExampleActivity extends Activity
 
     private void actuallySendError() {
         Bugsnag.notify(new RuntimeException("Non-fatal error"), Severity.ERROR);
-        Toast.makeText(this, "Sent error", 1000).show();
+        Toast.makeText(this, "Sent error", LENGTH_SHORT).show();
     }
 
     public void sendWarning(View view) {
@@ -81,12 +79,12 @@ public class ExampleActivity extends Activity
 
     private void actuallySendWarning() {
         Bugsnag.notify(new RuntimeException("Non-fatal warning"), Severity.WARNING);
-        Toast.makeText(this, "Sent warning", 1000).show();
+        Toast.makeText(this, "Sent warning", LENGTH_SHORT).show();
     }
 
     public void sendInfo(View view) {
         Bugsnag.notify(new RuntimeException("Non-fatal info"), Severity.INFO);
-        Toast.makeText(this, "Sent info", 1000).show();
+        Toast.makeText(this, "Sent info", LENGTH_SHORT).show();
     }
 
     public void sendErrorWithMetaData(View view) {
@@ -104,7 +102,7 @@ public class ExampleActivity extends Activity
         metaData.addToTab("user", "more", list);
 
         Bugsnag.notify(new RuntimeException("Non-fatal error with metaData"), Severity.ERROR, metaData);
-        Toast.makeText(this, "Sent error with metaData", 1000).show();
+        Toast.makeText(this, "Sent error with metaData", LENGTH_SHORT).show();
     }
 
     public void crash(View view) {
