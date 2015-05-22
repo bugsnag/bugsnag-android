@@ -7,15 +7,17 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 class DateUtils {
-    private static DateFormat iso8601;
-
-    static {
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
-        iso8601.setTimeZone(tz);
-    }
+    // SimpleDateFormat isn't thread safe, cache one instance per thread as needed.
+    private static final ThreadLocal<DateFormat> iso8601Holder = new ThreadLocal<DateFormat>() {
+        @Override protected DateFormat initialValue() {
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            iso8601.setTimeZone(tz);
+            return iso8601;
+        }
+    };
 
     static String toISO8601(Date date) {
-        return iso8601.format(date);
+        return iso8601Holder.get().format(date);
     }
 }
