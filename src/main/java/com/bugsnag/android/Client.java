@@ -17,6 +17,9 @@ import android.text.TextUtils;
  * @see Bugsnag
  */
 public class Client {
+
+    private static final boolean BLOCKING = true;
+
     private Configuration config;
     private Context appContext;
     private AppData appData;
@@ -314,7 +317,17 @@ public class Client {
      */
     public void notify(Throwable exception) {
         Error error = new Error(config, exception);
-        notify(error);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param  exception  the exception to send to Bugsnag
+     */
+    public void notifyBlocking(Throwable exception) {
+        Error error = new Error(config, exception);
+        notify(error, BLOCKING);
     }
 
     /**
@@ -327,8 +340,22 @@ public class Client {
     public void notify(Throwable exception, Severity severity) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
-        notify(error);
+        notify(error, !BLOCKING);
     }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param  exception  the exception to send to Bugsnag
+     * @param  severity   the severity of the error, one of Severity.ERROR,
+     *                    Severity.WARNING or Severity.INFO
+     */
+    public void notifyBlocking(Throwable exception, Severity severity) {
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        notify(error, BLOCKING);
+    }
+
 
     /**
      * Notify Bugsnag of a handled exception
@@ -339,7 +366,19 @@ public class Client {
     public void notify(Throwable exception, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setMetaData(metaData);
-        notify(error);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param  exception  the exception to send to Bugsnag
+     * @param  metaData   additional information to send with the exception
+     */
+    public void notifyBlocking(Throwable exception, MetaData metaData) {
+        Error error = new Error(config, exception);
+        error.setMetaData(metaData);
+        notify(error, BLOCKING);
     }
 
     /**
@@ -354,7 +393,22 @@ public class Client {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         error.setMetaData(metaData);
-        notify(error);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param  exception  the exception to send to Bugsnag
+     * @param  severity   the severity of the error, one of Severity.ERROR,
+     *                    Severity.WARNING or Severity.INFO
+     * @param  metaData   additional information to send with the exception
+     */
+    public void notifyBlocking(Throwable exception, Severity severity, MetaData metaData) {
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error, BLOCKING);
     }
 
     /**
@@ -371,7 +425,24 @@ public class Client {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
-        notify(error);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param  name        the error name or class
+     * @param  message     the error message
+     * @param  stacktrace  the stackframes associated with the error
+     * @param  severity    the severity of the error, one of Severity.ERROR,
+     *                     Severity.WARNING or Severity.INFO
+     * @param  metaData    additional information to send with the exception
+     */
+    public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error, BLOCKING);
     }
 
     /**
@@ -390,7 +461,26 @@ public class Client {
         error.setSeverity(severity);
         error.setMetaData(metaData);
         error.setContext(context);
-        notify(error);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param  name        the error name or class
+     * @param  message     the error message
+     * @param  context     the error context
+     * @param  stacktrace  the stackframes associated with the error
+     * @param  severity    the severity of the error, one of Severity.ERROR,
+     *                     Severity.WARNING or Severity.INFO
+     * @param  metaData    additional information to send with the exception
+     */
+    public void notifyBlocking(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        error.setContext(context);
+        notify(error, BLOCKING);
     }
 
     /**
@@ -480,7 +570,7 @@ public class Client {
         ExceptionHandler.disable(this);
     }
 
-    private void notify(final Error error) {
+    private void notify(final Error error, boolean blocking) {
         // Don't notify if this error class should be ignored
         if(error.shouldIgnoreClass()) {
             return;
@@ -513,25 +603,33 @@ public class Client {
         final Notification notification = new Notification(config);
         notification.addError(error);
 
-        // Attempt to send the notification in the background
-        Async.run(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    int errorCount = notification.deliver();
-                    Logger.info(String.format("Sent %d new error(s) to Bugsnag", errorCount));
-                } catch (HttpClient.NetworkException e) {
-                    Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
-
-                    // Save error to disk for later sending
-                    errorStore.write(error);
-                } catch (HttpClient.BadResponseException e) {
-                    Logger.info("Bad response when sending data to Bugsnag");
-                } catch (Exception e) {
-                    Logger.warn("Problem sending error to Bugsnag", e);
+        if (blocking) {
+            deliver(notification, error);
+        } else {
+            // Attempt to send the notification in the background
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    deliver(notification, error);
                 }
-            }
-        });
+            });
+        }
+    }
+
+    private void deliver(Notification notification, Error error) {
+        try {
+            int errorCount = notification.deliver();
+            Logger.info(String.format("Sent %d new error(s) to Bugsnag", errorCount));
+        } catch (HttpClient.NetworkException e) {
+            Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+
+            // Save error to disk for later sending
+            errorStore.write(error);
+        } catch (HttpClient.BadResponseException e) {
+            Logger.info("Bad response when sending data to Bugsnag");
+        } catch (Exception e) {
+            Logger.warn("Problem sending error to Bugsnag", e);
+        }
     }
 
     private boolean runBeforeNotifyTasks(Error error) {
