@@ -13,12 +13,13 @@ import android.content.Context;
 class ErrorStore {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
 
-    private Configuration config;
-    private String path;
+    private final Configuration config;
+    private final String path;
 
     ErrorStore(Configuration config, Context appContext) {
         this.config = config;
 
+        String path;
         try {
             path = appContext.getCacheDir().getAbsolutePath() + UNSENT_ERROR_PATH;
 
@@ -32,6 +33,7 @@ class ErrorStore {
             Logger.warn("Could not prepare error storage directory", e);
             path = null;
         }
+        this.path = path;
     }
 
     // Flush any on-disk errors to Bugsnag
