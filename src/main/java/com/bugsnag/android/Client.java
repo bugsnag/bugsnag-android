@@ -17,13 +17,13 @@ import android.text.TextUtils;
  * @see Bugsnag
  */
 public class Client {
-    private Configuration config;
-    private Context appContext;
-    private AppData appData;
-    private DeviceData deviceData;
-    private Breadcrumbs breadcrumbs;
-    private User user = new User();
-    private ErrorStore errorStore;
+    private final Configuration config;
+    private final Context appContext;
+    private final AppData appData;
+    private final DeviceData deviceData;
+    private final Breadcrumbs breadcrumbs;
+    private final User user = new User();
+    private final ErrorStore errorStore;
 
     /**
      * Initialize a Bugsnag client
