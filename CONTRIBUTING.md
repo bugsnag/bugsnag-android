@@ -29,7 +29,7 @@ installed to `~/.android-sdk`.
 > building.
 
 
-Building the Libarary
+Building the Library
 ---------------------
 
 You can build new `.jar` and `.aar` files as follows:
