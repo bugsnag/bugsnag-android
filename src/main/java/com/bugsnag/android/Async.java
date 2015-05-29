@@ -1,15 +1,13 @@
 package com.bugsnag.android;
 
-import android.os.AsyncTask;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 class Async {
-    static void run(final Runnable task) {
-        new AsyncTask <Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voi) {
-                task.run();
-                return null;
-            }
-        }.execute();
+
+    private static final Executor executor = Executors.newCachedThreadPool();
+
+    static void run(Runnable task) {
+        executor.execute(task);
     }
 }
