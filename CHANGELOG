@@ -1,3 +1,10 @@
+3.2.6
+-----
+-   Add blocking API
+-   Fix NPE issue
+-   Concurrent adding to tabs
+-   Thread Safe DateUtils#toISO8601
+
 3.2.5
 -----
 -   Silence harmless proguard warning
