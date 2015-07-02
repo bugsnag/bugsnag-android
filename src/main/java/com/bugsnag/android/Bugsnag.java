@@ -379,14 +379,14 @@ public final class Bugsnag {
      *
      * @param  numBreadcrumbs  number of breadcrumb log messages to send
      */
-    public void setMaxBreadcrumbs(int numBreadcrumbs) {
+    public static void setMaxBreadcrumbs(int numBreadcrumbs) {
         getClient().setMaxBreadcrumbs(numBreadcrumbs);
     }
 
     /**
      * Clear any breadcrumbs that have been left so far.
      */
-    public void clearBreadcrumbs() {
+    public static void clearBreadcrumbs() {
         getClient().clearBreadcrumbs();
     }
 
