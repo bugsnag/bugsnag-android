@@ -1,4 +1,4 @@
-Bugsnag Notifier for Android
+Bugsnag Notifier for Android ![build status](https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master)
 ============================
 
 [Bugsnag](https://bugsnag.com) for Android automatically detects crashes in
