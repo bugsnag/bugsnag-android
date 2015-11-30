@@ -1,13 +1,13 @@
 package com.bugsnag.android;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.provider.Settings;
+import android.util.DisplayMetrics;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
-
-import android.content.Context;
-import android.content.ContentResolver;
-import android.provider.Settings;
-import android.util.DisplayMetrics;
 
 /**
  * Information about the current Android device which doesn't change over time,
@@ -95,18 +95,36 @@ class DeviceData implements JsonStream.Streamable {
         }
     }
 
+    private static final String[] ROOT_INDICATORS = new String[]{
+        // Common binaries
+        "/system/xbin/su",
+        "/system/bin/su",
+        // < Android 5.0
+        "/system/app/Superuser.apk",
+        "/system/app/SuperSU.apk",
+        // >= Android 5.0
+        "/system/app/Superuser",
+        "/system/app/SuperSU",
+        // Fallback
+        "/system/xbin/daemonsu"
+    };
+
     /**
      * Check if the current Android device is rooted
      */
     private boolean isRooted() {
-        boolean hasTestKeys = android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys");
-        boolean hasSuperUserApk = false;
-        try {
-            File file = new File("/system/app/Superuser.apk");
-            hasSuperUserApk = file.exists();
-        } catch (Exception e) { }
+        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys"))
+            return true;
 
-        return hasTestKeys || hasSuperUserApk;
+        try {
+            for (String candidate : ROOT_INDICATORS) {
+                if (new File(candidate).exists())
+                    return true;
+            }
+        } catch (Exception ignore) {
+            // In case of unexpected issues, fail silently.
+        }
+        return false;
     }
 
     /**
