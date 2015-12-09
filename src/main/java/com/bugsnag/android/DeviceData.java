@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 
@@ -30,9 +31,10 @@ class DeviceData implements JsonStream.Streamable {
     DeviceData(Context appContext) {
         this.appContext = appContext;
 
-        screenDensity = getScreenDensity();
-        dpi = getScreenDensityDpi();
-        screenResolution = getScreenResolution();
+        Resources resources = appContext.getResources();
+        screenDensity = getScreenDensity(resources);
+        dpi = getScreenDensityDpi(resources);
+        screenResolution = getScreenResolution(resources);
         totalMemory = getTotalMemory();
         rooted = isRooted();
         locale = getLocale();
@@ -65,22 +67,28 @@ class DeviceData implements JsonStream.Streamable {
     /**
      * The screen density scaling factor of the current Android device
      */
-    private float getScreenDensity() {
-        return appContext.getResources().getDisplayMetrics().density;
+    private float getScreenDensity(Resources resources) {
+        if (resources == null)
+            return 0;
+        return resources.getDisplayMetrics().density;
     }
 
     /**
      * The screen density of the current Android device in dpi, eg. 320
      */
-    private float getScreenDensityDpi() {
-        return appContext.getResources().getDisplayMetrics().densityDpi;
+    private float getScreenDensityDpi(Resources resources) {
+        if (resources == null)
+            return 0;
+        return resources.getDisplayMetrics().densityDpi;
     }
 
     /**
      * The screen resolution of the current Android device in px, eg. 1920x1080
      */
-    private String getScreenResolution() {
-        DisplayMetrics metrics = appContext.getResources().getDisplayMetrics();
+    private String getScreenResolution(Resources resources) {
+        if (resources == null)
+            return "";
+        DisplayMetrics metrics = resources.getDisplayMetrics();
         return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
     }
 
