@@ -302,7 +302,7 @@ you are using [Bugsnag Enterprise](https://bugsnag.com/enterprise), to point
 to your own Bugsnag endpoint:
 
 ```java
-Bugsnag.setEndpoint("http://bugsnag.internal.example.com");
+Bugsnag.setEndpoint("https://bugsnag.internal.example.com");
 ```
 
 ###beforeNotify
