@@ -58,12 +58,14 @@ class ErrorStore {
                             notif.deliver();
 
                             Logger.info("Deleting sent error file " + errorFile.getName());
-                            errorFile.delete();
+                            if (!errorFile.delete())
+                                errorFile.deleteOnExit();
                         } catch (HttpClient.NetworkException e) {
                             Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
                         } catch (Exception e) {
                             Logger.warn("Problem sending unsent error from disk", e);
-                            errorFile.delete();
+                            if (!errorFile.delete())
+                                errorFile.deleteOnExit();
                         }
                     }
                 }
