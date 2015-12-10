@@ -108,7 +108,7 @@ This process is a little ridiculous...
     # GPG key details
     signing.keyId=your-gpg-key-id # From gpg --list-keys
     signing.password=your-gpg-key-passphrase
-    signing.secretKeyRingFile=/Users/james/.gnupg/secring.gpg
+    signing.secretKeyRingFile=/Users/{username}/.gnupg/secring.gpg
     ```
 
 -   Build and upload the new version
