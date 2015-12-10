@@ -72,7 +72,17 @@ Releasing a New Version
 If you are a project maintainer, you can build and release a new version of
 `bugsnag-android` as follows:
 
-### 1. Prepare for release
+### 1. Ensure you have permission to make a release
+
+This process is a little ridiculous...
+
+-   Create a [Sonatype JIRA](https://issues.sonatype.org) account
+-   Ask in the [Bugsnag Sonatype JIRA ticket](https://issues.sonatype.org/browse/OSSRH-5533) to become a contributor
+-   Ask an existing contributor (likely Simon) to confirm in the ticket
+-   Wait for Sonatype them to confirm the approval
+
+
+### 2. Prepare for release
 
 -   Update the `CHANGELOG` and `README.md` with any new features
 
@@ -86,7 +96,7 @@ If you are a project maintainer, you can build and release a new version of
     git push origin master && git push --tags
     ```
 
-### 2. Release to Maven Central
+### 3. Release to Maven Central
 
 -   Create a file `~/.gradle/gradle.properties` with the following contents:
 
@@ -117,7 +127,7 @@ If you are a project maintainer, you can build and release a new version of
     -   Select the com.bugsnag closed repository
     -   Click the “release” button in the toolbar
 
-### 3. Upload the .jar file to GitHub
+### 4. Upload the .jar file to GitHub
 
 -   Create a "release" from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
 -   Upload the generated `.jar` file from `build/outputs/jar/bugsnag-android-x.y.z.jar` on the "edit tag" page for this release tag
