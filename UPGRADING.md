@@ -7,10 +7,10 @@ Upgrade from 2.0 to 3.0
 
     ```java
     // Old
-    Bugsnag.register("api-key");
+    Bugsnag.register(Context, "api-key");
 
     // New
-    Bugsnag.init("api-key");
+    Bugsnag.init(Context, "api-key");
     ```
 
 -   Severity is now an `Enum`, so please update any references to severity in your app:
