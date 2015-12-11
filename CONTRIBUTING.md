@@ -102,6 +102,7 @@ This process is a little ridiculous...
 
     ```ini
     # Your credentials for https://oss.sonatype.org/
+    # NOTE: An equals sign (`=`) in any of these fields will break the parser
     NEXUS_USERNAME=your-nexus-username
     NEXUS_PASSWORD=your-nexus-password
 
