@@ -614,7 +614,7 @@ public class Client {
         }
     }
 
-    private void deliver(Notification notification, Error error) {
+    void deliver(Notification notification, Error error) {
         try {
             int errorCount = notification.deliver();
             Logger.info(String.format("Sent %d new error(s) to Bugsnag", errorCount));

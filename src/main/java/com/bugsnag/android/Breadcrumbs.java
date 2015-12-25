@@ -8,8 +8,8 @@ import java.util.List;
 class Breadcrumbs implements JsonStream.Streamable {
     private static class Breadcrumb {
         private static final int MAX_MESSAGE_LENGTH = 140;
-        private String timestamp;
-        private String message;
+        String timestamp;
+        String message;
 
         Breadcrumb(String message) {
             this.timestamp = DateUtils.toISO8601(new Date());
