@@ -4,11 +4,10 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.14.4'
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
     }
 }
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 19
