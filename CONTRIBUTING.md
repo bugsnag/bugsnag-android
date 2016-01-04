@@ -32,13 +32,13 @@ installed to `~/.android-sdk`.
 Building the Library
 ---------------------
 
-You can build new `.jar` and `.aar` files as follows:
+You can build new `.aar` files as follows:
 
 ```shell
 ./gradlew clean :build
 ```
 
-Files are generated into `build/outputs/jar` and `build/outputs/aar`.
+Files are generated into`build/outputs/aar`.
 
 
 Running Tests
@@ -128,7 +128,7 @@ This process is a little ridiculous...
     -   Select the com.bugsnag closed repository
     -   Click the “release” button in the toolbar
 
-### 4. Upload the .jar file to GitHub
+### 4. Upload the .aar file to GitHub
 
 -   Create a "release" from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
--   Upload the generated `.jar` file from `build/outputs/jar/bugsnag-android-x.y.z.jar` on the "edit tag" page for this release tag
+-   Upload the generated `.aar` file from `build/outputs/aar/bugsnag-android-release.aar` on the "edit tag" page for this release tag

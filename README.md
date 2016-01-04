@@ -32,12 +32,6 @@ Add `bugsnag-android` as a dependency in your `pom.xml`:
 </dependency>
 ```
 
-### Using a Jar
-
--   Download the [latest bugsnag-android.jar](https://github.com/bugsnag/bugsnag-android/releases/latest)
--   Place it in your Android app's `libs/` folder
-
-
 Configuring Your AndroidManifest
 --------------------------------
 

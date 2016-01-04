@@ -33,24 +33,5 @@ android {
     }
 }
 
-// Task to generate a .jar file
-task jarRelease(type: Copy) {
-    def jarFile = POM_ARTIFACT_ID + '-' + VERSION_NAME + '.jar'
-
-    from 'build/intermediates/bundles/release/'
-    into 'build/outputs/jar'
-    include 'classes.jar'
-    rename('classes.jar', jarFile)
-
-    artifacts.add('archives', file('build/outputs/jar/' + jarFile));
-}
-
-// Generate .jar files when assembling release builds
-tasks.whenTaskAdded { task ->
-    if (task.name == 'signArchives') {
-        task.dependsOn jarRelease
-    }
-}
-
 // Tasks to release the library to maven central
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
