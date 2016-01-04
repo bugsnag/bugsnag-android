@@ -13,8 +13,8 @@ import android.content.Context;
 class ErrorStore {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
 
-    private final Configuration config;
-    private final String path;
+    final Configuration config;
+    final String path;
 
     ErrorStore(Configuration config, Context appContext) {
         this.config = config;
