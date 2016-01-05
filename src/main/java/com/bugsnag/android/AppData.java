@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import java.io.IOException;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
 /**
