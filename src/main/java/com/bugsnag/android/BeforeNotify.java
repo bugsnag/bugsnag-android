@@ -16,5 +16,5 @@ public interface BeforeNotify {
     * @param  error  the error to be sent to Bugsnag
     * @see    Error
     */
-    public boolean run(Error error);
+    boolean run(Error error);
 }
