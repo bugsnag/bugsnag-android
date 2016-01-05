@@ -16,14 +16,12 @@ android {
     buildTypes {
 
         debug {
-            minifyEnabled true
-            proguardFile 'proguard.pro'
             applicationIdSuffix ".debug"
         }
 
         release {
             minifyEnabled true
-            proguardFile 'proguard.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
         }
     }
 
