@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 /**
@@ -15,7 +17,7 @@ class Notifier implements JsonStream.Streamable {
         return instance;
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
             writer.name("name").value(NOTIFIER_NAME);
             writer.name("version").value(NOTIFIER_VERSION);

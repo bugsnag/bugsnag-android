@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 /**
@@ -15,7 +17,7 @@ class Stacktrace implements JsonStream.Streamable {
         this.stacktrace = stacktrace;
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 
         for(StackTraceElement el : stacktrace) {

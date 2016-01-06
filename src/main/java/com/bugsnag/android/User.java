@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 /**
@@ -22,7 +24,7 @@ class User implements JsonStream.Streamable {
         this(u.id, u.email, u.name);
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
             if(id != null) {

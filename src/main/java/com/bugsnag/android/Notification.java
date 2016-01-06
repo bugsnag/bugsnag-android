@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -16,13 +18,13 @@ class Notification implements JsonStream.Streamable {
     private Collection<Error> errors;
     private Collection<File> errorFiles;
 
-    Notification(Configuration config) {
+    Notification(@NonNull Configuration config) {
         this.config = config;
         this.errors = new LinkedList<Error>();
         this.errorFiles = new LinkedList<File>();
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         // Create a JSON stream and top-level object
         writer.beginObject();
 
@@ -52,11 +54,11 @@ class Notification implements JsonStream.Streamable {
         writer.endObject();
     }
 
-    void addError(Error error) {
+    void addError(@NonNull Error error) {
         this.errors.add(error);
     }
 
-    void addError(File errorFile) {
+    void addError(@NonNull File errorFile) {
         this.errorFiles.add(errorFile);
     }
 

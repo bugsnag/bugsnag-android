@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 /**
@@ -24,7 +26,7 @@ class Exceptions implements JsonStream.Streamable {
         this.frames = frames;
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 
         if(exception != null) {

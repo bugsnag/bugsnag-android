@@ -33,6 +33,10 @@ android {
     }
 }
 
+dependencies {
+    compile "com.android.support:support-annotations:23.1.1"
+}
+
 // Task to generate a .jar file
 task jarRelease(type: Copy) {
     def jarFile = POM_ARTIFACT_ID + '-' + VERSION_NAME + '.jar'
