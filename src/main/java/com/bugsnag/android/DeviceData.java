@@ -21,13 +21,13 @@ import java.util.Locale;
  */
 class DeviceData implements JsonStream.Streamable {
 
-    private Float screenDensity;
-    private Integer dpi;
-    private String screenResolution;
-    private Long totalMemory;
-    private Boolean rooted;
-    private String locale;
-    private String id;
+    private final Float screenDensity;
+    private final Integer dpi;
+    private final String screenResolution;
+    private final Long totalMemory;
+    private final Boolean rooted;
+    private final String locale;
+    private final String id;
 
     DeviceData(@NonNull Context appContext) {
         screenDensity = getScreenDensity(appContext);

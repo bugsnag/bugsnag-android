@@ -11,7 +11,7 @@ import java.util.Map;
  * Capture and serialize the state of all threads at the time of an exception.
  */
 class ThreadState implements JsonStream.Streamable {
-    Configuration config;
+    final Configuration config;
 
     ThreadState(Configuration config) {
         this.config = config;

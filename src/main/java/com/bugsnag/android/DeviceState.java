@@ -18,20 +18,20 @@ import java.util.Date;
 
 /**
  * Information about the current Android device which can change over time,
- * including free memory, sensor status and orientatus.
+ * including free memory, sensor status and orientation.
  * <p/>
- * App information in this class is not cached, and is recalcuated every
+ * App information in this class is not cached, and is recalculated every
  * time toStream is called.
  */
 class DeviceState implements JsonStream.Streamable {
-    private Long freeMemory;
-    private String orientation;
-    private Float batteryLevel;
-    private Long freeDisk;
-    private Boolean charging;
-    private String locationStatus;
-    private String networkAccess;
-    private String time;
+    private final Long freeMemory;
+    private final String orientation;
+    private final Float batteryLevel;
+    private final Long freeDisk;
+    private final Boolean charging;
+    private final String locationStatus;
+    private final String networkAccess;
+    private final String time;
 
     DeviceState(@NonNull Context appContext) {
 

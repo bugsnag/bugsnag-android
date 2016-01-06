@@ -12,7 +12,7 @@ class Notifier implements JsonStream.Streamable {
     static final String NOTIFIER_VERSION = "3.2.7";
     static final String NOTIFIER_URL = "https://bugsnag.com";
 
-    private static Notifier instance = new Notifier();
+    private static final Notifier instance = new Notifier();
     public static Notifier getInstance() {
         return instance;
     }

@@ -10,8 +10,8 @@ import java.util.List;
 class Breadcrumbs implements JsonStream.Streamable {
     private static class Breadcrumb {
         private static final int MAX_MESSAGE_LENGTH = 140;
-        String timestamp;
-        String message;
+        final String timestamp;
+        final String message;
 
         Breadcrumb(@NonNull String message) {
             this.timestamp = DateUtils.toISO8601(new Date());
@@ -20,7 +20,7 @@ class Breadcrumbs implements JsonStream.Streamable {
     }
 
     private static final int DEFAULT_MAX_SIZE = 20;
-    private List<Breadcrumb> store = new LinkedList<Breadcrumb>();
+    private final List<Breadcrumb> store = new LinkedList<Breadcrumb>();
     private int maxSize = DEFAULT_MAX_SIZE;
 
     public void toStream(@NonNull JsonStream writer) throws IOException {

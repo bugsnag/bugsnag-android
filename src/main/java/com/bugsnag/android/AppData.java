@@ -16,13 +16,13 @@ import java.io.IOException;
  * subsequent lookups and to reduce GC overhead.
  */
 class AppData implements JsonStream.Streamable {
-    private Configuration config;
+    private final Configuration config;
 
-    private String packageName;
-    private String appName;
-    private Integer versionCode;
-    private String versionName;
-    private String guessedReleaseStage;
+    private final String packageName;
+    private final String appName;
+    private final Integer versionCode;
+    private final String versionName;
+    private final String guessedReleaseStage;
 
     AppData(@NonNull Context appContext, @NonNull Configuration config) {
         this.config = config;
@@ -49,13 +49,12 @@ class AppData implements JsonStream.Streamable {
         // Prefer user-configured appVersion + releaseStage
         if (getAppVersion() != null)
             writer.name("version").value(getAppVersion());
-        if (getReleaseStage() != null)
-            writer.name("releaseStage").value(getReleaseStage());
+        writer.name("releaseStage").value(getReleaseStage());
 
         writer.endObject();
     }
 
-    @Nullable
+    @NonNull
     public String getReleaseStage() {
         if (config.releaseStage != null) {
             return config.releaseStage;

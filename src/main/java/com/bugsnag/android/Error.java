@@ -18,7 +18,7 @@ import java.io.IOException;
 public class Error implements JsonStream.Streamable {
     private static final String PAYLOAD_VERSION = "2";
 
-    private Configuration config;
+    private final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
     private AppState appState;

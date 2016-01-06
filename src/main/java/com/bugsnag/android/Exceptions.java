@@ -8,7 +8,7 @@ import java.io.IOException;
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
 class Exceptions implements JsonStream.Streamable {
-    private Configuration config;
+    private final Configuration config;
     private Throwable exception;
     private String name;
     private String message;

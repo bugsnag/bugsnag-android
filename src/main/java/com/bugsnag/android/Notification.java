@@ -14,9 +14,9 @@ import java.util.LinkedList;
  * using your API key.
  */
 class Notification implements JsonStream.Streamable {
-    private Configuration config;
-    private Collection<Error> errors;
-    private Collection<File> errorFiles;
+    private final Configuration config;
+    private final Collection<Error> errors;
+    private final Collection<File> errorFiles;
 
     Notification(@NonNull Configuration config) {
         this.config = config;

@@ -13,17 +13,17 @@ import java.util.List;
  * Information about the running Android app which can change over time,
  * including memory usage and active screen information.
  * <p/>
- * App information in this class is not cached, and is recalcuated every
+ * App information in this class is not cached, and is recalculated every
  * time toStream is called.
  */
 class AppState implements JsonStream.Streamable {
-    private static Long startTime = SystemClock.elapsedRealtime();
+    private static final Long startTime = SystemClock.elapsedRealtime();
 
-    private Long duration;
-    private Boolean inForeground;
-    private String activeScreen;
-    private Long memoryUsage;
-    private Boolean lowMemory;
+    private final Long duration;
+    private final Boolean inForeground;
+    private final String activeScreen;
+    private final Long memoryUsage;
+    private final Boolean lowMemory;
 
     static void init() {
     }

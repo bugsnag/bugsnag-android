@@ -9,8 +9,8 @@ import java.io.IOException;
  * where appropriate.
  */
 class Stacktrace implements JsonStream.Streamable {
-    Configuration config;
-    StackTraceElement[] stacktrace;
+    final Configuration config;
+    final StackTraceElement[] stacktrace;
 
     Stacktrace(Configuration config, StackTraceElement[] stacktrace) {
         this.config = config;
