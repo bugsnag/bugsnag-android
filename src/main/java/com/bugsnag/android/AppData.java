@@ -1,10 +1,10 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
-
 import android.content.Context;
-import android.content.pm.ApplicationInfo;;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+
+import java.io.IOException;
 
 /**
  * Information about the running Android app which doesn't change over time,
