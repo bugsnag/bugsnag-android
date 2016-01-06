@@ -1,8 +1,5 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
-import java.util.Date;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +10,9 @@ import android.os.BatteryManager;
 import android.os.Environment;
 import android.os.StatFs;
 import android.provider.Settings;
+
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * Information about the current Android device which can change over time,
@@ -74,12 +74,17 @@ class DeviceState implements JsonStream.Streamable {
      * Get the device orientation, eg. "landscape"
      */
     private String getOrientation() {
-        String orientation = null;
+        String orientation;
         switch(appContext.getResources().getConfiguration().orientation) {
             case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
                 orientation = "landscape";
+                break;
             case android.content.res.Configuration.ORIENTATION_PORTRAIT:
                 orientation = "portrait";
+                break;
+            default:
+                orientation = null;
+                break;
         }
         return orientation;
     }
