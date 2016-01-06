@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 class JsonStream extends JsonWriter {
-    static interface Streamable {
+    interface Streamable {
         void toStream(JsonStream stream) throws IOException;
     }
 
