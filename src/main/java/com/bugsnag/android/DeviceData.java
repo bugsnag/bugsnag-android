@@ -47,21 +47,23 @@ class DeviceData implements JsonStream.Streamable {
             writer.name("manufacturer").value(android.os.Build.MANUFACTURER);
             writer.name("brand").value(android.os.Build.BRAND);
             writer.name("model").value(android.os.Build.MODEL);
+            // Can't be null
             writer.name("id").value(id);
-
             writer.name("apiLevel").value(android.os.Build.VERSION.SDK_INT);
             writer.name("osVersion").value(android.os.Build.VERSION.RELEASE);
             writer.name("osBuild").value(android.os.Build.DISPLAY);
-
+            // Can't be null
             writer.name("locale").value(locale);
-
+            // Can't be null
             writer.name("totalMemory").value(totalMemory);
-
-            writer.name("jailbroken").value(rooted);
-
-            writer.name("screenDensity").value(screenDensity);
-            writer.name("dpi").value(dpi);
-            writer.name("screenResolution").value(screenResolution);
+            if (rooted != null)
+                writer.name("jailbroken").value(rooted);
+            if (screenDensity != null)
+                writer.name("screenDensity").value(screenDensity);
+            if (dpi != null)
+                writer.name("dpi").value(dpi);
+            if (screenResolution != null)
+                writer.name("screenResolution").value(screenResolution);
         writer.endObject();
     }
 
