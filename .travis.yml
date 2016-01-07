@@ -2,6 +2,9 @@ language: android
 
 android:
   components:
+    - tools
+    - platform-tools
+    - build-tools-23.0.2
     - android-4
     - android-10
     - android-19

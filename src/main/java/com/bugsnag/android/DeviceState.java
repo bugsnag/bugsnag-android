@@ -87,8 +87,13 @@ class DeviceState implements JsonStream.Streamable {
         switch (appContext.getResources().getConfiguration().orientation) {
             case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
                 orientation = "landscape";
+                break;
             case android.content.res.Configuration.ORIENTATION_PORTRAIT:
                 orientation = "portrait";
+                break;
+            default:
+                orientation = null;
+                break;
         }
         return orientation;
     }
