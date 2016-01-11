@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 /**
@@ -19,7 +21,7 @@ public enum Severity implements JsonStream.Streamable {
         this.name = name;
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.value(name);
     }
 }

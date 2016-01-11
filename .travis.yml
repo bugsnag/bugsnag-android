@@ -9,6 +9,7 @@ android:
     - android-10
     - android-19
     - android-23
+    - extra-android-m2repository
 
 env:
   matrix:

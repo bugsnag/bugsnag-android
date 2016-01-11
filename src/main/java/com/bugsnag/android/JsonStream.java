@@ -1,16 +1,18 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Writer;
 
 class JsonStream extends JsonWriter {
-    static interface Streamable {
-        void toStream(JsonStream stream) throws IOException;
+    interface Streamable {
+        void toStream(@NonNull JsonStream stream) throws IOException;
     }
 
-    private Writer out;
+    private final Writer out;
 
     JsonStream(Writer out) {
         super(out);
@@ -18,27 +20,60 @@ class JsonStream extends JsonWriter {
     }
 
     // Allow chaining name().value()
-    public JsonStream name(String name) throws IOException {
+    public JsonStream name(@NonNull String name) throws IOException {
         super.name(name);
         return this;
     }
 
-    // Add null-protection
-    void value(Boolean value) throws IOException {
+    /**
+     * Writes a Boolean value into the stream if it is not null,
+     * otherwise a null value.
+     */
+    public void value(@NonNull Boolean value) throws IOException {
+        //noinspection ConstantConditions
         if (value == null) {
             nullValue();
-        } else {
-            super.value(value);
+            return;
         }
+        super.value(value);
     }
 
-    // Add support for Streamable values
-    void value(Streamable streamable) throws IOException {
+    /**
+     * Writes a String value into the stream if it is not null,
+     * otherwise a null value.
+     */
+    @Override
+    public JsonWriter value(@NonNull String value) throws IOException {
+        //noinspection ConstantConditions
+        if (value == null)
+            return nullValue();
+        return super.value(value);
+    }
+
+    /**
+     * Writes a Number value into the stream if it is not null,
+     * otherwise a null value.
+     */
+    @Override
+    public JsonWriter value(@NonNull Number value) throws IOException {
+        //noinspection ConstantConditions
+        if (value == null)
+            return nullValue();
+        return super.value(value);
+    }
+
+    /**
+     * This gives the Streamable the JsonStream instance and
+     * allows lets it write itself into the stream.
+     */
+    public void value(@NonNull Streamable streamable) throws IOException {
         streamable.toStream(this);
     }
 
-    // Add support for File values
-    void value(File file) throws IOException {
+    /**
+     * Writes a File (its content) into the stream
+     */
+    public void value(@NonNull File file) throws IOException {
         super.flush();
 
         // Copy the file contents onto the stream

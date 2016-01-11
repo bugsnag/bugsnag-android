@@ -12,7 +12,7 @@ import java.util.List;
 class Configuration {
     static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
 
-    String apiKey;
+    final String apiKey;
     String buildUUID;
     String appVersion;
     String context;
@@ -25,7 +25,7 @@ class Configuration {
     boolean sendThreads = true;
 
     MetaData metaData = new MetaData();
-    Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
+    final Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
 
     Configuration(String apiKey) {
         this.apiKey = apiKey;

@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 
 import java.io.File;
@@ -13,50 +15,54 @@ import java.util.Locale;
 /**
  * Information about the current Android device which doesn't change over time,
  * including screen and locale information.
- *
+ * <p/>
  * App information in this class is cached during construction for faster
  * subsequent lookups and to reduce GC overhead.
  */
 class DeviceData implements JsonStream.Streamable {
-    private Context appContext;
 
-    private float screenDensity;
-    private float dpi;
-    private String screenResolution;
-    private long totalMemory;
-    private boolean rooted;
-    private String locale;
-    private String id;
+    private final Float screenDensity;
+    private final Integer dpi;
+    private final String screenResolution;
+    private final Long totalMemory;
+    private final Boolean rooted;
+    private final String locale;
+    private final String id;
 
-    DeviceData(Context appContext) {
-        this.appContext = appContext;
-
-        Resources resources = appContext.getResources();
-        screenDensity = getScreenDensity(resources);
-        dpi = getScreenDensityDpi(resources);
-        screenResolution = getScreenResolution(resources);
+    DeviceData(@NonNull Context appContext) {
+        screenDensity = getScreenDensity(appContext);
+        dpi = getScreenDensityDpi(appContext);
+        screenResolution = getScreenResolution(appContext);
         totalMemory = getTotalMemory();
         rooted = isRooted();
         locale = getLocale();
-        id = getAndroidId();
+        id = getAndroidId(appContext);
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-            writer.name("manufacturer").value(android.os.Build.MANUFACTURER);
-            writer.name("brand").value(android.os.Build.BRAND);
-            writer.name("model").value(android.os.Build.MODEL);
-            writer.name("screenDensity").value(screenDensity);
-            writer.name("dpi").value(dpi);
-            writer.name("screenResolution").value(screenResolution);
-            writer.name("totalMemory").value(totalMemory);
-            writer.name("osName").value("android");
-            writer.name("osBuild").value(android.os.Build.DISPLAY);
-            writer.name("apiLevel").value(android.os.Build.VERSION.SDK_INT);
+
+        writer.name("osName").value("android");
+        writer.name("manufacturer").value(android.os.Build.MANUFACTURER);
+        writer.name("brand").value(android.os.Build.BRAND);
+        writer.name("model").value(android.os.Build.MODEL);
+        writer.name("id").value(id);
+        writer.name("apiLevel").value(android.os.Build.VERSION.SDK_INT);
+        writer.name("osVersion").value(android.os.Build.VERSION.RELEASE);
+        writer.name("osBuild").value(android.os.Build.DISPLAY);
+
+        writer.name("locale").value(locale);
+
+        writer.name("totalMemory").value(totalMemory);
+        if (rooted != null)
             writer.name("jailbroken").value(rooted);
-            writer.name("locale").value(locale);
-            writer.name("osVersion").value(android.os.Build.VERSION.RELEASE);
-            writer.name("id").value(id);
+        if (screenDensity != null)
+            writer.name("screenDensity").value(screenDensity);
+        if (dpi != null)
+            writer.name("dpi").value(dpi);
+        if (screenResolution != null)
+            writer.name("screenResolution").value(screenResolution);
+
         writer.endObject();
     }
 
@@ -67,27 +73,33 @@ class DeviceData implements JsonStream.Streamable {
     /**
      * The screen density scaling factor of the current Android device
      */
-    private float getScreenDensity(Resources resources) {
+    @Nullable
+    private static Float getScreenDensity(Context appContext) {
+        Resources resources = appContext.getResources();
         if (resources == null)
-            return 0;
+            return null;
         return resources.getDisplayMetrics().density;
     }
 
     /**
      * The screen density of the current Android device in dpi, eg. 320
      */
-    private float getScreenDensityDpi(Resources resources) {
+    @Nullable
+    private static Integer getScreenDensityDpi(Context appContext) {
+        Resources resources = appContext.getResources();
         if (resources == null)
-            return 0;
+            return null;
         return resources.getDisplayMetrics().densityDpi;
     }
 
     /**
      * The screen resolution of the current Android device in px, eg. 1920x1080
      */
-    private String getScreenResolution(Resources resources) {
+    @Nullable
+    private static String getScreenResolution(Context appContext) {
+        Resources resources = appContext.getResources();
         if (resources == null)
-            return "";
+            return null;
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
     }
@@ -95,8 +107,9 @@ class DeviceData implements JsonStream.Streamable {
     /**
      * Get the total memory available on the current Android device, in bytes
      */
-    private long getTotalMemory() {
-        if(Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
+    @NonNull
+    private static Long getTotalMemory() {
+        if (Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
             return Runtime.getRuntime().maxMemory();
         } else {
             return Runtime.getRuntime().totalMemory();
@@ -120,7 +133,8 @@ class DeviceData implements JsonStream.Streamable {
     /**
      * Check if the current Android device is rooted
      */
-    private boolean isRooted() {
+    @Nullable
+    private static Boolean isRooted() {
         if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys"))
             return true;
 
@@ -130,7 +144,7 @@ class DeviceData implements JsonStream.Streamable {
                     return true;
             }
         } catch (Exception ignore) {
-            // In case of unexpected issues, fail silently.
+            return null;
         }
         return false;
     }
@@ -138,14 +152,16 @@ class DeviceData implements JsonStream.Streamable {
     /**
      * Get the locale of the current Android device, eg en_US
      */
-    private String getLocale() {
+    @NonNull
+    private static String getLocale() {
         return Locale.getDefault().toString();
     }
 
     /**
      * Get the unique device id for the current Android device
      */
-    private String getAndroidId() {
+    @NonNull
+    private static String getAndroidId(Context appContext) {
         ContentResolver cr = appContext.getContentResolver();
         return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
     }

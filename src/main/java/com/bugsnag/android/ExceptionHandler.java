@@ -7,8 +7,8 @@ import java.util.WeakHashMap;
  * Provides automatic notification hooks for unhandled exceptions.
  */
 class ExceptionHandler implements UncaughtExceptionHandler {
-    private UncaughtExceptionHandler originalHandler;
-    WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
+    private final UncaughtExceptionHandler originalHandler;
+    final WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
 
     static void enable(Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();

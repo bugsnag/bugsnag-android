@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class MetaData implements JsonStream.Streamable {
         store = new ConcurrentHashMap<String, Object>(m);
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         objectToStream(store, writer);
     }
 

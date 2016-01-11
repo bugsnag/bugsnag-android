@@ -1,7 +1,10 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import java.io.IOException;
 
 /**
  * Information and associated diagnostics relating to a handled or unhandled
@@ -15,7 +18,7 @@ import android.text.TextUtils;
 public class Error implements JsonStream.Streamable {
     private static final String PAYLOAD_VERSION = "2";
 
-    private Configuration config;
+    private final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
     private AppState appState;
@@ -43,7 +46,7 @@ public class Error implements JsonStream.Streamable {
         this.frames = frames;
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.metaData, metaData);
         mergedMetaData.setFilters(config.filters);
@@ -51,7 +54,8 @@ public class Error implements JsonStream.Streamable {
         // Write error basics
         writer.beginObject();
             writer.name("payloadVersion").value(PAYLOAD_VERSION);
-            writer.name("context").value(getContext());
+            if(getContext() != null)
+                writer.name("context").value(getContext());
             writer.name("severity").value(severity);
             writer.name("metaData").value(mergedMetaData);
 
@@ -122,13 +126,14 @@ public class Error implements JsonStream.Streamable {
     /**
      * Get the context associated with this Error.
      */
+    @Nullable
     public String getContext() {
         if(context != null && !TextUtils.isEmpty(context)) {
             return context;
         } else if (config.context != null) {
             return config.context;
         } else if (appState != null){
-            return appState.getActiveScreenClass();
+            return AppState.getActiveScreenClass(context);
         } else {
             return null;
         }

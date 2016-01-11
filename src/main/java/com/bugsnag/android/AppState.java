@@ -1,54 +1,59 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
-import java.util.List;
-
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Information about the running Android app which can change over time,
  * including memory usage and active screen information.
- *
- * App information in this class is not cached, and is recalcuated every
+ * <p/>
+ * App information in this class is not cached, and is recalculated every
  * time toStream is called.
  */
 class AppState implements JsonStream.Streamable {
-    private static Long startTime = SystemClock.elapsedRealtime();
-    private Context appContext;
+    private static final Long startTime = SystemClock.elapsedRealtime();
 
-    private Long duration;
-    private Boolean inForeground;
-    private String activeScreen;
-    private Long memoryUsage;
-    private Boolean lowMemory;
+    private final Long duration;
+    private final Boolean inForeground;
+    private final String activeScreen;
+    private final Long memoryUsage;
+    private final Boolean lowMemory;
 
-    static void init() {}
-
-    AppState(Context appContext) {
-        this.appContext = appContext;
-
-        duration = getDuration();
-        inForeground = isInForeground();
-        activeScreen = getActiveScreen();
-        memoryUsage = getMemoryUsage();
-        lowMemory = isLowMemory();
+    static void init() {
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    AppState(@NonNull Context appContext) {
+        duration = getDuration();
+        inForeground = isInForeground(appContext);
+        activeScreen = getActiveScreen(appContext);
+        memoryUsage = getMemoryUsage();
+        lowMemory = isLowMemory(appContext);
+    }
+
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-            writer.name("duration").value(duration);
+
+        writer.name("duration").value(duration);
+        if (inForeground != null)
             writer.name("inForeground").value(inForeground);
+        if (activeScreen != null)
             writer.name("activeScreen").value(activeScreen);
-            writer.name("memoryUsage").value(memoryUsage);
+        writer.name("memoryUsage").value(memoryUsage);
+        if (lowMemory != null)
             writer.name("lowMemory").value(lowMemory);
+
         writer.endObject();
     }
 
-    public String getActiveScreenClass() {
-        if(activeScreen != null) {
+    @Nullable
+    public static String getActiveScreenClass(@Nullable String activeScreen) {
+        if (activeScreen != null) {
             return activeScreen.substring(activeScreen.lastIndexOf('.') + 1);
         } else {
             return null;
@@ -59,16 +64,18 @@ class AppState implements JsonStream.Streamable {
      * Get the actual memory used by the VM (which may not be the total used
      * by the app in the case of NDK usage).
      */
-    private long getMemoryUsage() {
+    @NonNull
+    private static Long getMemoryUsage() {
         return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
     }
 
     /**
      * Check if the device is currently running low on memory.
      */
-    private Boolean isLowMemory() {
+    @Nullable
+    private static Boolean isLowMemory(Context appContext) {
         try {
-            ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
             activityManager.getMemoryInfo(memInfo);
 
@@ -83,9 +90,10 @@ class AppState implements JsonStream.Streamable {
      * Get the name of the top-most activity. Requires the GET_TASKS permission,
      * which defaults to true in Android 5.0+.
      */
-    private String getActiveScreen() {
+    @Nullable
+    private static String getActiveScreen(Context appContext) {
         try {
-            ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
             ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
             return runningTask.topActivity.getClassName();
@@ -99,9 +107,10 @@ class AppState implements JsonStream.Streamable {
      * Get the name of the top-most activity. Requires the GET_TASKS permission,
      * which defaults to true in Android 5.0+.
      */
-    private Boolean isInForeground() {
+    @Nullable
+    private static Boolean isInForeground(Context appContext) {
         try {
-            ActivityManager activityManager = (ActivityManager)appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
             if (tasks.isEmpty()) {
                 return false;
@@ -120,7 +129,8 @@ class AppState implements JsonStream.Streamable {
      * Get the time in milliseconds since Bugsnag was initialized, which is a
      * good approximation for how long the app has been running.
      */
-    private Long getDuration() {
+    @NonNull
+    private static Long getDuration() {
         return SystemClock.elapsedRealtime() - startTime;
     }
 }

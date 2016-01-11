@@ -1,18 +1,20 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
  * Typically you'd instead use the static access provided in the Bugsnag class.
- *
+ * <p/>
  * Example usage:
- *
- *     Client client = new Client(this, "your-api-key");
- *     client.notify(new RuntimeException("something broke!"));
+ * <p/>
+ * Client client = new Client(this, "your-api-key");
+ * client.notify(new RuntimeException("something broke!"));
  *
  * @see Bugsnag
  */
@@ -29,33 +31,30 @@ public class Client {
     /**
      * Initialize a Bugsnag client
      *
-     * @param  androidContext  an Android context, usually <code>this</code>
+     * @param androidContext an Android context, usually <code>this</code>
      */
-    public Client(Context androidContext) {
+    public Client(@NonNull Context androidContext) {
         this(androidContext, null);
     }
 
     /**
      * Initialize a Bugsnag client
      *
-     * @param  androidContext  an Android context, usually <code>this</code>
-     * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
+     * @param androidContext an Android context, usually <code>this</code>
+     * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
-    public Client(Context androidContext, String apiKey) {
+    public Client(@NonNull Context androidContext, @Nullable String apiKey) {
         this(androidContext, apiKey, true);
     }
 
     /**
      * Initialize a Bugsnag client
      *
-     * @param  androidContext          an Android context, usually <code>this</code>
-     * @param  apiKey                  your Bugsnag API key from your Bugsnag dashboard
-     * @param  enableExceptionHandler  should we automatically handle uncaught exceptions?
+     * @param androidContext         an Android context, usually <code>this</code>
+     * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
+     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      */
-    public Client(Context androidContext, String apiKey, boolean enableExceptionHandler) {
-        if(androidContext == null) {
-            throw new NullPointerException("You must provide a non-null android Context");
-        }
+    public Client(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
 
         // Get the application context, many things need this
         appContext = androidContext.getApplicationContext();
@@ -68,10 +67,11 @@ public class Client {
                 ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
                 apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
                 buildUUID = ai.metaData.getString("com.bugsnag.android.BUILD_UUID");
-            } catch (Exception e) { }
+            } catch (Exception ignore) {
+            }
         }
 
-        if(apiKey == null) {
+        if (apiKey == null) {
             throw new NullPointerException("You must provide a Bugsnag API key");
         }
 
@@ -98,7 +98,7 @@ public class Client {
         errorStore = new ErrorStore(config, appContext);
 
         // Install a default exception handler with this client
-        if(enableExceptionHandler) {
+        if (enableExceptionHandler) {
             enableExceptionHandler();
         }
 
@@ -110,7 +110,7 @@ public class Client {
      * Set the application version sent to Bugsnag. By default we'll pull this
      * from your AndroidManifest.xml
      *
-     * @param  appVersion  the app version to send
+     * @param appVersion the app version to send
      */
     public void setAppVersion(String appVersion) {
         config.appVersion = appVersion;
@@ -121,7 +121,7 @@ public class Client {
      * name of the top-most activity at the time of a notification, and use this
      * as the context, but sometime this is not possible.
      *
-     * @param  context  set what was happening at the time of a crash
+     * @param context set what was happening at the time of a crash
      */
     public void setContext(String context) {
         config.context = context;
@@ -133,7 +133,7 @@ public class Client {
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
-     * @param  endpoint  the custom endpoint to send notifications to
+     * @param endpoint the custom endpoint to send notifications to
      */
     public void setEndpoint(String endpoint) {
         config.endpoint = endpoint;
@@ -145,7 +145,7 @@ public class Client {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param  buildUUID  the buildUUID.
+     * @param buildUUID the buildUUID.
      */
     public void setBuildUUID(final String buildUUID) {
         config.buildUUID = buildUUID;
@@ -158,12 +158,12 @@ public class Client {
      * or credit card information is stripped from metaData you send to Bugsnag.
      * Any keys in metaData which contain these strings will be marked as
      * [FILTERED] when send to Bugsnag.
-     *
+     * <p/>
      * For example:
+     * <p/>
+     * client.setFilters("password", "credit_card");
      *
-     *     client.setFilters("password", "credit_card");
-     *
-     * @param  filters  a list of keys to filter from metaData
+     * @param filters a list of keys to filter from metaData
      */
     public void setFilters(String... filters) {
         config.filters = filters;
@@ -171,12 +171,12 @@ public class Client {
 
     /**
      * Set which exception classes should be ignored (not sent) by Bugsnag.
-     *
+     * <p/>
      * For example:
+     * <p/>
+     * client.setIgnoreClasses("java.lang.RuntimeException");
      *
-     *     client.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param  ignoreClasses  a list of exception classes to ignore
+     * @param ignoreClasses a list of exception classes to ignore
      */
     public void setIgnoreClasses(String... ignoreClasses) {
         config.ignoreClasses = ignoreClasses;
@@ -185,13 +185,13 @@ public class Client {
     /**
      * Set for which releaseStages errors should be sent to Bugsnag.
      * Use this to stop errors from development builds being sent.
-     *
+     * <p/>
      * For example:
+     * <p/>
+     * client.setNotifyReleaseStages("production");
      *
-     *     client.setNotifyReleaseStages("production");
-     *
-     * @param  notifyReleaseStages  a list of releaseStages to notify for
-     * @see    #setReleaseStage
+     * @param notifyReleaseStages a list of releaseStages to notify for
+     * @see #setReleaseStage
      */
     public void setNotifyReleaseStages(String... notifyReleaseStages) {
         config.notifyReleaseStages = notifyReleaseStages;
@@ -200,14 +200,14 @@ public class Client {
     /**
      * Set which packages should be considered part of your application.
      * Bugsnag uses this to help with error grouping, and stacktrace display.
-     *
+     * <p/>
      * For example:
-     *
-     *     client.setProjectPackages("com.example.myapp");
-     *
+     * <p/>
+     * client.setProjectPackages("com.example.myapp");
+     * <p/>
      * By default, we'll mark the current package name as part of you app.
      *
-     * @param  projectPackages  a list of package names
+     * @param projectPackages a list of package names
      */
     public void setProjectPackages(String... projectPackages) {
         config.projectPackages = projectPackages;
@@ -218,8 +218,8 @@ public class Client {
      * By default, we'll set this to "development" for debug builds and
      * "production" for non-debug builds.
      *
-     * @param  releaseStage  the release stage of the app
-     * @see    #setNotifyReleaseStages
+     * @param releaseStage the release stage of the app
+     * @see #setNotifyReleaseStages
      */
     public void setReleaseStage(String releaseStage) {
         config.releaseStage = releaseStage;
@@ -229,7 +229,7 @@ public class Client {
      * Set whether to send thread-state with notifications.
      * By default, this will be true.
      *
-     * @param  sendThreads  should we send thread-state with notifications?
+     * @param sendThreads should we send thread-state with notifications?
      */
     public void setSendThreads(boolean sendThreads) {
         config.sendThreads = sendThreads;
@@ -238,14 +238,14 @@ public class Client {
     /**
      * Set details of the user currently using your application.
      * You can search for this information in your Bugsnag dashboard.
-     *
+     * <p/>
      * For example:
+     * <p/>
+     * client.setUser("12345", "james@example.com", "James Smith");
      *
-     *     client.setUser("12345", "james@example.com", "James Smith");
-     *
-     * @param  id     a unique identifier of the current user (defaults to a unique id)
-     * @param  email  the email address of the current user
-     * @param  name   the name of the current user
+     * @param id    a unique identifier of the current user (defaults to a unique id)
+     * @param email the email address of the current user
+     * @param name  the name of the current user
      */
     public void setUser(String id, String email, String name) {
         user.setId(id);
@@ -258,7 +258,7 @@ public class Client {
      * By default, this will be an automatically generated unique id
      * You can search for this information in your Bugsnag dashboard.
      *
-     * @param  id  a unique identifier of the current user
+     * @param id a unique identifier of the current user
      */
     public void setUserId(String id) {
         user.setId(id);
@@ -268,7 +268,7 @@ public class Client {
      * Set the email address of the current user.
      * You can search for this information in your Bugsnag dashboard.
      *
-     * @param  email  the email address of the current user
+     * @param email the email address of the current user
      */
     public void setUserEmail(String email) {
         user.setEmail(email);
@@ -278,7 +278,7 @@ public class Client {
      * Set the name of the current user.
      * You can search for this information in your Bugsnag dashboard.
      *
-     * @param  name   the name of the current user
+     * @param name the name of the current user
      */
     public void setUserName(String name) {
         user.setName(name);
@@ -287,22 +287,22 @@ public class Client {
     /**
      * Add a "before notify" callback, to execute code before every
      * notification to Bugsnag.
-     *
+     * <p/>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to halt execution.
-     *
+     * <p/>
      * For example:
+     * <p/>
+     * client.beforeNotify(new BeforeNotify() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
      *
-     *     client.beforeNotify(new BeforeNotify() {
-     *         public boolean run(Error error) {
-     *             error.setSeverity(Severity.INFO);
-     *             return true;
-     *         }
-     *     })
-     *
-     * @param  beforeNotify  a callback to run before sending errors to Bugsnag
-     * @see    BeforeNotify
+     * @param beforeNotify a callback to run before sending errors to Bugsnag
+     * @see BeforeNotify
      */
     public void beforeNotify(BeforeNotify beforeNotify) {
         config.beforeNotify(beforeNotify);
@@ -311,7 +311,7 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
+     * @param exception the exception to send to Bugsnag
      */
     public void notify(Throwable exception) {
         Error error = new Error(config, exception);
@@ -321,7 +321,7 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
+     * @param exception the exception to send to Bugsnag
      */
     public void notifyBlocking(Throwable exception) {
         Error error = new Error(config, exception);
@@ -331,9 +331,9 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  severity   the severity of the error, one of Severity.ERROR,
-     *                    Severity.WARNING or Severity.INFO
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
      */
     public void notify(Throwable exception, Severity severity) {
         Error error = new Error(config, exception);
@@ -344,9 +344,9 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  severity   the severity of the error, one of Severity.ERROR,
-     *                    Severity.WARNING or Severity.INFO
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
      */
     public void notifyBlocking(Throwable exception, Severity severity) {
         Error error = new Error(config, exception);
@@ -358,8 +358,8 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  metaData   additional information to send with the exception
+     * @param exception the exception to send to Bugsnag
+     * @param metaData  additional information to send with the exception
      */
     public void notify(Throwable exception, MetaData metaData) {
         Error error = new Error(config, exception);
@@ -370,8 +370,8 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  metaData   additional information to send with the exception
+     * @param exception the exception to send to Bugsnag
+     * @param metaData  additional information to send with the exception
      */
     public void notifyBlocking(Throwable exception, MetaData metaData) {
         Error error = new Error(config, exception);
@@ -382,10 +382,10 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  severity   the severity of the error, one of Severity.ERROR,
-     *                    Severity.WARNING or Severity.INFO
-     * @param  metaData   additional information to send with the exception
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
+     * @param metaData  additional information to send with the exception
      */
     public void notify(Throwable exception, Severity severity, MetaData metaData) {
         Error error = new Error(config, exception);
@@ -397,10 +397,10 @@ public class Client {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  severity   the severity of the error, one of Severity.ERROR,
-     *                    Severity.WARNING or Severity.INFO
-     * @param  metaData   additional information to send with the exception
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
+     * @param metaData  additional information to send with the exception
      */
     public void notifyBlocking(Throwable exception, Severity severity, MetaData metaData) {
         Error error = new Error(config, exception);
@@ -412,12 +412,12 @@ public class Client {
     /**
      * Notify Bugsnag of an error
      *
-     * @param  name        the error name or class
-     * @param  message     the error message
-     * @param  stacktrace  the stackframes associated with the error
-     * @param  severity    the severity of the error, one of Severity.ERROR,
-     *                     Severity.WARNING or Severity.INFO
-     * @param  metaData    additional information to send with the exception
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
      */
     public void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
@@ -429,12 +429,12 @@ public class Client {
     /**
      * Notify Bugsnag of an error
      *
-     * @param  name        the error name or class
-     * @param  message     the error message
-     * @param  stacktrace  the stackframes associated with the error
-     * @param  severity    the severity of the error, one of Severity.ERROR,
-     *                     Severity.WARNING or Severity.INFO
-     * @param  metaData    additional information to send with the exception
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
      */
     public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
@@ -446,13 +446,13 @@ public class Client {
     /**
      * Notify Bugsnag of an error
      *
-     * @param  name        the error name or class
-     * @param  message     the error message
-     * @param  context     the error context
-     * @param  stacktrace  the stackframes associated with the error
-     * @param  severity    the severity of the error, one of Severity.ERROR,
-     *                     Severity.WARNING or Severity.INFO
-     * @param  metaData    additional information to send with the exception
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
      */
     public void notify(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
@@ -465,13 +465,13 @@ public class Client {
     /**
      * Notify Bugsnag of an error
      *
-     * @param  name        the error name or class
-     * @param  message     the error message
-     * @param  context     the error context
-     * @param  stacktrace  the stackframes associated with the error
-     * @param  severity    the severity of the error, one of Severity.ERROR,
-     *                     Severity.WARNING or Severity.INFO
-     * @param  metaData    additional information to send with the exception
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
      */
     public void notifyBlocking(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
@@ -484,15 +484,15 @@ public class Client {
     /**
      * Add diagnostic information to every error report.
      * Diagnostic information is collected in "tabs" on your dashboard.
-     *
+     * <p/>
      * For example:
+     * <p/>
+     * client.addToTab("account", "name", "Acme Co.");
+     * client.addToTab("account", "payingCustomer", true);
      *
-     *     client.addToTab("account", "name", "Acme Co.");
-     *     client.addToTab("account", "payingCustomer", true);
-     *
-     * @param  tab    the dashboard tab to add diagnostic data to
-     * @param  key    the name of the diagnostic information
-     * @param  value  the contents of the diagnostic information
+     * @param tab   the dashboard tab to add diagnostic data to
+     * @param key   the name of the diagnostic information
+     * @param value the contents of the diagnostic information
      */
     public void addToTab(String tab, String key, Object value) {
         config.metaData.addToTab(tab, key, value);
@@ -501,7 +501,7 @@ public class Client {
     /**
      * Remove a tab of app-wide diagnostic information
      *
-     * @param  tabName  the dashboard tab to remove diagnostic data from
+     * @param tabName the dashboard tab to remove diagnostic data from
      */
     public void clearTab(String tabName) {
         config.metaData.clearTab(tabName);
@@ -510,7 +510,7 @@ public class Client {
     /**
      * Get the global diagnostic information currently stored in MetaData.
      *
-     * @see  MetaData
+     * @see MetaData
      */
     public MetaData getMetaData() {
         return config.metaData;
@@ -519,7 +519,7 @@ public class Client {
     /**
      * Set the global diagnostic information to be send with every error.
      *
-     * @see  MetaData
+     * @see MetaData
      */
     public void setMetaData(MetaData metaData) {
         config.metaData = metaData;
@@ -529,7 +529,7 @@ public class Client {
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
      *
-     * @param  breadcrumb  the log message to leave (max 140 chars)
+     * @param breadcrumb the log message to leave (max 140 chars)
      */
     public void leaveBreadcrumb(String breadcrumb) {
         breadcrumbs.add(breadcrumb);
@@ -540,7 +540,7 @@ public class Client {
      * By default, we'll keep and send the 20 most recent breadcrumb log
      * messages.
      *
-     * @param  numBreadcrumbs  number of breadcrumb log messages to send
+     * @param numBreadcrumbs number of breadcrumb log messages to send
      */
     public void setMaxBreadcrumbs(int numBreadcrumbs) {
         breadcrumbs.setSize(numBreadcrumbs);
@@ -570,12 +570,12 @@ public class Client {
 
     private void notify(final Error error, boolean blocking) {
         // Don't notify if this error class should be ignored
-        if(error.shouldIgnoreClass()) {
+        if (error.shouldIgnoreClass()) {
             return;
         }
 
         // Don't notify unless releaseStage is in notifyReleaseStages
-        if(!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
+        if (!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
             return;
         }
 
@@ -592,7 +592,7 @@ public class Client {
         error.setUser(user);
 
         // Run beforeNotify tasks, don't notify if any return true
-        if(!runBeforeNotifyTasks(error)) {
+        if (!runBeforeNotifyTasks(error)) {
             Logger.info("Skipping notification - beforeNotify task returned false");
             return;
         }

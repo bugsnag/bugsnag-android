@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -9,13 +11,13 @@ import java.util.Map;
  * Capture and serialize the state of all threads at the time of an exception.
  */
 class ThreadState implements JsonStream.Streamable {
-    Configuration config;
+    final Configuration config;
 
     ThreadState(Configuration config) {
         this.config = config;
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         long currentId = Thread.currentThread().getId();
         Map<Thread,StackTraceElement[]> liveThreads = Thread.getAllStackTraces();
 

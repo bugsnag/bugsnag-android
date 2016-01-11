@@ -1,12 +1,14 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
 class Exceptions implements JsonStream.Streamable {
-    private Configuration config;
+    private final Configuration config;
     private Throwable exception;
     private String name;
     private String message;
@@ -24,7 +26,7 @@ class Exceptions implements JsonStream.Streamable {
         this.frames = frames;
     }
 
-    public void toStream(JsonStream writer) throws IOException {
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 
         if(exception != null) {
