@@ -19,36 +19,11 @@ android {
     defaultConfig {
         minSdkVersion 4
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFile 'proguard.txt'
-        }
+        consumerProguardFiles 'proguard.txt'
     }
 
     lintOptions {
         disable 'DefaultLocale'
-    }
-}
-
-// Task to generate a .jar file
-task jarRelease(type: Copy) {
-    def jarFile = POM_ARTIFACT_ID + '-' + VERSION_NAME + '.jar'
-
-    from 'build/intermediates/bundles/release/'
-    into 'build/outputs/jar'
-    include 'classes.jar'
-    rename('classes.jar', jarFile)
-
-    artifacts.add('archives', file('build/outputs/jar/' + jarFile));
-}
-
-// Generate .jar files when assembling release builds
-tasks.whenTaskAdded { task ->
-    if (task.name == 'signArchives') {
-        task.dependsOn jarRelease
     }
 }
 

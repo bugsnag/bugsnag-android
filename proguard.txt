@@ -1,10 +1,11 @@
--dontobfuscate
+-keeppackagenames com.bugsnag.**
+-keepnames class com.bugsnag.**
+-keepclassmembernames class com.bugsnag.** { *; }
 
--renamesourcefileattribute SourceFile
 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,
                 SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
 
--keep public class * {
+-keep public class com.bugsnag.** {
     public protected *;
 }
 
@@ -12,21 +13,7 @@
     static void run(java.lang.Runnable);
 }
 
--keepclassmembernames class * {
-    java.lang.Class class$(java.lang.String);
-    java.lang.Class class$(java.lang.String, boolean);
-}
-
--keepclasseswithmembernames class * {
-    native <methods>;
-}
-
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
--keepclassmembers class * implements java.io.Serializable {
+-keepclassmembers class com.bugsnag.** implements java.io.Serializable {
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;
     private void writeObject(java.io.ObjectOutputStream);

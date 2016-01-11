@@ -32,12 +32,6 @@ Add `bugsnag-android` as a dependency in your `pom.xml`:
 </dependency>
 ```
 
-### Using a Jar
-
--   Download the [latest bugsnag-android.jar](https://github.com/bugsnag/bugsnag-android/releases/latest)
--   Place it in your Android app's `libs/` folder
-
-
 Configuring Your AndroidManifest
 --------------------------------
 
@@ -49,13 +43,12 @@ Configuring Your AndroidManifest
     </application>
     ```
 
--   Enable the `INTERNET`, `ACCESS_NETWORK_STATE` and `GET_TASKS` permissions:
+-   Recommended: Enable the `ACCESS_NETWORK_STATE` and `GET_TASKS` permissions:
 
     ```xml
-    <!-- Required: Used to deliver Bugsnag crash reports -->
-    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Optional: To provide network connectivity information to Bugsnag -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    
     <!-- Optional: To see which Activity was active at the time of a crash -->
     <uses-permission android:name="android.permission.GET_TASKS"/>
     ```
