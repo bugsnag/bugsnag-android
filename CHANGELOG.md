@@ -1,3 +1,20 @@
+3.3.0 (2016-01-18)
+-----
+
+### Enhancements
+
+- Change distribution method to be .aar only
+  [Lars Grefer](https://github.com/larsgrefer)
+  [#91](https://github.com/bugsnag/bugsnag-android/pull/91)
+
+- Skip sending empty device data values
+  [Matthias Urhahn](https://github.com/d4rken)
+  [#96](https://github.com/bugsnag/bugsnag-android/pull/96)
+
+- Remove the need for synthetic methods
+  [Jake Wharton](https://github.com/JakeWharton)
+  [#87](https://github.com/bugsnag/bugsnag-android/pull/87)
+
 3.2.7 (2015-12-10)
 -----
 
