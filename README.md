@@ -1,4 +1,4 @@
-Bugsnag Notifier for Android <img src="https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master" alt="build status" class="build-status">
+Bugsnag Notifier for Android <a href="https://travis-ci.org/bugsnag/bugsnag-android"><img src="https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master" alt="build status" class="build-status"></a>
 ============================
 
 [Bugsnag](https://bugsnag.com) for Android automatically detects crashes in
@@ -48,7 +48,7 @@ Configuring Your AndroidManifest
     ```xml
     <!-- Optional: To provide network connectivity information to Bugsnag -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    
+
     <!-- Optional: To see which Activity was active at the time of a crash -->
     <uses-permission android:name="android.permission.GET_TASKS"/>
     ```
