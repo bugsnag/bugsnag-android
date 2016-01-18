@@ -1,19 +1,19 @@
-3.2.7
+3.2.7 (2015-12-10)
 -----
 
 ### Enhancements
 
 - Add additional check to ensure the cache of uploaded errors are deleted
-  | [#80](https://github.com/bugsnag/bugsnag-android/issues/80)
+  [#80](https://github.com/bugsnag/bugsnag-android/issues/80)
 
 ### Bug Fixes
 
 - Fix exception which occurs when `appContext.getResources()` is null
-  | [#78](https://github.com/bugsnag/bugsnag-android/issues/78)
+  [#78](https://github.com/bugsnag/bugsnag-android/issues/78)
 
 - Fix bug preventing `maxBreadcrumbs` from being set
-  | [David Wu](https://github.com/wuman)
-  | [#70](https://github.com/bugsnag/bugsnag-android/pull/70)
+  [David Wu](https://github.com/wuman)
+  [#70](https://github.com/bugsnag/bugsnag-android/pull/70)
 
 3.2.6
 -----
