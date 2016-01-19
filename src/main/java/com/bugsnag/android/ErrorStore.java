@@ -12,6 +12,7 @@ import android.content.Context;
  */
 class ErrorStore {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
+    private static final int MAX_STORED_ERRORS = 100;
 
     final Configuration config;
     final String path;
@@ -76,6 +77,13 @@ class ErrorStore {
     // Write an error to disk, for later sending
     void write(Error error) {
         if(path == null) return;
+
+        // Limit number of saved errors to prevent disk space issues
+        File exceptionDir = new File(path);
+        if (exceptionDir.isDirectory() && exceptionDir.listFiles().length >= MAX_STORED_ERRORS) {
+            Logger.warn("Discarding error without saving to disk as stored error limit reached");
+            return;
+        }
 
         String filename = String.format("%s%d.json", path, System.currentTimeMillis());
         Writer out = null;
