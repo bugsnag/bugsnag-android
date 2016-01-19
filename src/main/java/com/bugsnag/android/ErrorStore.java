@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.List;
 
 import android.content.Context;
 
@@ -80,9 +82,16 @@ class ErrorStore {
 
         // Limit number of saved errors to prevent disk space issues
         File exceptionDir = new File(path);
-        if (exceptionDir.isDirectory() && exceptionDir.listFiles().length >= MAX_STORED_ERRORS) {
-            Logger.warn("Discarding error without saving to disk as stored error limit reached");
-            return;
+        if (exceptionDir.isDirectory()) {
+            File[] files = exceptionDir.listFiles();
+            if (files.length >= MAX_STORED_ERRORS) {
+                // Sort files then delete the first one (oldest timestamp)
+                Arrays.sort(files);
+                Logger.warn(String.format("Discarding oldest error as stored error limit reached (%s)", files[0].getPath()));
+                if (!files[0].delete()) {
+                    files[0].deleteOnExit();
+                }
+            }
         }
 
         String filename = String.format("%s%d.json", path, System.currentTimeMillis());
