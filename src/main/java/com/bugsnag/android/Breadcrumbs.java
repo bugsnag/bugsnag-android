@@ -4,8 +4,8 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 class Breadcrumbs implements JsonStream.Streamable {
     private static class Breadcrumb {
@@ -20,7 +20,7 @@ class Breadcrumbs implements JsonStream.Streamable {
     }
 
     private static final int DEFAULT_MAX_SIZE = 20;
-    private final List<Breadcrumb> store = new LinkedList<Breadcrumb>();
+    private final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
     private int maxSize = DEFAULT_MAX_SIZE;
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -38,9 +38,9 @@ class Breadcrumbs implements JsonStream.Streamable {
 
     void add(@NonNull String message) {
         if (store.size() >= maxSize) {
-            store.remove(0);
+            // Remove oldest breadcrumb
+            store.poll();
         }
-
         store.add(new Breadcrumb(message));
     }
 
@@ -52,7 +52,10 @@ class Breadcrumbs implements JsonStream.Streamable {
         if (size > store.size()) {
             this.maxSize = size;
         } else {
-            store.subList(0, store.size() - size).clear();
+            // Remove oldest breadcrumbs until reaching the required size
+            while (store.size() > size) {
+                store.poll();
+            }
         }
     }
 }
