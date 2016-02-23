@@ -7,10 +7,12 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import java.util.Locale;
+
 class HttpClient {
     static class BadResponseException extends Exception {
         public BadResponseException(String url, int responseCode) {
-            super(String.format("Got non-200 response code (%d) from %s", responseCode, url));
+            super(String.format(Locale.US, "Got non-200 response code (%d) from %s", responseCode, url));
         }
     }
 

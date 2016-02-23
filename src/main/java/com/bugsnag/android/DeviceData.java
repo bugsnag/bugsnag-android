@@ -101,7 +101,7 @@ class DeviceData implements JsonStream.Streamable {
         if (resources == null)
             return null;
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        return String.format("%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
+        return String.format(Locale.US, "%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
     }
 
     /**
