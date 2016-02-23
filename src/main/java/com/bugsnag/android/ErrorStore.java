@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 
@@ -52,7 +53,7 @@ class ErrorStore {
 
                 File[] errorFiles = exceptionDir.listFiles();
                 if(errorFiles != null && errorFiles.length > 0) {
-                    Logger.info(String.format("Sending %d saved error(s) to Bugsnag", errorFiles.length));
+                    Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", errorFiles.length));
 
                     for(File errorFile : errorFiles) {
                         try {
@@ -94,7 +95,7 @@ class ErrorStore {
             }
         }
 
-        String filename = String.format("%s%d.json", path, System.currentTimeMillis());
+        String filename = String.format(Locale.US, "%s%d.json", path, System.currentTimeMillis());
         Writer out = null;
         try {
             out = new FileWriter(filename);

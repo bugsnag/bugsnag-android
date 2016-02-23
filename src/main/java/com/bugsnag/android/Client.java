@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import java.util.Locale;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -617,7 +618,7 @@ public class Client {
     void deliver(Notification notification, Error error) {
         try {
             int errorCount = notification.deliver();
-            Logger.info(String.format("Sent %d new error(s) to Bugsnag", errorCount));
+            Logger.info(String.format(Locale.US, "Sent %d new error(s) to Bugsnag", errorCount));
         } catch (HttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
