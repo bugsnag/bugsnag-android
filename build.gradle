@@ -31,5 +31,15 @@ dependencies {
     compile "com.android.support:support-annotations:23.1.1"
 }
 
+// Disable doclint:
+// https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        // disable the crazy super-strict doclint tool in Java 8
+        //noinspection SpellCheckingInspection
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
 // Tasks to release the library to maven central
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
