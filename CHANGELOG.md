@@ -1,3 +1,24 @@
+# Changelog
+
+## 3.4.0 (2016-03-09)
+
+### Enhancements
+
+- Limit the number of stored errors
+  [Duncan Hewett](https://github.com/duncanhewett)
+  [#97](https://github.com/bugsnag/bugsnag-android/pull/97)
+
+### Bug Fixes
+
+- Fix `ConcurrentModificationException` which could occur when saving
+  breadcrumbs
+  [Duncan Hewett](https://github.com/duncanhewett)
+  [#98](https://github.com/bugsnag/bugsnag-android/pull/98)
+
+- Localize all numbers in error metrics
+  [Delisa Mason](https://github.com/kattrali)
+  [#100](https://github.com/bugsnag/bugsnag-android/pull/100)
+
 3.3.0 (2016-01-18)
 -----
 
