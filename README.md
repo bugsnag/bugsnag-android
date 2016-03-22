@@ -1,9 +1,8 @@
 Bugsnag Notifier for Android <a href="https://travis-ci.org/bugsnag/bugsnag-android"><img src="https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master" alt="build status" class="build-status"></a>
 ============================
 
-[Bugsnag](https://bugsnag.com/platforms/android) for Android automatically detects crashes in
-your Android apps, collecting diagnostic information and immediately notifying
-your development team.
+Bugsnag's [Android crash reporting](https://bugsnag.com/platforms/android) library automatically detects crashes in
+your Android apps, collecting diagnostic information and immediately notifying your development team, helping you to understand and resolve issues as fast as possible.
 
 [Create a free account](https://bugsnag.com) to start capturing exceptions
 from your applications.
