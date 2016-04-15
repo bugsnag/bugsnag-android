@@ -132,3 +132,8 @@ This process is a little ridiculous...
 
 -   Create a "release" from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
 -   Upload the generated `.aar` file from `build/outputs/aar/bugsnag-android-release.aar` on the "edit tag" page for this release tag
+
+### 5. Update documentation
+
+Update the setup guides for Java (android) on docs.bugsnag.com with any new
+content.
