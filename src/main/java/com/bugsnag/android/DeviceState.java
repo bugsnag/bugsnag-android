@@ -49,18 +49,12 @@ class DeviceState implements JsonStream.Streamable {
         writer.beginObject();
 
         writer.name("freeMemory").value(freeMemory);
-        if (orientation != null)
-            writer.name("orientation").value(orientation);
-        if (batteryLevel != null)
-            writer.name("batteryLevel").value(batteryLevel);
-        if (freeDisk != null)
-            writer.name("freeDisk").value(freeDisk);
-        if (charging != null)
-            writer.name("charging").value(charging);
-        if (locationStatus != null)
-            writer.name("locationStatus").value(locationStatus);
-        if (networkAccess != null)
-            writer.name("networkAccess").value(networkAccess);
+        writer.name("orientation").value(orientation);
+        writer.name("batteryLevel").value(batteryLevel);
+        writer.name("freeDisk").value(freeDisk);
+        writer.name("charging").value(charging);
+        writer.name("locationStatus").value(locationStatus);
+        writer.name("networkAccess").value(networkAccess);
         writer.name("time").value(time);
 
         writer.endObject();

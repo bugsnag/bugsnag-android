@@ -54,14 +54,10 @@ class DeviceData implements JsonStream.Streamable {
         writer.name("locale").value(locale);
 
         writer.name("totalMemory").value(totalMemory);
-        if (rooted != null)
-            writer.name("jailbroken").value(rooted);
-        if (screenDensity != null)
-            writer.name("screenDensity").value(screenDensity);
-        if (dpi != null)
-            writer.name("dpi").value(dpi);
-        if (screenResolution != null)
-            writer.name("screenResolution").value(screenResolution);
+        writer.name("jailbroken").value(rooted);
+        writer.name("screenDensity").value(screenDensity);
+        writer.name("dpi").value(dpi);
+        writer.name("screenResolution").value(screenResolution);
 
         writer.endObject();
     }
