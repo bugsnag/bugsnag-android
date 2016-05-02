@@ -83,7 +83,9 @@ public class Error implements JsonStream.Streamable {
             writer.name("deviceState").value(deviceState);
             writer.name("breadcrumbs").value(breadcrumbs);
             writer.name("groupingHash").value(groupingHash);
-            writer.name("threads").value(new ThreadState(config));
+            if(config.sendThreads) {
+                writer.name("threads").value(new ThreadState(config));
+            }
 
         writer.endObject();
     }
