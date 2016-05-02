@@ -42,13 +42,10 @@ class AppData implements JsonStream.Streamable {
         writer.name("packageName").value(packageName);
         writer.name("versionName").value(versionName);
         writer.name("versionCode").value(versionCode);
-
-        if (config.buildUUID != null)
-            writer.name("buildUUID").value(config.buildUUID);
+        writer.name("buildUUID").value(config.buildUUID);
 
         // Prefer user-configured appVersion + releaseStage
-        if (getAppVersion() != null)
-            writer.name("version").value(getAppVersion());
+        writer.name("version").value(getAppVersion());
         writer.name("releaseStage").value(getReleaseStage());
 
         writer.endObject();

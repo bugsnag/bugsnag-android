@@ -492,6 +492,21 @@ class JsonWriter implements Closeable {
   /**
    * Encodes {@code value}.
    *
+   * @return this writer.
+   */
+  public JsonWriter value(Boolean value) throws IOException {
+    if (value == null) {
+      return nullValue();
+    }
+    writeDeferredName();
+    beforeValue(false);
+    out.write(value ? "true" : "false");
+    return this;
+  }
+
+  /**
+   * Encodes {@code value}.
+   *
    * @param value a finite value. May not be {@link Double#isNaN() NaNs} or
    *     {@link Double#isInfinite() infinities}.
    * @return this writer.

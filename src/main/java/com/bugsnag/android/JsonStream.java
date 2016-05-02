@@ -16,6 +16,7 @@ class JsonStream extends JsonWriter {
 
     JsonStream(Writer out) {
         super(out);
+        setSerializeNulls(false);
         this.out = out;
     }
 
@@ -26,47 +27,14 @@ class JsonStream extends JsonWriter {
     }
 
     /**
-     * Writes a Boolean value into the stream if it is not null,
-     * otherwise a null value.
-     */
-    public void value(@NonNull Boolean value) throws IOException {
-        //noinspection ConstantConditions
-        if (value == null) {
-            nullValue();
-            return;
-        }
-        super.value(value);
-    }
-
-    /**
-     * Writes a String value into the stream if it is not null,
-     * otherwise a null value.
-     */
-    @Override
-    public JsonWriter value(@NonNull String value) throws IOException {
-        //noinspection ConstantConditions
-        if (value == null)
-            return nullValue();
-        return super.value(value);
-    }
-
-    /**
-     * Writes a Number value into the stream if it is not null,
-     * otherwise a null value.
-     */
-    @Override
-    public JsonWriter value(@NonNull Number value) throws IOException {
-        //noinspection ConstantConditions
-        if (value == null)
-            return nullValue();
-        return super.value(value);
-    }
-
-    /**
      * This gives the Streamable the JsonStream instance and
      * allows lets it write itself into the stream.
      */
-    public void value(@NonNull Streamable streamable) throws IOException {
+    public void value(Streamable streamable) throws IOException {
+        if (streamable == null) {
+            nullValue();
+            return;
+        }
         streamable.toStream(this);
     }
 

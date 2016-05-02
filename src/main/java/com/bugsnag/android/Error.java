@@ -54,8 +54,7 @@ public class Error implements JsonStream.Streamable {
         // Write error basics
         writer.beginObject();
             writer.name("payloadVersion").value(PAYLOAD_VERSION);
-            if(getContext() != null)
-                writer.name("context").value(getContext());
+            writer.name("context").value(getContext());
             writer.name("severity").value(severity);
             writer.name("metaData").value(mergedMetaData);
 
@@ -75,38 +74,16 @@ public class Error implements JsonStream.Streamable {
             }
 
             // Write user info
-            if(user != null) {
-                writer.name("user").value(user);
-            }
+            writer.name("user").value(user);
 
             // Write diagnostics
-            if(appData != null) {
-                writer.name("app").value(appData);
-            }
-
-            if(appState != null) {
-                writer.name("appState").value(appState);
-            }
-
-            if(deviceData != null) {
-                writer.name("device").value(deviceData);
-            }
-
-            if(deviceState != null) {
-                writer.name("deviceState").value(deviceState);
-            }
-
-            if(breadcrumbs != null) {
-                writer.name("breadcrumbs").value(breadcrumbs);
-            }
-
-            if(groupingHash != null) {
-                writer.name("groupingHash").value(groupingHash);
-            }
-
-            if(config.sendThreads) {
-                writer.name("threads").value(new ThreadState(config));
-            }
+            writer.name("app").value(appData);
+            writer.name("appState").value(appState);
+            writer.name("device").value(deviceData);
+            writer.name("deviceState").value(deviceState);
+            writer.name("breadcrumbs").value(breadcrumbs);
+            writer.name("groupingHash").value(groupingHash);
+            writer.name("threads").value(new ThreadState(config));
 
         writer.endObject();
     }

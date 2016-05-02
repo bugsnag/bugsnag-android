@@ -27,17 +27,9 @@ class User implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
-            if(id != null) {
-                writer.name("id").value(id);
-            }
-
-            if(email != null) {
-                writer.name("email").value(email);
-            }
-
-            if(name != null) {
-                writer.name("name").value(name);
-            }
+            writer.name("id").value(id);
+            writer.name("email").value(email);
+            writer.name("name").value(name);
 
         writer.endObject();
     }
