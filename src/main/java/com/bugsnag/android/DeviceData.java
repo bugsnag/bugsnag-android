@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -58,6 +60,12 @@ class DeviceData implements JsonStream.Streamable {
         writer.name("screenDensity").value(screenDensity);
         writer.name("dpi").value(dpi);
         writer.name("screenResolution").value(screenResolution);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            writer.name("cpuAbi").value(Arrays.toString(Build.SUPPORTED_ABIS));
+        } else {
+            writer.name("cpuAbi").value(Build.CPU_ABI);
+        }
 
         writer.endObject();
     }
