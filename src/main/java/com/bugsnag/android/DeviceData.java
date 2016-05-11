@@ -61,11 +61,13 @@ class DeviceData implements JsonStream.Streamable {
         writer.name("dpi").value(dpi);
         writer.name("screenResolution").value(screenResolution);
 
+        String cpuAbi = Build.CPU_ABI;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            writer.name("cpuAbi").value(Arrays.toString(Build.SUPPORTED_ABIS));
-        } else {
-            writer.name("cpuAbi").value(Build.CPU_ABI);
+            cpuAbi = Arrays.toString(Build.SUPPORTED_ABIS);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            cpuAbi = Arrays.toString(new String[]{Build.CPU_ABI,Build.CPU_ABI2});
         }
+        writer.name("cpuAbi").value(cpuAbi);
 
         writer.endObject();
     }
