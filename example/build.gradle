@@ -34,4 +34,4 @@ dependencies {
     compile rootProject
 }
 
-apply plugin: 'bugsnag'
+apply plugin: 'com.bugsnag.android.gradle'
