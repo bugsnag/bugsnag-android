@@ -1,347 +1,44 @@
-Bugsnag Notifier for Android <a href="https://travis-ci.org/bugsnag/bugsnag-android"><img src="https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master" alt="build status" class="build-status"></a>
-============================
+# Bugsnag exception reporter for Android
+[![Documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](http://docs.bugsnag.com/platforms/android/)
+[![Build status](https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master)](https://travis-ci.org/bugsnag/bugsnag-android)
 
-Bugsnag's [Android crash reporting](https://bugsnag.com/platforms/android) library automatically detects crashes in
-your Android apps, collecting diagnostic information and immediately notifying your development team, helping you to understand and resolve issues as fast as possible.
+Bugsnag's [Android crash reporting](https://bugsnag.com/platforms/android)
+library automatically detects crashes in your Android apps, collecting
+diagnostic information and immediately notifying your development team, helping
+you to understand and resolve issues as fast as possible.
 
-[Create a free account](https://bugsnag.com) to start capturing exceptions
-from your applications.
 
+## Features
 
-Installation
-------------
+* Automatically report unhandled exceptions and crashes
+* Report [handled exceptions](http://docs.bugsnag.com/platforms/android/#reporting-handled-exceptions)
+* [Log breadcrumbs](http://docs.bugsnag.com/platforms/android/#logging-breadcrumbs) which are attached to crash reports and add insight to users' actions
+* [Attach user information](http://docs.bugsnag.com/platforms/android/#identifying-users) to determine how many people are affected by a crash
 
-### Using Android Studio or Gradle
 
-Add `bugsnag-android` to the `dependencies` section in your `build.gradle`:
+## Getting started
 
-```gradle
-compile 'com.bugsnag:bugsnag-android:+'
-```
+1. [Create a Bugsnag account](https://bugsnag.com)
+1. Complete the instructions in the [integration guide](http://docs.bugsnag.com/platforms/android/) to report unhandled exceptions thrown from your app
+1. Report handled exceptions using [`Bugsnag.notify`](http://docs.bugsnag.com/platforms/android/reporting-handled-exceptions/)
+1. Customize your integration using the [configuration options](http://docs.bugsnag.com/platforms/android/configuration-options/)
 
-### Using Maven
 
-Add `bugsnag-android` as a dependency in your `pom.xml`:
+## Support
 
-```xml
-<dependency>
-    <groupId>com.bugsnag</groupId>
-    <artifactId>bugsnag-android</artifactId>
-    <version>LATEST</version>
-</dependency>
-```
+* [Read the integration guide](http://docs.bugsnag.com/platforms/android/) or [configuration options documentation](http://docs.bugsnag.com/platforms/android/configuration-options/)
+* [Search open and closed issues](https://github.com/bugsnag/bugsnag-android/issues?utf8=✓&q=is%3Aissue) for similar problems
+* [Report a bug or request a feature](https://github.com/bugsnag/bugsnag-android/issues/new)
 
-Configuring Your AndroidManifest
---------------------------------
 
--   Configure your Bugsnag API key as `meta-data` in your manifest's `<application>` tag:
+## Contributing
 
-    ```xml
-    <application ...>
-        <meta-data android:name="com.bugsnag.android.API_KEY" android:value="your-api-key-here"/>
-    </application>
-    ```
+All contributors are welcome! For information on how to build, test
+and release `bugsnag-android`, see our
+[contributing guide](https://github.com/bugsnag/bugsnag-android/blob/master/CONTRIBUTING.md).
 
--   Recommended: Enable the `ACCESS_NETWORK_STATE` and `GET_TASKS` permissions:
 
-    ```xml
-    <!-- Optional: To provide network connectivity information to Bugsnag -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- Optional: To see which Activity was active at the time of a crash -->
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-    ```
-
-For a full example, see our [example AndroidManifest.xml](https://raw.githubusercontent.com/bugsnag/bugsnag-android/master/example/src/main/AndroidManifest.xml).
-
-
-
-Initializing Bugsnag
---------------------
-
--   Import the `Bugsnag` package in your [Application](http://developer.android.com/reference/android/app/Application.html)
-    subclass:
-
-    ```java
-    import com.bugsnag.android.*;
-    ```
-
--   In your application's `onCreate` function, initialize Bugsnag to begin
-    capturing exceptions:
-
-    ```java
-    Bugsnag.init(this);
-    ```
-
-
-Sending Custom Data With Exceptions
------------------------------------
-
-It is often useful to send additional meta-data about your app, such as
-information about the currently logged in user, along with any exceptions,
-to help debug problems. To add custom data to every exception you can
-use `addToTab`:
-
-```java
-Bugsnag.addToTab("User", "Name", "Bob Hoskins");
-Bugsnag.addToTab("User", "Paying Customer?", true);
-```
-
-You can also add custom data or modify error information before each exception
-is sent to Bugsnag using `BeforeNotify` callbacks. See
-[beforeNotify](#beforenotify) below for details.
-
-
-Logging Breadcrumbs
--------------------
-
-Bugsnag allows you to leave developer-defined log messages called "breadcrumbs"
-to help understand exactly what was happening in your application in the time
-before each crash.
-
-When logging a breadcrumb, we'll keep track of the timestamp associated with
-the log message, and show both the message and timestamp on your dashboard.
-
-To leave breadcrumbs, you can use `leaveBreadcrumb`:
-
-```java
-Bugsnag.leaveBreadcrumb("App loaded");
-Bugsnag.leaveBreadcrumb("User clicked a button");
-```
-
-By default, we'll store and send the last 20 breadcrumbs you leave before
-errors are sent to Bugsnag. If you'd like to increase this number, you can
-call `setMaxBreadcrumbs`:
-
-```java
-Bugsnag.setMaxBreadcrumbs(50);
-```
-
-
-Sending Handled Exceptions
---------------------------
-
-If you would like to send non-fatal exceptions to Bugsnag, you can pass any
-`Throwable` object to the `notify` method:
-
-```java
-Bugsnag.notify(new Exception("Non-fatal"));
-```
-
-### With Custom Data
-
-You can also send additional meta-data with this exception:
-
-```java
-import com.bugsnag.android.MetaData;
-
-MetaData metaData = new MetaData();
-metaData.addToTab("User", "username", "bob-hoskins");
-metaData.addToTab("User", "email", "bob@example.com");
-
-Bugsnag.notify(new Exception("Non-fatal"), metaData);
-```
-
-### With a Severity
-
-You can set the severity of an error in Bugsnag by including the severity option when
-notifying bugsnag of the error,
-
-```java
-import com.bugsnag.android.Severity;
-
-Bugsnag.notify(new Exception("Non-fatal"), Severity.INFO)
-```
-
-Valid severities are `Severity.ERROR`, `Severity.WARNING` and `Severity.INFO`.
-
-Severity is displayed in the dashboard and can be used to filter the error list.
-By default all crashes (or unhandled exceptions) are set to `Bugsnag.ERROR` and all
-`Bugsnag.notify` calls default to `Bugsnag.WARNING`.
-
-
-### With Custom Data and Severity
-
-You can send handled exceptions with both custom data and severity as follows:
-
-```java
-import com.bugsnag.android.*;
-
-MetaData metaData = new MetaData();
-metaData.addToTab("User", "username", "bob-hoskins");
-
-Bugsnag.notify(new Exception("Non-fatal"), Severity.INFO, metaData);
-```
-
-
-Configuration
--------------
-
-###setContext
-
-Bugsnag uses the concept of "contexts" to help display and group your
-errors. Contexts represent what was happening in your application at the
-time an error occurs. In an android app, it is useful to set this to be
-your currently active `Activity`.
-
-If you enable the `GET_TASKS` permission, then this is set automatically for you.
-If you would like to set the bugsnag context manually, you can call
-`setContext`:
-
-```java
-Bugsnag.setContext("MyActivity");
-```
-
-###setUser
-
-Bugsnag helps you understand how many of your users are affected by each
-error. In order to do this, we need to send along user information with every
-exception.
-
-If you would like to enable this, set the `user`. You can set the user id,
-which should be the unique id to represent that user across all your apps,
-the user's email address and the user's name:
-
-```java
-Bugsnag.setUser("userId", "user@email.com", "User Name");
-```
-
-###setReleaseStage
-
-If you would like to distinguish between errors that happen in different
-stages of the application release process (development, production, etc)
-you can set the `releaseStage` that is reported to Bugsnag.
-
-```java
-Bugsnag.setReleaseStage("testing");
-```
-
-If you are running a debug build, we'll automatically set this to "development",
-otherwise it is set to "production".
-
-###setNotifyReleaseStages
-
-By default, we will notify Bugsnag of exceptions that happen in any
-`releaseStage`. If you would like to change which release stages notify
-Bugsnag of exceptions you can call `setNotifyReleaseStages`:
-
-```java
-Bugsnag.setNotifyReleaseStages("production", "development", "testing");
-```
-
-###setFilters
-
-Sets which values should be removed from any `MetaData` objects before sending
-them to Bugsnag. Use this if you want to ensure you don't send sensitive data
-such as passwords, and credit card numbers to our servers. Any keys which
-contain these strings will be filtered.
-
-```java
-Bugsnag.setFilters(new String[]{"password", "credit_card_number"});
-```
-
-By default, `filters` is set to `new String[] {"password"};`
-
-###setProjectPackages
-
-Sets which package names Bugsnag should consider as "inProject". We mark
-stacktrace lines as in-project if they originate from any of these
-packages.
-
-```java
-Bugsnag.setProjectPackages("com.company.package1", "com.company.package2");
-```
-
-By default, `projectPackages` is set to be the package you called
-`Bugsnag.init` from.
-
-###setIgnoreClasses
-
-Sets for which exception classes we should not send exceptions to Bugsnag.
-
-```java
-Bugsnag.setIgnoreClasses("java.net.UnknownHostException", "com.example.Custom");
-```
-
-###setAppVersion
-
-We'll automatically pull your app version from the `versionName` field in
-your `AndroidManifest.xml` file. If you'd like to override this you can call
-`setAppVersion`:
-
-```java
-Bugsnag.setAppVersion("1.0.0-alpha");
-```
-
-> Note: Bugsnag uses [Semantic Versioning](http://semver.org/) for app version
-sorting and filtering on the Bugsnag dashboard.
-
-###setSendThreads
-
-Sets if we should collect and send thread state along with errors.
-
-Bt default `sendThreads` is set to `true`.
-
-```java
-Bugsnag.setSendThreads(false);
-```
-
-###setEndpoint
-
-Set the endpoint to send data to. By default we'll send reports to our
-standard `https://notify.bugsnag.com` endpoint, but you can override this if
-you are using [Bugsnag Enterprise](https://bugsnag.com/enterprise), to point
-to your own Bugsnag endpoint:
-
-```java
-Bugsnag.setEndpoint("https://bugsnag.internal.example.com");
-```
-
-###beforeNotify
-
-Add a "before notify" callback, to execute code before every notification to
-Bugsnag.
-
-You can use this to add or modify information attached to an error before it
-is sent to your dashboard. You can also return `false` from any callback to
-halt execution.
-
-```java
-Bugsnag.beforeNotify(new BeforeNotify() {
-    public boolean run(Error error) {
-        error.setSeverity(Severity.INFO);
-        return true;
-    }
-});
-```
-
-Proguard
---------
-
-Bugsnag supports retracing Proguard stacktraces if you are using Proguard
-to obfuscate your application. This can be configured to work automatically using the
-[bugsnag-android-gradle-plugin](https://github.com/bugsnag/bugsnag-android-gradle-plugin),
-or manually using the [Bugsnag Proguard API](https://bugsnag.com/docs/notifiers/android/proguard).
-
-
-Reporting Bugs or Feature Requests
-----------------------------------
-
-Please report any bugs or feature requests on the github issues page for this
-project here:
-
-<https://github.com/bugsnag/bugsnag-android/issues>
-
-
-Contributing
-------------
-
-We'd love to see your contributions! For information on how to build, test
-and release `bugsnag-android`, see our [contributing guide](https://github.com/bugsnag/bugsnag-android/blob/master/CONTRIBUTING.md).
-
-
-License
--------
+## License
 
 The Bugsnag Android notifier is free software released under the MIT License.
 See [LICENSE.txt](https://github.com/bugsnag/bugsnag-android/blob/master/LICENSE.txt)

@@ -136,4 +136,4 @@ This process is a little ridiculous...
 ### 5. Update documentation
 
 Update the setup guides for Java (android) on docs.bugsnag.com with any new
-content.
+content, as well as the documentation links in the README.
