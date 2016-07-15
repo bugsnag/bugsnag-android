@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import java.util.Locale;
+import java.util.HashMap;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -534,6 +535,10 @@ public class Client {
      */
     public void leaveBreadcrumb(String breadcrumb) {
         breadcrumbs.add(breadcrumb);
+    }
+
+    public void leaveBreadcrumb(String name, BreadcrumbType type, HashMap<String, String> metadata) {
+        breadcrumbs.add(name, type, metadata);
     }
 
     /**

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class BreadcrumbsTest extends BugsnagTestCase {
     public void testSerialization() throws JSONException, IOException {
@@ -14,7 +15,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
 
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(3, breadcrumbsJson.length());
-        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim", breadcrumbsJson.getJSONArray(2).get(1));
+        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim", breadcrumbsJson.getJSONObject(2).getJSONObject("metadata").get("message"));
     }
 
     public void testSizeLimit() throws JSONException, IOException {
@@ -29,8 +30,8 @@ public class BreadcrumbsTest extends BugsnagTestCase {
 
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(5, breadcrumbsJson.length());
-        assertEquals("2", breadcrumbsJson.getJSONArray(0).get(1));
-        assertEquals("6", breadcrumbsJson.getJSONArray(4).get(1));
+        assertEquals("2", breadcrumbsJson.getJSONObject(0).getJSONObject("metadata").get("message"));
+        assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metadata").get("message"));
     }
 
     public void testResize() throws JSONException, IOException {
@@ -45,8 +46,8 @@ public class BreadcrumbsTest extends BugsnagTestCase {
 
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(5, breadcrumbsJson.length());
-        assertEquals("2", breadcrumbsJson.getJSONArray(0).get(1));
-        assertEquals("6", breadcrumbsJson.getJSONArray(4).get(1));
+        assertEquals("2", breadcrumbsJson.getJSONObject(0).getJSONObject("metadata").get("message"));
+        assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metadata").get("message"));
     }
 
     public void testClear() throws JSONException, IOException {

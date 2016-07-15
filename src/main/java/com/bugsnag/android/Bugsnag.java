@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import java.util.HashMap;
 
 /**
  * Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app.
@@ -370,6 +371,18 @@ public final class Bugsnag {
      */
     public static void leaveBreadcrumb(String message) {
         getClient().leaveBreadcrumb(message);
+    }
+
+    /**
+     * Leave a "breadcrumb" log message representing an action or event which
+     * occurred in your app, to aid with debugging
+     *
+     * @param name     A short label (max 32 chars)
+     * @param type     A category for the breadcrumb
+     * @param metadata Additional diagnostic information about the app environment
+     */
+    public static void leaveBreadcrumb(String name, BreadcrumbType type, HashMap<String, String> metadata) {
+        getClient().leaveBreadcrumb(name, type, metadata);
     }
 
     /**
