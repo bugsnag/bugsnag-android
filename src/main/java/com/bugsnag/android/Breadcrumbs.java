@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 class Breadcrumbs implements JsonStream.Streamable {
     private static class Breadcrumb {
         private static final int MAX_MESSAGE_LENGTH = 140;
-        private static final String DEFAULT_NAME = "Custom";
+        private static final String DEFAULT_NAME = "manual";
         private static final String MESSAGE_METAKEY = "message";
         final String timestamp;
         final String name;
@@ -22,7 +22,7 @@ class Breadcrumbs implements JsonStream.Streamable {
 
         Breadcrumb(@NonNull String message) {
             this.timestamp = DateUtils.toISO8601(new Date());
-            this.type = BreadcrumbType.CUSTOM;
+            this.type = BreadcrumbType.MANUAL;
             HashMap<String, String> metadata = new HashMap<String, String>();
             metadata.put(MESSAGE_METAKEY,
                     message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH)));

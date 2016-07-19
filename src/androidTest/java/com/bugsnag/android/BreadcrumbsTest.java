@@ -60,4 +60,11 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(0, breadcrumbsJson.length());
     }
+
+    public void testType() throws JSONException, IOException {
+        Breadcrumbs breadcrumbs = new Breadcrumbs();
+        breadcrumbs.add("1");
+        JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
+        assertEquals("manual", breadcrumbsJson.getJSONObject(0).get("type"));
+    }
 }

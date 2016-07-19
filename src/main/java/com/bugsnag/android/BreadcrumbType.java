@@ -1,9 +1,9 @@
 package com.bugsnag.android;
 
 public enum BreadcrumbType {
-    CUSTOM ("custom"),
     ERROR ("error"),
     LOG ("log"),
+    MANUAL ("manual"),
     NAVIGATION ("navigation"),
     PROCESS ("process"),
     REQUEST ("request"),
