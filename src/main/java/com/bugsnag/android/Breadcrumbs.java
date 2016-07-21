@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Queue;
 import java.util.HashMap;
@@ -11,10 +12,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 class Breadcrumbs implements JsonStream.Streamable {
-    private static class Breadcrumb {
+    private static class Breadcrumb implements JsonStream.Streamable {
         private static final int MAX_MESSAGE_LENGTH = 140;
         private static final String DEFAULT_NAME = "manual";
         private static final String MESSAGE_METAKEY = "message";
+        private final String TIMESTAMP_KEY = "timestamp";
+        private final String NAME_KEY = "name";
+        private final String METADATA_KEY = "metaData";
+        private final String TYPE_KEY = "type";
         final String timestamp;
         final String name;
         final BreadcrumbType type;
@@ -36,35 +41,40 @@ class Breadcrumbs implements JsonStream.Streamable {
             this.metadata = metadata;
             this.name = name;
         }
+
+        public void toStream(@NonNull JsonStream writer) throws IOException {
+            writer.beginObject();
+            writer.name(TIMESTAMP_KEY).value(this.timestamp);
+            writer.name(NAME_KEY).value(this.name);
+            writer.name(TYPE_KEY).value(this.type.serialize());
+            writer.name(METADATA_KEY);
+            writer.beginObject();
+            for (Map.Entry<String, String> entry : this.metadata.entrySet()) {
+                writer.name(entry.getKey()).value(entry.getValue());
+            }
+            writer.endObject();
+            writer.endObject();
+        }
+
+        public int payloadSize() throws IOException {
+            StringWriter writer = new StringWriter();
+            JsonStream jsonStream = new JsonStream(writer);
+            toStream(jsonStream);
+
+            return writer.toString().length();
+        }
     }
 
     private static final int DEFAULT_MAX_SIZE = 20;
+    private static final int MAX_PAYLOAD_SIZE = 4096;
     private final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
     private int maxSize = DEFAULT_MAX_SIZE;
-    private final String TIMESTAMP_KEY = "timestamp";
-    private final String NAME_KEY = "name";
-    private final String METADATA_KEY = "metadata";
-    private final String TYPE_KEY = "type";
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 
         for (Breadcrumb breadcrumb : store) {
-            writer.beginObject();
-            writer.name(TIMESTAMP_KEY);
-            writer.value(breadcrumb.timestamp);
-            writer.name(NAME_KEY);
-            writer.value(breadcrumb.name);
-            writer.name(TYPE_KEY);
-            writer.value(breadcrumb.type.serialize());
-            writer.name(METADATA_KEY);
-            writer.beginObject();
-            for (Map.Entry<String, String> entry : breadcrumb.metadata.entrySet()) {
-                writer.name(entry.getKey());
-                writer.value(entry.getValue());
-            }
-            writer.endObject();
-            writer.endObject();
+            breadcrumb.toStream(writer);
         }
 
         writer.endArray();
@@ -94,10 +104,18 @@ class Breadcrumbs implements JsonStream.Streamable {
     }
 
     private void addToStore(Breadcrumb breadcrumb) {
-        if (store.size() >= maxSize) {
-            // Remove oldest breadcrumb
-            store.poll();
+        try {
+            if (breadcrumb.payloadSize() > MAX_PAYLOAD_SIZE) {
+                Logger.warn("Dropping breadcrumb because payload exceeds 4KB limit");
+                return;
+            }
+            if (store.size() >= maxSize) {
+                // Remove oldest breadcrumb
+                store.poll();
+            }
+            store.add(breadcrumb);
+        } catch (IOException ex) {
+            Logger.warn("Dropping breadcrumb because it could not be serialized", ex);
         }
-        store.add(breadcrumb);
     }
 }
