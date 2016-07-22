@@ -43,7 +43,7 @@ class Breadcrumbs implements JsonStream.Streamable {
             writer.beginObject();
             writer.name(TIMESTAMP_KEY).value(this.timestamp);
             writer.name(NAME_KEY).value(this.name);
-            writer.name(TYPE_KEY).value(this.type.serialize());
+            writer.name(TYPE_KEY).value(this.type.toString());
             writer.name(METADATA_KEY);
             writer.beginObject();
             for (Map.Entry<String, String> entry : this.metadata.entrySet()) {

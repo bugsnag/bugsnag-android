@@ -43,6 +43,6 @@ public enum BreadcrumbType {
         this.type = type;
     }
 
-    String serialize() { return type; }
+    public String toString() { return type; }
 }
 
