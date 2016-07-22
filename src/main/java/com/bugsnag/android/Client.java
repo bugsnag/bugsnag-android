@@ -585,6 +585,11 @@ public class Client {
             return;
         }
 
+        // Add a breadcrumb for this error occurring
+        HashMap<String, String> breadcrumbMetadata = new HashMap<String, String>();
+        breadcrumbMetadata.put("message", error.getExceptionMessage());
+        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, breadcrumbMetadata);
+
         // Capture the state of the app and device and attach diagnostics to the error
         error.setAppData(appData);
         error.setDeviceData(deviceData);
