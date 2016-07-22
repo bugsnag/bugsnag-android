@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.5.0 (2016-07-21)
+
+### Enhancements
+
+- Add access to new Breadcrumbs API
+  [Delisa Mason](https://github.com/kattrali)
+  [#111](https://github.com/bugsnag/bugsnag-android/pull/111)
+
+
 ## 3.4.0 (2016-03-09)
 
 ### Enhancements

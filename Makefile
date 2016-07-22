@@ -10,3 +10,6 @@ clean:
 
 test:
 	./gradlew :connectedCheck
+
+release:
+	./gradlew clean :uploadArchives
