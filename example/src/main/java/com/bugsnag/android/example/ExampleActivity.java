@@ -10,6 +10,7 @@ import com.bugsnag.android.Error;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.Severity;
 import com.bugsnag.android.other.Other;
+import com.bugsnag.android.BreadcrumbType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ExampleActivity extends Activity
         Bugsnag.addToTab("user", "age", 31);
         Bugsnag.addToTab("custom", "account", "something");
 
-        Bugsnag.leaveBreadcrumb("onCreate");
+        Bugsnag.leaveBreadcrumb("onCreate", BreadcrumbType.NAVIGATION, new HashMap<String, String>());
 
         new Thread(new Runnable() {
             public void run() {

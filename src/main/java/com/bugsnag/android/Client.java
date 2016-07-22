@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import java.util.Locale;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -536,6 +538,10 @@ public class Client {
         breadcrumbs.add(breadcrumb);
     }
 
+    public void leaveBreadcrumb(String name, BreadcrumbType type, Map<String, String> metadata) {
+        breadcrumbs.add(name, type, metadata);
+    }
+
     /**
      * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
      * By default, we'll keep and send the 20 most recent breadcrumb log
@@ -579,6 +585,9 @@ public class Client {
         if (!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
             return;
         }
+
+        // Add a breadcrumb for this error occurring
+        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
 
         // Capture the state of the app and device and attach diagnostics to the error
         error.setAppData(appData);

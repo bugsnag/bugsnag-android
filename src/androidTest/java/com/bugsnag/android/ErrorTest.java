@@ -39,7 +39,7 @@ public class ErrorTest extends BugsnagTestCase {
 
         JSONObject errorJson = streamableToJson(error);
         assertEquals("warning", errorJson.get("severity"));
-        assertEquals("2", errorJson.get("payloadVersion"));
+        assertEquals("3", errorJson.get("payloadVersion"));
         assertNotNull(errorJson.get("severity"));
         assertNotNull(errorJson.get("metaData"));
         assertNotNull(errorJson.get("threads"));
