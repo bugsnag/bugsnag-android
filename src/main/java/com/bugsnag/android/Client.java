@@ -7,7 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import java.util.Locale;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -537,7 +538,7 @@ public class Client {
         breadcrumbs.add(breadcrumb);
     }
 
-    public void leaveBreadcrumb(String name, BreadcrumbType type, HashMap<String, String> metadata) {
+    public void leaveBreadcrumb(String name, BreadcrumbType type, Map<String, String> metadata) {
         breadcrumbs.add(name, type, metadata);
     }
 
@@ -586,9 +587,7 @@ public class Client {
         }
 
         // Add a breadcrumb for this error occurring
-        HashMap<String, String> breadcrumbMetadata = new HashMap<String, String>();
-        breadcrumbMetadata.put("message", error.getExceptionMessage());
-        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, breadcrumbMetadata);
+        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
 
         // Capture the state of the app and device and attach diagnostics to the error
         error.setAppData(appData);

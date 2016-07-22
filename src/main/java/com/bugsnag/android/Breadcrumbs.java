@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.Queue;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -23,19 +23,16 @@ class Breadcrumbs implements JsonStream.Streamable {
         final String timestamp;
         final String name;
         final BreadcrumbType type;
-        final HashMap<String, String> metadata;
+        final Map<String, String> metadata;
 
         Breadcrumb(@NonNull String message) {
             this.timestamp = DateUtils.toISO8601(new Date());
             this.type = BreadcrumbType.MANUAL;
-            HashMap<String, String> metadata = new HashMap<String, String>();
-            metadata.put(MESSAGE_METAKEY,
-                    message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH)));
-            this.metadata = metadata;
+            this.metadata = Collections.singletonMap(MESSAGE_METAKEY, message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH)));
             this.name = DEFAULT_NAME;
         }
 
-        Breadcrumb(@NonNull String name, BreadcrumbType type, HashMap<String, String> metadata) {
+        Breadcrumb(@NonNull String name, BreadcrumbType type, Map<String, String> metadata) {
             this.timestamp = DateUtils.toISO8601(new Date());
             this.type = type;
             this.metadata = metadata;
@@ -84,7 +81,7 @@ class Breadcrumbs implements JsonStream.Streamable {
         addToStore(new Breadcrumb(message));
     }
 
-    void add(@NonNull String name, BreadcrumbType type, HashMap<String, String> metadata) {
+    void add(@NonNull String name, BreadcrumbType type, Map<String, String> metadata) {
         addToStore(new Breadcrumb(name, type, metadata));
     }
 
