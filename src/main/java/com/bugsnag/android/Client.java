@@ -120,6 +120,14 @@ public class Client {
     }
 
     /**
+     * Gets the context to be sent to Bugsnag.
+     * @return Context
+     */
+    public String getContext() {
+        return config.context;
+    }
+
+    /**
      * Set the context sent to Bugsnag. By default we'll attempt to detect the
      * name of the top-most activity at the time of a notification, and use this
      * as the context, but sometime this is not possible.
