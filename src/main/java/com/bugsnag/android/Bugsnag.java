@@ -415,7 +415,7 @@ public final class Bugsnag {
     /**
      * Disable automatic reporting of unhandled exceptions.
      */
-    public void disableExceptionHandler() {
+    public static void disableExceptionHandler() {
         getClient().disableExceptionHandler();
     }
 
