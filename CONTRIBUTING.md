@@ -135,5 +135,7 @@ This process is a little ridiculous...
 
 ### 5. Update documentation
 
-Update the setup guides for Java (android) on docs.bugsnag.com with any new
-content, as well as the documentation links in the README.
+-    Bump the version numbers in the quickstart guides on the website
+-    Update the integration guides for Android on docs.bugsnag.com
+-    Update installation instructions in the quickstart guides on the website with any new content
+-    Update the documentation links in the README.
