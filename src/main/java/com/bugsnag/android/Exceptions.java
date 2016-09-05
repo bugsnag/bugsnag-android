@@ -10,37 +10,34 @@ import java.io.IOException;
 class Exceptions implements JsonStream.Streamable {
     private final Configuration config;
     private Throwable exception;
-    private String name;
-    private String message;
-    private StackTraceElement[] frames;
 
     Exceptions(Configuration config, Throwable exception) {
         this.config = config;
         this.exception = exception;
     }
 
-    Exceptions(Configuration config, String name, String message, StackTraceElement[] frames) {
-        this.config = config;
-        this.name = name;
-        this.message = message;
-        this.frames = frames;
-    }
-
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 
-        if(exception != null) {
-            // Unwrap any "cause" exceptions
-            Throwable currentEx = exception;
-            while(currentEx != null) {
-                exceptionToStream(writer, currentEx.getClass().getName(), currentEx.getLocalizedMessage(), currentEx.getStackTrace());
-                currentEx = currentEx.getCause();
-            }
-        } else {
-            exceptionToStream(writer, name, message, frames);
+        // Unwrap any "cause" exceptions
+        Throwable currentEx = exception;
+        while(currentEx != null) {
+            exceptionToStream(writer, getExceptionName(currentEx), currentEx.getLocalizedMessage(), currentEx.getStackTrace());
+            currentEx = currentEx.getCause();
         }
 
         writer.endArray();
+    }
+
+    /**
+     * Get the class name from the exception contained in this Error report.
+     */
+    private String getExceptionName(Throwable t) {
+        if(t instanceof BugsnagException) {
+            return ((BugsnagException)t).getName();
+        } else {
+            return t.getClass().getName();
+        }
     }
 
     private void exceptionToStream(JsonStream writer, String name, String message, StackTraceElement[] frames) throws IOException {

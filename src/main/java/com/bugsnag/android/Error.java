@@ -30,9 +30,6 @@ public class Error implements JsonStream.Streamable {
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
-    private String name;
-    private String message;
-    private StackTraceElement[] frames;
 
     Error(Configuration config, Throwable exception) {
         this.config = config;
@@ -41,9 +38,8 @@ public class Error implements JsonStream.Streamable {
 
     Error(Configuration config, String name, String message, StackTraceElement[] frames) {
         this.config = config;
-        this.name = name;
-        this.message = message;
-        this.frames = frames;
+
+        this.exception = new BugsnagException(name, message, frames);
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -67,11 +63,7 @@ public class Error implements JsonStream.Streamable {
             }
 
             // Write exception info
-            if(exception != null) {
-                writer.name("exceptions").value(new Exceptions(config, exception));
-            } else {
-                writer.name("exceptions").value(new Exceptions(config, name, message, frames));
-            }
+            writer.name("exceptions").value(new Exceptions(config, exception));
 
             // Write user info
             writer.name("user").value(user);
@@ -252,10 +244,10 @@ public class Error implements JsonStream.Streamable {
      * Get the class name from the exception contained in this Error report.
      */
     public String getExceptionName() {
-        if(exception != null) {
-            return exception.getClass().getName();
+        if(exception instanceof BugsnagException) {
+            return ((BugsnagException)exception).getName();
         } else {
-            return name;
+            return exception.getClass().getName();
         }
     }
 
@@ -263,11 +255,7 @@ public class Error implements JsonStream.Streamable {
      * Get the message from the exception contained in this Error report.
      */
     public String getExceptionMessage() {
-        if(exception != null) {
-            return exception.getLocalizedMessage();
-        } else {
-            return message;
-        }
+        return exception.getLocalizedMessage();
     }
 
     /**
