@@ -9,9 +9,9 @@ import java.io.IOException;
  */
 class Exceptions implements JsonStream.Streamable {
     private final Configuration config;
-    private Throwable exception;
+    private BugsnagException exception;
 
-    Exceptions(Configuration config, Throwable exception) {
+    Exceptions(Configuration config, BugsnagException exception) {
         this.config = config;
         this.exception = exception;
     }

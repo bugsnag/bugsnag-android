@@ -25,7 +25,7 @@ public class Error implements JsonStream.Streamable {
     private DeviceState deviceState;
     private Breadcrumbs breadcrumbs;
     private User user;
-    private Throwable exception;
+    private BugsnagException exception;
     private Severity severity = Severity.WARNING;
     private MetaData metaData = new MetaData();
     private String groupingHash;
@@ -33,12 +33,11 @@ public class Error implements JsonStream.Streamable {
 
     Error(Configuration config, Throwable exception) {
         this.config = config;
-        this.exception = exception;
+        this.exception = new BugsnagException(exception);
     }
 
     Error(Configuration config, String name, String message, StackTraceElement[] frames) {
         this.config = config;
-
         this.exception = new BugsnagException(name, message, frames);
     }
 
@@ -244,11 +243,7 @@ public class Error implements JsonStream.Streamable {
      * Get the class name from the exception contained in this Error report.
      */
     public String getExceptionName() {
-        if(exception instanceof BugsnagException) {
-            return ((BugsnagException)exception).getName();
-        } else {
-            return exception.getClass().getName();
-        }
+        return exception.getName();
     }
 
     /**
@@ -261,7 +256,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * The {@linkplain Throwable exception} which triggered this Error report.
      */
-    public Throwable getException() {
+    public BugsnagException getException() {
         return exception;
     }
 

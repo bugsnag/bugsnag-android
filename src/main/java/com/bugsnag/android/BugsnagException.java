@@ -22,6 +22,17 @@ public class BugsnagException extends Throwable {
     }
 
     /**
+     * Constructor
+     * @param t Any throwable passed in, used to get the class name to use as the name
+     */
+    public BugsnagException(Throwable t) {
+        super(t.getLocalizedMessage(), t.getCause());
+
+        super.setStackTrace(t.getStackTrace());
+        this.name = t.getClass().getName();
+    }
+
+    /**
      * @return The name of the exception (used instead of the exception class)
      */
     public String getName() {
