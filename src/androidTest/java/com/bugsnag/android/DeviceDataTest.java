@@ -24,6 +24,7 @@ public class DeviceDataTest extends BugsnagTestCase {
         assertTrue(deviceDataJson.getLong("totalMemory") > 0);
         assertNotNull(deviceDataJson.getBoolean("jailbroken"));
         assertNotNull(deviceDataJson.getString("locale"));
+        assertNotNull(deviceDataJson.getString("cpuAbi"));
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO) {
             // Emulators returned null for android id before android 2.2
