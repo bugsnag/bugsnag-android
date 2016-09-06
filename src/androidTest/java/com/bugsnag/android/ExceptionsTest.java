@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class ExceptionsTest extends BugsnagTestCase {
     public void testBasicException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
-        Exceptions exceptions = new Exceptions(config, new BugsnagException(new RuntimeException("oops")));
+        Exceptions exceptions = new Exceptions(config, new RuntimeException("oops"));
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
 
         assertEquals(1, exceptionsJson.length());
@@ -23,7 +23,7 @@ public class ExceptionsTest extends BugsnagTestCase {
     public void testCauseException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Throwable ex = new RuntimeException("oops", new Exception("cause"));
-        Exceptions exceptions = new Exceptions(config, new BugsnagException(ex));
+        Exceptions exceptions = new Exceptions(config, ex);
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
 
         assertEquals(2, exceptionsJson.length());
