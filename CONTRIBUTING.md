@@ -135,7 +135,8 @@ This process is a little ridiculous...
 
 ### 5. Update documentation
 
--    Bump the version numbers in the quickstart guides on the website
--    Update the integration guides for Android on docs.bugsnag.com
--    Update installation instructions in the quickstart guides on the website with any new content
--    Update the documentation links in the README.
+-    Bump the version numbers in the quickstart guides on the website (in
+     `notifiers.yml`) and update installation instructions in the quickstart
+     guides on the website with any new content (in `_android.slim`)
+-    Bump the version number in the installation instructions on
+     docs.bugsnag.com/platforms/android, and add any new content
