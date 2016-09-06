@@ -31,7 +31,7 @@ class DeviceData implements JsonStream.Streamable {
     private final Boolean rooted;
     private final String locale;
     private final String id;
-    private final String cpuAbi;
+    private final String[] cpuAbi;
 
     DeviceData(@NonNull Context appContext) {
         screenDensity = getScreenDensity(appContext);
@@ -63,7 +63,12 @@ class DeviceData implements JsonStream.Streamable {
         writer.name("screenDensity").value(screenDensity);
         writer.name("dpi").value(dpi);
         writer.name("screenResolution").value(screenResolution);
-        writer.name("cpuAbi").value(cpuAbi);
+
+        writer.name("cpuAbi").beginArray();
+        for (String s : cpuAbi) {
+            writer.value(s);
+        }
+        writer.endArray();
 
         writer.endObject();
     }
@@ -172,16 +177,14 @@ class DeviceData implements JsonStream.Streamable {
      * Gets information about the CPU / API
      */
     @NonNull
-    private static String getCpuAbi() {
-        String cpuAbi = Build.CPU_ABI;
-
+    private static String[] getCpuAbi() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cpuAbi = SupportedAbiWrapper.getSupportedAbis();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            cpuAbi = Abi2Wrapper.getAbi1andAbi2();
+            return SupportedAbiWrapper.getSupportedAbis();
         }
-
-        return cpuAbi;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            return Abi2Wrapper.getAbi1andAbi2();
+        }
+        return new String[]{Build.CPU_ABI};
     }
 
     /**
@@ -189,8 +192,8 @@ class DeviceData implements JsonStream.Streamable {
      */
     private static class SupportedAbiWrapper {
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public static String getSupportedAbis() {
-            return Arrays.toString(Build.SUPPORTED_ABIS);
+        public static String[] getSupportedAbis() {
+            return Build.SUPPORTED_ABIS;
         }
     }
 
@@ -199,8 +202,8 @@ class DeviceData implements JsonStream.Streamable {
      */
     private static class Abi2Wrapper {
         @TargetApi(Build.VERSION_CODES.FROYO)
-        public static String getAbi1andAbi2() {
-            return Arrays.toString(new String[]{Build.CPU_ABI, Build.CPU_ABI2});
+        public static String[] getAbi1andAbi2() {
+            return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
         }
     }
 }
