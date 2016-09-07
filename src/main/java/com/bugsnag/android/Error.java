@@ -45,7 +45,7 @@ public class Error implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.metaData, metaData);
-        mergedMetaData.setFilters(config.filters);
+        mergedMetaData.setFilters(config.getFilters());
 
         // Write error basics
         writer.beginObject();
@@ -54,9 +54,9 @@ public class Error implements JsonStream.Streamable {
             writer.name("severity").value(severity);
             writer.name("metaData").value(mergedMetaData);
 
-            if(config.projectPackages != null) {
+            if(config.getProjectPackages() != null) {
                 writer.name("projectPackages").beginArray();
-                    for (String projectPackage : config.projectPackages) {
+                    for (String projectPackage : config.getProjectPackages()) {
                         writer.value(projectPackage);
                     }
                 writer.endArray();
@@ -75,7 +75,7 @@ public class Error implements JsonStream.Streamable {
             writer.name("deviceState").value(deviceState);
             writer.name("breadcrumbs").value(breadcrumbs);
             writer.name("groupingHash").value(groupingHash);
-            if(config.sendThreads) {
+            if(config.getSendThreads()) {
                 writer.name("threads").value(new ThreadState(config));
             }
 
@@ -101,8 +101,8 @@ public class Error implements JsonStream.Streamable {
     public String getContext() {
         if(context != null && !TextUtils.isEmpty(context)) {
             return context;
-        } else if (config.context != null) {
-            return config.context;
+        } else if (config.getContext() != null) {
+            return config.getContext();
         } else if (appState != null){
             return AppState.getActiveScreenClass(context);
         } else {

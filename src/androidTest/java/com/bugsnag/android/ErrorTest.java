@@ -8,7 +8,7 @@ import org.json.JSONObject;
 public class ErrorTest extends BugsnagTestCase {
     public void testShouldIgnoreClass() {
         Configuration config = new Configuration("api-key");
-        config.ignoreClasses = new String[] {"java.io.IOException"};
+        config.setIgnoreClasses(new String[] {"java.io.IOException"});
 
         // Shouldn't ignore classes not in ignoreClasses
         Error error = new Error(config, new RuntimeException("Test"));

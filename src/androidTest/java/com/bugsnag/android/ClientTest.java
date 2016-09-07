@@ -10,7 +10,7 @@ public class ClientTest extends BugsnagTestCase {
 
     public void testNullApiKey() {
         try {
-            Client client = new Client(getContext(), null);
+            Client client = new Client(getContext(), null, true);
             fail("Should throw for null Contexts");
         } catch(NullPointerException e) { }
     }
