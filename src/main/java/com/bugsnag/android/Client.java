@@ -72,13 +72,13 @@ public class Client {
      * Initialize a Bugsnag client
      *
      * @param androidContext an Android context, usually <code>this</code>
-     * @param config         a configuration for the Client
+     * @param configuration  a configuration for the Client
      */
-    public Client(@NonNull Context androidContext, @NonNull Configuration config) {
+    public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
 
         appContext = androidContext.getApplicationContext();
 
-        this.config = config;
+        config = configuration;
 
         String buildUUID = null;
         try {
@@ -101,11 +101,15 @@ public class Client {
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
 
-        // Check to see if a user was stored in the SharedPreferences
-        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
-        user.setName(sharedPref.getString(USER_NAME_KEY, null));
-        user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
+        if (config.getPersistUserBetweenSessions()) {
+            // Check to see if a user was stored in the SharedPreferences
+            SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
+            user.setName(sharedPref.getString(USER_NAME_KEY, null));
+            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
+        } else {
+            user.setId(deviceData.getUserId());
+        }
 
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext);
@@ -333,7 +337,10 @@ public class Client {
      */
     public void setUserId(String id) {
         user.setId(id);
-        storeInSharedPrefs(USER_ID_KEY, id);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_ID_KEY, id);
+        }
     }
 
     /**
@@ -344,7 +351,10 @@ public class Client {
      */
     public void setUserEmail(String email) {
         user.setEmail(email);
-        storeInSharedPrefs(USER_EMAIL_KEY, email);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_EMAIL_KEY, email);
+        }
     }
 
     /**
@@ -355,7 +365,10 @@ public class Client {
      */
     public void setUserName(String name) {
         user.setName(name);
-        storeInSharedPrefs(USER_NAME_KEY, name);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_NAME_KEY, name);
+        }
     }
 
     /**
