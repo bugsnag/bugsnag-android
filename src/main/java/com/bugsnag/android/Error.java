@@ -166,6 +166,13 @@ public class Error implements JsonStream.Streamable {
     }
 
     /**
+     * @return user information associated with this Error
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
      * Set user id associated with this Error
      *
      * @param  id  the id of the user
