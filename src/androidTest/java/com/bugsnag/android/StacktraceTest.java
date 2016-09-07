@@ -22,7 +22,7 @@ public class StacktraceTest extends BugsnagTestCase {
 
     public void testInProject() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
-        config.projectPackages = new String[] {"com.bugsnag.android"};
+        config.setProjectPackages(new String[] {"com.bugsnag.android"});
 
         Throwable exception = new RuntimeException("oops");
         Stacktrace stacktrace = new Stacktrace(config, exception.getStackTrace());

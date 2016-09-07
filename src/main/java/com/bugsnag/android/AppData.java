@@ -42,7 +42,7 @@ class AppData implements JsonStream.Streamable {
         writer.name("packageName").value(packageName);
         writer.name("versionName").value(versionName);
         writer.name("versionCode").value(versionCode);
-        writer.name("buildUUID").value(config.buildUUID);
+        writer.name("buildUUID").value(config.getBuildUUID());
 
         // Prefer user-configured appVersion + releaseStage
         writer.name("version").value(getAppVersion());
@@ -53,8 +53,8 @@ class AppData implements JsonStream.Streamable {
 
     @NonNull
     public String getReleaseStage() {
-        if (config.releaseStage != null) {
-            return config.releaseStage;
+        if (config.getReleaseStage() != null) {
+            return config.getReleaseStage();
         } else {
             return guessedReleaseStage;
         }
@@ -62,8 +62,8 @@ class AppData implements JsonStream.Streamable {
 
     @Nullable
     public String getAppVersion() {
-        if (config.appVersion != null) {
-            return config.appVersion;
+        if (config.getAppVersion() != null) {
+            return config.getAppVersion();
         } else {
             return versionName;
         }

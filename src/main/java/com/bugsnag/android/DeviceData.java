@@ -1,8 +1,10 @@
 package com.bugsnag.android;
 
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +12,7 @@ import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -28,6 +31,7 @@ class DeviceData implements JsonStream.Streamable {
     private final Boolean rooted;
     private final String locale;
     private final String id;
+    private final String[] cpuAbi;
 
     DeviceData(@NonNull Context appContext) {
         screenDensity = getScreenDensity(appContext);
@@ -37,6 +41,7 @@ class DeviceData implements JsonStream.Streamable {
         rooted = isRooted();
         locale = getLocale();
         id = getAndroidId(appContext);
+        cpuAbi = getCpuAbi();
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -58,6 +63,12 @@ class DeviceData implements JsonStream.Streamable {
         writer.name("screenDensity").value(screenDensity);
         writer.name("dpi").value(dpi);
         writer.name("screenResolution").value(screenResolution);
+
+        writer.name("cpuAbi").beginArray();
+        for (String s : cpuAbi) {
+            writer.value(s);
+        }
+        writer.endArray();
 
         writer.endObject();
     }
@@ -160,5 +171,39 @@ class DeviceData implements JsonStream.Streamable {
     private static String getAndroidId(Context appContext) {
         ContentResolver cr = appContext.getContentResolver();
         return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
+    }
+
+    /**
+     * Gets information about the CPU / API
+     */
+    @NonNull
+    private static String[] getCpuAbi() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return SupportedAbiWrapper.getSupportedAbis();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            return Abi2Wrapper.getAbi1andAbi2();
+        }
+        return new String[]{Build.CPU_ABI};
+    }
+
+    /**
+     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
+     */
+    private static class SupportedAbiWrapper {
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        public static String[] getSupportedAbis() {
+            return Build.SUPPORTED_ABIS;
+        }
+    }
+
+    /**
+     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
+     */
+    private static class Abi2Wrapper {
+        @TargetApi(Build.VERSION_CODES.FROYO)
+        public static String[] getAbi1andAbi2() {
+            return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
+        }
     }
 }

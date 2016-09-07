@@ -44,7 +44,8 @@ public class ExceptionsTest extends BugsnagTestCase {
 
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);
         StackTraceElement[] frames = new StackTraceElement[] { element };
-        Exceptions exceptions = new Exceptions(config, "RuntimeException", "Example message", frames);
+        Error error = new Error(config, "RuntimeException", "Example message", frames);
+        Exceptions exceptions = new Exceptions(config, error.getException());
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);
         assertEquals("RuntimeException", exceptionJson.get("errorClass"));

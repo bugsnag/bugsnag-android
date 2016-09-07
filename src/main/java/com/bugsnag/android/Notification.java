@@ -29,7 +29,7 @@ class Notification implements JsonStream.Streamable {
         writer.beginObject();
 
             // Write the API key
-            writer.name("apiKey").value(config.apiKey);
+            writer.name("apiKey").value(config.getApiKey());
 
             // Write the notifier info
             writer.name("notifier").value(Notifier.getInstance());
@@ -63,7 +63,7 @@ class Notification implements JsonStream.Streamable {
     }
 
     int deliver() throws HttpClient.NetworkException, HttpClient.BadResponseException {
-        HttpClient.post(config.getNotifyEndpoint(), this);
+        HttpClient.post(config.getEndpoint(), this);
         return errors.size() + errorFiles.size();
     }
 }
