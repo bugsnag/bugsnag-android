@@ -59,7 +59,9 @@ public class ClientTest extends BugsnagTestCase {
             .putString("user.name", "Mr Test")
             .commit();
 
-        Client client = new Client(getContext(), "api-key");
+        Configuration config = new Configuration("api-key");
+        config.setPersistUserBetweenSessions(true);
+        Client client = new Client(getContext(), config);
         final User user = new User();
 
         client.beforeNotify(new BeforeNotify() {
@@ -82,7 +84,9 @@ public class ClientTest extends BugsnagTestCase {
     }
 
     public void testStoreUserInPrefs() {
-        Client client = new Client(getContext(), "api-key");
+        Configuration config = new Configuration("api-key");
+        config.setPersistUserBetweenSessions(true);
+        Client client = new Client(getContext(), config);
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was store in prefs
@@ -92,7 +96,20 @@ public class ClientTest extends BugsnagTestCase {
         assertEquals("Mr Test", sharedPref.getString("user.name", null));
     }
 
-    public void TestClearUser() {
+    public void testStoreUserInPrefsDisabled() {
+        Configuration config = new Configuration("api-key");
+        config.setPersistUserBetweenSessions(false);
+        Client client = new Client(getContext(), config);
+        client.setUser("123456", "mr.test@email.com", "Mr Test");
+
+        // Check that the user was not stored in prefs
+        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        assertFalse(sharedPref.contains("user.id"));
+        assertFalse(sharedPref.contains("user.email"));
+        assertFalse(sharedPref.contains("user.name"));
+    }
+
+    public void testClearUser() {
 
         // Set a user in prefs
         SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
@@ -112,7 +129,6 @@ public class ClientTest extends BugsnagTestCase {
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
     }
-
 
     @Override
     protected void tearDown() throws Exception {
