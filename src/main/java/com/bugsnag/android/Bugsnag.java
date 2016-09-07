@@ -97,7 +97,7 @@ public final class Bugsnag {
      * endpoint.
      *
      * @param  endpoint  the custom endpoint to send notifications to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoint()} instead.
+     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoint(String)} instead.
      */
     @Deprecated
     public static void setEndpoint(final String endpoint) {

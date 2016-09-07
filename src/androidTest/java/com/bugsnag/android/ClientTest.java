@@ -20,4 +20,15 @@ public class ClientTest extends BugsnagTestCase {
         Client client = new Client(getContext(), "api-key");
         client.notify(new RuntimeException("Testing"));
     }
+
+    public void testConfig() {
+        Configuration config = new Configuration("api-key");
+        config.setEndpoint("new-endpoint");
+
+        Client client = new Client(getContext(), config);
+
+        // Notify should not crash
+        client.notify(new RuntimeException("Testing"));
+    }
+
 }
