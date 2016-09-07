@@ -309,6 +309,22 @@ public class Client {
     }
 
     /**
+     * Removes the current user data and sets it back to defaults
+     */
+    public void clearUser() {
+        user.setId(deviceData.getUserId());
+        user.setEmail(null);
+        user.setName(null);
+
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPref.edit()
+            .remove(USER_ID_KEY)
+            .remove(USER_EMAIL_KEY)
+            .remove(USER_NAME_KEY)
+            .commit();
+    }
+
+    /**
      * Set a unique identifier for the user currently using your application.
      * By default, this will be an automatically generated unique id
      * You can search for this information in your Bugsnag dashboard.
