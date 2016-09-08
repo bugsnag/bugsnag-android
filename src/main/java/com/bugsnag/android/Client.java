@@ -1,11 +1,13 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import java.util.Locale;
 import java.util.Collections;
 import java.util.Map;
@@ -23,6 +25,11 @@ import java.util.Map;
  */
 public class Client {
     private static final boolean BLOCKING = true;
+    private static final String SHARED_PREF_KEY = "com.bugsnag.android";
+    private static final String USER_ID_KEY = "user.id";
+    private static final String USER_NAME_KEY = "user.name";
+    private static final String USER_EMAIL_KEY = "user.email";
+
     private final Configuration config;
     private final Context appContext;
     private final AppData appData;
@@ -37,7 +44,7 @@ public class Client {
      * @param androidContext an Android context, usually <code>this</code>
      */
     public Client(@NonNull Context androidContext) {
-        this(androidContext, null);
+        this(androidContext, null, true);
     }
 
     /**
@@ -58,31 +65,29 @@ public class Client {
      * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      */
     public Client(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
+        this(androidContext, createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
+    }
 
-        // Get the application context, many things need this
+    /**
+     * Initialize a Bugsnag client
+     *
+     * @param androidContext an Android context, usually <code>this</code>
+     * @param configuration  a configuration for the Client
+     */
+    public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
+
         appContext = androidContext.getApplicationContext();
 
+        config = configuration;
+
         String buildUUID = null;
-
-        // Attempt to load API key from AndroidManifest.xml if not passed in
-        if (TextUtils.isEmpty(apiKey)) {
-            try {
-                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-                apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
-                buildUUID = ai.metaData.getString("com.bugsnag.android.BUILD_UUID");
-            } catch (Exception ignore) {
-            }
+        try {
+            ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+            buildUUID = ai.metaData.getString("com.bugsnag.android.BUILD_UUID");
+        } catch (Exception ignore) {
         }
-
-        if (apiKey == null) {
-            throw new NullPointerException("You must provide a Bugsnag API key");
-        }
-
-        // Build a configuration object
-        config = new Configuration(apiKey);
-
         if (buildUUID != null) {
-            config.buildUUID = buildUUID;
+            config.setBuildUUID(buildUUID);
         }
 
         // Set up and collect constant app and device diagnostics
@@ -95,18 +100,60 @@ public class Client {
 
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
-        setUserId(deviceData.getUserId());
+
+        if (config.getPersistUserBetweenSessions()) {
+            // Check to see if a user was stored in the SharedPreferences
+            SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
+            user.setName(sharedPref.getString(USER_NAME_KEY, null));
+            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
+        } else {
+            user.setId(deviceData.getUserId());
+        }
 
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext);
 
         // Install a default exception handler with this client
-        if (enableExceptionHandler) {
+        if (config.getEnableExceptionHandler()) {
             enableExceptionHandler();
         }
 
         // Flush any on-disk errors
         errorStore.flush();
+    }
+
+    /**
+     * Creates a new configuration object based on the provided parameters
+     * will read the API key from the manifest file if it is not provided
+     *
+     * @param androidContext         The context of the application
+     * @param apiKey                 The API key to use
+     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
+     * @return The created config
+     */
+    private static Configuration createNewConfiguration(@NonNull Context androidContext, String apiKey, boolean enableExceptionHandler) {
+        Context appContext = androidContext.getApplicationContext();
+
+        // Attempt to load API key from AndroidManifest.xml if not passed in
+        if (TextUtils.isEmpty(apiKey)) {
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+            } catch (Exception ignore) {
+            }
+        }
+
+        if (apiKey == null) {
+            throw new NullPointerException("You must provide a Bugsnag API key");
+        }
+
+        // Build a configuration object
+        Configuration newConfig = new Configuration(apiKey);
+
+        newConfig.setEnableExceptionHandler(enableExceptionHandler);
+
+        return newConfig;
     }
 
     /**
@@ -116,15 +163,16 @@ public class Client {
      * @param appVersion the app version to send
      */
     public void setAppVersion(String appVersion) {
-        config.appVersion = appVersion;
+        config.setAppVersion(appVersion);
     }
 
     /**
      * Gets the context to be sent to Bugsnag.
+     *
      * @return Context
      */
     public String getContext() {
-        return config.context;
+        return config.getContext();
     }
 
     /**
@@ -135,7 +183,7 @@ public class Client {
      * @param context set what was happening at the time of a crash
      */
     public void setContext(String context) {
-        config.context = context;
+        config.setContext(context);
     }
 
     /**
@@ -147,7 +195,7 @@ public class Client {
      * @param endpoint the custom endpoint to send notifications to
      */
     public void setEndpoint(String endpoint) {
-        config.endpoint = endpoint;
+        config.setEndpoint(endpoint);
     }
 
     /**
@@ -159,7 +207,7 @@ public class Client {
      * @param buildUUID the buildUUID.
      */
     public void setBuildUUID(final String buildUUID) {
-        config.buildUUID = buildUUID;
+        config.setBuildUUID(buildUUID);
     }
 
 
@@ -177,7 +225,7 @@ public class Client {
      * @param filters a list of keys to filter from metaData
      */
     public void setFilters(String... filters) {
-        config.filters = filters;
+        config.setFilters(filters);
     }
 
     /**
@@ -190,7 +238,7 @@ public class Client {
      * @param ignoreClasses a list of exception classes to ignore
      */
     public void setIgnoreClasses(String... ignoreClasses) {
-        config.ignoreClasses = ignoreClasses;
+        config.setIgnoreClasses(ignoreClasses);
     }
 
     /**
@@ -205,7 +253,7 @@ public class Client {
      * @see #setReleaseStage
      */
     public void setNotifyReleaseStages(String... notifyReleaseStages) {
-        config.notifyReleaseStages = notifyReleaseStages;
+        config.setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
@@ -221,7 +269,7 @@ public class Client {
      * @param projectPackages a list of package names
      */
     public void setProjectPackages(String... projectPackages) {
-        config.projectPackages = projectPackages;
+        config.setProjectPackages(projectPackages);
     }
 
     /**
@@ -233,7 +281,7 @@ public class Client {
      * @see #setNotifyReleaseStages
      */
     public void setReleaseStage(String releaseStage) {
-        config.releaseStage = releaseStage;
+        config.setReleaseStage(releaseStage);
     }
 
     /**
@@ -243,7 +291,7 @@ public class Client {
      * @param sendThreads should we send thread-state with notifications?
      */
     public void setSendThreads(boolean sendThreads) {
-        config.sendThreads = sendThreads;
+        config.setSendThreads(sendThreads);
     }
 
     /**
@@ -259,9 +307,25 @@ public class Client {
      * @param name  the name of the current user
      */
     public void setUser(String id, String email, String name) {
-        user.setId(id);
-        user.setEmail(email);
-        user.setName(name);
+        setUserId(id);
+        setUserEmail(email);
+        setUserName(name);
+    }
+
+    /**
+     * Removes the current user data and sets it back to defaults
+     */
+    public void clearUser() {
+        user.setId(deviceData.getUserId());
+        user.setEmail(null);
+        user.setName(null);
+
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPref.edit()
+            .remove(USER_ID_KEY)
+            .remove(USER_EMAIL_KEY)
+            .remove(USER_NAME_KEY)
+            .commit();
     }
 
     /**
@@ -273,6 +337,10 @@ public class Client {
      */
     public void setUserId(String id) {
         user.setId(id);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_ID_KEY, id);
+        }
     }
 
     /**
@@ -283,6 +351,10 @@ public class Client {
      */
     public void setUserEmail(String email) {
         user.setEmail(email);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_EMAIL_KEY, email);
+        }
     }
 
     /**
@@ -293,6 +365,10 @@ public class Client {
      */
     public void setUserName(String name) {
         user.setName(name);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_NAME_KEY, name);
+        }
     }
 
     /**
@@ -506,7 +582,7 @@ public class Client {
      * @param value the contents of the diagnostic information
      */
     public void addToTab(String tab, String key, Object value) {
-        config.metaData.addToTab(tab, key, value);
+        config.getMetaData().addToTab(tab, key, value);
     }
 
     /**
@@ -515,7 +591,7 @@ public class Client {
      * @param tabName the dashboard tab to remove diagnostic data from
      */
     public void clearTab(String tabName) {
-        config.metaData.clearTab(tabName);
+        config.getMetaData().clearTab(tabName);
     }
 
     /**
@@ -524,7 +600,7 @@ public class Client {
      * @see MetaData
      */
     public MetaData getMetaData() {
-        return config.metaData;
+        return config.getMetaData();
     }
 
     /**
@@ -533,7 +609,7 @@ public class Client {
      * @see MetaData
      */
     public void setMetaData(MetaData metaData) {
-        config.metaData = metaData;
+        config.setMetaData(metaData);
     }
 
     /**
@@ -649,7 +725,7 @@ public class Client {
     }
 
     private boolean runBeforeNotifyTasks(Error error) {
-        for (BeforeNotify beforeNotify : config.beforeNotifyTasks) {
+        for (BeforeNotify beforeNotify : config.getBeforeNotifyTasks()) {
             try {
                 if (!beforeNotify.run(error)) {
                     return false;
@@ -661,5 +737,16 @@ public class Client {
 
         // By default, allow the error to be sent if there were no objections
         return true;
+    }
+
+    /**
+     * Stores the given key value pair into shared preferences
+     * @param key The key to store
+     * @param value The value to store
+     * @return Whether the value was stored successfully or not
+     */
+    private boolean storeInSharedPrefs(String key, String value) {
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        return sharedPref.edit().putString(key, value).commit();
     }
 }

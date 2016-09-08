@@ -51,6 +51,17 @@ public final class Bugsnag {
     }
 
     /**
+     * Initialize the static Bugsnag client
+     *
+     * @param androidContext an Android context, usually <code>this</code>
+     * @param config         a configuration for the Client
+     */
+    public static Client init(Context androidContext, Configuration config) {
+        client = new Client(androidContext, config);
+        return client;
+    }
+
+    /**
      * Set the application version sent to Bugsnag. By default we'll pull this
      * from your AndroidManifest.xml
      *
@@ -86,7 +97,9 @@ public final class Bugsnag {
      * endpoint.
      *
      * @param  endpoint  the custom endpoint to send notifications to
+     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoint(String)} instead.
      */
+    @Deprecated
     public static void setEndpoint(final String endpoint) {
         getClient().setEndpoint(endpoint);
     }
@@ -200,6 +213,13 @@ public final class Bugsnag {
      */
     public static void setUser(final String id, final String email, final String name) {
         getClient().setUser(id, email, name);
+    }
+
+    /**
+     * Removes the current user data and sets it back to defaults
+     */
+    public void clearUser() {
+        getClient().clearUser();
     }
 
     /**

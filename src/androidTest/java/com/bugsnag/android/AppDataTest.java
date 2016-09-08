@@ -22,7 +22,7 @@ public class AppDataTest extends BugsnagTestCase {
 
     public void testAppVersionOverride() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
-        config.appVersion = "1.2.3";
+        config.setAppVersion("1.2.3");
 
         AppData appData = new AppData(getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
@@ -32,7 +32,7 @@ public class AppDataTest extends BugsnagTestCase {
 
     public void testReleaseStageOverride() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
-        config.releaseStage = "test-stage";
+        config.setReleaseStage("test-stage");
 
         AppData appData = new AppData(getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
