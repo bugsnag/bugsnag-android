@@ -293,9 +293,9 @@ public class Configuration {
     }
 
     /**
-     * Set whether or not Bugsnag should persist user information between application settings
+     * Set whether or not Bugsnag should persist user information between application sessions
      * if set then any user information set will be re-used until
-     * @see Client#clearUser() is called
+     * @see Bugsnag#clearUser() is called
      *
      * @param persistUserBetweenSessions whether or not Bugsnag should persist user information
      */
