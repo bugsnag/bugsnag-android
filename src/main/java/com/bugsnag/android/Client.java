@@ -582,7 +582,7 @@ public class Client {
      * @param value the contents of the diagnostic information
      */
     public void addToTab(String tab, String key, Object value) {
-        config.metaData.addToTab(tab, key, value);
+        config.getMetaData().addToTab(tab, key, value);
     }
 
     /**
@@ -591,7 +591,7 @@ public class Client {
      * @param tabName the dashboard tab to remove diagnostic data from
      */
     public void clearTab(String tabName) {
-        config.metaData.clearTab(tabName);
+        config.getMetaData().clearTab(tabName);
     }
 
     /**
@@ -600,7 +600,7 @@ public class Client {
      * @see MetaData
      */
     public MetaData getMetaData() {
-        return config.metaData;
+        return config.getMetaData();
     }
 
     /**
@@ -609,7 +609,7 @@ public class Client {
      * @see MetaData
      */
     public void setMetaData(MetaData metaData) {
-        config.metaData = metaData;
+        config.setMetaData(metaData);
     }
 
     /**
@@ -725,7 +725,7 @@ public class Client {
     }
 
     private boolean runBeforeNotifyTasks(Error error) {
-        for (BeforeNotify beforeNotify : config.beforeNotifyTasks) {
+        for (BeforeNotify beforeNotify : config.getBeforeNotifyTasks()) {
             try {
                 if (!beforeNotify.run(error)) {
                     return false;

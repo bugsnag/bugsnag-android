@@ -26,8 +26,8 @@ public class Configuration {
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
 
-    protected MetaData metaData = new MetaData();
-    protected final Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
+    private MetaData metaData = new MetaData();
+    private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
 
     /**
      * Construct a new Bugsnag configuration object
@@ -301,6 +301,33 @@ public class Configuration {
      */
     public void setPersistUserBetweenSessions(boolean persistUserBetweenSessions) {
         this.persistUserBetweenSessions = persistUserBetweenSessions;
+    }
+
+    /*
+     * Gets any meta data associated with the error
+     *
+     * @return meta data
+     */
+    protected MetaData getMetaData() {
+        return metaData;
+    }
+
+    /**
+     * Sets any meta data associated with the error
+     *
+     * @param metaData meta data
+     */
+    protected void setMetaData(MetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    /**
+     * Gets any before notify tasks to run
+     *
+     * @return the before notify tasks
+     */
+    protected Collection<BeforeNotify> getBeforeNotifyTasks() {
+        return beforeNotifyTasks;
     }
 
     /**
