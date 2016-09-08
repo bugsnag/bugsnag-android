@@ -44,7 +44,7 @@ public class Error implements JsonStream.Streamable {
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
-        MetaData mergedMetaData = MetaData.merge(config.metaData, metaData);
+        MetaData mergedMetaData = MetaData.merge(config.getMetaData(), metaData);
         mergedMetaData.setFilters(config.getFilters());
 
         // Write error basics
