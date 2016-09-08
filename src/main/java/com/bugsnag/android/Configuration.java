@@ -283,7 +283,7 @@ public class Configuration {
         this.enableExceptionHandler = enableExceptionHandler;
     }
 
-    /**
+    /*
      * Gets any meta data associated with the error
      *
      * @return meta data
