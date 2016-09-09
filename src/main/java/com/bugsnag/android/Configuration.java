@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -24,6 +26,7 @@ public class Configuration {
     private String releaseStage;
     private boolean sendThreads = true;
     private boolean enableExceptionHandler = true;
+    private boolean persistUserBetweenSessions = false;
 
     private MetaData metaData = new MetaData();
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
@@ -33,7 +36,7 @@ public class Configuration {
      *
      * @param apiKey The API key to send reports to
      */
-    public Configuration(String apiKey) {
+    public Configuration(@NonNull String apiKey) {
         this.apiKey = apiKey;
     }
 
@@ -282,7 +285,7 @@ public class Configuration {
         this.enableExceptionHandler = enableExceptionHandler;
     }
 
-    /**
+    /*
      * Gets any meta data associated with the error
      *
      * @return meta data
@@ -307,6 +310,26 @@ public class Configuration {
      */
     protected Collection<BeforeNotify> getBeforeNotifyTasks() {
         return beforeNotifyTasks;
+    }
+
+    /**
+     * Get whether or not Bugsnag should persist user information between application settings
+     *
+     * @return whether or not Bugsnag should persist user information
+     */
+    public boolean getPersistUserBetweenSessions() {
+        return persistUserBetweenSessions;
+    }
+
+    /**
+     * Set whether or not Bugsnag should persist user information between application settings
+     * if set then any user information set will be re-used until
+     * @see Client#clearUser() is called
+     *
+     * @param persistUserBetweenSessions whether or not Bugsnag should persist user information
+     */
+    public void setPersistUserBetweenSessions(boolean persistUserBetweenSessions) {
+        this.persistUserBetweenSessions = persistUserBetweenSessions;
     }
 
     /**

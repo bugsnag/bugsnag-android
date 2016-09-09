@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -24,6 +25,11 @@ import java.util.Map;
  */
 public class Client {
     private static final boolean BLOCKING = true;
+    private static final String SHARED_PREF_KEY = "com.bugsnag.android";
+    private static final String USER_ID_KEY = "user.id";
+    private static final String USER_NAME_KEY = "user.name";
+    private static final String USER_EMAIL_KEY = "user.email";
+
     private final Configuration config;
     private final Context appContext;
     private final AppData appData;
@@ -66,13 +72,13 @@ public class Client {
      * Initialize a Bugsnag client
      *
      * @param androidContext an Android context, usually <code>this</code>
-     * @param config         a configuration for the Client
+     * @param configuration  a configuration for the Client
      */
-    public Client(@NonNull Context androidContext, @NonNull Configuration config) {
+    public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
 
         appContext = androidContext.getApplicationContext();
 
-        this.config = config;
+        config = configuration;
 
         String buildUUID = null;
         try {
@@ -94,7 +100,16 @@ public class Client {
 
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
-        setUserId(deviceData.getUserId());
+
+        if (config.getPersistUserBetweenSessions()) {
+            // Check to see if a user was stored in the SharedPreferences
+            SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
+            user.setName(sharedPref.getString(USER_NAME_KEY, null));
+            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
+        } else {
+            user.setId(deviceData.getUserId());
+        }
 
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext);
@@ -292,9 +307,25 @@ public class Client {
      * @param name  the name of the current user
      */
     public void setUser(String id, String email, String name) {
-        user.setId(id);
-        user.setEmail(email);
-        user.setName(name);
+        setUserId(id);
+        setUserEmail(email);
+        setUserName(name);
+    }
+
+    /**
+     * Removes the current user data and sets it back to defaults
+     */
+    public void clearUser() {
+        user.setId(deviceData.getUserId());
+        user.setEmail(null);
+        user.setName(null);
+
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPref.edit()
+            .remove(USER_ID_KEY)
+            .remove(USER_EMAIL_KEY)
+            .remove(USER_NAME_KEY)
+            .commit();
     }
 
     /**
@@ -306,6 +337,10 @@ public class Client {
      */
     public void setUserId(String id) {
         user.setId(id);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_ID_KEY, id);
+        }
     }
 
     /**
@@ -316,6 +351,10 @@ public class Client {
      */
     public void setUserEmail(String email) {
         user.setEmail(email);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_EMAIL_KEY, email);
+        }
     }
 
     /**
@@ -326,6 +365,10 @@ public class Client {
      */
     public void setUserName(String name) {
         user.setName(name);
+
+        if (config.getPersistUserBetweenSessions()) {
+            storeInSharedPrefs(USER_NAME_KEY, name);
+        }
     }
 
     /**
@@ -694,5 +737,16 @@ public class Client {
 
         // By default, allow the error to be sent if there were no objections
         return true;
+    }
+
+    /**
+     * Stores the given key value pair into shared preferences
+     * @param key The key to store
+     * @param value The value to store
+     * @return Whether the value was stored successfully or not
+     */
+    private boolean storeInSharedPrefs(String key, String value) {
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        return sharedPref.edit().putString(key, value).commit();
     }
 }
