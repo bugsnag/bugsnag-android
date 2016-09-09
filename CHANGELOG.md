@@ -1,5 +1,38 @@
 # Changelog
 
+## 3.6.0 (2016-09-09)
+
+### Enhancements
+
+- Support optionally persisting user information between sessions using the
+  configuration option `persistUserBetweenSessions`
+  [Dave Perryman](https://github.com/Pezzah)
+  [#120](https://github.com/bugsnag/bugsnag-android/pull/120)
+
+- Support initializing Bugsnag with a pre-configured Configuration instance
+  [Dave Perryman](https://github.com/Pezzah)
+  [#121](https://github.com/bugsnag/bugsnag-android/pull/121)
+
+- Expose client context
+  [nicous](https://github.com/nicous)
+  [#112](https://github.com/bugsnag/bugsnag-android/pull/112)
+
+- Add CPU/ABI information to device metadata
+  [Dave Perryman](https://github.com/Pezzah)
+  [Crossle Song](https://github.com/crossle)
+  [#119](https://github.com/bugsnag/bugsnag-android/pull/119)
+
+### Bug Fixes
+
+- Fix potentially misdirected error report when changing the endpoint soon
+  after initializing Bugsnag
+  [Dave Perryman](https://github.com/Pezzah)
+  [#121](https://github.com/bugsnag/bugsnag-android/pull/121)
+
+- Fix missing static modifier on `disableExceptionHandler`
+  [Niklas Klein](https://github.com/Taig)
+  [#113](https://github.com/bugsnag/bugsnag-android/pull/113)
+
 ## 3.5.0 (2016-07-21)
 
 ### Enhancements
