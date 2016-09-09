@@ -627,9 +627,6 @@ public class Client {
             return;
         }
 
-        // Add a breadcrumb for this error occurring
-        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
-
         // Capture the state of the app and device and attach diagnostics to the error
         error.setAppData(appData);
         error.setDeviceData(deviceData);
@@ -663,6 +660,9 @@ public class Client {
                 }
             });
         }
+
+        // Add a breadcrumb for this error occurring
+        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
     }
 
     void deliver(Notification notification, Error error) {
