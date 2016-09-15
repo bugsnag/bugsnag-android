@@ -689,17 +689,18 @@ public class Client {
         }
 
         // Build the report
-        final Report report = new Report(config);
-        report.addError(error);
+        Report report = new Report(config.getApiKey(), error);
 
         if (blocking) {
             deliver(report, error);
         } else {
+            final Report finalReport = report;
+            final Error finalError = error;
             // Attempt to send the report in the background
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    deliver(report, error);
+                    deliver(finalReport, finalError);
                 }
             });
         }
@@ -710,8 +711,8 @@ public class Client {
 
     void deliver(Report report, Error error) {
         try {
-            int errorCount = report.deliver();
-            Logger.info(String.format(Locale.US, "Sent %d new error(s) to Bugsnag", errorCount));
+            HttpClient.post(config.getEndpoint(), report);
+            Logger.info(String.format(Locale.US, "Sent 1 new error to Bugsnag"));
         } catch (HttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 

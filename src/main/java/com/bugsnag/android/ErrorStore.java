@@ -57,9 +57,8 @@ class ErrorStore {
 
                     for(File errorFile : errorFiles) {
                         try {
-                            Report report = new Report(config);
-                            report.addError(errorFile);
-                            report.deliver();
+                            Report report = new Report(config.getApiKey(), errorFile);
+                            HttpClient.post(config.getEndpoint(), report);
 
                             Logger.info("Deleting sent error file " + errorFile.getName());
                             if (!errorFile.delete())

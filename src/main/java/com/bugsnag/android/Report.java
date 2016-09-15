@@ -14,14 +14,23 @@ import java.util.LinkedList;
  * using your API key.
  */
 public class Report implements JsonStream.Streamable {
-    private final Configuration config;
-    private final Collection<Error> errors;
-    private final Collection<File> errorFiles;
+    private final File errorFile;
+    private Error error;
+    private String apiKey;
+    private Notifier notifier;
 
-    Report(@NonNull Configuration config) {
-        this.config = config;
-        this.errors = new LinkedList<Error>();
-        this.errorFiles = new LinkedList<File>();
+    Report(@NonNull String apiKey, File errorFile) {
+        this.apiKey = apiKey;
+        this.error = null;
+        this.errorFile = errorFile;
+        this.notifier = Notifier.getInstance();
+    }
+
+    Report(@NonNull String apiKey, Error error) {
+        this.apiKey = apiKey;
+        this.error = error;
+        this.errorFile = null;
+        this.notifier = Notifier.getInstance();
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -29,23 +38,21 @@ public class Report implements JsonStream.Streamable {
         writer.beginObject();
 
             // Write the API key
-            writer.name("apiKey").value(config.getApiKey());
+            writer.name("apiKey").value(apiKey);
 
             // Write the notifier info
-            writer.name("notifier").value(Notifier.getInstance());
+            writer.name("notifier").value(notifier);
 
             // Start events array
             writer.name("events").beginArray();
 
-            // Write any in-memory events
-            for(Error error : errors) {
+            // Write in-memory event
+            if (error != null)
                 writer.value(error);
-            }
 
-            // Write any on-disk events
-            for(File errorFile : errorFiles) {
+            // Write on-disk event
+            if (errorFile != null)
                 writer.value(errorFile);
-            }
 
             // End events array
             writer.endArray();
@@ -54,16 +61,23 @@ public class Report implements JsonStream.Streamable {
         writer.endObject();
     }
 
-    void addError(@NonNull Error error) {
-        this.errors.add(error);
+    public Error getError() {
+        return error;
     }
 
-    void addError(@NonNull File errorFile) {
-        this.errorFiles.add(errorFile);
+    public void setApiKey(@NonNull String apiKey) {
+        this.apiKey = apiKey;
     }
 
-    int deliver() throws HttpClient.NetworkException, HttpClient.BadResponseException {
-        HttpClient.post(config.getEndpoint(), this);
-        return errors.size() + errorFiles.size();
+    public void setNotifierVersion(@NonNull String version) {
+        notifier.setVersion(version);
+    }
+
+    public void setNotifierName(@NonNull String name) {
+        notifier.setName(name);
+    }
+
+    public void setNotifierURL(@NonNull String url) {
+        notifier.setURL(url);
     }
 }
