@@ -79,7 +79,7 @@ public class Configuration {
 
     /**
      * Set the context sent to Bugsnag. By default we'll attempt to detect the
-     * name of the top-most activity at the time of a notification, and use this
+     * name of the top-most activity at the time of a report, and use this
      * as the context, but sometime this is not possible.
      *
      * @param context set what was happening at the time of a crash
@@ -103,7 +103,7 @@ public class Configuration {
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
-     * @param endpoint the custom endpoint to send notifications to
+     * @param endpoint the custom endpoint to send report to
      */
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
@@ -249,7 +249,7 @@ public class Configuration {
     }
 
     /**
-     * Get whether to send thread-state with notifications.
+     * Get whether to send thread-state with report.
      *
      * @return send threads
      */
@@ -258,10 +258,10 @@ public class Configuration {
     }
 
     /**
-     * Set whether to send thread-state with notifications.
+     * Set whether to send thread-state with report.
      * By default, this will be true.
      *
-     * @param sendThreads should we send thread-state with notifications?
+     * @param sendThreads should we send thread-state with report?
      */
     public void setSendThreads(boolean sendThreads) {
         this.sendThreads = sendThreads;

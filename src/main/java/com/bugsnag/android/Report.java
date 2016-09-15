@@ -8,17 +8,17 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 /**
- * An error notification payload.
+ * An error report payload.
  *
  * This payload contains an error report and identifies the source application
  * using your API key.
  */
-class Notification implements JsonStream.Streamable {
+public class Report implements JsonStream.Streamable {
     private final Configuration config;
     private final Collection<Error> errors;
     private final Collection<File> errorFiles;
 
-    Notification(@NonNull Configuration config) {
+    Report(@NonNull Configuration config) {
         this.config = config;
         this.errors = new LinkedList<Error>();
         this.errorFiles = new LinkedList<File>();

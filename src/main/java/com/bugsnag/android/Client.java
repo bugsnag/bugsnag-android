@@ -177,7 +177,7 @@ public class Client {
 
     /**
      * Set the context sent to Bugsnag. By default we'll attempt to detect the
-     * name of the top-most activity at the time of a notification, and use this
+     * name of the top-most activity at the time of a report, and use this
      * as the context, but sometime this is not possible.
      *
      * @param context set what was happening at the time of a crash
@@ -192,7 +192,7 @@ public class Client {
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
-     * @param endpoint the custom endpoint to send notifications to
+     * @param endpoint the custom endpoint to send report to
      */
     public void setEndpoint(String endpoint) {
         config.setEndpoint(endpoint);
@@ -285,10 +285,10 @@ public class Client {
     }
 
     /**
-     * Set whether to send thread-state with notifications.
+     * Set whether to send thread-state with report.
      * By default, this will be true.
      *
-     * @param sendThreads should we send thread-state with notifications?
+     * @param sendThreads should we send thread-state with report?
      */
     public void setSendThreads(boolean sendThreads) {
         config.setSendThreads(sendThreads);
@@ -373,7 +373,7 @@ public class Client {
 
     /**
      * Add a "before notify" callback, to execute code before every
-     * notification to Bugsnag.
+     * report to Bugsnag.
      * <p/>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
@@ -688,18 +688,18 @@ public class Client {
             return;
         }
 
-        // Build the notification
-        final Notification notification = new Notification(config);
-        notification.addError(error);
+        // Build the report
+        final Report report = new Report(config);
+        report.addError(error);
 
         if (blocking) {
-            deliver(notification, error);
+            deliver(report, error);
         } else {
-            // Attempt to send the notification in the background
+            // Attempt to send the report in the background
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    deliver(notification, error);
+                    deliver(report, error);
                 }
             });
         }
@@ -708,9 +708,9 @@ public class Client {
         breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
     }
 
-    void deliver(Notification notification, Error error) {
+    void deliver(Report report, Error error) {
         try {
-            int errorCount = notification.deliver();
+            int errorCount = report.deliver();
             Logger.info(String.format(Locale.US, "Sent %d new error(s) to Bugsnag", errorCount));
         } catch (HttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");

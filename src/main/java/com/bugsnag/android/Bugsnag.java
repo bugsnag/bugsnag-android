@@ -81,7 +81,7 @@ public final class Bugsnag {
 
     /**
      * Set the context sent to Bugsnag. By default we'll attempt to detect the
-     * name of the top-most activity at the time of a notification, and use this
+     * name of the top-most activity at the time of a report, and use this
      * as the context, but sometime this is not possible.
      *
      * @param  context  set what was happening at the time of a crash
@@ -96,7 +96,7 @@ public final class Bugsnag {
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
-     * @param  endpoint  the custom endpoint to send notifications to
+     * @param  endpoint  the custom endpoint to send report to
      * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoint(String)} instead.
      */
     @Deprecated
@@ -190,10 +190,10 @@ public final class Bugsnag {
     }
 
     /**
-     * Set whether to send thread-state with notifications.
+     * Set whether to send thread-state with report.
      * By default, this will be true.
      *
-     * @param  sendThreads  should we send thread-state with notifications?
+     * @param  sendThreads  should we send thread-state with report?
      */
     public static void setSendThreads(final boolean sendThreads) {
         getClient().setSendThreads(sendThreads);
@@ -255,7 +255,7 @@ public final class Bugsnag {
 
     /**
      * Add a "before notify" callback, to execute code before every
-     * notification to Bugsnag.
+     * report to Bugsnag.
      *
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
