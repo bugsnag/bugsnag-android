@@ -402,7 +402,7 @@ public class Client {
      */
     public void notify(Throwable exception) {
         Error error = new Error(config, exception);
-        notify(error, !BLOCKING);
+        notify(error, !BLOCKING, null);
     }
 
     /**
@@ -412,7 +412,61 @@ public class Client {
      */
     public void notifyBlocking(Throwable exception) {
         Error error = new Error(config, exception);
-        notify(error, BLOCKING);
+        notify(error, BLOCKING, null);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param callback callback invoked on the generated error report for
+     *                 additional modification
+     */
+    public void notify(Throwable exception, Callback callback) {
+        Error error = new Error(config, exception);
+        notify(error, !BLOCKING, callback);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param callback callback invoked on the generated error report for
+     *                 additional modification
+     */
+    public void notifyBlocking(Throwable exception, Callback callback) {
+        Error error = new Error(config, exception);
+        notify(error, BLOCKING, callback);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param callback   callback invoked on the generated error report for
+     *                   additional modification
+     */
+    public void notify(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
+        Error error = new Error(config, name, message, stacktrace);
+        notify(error, !BLOCKING, callback);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param callback   callback invoked on the generated error report for
+     *                   additional modification
+     */
+    public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
+        Error error = new Error(config, name, message, stacktrace);
+        notify(error, BLOCKING, callback);
     }
 
     /**
@@ -438,133 +492,6 @@ public class Client {
     public void notifyBlocking(Throwable exception, Severity severity) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
-        notify(error, BLOCKING);
-    }
-
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     */
-    public void notify(Throwable exception, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setMetaData(metaData);
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     */
-    public void notifyBlocking(Throwable exception, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setMetaData(metaData);
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     */
-    public void notify(Throwable exception, Severity severity, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     */
-    public void notifyBlocking(Throwable exception, Severity severity, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     */
-    public void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     */
-    public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     */
-    public void notify(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
-        error.setContext(context);
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     */
-    public void notifyBlocking(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
-        error.setContext(context);
         notify(error, BLOCKING);
     }
 
@@ -659,7 +586,11 @@ public class Client {
         ExceptionHandler.disable(this);
     }
 
-    private void notify(final Error error, boolean blocking) {
+    private void notify(Error error, boolean blocking) {
+        notify(error, blocking, null);
+    }
+
+    private void notify(Error error, boolean blocking, Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;
@@ -690,6 +621,10 @@ public class Client {
 
         // Build the report
         Report report = new Report(config.getApiKey(), error);
+
+        if (callback != null) {
+            callback.beforeNotify(report);
+        }
 
         if (blocking) {
             deliver(report, error);
@@ -749,5 +684,161 @@ public class Client {
     private boolean storeInSharedPrefs(String key, String value) {
         SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         return sharedPref.edit().putString(key, value).commit();
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param metaData  additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(Throwable,Callback)}
+     *             to send and modify error reports
+     */
+    public void notify(Throwable exception, MetaData metaData) {
+        Error error = new Error(config, exception);
+        error.setMetaData(metaData);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param metaData  additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(Throwable,Callback)}
+     *             to send and modify error reports
+     */
+    public void notifyBlocking(Throwable exception, MetaData metaData) {
+        Error error = new Error(config, exception);
+        error.setMetaData(metaData);
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
+     * @param metaData  additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(Throwable,Callback)} to send and
+     *             modify error reports
+     */
+    @Deprecated
+    public void notify(Throwable exception, Severity severity, MetaData metaData) {
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
+     * @param metaData  additional information to send with the exception
+     *
+     * @deprecated Use {@link #notifyBlocking(Throwable,Callback)} to send
+     *             and modify error reports
+     */
+    @Deprecated
+    public void notifyBlocking(Throwable exception, Severity severity, MetaData metaData) {
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
+     *             to send and modify error reports
+     */
+    @Deprecated
+    public void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     *
+     * @deprecated Use {@link #notifyBlocking(String,String,StackTraceElement[],Callback)}
+     *             to send and modify error reports
+     */
+    @Deprecated
+    public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
+     *             to send and modify error reports
+     */
+    @Deprecated
+    public void notify(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        error.setContext(context);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     *
+     * @deprecated Use {@link #notifyBlocking(String,String,StackTraceElement[],Callback)}
+     *             to send and modify error reports
+     */
+    @Deprecated
+    public void notifyBlocking(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+        Error error = new Error(config, name, message, stacktrace);
+        error.setSeverity(severity);
+        error.setMetaData(metaData);
+        error.setContext(context);
+        notify(error, BLOCKING);
     }
 }
