@@ -81,7 +81,7 @@ public final class Bugsnag {
 
     /**
      * Set the context sent to Bugsnag. By default we'll attempt to detect the
-     * name of the top-most activity at the time of a notification, and use this
+     * name of the top-most activity at the time of a report, and use this
      * as the context, but sometime this is not possible.
      *
      * @param  context  set what was happening at the time of a crash
@@ -96,7 +96,7 @@ public final class Bugsnag {
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
-     * @param  endpoint  the custom endpoint to send notifications to
+     * @param  endpoint  the custom endpoint to send report to
      * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoint(String)} instead.
      */
     @Deprecated
@@ -190,10 +190,10 @@ public final class Bugsnag {
     }
 
     /**
-     * Set whether to send thread-state with notifications.
+     * Set whether to send thread-state with report.
      * By default, this will be true.
      *
-     * @param  sendThreads  should we send thread-state with notifications?
+     * @param  sendThreads  should we send thread-state with report?
      */
     public static void setSendThreads(final boolean sendThreads) {
         getClient().setSendThreads(sendThreads);
@@ -255,7 +255,7 @@ public final class Bugsnag {
 
     /**
      * Add a "before notify" callback, to execute code before every
-     * notification to Bugsnag.
+     * report to Bugsnag.
      *
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
@@ -289,6 +289,30 @@ public final class Bugsnag {
     /**
      * Notify Bugsnag of a handled exception
      *
+     * @param exception the exception to send to Bugsnag
+     * @param callback  callback invoked on the generated error report for
+     *                  additional modification
+     */
+    public static void notify(final Throwable exception, final Callback callback) {
+        getClient().notify(exception, callback);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param callback   callback invoked on the generated error report for
+     *                   additional modification
+     */
+    public static void notify(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
+        getClient().notify(name, message, stacktrace, callback);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
      * @param  exception  the exception to send to Bugsnag
      * @param  severity   the severity of the error, one of Severity.ERROR,
      *                    Severity.WARNING or Severity.INFO
@@ -302,9 +326,17 @@ public final class Bugsnag {
      *
      * @param  exception  the exception to send to Bugsnag
      * @param  metaData   additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(Throwable,Callback)}
+     *             to send and modify error reports
      */
     public static void notify(final Throwable exception, final MetaData metaData) {
-        getClient().notify(exception, metaData);
+        getClient().notify(exception, new Callback() {
+            @Override
+            public void beforeNotify(Report report) {
+                report.getError().setMetaData(metaData);
+            }
+        });
     }
 
     /**
@@ -314,38 +346,74 @@ public final class Bugsnag {
      * @param  severity   the severity of the error, one of Severity.ERROR,
      *                    Severity.WARNING or Severity.INFO
      * @param  metaData   additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(Throwable,Callback)}
+     *             to send and modify error reports
      */
+    @Deprecated
     public static void notify(final Throwable exception, final Severity severity, final MetaData metaData) {
-        getClient().notify(exception, severity, metaData);
+        getClient().notify(exception, new Callback() {
+            @Override
+            public void beforeNotify(Report report) {
+                report.getError().setSeverity(severity);
+                report.getError().setMetaData(metaData);
+            }
+        });
     }
 
     /**
-      * Notify Bugsnag of an error
-      *
-      * @param  name        the error name or class
-      * @param  message     the error message
-      * @param  stacktrace  the stackframes associated with the error
-      * @param  severity    the severity of the error, one of Severity.ERROR,
-      *                     Severity.WARNING or Severity.INFO
-      * @param  metaData    additional information to send with the exception
-      */
+     * Notify Bugsnag of an error
+     *
+     * @param  name        the error name or class
+     * @param  message     the error message
+     * @param  stacktrace  the stackframes associated with the error
+     * @param  severity    the severity of the error, one of Severity.ERROR,
+     *                     Severity.WARNING or Severity.INFO
+     * @param  metaData    additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
+     *             to send and modify error reports
+     */
+    @Deprecated
     public static void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        getClient().notify(name, message, stacktrace, severity, metaData);
+        final Severity finalSeverity = severity;
+        final MetaData finalMetaData = metaData;
+        getClient().notify(name, message, stacktrace, new Callback() {
+            @Override
+            public void beforeNotify(Report report) {
+                report.getError().setSeverity(finalSeverity);
+                report.getError().setMetaData(finalMetaData);
+            }
+        });
     }
 
     /**
-      * Notify Bugsnag of an error
-      *
-      * @param  name        the error name or class
-      * @param  message     the error message
-      * @param  context     the error context
-      * @param  stacktrace  the stackframes associated with the error
-      * @param  severity    the severity of the error, one of Severity.ERROR,
-      *                     Severity.WARNING or Severity.INFO
-      * @param  metaData    additional information to send with the exception
-      */
+     * Notify Bugsnag of an error
+     *
+     * @param  name        the error name or class
+     * @param  message     the error message
+     * @param  context     the error context
+     * @param  stacktrace  the stackframes associated with the error
+     * @param  severity    the severity of the error, one of Severity.ERROR,
+     *                     Severity.WARNING or Severity.INFO
+     * @param  metaData    additional information to send with the exception
+     *
+     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
+     *             to send and modify error reports
+     */
+    @Deprecated
     public static void notify(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        getClient().notify(name, message, context, stacktrace, severity, metaData);
+        final String finalContext = context;
+        final Severity finalSeverity = severity;
+        final MetaData finalMetaData = metaData;
+        getClient().notify(name, message, stacktrace, new Callback() {
+            @Override
+            public void beforeNotify(Report report) {
+                report.getError().setSeverity(finalSeverity);
+                report.getError().setMetaData(finalMetaData);
+                report.getError().setContext(finalContext);
+            }
+        });
     }
 
     /**
