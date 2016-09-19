@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
 import java.io.IOException;
 
 import org.json.JSONArray;
@@ -55,5 +56,43 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertEquals("Class.method", stackframeJson.get("method"));
         assertEquals("Class.java", stackframeJson.get("file"));
         assertEquals(123, stackframeJson.get("lineNumber"));
+    }
+
+    public void testCustomExceptionSerialization() throws JSONException, IOException {
+        Configuration config = new Configuration("api-key");
+        Exceptions exceptions = new Exceptions(config, new CustomException("Failed serialization"));
+
+        JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);
+        assertEquals("CustomizedException", exceptionJson.get("errorClass"));
+        assertEquals("Failed serialization", exceptionJson.get("message"));
+
+        JSONObject stackframeJson = exceptionJson.getJSONArray("stacktrace").getJSONObject(0);
+        assertEquals("MyFile.run", stackframeJson.get("method"));
+        assertEquals("MyFile.java", stackframeJson.get("file"));
+        assertEquals(408, stackframeJson.get("lineNumber"));
+        assertEquals(18, stackframeJson.get("offset"));
+    }
+}
+
+class CustomException extends Exception implements JsonStream.Streamable {
+
+    CustomException(String message) {
+        super(message);
+    }
+
+    public void toStream(@NonNull JsonStream writer) throws IOException {
+        writer.beginObject();
+            writer.name("errorClass").value("CustomizedException");
+            writer.name("message").value(getLocalizedMessage());
+            writer.name("stacktrace");
+            writer.beginArray();
+                writer.beginObject();
+                    writer.name("file").value("MyFile.java");
+                    writer.name("lineNumber").value(408);
+                    writer.name("offset").value(18);
+                    writer.name("method").value("MyFile.run");
+                writer.endObject();
+            writer.endArray();
+        writer.endObject();
     }
 }
