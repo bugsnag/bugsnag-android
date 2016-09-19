@@ -22,7 +22,11 @@ class Exceptions implements JsonStream.Streamable {
         // Unwrap any "cause" exceptions
         Throwable currentEx = exception;
         while(currentEx != null) {
-            exceptionToStream(writer, getExceptionName(currentEx), currentEx.getLocalizedMessage(), currentEx.getStackTrace());
+            if(currentEx instanceof JsonStream.Streamable) {
+                ((JsonStream.Streamable)currentEx).toStream(writer);
+            } else {
+                exceptionToStream(writer, getExceptionName(currentEx), currentEx.getLocalizedMessage(), currentEx.getStackTrace());
+            }
             currentEx = currentEx.getCause();
         }
 

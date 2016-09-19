@@ -120,7 +120,7 @@ import java.util.List;
  * @author Jesse Wilson
  * @since 1.6
  */
-class JsonWriter implements Closeable {
+public class JsonWriter implements Closeable {
 
     /**
     * Lexical scoping elements within a JSON reader or writer.

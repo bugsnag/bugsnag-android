@@ -7,8 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Writer;
 
-class JsonStream extends JsonWriter {
-    interface Streamable {
+public class JsonStream extends JsonWriter {
+    public interface Streamable {
         void toStream(@NonNull JsonStream stream) throws IOException;
     }
 
