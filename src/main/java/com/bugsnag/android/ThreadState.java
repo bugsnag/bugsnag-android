@@ -11,6 +11,8 @@ import java.util.Map;
  * Capture and serialize the state of all threads at the time of an exception.
  */
 class ThreadState implements JsonStream.Streamable {
+    private static final String THREAD_TYPE = "android";
+
     final Configuration config;
 
     ThreadState(Configuration config) {
@@ -40,6 +42,7 @@ class ThreadState implements JsonStream.Streamable {
                 writer.beginObject();
                     writer.name("id").value(thread.getId());
                     writer.name("name").value(thread.getName());
+                    writer.name("type").value(THREAD_TYPE);
                     writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
                 writer.endObject();
             }
