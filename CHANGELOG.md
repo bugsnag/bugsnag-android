@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.7.0 (2016-10-05)
+
+### Enhancements
+
+- Add support for sending reports using lambdas for customization
+  [Delisa Mason](https://github.com/kattrali)
+  [#123](https://github.com/bugsnag/bugsnag-android/pull/123)
+
 ## 3.6.0 (2016-09-09)
 
 ### Enhancements
