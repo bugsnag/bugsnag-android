@@ -32,7 +32,10 @@ public class EventReceiver extends BroadcastReceiver {
         Bugsnag.leaveBreadcrumb(actionName, BreadcrumbType.LOG, meta);
     }
 
-
+    /**
+     * Creates a new Intent filter with all the intents to record breadcrumbs for
+     * @return The intent filter
+     */
     public static IntentFilter getIntentFilter() {
 
         IntentFilter i = new IntentFilter();
@@ -68,7 +71,7 @@ public class EventReceiver extends BroadcastReceiver {
         i.addAction(Intent.ACTION_PACKAGE_REMOVED);
         i.addAction(Intent.ACTION_PACKAGE_RESTARTED);
         i.addAction(Intent.ACTION_PACKAGE_DATA_CLEARED);
-//        i.addAction(Intent.ACTION_PACKAGES_SUSPENDED);
+//        i.addAction(Intent.ACTION_PACKAGES_SUSPENDED); Deprecated?
 //        i.addAction(Intent.ACTION_PACKAGES_UNSUSPENDED);
         i.addAction(Intent.ACTION_UID_REMOVED);
         i.addAction(Intent.ACTION_BATTERY_CHANGED);
@@ -89,7 +92,7 @@ public class EventReceiver extends BroadcastReceiver {
         i.addCategory(Intent.CATEGORY_HOME);
         i.addCategory(Intent.CATEGORY_PREFERENCE);
         i.addCategory(Intent.CATEGORY_TEST);
-//        i.addCategory(Intent.CATEGORY_CAR_DOCK);
+//        i.addCategory(Intent.CATEGORY_CAR_DOCK); Deprecated?
 //        i.addCategory(Intent.CATEGORY_DESK_DOCK);
 //        i.addCategory(Intent.CATEGORY_LE_DESK_DOCK);
 //        i.addCategory(Intent.CATEGORY_HE_DESK_DOCK);
