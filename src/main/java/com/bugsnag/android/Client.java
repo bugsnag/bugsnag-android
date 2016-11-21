@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -37,6 +38,7 @@ public class Client {
     private final Breadcrumbs breadcrumbs;
     private final User user = new User();
     private final ErrorStore errorStore;
+    private final EventReceiver eventReceiver = new EventReceiver();
 
     /**
      * Initialize a Bugsnag client
@@ -118,6 +120,9 @@ public class Client {
         if (config.getEnableExceptionHandler()) {
             enableExceptionHandler();
         }
+
+        Logger.warn("REGISTERING RECEIVER");
+        androidContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
 
         // Flush any on-disk errors
         errorStore.flush();
@@ -840,5 +845,14 @@ public class Client {
         error.setMetaData(metaData);
         error.setContext(context);
         notify(error, BLOCKING);
+    }
+
+    /**
+     * Finalize by removing the receiver
+     * @throws Throwable if something goes wrong
+     */
+    protected void finalize() throws Throwable {
+        appContext.unregisterReceiver(eventReceiver);
+        super.finalize();
     }
 }
