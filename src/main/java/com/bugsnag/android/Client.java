@@ -121,7 +121,7 @@ public class Client {
             enableExceptionHandler();
         }
 
-        Logger.warn("REGISTERING RECEIVER");
+        // register a receiver for automatic breadcrumbs
         androidContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
 
         // Flush any on-disk errors
