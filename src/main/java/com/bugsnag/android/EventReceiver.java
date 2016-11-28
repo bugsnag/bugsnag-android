@@ -14,26 +14,30 @@ import java.util.Map;
 public class EventReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Logger.warn("GOT EVENT IN RECEIVER");
+        try {
+            Map<String, String> meta = new HashMap<>();
 
-        Map<String, String> meta = new HashMap<>();
-
-        if (intent.getExtras() != null) {
-            for (String key : intent.getExtras().keySet()) {
-                meta.put(key, intent.getExtras().get(key).toString());
+            if (intent.getExtras() != null) {
+                for (String key : intent.getExtras().keySet()) {
+                    meta.put(key, intent.getExtras().get(key).toString());
+                }
             }
-        }
 
-        String actionName = intent.getAction();
-        if (actionName.contains(".")) {
-            actionName = actionName.substring(actionName.lastIndexOf(".") + 1, actionName.length());
-        }
+            String actionName = intent.getAction();
+            if (actionName.contains(".")) {
+                actionName = actionName.substring(actionName.lastIndexOf(".") + 1, actionName.length());
+            }
 
-        Bugsnag.leaveBreadcrumb(actionName, BreadcrumbType.LOG, meta);
+            Bugsnag.leaveBreadcrumb(actionName, BreadcrumbType.LOG, meta);
+
+        } catch (Exception ex) {
+            Logger.warn("Failed to leave breadcrumb in EventReceiver: " + ex.getMessage());
+        }
     }
 
     /**
      * Creates a new Intent filter with all the intents to record breadcrumbs for
+     *
      * @return The intent filter
      */
     public static IntentFilter getIntentFilter() {
@@ -145,7 +149,8 @@ public class EventReceiver extends BroadcastReceiver {
         i.addAction("android.intent.action.AIRPLANE_MODE");
         i.addAction("android.intent.action.APPLICATION_RESTRICTIONS_CHANGED");
         i.addAction("android.intent.action.BATTERY_CHANGED");
-        i.addAction("android.intent.action.BATTERY_LOW android.intent.action.BATTERY_OKAY");
+        i.addAction("android.intent.action.BATTERY_LOW");
+        i.addAction("android.intent.action.BATTERY_OKAY");
         i.addAction("android.intent.action.BOOT_COMPLETED");
         i.addAction("android.intent.action.CAMERA_BUTTON");
         i.addAction("android.intent.action.CONFIGURATION_CHANGED");
@@ -173,7 +178,8 @@ public class EventReceiver extends BroadcastReceiver {
         i.addAction("android.intent.action.MEDIA_BUTTON");
         i.addAction("android.intent.action.MEDIA_CHECKING");
         i.addAction("android.intent.action.MEDIA_EJECT");
-        i.addAction("android.intent.action.MEDIA_MOUNTED android.intent.action.MEDIA_NOFS");
+        i.addAction("android.intent.action.MEDIA_MOUNTED");
+        i.addAction("android.intent.action.MEDIA_NOFS");
         i.addAction("android.intent.action.MEDIA_REMOVED");
         i.addAction("android.intent.action.MEDIA_SCANNER_FINISHED");
         i.addAction("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
@@ -197,25 +203,32 @@ public class EventReceiver extends BroadcastReceiver {
         i.addAction("android.intent.action.PACKAGE_VERIFIED");
         i.addAction("android.intent.action.PHONE_STATE");
         i.addAction("android.intent.action.PROVIDER_CHANGED");
-        i.addAction("android.intent.action.PROXY_CHANGE android.intent.action.REBOOT");
-        i.addAction("android.intent.action.SCREEN_OFF android.intent.action.SCREEN_ON");
+        i.addAction("android.intent.action.PROXY_CHANGE");
+        i.addAction("android.intent.action.REBOOT");
+        i.addAction("android.intent.action.SCREEN_OFF");
+        i.addAction("android.intent.action.SCREEN_ON");
         i.addAction("android.intent.action.TIMEZONE_CHANGED");
-        i.addAction("android.intent.action.TIME_SET android.intent.action.TIME_TICK");
-        i.addAction("android.intent.action.UID_REMOVED android.intent.action.USER_PRESENT");
+        i.addAction("android.intent.action.TIME_SET");
+        i.addAction("android.intent.action.UID_REMOVED");
+        i.addAction("android.intent.action.USER_PRESENT");
         i.addAction("android.intent.action.WALLPAPER_CHANGED");
         i.addAction("android.media.ACTION_SCO_AUDIO_STATE_UPDATED");
-        i.addAction("android.media.AUDIO_BECOMING_NOISY android.media.RINGER_MODE_CHANGED");
+        i.addAction("android.media.AUDIO_BECOMING_NOISY");
+        i.addAction("android.media.RINGER_MODE_CHANGED");
         i.addAction("android.media.SCO_AUDIO_STATE_CHANGED");
         i.addAction("android.media.VIBRATE_SETTING_CHANGED");
         i.addAction("android.media.action.CLOSE_AUDIO_EFFECT_CONTROL_SESSION");
         i.addAction("android.media.action.HDMI_AUDIO_PLUG");
         i.addAction("android.media.action.OPEN_AUDIO_EFFECT_CONTROL_SESSION");
         i.addAction("android.net.conn.BACKGROUND_DATA_SETTING_CHANGED");
-        i.addAction("android.net.conn.CONNECTIVITY_CHANGE android.net.nsd.STATE_CHANGED");
+        i.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        i.addAction("android.net.nsd.STATE_CHANGED");
         i.addAction("android.net.scoring.SCORER_CHANGED");
         i.addAction("android.net.scoring.SCORE_NETWORKS");
-        i.addAction("android.net.wifi.NETWORK_IDS_CHANGED android.net.wifi.RSSI_CHANGED");
-        i.addAction("android.net.wifi.SCAN_RESULTS android.net.wifi.STATE_CHANGE");
+        i.addAction("android.net.wifi.NETWORK_IDS_CHANGED");
+        i.addAction("android.net.wifi.RSSI_CHANGED");
+        i.addAction("android.net.wifi.SCAN_RESULTS");
+        i.addAction("android.net.wifi.STATE_CHANGE");
         i.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         i.addAction("android.net.wifi.p2p.CONNECTION_STATE_CHANGE");
         i.addAction("android.net.wifi.p2p.DISCOVERY_STATE_CHANGE");
