@@ -83,7 +83,7 @@ public class MetaData implements JsonStream.Streamable {
             tab.remove(key);
         }
 
-        if (notify) {
+        if (notify && Bugsnag.client != null) {
             Bugsnag.getClient().notifyBugsnagObservers(NotifyType.META);
         }
     }
@@ -95,7 +95,10 @@ public class MetaData implements JsonStream.Streamable {
      */
     public void clearTab(String tabName) {
         store.remove(tabName);
-        Bugsnag.getClient().notifyBugsnagObservers(NotifyType.META);
+
+        if (Bugsnag.client != null) {
+            Bugsnag.getClient().notifyBugsnagObservers(NotifyType.META);
+        }
     }
 
     Map<String, Object> getTab(String tabName) {
@@ -111,7 +114,10 @@ public class MetaData implements JsonStream.Streamable {
 
     void setFilters(String... filters) {
         this.filters = filters;
-        Bugsnag.getClient().notifyBugsnagObservers(NotifyType.FILTERS);
+
+        if (Bugsnag.client != null) {
+            Bugsnag.getClient().notifyBugsnagObservers(NotifyType.FILTERS);
+        }
     }
 
     static MetaData merge(MetaData... metaDataList) {
