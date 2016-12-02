@@ -49,6 +49,7 @@ class Exceptions implements JsonStream.Streamable {
         writer.beginObject();
             writer.name("errorClass").value(name);
             writer.name("message").value(message);
+            writer.name("type").value(config.defaultExceptionType);
             writer.name("stacktrace").value(stacktrace);
         writer.endObject();
     }

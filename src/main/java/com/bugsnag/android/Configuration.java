@@ -27,6 +27,7 @@ public class Configuration {
     private boolean sendThreads = true;
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
+    String defaultExceptionType = "android";
 
     private MetaData metaData = new MetaData();
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
@@ -66,6 +67,7 @@ public class Configuration {
      */
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
+        notifyObservers(NotifyType.APP);
     }
 
     /**
@@ -86,6 +88,7 @@ public class Configuration {
      */
     public void setContext(String context) {
         this.context = context;
+        notifyObservers(NotifyType.CONTEXT);
     }
 
     /**
@@ -128,6 +131,7 @@ public class Configuration {
      */
     public void setBuildUUID(String buildUUID) {
         this.buildUUID = buildUUID;
+        notifyObservers(NotifyType.APP);
     }
 
     /**
@@ -154,6 +158,7 @@ public class Configuration {
      */
     public void setFilters(String[] filters) {
         this.filters = filters;
+        this.metaData.setFilters(filters);
     }
 
     /**
@@ -200,6 +205,7 @@ public class Configuration {
      */
     public void setNotifyReleaseStages(String[] notifyReleaseStages) {
         this.notifyReleaseStages = notifyReleaseStages;
+        notifyObservers(NotifyType.RELEASE_STAGES);
     }
 
     /**
@@ -246,6 +252,7 @@ public class Configuration {
      */
     public void setReleaseStage(String releaseStage) {
         this.releaseStage = releaseStage;
+        notifyObservers(NotifyType.APP);
     }
 
     /**
@@ -301,6 +308,7 @@ public class Configuration {
      */
     protected void setMetaData(MetaData metaData) {
         this.metaData = metaData;
+        notifyObservers(NotifyType.META);
     }
 
     /**
@@ -386,4 +394,11 @@ public class Configuration {
 
         return false;
     }
+
+    private void notifyObservers(NotifyType type) {
+        if (Bugsnag.client != null) {
+            Bugsnag.getClient().notifyBugsnagObservers(type);
+        }
+    }
+
 }

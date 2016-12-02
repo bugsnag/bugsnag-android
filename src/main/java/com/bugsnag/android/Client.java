@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import java.util.Locale;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Observable;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -23,20 +24,22 @@ import java.util.Map;
  *
  * @see Bugsnag
  */
-public class Client {
+public class Client extends Observable {
+
+
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String USER_ID_KEY = "user.id";
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
 
-    private final Configuration config;
+    protected final Configuration config;
     private final Context appContext;
-    private final AppData appData;
-    private final DeviceData deviceData;
-    private final Breadcrumbs breadcrumbs;
-    private final User user = new User();
-    private final ErrorStore errorStore;
+    protected final AppData appData;
+    protected final DeviceData deviceData;
+    final Breadcrumbs breadcrumbs;
+    protected final User user = new User();
+    protected final ErrorStore errorStore;
 
     /**
      * Initialize a Bugsnag client
@@ -121,6 +124,11 @@ public class Client {
 
         // Flush any on-disk errors
         errorStore.flush();
+    }
+
+    public void notifyBugsnagObservers(NotifyType type) {
+        setChanged();
+        super.notifyObservers(type.getValue());
     }
 
     /**
@@ -326,6 +334,7 @@ public class Client {
             .remove(USER_EMAIL_KEY)
             .remove(USER_NAME_KEY)
             .commit();
+        notifyBugsnagObservers(NotifyType.USER);
     }
 
     /**
@@ -336,10 +345,24 @@ public class Client {
      * @param id a unique identifier of the current user
      */
     public void setUserId(String id) {
+        setUserId(id, true);
+    }
+
+    /**
+     * Sets the user ID with the option to not notify any NDK components of the change
+     *
+     * @param id a unique identifier of the current user
+     * @param notify whether or not to notify NDK components
+     */
+    void setUserId(String id, boolean notify) {
         user.setId(id);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_ID_KEY, id);
+        }
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -350,10 +373,24 @@ public class Client {
      * @param email the email address of the current user
      */
     public void setUserEmail(String email) {
+        setUserEmail(email, true);
+    }
+
+    /**
+     * Sets the user email with the option to not notify any NDK components of the change
+     *
+     * @param email the email address of the current user
+     * @param notify whether or not to notify NDK components
+     */
+    void setUserEmail(String email, boolean notify) {
         user.setEmail(email);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_EMAIL_KEY, email);
+        }
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -364,10 +401,24 @@ public class Client {
      * @param name the name of the current user
      */
     public void setUserName(String name) {
+        setUserName(name, true);
+    }
+
+    /**
+     * Sets the user name with the option to not notify any NDK components of the change
+     *
+     * @param name the name of the current user
+     * @param notify whether or not to notify NDK components
+     */
+    void setUserName(String name, boolean notify) {
         user.setName(name);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_NAME_KEY, name);
+        }
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -444,7 +495,6 @@ public class Client {
      *
      * @param name       the error name or class
      * @param message    the error message
-     * @param context    the error context
      * @param stacktrace the stackframes associated with the error
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
@@ -459,7 +509,6 @@ public class Client {
      *
      * @param name       the error name or class
      * @param message    the error message
-     * @param context    the error context
      * @param stacktrace the stackframes associated with the error
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
@@ -547,10 +596,22 @@ public class Client {
      */
     public void leaveBreadcrumb(String breadcrumb) {
         breadcrumbs.add(breadcrumb);
+        notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
     public void leaveBreadcrumb(String name, BreadcrumbType type, Map<String, String> metadata) {
+        leaveBreadcrumb(name, type, metadata, true);
+    }
+
+    void leaveBreadcrumb(String name,
+                         BreadcrumbType type,
+                         Map<String, String> metadata,
+                         boolean notify) {
         breadcrumbs.add(name, type, metadata);
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.BREADCRUMB);
+        }
     }
 
     /**
@@ -569,6 +630,7 @@ public class Client {
      */
     public void clearBreadcrumbs() {
         breadcrumbs.clear();
+        notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
     /**
