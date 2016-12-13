@@ -48,7 +48,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     public void uncaughtException(Thread t, Throwable e) {
         // Notify any subscribed clients of the uncaught exception
         for(Client client : clientMap.keySet()) {
-            client.notify(e, Severity.ERROR);
+            client.notifyBlocking(e, Severity.ERROR);
         }
 
         // Pass exception on to original exception handler
