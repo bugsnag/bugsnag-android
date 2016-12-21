@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.7.1 (2016-12-21)
+
+### Bug fixes
+
+* Make `getContext` and `clearUser` static methods
+  [Dave Perryman](https://github.com/Pezzah)
+  [#132](https://github.com/bugsnag/bugsnag-android/pull/132)
+
+* Ensure fatal crashes are sent as blocking requests
+  [Simon Maynard](https://github.com/snmaynard)
+  [#137](https://github.com/bugsnag/bugsnag-android/pull/137)
+
 ## 3.7.0 (2016-10-05)
 
 ### Enhancements
