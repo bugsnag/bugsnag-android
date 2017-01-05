@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -24,7 +25,7 @@ import java.util.Observable;
  *
  * @see Bugsnag
  */
-public class Client extends Observable {
+public class Client extends Observable implements Observer {
 
 
     private static final boolean BLOCKING = true;
@@ -122,6 +123,8 @@ public class Client extends Observable {
             enableExceptionHandler();
         }
 
+        config.addObserver(this);
+
         // Flush any on-disk errors
         errorStore.flush();
     }
@@ -129,6 +132,17 @@ public class Client extends Observable {
     public void notifyBugsnagObservers(NotifyType type) {
         setChanged();
         super.notifyObservers(type.getValue());
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg instanceof Integer) {
+            NotifyType type = NotifyType.fromInt((Integer) arg);
+
+            if (type != null) {
+                notifyBugsnagObservers(type);
+            }
+        }
     }
 
     /**

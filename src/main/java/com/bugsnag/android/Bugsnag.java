@@ -25,7 +25,7 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext) {
         client = new Client(androidContext);
-        configureClientObservers();
+        NativeInterface.configureClientObservers(client);
         return client;
     }
 
@@ -37,7 +37,7 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext, String apiKey) {
         client = new Client(androidContext, apiKey);
-        configureClientObservers();
+        NativeInterface.configureClientObservers(client);
         return client;
     }
 
@@ -50,7 +50,7 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext, String apiKey, boolean enableExceptionHandler) {
         client = new Client(androidContext, apiKey, enableExceptionHandler);
-        configureClientObservers();
+        NativeInterface.configureClientObservers(client);
         return client;
     }
 
@@ -62,30 +62,8 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext, Configuration config) {
         client = new Client(androidContext, config);
-        configureClientObservers();
+        NativeInterface.configureClientObservers(client);
         return client;
-    }
-
-    private static void configureClientObservers() {
-
-        // Ensure that the bugsnag observer is registered
-        // Should only happen if the NDK library is present
-        try {
-            String className = "com.bugsnag.android.ndk.BugsnagObserver";
-            Class c = Class.forName(className);
-            Observer o = (Observer)c.newInstance();
-            client.addObserver(o);
-        } catch (ClassNotFoundException e) {
-            // ignore this one, will happen if the NDK plugin is not present
-            Logger.warn("Failed to find NDK observer");
-        } catch (InstantiationException e) {
-            Logger.warn("Failed to instantiate NDK observer", e);
-        } catch (IllegalAccessException e) {
-            Logger.warn("Could not access NDK observer", e);
-        }
-
-        // Should make NDK components configure
-        client.notifyBugsnagObservers(NotifyType.ALL);
     }
 
     /**

@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-public class MetaData implements JsonStream.Streamable {
+public class MetaData extends Observable implements JsonStream.Streamable {
     private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
@@ -83,9 +84,7 @@ public class MetaData implements JsonStream.Streamable {
             tab.remove(key);
         }
 
-        if (notify && Bugsnag.client != null) {
-            Bugsnag.getClient().notifyBugsnagObservers(NotifyType.META);
-        }
+        notifyBugsnagObservers(NotifyType.META);
     }
 
     /**
@@ -96,9 +95,7 @@ public class MetaData implements JsonStream.Streamable {
     public void clearTab(String tabName) {
         store.remove(tabName);
 
-        if (Bugsnag.client != null) {
-            Bugsnag.getClient().notifyBugsnagObservers(NotifyType.META);
-        }
+        notifyBugsnagObservers(NotifyType.META);
     }
 
     Map<String, Object> getTab(String tabName) {
@@ -115,9 +112,7 @@ public class MetaData implements JsonStream.Streamable {
     void setFilters(String... filters) {
         this.filters = filters;
 
-        if (Bugsnag.client != null) {
-            Bugsnag.getClient().notifyBugsnagObservers(NotifyType.FILTERS);
-        }
+        notifyBugsnagObservers(NotifyType.FILTERS);
     }
 
     static MetaData merge(MetaData... metaDataList) {
@@ -228,5 +223,10 @@ public class MetaData implements JsonStream.Streamable {
         }
 
         return false;
+    }
+
+    private void notifyBugsnagObservers(NotifyType type) {
+        setChanged();
+        super.notifyObservers(type.getValue());
     }
 }

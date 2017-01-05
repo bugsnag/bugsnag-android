@@ -3,86 +3,125 @@ package com.bugsnag.android;
 import java.sql.BatchUpdateException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observer;
 
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
  */
-class NativeInterface {
+public class NativeInterface {
+
+    /** Static reference used if not using Bugsnag.init() */
+    private static Client client;
+
+    private static Client getClient() {
+        if (client != null) {
+            return client;
+        } else {
+            return Bugsnag.getClient();
+        }
+    }
+
+    public static void setClient(Client client) {
+        NativeInterface.client = client;
+        configureClientObservers(client);
+    }
+
+    public static void configureClientObservers(Client client) {
+
+        // Ensure that the bugsnag observer is registered
+        // Should only happen if the NDK library is present
+        try {
+            String className = "com.bugsnag.android.ndk.BugsnagObserver";
+            Class c = Class.forName(className);
+            Observer o = (Observer)c.newInstance();
+            client.addObserver(o);
+        } catch (ClassNotFoundException e) {
+            // ignore this one, will happen if the NDK plugin is not present
+            Logger.info("Failed to find NDK observer");
+        } catch (InstantiationException e) {
+            Logger.warn("Failed to instantiate NDK observer", e);
+        } catch (IllegalAccessException e) {
+            Logger.warn("Could not access NDK observer", e);
+        }
+
+        // Should make NDK components configure
+        client.notifyBugsnagObservers(NotifyType.ALL);
+    }
 
     public static String getContext() {
-        return Bugsnag.getClient().getContext();
+        return getClient().getContext();
     }
 
     public static String getErrorStorePath() {
-        return Bugsnag.getClient().errorStore.path;
+        return getClient().errorStore.path;
     }
 
     public static String getUserId() {
-        return Bugsnag.getClient().user.getId();
+        return getClient().user.getId();
     }
 
     public static String getUserEmail() {
-        return Bugsnag.getClient().user.getEmail();
+        return getClient().user.getEmail();
     }
 
     public static String getUserName() {
-        return Bugsnag.getClient().user.getName();
+        return getClient().user.getName();
     }
 
     public static String getPackageName() {
-        return Bugsnag.getClient().appData.packageName;
+        return getClient().appData.packageName;
     }
 
     public static String getAppName() {
-        return Bugsnag.getClient().appData.appName;
+        return getClient().appData.appName;
     }
 
     public static String getVersionName() {
-        return Bugsnag.getClient().appData.versionName;
+        return getClient().appData.versionName;
     }
 
     public static int getVersionCode() {
-        return Bugsnag.getClient().appData.versionCode;
+        return getClient().appData.versionCode;
     }
 
     public static String getBuildUUID() {
-        return Bugsnag.getClient().config.getBuildUUID();
+        return getClient().config.getBuildUUID();
     }
 
     public static String getAppVersion() {
-        return Bugsnag.getClient().appData.getAppVersion();
+        return getClient().appData.getAppVersion();
     }
 
     public static String getReleaseStage() {
-        return Bugsnag.getClient().appData.getReleaseStage();
+        return getClient().appData.getReleaseStage();
     }
 
     public static String getDeviceId() {
-        return Bugsnag.getClient().deviceData.id;
+        return getClient().deviceData.id;
     }
 
     public static String getDeviceLocale() {
-        return Bugsnag.getClient().deviceData.locale;
+        return getClient().deviceData.locale;
     }
 
     public static double getDeviceTotalMemory() {
-        return Bugsnag.getClient().deviceData.totalMemory;
+        return getClient().deviceData.totalMemory;
     }
 
     public static Boolean getDeviceRooted() {
-        return Bugsnag.getClient().deviceData.rooted;
+        return getClient().deviceData.rooted;
     }
 
     public static float getDeviceScreenDensity() {
-        return Bugsnag.getClient().deviceData.screenDensity;
+        return getClient().deviceData.screenDensity;
     }
 
     public static int getDeviceDpi() {
-        return Bugsnag.getClient().deviceData.dpi;
+        return getClient().deviceData.dpi;
     }
 
     public static String getDeviceScreenResolution() {
-        return Bugsnag.getClient().deviceData.screenResolution;
+        return getClient().deviceData.screenResolution;
     }
 
     public static String getDeviceManufacturer() {
@@ -110,46 +149,46 @@ class NativeInterface {
     }
 
     public static String[] getDeviceCpuAbi() {
-        return Bugsnag.getClient().deviceData.cpuAbi;
+        return getClient().deviceData.cpuAbi;
     }
 
 
     public static Map<String, Object> getMetaData() {
-        return Bugsnag.getClient().getMetaData().store;
+        return getClient().getMetaData().store;
     }
 
     public static Object[] getBreadcrumbs() {
-        return Bugsnag.getClient().breadcrumbs.store.toArray();
+        return getClient().breadcrumbs.store.toArray();
     }
 
     public static String[] getFilters() {
-        return Bugsnag.getClient().config.getFilters();
+        return getClient().config.getFilters();
     }
 
     public static String[] getReleaseStages() {
-        return Bugsnag.getClient().config.getNotifyReleaseStages();
+        return getClient().config.getNotifyReleaseStages();
     }
 
     public static void setUser(final String id,
                                final String email,
                                final String name) {
 
-        Bugsnag.getClient().setUserId(id, false);
-        Bugsnag.getClient().setUserEmail(email, false);
-        Bugsnag.getClient().setUserName(name, false);
+        getClient().setUserId(id, false);
+        getClient().setUserEmail(email, false);
+        getClient().setUserName(name, false);
     }
 
     public static void leaveBreadcrumb(final String name,
                                        final BreadcrumbType type) {
 
-        Bugsnag.getClient().leaveBreadcrumb(name, type, new HashMap<String, String>(), false);
+        getClient().leaveBreadcrumb(name, type, new HashMap<String, String>(), false);
     }
 
     public static void addToTab(final String tab,
                                 final String key,
                                 final Object value) {
 
-        Bugsnag.getClient().config.getMetaData().addToTab(tab, key, value, false);
+        getClient().config.getMetaData().addToTab(tab, key, value, false);
     }
 
     public static void notify(final String name,
@@ -158,7 +197,7 @@ class NativeInterface {
                               final StackTraceElement[] stacktrace,
                               final Map<String, Object> metaData) {
 
-        Bugsnag.getClient().notify(name, message, stacktrace, new Callback() {
+        getClient().notify(name, message, stacktrace, new Callback() {
             @Override
             public void beforeNotify(Report report) {
                 report.getError().setSeverity(severity);
