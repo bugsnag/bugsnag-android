@@ -12,6 +12,12 @@ import java.util.Locale;
 import java.util.Collections;
 import java.util.Map;
 
+enum DeliveryStyle {
+    SAME_THREAD,
+    ASYNC,
+    ASYNC_WITH_CACHE
+}
+
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
  * Typically you'd instead use the static access provided in the Bugsnag class.
@@ -402,7 +408,7 @@ public class Client {
      */
     public void notify(Throwable exception) {
         Error error = new Error(config, exception);
-        notify(error, !BLOCKING, null);
+        notify(error, !BLOCKING);
     }
 
     /**
@@ -412,7 +418,7 @@ public class Client {
      */
     public void notifyBlocking(Throwable exception) {
         Error error = new Error(config, exception);
-        notify(error, BLOCKING, null);
+        notify(error, BLOCKING);
     }
 
     /**
@@ -424,7 +430,7 @@ public class Client {
      */
     public void notify(Throwable exception, Callback callback) {
         Error error = new Error(config, exception);
-        notify(error, !BLOCKING, callback);
+        notify(error, DeliveryStyle.ASYNC, callback);
     }
 
     /**
@@ -436,7 +442,7 @@ public class Client {
      */
     public void notifyBlocking(Throwable exception, Callback callback) {
         Error error = new Error(config, exception);
-        notify(error, BLOCKING, callback);
+        notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
     /**
@@ -451,7 +457,7 @@ public class Client {
      */
     public void notify(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
         Error error = new Error(config, name, message, stacktrace);
-        notify(error, !BLOCKING, callback);
+        notify(error, DeliveryStyle.ASYNC, callback);
     }
 
     /**
@@ -466,7 +472,7 @@ public class Client {
      */
     public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
         Error error = new Error(config, name, message, stacktrace);
-        notify(error, BLOCKING, callback);
+        notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
     /**
@@ -587,10 +593,11 @@ public class Client {
     }
 
     private void notify(Error error, boolean blocking) {
-        notify(error, blocking, null);
+        DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
+        notify(error, style, null);
     }
 
-    private void notify(Error error, boolean blocking, Callback callback) {
+    private void notify(Error error, DeliveryStyle style, Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;
@@ -626,18 +633,24 @@ public class Client {
             callback.beforeNotify(report);
         }
 
-        if (blocking) {
-            deliver(report, error);
-        } else {
-            final Report finalReport = report;
-            final Error finalError = error;
-            // Attempt to send the report in the background
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    deliver(finalReport, finalError);
-                }
-            });
+        switch (style) {
+            case SAME_THREAD:
+                deliver(report, error);
+                break;
+            case ASYNC:
+                final Report finalReport = report;
+                final Error finalError = error;
+                // Attempt to send the report in the background
+                Async.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        deliver(finalReport, finalError);
+                    }
+                });
+                break;
+            case ASYNC_WITH_CACHE:
+                errorStore.write(error);
+                errorStore.flush();
         }
 
         // Add a breadcrumb for this error occurring
@@ -658,6 +671,12 @@ public class Client {
         } catch (Exception e) {
             Logger.warn("Problem sending error to Bugsnag", e);
         }
+    }
+
+    void cacheAndNotify(Throwable exception, Severity severity) {
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
     private boolean runBeforeNotifyTasks(Error error) {
