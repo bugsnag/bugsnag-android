@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.2 (2017-01-12)
+
+* Cache unhandled exception reports prior to sending, send non-blocking
+  [Delisa Mason](https://github.com/kattrali)
+  [#139](https://github.com/bugsnag/bugsnag-android/pull/139)
+
 ## 3.7.1 (2016-12-21)
 
 ### Bug fixes
