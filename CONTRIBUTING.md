@@ -141,3 +141,8 @@ This process is a little ridiculous...
      guides on the website with any new content (in `_android.slim`)
 -    Bump the version number in the installation instructions on
      docs.bugsnag.com/platforms/android, and add any new content
+
+### 6. Keep dependent libraries in sync
+
+-    Make releases to downstream libraries, if appropriate (generally for bug
+     fixes)
