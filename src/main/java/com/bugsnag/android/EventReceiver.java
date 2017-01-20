@@ -119,6 +119,10 @@ public class EventReceiver extends BroadcastReceiver {
             filter.addAction(action);
         }
 
+        for (String category : categories) {
+            filter.addCategory(category);
+        }
+
         return filter;
     }
 
