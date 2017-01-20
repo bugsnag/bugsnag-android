@@ -136,9 +136,9 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.app.action.ACTION_PASSWORD_CHANGED", BreadcrumbType.LOG);
         actions.put("android.app.action.ACTION_PASSWORD_FAILED", BreadcrumbType.LOG);
         actions.put("android.app.action.ACTION_PASSWORD_SUCCEEDED", BreadcrumbType.LOG);
-        actions.put("android.app.action.DEVICE_ADMIN_DISABLED", BreadcrumbType.LOG);
-        actions.put("android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED", BreadcrumbType.LOG);
-        actions.put("android.app.action.DEVICE_ADMIN_ENABLED", BreadcrumbType.LOG);
+        actions.put("android.app.action.DEVICE_ADMIN_DISABLED", BreadcrumbType.USER);
+        actions.put("android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED", BreadcrumbType.USER);
+        actions.put("android.app.action.DEVICE_ADMIN_ENABLED", BreadcrumbType.USER);
         actions.put("android.bluetooth.a2dp.action.SINK_STATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.bluetooth.adapter.action.DISCOVERY_FINISHED", BreadcrumbType.LOG);
         actions.put("android.bluetooth.adapter.action.DISCOVERY_STARTED", BreadcrumbType.LOG);
@@ -156,39 +156,39 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.bluetooth.devicepicker.action.LAUNCH", BreadcrumbType.LOG);
         actions.put("android.bluetooth.headset.action.AUDIO_STATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.bluetooth.headset.action.STATE_CHANGED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.ACTION_POWER_CONNECTED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.ACTION_POWER_DISCONNECTED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.ACTION_SHUTDOWN", BreadcrumbType.LOG);
-        actions.put("android.intent.action.AIRPLANE_MODE", BreadcrumbType.LOG);
+        actions.put("android.intent.action.ACTION_POWER_CONNECTED", BreadcrumbType.USER);
+        actions.put("android.intent.action.ACTION_POWER_DISCONNECTED", BreadcrumbType.USER);
+        actions.put("android.intent.action.ACTION_SHUTDOWN", BreadcrumbType.USER);
+        actions.put("android.intent.action.AIRPLANE_MODE", BreadcrumbType.USER);
         //actions.put("android.intent.action.BATTERY_CHANGED", BreadcrumbType.LOG); - Ignore this, changes every percent
         actions.put("android.intent.action.BATTERY_LOW", BreadcrumbType.LOG);
         actions.put("android.intent.action.BATTERY_OKAY", BreadcrumbType.LOG);
         actions.put("android.intent.action.BOOT_COMPLETED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.CAMERA_BUTTON", BreadcrumbType.LOG);
+        actions.put("android.intent.action.CAMERA_BUTTON", BreadcrumbType.USER);
         actions.put("android.intent.action.CONFIGURATION_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.DATA_SMS_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.intent.action.DATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.DEVICE_STORAGE_LOW", BreadcrumbType.LOG);
         actions.put("android.intent.action.DEVICE_STORAGE_OK", BreadcrumbType.LOG);
-        actions.put("android.intent.action.DOCK_EVENT", BreadcrumbType.LOG);
+        actions.put("android.intent.action.DOCK_EVENT", BreadcrumbType.USER);
         actions.put("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE", BreadcrumbType.LOG);
         actions.put("android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE", BreadcrumbType.LOG);
         actions.put("android.intent.action.GTALK_CONNECTED", BreadcrumbType.LOG);
         actions.put("android.intent.action.GTALK_DISCONNECTED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.HEADSET_PLUG", BreadcrumbType.LOG);
+        actions.put("android.intent.action.HEADSET_PLUG", BreadcrumbType.USER);
         actions.put("android.intent.action.INPUT_METHOD_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.LOCALE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.MANAGE_PACKAGE_STORAGE", BreadcrumbType.LOG);
         actions.put("android.intent.action.MEDIA_BAD_REMOVAL", BreadcrumbType.LOG);
-        actions.put("android.intent.action.MEDIA_BUTTON", BreadcrumbType.LOG);
+        actions.put("android.intent.action.MEDIA_BUTTON", BreadcrumbType.USER);
         actions.put("android.intent.action.MEDIA_CHECKING", BreadcrumbType.LOG);
-        actions.put("android.intent.action.MEDIA_EJECT", BreadcrumbType.LOG);
+        actions.put("android.intent.action.MEDIA_EJECT", BreadcrumbType.USER);
         actions.put("android.intent.action.MEDIA_MOUNTED", BreadcrumbType.LOG);
         actions.put("android.intent.action.MEDIA_NOFS", BreadcrumbType.LOG);
-        actions.put("android.intent.action.MEDIA_REMOVED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.MEDIA_SCANNER_FINISHED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.MEDIA_SCANNER_SCAN_FILE", BreadcrumbType.LOG);
-        actions.put("android.intent.action.MEDIA_SCANNER_STARTED", BreadcrumbType.LOG);
+        actions.put("android.intent.action.MEDIA_REMOVED", BreadcrumbType.USER);
+        actions.put("android.intent.action.MEDIA_SCANNER_FINISHED", BreadcrumbType.PROCESS);
+        actions.put("android.intent.action.MEDIA_SCANNER_SCAN_FILE", BreadcrumbType.PROCESS);
+        actions.put("android.intent.action.MEDIA_SCANNER_STARTED", BreadcrumbType.PROCESS);
         actions.put("android.intent.action.MEDIA_SHARED", BreadcrumbType.LOG);
         actions.put("android.intent.action.MEDIA_UNMOUNTABLE", BreadcrumbType.LOG);
         actions.put("android.intent.action.MEDIA_UNMOUNTED", BreadcrumbType.LOG);
@@ -199,19 +199,19 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.intent.action.PACKAGE_INSTALL", BreadcrumbType.LOG);
         actions.put("android.intent.action.PACKAGE_REMOVED", BreadcrumbType.LOG);
         actions.put("android.intent.action.PACKAGE_REPLACED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.PACKAGE_RESTARTED", BreadcrumbType.LOG);
+        actions.put("android.intent.action.PACKAGE_RESTARTED", BreadcrumbType.NAVIGATION);
         actions.put("android.intent.action.PHONE_STATE", BreadcrumbType.LOG);
         actions.put("android.intent.action.PROVIDER_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.REBOOT", BreadcrumbType.LOG);
-        actions.put("android.intent.action.SCREEN_OFF", BreadcrumbType.LOG);
-        actions.put("android.intent.action.SCREEN_ON", BreadcrumbType.LOG);
+        actions.put("android.intent.action.SCREEN_OFF", BreadcrumbType.USER);
+        actions.put("android.intent.action.SCREEN_ON", BreadcrumbType.USER);
         actions.put("android.intent.action.TIMEZONE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.TIME_SET", BreadcrumbType.LOG);
         //actions.put("android.intent.action.TIME_TICK", BreadcrumbType.LOG); - Ignore this, adds a message every minute
         actions.put("android.intent.action.UID_REMOVED", BreadcrumbType.LOG);
         actions.put("android.intent.action.UMS_CONNECTED", BreadcrumbType.LOG);
         actions.put("android.intent.action.UMS_DISCONNECTED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.USER_PRESENT", BreadcrumbType.LOG);
+        actions.put("android.intent.action.USER_PRESENT", BreadcrumbType.USER);
         actions.put("android.intent.action.WALLPAPER_CHANGED", BreadcrumbType.LOG);
         actions.put("android.media.AUDIO_BECOMING_NOISY", BreadcrumbType.LOG);
         actions.put("android.media.RINGER_MODE_CHANGED", BreadcrumbType.LOG);
@@ -233,8 +233,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.provider.Telephony.WAP_PUSH_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.speech.tts.TTS_QUEUE_PROCESSING_COMPLETED", BreadcrumbType.LOG);
         actions.put("android.speech.tts.engine.TTS_DATA_INSTALLED", BreadcrumbType.LOG);
-
-
     }
 
     /**
@@ -319,7 +317,7 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.bluetooth.input.profile.action.CONNECTION_STATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.bluetooth.pan.profile.action.CONNECTION_STATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.MY_PACKAGE_REPLACED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.PACKAGE_FIRST_LAUNCH", BreadcrumbType.LOG);
+        actions.put("android.intent.action.PACKAGE_FIRST_LAUNCH", BreadcrumbType.NAVIGATION);
     }
 
     /**
@@ -437,8 +435,8 @@ public class EventReceiver extends BroadcastReceiver {
      */
     private static void addIntentActionsApi17(Map<String, BreadcrumbType> actions) {
 
-        actions.put("android.intent.action.DREAMING_STARTED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.DREAMING_STOPPED", BreadcrumbType.LOG);
+        actions.put("android.intent.action.DREAMING_STARTED", BreadcrumbType.NAVIGATION);
+        actions.put("android.intent.action.DREAMING_STOPPED", BreadcrumbType.NAVIGATION);
         actions.put("android.intent.action.PACKAGE_VERIFIED", BreadcrumbType.LOG);
     }
 
@@ -482,7 +480,7 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.intent.action.CONTENT_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.DATA_SMS_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.intent.action.DOWNLOAD_COMPLETE", BreadcrumbType.LOG);
-        actions.put("android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED", BreadcrumbType.LOG);
+        actions.put("android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED", BreadcrumbType.USER);
         actions.put("android.provider.Telephony.SIM_FULL", BreadcrumbType.LOG);
         actions.put("android.provider.Telephony.SMS_CB_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.provider.Telephony.SMS_DELIVER", BreadcrumbType.LOG);
@@ -528,14 +526,14 @@ public class EventReceiver extends BroadcastReceiver {
      */
     private static void addIntentActionsApi21(Map<String, BreadcrumbType> actions) {
 
-        actions.put("android.app.action.LOCK_TASK_ENTERING", BreadcrumbType.LOG);
-        actions.put("android.app.action.LOCK_TASK_EXITING", BreadcrumbType.LOG);
+        actions.put("android.app.action.LOCK_TASK_ENTERING", BreadcrumbType.NAVIGATION);
+        actions.put("android.app.action.LOCK_TASK_EXITING", BreadcrumbType.NAVIGATION);
         actions.put("android.app.action.NEXT_ALARM_CLOCK_CHANGED", BreadcrumbType.LOG);
         actions.put("android.app.action.PROFILE_PROVISIONING_COMPLETE", BreadcrumbType.LOG);
         actions.put("android.hardware.hdmi.action.OSD_MESSAGE", BreadcrumbType.LOG);
         actions.put("android.intent.action.APPLICATION_RESTRICTIONS_CHANGED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.HEADSET_PLUG", BreadcrumbType.LOG);
-        actions.put("android.media.action.HDMI_AUDIO_PLUG", BreadcrumbType.LOG);
+        actions.put("android.intent.action.HEADSET_PLUG", BreadcrumbType.USER);
+        actions.put("android.media.action.HDMI_AUDIO_PLUG", BreadcrumbType.USER);
         actions.put("android.net.scoring.SCORER_CHANGED", BreadcrumbType.LOG);
         actions.put("android.net.scoring.SCORE_NETWORKS", BreadcrumbType.LOG);
         actions.put("android.os.action.POWER_SAVE_MODE_CHANGED", BreadcrumbType.LOG);
@@ -604,7 +602,7 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.intent.action.LOCKED_BOOT_COMPLETED", BreadcrumbType.LOG);
         actions.put("android.intent.action.PACKAGES_SUSPENDED", BreadcrumbType.LOG);
         actions.put("android.intent.action.PACKAGES_UNSUSPENDED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.USER_UNLOCKED", BreadcrumbType.LOG);
+        actions.put("android.intent.action.USER_UNLOCKED", BreadcrumbType.USER);
         actions.put("android.net.conn.RESTRICT_BACKGROUND_CHANGED", BreadcrumbType.LOG);
         actions.put("android.provider.action.DEFAULT_SMS_PACKAGE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.provider.action.EXTERNAL_PROVIDER_CHANGE", BreadcrumbType.LOG);
