@@ -18,7 +18,7 @@ import java.io.IOException;
 public class Error implements JsonStream.Streamable {
     private static final String PAYLOAD_VERSION = "3";
 
-    private final Configuration config;
+    final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
     private AppState appState;
@@ -45,7 +45,6 @@ public class Error implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.getMetaData(), metaData);
-        mergedMetaData.setFilters(config.getFilters());
 
         // Write error basics
         writer.beginObject();

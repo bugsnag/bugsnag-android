@@ -24,14 +24,14 @@ import java.util.Locale;
  */
 class DeviceData implements JsonStream.Streamable {
 
-    private final Float screenDensity;
-    private final Integer dpi;
-    private final String screenResolution;
-    private final Long totalMemory;
-    private final Boolean rooted;
-    private final String locale;
-    private final String id;
-    private final String[] cpuAbi;
+    protected final Float screenDensity;
+    protected final Integer dpi;
+    protected final String screenResolution;
+    protected final Long totalMemory;
+    protected final Boolean rooted;
+    protected final String locale;
+    protected final String id;
+    protected final String[] cpuAbi;
 
     DeviceData(@NonNull Context appContext) {
         screenDensity = getScreenDensity(appContext);

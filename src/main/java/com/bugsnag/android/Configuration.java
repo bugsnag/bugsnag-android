@@ -6,12 +6,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-public class Configuration {
+public class Configuration extends Observable implements Observer {
     static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
 
     private final String apiKey;
@@ -27,8 +29,9 @@ public class Configuration {
     private boolean sendThreads = true;
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
+    String defaultExceptionType = "android";
 
-    private MetaData metaData = new MetaData();
+    private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
 
     /**
@@ -38,6 +41,8 @@ public class Configuration {
      */
     public Configuration(@NonNull String apiKey) {
         this.apiKey = apiKey;
+        this.metaData = new MetaData();
+        this.metaData.addObserver(this);
     }
 
     /**
@@ -66,6 +71,7 @@ public class Configuration {
      */
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
+        notifyBugsnagObservers(NotifyType.APP);
     }
 
     /**
@@ -86,6 +92,7 @@ public class Configuration {
      */
     public void setContext(String context) {
         this.context = context;
+        notifyBugsnagObservers(NotifyType.CONTEXT);
     }
 
     /**
@@ -128,6 +135,7 @@ public class Configuration {
      */
     public void setBuildUUID(String buildUUID) {
         this.buildUUID = buildUUID;
+        notifyBugsnagObservers(NotifyType.APP);
     }
 
     /**
@@ -154,6 +162,7 @@ public class Configuration {
      */
     public void setFilters(String[] filters) {
         this.filters = filters;
+        this.metaData.setFilters(filters);
     }
 
     /**
@@ -200,6 +209,7 @@ public class Configuration {
      */
     public void setNotifyReleaseStages(String[] notifyReleaseStages) {
         this.notifyReleaseStages = notifyReleaseStages;
+        notifyBugsnagObservers(NotifyType.RELEASE_STAGES);
     }
 
     /**
@@ -246,6 +256,7 @@ public class Configuration {
      */
     public void setReleaseStage(String releaseStage) {
         this.releaseStage = releaseStage;
+        notifyBugsnagObservers(NotifyType.APP);
     }
 
     /**
@@ -300,7 +311,10 @@ public class Configuration {
      * @param metaData meta data
      */
     protected void setMetaData(MetaData metaData) {
+        this.metaData.deleteObserver(this);
         this.metaData = metaData;
+        this.metaData.addObserver(this);
+        notifyBugsnagObservers(NotifyType.META);
     }
 
     /**
@@ -385,5 +399,21 @@ public class Configuration {
         }
 
         return false;
+    }
+
+    private void notifyBugsnagObservers(NotifyType type) {
+        setChanged();
+        super.notifyObservers(type.getValue());
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg instanceof Integer) {
+            NotifyType type = NotifyType.fromInt((Integer) arg);
+
+            if (type != null) {
+                notifyBugsnagObservers(type);
+            }
+        }
     }
 }

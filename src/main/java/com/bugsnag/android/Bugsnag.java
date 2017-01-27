@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import java.util.Map;
+import java.util.Observer;
 
 import android.content.Context;
 
@@ -14,7 +15,7 @@ import android.content.Context;
  * @see Client
  */
 public final class Bugsnag {
-    private static Client client;
+    static Client client;
     private Bugsnag() {}
 
     /**
@@ -24,6 +25,7 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext) {
         client = new Client(androidContext);
+        NativeInterface.configureClientObservers(client);
         return client;
     }
 
@@ -35,6 +37,7 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext, String apiKey) {
         client = new Client(androidContext, apiKey);
+        NativeInterface.configureClientObservers(client);
         return client;
     }
 
@@ -47,6 +50,7 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext, String apiKey, boolean enableExceptionHandler) {
         client = new Client(androidContext, apiKey, enableExceptionHandler);
+        NativeInterface.configureClientObservers(client);
         return client;
     }
 
@@ -58,6 +62,7 @@ public final class Bugsnag {
      */
     public static Client init(Context androidContext, Configuration config) {
         client = new Client(androidContext, config);
+        NativeInterface.configureClientObservers(client);
         return client;
     }
 
