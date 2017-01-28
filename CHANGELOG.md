@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.8.0 (2017-01-27)
+
+## Enhancements
+
+* Add support for interfacing with native code
+
 ## 3.7.2 (2017-01-12)
 
 * Cache unhandled exception reports prior to sending, send non-blocking
