@@ -1,11 +1,15 @@
 package com.bugsnag.android;
 
+import android.annotation.SuppressLint;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+
+import static org.junit.Assert.assertNotEquals;
 
 public class DeviceDataTest extends BugsnagTestCase {
     public void testSaneValues() throws JSONException, IOException {
@@ -30,5 +34,16 @@ public class DeviceDataTest extends BugsnagTestCase {
             // Emulators returned null for android id before android 2.2
             assertNotNull(deviceDataJson.getString("id"));
         }
+    }
+
+    @SuppressLint("HardwareIds")
+    public void testDeviceIdSource() {
+        DeviceIdSource deviceIdSource = new DeviceIdSource(getContext());
+        final String id1 = deviceIdSource.getId();
+        assertNotNull(id1);
+        assertEquals(id1, deviceIdSource.getId());
+
+        // Instrumentation test should never enter legacy mode
+        assertNotEquals(Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID), deviceIdSource);
     }
 }

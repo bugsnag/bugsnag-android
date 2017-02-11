@@ -1,18 +1,15 @@
 package com.bugsnag.android;
 
 import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -40,7 +37,7 @@ class DeviceData implements JsonStream.Streamable {
         totalMemory = getTotalMemory();
         rooted = isRooted();
         locale = getLocale();
-        id = getAndroidId(appContext);
+        id = new DeviceIdSource(appContext).getId();
         cpuAbi = getCpuAbi();
     }
 
@@ -164,15 +161,6 @@ class DeviceData implements JsonStream.Streamable {
     @NonNull
     private static String getLocale() {
         return Locale.getDefault().toString();
-    }
-
-    /**
-     * Get the unique device id for the current Android device
-     */
-    @NonNull
-    private static String getAndroidId(Context appContext) {
-        ContentResolver cr = appContext.getContentResolver();
-        return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
     }
 
     /**
