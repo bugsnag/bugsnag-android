@@ -12,7 +12,6 @@ import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -134,7 +133,9 @@ class DeviceData implements JsonStream.Streamable {
         "/system/app/Superuser",
         "/system/app/SuperSU",
         // Fallback
-        "/system/xbin/daemonsu"
+        "/system/xbin/daemonsu",
+        // Systemless root
+        "/su/bin"
     };
 
     /**
@@ -142,13 +143,10 @@ class DeviceData implements JsonStream.Streamable {
      */
     @Nullable
     private static Boolean isRooted() {
-        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys"))
-            return true;
-
+        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys")) return true;
         try {
             for (String candidate : ROOT_INDICATORS) {
-                if (new File(candidate).exists())
-                    return true;
+                if (new File(candidate).exists()) return true;
             }
         } catch (Exception ignore) {
             return null;
