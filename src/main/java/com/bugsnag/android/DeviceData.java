@@ -134,7 +134,9 @@ class DeviceData implements JsonStream.Streamable {
         "/system/app/Superuser",
         "/system/app/SuperSU",
         // Fallback
-        "/system/xbin/daemonsu"
+        "/system/xbin/daemonsu",
+        // Systemless root
+        "/su/bin"
     };
 
     /**
