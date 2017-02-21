@@ -9,7 +9,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 
 public class DeviceDataTest extends BugsnagTestCase {
     public void testSaneValues() throws JSONException, IOException {
@@ -44,6 +46,6 @@ public class DeviceDataTest extends BugsnagTestCase {
         assertEquals(id1, deviceIdSource.getId());
 
         // Instrumentation test should never enter legacy mode
-        assertNotEquals(Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID), deviceIdSource);
+        assertThat(Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID), not(equalTo(deviceIdSource.getId())));
     }
 }
