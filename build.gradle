@@ -1,16 +1,15 @@
 buildscript {
     repositories {
+        jcenter()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+        classpath 'com.android.tools.build:gradle:2.2.3'
     }
 }
 
 // Tasks to build and test the android library
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.library'
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
@@ -27,7 +26,7 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:support-annotations:23.1.1"
+    compile "com.android.support:support-annotations:25.1.1"
 }
 
 // Disable doclint:
