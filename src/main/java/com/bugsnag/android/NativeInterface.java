@@ -37,7 +37,7 @@ public class NativeInterface {
             client.addObserver(o);
         } catch (ClassNotFoundException e) {
             // ignore this one, will happen if the NDK plugin is not present
-            Logger.info("Failed to find NDK observer");
+            Logger.info("Bugsnag NDK integration not available");
         } catch (InstantiationException e) {
             Logger.warn("Failed to instantiate NDK observer", e);
         } catch (IllegalAccessException e) {
