@@ -8,8 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.util.Locale;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -35,10 +35,11 @@ public class Client extends Observable implements Observer {
 
 
     private static final boolean BLOCKING = true;
-    private static final String SHARED_PREF_KEY = "com.bugsnag.android";
+    static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String USER_ID_KEY = "user.id";
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
+    static final String DEVICE_TOKEN_KEY = "device.token";
 
     protected final Configuration config;
     private final Context appContext;
