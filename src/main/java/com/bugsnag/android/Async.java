@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import android.os.Build;
 import android.support.annotation.NonNull;
 
 import java.util.concurrent.BlockingQueue;
@@ -19,26 +18,18 @@ class Async {
     private static final int CORE_POOL_SIZE = Math.max(1, Math.min(CPU_COUNT - 1, 4));
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
     private static final int KEEP_ALIVE_SECONDS = 30;
-    private static final Executor EXECUTOR;
     private static final BlockingQueue<Runnable> POOL_WORK_QUEUE =
         new LinkedBlockingQueue<>(128);
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
-        private final AtomicInteger mCount = new AtomicInteger(1);
+        private final AtomicInteger count = new AtomicInteger(1);
 
         public Thread newThread(@NonNull Runnable r) {
-            return new Thread(r, "Bugsnag Thread #" + mCount.getAndIncrement());
+            return new Thread(r, "Bugsnag Thread #" + count.getAndIncrement());
         }
     };
-
-    static {
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-            CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
-            POOL_WORK_QUEUE, THREAD_FACTORY);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            threadPoolExecutor.allowCoreThreadTimeOut(true);
-        }
-        EXECUTOR = threadPoolExecutor;
-    }
+    private static final Executor EXECUTOR = new ThreadPoolExecutor(
+        CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
+        POOL_WORK_QUEUE, THREAD_FACTORY);
 
     static void run(Runnable task) {
         EXECUTOR.execute(task);
