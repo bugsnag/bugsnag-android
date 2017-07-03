@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 
@@ -13,7 +15,8 @@ public class DeviceDataTest extends BugsnagTestCase {
 
     public void testSaneValues() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
-        DeviceData deviceData = new DeviceData(getContext());
+        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        DeviceData deviceData = new DeviceData(getContext(), sharedPref);
         JSONObject deviceDataJson = streamableToJson(deviceData);
 
         assertEquals("android", deviceDataJson.getString("osName"));

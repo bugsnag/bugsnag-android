@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -22,6 +23,8 @@ import java.util.UUID;
  */
 class DeviceData implements JsonStream.Streamable {
 
+    private static final String INSTALL_ID_KEY = "install.iud";
+
     protected final Float screenDensity;
     protected final Integer dpi;
     protected final String screenResolution;
@@ -31,14 +34,14 @@ class DeviceData implements JsonStream.Streamable {
     protected final String id;
     protected final String[] cpuAbi;
 
-    DeviceData(@NonNull Context appContext) {
+    DeviceData(@NonNull Context appContext, SharedPreferences sharedPref) {
         screenDensity = getScreenDensity(appContext);
         dpi = getScreenDensityDpi(appContext);
         screenResolution = getScreenResolution(appContext);
         totalMemory = getTotalMemory();
         rooted = isRooted();
         locale = getLocale();
-        id = getUniqueInstallId();
+        id = retrieveUniqueInstallId(sharedPref);
         cpuAbi = getCpuAbi();
     }
 
@@ -71,6 +74,7 @@ class DeviceData implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    @NonNull
     public String getUserId() {
         return id;
     }
@@ -165,11 +169,16 @@ class DeviceData implements JsonStream.Streamable {
     }
 
     /**
-     * Get the unique id for the current app installation
+     * Get the unique id for the current app installation, creating a unique UUID if needed
      */
-    @NonNull
-    private static String getUniqueInstallId() {
-        return UUID.randomUUID().toString(); // TODO persist in shared prefs
+    private String retrieveUniqueInstallId(SharedPreferences sharedPref) {
+        String installId = sharedPref.getString(INSTALL_ID_KEY, null);
+
+        if (installId == null) {
+            installId = UUID.randomUUID().toString();
+            sharedPref.edit().putString(INSTALL_ID_KEY, installId).commit();
+        }
+        return installId;
     }
 
     /**
