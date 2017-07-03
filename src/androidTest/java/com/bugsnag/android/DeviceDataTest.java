@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.content.ContentResolver;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 
 import org.json.JSONException;
@@ -8,6 +10,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class DeviceDataTest extends BugsnagTestCase {
+
     public void testSaneValues() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
         DeviceData deviceData = new DeviceData(getContext());
@@ -29,6 +32,11 @@ public class DeviceDataTest extends BugsnagTestCase {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO) {
             // Emulators returned null for android id before android 2.2
             assertNotNull(deviceDataJson.getString("id"));
+
+            ContentResolver cr = getContext().getContentResolver();
+            String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
+            assertNotSame(androidId, deviceDataJson.getString("id"));
         }
+
     }
 }
