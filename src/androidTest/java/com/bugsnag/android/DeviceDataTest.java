@@ -15,7 +15,7 @@ public class DeviceDataTest extends BugsnagTestCase {
 
     public void testSaneValues() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         DeviceData deviceData = new DeviceData(getContext(), sharedPref);
         JSONObject deviceDataJson = streamableToJson(deviceData);
 
@@ -36,6 +36,7 @@ public class DeviceDataTest extends BugsnagTestCase {
             // Emulators returned null for android id before android 2.2
             assertNotNull(deviceDataJson.getString("id"));
 
+            // historically Android ID was used, this should no longer be the case
             ContentResolver cr = getContext().getContentResolver();
             String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
             assertNotSame(androidId, deviceDataJson.getString("id"));
