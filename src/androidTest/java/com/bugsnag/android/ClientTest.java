@@ -10,7 +10,7 @@ public class ClientTest extends BugsnagTestCase {
         super.setUp();
 
         // Make sure no user is stored
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .remove("user.id")
             .remove("user.email")
@@ -45,7 +45,7 @@ public class ClientTest extends BugsnagTestCase {
     public void testRestoreUserFromPrefs() {
 
         // Set a user in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .putString("user.id", "123456")
             .putString("user.email", "mr.test@email.com")
@@ -83,7 +83,7 @@ public class ClientTest extends BugsnagTestCase {
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was store in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         assertEquals("123456", sharedPref.getString("user.id", null));
         assertEquals("mr.test@email.com", sharedPref.getString("user.email", null));
         assertEquals("Mr Test", sharedPref.getString("user.name", null));
@@ -96,7 +96,7 @@ public class ClientTest extends BugsnagTestCase {
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was not stored in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -105,7 +105,7 @@ public class ClientTest extends BugsnagTestCase {
     public void testClearUser() {
 
         // Set a user in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .putString("user.id", "123456")
             .putString("user.email", "mr.test@email.com")
@@ -117,7 +117,7 @@ public class ClientTest extends BugsnagTestCase {
         client.clearUser();
 
         // Check that there is no user information in the prefs anymore
-        sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        sharedPref = getSharedPrefs();
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -128,7 +128,7 @@ public class ClientTest extends BugsnagTestCase {
         super.tearDown();
 
         // Make sure no user is stored
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .remove("user.id")
             .remove("user.email")

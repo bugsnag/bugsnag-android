@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.UUID;
 
 enum DeliveryStyle {
     SAME_THREAD,
@@ -101,8 +102,10 @@ public class Client extends Observable implements Observer {
         }
 
         // Set up and collect constant app and device diagnostics
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+
         appData = new AppData(appContext, config);
-        deviceData = new DeviceData(appContext);
+        deviceData = new DeviceData(appContext, sharedPref);
         AppState.init();
 
         // Set up breadcrumbs
@@ -113,7 +116,6 @@ public class Client extends Observable implements Observer {
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
             user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
             user.setName(sharedPref.getString(USER_NAME_KEY, null));
             user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
