@@ -6,10 +6,8 @@ public class ClientRejectedExecutionTest extends BugsnagTestCase {
 
     /**
      * Checks that an exception is not thrown when the max task queue is reached.
-     *
-     * @throws InterruptedException
      */
-    public void testRejectedExecution() throws InterruptedException {
+    public void testRejectedExecution() {
         Client client = new Client(getContext(), "api-key");
 
         for (int k = 0; k < MAX_ALLOWED_TASKS * 2; k++) {
