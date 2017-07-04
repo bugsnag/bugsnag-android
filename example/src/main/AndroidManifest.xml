@@ -13,7 +13,10 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="com.bugsnag.android.API_KEY" android:value="066f5ad3590596f9aa8d601ea89af845"/>
+      <!-- Uses a manifest placeholder to specify the API key. This means that different keys
+      can be supplied depending on the build variant. See
+       https://developer.android.com/studio/build/manifest-build-variables.html-->
+        <meta-data android:name="com.bugsnag.android.API_KEY" android:value="${bugsnagApiKey}"/>
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
