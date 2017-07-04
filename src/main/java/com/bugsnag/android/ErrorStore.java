@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.RejectedExecutionException;
 
 import android.content.Context;
 
@@ -44,36 +45,41 @@ class ErrorStore {
     void flush() {
         if(path == null) return;
 
-        Async.run(new Runnable() {
-            @Override
-            public void run() {
-                // Look up all saved error files
-                File exceptionDir = new File(path);
-                if(!exceptionDir.exists() || !exceptionDir.isDirectory()) return;
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    // Look up all saved error files
+                    File exceptionDir = new File(path);
+                    if(!exceptionDir.exists() || !exceptionDir.isDirectory()) return;
 
-                File[] errorFiles = exceptionDir.listFiles();
-                if(errorFiles != null && errorFiles.length > 0) {
-                    Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", errorFiles.length));
+                    File[] errorFiles = exceptionDir.listFiles();
+                    if(errorFiles != null && errorFiles.length > 0) {
+                        Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", errorFiles.length));
 
-                    for(File errorFile : errorFiles) {
-                        try {
-                            Report report = new Report(config.getApiKey(), errorFile);
-                            HttpClient.post(config.getEndpoint(), report);
+                        for(File errorFile : errorFiles) {
+                            try {
+                                Report report = new Report(config.getApiKey(), errorFile);
+                                HttpClient.post(config.getEndpoint(), report);
 
-                            Logger.info("Deleting sent error file " + errorFile.getName());
-                            if (!errorFile.delete())
-                                errorFile.deleteOnExit();
-                        } catch (HttpClient.NetworkException e) {
-                            Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
-                        } catch (Exception e) {
-                            Logger.warn("Problem sending unsent error from disk", e);
-                            if (!errorFile.delete())
-                                errorFile.deleteOnExit();
+                                Logger.info("Deleting sent error file " + errorFile.getName());
+                                if (!errorFile.delete())
+                                    errorFile.deleteOnExit();
+                            } catch (HttpClient.NetworkException e) {
+                                Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
+                            } catch (Exception e) {
+                                Logger.warn("Problem sending unsent error from disk", e);
+                                if (!errorFile.delete())
+                                    errorFile.deleteOnExit();
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
+        catch (RejectedExecutionException e) {
+            Logger.warn("Failed to flush all on-disk errors, retaining unsent errors for later.");
+        }
     }
 
     // Write an error to disk, for later sending
