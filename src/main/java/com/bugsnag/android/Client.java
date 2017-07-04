@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.RejectedExecutionException;
 
 enum DeliveryStyle {
     SAME_THREAD,
@@ -716,13 +717,20 @@ public class Client extends Observable implements Observer {
             case ASYNC:
                 final Report finalReport = report;
                 final Error finalError = error;
+
                 // Attempt to send the report in the background
-                Async.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        deliver(finalReport, finalError);
-                    }
-                });
+                try {
+                    Async.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            deliver(finalReport, finalError);
+                        }
+                    });
+                }
+                catch (RejectedExecutionException e) {
+                    errorStore.write(error);
+                    Logger.warn("Exceeded max queue count, saving to disk to send later");
+                }
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);

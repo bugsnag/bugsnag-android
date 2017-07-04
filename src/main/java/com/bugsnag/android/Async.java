@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,7 @@ class Async {
         CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
         POOL_WORK_QUEUE, THREAD_FACTORY);
 
-    static void run(Runnable task) {
+    static void run(Runnable task) throws RejectedExecutionException {
         EXECUTOR.execute(task);
     }
 }
