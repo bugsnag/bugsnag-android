@@ -9,10 +9,31 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'com.bugsnag.android.gradle'
 
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
+
+    defaultConfig {
+        manifestPlaceholders = [
+            bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
+            bugsnagBuildUUID: "123",
+            bugsnagAppVersion: "1.2.3",
+            bugsnagEndpoint: "https://example.com",
+            bugsnagReleaseStage: "debug",
+            bugsnagSendThreads: true,
+            bugsnagEnableExceptionHandler: true,
+            bugsnagPersistUserBetweenSessions: false,
+        ]
+
+        // TODO enter below into manifest placeholder
+
+//            private String[] filters = new String[]{"password"};
+//            private String[] ignoreClasses;
+//            private String[] notifyReleaseStages = null;
+//            private String[] projectPackages;
+    }
 
     buildTypes {
 
@@ -26,17 +47,8 @@ android {
         }
     }
 
-    productFlavors {
-        free {
-            buildConfigField "String", "bugsnagApiKey", "\"066f5ad3590596f9aa8d601ea89af845\""
-            resValue "string", "bugsnagApiKey", "066f5ad3590596f9aa8d601ea89af845"
-            manifestPlaceholders = [bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845"]
-        }
-    }
-
     defaultConfig {
         minSdkVersion 4
-        manifestPlaceholders = [bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845"]
     }
 }
 
@@ -44,4 +56,3 @@ dependencies {
     compile rootProject
 }
 
-apply plugin: 'com.bugsnag.android.gradle'

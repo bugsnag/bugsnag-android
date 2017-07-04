@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Collections;
 import java.util.Map;
@@ -34,12 +36,22 @@ enum DeliveryStyle {
  */
 public class Client extends Observable implements Observer {
 
-
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
+    private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
     private static final String USER_ID_KEY = "user.id";
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
+
+    private static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
+    private static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
+    private static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
+    private static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
+    private static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
+    private static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
+    private static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
+    private static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
+    private static final String MF_FILTERS = BUGSNAG_NAMESPACE + ".FILTERS";
 
     protected final Configuration config;
     private final Context appContext;
@@ -94,7 +106,7 @@ public class Client extends Observable implements Observer {
         String buildUUID = null;
         try {
             ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-            buildUUID = ai.metaData.getString("com.bugsnag.android.BUILD_UUID");
+            buildUUID = ai.metaData.getString(MF_BUILD_UUID);
         } catch (Exception ignore) {
         }
         if (buildUUID != null) {
@@ -169,7 +181,19 @@ public class Client extends Observable implements Observer {
         if (TextUtils.isEmpty(apiKey)) {
             try {
                 ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-                apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+                Bundle data = ai.metaData;
+
+                apiKey = data.getString(MF_API_KEY);
+
+                // TODO serialise following, otherwise use the defaults
+                data.getString(MF_BUILD_UUID);
+                data.getString(MF_APP_VERSION);
+                data.getString(MF_ENDPOINT);
+                data.getString(MF_RELEASE_STAGE);
+                data.getBoolean(MF_SEND_THREADS);
+                data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER);
+                data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS);
+
             } catch (Exception ignore) {
             }
         }
