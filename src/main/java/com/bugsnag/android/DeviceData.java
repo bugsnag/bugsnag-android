@@ -1,19 +1,18 @@
 package com.bugsnag.android;
 
 import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Information about the current Android device which doesn't change over time,
@@ -24,6 +23,8 @@ import java.util.Locale;
  */
 class DeviceData implements JsonStream.Streamable {
 
+    private static final String INSTALL_ID_KEY = "install.iud";
+
     protected final Float screenDensity;
     protected final Integer dpi;
     protected final String screenResolution;
@@ -33,14 +34,14 @@ class DeviceData implements JsonStream.Streamable {
     protected final String id;
     protected final String[] cpuAbi;
 
-    DeviceData(@NonNull Context appContext) {
+    DeviceData(@NonNull Context appContext, SharedPreferences sharedPref) {
         screenDensity = getScreenDensity(appContext);
         dpi = getScreenDensityDpi(appContext);
         screenResolution = getScreenResolution(appContext);
         totalMemory = getTotalMemory();
         rooted = isRooted();
         locale = getLocale();
-        id = getAndroidId(appContext);
+        id = retrieveUniqueInstallId(sharedPref);
         cpuAbi = getCpuAbi();
     }
 
@@ -73,6 +74,7 @@ class DeviceData implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    @NonNull
     public String getUserId() {
         return id;
     }
@@ -167,12 +169,16 @@ class DeviceData implements JsonStream.Streamable {
     }
 
     /**
-     * Get the unique device id for the current Android device
+     * Get the unique id for the current app installation, creating a unique UUID if needed
      */
-    @NonNull
-    private static String getAndroidId(Context appContext) {
-        ContentResolver cr = appContext.getContentResolver();
-        return Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
+    private String retrieveUniqueInstallId(SharedPreferences sharedPref) {
+        String installId = sharedPref.getString(INSTALL_ID_KEY, null);
+
+        if (installId == null) {
+            installId = UUID.randomUUID().toString();
+            sharedPref.edit().putString(INSTALL_ID_KEY, installId).commit();
+        }
+        return installId;
     }
 
     /**
