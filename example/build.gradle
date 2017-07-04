@@ -26,6 +26,14 @@ android {
         }
     }
 
+    productFlavors {
+        free {
+            buildConfigField "String", "bugsnagApiKey", "\"066f5ad3590596f9aa8d601ea89af845\""
+            resValue "string", "bugsnagApiKey", "066f5ad3590596f9aa8d601ea89af845"
+            manifestPlaceholders = [bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845"]
+        }
+    }
+
     defaultConfig {
         minSdkVersion 4
         manifestPlaceholders = [bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845"]
