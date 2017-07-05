@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -10,8 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.util.Locale;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -51,13 +50,14 @@ public class Client extends Observable implements Observer {
     static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
     static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
 
+
     protected final Configuration config;
     private final Context appContext;
-    private final AppData appData;
-    private final DeviceData deviceData;
-    private final Breadcrumbs breadcrumbs;
-    private final User user = new User();
-    private final ErrorStore errorStore;
+    protected final AppData appData;
+    protected final DeviceData deviceData;
+    final Breadcrumbs breadcrumbs;
+    protected final User user = new User();
+    protected final ErrorStore errorStore;
     private final EventReceiver eventReceiver = new EventReceiver();
 
     /**

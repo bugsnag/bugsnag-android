@@ -10,7 +10,6 @@
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.GET_TASKS" />
 
-    <application android:label="Bugsnag Example App" android:icon="@drawable/ic_launcher">
         <activity android:name="ExampleActivity"
                   android:label="Bugsnag Example App"
                   android:theme="@android:style/Theme.Light">
