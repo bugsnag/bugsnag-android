@@ -21,6 +21,12 @@ public class ErrorStoreTest extends BugsnagTestCase {
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        FileUtils.clearFilesInDir(errorStorageDir);
+    }
+
     public void testWrite() throws Exception {
         Error error = new Error(config, new RuntimeException());
         errorStore.write(error);

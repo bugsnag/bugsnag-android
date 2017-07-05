@@ -14,10 +14,15 @@ public class ClientRejectedExecutionTest extends BugsnagTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
         client = new Client(getContext(), "api-key");
         ErrorStore errorStore = client.errorStore;
         errorStorageDir = new File(errorStore.path);
+        FileUtils.clearFilesInDir(errorStorageDir);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
@@ -38,5 +43,4 @@ public class ClientRejectedExecutionTest extends BugsnagTestCase {
         File errorFile = files[0];
         ErrorStoreTest.checkFirstErrorReportFile(errorFile);
     }
-
 }
