@@ -168,7 +168,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Creates a new configuration object based on the provided parameters
-     * will read the API key from the manifest file if it is not provided
+     * will read the API key and other configuration values from the manifest if it is not provided
      *
      * @param androidContext         The context of the application
      * @param apiKey                 The API key to use
@@ -209,6 +209,13 @@ public class Client extends Observable implements Observer {
         return newConfig;
     }
 
+    /**
+     * Populates the config with meta-data values supplied from the manifest as a Bundle.
+     *
+     * @param config the config to mutate
+     * @param data the manifest bundle
+     * @return the updated config
+     */
     static Configuration populateConfigFromManifest(Configuration config, Bundle data) {
         config.setBuildUUID(data.getString(MF_BUILD_UUID));
         config.setAppVersion(data.getString(MF_APP_VERSION));

@@ -137,6 +137,7 @@ public class ClientTest extends BugsnagTestCase {
         Bundle data = new Bundle();
         Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
 
+        assertEquals(config.getApiKey(), newConfig.getApiKey());
         assertEquals(config.getBuildUUID(), newConfig.getBuildUUID());
         assertEquals(config.getAppVersion(), newConfig.getAppVersion());
         assertEquals(config.getReleaseStage(), newConfig.getReleaseStage());
