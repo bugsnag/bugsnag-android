@@ -1,8 +1,9 @@
 package com.bugsnag.android;
 
-import java.util.Map;
-
+import android.app.Application;
 import android.content.Context;
+
+import java.util.Map;
 
 /**
  * Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app.
@@ -23,6 +24,7 @@ public final class Bugsnag {
      * @param  androidContext  an Android context, usually <code>this</code>
      */
     public static Client init(Context androidContext) {
+        warnIfNotAppContext(androidContext);
         client = new Client(androidContext);
         return client;
     }
@@ -34,6 +36,7 @@ public final class Bugsnag {
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      */
     public static Client init(Context androidContext, String apiKey) {
+        warnIfNotAppContext(androidContext);
         client = new Client(androidContext, apiKey);
         return client;
     }
@@ -46,6 +49,7 @@ public final class Bugsnag {
      * @param  enableExceptionHandler  should we automatically handle uncaught exceptions?
      */
     public static Client init(Context androidContext, String apiKey, boolean enableExceptionHandler) {
+        warnIfNotAppContext(androidContext);
         client = new Client(androidContext, apiKey, enableExceptionHandler);
         return client;
     }
@@ -57,6 +61,7 @@ public final class Bugsnag {
      * @param config         a configuration for the Client
      */
     public static Client init(Context androidContext, Configuration config) {
+        warnIfNotAppContext(androidContext);
         client = new Client(androidContext, config);
         return client;
     }
@@ -524,5 +529,12 @@ public final class Bugsnag {
         }
 
         return client;
+    }
+
+    private static void warnIfNotAppContext(Context androidContext) {
+        if (!(androidContext instanceof Application)) {
+            Logger.warn("Warning - Non-Application context detected! Please ensure that you are " +
+                "initializing Bugsnag from a custom Application class.");
+        }
     }
 }

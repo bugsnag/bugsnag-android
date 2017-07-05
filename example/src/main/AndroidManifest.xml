@@ -3,7 +3,10 @@
       package="com.bugsnag.android.example"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:label="Bugsnag Example App" android:icon="@drawable/ic_launcher">
+
+  <application android:label="Bugsnag Example App" android:icon="@drawable/ic_launcher"
+      android:name=".ExampleApplication">
+
         <activity android:name="ExampleActivity"
                   android:label="Bugsnag Example App"
                   android:theme="@android:style/Theme.Light">

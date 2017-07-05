@@ -27,9 +27,6 @@ public class ExampleActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        // Initialize the Bugsnag client
-        Bugsnag.init(this);
-
         // Execute some code before every bugsnag notification
         Bugsnag.beforeNotify(new BeforeNotify() {
             @Override
