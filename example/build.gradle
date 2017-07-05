@@ -9,7 +9,6 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
-apply plugin: 'com.bugsnag.android.gradle'
 
 android {
     compileSdkVersion 25
@@ -18,21 +17,14 @@ android {
     defaultConfig {
         manifestPlaceholders = [
             bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
-            bugsnagBuildUUID: "123",
-            bugsnagAppVersion: "1.2.3",
-            bugsnagEndpoint: "https://example.com",
+            bugsnagBuildUUID: "abc123",
+            bugsnagAppVersion: "1.0.0",
+            bugsnagEndpoint: "https://notify.bugsnag.com",
             bugsnagReleaseStage: "debug",
             bugsnagSendThreads: true,
             bugsnagEnableExceptionHandler: true,
             bugsnagPersistUserBetweenSessions: false,
         ]
-
-        // TODO enter below into manifest placeholder
-
-//            private String[] filters = new String[]{"password"};
-//            private String[] ignoreClasses;
-//            private String[] notifyReleaseStages = null;
-//            private String[] projectPackages;
     }
 
     buildTypes {
@@ -56,3 +48,4 @@ dependencies {
     compile rootProject
 }
 
+apply plugin: 'com.bugsnag.android.gradle'

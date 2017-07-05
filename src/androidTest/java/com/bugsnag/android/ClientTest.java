@@ -132,8 +132,21 @@ public class ClientTest extends BugsnagTestCase {
         assertFalse(sharedPref.contains("user.name"));
     }
 
-    public void testFullManifestConfig() {
+    public void testEmptyManifestConfig() {
         Configuration config = new Configuration("api-key");
+        Bundle data = new Bundle();
+        Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
+
+        assertEquals(config.getBuildUUID(), newConfig.getBuildUUID());
+        assertEquals(config.getAppVersion(), newConfig.getAppVersion());
+        assertEquals(config.getReleaseStage(), newConfig.getReleaseStage());
+        assertEquals(config.getEndpoint(), newConfig.getEndpoint());
+        assertEquals(config.getSendThreads(), newConfig.getSendThreads());
+        assertEquals(config.getEnableExceptionHandler(), newConfig.getEnableExceptionHandler());
+        assertEquals(config.getPersistUserBetweenSessions(), newConfig.getPersistUserBetweenSessions());
+    }
+
+    public void testFullManifestConfig() {
         String buildUuid = "123";
         String appVersion = "v1.0";
         String releaseStage = "debug";
@@ -149,7 +162,6 @@ public class ClientTest extends BugsnagTestCase {
         data.putBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, true);
 
         Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
-        assertNotSame(config, newConfig);
         assertEquals(buildUuid, newConfig.getBuildUUID());
         assertEquals(appVersion, newConfig.getAppVersion());
         assertEquals(releaseStage, newConfig.getReleaseStage());

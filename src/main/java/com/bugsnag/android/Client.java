@@ -100,7 +100,8 @@ public class Client extends Observable implements Observer {
 
         config = configuration;
 
-        // populate from manifest (if the constructor was called directly by the User)
+        // populate from manifest (in the case where the constructor was called directly by the
+        // User or no UUID was supplied)
         if (config.getBuildUUID() == null) {
             String buildUUID = null;
             try {
