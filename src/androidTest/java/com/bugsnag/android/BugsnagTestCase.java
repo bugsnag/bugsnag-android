@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.test.AndroidTestCase;
 
 public class BugsnagTestCase extends AndroidTestCase {
@@ -24,5 +26,9 @@ public class BugsnagTestCase extends AndroidTestCase {
 
     protected JSONArray streamableToJsonArray(JsonStream.Streamable streamable) throws JSONException, IOException  {
         return new JSONArray(streamableToString(streamable));
+    }
+
+    protected SharedPreferences getSharedPrefs() {
+        return getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
     }
 }

@@ -84,6 +84,8 @@ This process is a little ridiculous...
 
 ### 2. Prepare for release
 
+-   Test unhandled and handled exception reporting via the example application,
+    ensuring both kinds of reports are sent.
 -   Update the `CHANGELOG` and `README.md` with any new features
 
 -   Update the version numbers in `gradle.properties` and `src/main/java/com/bugsnag/android/Notifier.java`
@@ -135,8 +137,12 @@ This process is a little ridiculous...
 
 ### 5. Update documentation
 
--    Bump the version numbers in the quickstart guides on the website (in
-     `notifiers.yml`) and update installation instructions in the quickstart
+-    Update installation instructions in the quickstart
      guides on the website with any new content (in `_android.slim`)
 -    Bump the version number in the installation instructions on
      docs.bugsnag.com/platforms/android, and add any new content
+
+### 6. Keep dependent libraries in sync
+
+-    Make releases to downstream libraries, if appropriate (generally for bug
+     fixes)

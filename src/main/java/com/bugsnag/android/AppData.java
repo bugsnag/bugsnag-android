@@ -18,11 +18,11 @@ import java.io.IOException;
 class AppData implements JsonStream.Streamable {
     private final Configuration config;
 
-    private final String packageName;
-    private final String appName;
-    private final Integer versionCode;
-    private final String versionName;
-    private final String guessedReleaseStage;
+    protected final String packageName;
+    protected final String appName;
+    protected final Integer versionCode;
+    protected final String versionName;
+    protected final String guessedReleaseStage;
 
     AppData(@NonNull Context appContext, @NonNull Configuration config) {
         this.config = config;

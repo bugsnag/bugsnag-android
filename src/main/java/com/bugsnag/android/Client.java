@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,6 +13,14 @@ import android.text.TextUtils;
 import java.util.Locale;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
+enum DeliveryStyle {
+    SAME_THREAD,
+    ASYNC,
+    ASYNC_WITH_CACHE
+}
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -24,14 +33,25 @@ import java.util.Map;
  *
  * @see Bugsnag
  */
-public class Client {
+public class Client extends Observable implements Observer {
+
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
+    private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
     private static final String USER_ID_KEY = "user.id";
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
 
-    private final Configuration config;
+    static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
+    static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
+    static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
+    static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
+    static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
+    static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
+    static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
+    static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
+
+    protected final Configuration config;
     private final Context appContext;
     private final AppData appData;
     private final DeviceData deviceData;
@@ -82,19 +102,25 @@ public class Client {
 
         config = configuration;
 
-        String buildUUID = null;
-        try {
-            ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-            buildUUID = ai.metaData.getString("com.bugsnag.android.BUILD_UUID");
-        } catch (Exception ignore) {
-        }
-        if (buildUUID != null) {
-            config.setBuildUUID(buildUUID);
+        // populate from manifest (in the case where the constructor was called directly by the
+        // User or no UUID was supplied)
+        if (config.getBuildUUID() == null) {
+            String buildUUID = null;
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                buildUUID = ai.metaData.getString(MF_BUILD_UUID);
+            } catch (Exception ignore) {
+            }
+            if (buildUUID != null) {
+                config.setBuildUUID(buildUUID);
+            }
         }
 
         // Set up and collect constant app and device diagnostics
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+
         appData = new AppData(appContext, config);
-        deviceData = new DeviceData(appContext);
+        deviceData = new DeviceData(appContext, sharedPref);
         AppState.init();
 
         // Set up breadcrumbs
@@ -105,7 +131,6 @@ public class Client {
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
             user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
             user.setName(sharedPref.getString(USER_NAME_KEY, null));
             user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
@@ -123,14 +148,31 @@ public class Client {
 
         // register a receiver for automatic breadcrumbs
         androidContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
+        config.addObserver(this);
 
         // Flush any on-disk errors
         errorStore.flush();
     }
 
+    public void notifyBugsnagObservers(NotifyType type) {
+        setChanged();
+        super.notifyObservers(type.getValue());
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg instanceof Integer) {
+            NotifyType type = NotifyType.fromInt((Integer) arg);
+
+            if (type != null) {
+                notifyBugsnagObservers(type);
+            }
+        }
+    }
+
     /**
      * Creates a new configuration object based on the provided parameters
-     * will read the API key from the manifest file if it is not provided
+     * will read the API key and other configuration values from the manifest if it is not provided
      *
      * @param androidContext         The context of the application
      * @param apiKey                 The API key to use
@@ -140,11 +182,14 @@ public class Client {
     private static Configuration createNewConfiguration(@NonNull Context androidContext, String apiKey, boolean enableExceptionHandler) {
         Context appContext = androidContext.getApplicationContext();
 
-        // Attempt to load API key from AndroidManifest.xml if not passed in
-        if (TextUtils.isEmpty(apiKey)) {
+        // Attempt to load API key and other config from AndroidManifest.xml, if not passed in
+        boolean loadFromManifest = TextUtils.isEmpty(apiKey);
+
+        if (loadFromManifest) {
             try {
                 ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-                apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+                Bundle data = ai.metaData;
+                apiKey = data.getString(MF_API_KEY);
             } catch (Exception ignore) {
             }
         }
@@ -155,10 +200,41 @@ public class Client {
 
         // Build a configuration object
         Configuration newConfig = new Configuration(apiKey);
-
         newConfig.setEnableExceptionHandler(enableExceptionHandler);
 
+        if (loadFromManifest) {
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                Bundle data = ai.metaData;
+                populateConfigFromManifest(newConfig, data);
+            } catch (Exception ignore) {
+            }
+        }
         return newConfig;
+    }
+
+    /**
+     * Populates the config with meta-data values supplied from the manifest as a Bundle.
+     *
+     * @param config the config to mutate
+     * @param data the manifest bundle
+     * @return the updated config
+     */
+    static Configuration populateConfigFromManifest(Configuration config, Bundle data) {
+        config.setBuildUUID(data.getString(MF_BUILD_UUID));
+        config.setAppVersion(data.getString(MF_APP_VERSION));
+        config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
+
+        String endpoint = data.getString(MF_ENDPOINT);
+
+        if (endpoint != null) {
+            config.setEndpoint(endpoint);
+        }
+
+        config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
+        config.setPersistUserBetweenSessions(data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
+        config.setEnableExceptionHandler(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
+        return config;
     }
 
     /**
@@ -331,6 +407,7 @@ public class Client {
             .remove(USER_EMAIL_KEY)
             .remove(USER_NAME_KEY)
             .commit();
+        notifyBugsnagObservers(NotifyType.USER);
     }
 
     /**
@@ -341,10 +418,24 @@ public class Client {
      * @param id a unique identifier of the current user
      */
     public void setUserId(String id) {
+        setUserId(id, true);
+    }
+
+    /**
+     * Sets the user ID with the option to not notify any NDK components of the change
+     *
+     * @param id a unique identifier of the current user
+     * @param notify whether or not to notify NDK components
+     */
+    void setUserId(String id, boolean notify) {
         user.setId(id);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_ID_KEY, id);
+        }
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -355,10 +446,24 @@ public class Client {
      * @param email the email address of the current user
      */
     public void setUserEmail(String email) {
+        setUserEmail(email, true);
+    }
+
+    /**
+     * Sets the user email with the option to not notify any NDK components of the change
+     *
+     * @param email the email address of the current user
+     * @param notify whether or not to notify NDK components
+     */
+    void setUserEmail(String email, boolean notify) {
         user.setEmail(email);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_EMAIL_KEY, email);
+        }
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -369,10 +474,24 @@ public class Client {
      * @param name the name of the current user
      */
     public void setUserName(String name) {
+        setUserName(name, true);
+    }
+
+    /**
+     * Sets the user name with the option to not notify any NDK components of the change
+     *
+     * @param name the name of the current user
+     * @param notify whether or not to notify NDK components
+     */
+    void setUserName(String name, boolean notify) {
         user.setName(name);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_NAME_KEY, name);
+        }
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -407,7 +526,7 @@ public class Client {
      */
     public void notify(Throwable exception) {
         Error error = new Error(config, exception);
-        notify(error, !BLOCKING, null);
+        notify(error, !BLOCKING);
     }
 
     /**
@@ -417,7 +536,7 @@ public class Client {
      */
     public void notifyBlocking(Throwable exception) {
         Error error = new Error(config, exception);
-        notify(error, BLOCKING, null);
+        notify(error, BLOCKING);
     }
 
     /**
@@ -429,7 +548,7 @@ public class Client {
      */
     public void notify(Throwable exception, Callback callback) {
         Error error = new Error(config, exception);
-        notify(error, !BLOCKING, callback);
+        notify(error, DeliveryStyle.ASYNC, callback);
     }
 
     /**
@@ -441,7 +560,7 @@ public class Client {
      */
     public void notifyBlocking(Throwable exception, Callback callback) {
         Error error = new Error(config, exception);
-        notify(error, BLOCKING, callback);
+        notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
     /**
@@ -449,14 +568,13 @@ public class Client {
      *
      * @param name       the error name or class
      * @param message    the error message
-     * @param context    the error context
      * @param stacktrace the stackframes associated with the error
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
     public void notify(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
         Error error = new Error(config, name, message, stacktrace);
-        notify(error, !BLOCKING, callback);
+        notify(error, DeliveryStyle.ASYNC, callback);
     }
 
     /**
@@ -464,14 +582,13 @@ public class Client {
      *
      * @param name       the error name or class
      * @param message    the error message
-     * @param context    the error context
      * @param stacktrace the stackframes associated with the error
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
     public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
         Error error = new Error(config, name, message, stacktrace);
-        notify(error, BLOCKING, callback);
+        notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
     /**
@@ -552,10 +669,22 @@ public class Client {
      */
     public void leaveBreadcrumb(String breadcrumb) {
         breadcrumbs.add(breadcrumb);
+        notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
     public void leaveBreadcrumb(String name, BreadcrumbType type, Map<String, String> metadata) {
+        leaveBreadcrumb(name, type, metadata, true);
+    }
+
+    void leaveBreadcrumb(String name,
+                         BreadcrumbType type,
+                         Map<String, String> metadata,
+                         boolean notify) {
         breadcrumbs.add(name, type, metadata);
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.BREADCRUMB);
+        }
     }
 
     /**
@@ -574,6 +703,7 @@ public class Client {
      */
     public void clearBreadcrumbs() {
         breadcrumbs.clear();
+        notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
     /**
@@ -592,10 +722,11 @@ public class Client {
     }
 
     private void notify(Error error, boolean blocking) {
-        notify(error, blocking, null);
+        DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
+        notify(error, style, null);
     }
 
-    private void notify(Error error, boolean blocking, Callback callback) {
+    private void notify(Error error, DeliveryStyle style, Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;
@@ -631,18 +762,24 @@ public class Client {
             callback.beforeNotify(report);
         }
 
-        if (blocking) {
-            deliver(report, error);
-        } else {
-            final Report finalReport = report;
-            final Error finalError = error;
-            // Attempt to send the report in the background
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    deliver(finalReport, finalError);
-                }
-            });
+        switch (style) {
+            case SAME_THREAD:
+                deliver(report, error);
+                break;
+            case ASYNC:
+                final Report finalReport = report;
+                final Error finalError = error;
+                // Attempt to send the report in the background
+                Async.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        deliver(finalReport, finalError);
+                    }
+                });
+                break;
+            case ASYNC_WITH_CACHE:
+                errorStore.write(error);
+                errorStore.flush();
         }
 
         // Add a breadcrumb for this error occurring
@@ -663,6 +800,12 @@ public class Client {
         } catch (Exception e) {
             Logger.warn("Problem sending error to Bugsnag", e);
         }
+    }
+
+    void cacheAndNotify(Throwable exception, Severity severity) {
+        Error error = new Error(config, exception);
+        error.setSeverity(severity);
+        notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
     private boolean runBeforeNotifyTasks(Error error) {

@@ -14,6 +14,19 @@ android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
 
+    defaultConfig {
+        manifestPlaceholders = [
+            bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
+            bugsnagBuildUUID: "abc123",
+            bugsnagAppVersion: "1.0.0",
+            bugsnagEndpoint: "https://notify.bugsnag.com",
+            bugsnagReleaseStage: "debug",
+            bugsnagSendThreads: true,
+            bugsnagEnableExceptionHandler: true,
+            bugsnagPersistUserBetweenSessions: false,
+        ]
+    }
+
     buildTypes {
 
         debug {

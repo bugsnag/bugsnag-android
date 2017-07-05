@@ -1,5 +1,42 @@
 # Changelog
 
+## 3.9.0 (2017-05-08)
+
+### Enhancements
+
+* Improve performance by using bounded `ThreadPoolExecutor` for asynchronous
+  `notify()` calls
+  [Felipe Lima](https://github.com/felipecsl)
+  [#145](https://github.com/bugsnag/bugsnag-android/pull/145)
+
+* Detect systemless root
+  [Matthias Urhahn](https://github.com/d4rken)
+  [#142](https://github.com/bugsnag/bugsnag-android/pull/142)
+
+## 3.8.0 (2017-01-27)
+
+## Enhancements
+
+* Add support for interfacing with native code
+
+## 3.7.2 (2017-01-12)
+
+* Cache unhandled exception reports prior to sending, send non-blocking
+  [Delisa Mason](https://github.com/kattrali)
+  [#139](https://github.com/bugsnag/bugsnag-android/pull/139)
+
+## 3.7.1 (2016-12-21)
+
+### Bug fixes
+
+* Make `getContext` and `clearUser` static methods
+  [Dave Perryman](https://github.com/Pezzah)
+  [#132](https://github.com/bugsnag/bugsnag-android/pull/132)
+
+* Ensure fatal crashes are sent as blocking requests
+  [Simon Maynard](https://github.com/snmaynard)
+  [#137](https://github.com/bugsnag/bugsnag-android/pull/137)
+
 ## 3.7.0 (2016-10-05)
 
 ### Enhancements

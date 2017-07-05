@@ -2,6 +2,15 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+
+import static com.bugsnag.android.Client.MF_APP_VERSION;
+import static com.bugsnag.android.Client.MF_BUILD_UUID;
+import static com.bugsnag.android.Client.MF_ENABLE_EXCEPTION_HANDLER;
+import static com.bugsnag.android.Client.MF_ENDPOINT;
+import static com.bugsnag.android.Client.MF_PERSIST_USER_BETWEEN_SESSIONS;
+import static com.bugsnag.android.Client.MF_RELEASE_STAGE;
+import static com.bugsnag.android.Client.MF_SEND_THREADS;
 
 public class ClientTest extends BugsnagTestCase {
 
@@ -10,7 +19,7 @@ public class ClientTest extends BugsnagTestCase {
         super.setUp();
 
         // Make sure no user is stored
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .remove("user.id")
             .remove("user.email")
@@ -45,7 +54,7 @@ public class ClientTest extends BugsnagTestCase {
     public void testRestoreUserFromPrefs() {
 
         // Set a user in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .putString("user.id", "123456")
             .putString("user.email", "mr.test@email.com")
@@ -83,7 +92,7 @@ public class ClientTest extends BugsnagTestCase {
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was store in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         assertEquals("123456", sharedPref.getString("user.id", null));
         assertEquals("mr.test@email.com", sharedPref.getString("user.email", null));
         assertEquals("Mr Test", sharedPref.getString("user.name", null));
@@ -96,7 +105,7 @@ public class ClientTest extends BugsnagTestCase {
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was not stored in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -105,7 +114,7 @@ public class ClientTest extends BugsnagTestCase {
     public void testClearUser() {
 
         // Set a user in prefs
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .putString("user.id", "123456")
             .putString("user.email", "mr.test@email.com")
@@ -117,10 +126,50 @@ public class ClientTest extends BugsnagTestCase {
         client.clearUser();
 
         // Check that there is no user information in the prefs anymore
-        sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        sharedPref = getSharedPrefs();
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
+    }
+
+    public void testEmptyManifestConfig() {
+        Configuration config = new Configuration("api-key");
+        Bundle data = new Bundle();
+        Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
+
+        assertEquals(config.getApiKey(), newConfig.getApiKey());
+        assertEquals(config.getBuildUUID(), newConfig.getBuildUUID());
+        assertEquals(config.getAppVersion(), newConfig.getAppVersion());
+        assertEquals(config.getReleaseStage(), newConfig.getReleaseStage());
+        assertEquals(config.getEndpoint(), newConfig.getEndpoint());
+        assertEquals(config.getSendThreads(), newConfig.getSendThreads());
+        assertEquals(config.getEnableExceptionHandler(), newConfig.getEnableExceptionHandler());
+        assertEquals(config.getPersistUserBetweenSessions(), newConfig.getPersistUserBetweenSessions());
+    }
+
+    public void testFullManifestConfig() {
+        String buildUuid = "123";
+        String appVersion = "v1.0";
+        String releaseStage = "debug";
+        String endpoint = "http://example.com";
+
+        Bundle data = new Bundle();
+        data.putString(MF_BUILD_UUID, buildUuid);
+        data.putString(MF_APP_VERSION, appVersion);
+        data.putString(MF_RELEASE_STAGE, releaseStage);
+        data.putString(MF_ENDPOINT, endpoint);
+        data.putBoolean(MF_SEND_THREADS, false);
+        data.putBoolean(MF_ENABLE_EXCEPTION_HANDLER, false);
+        data.putBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, true);
+
+        Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
+        assertEquals(buildUuid, newConfig.getBuildUUID());
+        assertEquals(appVersion, newConfig.getAppVersion());
+        assertEquals(releaseStage, newConfig.getReleaseStage());
+        assertEquals(endpoint, newConfig.getEndpoint());
+        assertEquals(false, newConfig.getSendThreads());
+        assertEquals(false, newConfig.getEnableExceptionHandler());
+        assertEquals(true, newConfig.getPersistUserBetweenSessions());
     }
 
     @Override
@@ -128,7 +177,7 @@ public class ClientTest extends BugsnagTestCase {
         super.tearDown();
 
         // Make sure no user is stored
-        SharedPreferences sharedPref = getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
             .remove("user.id")
             .remove("user.email")

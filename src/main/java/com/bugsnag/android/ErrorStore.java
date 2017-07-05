@@ -84,7 +84,7 @@ class ErrorStore {
         File exceptionDir = new File(path);
         if (exceptionDir.isDirectory()) {
             File[] files = exceptionDir.listFiles();
-            if (files.length >= MAX_STORED_ERRORS) {
+            if (files != null && files.length >= MAX_STORED_ERRORS) {
                 // Sort files then delete the first one (oldest timestamp)
                 Arrays.sort(files);
                 Logger.warn(String.format("Discarding oldest error as stored error limit reached (%s)", files[0].getPath()));
