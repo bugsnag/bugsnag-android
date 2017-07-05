@@ -9,13 +9,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.UUID;
 
 enum DeliveryStyle {
     SAME_THREAD,
@@ -43,15 +41,14 @@ public class Client extends Observable implements Observer {
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
 
-    private static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
-    private static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
-    private static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
-    private static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
-    private static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
-    private static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
-    private static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
-    private static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
-    private static final String MF_FILTERS = BUGSNAG_NAMESPACE + ".FILTERS";
+    static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
+    static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
+    static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
+    static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
+    static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
+    static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
+    static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
+    static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
 
     protected final Configuration config;
     private final Context appContext;
@@ -103,14 +100,17 @@ public class Client extends Observable implements Observer {
 
         config = configuration;
 
-        String buildUUID = null;
-        try {
-            ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-            buildUUID = ai.metaData.getString(MF_BUILD_UUID);
-        } catch (Exception ignore) {
-        }
-        if (buildUUID != null) {
-            config.setBuildUUID(buildUUID);
+        // populate from manifest (if the constructor was called directly by the User)
+        if (config.getBuildUUID() == null) {
+            String buildUUID = null;
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                buildUUID = ai.metaData.getString(MF_BUILD_UUID);
+            } catch (Exception ignore) {
+            }
+            if (buildUUID != null) {
+                config.setBuildUUID(buildUUID);
+            }
         }
 
         // Set up and collect constant app and device diagnostics
@@ -177,23 +177,14 @@ public class Client extends Observable implements Observer {
     private static Configuration createNewConfiguration(@NonNull Context androidContext, String apiKey, boolean enableExceptionHandler) {
         Context appContext = androidContext.getApplicationContext();
 
-        // Attempt to load API key from AndroidManifest.xml if not passed in
-        if (TextUtils.isEmpty(apiKey)) {
+        // Attempt to load API key and other config from AndroidManifest.xml, if not passed in
+        boolean loadFromManifest = TextUtils.isEmpty(apiKey);
+
+        if (loadFromManifest) {
             try {
                 ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
                 Bundle data = ai.metaData;
-
                 apiKey = data.getString(MF_API_KEY);
-
-                // TODO serialise following, otherwise use the defaults
-                data.getString(MF_BUILD_UUID);
-                data.getString(MF_APP_VERSION);
-                data.getString(MF_ENDPOINT);
-                data.getString(MF_RELEASE_STAGE);
-                data.getBoolean(MF_SEND_THREADS);
-                data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER);
-                data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS);
-
             } catch (Exception ignore) {
             }
         }
@@ -204,10 +195,34 @@ public class Client extends Observable implements Observer {
 
         // Build a configuration object
         Configuration newConfig = new Configuration(apiKey);
-
         newConfig.setEnableExceptionHandler(enableExceptionHandler);
 
+        if (loadFromManifest) {
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                Bundle data = ai.metaData;
+                populateConfigFromManifest(newConfig, data);
+            } catch (Exception ignore) {
+            }
+        }
         return newConfig;
+    }
+
+    static Configuration populateConfigFromManifest(Configuration config, Bundle data) {
+        config.setBuildUUID(data.getString(MF_BUILD_UUID));
+        config.setAppVersion(data.getString(MF_APP_VERSION));
+        config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
+
+        String endpoint = data.getString(MF_ENDPOINT);
+
+        if (endpoint != null) {
+            config.setEndpoint(endpoint);
+        }
+
+        config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
+        config.setPersistUserBetweenSessions(data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
+        config.setEnableExceptionHandler(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
+        return config;
     }
 
     /**
