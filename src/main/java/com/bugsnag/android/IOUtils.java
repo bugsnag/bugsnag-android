@@ -18,7 +18,7 @@ class IOUtils {
             if (closeable != null) {
                 closeable.close();
             }
-        } catch (final IOException ioe) {
+        } catch (final Exception ioe) {
             // ignore
         }
     }
