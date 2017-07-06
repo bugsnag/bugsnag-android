@@ -3,6 +3,10 @@
       package="com.bugsnag.android.example"
       android:versionCode="1"
       android:versionName="1.0">
+
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.GET_TASKS" />
+
     <application android:label="Bugsnag Example App" android:icon="@drawable/ic_launcher">
         <activity android:name="ExampleActivity"
                   android:label="Bugsnag Example App"
@@ -13,9 +17,18 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="com.bugsnag.android.API_KEY" android:value="066f5ad3590596f9aa8d601ea89af845"/>
-    </application>
+      <!-- Uses a manifest placeholder to specify the API key. This means that different keys
+      can be supplied depending on the build variant. See
+       https://developer.android.com/studio/build/manifest-build-variables.html-->
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
+        <meta-data android:name="com.bugsnag.android.API_KEY" android:value="${bugsnagApiKey}"/>
+        <meta-data android:name="com.bugsnag.android.BUILD_UUID" android:value="${bugsnagBuildUUID}"/>
+        <meta-data android:name="com.bugsnag.android.APP_VERSION" android:value="${bugsnagAppVersion}"/>
+        <meta-data android:name="com.bugsnag.android.ENDPOINT" android:value="${bugsnagEndpoint}"/>
+        <meta-data android:name="com.bugsnag.android.RELEASE_STAGE" android:value="${bugsnagReleaseStage}"/>
+        <meta-data android:name="com.bugsnag.android.SEND_THREADS" android:value="${bugsnagSendThreads}"/>
+        <meta-data android:name="com.bugsnag.android.ENABLE_EXCEPTION_HANDLER" android:value="${bugsnagEnableExceptionHandler}"/>
+        <meta-data android:name="com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS" android:value="${bugsnagPersistUserBetweenSessions}"/>
+
+    </application>
 </manifest>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -35,12 +36,21 @@ enum DeliveryStyle {
  */
 public class Client extends Observable implements Observer {
 
-
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
+    private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
     private static final String USER_ID_KEY = "user.id";
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
+
+    static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
+    static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
+    static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
+    static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
+    static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
+    static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
+    static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
+    static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
 
     protected final Configuration config;
     private final Context appContext;
@@ -92,14 +102,18 @@ public class Client extends Observable implements Observer {
 
         config = configuration;
 
-        String buildUUID = null;
-        try {
-            ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-            buildUUID = ai.metaData.getString("com.bugsnag.android.BUILD_UUID");
-        } catch (Exception ignore) {
-        }
-        if (buildUUID != null) {
-            config.setBuildUUID(buildUUID);
+        // populate from manifest (in the case where the constructor was called directly by the
+        // User or no UUID was supplied)
+        if (config.getBuildUUID() == null) {
+            String buildUUID = null;
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                buildUUID = ai.metaData.getString(MF_BUILD_UUID);
+            } catch (Exception ignore) {
+            }
+            if (buildUUID != null) {
+                config.setBuildUUID(buildUUID);
+            }
         }
 
         // Set up and collect constant app and device diagnostics
@@ -156,7 +170,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Creates a new configuration object based on the provided parameters
-     * will read the API key from the manifest file if it is not provided
+     * will read the API key and other configuration values from the manifest if it is not provided
      *
      * @param androidContext         The context of the application
      * @param apiKey                 The API key to use
@@ -166,11 +180,14 @@ public class Client extends Observable implements Observer {
     private static Configuration createNewConfiguration(@NonNull Context androidContext, String apiKey, boolean enableExceptionHandler) {
         Context appContext = androidContext.getApplicationContext();
 
-        // Attempt to load API key from AndroidManifest.xml if not passed in
-        if (TextUtils.isEmpty(apiKey)) {
+        // Attempt to load API key and other config from AndroidManifest.xml, if not passed in
+        boolean loadFromManifest = TextUtils.isEmpty(apiKey);
+
+        if (loadFromManifest) {
             try {
                 ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-                apiKey = ai.metaData.getString("com.bugsnag.android.API_KEY");
+                Bundle data = ai.metaData;
+                apiKey = data.getString(MF_API_KEY);
             } catch (Exception ignore) {
             }
         }
@@ -181,10 +198,41 @@ public class Client extends Observable implements Observer {
 
         // Build a configuration object
         Configuration newConfig = new Configuration(apiKey);
-
         newConfig.setEnableExceptionHandler(enableExceptionHandler);
 
+        if (loadFromManifest) {
+            try {
+                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                Bundle data = ai.metaData;
+                populateConfigFromManifest(newConfig, data);
+            } catch (Exception ignore) {
+            }
+        }
         return newConfig;
+    }
+
+    /**
+     * Populates the config with meta-data values supplied from the manifest as a Bundle.
+     *
+     * @param config the config to mutate
+     * @param data the manifest bundle
+     * @return the updated config
+     */
+    static Configuration populateConfigFromManifest(Configuration config, Bundle data) {
+        config.setBuildUUID(data.getString(MF_BUILD_UUID));
+        config.setAppVersion(data.getString(MF_APP_VERSION));
+        config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
+
+        String endpoint = data.getString(MF_ENDPOINT);
+
+        if (endpoint != null) {
+            config.setEndpoint(endpoint);
+        }
+
+        config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
+        config.setPersistUserBetweenSessions(data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
+        config.setEnableExceptionHandler(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
+        return config;
     }
 
     /**
