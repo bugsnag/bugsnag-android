@@ -9,8 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.util.Locale;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -52,6 +52,7 @@ public class Client extends Observable implements Observer {
     static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
     static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
 
+
     protected final Configuration config;
     private final Context appContext;
     protected final AppData appData;
@@ -59,6 +60,7 @@ public class Client extends Observable implements Observer {
     final Breadcrumbs breadcrumbs;
     protected final User user = new User();
     protected final ErrorStore errorStore;
+    private final EventReceiver eventReceiver = new EventReceiver();
 
     /**
      * Initialize a Bugsnag client
@@ -146,6 +148,8 @@ public class Client extends Observable implements Observer {
             enableExceptionHandler();
         }
 
+        // register a receiver for automatic breadcrumbs
+        androidContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
         config.addObserver(this);
 
         // Flush any on-disk errors
@@ -993,5 +997,14 @@ public class Client extends Observable implements Observer {
         error.setMetaData(metaData);
         error.setContext(context);
         notify(error, BLOCKING);
+    }
+
+    /**
+     * Finalize by removing the receiver
+     * @throws Throwable if something goes wrong
+     */
+    protected void finalize() throws Throwable {
+        appContext.unregisterReceiver(eventReceiver);
+        super.finalize();
     }
 }
