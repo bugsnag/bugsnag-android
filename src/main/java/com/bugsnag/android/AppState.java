@@ -49,7 +49,7 @@ class AppState implements JsonStream.Streamable {
     }
 
     @Nullable
-    public static String getActiveScreenClass(@Nullable String activeScreen) {
+    public String getActiveScreenClass() {
         if (activeScreen != null) {
             return activeScreen.substring(activeScreen.lastIndexOf('.') + 1);
         } else {

@@ -98,12 +98,12 @@ public class Error implements JsonStream.Streamable {
      */
     @Nullable
     public String getContext() {
-        if(context != null && !TextUtils.isEmpty(context)) {
+        if (!TextUtils.isEmpty(context)) {
             return context;
         } else if (config.getContext() != null) {
             return config.getContext();
-        } else if (appState != null){
-            return AppState.getActiveScreenClass(context);
+        } else if (appState != null) {
+            return appState.getActiveScreenClass();
         } else {
             return null;
         }
