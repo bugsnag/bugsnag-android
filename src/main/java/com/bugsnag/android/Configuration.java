@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -32,7 +32,7 @@ public class Configuration extends Observable implements Observer {
     String defaultExceptionType = "android";
 
     private MetaData metaData;
-    private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedList<BeforeNotify>();
+    private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
 
     /**
      * Construct a new Bugsnag configuration object
