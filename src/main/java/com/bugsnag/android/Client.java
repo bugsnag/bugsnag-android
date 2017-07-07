@@ -1,9 +1,11 @@
 package com.bugsnag.android;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +17,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.UUID;
 
 enum DeliveryStyle {
     SAME_THREAD,
@@ -99,8 +100,18 @@ public class Client extends Observable implements Observer {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
-
+        warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
+
+        if (appContext instanceof Application && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            SdkCompatWrapper sdkCompatWrapper = new SdkCompatWrapper();
+            Application application = (Application) appContext;
+            sdkCompatWrapper.setupLifecycleLogger(application);
+        }
+        else {
+            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle breadcrumbs on API " +
+                "Levels below 14.");
+        }
 
         config = configuration;
 
@@ -1006,5 +1017,12 @@ public class Client extends Observable implements Observer {
     protected void finalize() throws Throwable {
         appContext.unregisterReceiver(eventReceiver);
         super.finalize();
+    }
+
+    private static void warnIfNotAppContext(Context androidContext) {
+        if (!(androidContext instanceof Application)) {
+            Logger.warn("Warning - Non-Application context detected! Please ensure that you are " +
+                "initializing Bugsnag from a custom Application class.");
+        }
     }
 }
