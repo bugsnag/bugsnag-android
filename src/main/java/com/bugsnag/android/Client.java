@@ -62,6 +62,7 @@ public class Client extends Observable implements Observer {
     protected final User user = new User();
     protected final ErrorStore errorStore;
     private final EventReceiver eventReceiver = new EventReceiver();
+    private ReportApiInterface reportApiInterface = new DefaultHttpClient();
 
     /**
      * Initialize a Bugsnag client
@@ -164,7 +165,7 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         // Flush any on-disk errors
-        errorStore.flush();
+        errorStore.flush(reportApiInterface);
     }
 
     public void notifyBugsnagObservers(NotifyType type) {
@@ -799,7 +800,7 @@ public class Client extends Observable implements Observer {
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
-                errorStore.flush();
+                errorStore.flush(reportApiInterface);
         }
 
         // Add a breadcrumb for this error occurring
@@ -808,14 +809,14 @@ public class Client extends Observable implements Observer {
 
     void deliver(Report report, Error error) {
         try {
-            HttpClient.post(config.getEndpoint(), report);
+            reportApiInterface.postReport(config.getEndpoint(), report);
             Logger.info(String.format(Locale.US, "Sent 1 new error to Bugsnag"));
-        } catch (HttpClient.NetworkException e) {
+        } catch (DefaultHttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
             // Save error to disk for later sending
             errorStore.write(error);
-        } catch (HttpClient.BadResponseException e) {
+        } catch (DefaultHttpClient.BadResponseException e) {
             Logger.info("Bad response when sending data to Bugsnag");
         } catch (Exception e) {
             Logger.warn("Problem sending error to Bugsnag", e);
