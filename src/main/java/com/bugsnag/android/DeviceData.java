@@ -25,16 +25,24 @@ class DeviceData implements JsonStream.Streamable {
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
+    @Nullable
     protected final Float screenDensity;
+    @Nullable
     protected final Integer dpi;
+    @Nullable
     protected final String screenResolution;
+    @NonNull
     protected final Long totalMemory;
+    @Nullable
     protected final Boolean rooted;
+    @NonNull
     protected final String locale;
+    @Nullable
     protected final String id;
+    @NonNull
     protected final String[] cpuAbi;
 
-    DeviceData(@NonNull Context appContext, SharedPreferences sharedPref) {
+    DeviceData(@NonNull Context appContext, @NonNull SharedPreferences sharedPref) {
         screenDensity = getScreenDensity(appContext);
         dpi = getScreenDensityDpi(appContext);
         screenResolution = getScreenResolution(appContext);
@@ -83,7 +91,7 @@ class DeviceData implements JsonStream.Streamable {
      * The screen density scaling factor of the current Android device
      */
     @Nullable
-    private static Float getScreenDensity(Context appContext) {
+    private static Float getScreenDensity(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
         if (resources == null)
             return null;
@@ -94,7 +102,7 @@ class DeviceData implements JsonStream.Streamable {
      * The screen density of the current Android device in dpi, eg. 320
      */
     @Nullable
-    private static Integer getScreenDensityDpi(Context appContext) {
+    private static Integer getScreenDensityDpi(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
         if (resources == null)
             return null;
@@ -105,7 +113,7 @@ class DeviceData implements JsonStream.Streamable {
      * The screen resolution of the current Android device in px, eg. 1920x1080
      */
     @Nullable
-    private static String getScreenResolution(Context appContext) {
+    private static String getScreenResolution(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
         if (resources == null)
             return null;
@@ -171,7 +179,8 @@ class DeviceData implements JsonStream.Streamable {
     /**
      * Get the unique id for the current app installation, creating a unique UUID if needed
      */
-    private String retrieveUniqueInstallId(SharedPreferences sharedPref) {
+    @Nullable
+    private String retrieveUniqueInstallId(@NonNull SharedPreferences sharedPref) {
         String installId = sharedPref.getString(INSTALL_ID_KEY, null);
 
         if (installId == null) {
@@ -209,6 +218,7 @@ class DeviceData implements JsonStream.Streamable {
      * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
      */
     private static class Abi2Wrapper {
+        @NonNull
         @TargetApi(Build.VERSION_CODES.FROYO)
         public static String[] getAbi1andAbi2() {
             return new String[]{Build.CPU_ABI, Build.CPU_ABI2};

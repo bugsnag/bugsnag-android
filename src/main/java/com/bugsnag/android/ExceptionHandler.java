@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.WeakHashMap;
 
@@ -45,7 +47,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         this.originalHandler = originalHandler;
     }
 
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         // Notify any subscribed clients of the uncaught exception
         for(Client client : clientMap.keySet()) {
             client.cacheAndNotify(e, Severity.ERROR);

@@ -54,12 +54,17 @@ public class Client extends Observable implements Observer {
     static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
 
 
+    @NonNull
     protected final Configuration config;
     private final Context appContext;
+    @NonNull
     protected final AppData appData;
+    @NonNull
     protected final DeviceData deviceData;
+    @NonNull
     final Breadcrumbs breadcrumbs;
     protected final User user = new User();
+    @NonNull
     protected final ErrorStore errorStore;
     private final EventReceiver eventReceiver = new EventReceiver();
 
@@ -167,7 +172,7 @@ public class Client extends Observable implements Observer {
         errorStore.flush();
     }
 
-    public void notifyBugsnagObservers(NotifyType type) {
+    public void notifyBugsnagObservers(@NonNull NotifyType type) {
         setChanged();
         super.notifyObservers(type.getValue());
     }
@@ -192,6 +197,7 @@ public class Client extends Observable implements Observer {
      * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      * @return The created config
      */
+    @NonNull
     private static Configuration createNewConfiguration(@NonNull Context androidContext, String apiKey, boolean enableExceptionHandler) {
         Context appContext = androidContext.getApplicationContext();
 
@@ -233,7 +239,8 @@ public class Client extends Observable implements Observer {
      * @param data the manifest bundle
      * @return the updated config
      */
-    static Configuration populateConfigFromManifest(Configuration config, Bundle data) {
+    @NonNull
+    static Configuration populateConfigFromManifest(@NonNull Configuration config, @NonNull Bundle data) {
         config.setBuildUUID(data.getString(MF_BUILD_UUID));
         config.setAppVersion(data.getString(MF_APP_VERSION));
         config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
@@ -680,16 +687,16 @@ public class Client extends Observable implements Observer {
      *
      * @param breadcrumb the log message to leave (max 140 chars)
      */
-    public void leaveBreadcrumb(String breadcrumb) {
+    public void leaveBreadcrumb(@NonNull String breadcrumb) {
         breadcrumbs.add(breadcrumb);
         notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
-    public void leaveBreadcrumb(String name, BreadcrumbType type, Map<String, String> metadata) {
+    public void leaveBreadcrumb(@NonNull String name, BreadcrumbType type, Map<String, String> metadata) {
         leaveBreadcrumb(name, type, metadata, true);
     }
 
-    void leaveBreadcrumb(String name,
+    void leaveBreadcrumb(@NonNull String name,
                          BreadcrumbType type,
                          Map<String, String> metadata,
                          boolean notify) {
@@ -734,12 +741,12 @@ public class Client extends Observable implements Observer {
         ExceptionHandler.disable(this);
     }
 
-    private void notify(Error error, boolean blocking) {
+    private void notify(@NonNull Error error, boolean blocking) {
         DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
         notify(error, style, null);
     }
 
-    private void notify(Error error, DeliveryStyle style, Callback callback) {
+    private void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;

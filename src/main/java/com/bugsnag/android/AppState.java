@@ -19,10 +19,15 @@ import java.util.List;
 class AppState implements JsonStream.Streamable {
     private static final Long startTime = SystemClock.elapsedRealtime();
 
+    @NonNull
     private final Long duration;
+    @Nullable
     private final Boolean inForeground;
+    @Nullable
     private final String activeScreen;
+    @NonNull
     private final Long memoryUsage;
+    @Nullable
     private final Boolean lowMemory;
 
     static void init() {
@@ -70,7 +75,7 @@ class AppState implements JsonStream.Streamable {
      * Check if the device is currently running low on memory.
      */
     @Nullable
-    private static Boolean isLowMemory(Context appContext) {
+    private static Boolean isLowMemory(@NonNull Context appContext) {
         try {
             ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
@@ -88,7 +93,7 @@ class AppState implements JsonStream.Streamable {
      * which defaults to true in Android 5.0+.
      */
     @Nullable
-    private static String getActiveScreen(Context appContext) {
+    private static String getActiveScreen(@NonNull Context appContext) {
         try {
             ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
@@ -105,7 +110,7 @@ class AppState implements JsonStream.Streamable {
      * which defaults to true in Android 5.0+.
      */
     @Nullable
-    private static Boolean isInForeground(Context appContext) {
+    private static Boolean isInForeground(@NonNull Context appContext) {
         try {
             ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);

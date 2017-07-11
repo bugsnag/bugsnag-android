@@ -44,7 +44,7 @@ class Exceptions implements JsonStream.Streamable {
         }
     }
 
-    private void exceptionToStream(JsonStream writer, String name, String message, StackTraceElement[] frames) throws IOException {
+    private void exceptionToStream(@NonNull JsonStream writer, String name, String message, StackTraceElement[] frames) throws IOException {
         Stacktrace stacktrace = new Stacktrace(config, frames);
         writer.beginObject();
             writer.name("errorClass").value(name);

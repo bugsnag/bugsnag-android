@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Map;
 
@@ -22,7 +24,7 @@ public final class Bugsnag {
      *
      * @param  androidContext  an Android context, usually <code>this</code>
      */
-    public static Client init(Context androidContext) {
+    public static Client init(@NonNull Context androidContext) {
         client = new Client(androidContext);
         NativeInterface.configureClientObservers(client);
         return client;
@@ -34,7 +36,7 @@ public final class Bugsnag {
      * @param  androidContext  an Android context, usually <code>this</code>
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      */
-    public static Client init(Context androidContext, String apiKey) {
+    public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
         client = new Client(androidContext, apiKey);
         NativeInterface.configureClientObservers(client);
         return client;
@@ -47,7 +49,7 @@ public final class Bugsnag {
      * @param  apiKey                  your Bugsnag API key from your Bugsnag dashboard
      * @param  enableExceptionHandler  should we automatically handle uncaught exceptions?
      */
-    public static Client init(Context androidContext, String apiKey, boolean enableExceptionHandler) {
+    public static Client init(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
         client = new Client(androidContext, apiKey, enableExceptionHandler);
         NativeInterface.configureClientObservers(client);
         return client;
@@ -59,7 +61,7 @@ public final class Bugsnag {
      * @param androidContext an Android context, usually <code>this</code>
      * @param config         a configuration for the Client
      */
-    public static Client init(Context androidContext, Configuration config) {
+    public static Client init(@NonNull Context androidContext, @NonNull Configuration config) {
         client = new Client(androidContext, config);
         NativeInterface.configureClientObservers(client);
         return client;
@@ -337,7 +339,7 @@ public final class Bugsnag {
     public static void notify(final Throwable exception, final MetaData metaData) {
         getClient().notify(exception, new Callback() {
             @Override
-            public void beforeNotify(Report report) {
+            public void beforeNotify(@NonNull Report report) {
                 report.getError().setMetaData(metaData);
             }
         });
@@ -358,7 +360,7 @@ public final class Bugsnag {
     public static void notify(final Throwable exception, final Severity severity, final MetaData metaData) {
         getClient().notify(exception, new Callback() {
             @Override
-            public void beforeNotify(Report report) {
+            public void beforeNotify(@NonNull Report report) {
                 report.getError().setSeverity(severity);
                 report.getError().setMetaData(metaData);
             }
@@ -384,7 +386,7 @@ public final class Bugsnag {
         final MetaData finalMetaData = metaData;
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
-            public void beforeNotify(Report report) {
+            public void beforeNotify(@NonNull Report report) {
                 report.getError().setSeverity(finalSeverity);
                 report.getError().setMetaData(finalMetaData);
             }
@@ -412,7 +414,7 @@ public final class Bugsnag {
         final MetaData finalMetaData = metaData;
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
-            public void beforeNotify(Report report) {
+            public void beforeNotify(@NonNull Report report) {
                 report.getError().setSeverity(finalSeverity);
                 report.getError().setMetaData(finalMetaData);
                 report.getError().setContext(finalContext);
@@ -470,7 +472,7 @@ public final class Bugsnag {
      *
      * @param  message  the log message to leave (max 140 chars)
      */
-    public static void leaveBreadcrumb(String message) {
+    public static void leaveBreadcrumb(@NonNull String message) {
         getClient().leaveBreadcrumb(message);
     }
 
@@ -482,7 +484,7 @@ public final class Bugsnag {
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
-    public static void leaveBreadcrumb(String name, BreadcrumbType type, Map<String, String> metadata) {
+    public static void leaveBreadcrumb(@NonNull String name, BreadcrumbType type, Map<String, String> metadata) {
         getClient().leaveBreadcrumb(name, type, metadata);
     }
 

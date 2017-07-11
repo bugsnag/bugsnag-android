@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 
 import java.util.HashMap;
@@ -15,41 +16,41 @@ class LifecycleBreadcrumbLogger implements Application.ActivityLifecycleCallback
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycleCallback";
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
         leaveLifecycleBreadcrumb(activity, "onCreate()");
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
+    public void onActivityStarted(@NonNull Activity activity) {
         leaveLifecycleBreadcrumb(activity, "onStart()");
     }
 
     @Override
-    public void onActivityResumed(Activity activity) {
+    public void onActivityResumed(@NonNull Activity activity) {
         leaveLifecycleBreadcrumb(activity, "onResume()");
     }
 
     @Override
-    public void onActivityPaused(Activity activity) {
+    public void onActivityPaused(@NonNull Activity activity) {
         leaveLifecycleBreadcrumb(activity, "onPause()");
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {
+    public void onActivityStopped(@NonNull Activity activity) {
         leaveLifecycleBreadcrumb(activity, "onStop()");
     }
 
     @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    public void onActivitySaveInstanceState(@NonNull Activity activity, Bundle outState) {
         leaveLifecycleBreadcrumb(activity, "onSaveInstanceState()");
     }
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
+    public void onActivityDestroyed(@NonNull Activity activity) {
         leaveLifecycleBreadcrumb(activity, "onDestroy()");
     }
 
-    private void leaveLifecycleBreadcrumb(Activity activity, String lifecycleCallback) {
+    private void leaveLifecycleBreadcrumb(@NonNull Activity activity, String lifecycleCallback) {
         String activityName = activity.getClass().getSimpleName();
         Map<String, String> metadata = new HashMap<>();
         metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);

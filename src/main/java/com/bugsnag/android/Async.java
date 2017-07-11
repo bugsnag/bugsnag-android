@@ -24,6 +24,7 @@ class Async {
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
         private final AtomicInteger count = new AtomicInteger(1);
 
+        @NonNull
         public Thread newThread(@NonNull Runnable r) {
             return new Thread(r, "Bugsnag Thread #" + count.getAndIncrement());
         }
@@ -32,7 +33,7 @@ class Async {
         CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
         POOL_WORK_QUEUE, THREAD_FACTORY);
 
-    static void run(Runnable task) throws RejectedExecutionException {
+    static void run(@NonNull Runnable task) throws RejectedExecutionException {
         EXECUTOR.execute(task);
     }
 }

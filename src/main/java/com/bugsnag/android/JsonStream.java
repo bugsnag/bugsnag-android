@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileReader;
@@ -21,6 +22,7 @@ public class JsonStream extends JsonWriter {
     }
 
     // Allow chaining name().value()
+    @NonNull
     public JsonStream name(@NonNull String name) throws IOException {
         super.name(name);
         return this;
@@ -30,7 +32,7 @@ public class JsonStream extends JsonWriter {
      * This gives the Streamable the JsonStream instance and
      * allows lets it write itself into the stream.
      */
-    public void value(Streamable streamable) throws IOException {
+    public void value(@Nullable Streamable streamable) throws IOException {
         if (streamable == null) {
             nullValue();
             return;

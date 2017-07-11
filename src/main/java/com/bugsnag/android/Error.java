@@ -26,6 +26,7 @@ public class Error implements JsonStream.Streamable {
     private Breadcrumbs breadcrumbs;
     private User user;
     private Throwable exception;
+    @Nullable
     private Severity severity = Severity.WARNING;
     private MetaData metaData = new MetaData();
     private String groupingHash;
@@ -130,7 +131,7 @@ public class Error implements JsonStream.Streamable {
      * @param  severity  the severity of this error
      * @see    Severity
      */
-    public void setSeverity(Severity severity) {
+    public void setSeverity(@Nullable Severity severity) {
         if(severity != null) {
             this.severity = severity;
         }
@@ -141,6 +142,7 @@ public class Error implements JsonStream.Streamable {
      *
      * @see  Severity
      */
+    @Nullable
     public Severity getSeverity() {
         return severity;
     }

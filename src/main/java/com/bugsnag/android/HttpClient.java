@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -23,7 +25,7 @@ class HttpClient {
         }
     }
 
-    static void post(String urlString, JsonStream.Streamable payload) throws NetworkException, BadResponseException {
+    static void post(String urlString, @NonNull JsonStream.Streamable payload) throws NetworkException, BadResponseException {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(urlString);

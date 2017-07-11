@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Store and flush Error reports which couldn't be sent immediately due to
@@ -19,9 +21,10 @@ class ErrorStore {
     private static final int MAX_STORED_ERRORS = 100;
 
     final Configuration config;
+    @Nullable
     final String path;
 
-    ErrorStore(Configuration config, Context appContext) {
+    ErrorStore(Configuration config, @NonNull Context appContext) {
         this.config = config;
 
         String path;
