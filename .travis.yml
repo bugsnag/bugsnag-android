@@ -10,13 +10,11 @@ android:
     - android-10
     - android-19
     - android-23
-    - android-25
     - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-25
 
 env:
   matrix:
-    - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-23 ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
