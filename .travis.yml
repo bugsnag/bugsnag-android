@@ -4,16 +4,18 @@ android:
   components:
     - tools
     - platform-tools
+    - build-tools-23.0.1
     - build-tools-25.0.2
+    - extra-android-m2repository
     - android-4
     - android-10
     - android-19
     - android-21
-    - extra-android-m2repository
+    - android-24
 
 env:
   matrix:
-    - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-24 ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
@@ -22,11 +24,20 @@ before_script:
   # Create and start emulator
   - android list targets
   - jdk_switcher use oraclejdk8
+  - android-update-sdk --components=sys-img-$ANDROID_ABI-$ANDROID_TARGET --accept-licenses='android-sdk-license-[0-9a-f]{8}'
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
   - adb wait-for-device
   - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
   - adb shell input keyevent 82 &
+
+
+
+    - echo no | android create avd --force -n test -t $API --abi $ABI
+    - emulator -avd test -no-audio -no-window
+    - android-wait-for-emulator
+    - adb shell input keyevent 82 &
+
 
 script: ./gradlew --info connectedAndroidTest
 

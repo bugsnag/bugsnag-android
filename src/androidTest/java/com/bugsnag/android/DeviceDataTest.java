@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
