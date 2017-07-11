@@ -27,7 +27,7 @@ before_script:
   # Create and start emulator
   - android list targets
   - jdk_switcher use oraclejdk8
-  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - echo no | avdmanager create avd -n test -k "system-images;android-25;google_apis;x86"
   - emulator -avd test -no-skin -no-audio -no-window &
   - adb wait-for-device
   - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
