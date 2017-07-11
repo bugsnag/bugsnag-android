@@ -41,7 +41,7 @@ class ErrorStore {
     }
 
     // Flush any on-disk errors to Bugsnag
-    void flush(final ReportApiClient reportApiClient) {
+    void flush(final ErrorReportApiClient errorReportApiClient) {
         if(path == null) return;
 
         try {
@@ -59,7 +59,7 @@ class ErrorStore {
                         for(File errorFile : errorFiles) {
                             try {
                                 Report report = new Report(config.getApiKey(), errorFile);
-                                reportApiClient.postReport(config.getEndpoint(), report);
+                                errorReportApiClient.postReport(config.getEndpoint(), report);
 
                                 Logger.info("Deleting sent error file " + errorFile.getName());
                                 if (!errorFile.delete())

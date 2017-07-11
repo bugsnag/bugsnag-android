@@ -1,20 +1,20 @@
 package com.bugsnag.android;
 
-public class ReportApiClientTest extends BugsnagTestCase {
+public class ErrorReportApiClientTest extends BugsnagTestCase {
 
-    private ReportApiClient reportApiClient;
+    private ErrorReportApiClient errorReportApiClient;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        reportApiClient = new DefaultHttpClient();
+        errorReportApiClient = new DefaultHttpClient();
     }
 
     public void testBugsnagNullValidation() {
         Bugsnag.init(getContext(), "123");
         try {
             Bugsnag.setReportApiClient(null);
-            fail("ReportApiClient cannot be null");
+            fail("ErrorReportApiClient cannot be null");
         }
         catch (Exception ignored) {
         }
@@ -22,7 +22,7 @@ public class ReportApiClientTest extends BugsnagTestCase {
 
     public void testBugsnagClient() {
         Bugsnag.init(getContext(), "123");
-        Bugsnag.setReportApiClient(reportApiClient);
+        Bugsnag.setReportApiClient(errorReportApiClient);
     }
 
 }

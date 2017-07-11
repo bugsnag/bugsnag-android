@@ -6,7 +6,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-class DefaultHttpClient implements ReportApiClient {
+class DefaultHttpClient implements ErrorReportApiClient {
 
     @Override
     public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {

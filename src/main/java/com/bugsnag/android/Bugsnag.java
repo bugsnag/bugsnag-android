@@ -267,10 +267,10 @@ public final class Bugsnag {
      * as documented here: <a href="https://docs.bugsnag.com/api/error-reporting/">
      *     https://docs.bugsnag.com/api/error-reporting/</a>
      *
-     * @param reportApiClient the custom HTTP client implementation
+     * @param errorReportApiClient the custom HTTP client implementation
      */
-    public static void setReportApiClient(@NonNull ReportApiClient reportApiClient) {
-        getClient().setReportApiClient(reportApiClient);
+    public static void setReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
+        getClient().setErrorReportApiClient(errorReportApiClient);
     }
 
     /**
