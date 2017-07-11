@@ -269,7 +269,7 @@ public final class Bugsnag {
      *
      * @param errorReportApiClient the custom HTTP client implementation
      */
-    public static void setReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
+    public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
         getClient().setErrorReportApiClient(errorReportApiClient);
     }
 

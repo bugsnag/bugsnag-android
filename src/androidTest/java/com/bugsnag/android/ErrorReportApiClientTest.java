@@ -13,7 +13,7 @@ public class ErrorReportApiClientTest extends BugsnagTestCase {
     public void testBugsnagNullValidation() {
         Bugsnag.init(getContext(), "123");
         try {
-            Bugsnag.setReportApiClient(null);
+            Bugsnag.setErrorReportApiClient(null);
             fail("ErrorReportApiClient cannot be null");
         }
         catch (Exception ignored) {
@@ -22,7 +22,7 @@ public class ErrorReportApiClientTest extends BugsnagTestCase {
 
     public void testBugsnagClient() {
         Bugsnag.init(getContext(), "123");
-        Bugsnag.setReportApiClient(errorReportApiClient);
+        Bugsnag.setErrorReportApiClient(errorReportApiClient);
     }
 
 }

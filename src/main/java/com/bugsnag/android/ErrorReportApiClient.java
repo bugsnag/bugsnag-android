@@ -6,7 +6,7 @@ import java.util.Locale;
 /**
  * Posts an error report to the Bugsnag API. Custom implementations of this client can be used in
  * place of the default implementation, by calling
- * {@link Bugsnag#setReportApiClient(ErrorReportApiClient)}
+ * {@link Bugsnag#setErrorReportApiClient(ErrorReportApiClient)}
  *
  * @see DefaultHttpClient
  */
