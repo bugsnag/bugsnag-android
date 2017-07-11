@@ -20,7 +20,7 @@ class DateUtils {
         }
     };
 
-    static String toISO8601(Date date) {
+    static String toISO8601(@NonNull Date date) {
         return iso8601Holder.get().format(date);
     }
 }

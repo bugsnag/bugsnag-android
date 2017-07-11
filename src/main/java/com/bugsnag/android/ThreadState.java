@@ -31,7 +31,7 @@ class ThreadState implements JsonStream.Streamable {
         });
 
         writer.beginArray();
-        for(int i = 0; i < keys.length; i++) {
+        for (int i = 0; i < keys.length; i++) {
             Thread thread = (Thread)keys[i];
 
             // Don't show the current stacktrace here. It'll point at this method

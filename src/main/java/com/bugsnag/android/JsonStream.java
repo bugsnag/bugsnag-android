@@ -23,7 +23,7 @@ public class JsonStream extends JsonWriter {
 
     // Allow chaining name().value()
     @NonNull
-    public JsonStream name(@NonNull String name) throws IOException {
+    public JsonStream name(@Nullable String name) throws IOException {
         super.name(name);
         return this;
     }

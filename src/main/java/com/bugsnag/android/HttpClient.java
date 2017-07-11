@@ -25,7 +25,7 @@ class HttpClient {
         }
     }
 
-    static void post(String urlString, @NonNull JsonStream.Streamable payload) throws NetworkException, BadResponseException {
+    static void post(@NonNull String urlString, @NonNull JsonStream.Streamable payload) throws NetworkException, BadResponseException {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(urlString);

@@ -23,7 +23,9 @@ class Breadcrumbs implements JsonStream.Streamable {
         final String timestamp;
         @NonNull
         final String name;
+        @NonNull
         final BreadcrumbType type;
+        @NonNull
         final Map<String, String> metadata;
 
         Breadcrumb(@NonNull String message) {

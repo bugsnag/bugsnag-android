@@ -16,6 +16,7 @@ import java.util.Map;
  * @see Client
  */
 public final class Bugsnag {
+    @Nullable
     static Client client;
     private Bugsnag() {}
 
@@ -24,6 +25,7 @@ public final class Bugsnag {
      *
      * @param  androidContext  an Android context, usually <code>this</code>
      */
+    @Nullable
     public static Client init(@NonNull Context androidContext) {
         client = new Client(androidContext);
         NativeInterface.configureClientObservers(client);
@@ -36,6 +38,7 @@ public final class Bugsnag {
      * @param  androidContext  an Android context, usually <code>this</code>
      * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
      */
+    @Nullable
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
         client = new Client(androidContext, apiKey);
         NativeInterface.configureClientObservers(client);
@@ -49,6 +52,7 @@ public final class Bugsnag {
      * @param  apiKey                  your Bugsnag API key from your Bugsnag dashboard
      * @param  enableExceptionHandler  should we automatically handle uncaught exceptions?
      */
+    @Nullable
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
         client = new Client(androidContext, apiKey, enableExceptionHandler);
         NativeInterface.configureClientObservers(client);
@@ -61,6 +65,7 @@ public final class Bugsnag {
      * @param androidContext an Android context, usually <code>this</code>
      * @param config         a configuration for the Client
      */
+    @Nullable
     public static Client init(@NonNull Context androidContext, @NonNull Configuration config) {
         client = new Client(androidContext, config);
         NativeInterface.configureClientObservers(client);
@@ -288,7 +293,7 @@ public final class Bugsnag {
      *
      * @param  exception  the exception to send to Bugsnag
      */
-    public static void notify(final Throwable exception) {
+    public static void notify(@NonNull final Throwable exception) {
         getClient().notify(exception);
     }
 
@@ -299,7 +304,7 @@ public final class Bugsnag {
      * @param callback  callback invoked on the generated error report for
      *                  additional modification
      */
-    public static void notify(final Throwable exception, final Callback callback) {
+    public static void notify(@NonNull final Throwable exception, final Callback callback) {
         getClient().notify(exception, callback);
     }
 
@@ -312,7 +317,7 @@ public final class Bugsnag {
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
-    public static void notify(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
+    public static void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
         getClient().notify(name, message, stacktrace, callback);
     }
 
@@ -323,7 +328,7 @@ public final class Bugsnag {
      * @param  severity   the severity of the error, one of Severity.ERROR,
      *                    Severity.WARNING or Severity.INFO
      */
-    public static void notify(final Throwable exception, final Severity severity) {
+    public static void notify(@NonNull final Throwable exception, final Severity severity) {
         getClient().notify(exception, severity);
     }
 
@@ -336,7 +341,7 @@ public final class Bugsnag {
      * @deprecated Use {@link #notify(Throwable,Callback)}
      *             to send and modify error reports
      */
-    public static void notify(final Throwable exception, final MetaData metaData) {
+    public static void notify(@NonNull final Throwable exception, final MetaData metaData) {
         getClient().notify(exception, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
@@ -357,7 +362,7 @@ public final class Bugsnag {
      *             to send and modify error reports
      */
     @Deprecated
-    public static void notify(final Throwable exception, final Severity severity, final MetaData metaData) {
+    public static void notify(@NonNull final Throwable exception, final Severity severity, final MetaData metaData) {
         getClient().notify(exception, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
@@ -381,7 +386,7 @@ public final class Bugsnag {
      *             to send and modify error reports
      */
     @Deprecated
-    public static void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public static void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         final Severity finalSeverity = severity;
         final MetaData finalMetaData = metaData;
         getClient().notify(name, message, stacktrace, new Callback() {
@@ -408,7 +413,7 @@ public final class Bugsnag {
      *             to send and modify error reports
      */
     @Deprecated
-    public static void notify(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public static void notify(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         final String finalContext = context;
         final Severity finalSeverity = severity;
         final MetaData finalMetaData = metaData;
@@ -484,7 +489,7 @@ public final class Bugsnag {
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
-    public static void leaveBreadcrumb(@NonNull String name, BreadcrumbType type, Map<String, String> metadata) {
+    public static void leaveBreadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
         getClient().leaveBreadcrumb(name, type, metadata);
     }
 
@@ -524,8 +529,9 @@ public final class Bugsnag {
     /**
      * Get the current Bugsnag Client instance.
      */
+    @NonNull
     public static Client getClient() {
-        if(client == null) {
+        if (client == null) {
             throw new IllegalStateException("You must call Bugsnag.init before any other Bugsnag methods");
         }
 

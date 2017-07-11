@@ -1,16 +1,15 @@
 package com.bugsnag.android;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 /**
  * Store and flush Error reports which couldn't be sent immediately due to
@@ -20,11 +19,12 @@ class ErrorStore {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
     private static final int MAX_STORED_ERRORS = 100;
 
+    @NonNull
     final Configuration config;
     @Nullable
     final String path;
 
-    ErrorStore(Configuration config, @NonNull Context appContext) {
+    ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
         this.config = config;
 
         String path;
@@ -86,7 +86,7 @@ class ErrorStore {
     }
 
     // Write an error to disk, for later sending
-    void write(Error error) {
+    void write(@NonNull Error error) {
         if(path == null) return;
 
         // Limit number of saved errors to prevent disk space issues

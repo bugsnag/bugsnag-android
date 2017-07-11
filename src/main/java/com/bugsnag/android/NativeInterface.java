@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.sql.BatchUpdateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
@@ -16,6 +15,7 @@ public class NativeInterface {
     /** Static reference used if not using Bugsnag.init() */
     private static Client client;
 
+    @NonNull
     private static Client getClient() {
         if (client != null) {
             return client;
@@ -194,7 +194,7 @@ public class NativeInterface {
     }
 
     public static void leaveBreadcrumb(@NonNull final String name,
-                                       final BreadcrumbType type) {
+                                       @NonNull final BreadcrumbType type) {
 
         getClient().leaveBreadcrumb(name, type, new HashMap<String, String>(), false);
     }
@@ -206,10 +206,10 @@ public class NativeInterface {
         getClient().config.getMetaData().addToTab(tab, key, value, false);
     }
 
-    public static void notify(final String name,
-                              final String message,
+    public static void notify(@NonNull final String name,
+                              @NonNull final String message,
                               final Severity severity,
-                              final StackTraceElement[] stacktrace,
+                              @NonNull final StackTraceElement[] stacktrace,
                               @NonNull final Map<String, Object> metaData) {
 
         getClient().notify(name, message, stacktrace, new Callback() {

@@ -20,14 +20,14 @@ public class Report implements JsonStream.Streamable {
     private String apiKey;
     private Notifier notifier;
 
-    Report(@NonNull String apiKey, File errorFile) {
+    Report(@NonNull String apiKey, @Nullable File errorFile) {
         this.apiKey = apiKey;
         this.error = null;
         this.errorFile = errorFile;
         this.notifier = Notifier.getInstance();
     }
 
-    Report(@NonNull String apiKey, Error error) {
+    Report(@NonNull String apiKey, @Nullable Error error) {
         this.apiKey = apiKey;
         this.error = error;
         this.errorFile = null;

@@ -18,6 +18,7 @@ import java.io.IOException;
 public class Error implements JsonStream.Streamable {
     private static final String PAYLOAD_VERSION = "3";
 
+    @NonNull
     final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
@@ -32,12 +33,13 @@ public class Error implements JsonStream.Streamable {
     private String groupingHash;
     private String context;
 
-    Error(Configuration config, Throwable exception) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception) {
         this.config = config;
         this.exception = exception;
     }
 
-    Error(Configuration config, String name, String message, StackTraceElement[] frames) {
+    Error(@NonNull Configuration config, @NonNull String name,
+          @NonNull String message, @NonNull StackTraceElement[] frames) {
         this.config = config;
 
         this.exception = new BugsnagException(name, message, frames);
