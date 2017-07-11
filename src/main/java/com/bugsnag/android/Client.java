@@ -62,7 +62,7 @@ public class Client extends Observable implements Observer {
     protected final User user = new User();
     protected final ErrorStore errorStore;
     private final EventReceiver eventReceiver = new EventReceiver();
-    private ReportApiInterface reportApiInterface = new DefaultHttpClient();
+    private ReportApiClient reportApiClient = new DefaultHttpClient();
 
     /**
      * Initialize a Bugsnag client
@@ -165,7 +165,7 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         // Flush any on-disk errors
-        errorStore.flush(reportApiInterface);
+        errorStore.flush(reportApiClient);
     }
 
     public void notifyBugsnagObservers(NotifyType type) {
@@ -509,6 +509,14 @@ public class Client extends Observable implements Observer {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
+    void setReportApiClient(@NonNull ReportApiClient reportApiClient) {
+        if (reportApiClient == null) {
+            throw new IllegalArgumentException("ReportApiClient cannot be null.");
+        }
+        this.reportApiClient = reportApiClient;
+    }
+
     /**
      * Add a "before notify" callback, to execute code before every
      * report to Bugsnag.
@@ -800,7 +808,7 @@ public class Client extends Observable implements Observer {
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
-                errorStore.flush(reportApiInterface);
+                errorStore.flush(reportApiClient);
         }
 
         // Add a breadcrumb for this error occurring
@@ -809,7 +817,7 @@ public class Client extends Observable implements Observer {
 
     void deliver(Report report, Error error) {
         try {
-            reportApiInterface.postReport(config.getEndpoint(), report);
+            reportApiClient.postReport(config.getEndpoint(), report);
             Logger.info(String.format(Locale.US, "Sent 1 new error to Bugsnag"));
         } catch (DefaultHttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");

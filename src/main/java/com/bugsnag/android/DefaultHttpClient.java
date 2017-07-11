@@ -6,10 +6,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-class DefaultHttpClient implements ReportApiInterface {
+class DefaultHttpClient implements ReportApiClient {
 
     @Override
-    public void postReport(String urlString, JsonStream.Streamable reportPayload) throws NetworkException, BadResponseException {
+    public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(urlString);
@@ -23,7 +23,7 @@ class DefaultHttpClient implements ReportApiInterface {
                 out = conn.getOutputStream();
 
                 JsonStream stream = new JsonStream(new OutputStreamWriter(out));
-                reportPayload.toStream(stream);
+                report.toStream(stream);
                 stream.close();
             } finally {
                 IOUtils.closeQuietly(out);
@@ -31,7 +31,7 @@ class DefaultHttpClient implements ReportApiInterface {
 
             // End the request, get the response code
             int status = conn.getResponseCode();
-            if(status / 100 != 2) {
+            if (status / 100 != 2) {
                 throw new BadResponseException(urlString, status);
             }
         } catch (IOException e) {

@@ -3,9 +3,9 @@ package com.bugsnag.android;
 import java.io.IOException;
 import java.util.Locale;
 
-public interface ReportApiInterface {
+public interface ReportApiClient {
 
-    void postReport(String urlString, JsonStream.Streamable reportPayload) throws NetworkException, BadResponseException;
+    void postReport(String urlString, Report report) throws NetworkException, BadResponseException;
 
     class BadResponseException extends Exception {
         public BadResponseException(String url, int responseCode) {
