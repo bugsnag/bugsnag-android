@@ -2,15 +2,15 @@ package com.bugsnag.android;
 
 public class ErrorReportApiClientTest extends BugsnagTestCase {
 
-    private ErrorReportApiClient errorReportApiClient;
+    private FakeApiClient apiClient;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        errorReportApiClient = new DefaultHttpClient();
+        apiClient = new FakeApiClient();
     }
 
-    public void testBugsnagNullValidation() {
+    public void testApiClientNullValidation() {
         Bugsnag.init(getContext(), "123");
         try {
             Bugsnag.setErrorReportApiClient(null);
@@ -20,9 +20,22 @@ public class ErrorReportApiClientTest extends BugsnagTestCase {
         }
     }
 
-    public void testBugsnagClient() {
+    public void testPostReportCalled() {
         Bugsnag.init(getContext(), "123");
-        Bugsnag.setErrorReportApiClient(errorReportApiClient);
+        Bugsnag.setErrorReportApiClient(apiClient);
+
+        assertNull(apiClient.report);
+        Client client = Bugsnag.getClient();
+        client.notifyBlocking(new Throwable());
+        assertNotNull(apiClient.report);
     }
 
+    private static class FakeApiClient implements ErrorReportApiClient {
+        private Report report;
+
+        @Override
+        public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+            this.report = report;
+        }
+    }
 }
