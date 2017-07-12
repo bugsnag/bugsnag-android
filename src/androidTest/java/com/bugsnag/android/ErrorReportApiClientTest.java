@@ -16,7 +16,7 @@ public class ErrorReportApiClientTest extends BugsnagTestCase {
             Bugsnag.setErrorReportApiClient(null);
             fail("ErrorReportApiClient cannot be null");
         }
-        catch (Exception ignored) {
+        catch (IllegalArgumentException ignored) {
         }
     }
 
