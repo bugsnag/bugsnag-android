@@ -1,7 +1,7 @@
 # Bugsnag exception reporter for Android
 [![Documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](http://docs.bugsnag.com/platforms/android/)
 [![Build status](https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master)](https://travis-ci.org/bugsnag/bugsnag-android)
-<a href="http://www.methodscount.com/?lib=com.bugsnag%3Abugsnag-android%3A3.9.0"><img src="https://img.shields.io/badge/Methods and size-core: 661 | deps: 32 | 73 KB-e91e63.svg"/></a>
+[![Method count and size](https://img.shields.io/badge/Methods%20and%20size-core:%20661%20|%20deps:%2032%20|%2073%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.bugsnag%3Abugsnag-android%3A3.9.0)
 
 
 Bugsnag's [Android crash reporting](https://bugsnag.com/platforms/android)
