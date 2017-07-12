@@ -22,7 +22,6 @@ android {
 
     lintOptions {
         disable 'DefaultLocale', 'Typos'
-        baseline file("lint-baseline.xml")
         abortOnError true
     }
 }

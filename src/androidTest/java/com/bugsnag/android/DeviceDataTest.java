@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -38,6 +38,7 @@ public class DeviceDataTest extends BugsnagTestCase {
 
             // historically Android ID was used, this should no longer be the case
             ContentResolver cr = getContext().getContentResolver();
+            @SuppressLint("HardwareIds")
             String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
             assertNotSame(androidId, deviceDataJson.getString("id"));
         }

@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
-import java.sql.BatchUpdateException;
+import android.annotation.SuppressLint;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
@@ -11,6 +12,7 @@ import java.util.Observer;
 public class NativeInterface {
 
     /** Static reference used if not using Bugsnag.init() */
+    @SuppressLint("StaticFieldLeak")
     private static Client client;
 
     private static Client getClient() {
