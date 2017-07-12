@@ -146,3 +146,6 @@ This process is a little ridiculous...
 
 -    Make releases to downstream libraries, if appropriate (generally for bug
      fixes)
+     
+### 7. Update Method Count Badge
+-   Update the version number specified in the URL for the method count badge in the README. 
