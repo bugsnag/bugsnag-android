@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class StrictModeTest extends BugsnagTestCase {
 
-    private final ExceptionHandler exceptionHandler = new ExceptionHandler(Thread.getDefaultUncaughtExceptionHandler());
+    private final StrictModeHandler strictModeHandler = new StrictModeHandler();
 
     @Override
     public void setUp() throws Exception {
@@ -33,19 +33,19 @@ public class StrictModeTest extends BugsnagTestCase {
     }
 
     public void testIsNotStrictModeThrowable() throws Exception {
-        assertFalse(exceptionHandler.isStrictModeThrowable(new RuntimeException()));
-        assertFalse(exceptionHandler.isStrictModeThrowable(new Throwable()));
+        assertFalse(strictModeHandler.isStrictModeThrowable(new RuntimeException()));
+        assertFalse(strictModeHandler.isStrictModeThrowable(new Throwable()));
     }
 
     public void testIsStrictModeThrowable() throws Exception {
         Exception strictModeException = generateStrictModeException();
-        assertTrue(exceptionHandler.isStrictModeThrowable(strictModeException));
+        assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
 
         RuntimeException wrappedException = new RuntimeException(strictModeException);
-        assertTrue(exceptionHandler.isStrictModeThrowable(wrappedException));
+        assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
 
         RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
-        assertTrue(exceptionHandler.isStrictModeThrowable(doubleWrappedException));
+        assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
     }
 
     /**

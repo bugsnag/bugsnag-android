@@ -8,9 +8,8 @@ import java.util.WeakHashMap;
  */
 class ExceptionHandler implements UncaughtExceptionHandler {
 
-    private  static final String STRICT_MODE_VIOLATION_CLZ_NAME = "android.os.StrictMode$StrictModeViolation";
-
     private final UncaughtExceptionHandler originalHandler;
+    private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     final WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
 
     static void enable(Client client) {
@@ -48,11 +47,16 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         this.originalHandler = originalHandler;
     }
 
+    @Override
     public void uncaughtException(Thread t, Throwable e) {
-        isStrictModeThrowable(e);
+        boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
 
         // Notify any subscribed clients of the uncaught exception
         for (Client client : clientMap.keySet()) {
+            if (strictModeThrowable) {
+                client.cacheAndNotify(e, Severity.WARNING);
+            }
+
             client.cacheAndNotify(e, Severity.ERROR);
         }
 
@@ -62,29 +66,6 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         } else {
             System.err.printf("Exception in thread \"%s\" ", t.getName());
             e.printStackTrace(System.err);
-        }
-    }
-
-    boolean isStrictModeThrowable(Throwable e) {
-        Throwable cause = getRootCause(e);
-        Class<? extends Throwable> causeClass = cause.getClass();
-        String simpleName = causeClass.getName();
-        return STRICT_MODE_VIOLATION_CLZ_NAME.equals(simpleName);
-    }
-
-    /**
-     * Recurse to get the original cause of the throwable
-     *
-     * @param t the throwable
-     * @return the root cause of the throwable
-     */
-    private Throwable getRootCause(Throwable t) {
-        Throwable cause = t.getCause();
-
-        if (cause == null) {
-            return t;
-        } else {
-            return getRootCause(cause);
         }
     }
 
