@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 class StrictModeHandler {
@@ -74,7 +73,7 @@ class StrictModeHandler {
                 String val = POLICY_CODE_MAP.get(code);
 
                 if (val != null) {
-                    return String.format(Locale.US, "%s (%d)", val, code);
+                    return "StrictMode - " + val;
                 }
             }
         }

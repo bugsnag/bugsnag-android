@@ -822,9 +822,10 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    void cacheAndNotify(Throwable exception, Severity severity) {
+    void cacheAndNotify(Throwable exception, Severity severity, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
+        error.setMetaData(metaData);
         notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 

@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Collections;
 import java.util.WeakHashMap;
 
 /**
@@ -8,6 +9,7 @@ import java.util.WeakHashMap;
  */
 class ExceptionHandler implements UncaughtExceptionHandler {
 
+    public static final String KEY_STRICT_MODE_VIOLATION = "StrictModeViolation";
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     final WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
@@ -53,11 +55,15 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
         // Notify any subscribed clients of the uncaught exception
         for (Client client : clientMap.keySet()) {
-            if (strictModeThrowable) {
-                client.cacheAndNotify(e, Severity.WARNING);
+
+            if (strictModeThrowable) { // add strictmode policy violation to metadata
+                String violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
+                MetaData metaData = new MetaData(
+                    Collections.<String, Object>singletonMap(KEY_STRICT_MODE_VIOLATION, violationDesc));
+                client.cacheAndNotify(e, Severity.ERROR, metaData);
             }
 
-            client.cacheAndNotify(e, Severity.ERROR);
+            client.cacheAndNotify(e, Severity.ERROR, null);
         }
 
         // Pass exception on to original exception handler
