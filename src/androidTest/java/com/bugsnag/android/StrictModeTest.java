@@ -31,13 +31,16 @@ public class StrictModeTest extends BugsnagTestCase {
     public void testIsStrictModeThrowable() throws Exception {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             Exception strictModeException = generateStrictModeException();
-            assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
 
-            RuntimeException wrappedException = new RuntimeException(strictModeException);
-            assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
+            if (strictModeException != null) {
+                assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
 
-            RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
-            assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
+                RuntimeException wrappedException = new RuntimeException(strictModeException);
+                assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
+
+                RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
+                assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
+            }
         }
     }
 
@@ -72,15 +75,19 @@ public class StrictModeTest extends BugsnagTestCase {
     public void testStrictModeDescException() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             Exception exception = generateStrictModeException();
-            String desc = strictModeHandler.getViolationDescription(exception.getMessage());
-            assertEquals("StrictMode - DiskRead", desc);
+
+            if (exception != null) {
+                String desc = strictModeHandler.getViolationDescription(exception.getMessage());
+                assertEquals("StrictMode - DiskRead", desc);
+            }
         }
     }
 
     /**
      * Generates a StrictMode Exception (as it has private visibility in StrictMode)
      *
-     * @return the StrictModeException
+     * @return the StrictModeException. This is nullable as the errors StrictMode detect
+     * depend on the API level.
      */
     private Exception generateStrictModeException() {
         try {
