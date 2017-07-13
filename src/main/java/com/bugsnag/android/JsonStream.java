@@ -14,7 +14,7 @@ public class JsonStream extends JsonWriter {
 
     private final Writer out;
 
-    JsonStream(Writer out) {
+    public JsonStream(Writer out) {
         super(out);
         setSerializeNulls(false);
         this.out = out;
