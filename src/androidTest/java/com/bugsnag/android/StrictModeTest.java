@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class StrictModeTest extends BugsnagTestCase {
 
+    public static final String STRICT_MODE_MSG = "android.os.StrictMode$StrictModeViolation: policy=262146 violation=";
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
 
     @Override
@@ -46,6 +47,31 @@ public class StrictModeTest extends BugsnagTestCase {
 
         RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
         assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
+    }
+
+    public void testStrictModeInvalidDesc() {
+        String[] invalidArgs = {null, ""};
+
+        for (String invalidArg : invalidArgs) {
+            try {
+                strictModeHandler.getViolationDescription(invalidArg);
+                fail("Null/empty values not rejected");
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+    }
+
+    public void testStrictModeBadDesc() {
+        String desc = strictModeHandler.getViolationDescription("Three blind mice, look how they run");
+        assertNull(desc);
+    }
+
+    public void testStrictModeDesc() {
+        String fileReadDesc = strictModeHandler.getViolationDescription(STRICT_MODE_MSG + "2");
+        assertEquals("Disk Read", fileReadDesc);
+
+        String fileWriteDesc = strictModeHandler.getViolationDescription(STRICT_MODE_MSG + "1");
+        assertEquals("Disk Write", fileWriteDesc);
     }
 
     /**

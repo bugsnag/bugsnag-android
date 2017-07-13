@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+
 class StrictModeHandler {
 
     private static final String STRICT_MODE_CLZ_NAME = "android.os.StrictMode";
@@ -14,6 +17,15 @@ class StrictModeHandler {
         Class<? extends Throwable> causeClass = cause.getClass();
         String simpleName = causeClass.getName();
         return simpleName.startsWith(STRICT_MODE_CLZ_NAME);
+    }
+
+    @Nullable
+    String getViolationDescription(String exceptionMessage) {
+        if (TextUtils.isEmpty(exceptionMessage)) {
+            throw new IllegalArgumentException();
+        }
+        int i = exceptionMessage.lastIndexOf("violation=");
+        return null;
     }
 
     /**
