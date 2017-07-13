@@ -1022,7 +1022,14 @@ public class Client extends Observable implements Observer {
      * @throws Throwable if something goes wrong
      */
     protected void finalize() throws Throwable {
-        appContext.unregisterReceiver(eventReceiver);
+        if (eventReceiver != null) {
+            try {
+                appContext.unregisterReceiver(eventReceiver);
+            }
+            catch (IllegalArgumentException e) {
+                Logger.warn("Receiver not registered");
+            }
+        }
         super.finalize();
     }
 

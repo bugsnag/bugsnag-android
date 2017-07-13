@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,8 +17,11 @@ import java.util.Map;
  * @see Client
  */
 public final class Bugsnag {
+  
     @Nullable
+    @SuppressLint("StaticFieldLeak")
     static Client client;
+
     private Bugsnag() {}
 
     /**

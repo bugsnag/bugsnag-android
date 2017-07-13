@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.annotation.SuppressLint;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Observer;
 public class NativeInterface {
 
     /** Static reference used if not using Bugsnag.init() */
+    @SuppressLint("StaticFieldLeak")
     private static Client client;
 
     @NonNull
