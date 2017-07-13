@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import android.os.Build;
-import android.os.StrictMode;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,28 +8,19 @@ import java.io.IOException;
 
 public class StrictModeTest extends BugsnagTestCase {
 
-    public static final String STRICT_MODE_MSG = "android.os.StrictMode$StrictModeViolation: policy=262146 violation=";
+    private static final String STRICT_MODE_MSG = "android.os.StrictMode$StrictModeViolation: policy=262146 violation=";
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .penaltyDeath()
-                .build());
-        }
+        StrictModeCompat.setUp();
     }
 
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
-        }
+        StrictModeCompat.tearDown();
     }
 
     public void testIsNotStrictModeThrowable() throws Exception {
@@ -39,14 +29,16 @@ public class StrictModeTest extends BugsnagTestCase {
     }
 
     public void testIsStrictModeThrowable() throws Exception {
-        Exception strictModeException = generateStrictModeException();
-        assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            Exception strictModeException = generateStrictModeException();
+            assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
 
-        RuntimeException wrappedException = new RuntimeException(strictModeException);
-        assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
+            RuntimeException wrappedException = new RuntimeException(strictModeException);
+            assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
 
-        RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
-        assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
+            RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
+            assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
+        }
     }
 
     public void testStrictModeInvalidDesc() {
@@ -78,9 +70,11 @@ public class StrictModeTest extends BugsnagTestCase {
     }
 
     public void testStrictModeDescException() {
-        Exception exception = generateStrictModeException();
-        String desc = strictModeHandler.getViolationDescription(exception.getMessage());
-        assertEquals("StrictMode - DiskRead", desc);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            Exception exception = generateStrictModeException();
+            String desc = strictModeHandler.getViolationDescription(exception.getMessage());
+            assertEquals("StrictMode - DiskRead", desc);
+        }
     }
 
     /**

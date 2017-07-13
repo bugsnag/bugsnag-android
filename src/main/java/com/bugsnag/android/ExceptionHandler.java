@@ -9,7 +9,7 @@ import java.util.WeakHashMap;
  */
 class ExceptionHandler implements UncaughtExceptionHandler {
 
-    public static final String KEY_STRICT_MODE_VIOLATION = "StrictModeViolation";
+    private static final String KEY_STRICT_MODE_VIOLATION = "StrictModeViolation";
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     final WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
