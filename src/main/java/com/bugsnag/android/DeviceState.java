@@ -24,13 +24,21 @@ import java.util.Date;
  * time toStream is called.
  */
 class DeviceState implements JsonStream.Streamable {
+    @NonNull
     private final Long freeMemory;
+    @Nullable
     private final String orientation;
+    @Nullable
     private final Float batteryLevel;
+    @Nullable
     private final Long freeDisk;
+    @Nullable
     private final Boolean charging;
+    @Nullable
     private final String locationStatus;
+    @Nullable
     private final String networkAccess;
+    @NonNull
     private final String time;
 
     DeviceState(@NonNull Context appContext) {
@@ -76,7 +84,7 @@ class DeviceState implements JsonStream.Streamable {
      * Get the device orientation, eg. "landscape"
      */
     @Nullable
-    private static String getOrientation(Context appContext) {
+    private static String getOrientation(@NonNull Context appContext) {
         String orientation = null;
         switch (appContext.getResources().getConfiguration().orientation) {
             case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
@@ -96,7 +104,7 @@ class DeviceState implements JsonStream.Streamable {
      * Get the current battery charge level, eg 0.3
      */
     @Nullable
-    private static Float getBatteryLevel(Context appContext) {
+    private static Float getBatteryLevel(@NonNull Context appContext) {
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
@@ -131,7 +139,7 @@ class DeviceState implements JsonStream.Streamable {
      * Is the device currently charging/full battery?
      */
     @Nullable
-    private static Boolean isCharging(Context appContext) {
+    private static Boolean isCharging(@NonNull Context appContext) {
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
@@ -148,7 +156,7 @@ class DeviceState implements JsonStream.Streamable {
      * Get the current status of location services
      */
     @Nullable
-    private static String getLocationStatus(Context appContext) {
+    private static String getLocationStatus(@NonNull Context appContext) {
         try {
             ContentResolver cr = appContext.getContentResolver();
             String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
@@ -167,7 +175,7 @@ class DeviceState implements JsonStream.Streamable {
      * Get the current status of network access, eg "cellular"
      */
     @Nullable
-    private static String getNetworkAccess(Context appContext) {
+    private static String getNetworkAccess(@NonNull Context appContext) {
         try {
             ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();

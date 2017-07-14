@@ -18,6 +18,7 @@ import java.io.IOException;
 public class Error implements JsonStream.Streamable {
     private static final String PAYLOAD_VERSION = "3";
 
+    @NonNull
     final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
@@ -26,17 +27,19 @@ public class Error implements JsonStream.Streamable {
     private Breadcrumbs breadcrumbs;
     private User user;
     private Throwable exception;
+    @Nullable
     private Severity severity = Severity.WARNING;
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
 
-    Error(Configuration config, Throwable exception) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception) {
         this.config = config;
         this.exception = exception;
     }
 
-    Error(Configuration config, String name, String message, StackTraceElement[] frames) {
+    Error(@NonNull Configuration config, @NonNull String name,
+          @NonNull String message, @NonNull StackTraceElement[] frames) {
         this.config = config;
 
         this.exception = new BugsnagException(name, message, frames);
@@ -130,7 +133,7 @@ public class Error implements JsonStream.Streamable {
      * @param  severity  the severity of this error
      * @see    Severity
      */
-    public void setSeverity(Severity severity) {
+    public void setSeverity(@Nullable Severity severity) {
         if(severity != null) {
             this.severity = severity;
         }
@@ -141,6 +144,7 @@ public class Error implements JsonStream.Streamable {
      *
      * @see  Severity
      */
+    @Nullable
     public Severity getSeverity() {
         return severity;
     }

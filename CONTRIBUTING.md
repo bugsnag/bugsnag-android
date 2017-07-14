@@ -52,6 +52,13 @@ You can run the test suite on a device/emulator as follows:
 ./gradlew clean :connectedCheck
 ```
 
+Running Lint
+------------
+You can run lint on the project using the following command:
+
+```shell
+./gradlew lint
+```
 
 Building the Example App
 ------------------------

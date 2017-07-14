@@ -21,8 +21,11 @@ class Breadcrumbs implements JsonStream.Streamable {
         private final String METADATA_KEY = "metaData";
         private final String TYPE_KEY = "type";
         final String timestamp;
+        @NonNull
         final String name;
+        @NonNull
         final BreadcrumbType type;
+        @NonNull
         final Map<String, String> metadata;
 
         Breadcrumb(@NonNull String message) {
@@ -32,7 +35,7 @@ class Breadcrumbs implements JsonStream.Streamable {
             this.name = DEFAULT_NAME;
         }
 
-        Breadcrumb(@NonNull String name, BreadcrumbType type, Map<String, String> metadata) {
+        Breadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
             this.timestamp = DateUtils.toISO8601(new Date());
             this.type = type;
             this.metadata = metadata;
@@ -81,7 +84,7 @@ class Breadcrumbs implements JsonStream.Streamable {
         addToStore(new Breadcrumb(message));
     }
 
-    void add(@NonNull String name, BreadcrumbType type, Map<String, String> metadata) {
+    void add(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
         addToStore(new Breadcrumb(name, type, metadata));
     }
 
@@ -100,7 +103,7 @@ class Breadcrumbs implements JsonStream.Streamable {
         }
     }
 
-    private void addToStore(Breadcrumb breadcrumb) {
+    private void addToStore(@NonNull Breadcrumb breadcrumb) {
         try {
             if (breadcrumb.payloadSize() > MAX_PAYLOAD_SIZE) {
                 Logger.warn("Dropping breadcrumb because payload exceeds 4KB limit");

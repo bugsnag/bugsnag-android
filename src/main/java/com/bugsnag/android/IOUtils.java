@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Closeable;
@@ -18,7 +19,7 @@ class IOUtils {
             if (closeable != null) {
                 closeable.close();
             }
-        } catch (final Exception ioe) {
+        } catch (@NonNull final Exception ioe) {
             // ignore
         }
     }
@@ -29,7 +30,7 @@ class IOUtils {
         }
     }
 
-    public static int copy(final Reader input, final Writer output) throws IOException {
+    public static int copy(@NonNull final Reader input, @NonNull final Writer output) throws IOException {
         char[] buffer = new char[DEFAULT_BUFFER_SIZE];
         long count = 0;
         int n = 0;

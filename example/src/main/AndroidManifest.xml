@@ -4,11 +4,12 @@
       android:versionCode="1"
       android:versionName="1.0">
 
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.GET_TASKS" />
+
   <application android:label="Bugsnag Example App" android:icon="@drawable/ic_launcher"
       android:name=".ExampleApplication">
 
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  <uses-permission android:name="android.permission.GET_TASKS" />
 
         <activity android:name="ExampleActivity"
                   android:label="Bugsnag Example App"

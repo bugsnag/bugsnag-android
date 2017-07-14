@@ -16,6 +16,7 @@ public class Notifier implements JsonStream.Streamable {
     private String url;
 
     private static final Notifier instance = new Notifier();
+    @NonNull
     public static Notifier getInstance() {
         return instance;
     }

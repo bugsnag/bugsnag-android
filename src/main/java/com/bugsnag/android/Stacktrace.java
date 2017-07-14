@@ -20,14 +20,14 @@ class Stacktrace implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 
-        for(StackTraceElement el : stacktrace) {
+        for (StackTraceElement el : stacktrace) {
             try {
                 writer.beginObject();
                     writer.name("method").value(el.getClassName() + "." + el.getMethodName());
                     writer.name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName());
                     writer.name("lineNumber").value(el.getLineNumber());
 
-                    if(config.inProject(el.getClassName())) {
+                    if (config.inProject(el.getClassName())) {
                         writer.name("inProject").value(true);
                     }
 

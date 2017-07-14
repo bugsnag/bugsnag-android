@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,10 +19,12 @@ class ErrorStore {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
     private static final int MAX_STORED_ERRORS = 100;
 
+    @NonNull
     final Configuration config;
+    @Nullable
     final String path;
 
-    ErrorStore(Configuration config, Context appContext) {
+    ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
         this.config = config;
 
         String path;
@@ -82,7 +86,7 @@ class ErrorStore {
     }
 
     // Write an error to disk, for later sending
-    void write(Error error) {
+    void write(@NonNull Error error) {
         if(path == null) return;
 
         // Limit number of saved errors to prevent disk space issues
