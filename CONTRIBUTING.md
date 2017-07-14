@@ -52,6 +52,13 @@ You can run the test suite on a device/emulator as follows:
 ./gradlew clean :connectedCheck
 ```
 
+Running Lint
+------------
+You can run lint on the project using the following command:
+
+```shell
+./gradlew lint
+```
 
 Building the Example App
 ------------------------
@@ -146,3 +153,6 @@ This process is a little ridiculous...
 
 -    Make releases to downstream libraries, if appropriate (generally for bug
      fixes)
+     
+### 7. Update Method Count Badge
+-   Update the version number specified in the URL for the method count badge in the README. 

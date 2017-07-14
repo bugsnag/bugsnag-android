@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Collections;
 import java.util.WeakHashMap;
@@ -14,7 +16,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     final WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
 
-    static void enable(Client client) {
+    static void enable(@NonNull Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
 
         // Find or create the Bugsnag ExceptionHandler
@@ -30,7 +32,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         bugsnagHandler.clientMap.put(client, true);
     }
 
-    static void disable(Client client) {
+    static void disable(@NonNull Client client) {
         // Find the Bugsnag ExceptionHandler
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         if (currentHandler instanceof ExceptionHandler) {
@@ -50,9 +52,9 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
-
+      
         // Notify any subscribed clients of the uncaught exception
         for (Client client : clientMap.keySet()) {
 

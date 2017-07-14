@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.Observer;
 public class Configuration extends Observable implements Observer {
     static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
 
+    @NonNull
     private final String apiKey;
     private String buildUUID;
     private String appVersion;
@@ -23,12 +25,14 @@ public class Configuration extends Observable implements Observer {
     private String endpoint = DEFAULT_ENDPOINT;
     private String[] filters = new String[]{"password"};
     private String[] ignoreClasses;
+    @Nullable
     private String[] notifyReleaseStages = null;
     private String[] projectPackages;
     private String releaseStage;
     private boolean sendThreads = true;
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
+    @NonNull
     String defaultExceptionType = "android";
 
     private MetaData metaData;
@@ -50,6 +54,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return API key
      */
+    @NonNull
     public String getApiKey() {
         return apiKey;
     }
@@ -192,6 +197,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Notify release stages
      */
+    @Nullable
     public String[] getNotifyReleaseStages() {
         return notifyReleaseStages;
     }
@@ -322,6 +328,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the before notify tasks
      */
+    @NonNull
     protected Collection<BeforeNotify> getBeforeNotifyTasks() {
         return beforeNotifyTasks;
     }
@@ -389,7 +396,7 @@ public class Configuration extends Observable implements Observer {
      * @param className the class to check
      * @return true if the class should be considered in the project else false
      */
-    protected boolean inProject(String className) {
+    protected boolean inProject(@NonNull String className) {
         if(projectPackages != null) {
             for(String packageName : projectPackages) {
                 if(packageName != null && className.startsWith(packageName)) {
@@ -401,7 +408,7 @@ public class Configuration extends Observable implements Observer {
         return false;
     }
 
-    private void notifyBugsnagObservers(NotifyType type) {
+    private void notifyBugsnagObservers(@NonNull NotifyType type) {
         setChanged();
         super.notifyObservers(type.getValue());
     }

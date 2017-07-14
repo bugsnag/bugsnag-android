@@ -1,6 +1,9 @@
 package com.bugsnag.android;
 
-import java.sql.BatchUpdateException;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.annotation.SuppressLint;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
@@ -11,8 +14,10 @@ import java.util.Observer;
 public class NativeInterface {
 
     /** Static reference used if not using Bugsnag.init() */
+    @SuppressLint("StaticFieldLeak")
     private static Client client;
 
+    @NonNull
     private static Client getClient() {
         if (client != null) {
             return client;
@@ -21,12 +26,12 @@ public class NativeInterface {
         }
     }
 
-    public static void setClient(Client client) {
+    public static void setClient(@NonNull Client client) {
         NativeInterface.client = client;
         configureClientObservers(client);
     }
 
-    public static void configureClientObservers(Client client) {
+    public static void configureClientObservers(@NonNull Client client) {
 
         // Ensure that the bugsnag observer is registered
         // Should only happen if the NDK library is present
@@ -52,6 +57,7 @@ public class NativeInterface {
         return getClient().getContext();
     }
 
+    @Nullable
     public static String getErrorStorePath() {
         return getClient().errorStore.path;
     }
@@ -68,14 +74,17 @@ public class NativeInterface {
         return getClient().user.getName();
     }
 
+    @NonNull
     public static String getPackageName() {
         return getClient().appData.packageName;
     }
 
+    @Nullable
     public static String getAppName() {
         return getClient().appData.appName;
     }
 
+    @Nullable
     public static String getVersionName() {
         return getClient().appData.versionName;
     }
@@ -88,6 +97,7 @@ public class NativeInterface {
         return getClient().config.getBuildUUID();
     }
 
+    @Nullable
     public static String getAppVersion() {
         return getClient().appData.getAppVersion();
     }
@@ -96,10 +106,12 @@ public class NativeInterface {
         return getClient().appData.getReleaseStage();
     }
 
+    @Nullable
     public static String getDeviceId() {
         return getClient().deviceData.id;
     }
 
+    @NonNull
     public static String getDeviceLocale() {
         return getClient().deviceData.locale;
     }
@@ -108,6 +120,7 @@ public class NativeInterface {
         return getClient().deviceData.totalMemory;
     }
 
+    @Nullable
     public static Boolean getDeviceRooted() {
         return getClient().deviceData.rooted;
     }
@@ -120,6 +133,7 @@ public class NativeInterface {
         return getClient().deviceData.dpi;
     }
 
+    @Nullable
     public static String getDeviceScreenResolution() {
         return getClient().deviceData.screenResolution;
     }
@@ -148,11 +162,13 @@ public class NativeInterface {
         return android.os.Build.VERSION.SDK_INT;
     }
 
+    @NonNull
     public static String[] getDeviceCpuAbi() {
         return getClient().deviceData.cpuAbi;
     }
 
 
+    @NonNull
     public static Map<String, Object> getMetaData() {
         return getClient().getMetaData().store;
     }
@@ -165,6 +181,7 @@ public class NativeInterface {
         return getClient().config.getFilters();
     }
 
+    @Nullable
     public static String[] getReleaseStages() {
         return getClient().config.getNotifyReleaseStages();
     }
@@ -178,8 +195,8 @@ public class NativeInterface {
         getClient().setUserName(name, false);
     }
 
-    public static void leaveBreadcrumb(final String name,
-                                       final BreadcrumbType type) {
+    public static void leaveBreadcrumb(@NonNull final String name,
+                                       @NonNull final BreadcrumbType type) {
 
         getClient().leaveBreadcrumb(name, type, new HashMap<String, String>(), false);
     }
@@ -191,15 +208,15 @@ public class NativeInterface {
         getClient().config.getMetaData().addToTab(tab, key, value, false);
     }
 
-    public static void notify(final String name,
-                              final String message,
+    public static void notify(@NonNull final String name,
+                              @NonNull final String message,
                               final Severity severity,
-                              final StackTraceElement[] stacktrace,
-                              final Map<String, Object> metaData) {
+                              @NonNull final StackTraceElement[] stacktrace,
+                              @NonNull final Map<String, Object> metaData) {
 
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
-            public void beforeNotify(Report report) {
+            public void beforeNotify(@NonNull Report report) {
                 report.getError().setSeverity(severity);
                 report.getError().config.defaultExceptionType = "c";
 

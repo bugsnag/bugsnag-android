@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,11 +16,13 @@ import java.util.Map;
  */
 public class EventReceiver extends BroadcastReceiver {
 
+    @NonNull
     private static Map<String, BreadcrumbType> actions = buildActions();
+    @NonNull
     private static List<String> categories = buildCategories();
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, @NonNull Intent intent) {
         try {
             Map<String, String> meta = new HashMap<>();
 
@@ -46,6 +49,7 @@ public class EventReceiver extends BroadcastReceiver {
         }
     }
 
+    @NonNull
     private static Map<String, BreadcrumbType> buildActions() {
         HashMap<String, BreadcrumbType> actions = new HashMap<>();
 
@@ -76,6 +80,7 @@ public class EventReceiver extends BroadcastReceiver {
         return actions;
     }
 
+    @NonNull
     private static List<String> buildCategories() {
         List<String> categories = new ArrayList<>();
 
@@ -111,6 +116,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @return The intent filter
      */
+    @NonNull
     public static IntentFilter getIntentFilter() {
 
         IntentFilter filter = new IntentFilter();
@@ -131,7 +137,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi09(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi09(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.app.action.ACTION_PASSWORD_CHANGED", BreadcrumbType.LOG);
         actions.put("android.app.action.ACTION_PASSWORD_FAILED", BreadcrumbType.LOG);
@@ -240,7 +246,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param categories The list to add to
      */
-    private static void addIntentCategoriesApi09(List<String> categories) {
+    private static void addIntentCategoriesApi09(@NonNull List<String> categories) {
         categories.add("android.intent.category.ALTERNATIVE");
         categories.add("android.intent.category.BROWSABLE");
         categories.add("android.intent.category.CAR_DOCK");
@@ -282,7 +288,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi11(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi11(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.app.action.ACTION_PASSWORD_EXPIRING", BreadcrumbType.LOG);
         actions.put("android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED", BreadcrumbType.LOG);
@@ -301,7 +307,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param categories The list to add to
      */
-    private static void addIntentCategoriesApi11(List<String> categories) {
+    private static void addIntentCategoriesApi11(@NonNull List<String> categories) {
         categories.add("android.intent.category.APP_MARKET");
         categories.add("android.intent.category.HE_DESK_DOCK");
         categories.add("android.intent.category.LE_DESK_DOCK");
@@ -312,7 +318,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi12(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi12(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.bluetooth.input.profile.action.CONNECTION_STATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.bluetooth.pan.profile.action.CONNECTION_STATE_CHANGED", BreadcrumbType.LOG);
@@ -352,7 +358,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi14(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi14(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.hardware.action.NEW_PICTURE", BreadcrumbType.LOG);
         actions.put("android.hardware.action.NEW_VIDEO", BreadcrumbType.LOG);
@@ -383,7 +389,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi15(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi15(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.bluetooth.device.action.UUID", BreadcrumbType.LOG);
     }
@@ -393,7 +399,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param categories The list to add to
      */
-    private static void addIntentCategoriesApi15(List<String> categories) {
+    private static void addIntentCategoriesApi15(@NonNull List<String> categories) {
 
         categories.add("android.intent.category.APP_BROWSER");
         categories.add("android.intent.category.APP_CALCULATOR");
@@ -411,7 +417,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi16(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi16(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.hardware.input.action.QUERY_KEYBOARD_LAYOUTS", BreadcrumbType.LOG);
         actions.put("android.net.nsd.STATE_CHANGED", BreadcrumbType.LOG);
@@ -433,7 +439,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi17(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi17(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.intent.action.DREAMING_STARTED", BreadcrumbType.NAVIGATION);
         actions.put("android.intent.action.DREAMING_STOPPED", BreadcrumbType.NAVIGATION);
@@ -454,7 +460,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi18(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi18(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.net.conn.CONNECTIVITY_CHANGE", BreadcrumbType.LOG);
         actions.put("android.nfc.action.ADAPTER_STATE_CHANGED", BreadcrumbType.LOG);
@@ -474,7 +480,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi19(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi19(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.bluetooth.device.action.PAIRING_REQUEST", BreadcrumbType.LOG);
         actions.put("android.intent.action.CONTENT_CHANGED", BreadcrumbType.LOG);
@@ -524,7 +530,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi21(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi21(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.app.action.LOCK_TASK_ENTERING", BreadcrumbType.NAVIGATION);
         actions.put("android.app.action.LOCK_TASK_EXITING", BreadcrumbType.NAVIGATION);
@@ -544,7 +550,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param categories The list to add to
      */
-    private static void addIntentCategoriesApi21(List<String> categories) {
+    private static void addIntentCategoriesApi21(@NonNull List<String> categories) {
         categories.add("android.intent.category.LEANBACK_LAUNCHER");
         categories.add("android.intent.category.NOTIFICATION_PREFERENCES");
     }
@@ -572,7 +578,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi23(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi23(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.app.action.DEVICE_OWNER_CHANGED", BreadcrumbType.LOG);
         actions.put("android.app.action.INTERRUPTION_FILTER_CHANGED", BreadcrumbType.LOG);
@@ -587,7 +593,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param categories The list to add to
      */
-    private static void addIntentCategoriesApi23(List<String> categories) {
+    private static void addIntentCategoriesApi23(@NonNull List<String> categories) {
         categories.add("android.intent.category.USAGE_ACCESS_CONFIG");
         categories.add("android.intent.category.VOICE");
     }
@@ -597,7 +603,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param actions The map to add to
      */
-    private static void addIntentActionsApi24(Map<String, BreadcrumbType> actions) {
+    private static void addIntentActionsApi24(@NonNull Map<String, BreadcrumbType> actions) {
 
         actions.put("android.intent.action.LOCKED_BOOT_COMPLETED", BreadcrumbType.LOG);
         actions.put("android.intent.action.PACKAGES_SUSPENDED", BreadcrumbType.LOG);
@@ -614,7 +620,7 @@ public class EventReceiver extends BroadcastReceiver {
      *
      * @param categories The list to add to
      */
-    private static void addIntentCategoriesApi24(List<String> categories) {
+    private static void addIntentCategoriesApi24(@NonNull List<String> categories) {
         categories.add("android.service.quicksettings.action.QS_TILE_PREFERENCES");
     }
 

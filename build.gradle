@@ -21,7 +21,8 @@ android {
     }
 
     lintOptions {
-        disable 'DefaultLocale'
+        disable 'DefaultLocale', 'Typos'
+        abortOnError true
     }
 }
 

@@ -1,11 +1,10 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
 
 /**
  * An error report payload.
@@ -14,19 +13,21 @@ import java.util.LinkedList;
  * using your API key.
  */
 public class Report implements JsonStream.Streamable {
+    @Nullable
     private final File errorFile;
+    @Nullable
     private Error error;
     private String apiKey;
     private Notifier notifier;
 
-    Report(@NonNull String apiKey, File errorFile) {
+    Report(@NonNull String apiKey, @Nullable File errorFile) {
         this.apiKey = apiKey;
         this.error = null;
         this.errorFile = errorFile;
         this.notifier = Notifier.getInstance();
     }
 
-    Report(@NonNull String apiKey, Error error) {
+    Report(@NonNull String apiKey, @Nullable Error error) {
         this.apiKey = apiKey;
         this.error = error;
         this.errorFile = null;
@@ -61,6 +62,7 @@ public class Report implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    @Nullable
     public Error getError() {
         return error;
     }

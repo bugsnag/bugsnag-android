@@ -54,12 +54,17 @@ public class Client extends Observable implements Observer {
     static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
 
 
+    @NonNull
     protected final Configuration config;
     private final Context appContext;
+    @NonNull
     protected final AppData appData;
+    @NonNull
     protected final DeviceData deviceData;
+    @NonNull
     final Breadcrumbs breadcrumbs;
     protected final User user = new User();
+    @NonNull
     protected final ErrorStore errorStore;
     private final EventReceiver eventReceiver = new EventReceiver();
 
@@ -167,7 +172,7 @@ public class Client extends Observable implements Observer {
         errorStore.flush();
     }
 
-    public void notifyBugsnagObservers(NotifyType type) {
+    public void notifyBugsnagObservers(@NonNull NotifyType type) {
         setChanged();
         super.notifyObservers(type.getValue());
     }
@@ -192,6 +197,7 @@ public class Client extends Observable implements Observer {
      * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      * @return The created config
      */
+    @NonNull
     private static Configuration createNewConfiguration(@NonNull Context androidContext, String apiKey, boolean enableExceptionHandler) {
         Context appContext = androidContext.getApplicationContext();
 
@@ -233,7 +239,8 @@ public class Client extends Observable implements Observer {
      * @param data the manifest bundle
      * @return the updated config
      */
-    static Configuration populateConfigFromManifest(Configuration config, Bundle data) {
+    @NonNull
+    static Configuration populateConfigFromManifest(@NonNull Configuration config, @NonNull Bundle data) {
         config.setBuildUUID(data.getString(MF_BUILD_UUID));
         config.setAppVersion(data.getString(MF_APP_VERSION));
         config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
@@ -537,7 +544,7 @@ public class Client extends Observable implements Observer {
      *
      * @param exception the exception to send to Bugsnag
      */
-    public void notify(Throwable exception) {
+    public void notify(@NonNull Throwable exception) {
         Error error = new Error(config, exception);
         notify(error, !BLOCKING);
     }
@@ -547,7 +554,7 @@ public class Client extends Observable implements Observer {
      *
      * @param exception the exception to send to Bugsnag
      */
-    public void notifyBlocking(Throwable exception) {
+    public void notifyBlocking(@NonNull Throwable exception) {
         Error error = new Error(config, exception);
         notify(error, BLOCKING);
     }
@@ -559,7 +566,7 @@ public class Client extends Observable implements Observer {
      * @param callback callback invoked on the generated error report for
      *                 additional modification
      */
-    public void notify(Throwable exception, Callback callback) {
+    public void notify(@NonNull Throwable exception, Callback callback) {
         Error error = new Error(config, exception);
         notify(error, DeliveryStyle.ASYNC, callback);
     }
@@ -571,7 +578,7 @@ public class Client extends Observable implements Observer {
      * @param callback callback invoked on the generated error report for
      *                 additional modification
      */
-    public void notifyBlocking(Throwable exception, Callback callback) {
+    public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
         Error error = new Error(config, exception);
         notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
@@ -585,7 +592,7 @@ public class Client extends Observable implements Observer {
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
-    public void notify(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
+    public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
         Error error = new Error(config, name, message, stacktrace);
         notify(error, DeliveryStyle.ASYNC, callback);
     }
@@ -599,7 +606,7 @@ public class Client extends Observable implements Observer {
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
-    public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Callback callback) {
+    public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
         Error error = new Error(config, name, message, stacktrace);
         notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
@@ -611,7 +618,7 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      */
-    public void notify(Throwable exception, Severity severity) {
+    public void notify(@NonNull Throwable exception, Severity severity) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         notify(error, !BLOCKING);
@@ -624,7 +631,7 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      */
-    public void notifyBlocking(Throwable exception, Severity severity) {
+    public void notifyBlocking(@NonNull Throwable exception, Severity severity) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         notify(error, BLOCKING);
@@ -680,18 +687,18 @@ public class Client extends Observable implements Observer {
      *
      * @param breadcrumb the log message to leave (max 140 chars)
      */
-    public void leaveBreadcrumb(String breadcrumb) {
+    public void leaveBreadcrumb(@NonNull String breadcrumb) {
         breadcrumbs.add(breadcrumb);
         notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
-    public void leaveBreadcrumb(String name, BreadcrumbType type, Map<String, String> metadata) {
+    public void leaveBreadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
         leaveBreadcrumb(name, type, metadata, true);
     }
 
-    void leaveBreadcrumb(String name,
-                         BreadcrumbType type,
-                         Map<String, String> metadata,
+    void leaveBreadcrumb(@NonNull String name,
+                         @NonNull BreadcrumbType type,
+                         @NonNull Map<String, String> metadata,
                          boolean notify) {
         breadcrumbs.add(name, type, metadata);
 
@@ -734,12 +741,12 @@ public class Client extends Observable implements Observer {
         ExceptionHandler.disable(this);
     }
 
-    private void notify(Error error, boolean blocking) {
+    private void notify(@NonNull Error error, boolean blocking) {
         DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
         notify(error, style, null);
     }
 
-    private void notify(Error error, DeliveryStyle style, Callback callback) {
+    private void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;
@@ -806,7 +813,7 @@ public class Client extends Observable implements Observer {
         breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
     }
 
-    void deliver(Report report, Error error) {
+    void deliver(@NonNull Report report, @NonNull Error error) {
         try {
             HttpClient.post(config.getEndpoint(), report);
             Logger.info(String.format(Locale.US, "Sent 1 new error to Bugsnag"));
@@ -822,7 +829,7 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    void cacheAndNotify(Throwable exception, Severity severity, MetaData metaData) {
+    void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -864,7 +871,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable,Callback)}
      *             to send and modify error reports
      */
-    public void notify(Throwable exception, MetaData metaData) {
+    public void notify(@NonNull Throwable exception, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setMetaData(metaData);
         notify(error, !BLOCKING);
@@ -879,7 +886,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable,Callback)}
      *             to send and modify error reports
      */
-    public void notifyBlocking(Throwable exception, MetaData metaData) {
+    public void notifyBlocking(@NonNull Throwable exception, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setMetaData(metaData);
         notify(error, BLOCKING);
@@ -897,7 +904,7 @@ public class Client extends Observable implements Observer {
      *             modify error reports
      */
     @Deprecated
-    public void notify(Throwable exception, Severity severity, MetaData metaData) {
+    public void notify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -916,7 +923,7 @@ public class Client extends Observable implements Observer {
      *             and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(Throwable exception, Severity severity, MetaData metaData) {
+    public void notifyBlocking(@NonNull Throwable exception, Severity severity, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -937,7 +944,7 @@ public class Client extends Observable implements Observer {
      *             to send and modify error reports
      */
     @Deprecated
-    public void notify(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -958,7 +965,7 @@ public class Client extends Observable implements Observer {
      *             to send and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(String name, String message, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -980,7 +987,7 @@ public class Client extends Observable implements Observer {
      *             to send and modify error reports
      */
     @Deprecated
-    public void notify(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notify(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -1003,7 +1010,7 @@ public class Client extends Observable implements Observer {
      *             to send and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(String name, String message, String context, StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notifyBlocking(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -1016,7 +1023,14 @@ public class Client extends Observable implements Observer {
      * @throws Throwable if something goes wrong
      */
     protected void finalize() throws Throwable {
-        appContext.unregisterReceiver(eventReceiver);
+        if (eventReceiver != null) {
+            try {
+                appContext.unregisterReceiver(eventReceiver);
+            }
+            catch (IllegalArgumentException e) {
+                Logger.warn("Receiver not registered");
+            }
+        }
         super.finalize();
     }
 
