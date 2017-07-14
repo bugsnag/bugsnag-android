@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -26,6 +27,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
     private String[] filters;
+    @NonNull
     final Map<String, Object> store;
 
     /**
@@ -38,7 +40,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     /**
      * Create a MetaData with values copied from an existing Map
      */
-    public MetaData(Map<String, Object> m) {
+    public MetaData(@NonNull Map<String, Object> m) {
         store = new ConcurrentHashMap<String, Object>(m);
     }
 
@@ -75,7 +77,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      * @param  value    the contents of the diagnostic information
      * @param  notify   whether or not to notify any NDK observers about this change
      */
-    void addToTab(String tabName, String key, Object value, boolean notify) {
+    void addToTab(String tabName, String key, @Nullable Object value, boolean notify) {
         Map<String, Object> tab = getTab(tabName);
 
         if(value != null) {
@@ -98,6 +100,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         notifyBugsnagObservers(NotifyType.META);
     }
 
+    @NonNull
     Map<String, Object> getTab(String tabName) {
         Map<String, Object> tab = (Map<String, Object>)store.get(tabName);
 
@@ -115,7 +118,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         notifyBugsnagObservers(NotifyType.FILTERS);
     }
 
-    static MetaData merge(MetaData... metaDataList) {
+    @NonNull
+    static MetaData merge(@NonNull MetaData... metaDataList) {
         ArrayList<Map<String, Object>> stores = new ArrayList<Map<String, Object>>();
         List<String> filters = new ArrayList<>();
         for(MetaData metaData : metaDataList) {
@@ -134,7 +138,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         return newMeta;
     }
 
-    private static Map<String, Object> mergeMaps(Map<String, Object>... maps) {
+    @NonNull
+    private static Map<String, Object> mergeMaps(@NonNull Map<String, Object>... maps) {
         Map<String, Object> result = new ConcurrentHashMap<String, Object>();
 
         for(Map<String, Object> map : maps) {
@@ -166,7 +171,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     }
 
     // Write complex/nested values to a JsonStreamer
-    private void objectToStream(Object obj, JsonStream writer) throws IOException {
+    private void objectToStream(@Nullable Object obj, @NonNull JsonStream writer) throws IOException {
         if(obj == null) {
             writer.nullValue();
         } else if(obj instanceof String) {
@@ -213,7 +218,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     }
 
     // Should this key be filtered
-    private boolean shouldFilter(String key) {
+    private boolean shouldFilter(@Nullable String key) {
         if(filters == null || key == null) return false;
 
         for(String filter : filters) {
@@ -225,7 +230,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         return false;
     }
 
-    private void notifyBugsnagObservers(NotifyType type) {
+    private void notifyBugsnagObservers(@NonNull NotifyType type) {
         setChanged();
         super.notifyObservers(type.getValue());
     }

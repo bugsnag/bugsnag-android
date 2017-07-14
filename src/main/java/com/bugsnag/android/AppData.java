@@ -16,12 +16,18 @@ import java.io.IOException;
  * subsequent lookups and to reduce GC overhead.
  */
 class AppData implements JsonStream.Streamable {
+    @NonNull
     private final Configuration config;
 
+    @NonNull
     protected final String packageName;
+    @Nullable
     protected final String appName;
+    @Nullable
     protected final Integer versionCode;
+    @Nullable
     protected final String versionName;
+    @NonNull
     protected final String guessedReleaseStage;
 
     AppData(@NonNull Context appContext, @NonNull Configuration config) {
@@ -73,7 +79,7 @@ class AppData implements JsonStream.Streamable {
      * The package name of the running Android app, eg: com.example.myapp
      */
     @NonNull
-    private static String getPackageName(Context appContext) {
+    private static String getPackageName(@NonNull Context appContext) {
         return appContext.getPackageName();
     }
 
@@ -82,7 +88,7 @@ class AppData implements JsonStream.Streamable {
      * AndroidManifest.xml
      */
     @Nullable
-    private static String getAppName(Context appContext) {
+    private static String getAppName(@NonNull Context appContext) {
         try {
             PackageManager packageManager = appContext.getPackageManager();
             ApplicationInfo appInfo = packageManager.getApplicationInfo(appContext.getPackageName(), 0);
@@ -99,7 +105,7 @@ class AppData implements JsonStream.Streamable {
      * in AndroidManifest.xml
      */
     @Nullable
-    private static Integer getVersionCode(Context appContext) {
+    private static Integer getVersionCode(@NonNull Context appContext) {
         try {
             return appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
@@ -113,7 +119,7 @@ class AppData implements JsonStream.Streamable {
      * in AndroidManifest.xml
      */
     @Nullable
-    private static String getVersionName(Context appContext) {
+    private static String getVersionName(@NonNull Context appContext) {
         try {
             return appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
@@ -127,7 +133,7 @@ class AppData implements JsonStream.Streamable {
      * android:debuggable flag from AndroidManifest.xml
      */
     @NonNull
-    private static String guessReleaseStage(Context appContext) {
+    private static String guessReleaseStage(@NonNull Context appContext) {
         try {
             int appFlags = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), 0).flags;
             if ((appFlags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {

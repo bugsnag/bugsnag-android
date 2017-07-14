@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.app.Application;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 
 /**
@@ -15,7 +16,7 @@ final class SdkCompatWrapper {
     private final LifecycleBreadcrumbLogger logger = new LifecycleBreadcrumbLogger();
 
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    void setupLifecycleLogger(Application application) {
+    void setupLifecycleLogger(@NonNull Application application) {
         application.registerActivityLifecycleCallbacks(logger);
     }
 

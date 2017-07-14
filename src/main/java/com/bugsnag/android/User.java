@@ -20,7 +20,7 @@ class User implements JsonStream.Streamable {
         this.name = name;
     }
 
-    User(User u) {
+    User(@NonNull User u) {
         this(u.id, u.email, u.name);
     }
 

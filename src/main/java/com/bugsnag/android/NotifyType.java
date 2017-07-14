@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.Nullable;
+
 /**
  * Used to inform the NDK library which type of data needs to be updated
  */
@@ -24,7 +26,8 @@ public enum NotifyType {
         return intValue;
     }
 
-    public static NotifyType fromInt(Integer intValue) {
+    @Nullable
+    public static NotifyType fromInt(@Nullable Integer intValue) {
         if (intValue != null) {
             for (NotifyType type : NotifyType.values()) {
                 if (intValue.equals(type.getValue())) {

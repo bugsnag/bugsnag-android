@@ -16,6 +16,9 @@
 
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
@@ -186,6 +189,7 @@ public class JsonWriter implements Closeable {
    * newline characters. This prevents eval() from failing with a syntax
    * error. http://code.google.com/p/google-gson/issues/detail?id=341
    */
+  @NonNull
   private static final String[] REPLACEMENT_CHARS;
   private static final String[] HTML_SAFE_REPLACEMENT_CHARS;
   static {
@@ -209,6 +213,7 @@ public class JsonWriter implements Closeable {
   }
 
   /** The output data, containing at most one top-level array or object. */
+  @Nullable
   private final Writer out;
 
   private final List<JsonScope> stack = new ArrayList<JsonScope>();
@@ -220,17 +225,20 @@ public class JsonWriter implements Closeable {
    * A string containing a full set of spaces for a single level of
    * indentation, or null for no pretty printing.
    */
+  @Nullable
   private String indent;
 
   /**
    * The name/value separator; either ":" or ": ".
    */
+  @NonNull
   private String separator = ":";
 
   private boolean lenient;
 
   private boolean htmlSafe;
 
+  @Nullable
   private String deferredName;
 
   private boolean serializeNulls = true;
@@ -240,7 +248,7 @@ public class JsonWriter implements Closeable {
    * For best performance, ensure {@link Writer} is buffered; wrapping in
    * {@link java.io.BufferedWriter BufferedWriter} if necessary.
    */
-  public JsonWriter(Writer out) {
+  public JsonWriter(@Nullable Writer out) {
     if (out == null) {
       throw new NullPointerException("out == null");
     }
@@ -255,7 +263,7 @@ public class JsonWriter implements Closeable {
    *
    * @param indent a string containing only whitespace.
    */
-  public final void setIndent(String indent) {
+  public final void setIndent(@NonNull String indent) {
     if (indent.length() == 0) {
       this.indent = null;
       this.separator = ":";
@@ -329,6 +337,7 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
+  @NonNull
   public JsonWriter beginArray() throws IOException {
     writeDeferredName();
     return open(JsonScope.EMPTY_ARRAY, "[");
@@ -339,6 +348,7 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
+  @NonNull
   public JsonWriter endArray() throws IOException {
     return close(JsonScope.EMPTY_ARRAY, JsonScope.NONEMPTY_ARRAY, "]");
   }
@@ -349,6 +359,7 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
+  @NonNull
   public JsonWriter beginObject() throws IOException {
     writeDeferredName();
     return open(JsonScope.EMPTY_OBJECT, "{");
@@ -359,6 +370,7 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
+  @NonNull
   public JsonWriter endObject() throws IOException {
     return close(JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, "}");
   }
@@ -367,7 +379,8 @@ public class JsonWriter implements Closeable {
    * Enters a new scope by appending any necessary whitespace and the given
    * bracket.
    */
-  private JsonWriter open(JsonScope empty, String openBracket) throws IOException {
+  @NonNull
+  private JsonWriter open(JsonScope empty, @NonNull String openBracket) throws IOException {
     beforeValue(true);
     stack.add(empty);
     out.write(openBracket);
@@ -378,7 +391,8 @@ public class JsonWriter implements Closeable {
    * Closes the current scope by appending any necessary whitespace and the
    * given bracket.
    */
-  private JsonWriter close(JsonScope empty, JsonScope nonempty, String closeBracket)
+  @NonNull
+  private JsonWriter close(JsonScope empty, JsonScope nonempty, @NonNull String closeBracket)
       throws IOException {
     JsonScope context = peek();
     if (context != nonempty && context != empty) {
@@ -420,7 +434,8 @@ public class JsonWriter implements Closeable {
    * @param name the name of the forthcoming value. May not be null.
    * @return this writer.
    */
-  public JsonWriter name(String name) throws IOException {
+  @NonNull
+  public JsonWriter name(@Nullable String name) throws IOException {
     if (name == null) {
       throw new NullPointerException("name == null");
     }
@@ -448,7 +463,8 @@ public class JsonWriter implements Closeable {
    * @param value the literal string value, or null to encode a null literal.
    * @return this writer.
    */
-  public JsonWriter value(String value) throws IOException {
+  @NonNull
+  public JsonWriter value(@Nullable String value) throws IOException {
     if (value == null) {
       return nullValue();
     }
@@ -463,6 +479,7 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
+  @NonNull
   public JsonWriter nullValue() throws IOException {
     if (deferredName != null) {
       if (serializeNulls) {
@@ -482,6 +499,7 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
+  @NonNull
   public JsonWriter value(boolean value) throws IOException {
     writeDeferredName();
     beforeValue(false);
@@ -494,7 +512,8 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
-  public JsonWriter value(Boolean value) throws IOException {
+  @NonNull
+  public JsonWriter value(@Nullable Boolean value) throws IOException {
     if (value == null) {
       return nullValue();
     }
@@ -511,6 +530,7 @@ public class JsonWriter implements Closeable {
    *     {@link Double#isInfinite() infinities}.
    * @return this writer.
    */
+  @NonNull
   public JsonWriter value(double value) throws IOException {
     if (Double.isNaN(value) || Double.isInfinite(value)) {
       throw new IllegalArgumentException("Numeric values must be finite, but was " + value);
@@ -526,6 +546,7 @@ public class JsonWriter implements Closeable {
    *
    * @return this writer.
    */
+  @NonNull
   public JsonWriter value(long value) throws IOException {
     writeDeferredName();
     beforeValue(false);
@@ -540,7 +561,8 @@ public class JsonWriter implements Closeable {
    *     {@link Double#isInfinite() infinities}.
    * @return this writer.
    */
-  public JsonWriter value(Number value) throws IOException {
+  @NonNull
+  public JsonWriter value(@Nullable Number value) throws IOException {
     if (value == null) {
       return nullValue();
     }
@@ -582,7 +604,7 @@ public class JsonWriter implements Closeable {
     stack.clear();
   }
 
-  private void string(String value) throws IOException {
+  private void string(@NonNull String value) throws IOException {
     String[] replacements = htmlSafe ? HTML_SAFE_REPLACEMENT_CHARS : REPLACEMENT_CHARS;
     out.write("\"");
     int last = 0;
