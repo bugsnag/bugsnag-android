@@ -34,7 +34,7 @@ class StrictModeHandler {
         POLICY_CODE_MAP.put(DETECT_DISK_READ, "DiskRead");
         POLICY_CODE_MAP.put(DETECT_NETWORK, "NetworkOperation");
         POLICY_CODE_MAP.put(DETECT_CUSTOM, "CustomSlowCall");
-        POLICY_CODE_MAP.put(DETECT_RESOURCE_MISMATCH, "ResourceMistmatch");
+        POLICY_CODE_MAP.put(DETECT_RESOURCE_MISMATCH, "ResourceMismatch");
 
         POLICY_CODE_MAP.put(DETECT_VM_CURSOR_LEAKS, "CursorLeak");
         POLICY_CODE_MAP.put(DETECT_VM_CLOSABLE_LEAKS, "CloseableLeak");
