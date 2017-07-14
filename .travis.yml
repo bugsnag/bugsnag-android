@@ -1,43 +1,34 @@
 language: android
-jdk: oraclejdk8
 
 android:
   components:
     - tools
     - platform-tools
-    - tools # https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943
-#    - build-tools-23.0.1
+    - build-tools-23.0.1
     - build-tools-25.0.2
-#    - android-4
-#    - android-10
-#    - android-19
-
-    - sys-img-armeabi-v7a-android-22
-    - android-22
+    - android-4
+    - android-10
+    - android-19
+    - android-23
     - android-25
     - extra-android-m2repository
 
-# use Travis CI example
+env:
+  matrix:
+    - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
+    - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
+    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+
 before_script:
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-
-#env:
-#  matrix:
-#    - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
-#    - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
-#    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
-
-#before_script:
   # Create and start emulator
-#  - jdk_switcher use oraclejdk8
-#  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-#  - emulator -avd test -no-skin -no-audio -no-window &
-#  - adb wait-for-device
-#  - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
-#  - adb shell input keyevent 82 &
+  - android list targets
+  - jdk_switcher use oraclejdk8
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - adb wait-for-device
+  - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
+  - adb shell input keyevent 82 &
 
 script: ./gradlew --info connectedAndroidTest
 
