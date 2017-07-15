@@ -4,6 +4,7 @@ android:
   components:
     - tools
     - platform-tools
+    - tools # appears twice as per Travis docs
     - build-tools-23.0.1
     - build-tools-25.0.2
     - android-4
@@ -13,14 +14,18 @@ android:
     - android-25
     - extra-android-m2repository
 
+    - sys-img-armeabi-v7a-android-25
+
 env:
   matrix:
     - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
 
 before_script:
   # Create and start emulator
+  - android list targets
   - jdk_switcher use oraclejdk8
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
