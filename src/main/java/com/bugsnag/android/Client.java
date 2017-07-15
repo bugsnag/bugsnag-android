@@ -67,6 +67,7 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final ErrorStore errorStore;
     private final EventReceiver eventReceiver = new EventReceiver();
+    private ErrorReportApiClient errorReportApiClient = new DefaultHttpClient();
 
     /**
      * Initialize a Bugsnag client
@@ -169,7 +170,7 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         // Flush any on-disk errors
-        errorStore.flush();
+        errorStore.flush(errorReportApiClient);
     }
 
     public void notifyBugsnagObservers(@NonNull NotifyType type) {
@@ -515,6 +516,14 @@ public class Client extends Observable implements Observer {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
+    void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
+        if (errorReportApiClient == null) {
+            throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
+        }
+        this.errorReportApiClient = errorReportApiClient;
+    }
+
     /**
      * Add a "before notify" callback, to execute code before every
      * report to Bugsnag.
@@ -806,7 +815,7 @@ public class Client extends Observable implements Observer {
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
-                errorStore.flush();
+                errorStore.flush(errorReportApiClient);
         }
 
         // Add a breadcrumb for this error occurring
@@ -815,14 +824,14 @@ public class Client extends Observable implements Observer {
 
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
-            HttpClient.post(config.getEndpoint(), report);
+            errorReportApiClient.postReport(config.getEndpoint(), report);
             Logger.info(String.format(Locale.US, "Sent 1 new error to Bugsnag"));
-        } catch (HttpClient.NetworkException e) {
+        } catch (DefaultHttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
             // Save error to disk for later sending
             errorStore.write(error);
-        } catch (HttpClient.BadResponseException e) {
+        } catch (DefaultHttpClient.BadResponseException e) {
             Logger.info("Bad response when sending data to Bugsnag");
         } catch (Exception e) {
             Logger.warn("Problem sending error to Bugsnag", e);

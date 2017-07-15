@@ -17,7 +17,7 @@ import java.util.Map;
  * @see Client
  */
 public final class Bugsnag {
-  
+
     @Nullable
     @SuppressLint("StaticFieldLeak")
     static Client client;
@@ -266,6 +266,21 @@ public final class Bugsnag {
      */
     public static void setUserName(final String name) {
         getClient().setUserName(name);
+    }
+
+    /**
+     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
+     * requirements such as certificate pinning to be achieved.
+     * <p/>
+     *
+     * The client implementation, and must be capable of sending Error Reports to the Bugsnag API,
+     * as documented here: <a href="https://docs.bugsnag.com/api/error-reporting/">
+     *     https://docs.bugsnag.com/api/error-reporting/</a>
+     *
+     * @param errorReportApiClient the custom HTTP client implementation
+     */
+    public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
+        getClient().setErrorReportApiClient(errorReportApiClient);
     }
 
     /**

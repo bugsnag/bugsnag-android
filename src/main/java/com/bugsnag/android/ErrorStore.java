@@ -45,7 +45,7 @@ class ErrorStore {
     }
 
     // Flush any on-disk errors to Bugsnag
-    void flush() {
+    void flush(final ErrorReportApiClient errorReportApiClient) {
         if(path == null) return;
 
         try {
@@ -63,12 +63,12 @@ class ErrorStore {
                         for(File errorFile : errorFiles) {
                             try {
                                 Report report = new Report(config.getApiKey(), errorFile);
-                                HttpClient.post(config.getEndpoint(), report);
+                                errorReportApiClient.postReport(config.getEndpoint(), report);
 
                                 Logger.info("Deleting sent error file " + errorFile.getName());
                                 if (!errorFile.delete())
                                     errorFile.deleteOnExit();
-                            } catch (HttpClient.NetworkException e) {
+                            } catch (DefaultHttpClient.NetworkException e) {
                                 Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
                             } catch (Exception e) {
                                 Logger.warn("Problem sending unsent error from disk", e);
