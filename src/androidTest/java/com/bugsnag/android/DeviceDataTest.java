@@ -15,8 +15,15 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(AndroidJUnit4.class)
-public class DeviceDataTest extends BugsnagTestCase {
+public class DeviceDataTest {
 
     @Test
     public void testSaneValues() throws JSONException, IOException {

@@ -10,8 +10,13 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(AndroidJUnit4.class)
-public class StacktraceTest extends BugsnagTestCase {
+public class StacktraceTest {
 
     @Test
     public void testBasicException() throws JSONException, IOException {
@@ -21,7 +26,7 @@ public class StacktraceTest extends BugsnagTestCase {
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
         JSONObject firstFrame = (JSONObject)stacktraceJson.get(0);
-        assertEquals(19, firstFrame.get("lineNumber"));
+        assertEquals(24, firstFrame.get("lineNumber"));
         assertEquals("com.bugsnag.android.StacktraceTest.testBasicException", firstFrame.get("method"));
         assertEquals("StacktraceTest.java", firstFrame.get("file"));
         assertFalse(firstFrame.has("inProject"));

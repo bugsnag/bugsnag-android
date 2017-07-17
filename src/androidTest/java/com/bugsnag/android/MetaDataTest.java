@@ -15,8 +15,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(AndroidJUnit4.class)
-public class MetaDataTest extends BugsnagTestCase {
+public class MetaDataTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
@@ -39,7 +43,7 @@ public class MetaDataTest extends BugsnagTestCase {
         JSONObject tab = metaDataJson.getJSONObject("example");
         assertEquals("value", tab.getString("string"));
         assertEquals(123, tab.getInt("integer"));
-        assertEquals(123.45, tab.getDouble("double"));
+        assertEquals(123.45, tab.getDouble("double"), 0.01);
         assertEquals(true, tab.getBoolean("boolean"));
         assertTrue(tab.isNull("null"));
 

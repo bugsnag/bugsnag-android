@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static com.bugsnag.android.Client.MF_APP_VERSION;
 import static com.bugsnag.android.Client.MF_BUILD_UUID;
 import static com.bugsnag.android.Client.MF_ENABLE_EXCEPTION_HANDLER;
@@ -18,9 +19,11 @@ import static com.bugsnag.android.Client.MF_ENDPOINT;
 import static com.bugsnag.android.Client.MF_PERSIST_USER_BETWEEN_SESSIONS;
 import static com.bugsnag.android.Client.MF_RELEASE_STAGE;
 import static com.bugsnag.android.Client.MF_SEND_THREADS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(AndroidJUnit4.class)
-public class ClientTest extends BugsnagTestCase {
+public class ClientTest {
 
     private Context context;
 
@@ -48,12 +51,9 @@ public class ClientTest extends BugsnagTestCase {
             .commit();
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testNullContext() {
-        try {
-            Client client = new Client(null, "api-key");
-            fail("Should throw for null Contexts");
-        } catch(NullPointerException e) { }
+        new Client(null, "api-key");
     }
 
     @Test

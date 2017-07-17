@@ -10,8 +10,11 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+
 @RunWith(AndroidJUnit4.class)
-public class ReportTest extends BugsnagTestCase {
+public class ReportTest {
 
     @Test
     public void testInMemoryError() throws JSONException, IOException {

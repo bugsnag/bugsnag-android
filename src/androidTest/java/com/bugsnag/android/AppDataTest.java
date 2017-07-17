@@ -10,8 +10,11 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+
 @RunWith(AndroidJUnit4.class)
-public class AppDataTest extends BugsnagTestCase {
+public class AppDataTest {
 
     @Test
     public void testManifestData() throws JSONException, IOException {
@@ -22,7 +25,7 @@ public class AppDataTest extends BugsnagTestCase {
         assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
         assertEquals("com.bugsnag.android.test", appDataJson.get("packageName"));
         assertEquals("Bugsnag Android Tests", appDataJson.get("name"));
-        assertEquals(Integer.valueOf(1), appDataJson.get("versionCode"));
+        assertEquals(1, appDataJson.get("versionCode"));
         assertEquals("1.0", appDataJson.get("versionName"));
         assertEquals("1.0", appDataJson.get("version"));
         assertEquals("development", appDataJson.get("releaseStage"));

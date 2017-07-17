@@ -10,8 +10,11 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
+import static org.junit.Assert.assertEquals;
+
 @RunWith(AndroidJUnit4.class)
-public class BreadcrumbsTest extends BugsnagTestCase {
+public class BreadcrumbsTest {
 
     @Test
     public void testSerialization() throws JSONException, IOException {

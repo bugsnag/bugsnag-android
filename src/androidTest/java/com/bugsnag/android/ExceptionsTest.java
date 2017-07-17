@@ -11,8 +11,12 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 @RunWith(AndroidJUnit4.class)
-public class ExceptionsTest extends BugsnagTestCase {
+public class ExceptionsTest {
 
     @Test
     public void testBasicException() throws JSONException, IOException {
