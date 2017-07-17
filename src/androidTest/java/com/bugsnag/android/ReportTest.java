@@ -1,12 +1,19 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
+import android.support.test.runner.AndroidJUnit4;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
+@RunWith(AndroidJUnit4.class)
 public class ReportTest extends BugsnagTestCase {
+
+    @Test
     public void testInMemoryError() throws JSONException, IOException {
         Configuration config = new Configuration("example-api-key");
         Error error = new Error(config, new RuntimeException("Something broke"));
@@ -17,6 +24,7 @@ public class ReportTest extends BugsnagTestCase {
         assertEquals(1, reportJson.getJSONArray("events").length());
     }
 
+    @Test
     public void testModifyingAPIKey() throws JSONException, IOException {
         Configuration config = new Configuration("example-api-key");
         Error error = new Error(config, new RuntimeException("Something broke"));
@@ -27,6 +35,7 @@ public class ReportTest extends BugsnagTestCase {
         assertEquals("other-api-key", reportJson.get("apiKey"));
     }
 
+    @Test
     public void testModifyingGroupingHash() throws JSONException, IOException {
         Configuration config = new Configuration("example-api-key");
         Error error = new Error(config, new RuntimeException("Something broke"));

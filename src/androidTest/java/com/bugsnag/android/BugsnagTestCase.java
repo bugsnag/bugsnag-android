@@ -1,16 +1,17 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.test.AndroidTestCase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.test.AndroidTestCase;
+import java.io.IOException;
+import java.io.StringWriter;
 
+@Deprecated
 public class BugsnagTestCase extends AndroidTestCase {
     protected String streamableToString(JsonStream.Streamable streamable) throws IOException {
         StringWriter writer = new StringWriter();

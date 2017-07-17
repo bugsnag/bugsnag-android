@@ -1,13 +1,19 @@
 package com.bugsnag.android;
 
+import android.support.test.runner.AndroidJUnit4;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.json.JSONException;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+@RunWith(AndroidJUnit4.class)
 public class BreadcrumbsTest extends BugsnagTestCase {
+
+    @Test
     public void testSerialization() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("Started app");
@@ -19,6 +25,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim", breadcrumbsJson.getJSONObject(2).getJSONObject("metaData").get("message"));
     }
 
+    @Test
     public void testSizeLimit() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.setSize(5);
@@ -35,6 +42,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
     }
 
+    @Test
     public void testResize() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
@@ -51,6 +59,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
     }
 
+    @Test
     public void testClear() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
@@ -62,6 +71,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals(0, breadcrumbsJson.length());
     }
 
+    @Test
     public void testType() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
@@ -69,6 +79,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("manual", breadcrumbsJson.getJSONObject(0).get("type"));
     }
 
+    @Test
     public void testPayloadSizeLimit() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         HashMap<String, String> metadata = new HashMap<String, String>();
@@ -80,6 +91,7 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals(0, breadcrumbsJson.length());
     }
 
+    @Test
     public void testPayloadType() throws JSONException, IOException {
         Breadcrumbs breadcrumbs = new Breadcrumbs();
         HashMap<String, String> metadata = new HashMap<String, String>();

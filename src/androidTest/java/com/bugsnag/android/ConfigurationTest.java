@@ -1,6 +1,18 @@
 package com.bugsnag.android;
 
-public class ConfigurationTest extends BugsnagTestCase {
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(AndroidJUnit4.class)
+public class ConfigurationTest {
+
+    @Test
     public void testEndpoints() {
         Configuration config = new Configuration("api-key");
 
@@ -12,6 +24,7 @@ public class ConfigurationTest extends BugsnagTestCase {
         assertEquals("http://localhost:8000", config.getEndpoint());
     }
 
+    @Test
     public void testShouldNotify() {
         Configuration config = new Configuration("api-key");
 
@@ -31,6 +44,7 @@ public class ConfigurationTest extends BugsnagTestCase {
         assertTrue(config.shouldNotifyForReleaseStage("production"));
     }
 
+    @Test
     public void testShouldIgnore() {
         Configuration config = new Configuration("api-key");
 
@@ -42,6 +56,7 @@ public class ConfigurationTest extends BugsnagTestCase {
         assertTrue(config.shouldIgnoreClass("java.io.IOException"));
     }
 
+    @Test
     public void testInProject() {
         Configuration config = new Configuration("api-key");
 

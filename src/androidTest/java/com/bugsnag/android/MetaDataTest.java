@@ -1,18 +1,24 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
+import android.support.test.runner.AndroidJUnit4;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+@RunWith(AndroidJUnit4.class)
 public class MetaDataTest extends BugsnagTestCase {
+
+    @Test
     public void testBasicSerialization() throws JSONException, IOException {
         MetaData metaData = new MetaData();
         metaData.addToTab("example", "string", "value");
@@ -51,6 +57,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("value", mapJson.getString("key"));
     }
 
+    @Test
     public void testNestedMapSerialization() throws JSONException, IOException {
         Map<String, String> childMap = new HashMap<String, String>();
         childMap.put("key", "value");
@@ -68,12 +75,13 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("value", childMapJson.getString("key"));
     }
 
+    @Test
     public void testNestedCollectionSerialization() throws JSONException, IOException {
-        Collection childList = new LinkedList<String>();
+        Collection<String> childList = new LinkedList<>();
         childList.add("james");
         childList.add("test");
 
-        Collection list = new LinkedList();
+        Collection<Collection<String>> list = new LinkedList<>();
         list.add(childList);
 
         MetaData metaData = new MetaData();
@@ -88,6 +96,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("test", childListJson.get(1));
     }
 
+    @Test
     public void testBasicMerge() {
         MetaData base = new MetaData();
         base.addToTab("example", "name", "bob");
@@ -104,6 +113,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals(true, tab.get("awesome"));
     }
 
+    @Test
     public void testNullMerge() {
         MetaData base = new MetaData();
         base.addToTab("example", "name", "bob");
@@ -117,6 +127,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("bob", tab.get("name"));
     }
 
+    @Test
     public void testDeepMerge() {
         Map<String, String> baseMap = new HashMap<String, String>();
         baseMap.put("key", "fromBase");
@@ -134,6 +145,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("fromOverrides", mergedMap.get("key"));
     }
 
+    @Test
     public void testBasicFiltering() throws JSONException, IOException {
         MetaData metaData = new MetaData();
         metaData.setFilters("password");
@@ -150,6 +162,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("safe", tabJson.getString("normal"));
     }
 
+    @Test
     public void testNestedFiltering() throws JSONException, IOException  {
         Map<String, String> sensitiveMap = new HashMap<String, String>();
         sensitiveMap.put("password", "p4ssw0rd");

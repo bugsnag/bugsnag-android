@@ -1,9 +1,20 @@
 package com.bugsnag.android;
 
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+
 import java.io.File;
 
-public class ClientRejectedExecutionTest extends BugsnagTestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(AndroidJUnit4.class)
+public class ClientRejectedExecutionTest  {
 
     private static final int MAX_ALLOWED_TASKS = 128;
     private static final int TASK_COUNT = MAX_ALLOWED_TASKS * 2;
@@ -11,18 +22,16 @@ public class ClientRejectedExecutionTest extends BugsnagTestCase {
     private Client client;
     private File errorStorageDir;
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-        client = new Client(getContext(), "api-key");
+        client = new Client(InstrumentationRegistry.getContext(), "api-key");
         ErrorStore errorStore = client.errorStore;
         errorStorageDir = new File(errorStore.path);
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 

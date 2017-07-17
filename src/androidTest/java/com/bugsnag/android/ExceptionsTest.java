@@ -1,13 +1,20 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
-import java.io.IOException;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
+@RunWith(AndroidJUnit4.class)
 public class ExceptionsTest extends BugsnagTestCase {
+
+    @Test
     public void testBasicException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Exceptions exceptions = new Exceptions(config, new RuntimeException("oops"));
@@ -21,6 +28,7 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertNotNull(firstException.get("stacktrace"));
     }
 
+    @Test
     public void testCauseException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Throwable ex = new RuntimeException("oops", new Exception("cause"));
@@ -40,6 +48,7 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertNotNull(causeException.get("stacktrace"));
     }
 
+    @Test
     public void testNamedException() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
 
@@ -58,6 +67,7 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertEquals(123, stackframeJson.get("lineNumber"));
     }
 
+    @Test
     public void testCustomExceptionSerialization() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Exceptions exceptions = new Exceptions(config, new CustomException("Failed serialization"));

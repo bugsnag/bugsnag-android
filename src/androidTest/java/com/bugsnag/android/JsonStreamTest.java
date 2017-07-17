@@ -1,12 +1,22 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class JsonStreamTest extends BugsnagTestCase {
+import java.io.IOException;
+import java.io.StringWriter;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(AndroidJUnit4.class)
+public class JsonStreamTest {
+
+    @Test
     public void testSaneValues() throws JSONException, IOException {
         StringWriter writer = new StringWriter();
         JsonStream stream = new JsonStream(writer);

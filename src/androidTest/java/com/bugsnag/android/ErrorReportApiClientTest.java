@@ -1,17 +1,30 @@
 package com.bugsnag.android;
 
-public class ErrorReportApiClientTest extends BugsnagTestCase {
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Before;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+@RunWith(AndroidJUnit4.class)
+public class ErrorReportApiClientTest {
 
     private FakeApiClient apiClient;
+    private Context context;
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
+        context = InstrumentationRegistry.getContext();
         apiClient = new FakeApiClient();
     }
 
     public void testApiClientNullValidation() {
-        Bugsnag.init(getContext(), "123");
+        Bugsnag.init(context, "123");
         try {
             Bugsnag.setErrorReportApiClient(null);
             fail("ErrorReportApiClient cannot be null");
@@ -21,7 +34,7 @@ public class ErrorReportApiClientTest extends BugsnagTestCase {
     }
 
     public void testPostReportCalled() {
-        Bugsnag.init(getContext(), "123");
+        Bugsnag.init(context, "123");
         Bugsnag.setErrorReportApiClient(apiClient);
 
         assertNull(apiClient.report);

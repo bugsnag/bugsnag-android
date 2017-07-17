@@ -1,11 +1,18 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
+@RunWith(AndroidJUnit4.class)
 public class ErrorTest extends BugsnagTestCase {
+
+    @Test
     public void testShouldIgnoreClass() {
         Configuration config = new Configuration("api-key");
         config.setIgnoreClasses(new String[] {"java.io.IOException"});
@@ -19,6 +26,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertTrue(error.shouldIgnoreClass());
     }
 
+    @Test
     public void testGetExceptionName() {
         Configuration config = new Configuration("api-key");
 
@@ -26,6 +34,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertEquals("java.lang.RuntimeException", error.getExceptionName());
     }
 
+    @Test
     public void testGetExceptionMessage() {
         Configuration config = new Configuration("api-key");
 
@@ -33,6 +42,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertEquals("Example message", error.getExceptionMessage());
     }
 
+    @Test
     public void testBasicSerialization() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
@@ -45,6 +55,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertNotNull(errorJson.get("threads"));
     }
 
+    @Test
     public void testSetContext() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
@@ -54,6 +65,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertEquals("ExampleContext", errorJson.get("context"));
     }
 
+    @Test
     public void testSetGroupingHash() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));
@@ -63,6 +75,7 @@ public class ErrorTest extends BugsnagTestCase {
         assertEquals("herpderp", errorJson.get("groupingHash"));
     }
 
+    @Test
     public void testSetSeverity() throws JSONException, IOException {
         Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Example message"));

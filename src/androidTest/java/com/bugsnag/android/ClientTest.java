@@ -3,6 +3,13 @@ package com.bugsnag.android;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static com.bugsnag.android.Client.MF_APP_VERSION;
 import static com.bugsnag.android.Client.MF_BUILD_UUID;
@@ -11,12 +18,18 @@ import static com.bugsnag.android.Client.MF_ENDPOINT;
 import static com.bugsnag.android.Client.MF_PERSIST_USER_BETWEEN_SESSIONS;
 import static com.bugsnag.android.Client.MF_RELEASE_STAGE;
 import static com.bugsnag.android.Client.MF_SEND_THREADS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
+@RunWith(AndroidJUnit4.class)
 public class ClientTest extends BugsnagTestCase {
 
-    @Override
+    private Context context;
+
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
+        context = InstrumentationRegistry.getContext();
 
         // Make sure no user is stored
         SharedPreferences sharedPref = getSharedPrefs();
@@ -27,7 +40,7 @@ public class ClientTest extends BugsnagTestCase {
             .commit();
     }
 
-
+    @Test
     public void testNullContext() {
         try {
             Client client = new Client(null, "api-key");
@@ -35,22 +48,25 @@ public class ClientTest extends BugsnagTestCase {
         } catch(NullPointerException e) { }
     }
 
+    @Test
     public void testNotify() {
         // Notify should not crash
-        Client client = new Client(getContext(), "api-key");
+        Client client = new Client(context, "api-key");
         client.notify(new RuntimeException("Testing"));
     }
 
+    @Test
     public void testConfig() {
         Configuration config = new Configuration("api-key");
         config.setEndpoint("new-endpoint");
 
-        Client client = new Client(getContext(), config);
+        Client client = new Client(context, config);
 
         // Notify should not crash
         client.notify(new RuntimeException("Testing"));
     }
 
+    @Test
     public void testRestoreUserFromPrefs() {
 
         // Set a user in prefs
@@ -63,7 +79,7 @@ public class ClientTest extends BugsnagTestCase {
 
         Configuration config = new Configuration("api-key");
         config.setPersistUserBetweenSessions(true);
-        Client client = new Client(getContext(), config);
+        Client client = new Client(context, config);
         final User user = new User();
 
         client.beforeNotify(new BeforeNotify() {
@@ -85,10 +101,11 @@ public class ClientTest extends BugsnagTestCase {
         assertEquals("Mr Test", user.getName());
     }
 
+    @Test
     public void testStoreUserInPrefs() {
         Configuration config = new Configuration("api-key");
         config.setPersistUserBetweenSessions(true);
-        Client client = new Client(getContext(), config);
+        Client client = new Client(context, config);
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was store in prefs
@@ -98,10 +115,11 @@ public class ClientTest extends BugsnagTestCase {
         assertEquals("Mr Test", sharedPref.getString("user.name", null));
     }
 
+    @Test
     public void testStoreUserInPrefsDisabled() {
         Configuration config = new Configuration("api-key");
         config.setPersistUserBetweenSessions(false);
-        Client client = new Client(getContext(), config);
+        Client client = new Client(context, config);
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was not stored in prefs
@@ -111,6 +129,7 @@ public class ClientTest extends BugsnagTestCase {
         assertFalse(sharedPref.contains("user.name"));
     }
 
+    @Test
     public void testClearUser() {
 
         // Set a user in prefs
@@ -122,7 +141,7 @@ public class ClientTest extends BugsnagTestCase {
             .commit();
 
         // Clear the user using the command
-        Client client = new Client(getContext(), "api-key");
+        Client client = new Client(context, "api-key");
         client.clearUser();
 
         // Check that there is no user information in the prefs anymore
@@ -132,6 +151,7 @@ public class ClientTest extends BugsnagTestCase {
         assertFalse(sharedPref.contains("user.name"));
     }
 
+    @Test
     public void testEmptyManifestConfig() {
         Configuration config = new Configuration("api-key");
         Bundle data = new Bundle();
@@ -147,6 +167,7 @@ public class ClientTest extends BugsnagTestCase {
         assertEquals(config.getPersistUserBetweenSessions(), newConfig.getPersistUserBetweenSessions());
     }
 
+    @Test
     public void testFullManifestConfig() {
         String buildUuid = "123";
         String appVersion = "v1.0";
@@ -172,10 +193,8 @@ public class ClientTest extends BugsnagTestCase {
         assertEquals(true, newConfig.getPersistUserBetweenSessions());
     }
 
-    @Override
+    @After
     protected void tearDown() throws Exception {
-        super.tearDown();
-
         // Make sure no user is stored
         SharedPreferences sharedPref = getSharedPrefs();
         sharedPref.edit()
