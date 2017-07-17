@@ -40,7 +40,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 4
+        minSdkVersion 14
     }
 }
 
