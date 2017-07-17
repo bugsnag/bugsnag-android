@@ -18,9 +18,6 @@ import static com.bugsnag.android.Client.MF_ENDPOINT;
 import static com.bugsnag.android.Client.MF_PERSIST_USER_BETWEEN_SESSIONS;
 import static com.bugsnag.android.Client.MF_RELEASE_STAGE;
 import static com.bugsnag.android.Client.MF_SEND_THREADS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class ClientTest extends BugsnagTestCase {
@@ -28,11 +25,22 @@ public class ClientTest extends BugsnagTestCase {
     private Context context;
 
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
 
         // Make sure no user is stored
-        SharedPreferences sharedPref = getSharedPrefs();
+        SharedPreferences sharedPref = getSharedPrefs(context);
+        sharedPref.edit()
+            .remove("user.id")
+            .remove("user.email")
+            .remove("user.name")
+            .commit();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        // Make sure no user is stored
+        SharedPreferences sharedPref = getSharedPrefs(context);
         sharedPref.edit()
             .remove("user.id")
             .remove("user.email")
@@ -70,7 +78,7 @@ public class ClientTest extends BugsnagTestCase {
     public void testRestoreUserFromPrefs() {
 
         // Set a user in prefs
-        SharedPreferences sharedPref = getSharedPrefs();
+        SharedPreferences sharedPref = getSharedPrefs(context);
         sharedPref.edit()
             .putString("user.id", "123456")
             .putString("user.email", "mr.test@email.com")
@@ -109,7 +117,7 @@ public class ClientTest extends BugsnagTestCase {
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was store in prefs
-        SharedPreferences sharedPref = getSharedPrefs();
+        SharedPreferences sharedPref = getSharedPrefs(context);
         assertEquals("123456", sharedPref.getString("user.id", null));
         assertEquals("mr.test@email.com", sharedPref.getString("user.email", null));
         assertEquals("Mr Test", sharedPref.getString("user.name", null));
@@ -123,7 +131,7 @@ public class ClientTest extends BugsnagTestCase {
         client.setUser("123456", "mr.test@email.com", "Mr Test");
 
         // Check that the user was not stored in prefs
-        SharedPreferences sharedPref = getSharedPrefs();
+        SharedPreferences sharedPref = getSharedPrefs(context);
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -133,7 +141,7 @@ public class ClientTest extends BugsnagTestCase {
     public void testClearUser() {
 
         // Set a user in prefs
-        SharedPreferences sharedPref = getSharedPrefs();
+        SharedPreferences sharedPref = getSharedPrefs(context);
         sharedPref.edit()
             .putString("user.id", "123456")
             .putString("user.email", "mr.test@email.com")
@@ -145,7 +153,7 @@ public class ClientTest extends BugsnagTestCase {
         client.clearUser();
 
         // Check that there is no user information in the prefs anymore
-        sharedPref = getSharedPrefs();
+        sharedPref = getSharedPrefs(context);
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -193,14 +201,4 @@ public class ClientTest extends BugsnagTestCase {
         assertEquals(true, newConfig.getPersistUserBetweenSessions());
     }
 
-    @After
-    protected void tearDown() throws Exception {
-        // Make sure no user is stored
-        SharedPreferences sharedPref = getSharedPrefs();
-        sharedPref.edit()
-            .remove("user.id")
-            .remove("user.email")
-            .remove("user.name")
-            .commit();
-    }
 }

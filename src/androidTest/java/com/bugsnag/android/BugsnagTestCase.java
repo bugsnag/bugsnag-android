@@ -29,7 +29,7 @@ public class BugsnagTestCase extends AndroidTestCase {
         return new JSONArray(streamableToString(streamable));
     }
 
-    protected SharedPreferences getSharedPrefs() {
-        return getContext().getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+    protected SharedPreferences getSharedPrefs(Context context) {
+        return context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
     }
 }

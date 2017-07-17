@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public class ClientRejectedExecutionTest  {
      * Checks that an exception is not thrown when the max task queue is reached, and that the
      * error is written to disk
      */
+    @Test
     public void testRejectedExecution() throws Exception {
         assertEquals(0, errorStorageDir.listFiles().length);
 

@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
@@ -15,7 +16,7 @@ public class AppStateTest extends BugsnagTestCase {
     @Test
     public void testSaneValues() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
-        AppState appState = new AppState(getContext());
+        AppState appState = new AppState(InstrumentationRegistry.getContext());
         JSONObject appStateJson = streamableToJson(appState);
 
         assertTrue(appStateJson.getLong("memoryUsage") > 0);

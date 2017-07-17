@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
@@ -23,6 +24,7 @@ public class ErrorReportApiClientTest {
         apiClient = new FakeApiClient();
     }
 
+    @Test
     public void testApiClientNullValidation() {
         Bugsnag.init(context, "123");
         try {
@@ -33,6 +35,7 @@ public class ErrorReportApiClientTest {
         }
     }
 
+    @Test
     public void testPostReportCalled() {
         Bugsnag.init(context, "123");
         Bugsnag.setErrorReportApiClient(apiClient);

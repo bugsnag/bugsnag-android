@@ -21,7 +21,7 @@ public class StacktraceTest extends BugsnagTestCase {
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
         JSONObject firstFrame = (JSONObject)stacktraceJson.get(0);
-        assertEquals(12, firstFrame.get("lineNumber"));
+        assertEquals(19, firstFrame.get("lineNumber"));
         assertEquals("com.bugsnag.android.StacktraceTest.testBasicException", firstFrame.get("method"));
         assertEquals("StacktraceTest.java", firstFrame.get("file"));
         assertFalse(firstFrame.has("inProject"));

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.provider.Settings;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.DisplayMetrics;
 
@@ -20,8 +21,8 @@ public class DeviceDataTest extends BugsnagTestCase {
     @Test
     public void testSaneValues() throws JSONException, IOException {
         Configuration config = new Configuration("some-api-key");
-        SharedPreferences sharedPref = getSharedPrefs();
-        DeviceData deviceData = new DeviceData(getContext(), sharedPref);
+        SharedPreferences sharedPref = getSharedPrefs(InstrumentationRegistry.getContext());
+        DeviceData deviceData = new DeviceData(InstrumentationRegistry.getContext(), sharedPref);
         JSONObject deviceDataJson = streamableToJson(deviceData);
 
         assertEquals("android", deviceDataJson.getString("osName"));
@@ -41,7 +42,7 @@ public class DeviceDataTest extends BugsnagTestCase {
         assertNotNull(deviceDataJson.getString("id"));
 
         // historically Android ID was used, this should no longer be the case
-        ContentResolver cr = getContext().getContentResolver();
+        ContentResolver cr = InstrumentationRegistry.getContext().getContentResolver();
         @SuppressLint("HardwareIds")
         String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
         assertNotSame(androidId, deviceDataJson.getString("id"));
