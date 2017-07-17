@@ -24,7 +24,7 @@
       />
 
     <!-- Separator -->
-    <View android:layout_width="match_parent" android:layout_height="32dp" />
+    <View android:layout_width="match_parent" android:layout_height="16dp" />
 
     <!-- Trigger handled exceptions -->
     <TextView
@@ -57,4 +57,22 @@
         android:text="@string/with_metadata"
         android:onClick="sendErrorWithMetaData"
         />
+
+  <!-- Separator -->
+  <View android:layout_width="match_parent" android:layout_height="16dp" />
+
+    <!-- Documentation -->
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:text="@string/documentation"
+      style="@style/header_text"/>
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/read_the_docs"
+      android:onClick="readDocs"
+      />
+
 </LinearLayout>

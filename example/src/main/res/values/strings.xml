@@ -7,4 +7,6 @@
   <string name="severity_warning">Severity: Warning</string>
   <string name="severity_info">Severity: Info</string>
   <string name="with_metadata">With MetaData</string>
+  <string name="documentation">Documentation</string>
+  <string name="read_the_docs">Read the Docs</string>
 </resources>

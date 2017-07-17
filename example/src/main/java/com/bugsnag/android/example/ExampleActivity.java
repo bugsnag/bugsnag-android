@@ -1,5 +1,7 @@
 package com.bugsnag.android.example;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -87,7 +89,7 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     public void sendErrorWithMetaData(View view) {
-        Map<String, String> nested = new HashMap<String, String>();
+        Map<String, String> nested = new HashMap<>();
         nested.put("normalkey", "normalvalue");
         nested.put("password", "s3cr3t");
 
@@ -107,5 +109,11 @@ public class ExampleActivity extends AppCompatActivity {
     public void crash(View view) {
         Other other = new Other();
         other.meow();
+    }
+
+    public void readDocs(View view) {
+        Uri uri = Uri.parse("https://docs.bugsnag.com/platforms/android/sdk/");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 }
