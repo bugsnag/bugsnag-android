@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.DisplayMetrics;
 
@@ -24,6 +25,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class DeviceDataTest {
 
     private DeviceData deviceData;

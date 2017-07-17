@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
@@ -15,6 +16,7 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class AppDataTest {
 
     private Configuration config;

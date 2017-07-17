@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class ErrorStoreTest  {
 
     private ErrorStore errorStore;

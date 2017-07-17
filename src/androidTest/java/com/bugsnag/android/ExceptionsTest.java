@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONArray;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class ExceptionsTest {
 
     private Configuration config;

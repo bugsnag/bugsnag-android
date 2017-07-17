@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class ExceptionHandlerTest  {
 
     private Context context;

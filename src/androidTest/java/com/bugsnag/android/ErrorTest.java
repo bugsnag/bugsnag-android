@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class ErrorTest {
 
     private Configuration config;

@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONArray;
@@ -16,6 +17,7 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class BreadcrumbsTest {
 
     private Breadcrumbs breadcrumbs;
