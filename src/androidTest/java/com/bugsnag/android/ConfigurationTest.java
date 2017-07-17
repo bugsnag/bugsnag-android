@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -12,10 +13,15 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class ConfigurationTest {
 
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("api-key");
+    }
+
     @Test
     public void testEndpoints() {
-        Configuration config = new Configuration("api-key");
-
         // Default endpoints
         assertEquals("https://notify.bugsnag.com", config.getEndpoint());
 
@@ -26,8 +32,6 @@ public class ConfigurationTest {
 
     @Test
     public void testShouldNotify() {
-        Configuration config = new Configuration("api-key");
-
         // Should notify if notifyReleaseStages is null
         assertTrue(config.shouldNotifyForReleaseStage("development"));
 
@@ -46,8 +50,6 @@ public class ConfigurationTest {
 
     @Test
     public void testShouldIgnore() {
-        Configuration config = new Configuration("api-key");
-
         // Should not ignore by default
         assertFalse(config.shouldIgnoreClass("java.io.IOException"));
 
@@ -58,8 +60,6 @@ public class ConfigurationTest {
 
     @Test
     public void testInProject() {
-        Configuration config = new Configuration("api-key");
-
         // Shouldn't be inProject if projectPackages hasn't been set
         assertFalse(config.inProject("com.bugsnag.android.Example"));
 

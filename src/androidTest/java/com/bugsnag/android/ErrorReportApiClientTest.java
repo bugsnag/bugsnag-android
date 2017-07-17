@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class ErrorReportApiClientTest {
@@ -22,22 +21,16 @@ public class ErrorReportApiClientTest {
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
         apiClient = new FakeApiClient();
+        Bugsnag.init(context, "123");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testApiClientNullValidation() {
-        Bugsnag.init(context, "123");
-        try {
-            Bugsnag.setErrorReportApiClient(null);
-            fail("ErrorReportApiClient cannot be null");
-        }
-        catch (IllegalArgumentException ignored) {
-        }
+        Bugsnag.setErrorReportApiClient(null);
     }
 
     @Test
     public void testPostReportCalled() {
-        Bugsnag.init(context, "123");
         Bugsnag.setErrorReportApiClient(apiClient);
 
         assertNull(apiClient.report);

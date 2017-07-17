@@ -20,13 +20,12 @@ public class ExceptionHandlerTest  {
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
+        // Start in a clean state, since we've created clients before in tests
+        Thread.setDefaultUncaughtExceptionHandler(null);
     }
 
     @Test
     public void testEnableDisable() {
-        // Start in a clean state, since we've created clients before in tests
-        Thread.setDefaultUncaughtExceptionHandler(null);
-
         Client client = new Client(context, "api-key");
         assertTrue(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
 
@@ -36,9 +35,6 @@ public class ExceptionHandlerTest  {
 
     @Test
     public void testMultipleClients() {
-        // Start in a clean state, since we've created clients before in tests
-        Thread.setDefaultUncaughtExceptionHandler(null);
-
         Client clientOne = new Client(context, "client-one");
         Client clientTwo = new Client(context, "client-two");
         Client clientThree = new Client(context, "client-two");

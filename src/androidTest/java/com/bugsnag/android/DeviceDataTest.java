@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -25,11 +26,16 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class DeviceDataTest {
 
+    private DeviceData deviceData;
+
+    @Before
+    public void setUp() throws Exception {
+        SharedPreferences sharedPref = getSharedPrefs(InstrumentationRegistry.getContext());
+        deviceData = new DeviceData(InstrumentationRegistry.getContext(), sharedPref);
+    }
+
     @Test
     public void testSaneValues() throws JSONException, IOException {
-        Configuration config = new Configuration("some-api-key");
-        SharedPreferences sharedPref = getSharedPrefs(InstrumentationRegistry.getContext());
-        DeviceData deviceData = new DeviceData(InstrumentationRegistry.getContext(), sharedPref);
         JSONObject deviceDataJson = streamableToJson(deviceData);
 
         assertEquals("android", deviceDataJson.getString("osName"));

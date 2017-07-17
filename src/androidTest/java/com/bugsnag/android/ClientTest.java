@@ -26,11 +26,21 @@ import static org.junit.Assert.assertFalse;
 public class ClientTest {
 
     private Context context;
+    private Configuration config;
 
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
+        clearSharedPrefs();
+        config = new Configuration("api-key");
+    }
 
+    @After
+    public void tearDown() throws Exception {
+        clearSharedPrefs();
+    }
+
+    private void clearSharedPrefs() {
         // Make sure no user is stored
         SharedPreferences sharedPref = getSharedPrefs(context);
         sharedPref.edit()
@@ -40,15 +50,15 @@ public class ClientTest {
             .commit();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        // Make sure no user is stored
+    private SharedPreferences setUserPrefs() {
+        // Set a user in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
         sharedPref.edit()
-            .remove("user.id")
-            .remove("user.email")
-            .remove("user.name")
+            .putString("user.id", "123456")
+            .putString("user.email", "mr.test@email.com")
+            .putString("user.name", "Mr Test")
             .commit();
+        return sharedPref;
     }
 
     @Test(expected = NullPointerException.class)
@@ -65,7 +75,6 @@ public class ClientTest {
 
     @Test
     public void testConfig() {
-        Configuration config = new Configuration("api-key");
         config.setEndpoint("new-endpoint");
 
         Client client = new Client(context, config);
@@ -76,16 +85,8 @@ public class ClientTest {
 
     @Test
     public void testRestoreUserFromPrefs() {
+        setUserPrefs();
 
-        // Set a user in prefs
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        sharedPref.edit()
-            .putString("user.id", "123456")
-            .putString("user.email", "mr.test@email.com")
-            .putString("user.name", "Mr Test")
-            .commit();
-
-        Configuration config = new Configuration("api-key");
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
         final User user = new User();
@@ -111,7 +112,6 @@ public class ClientTest {
 
     @Test
     public void testStoreUserInPrefs() {
-        Configuration config = new Configuration("api-key");
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
         client.setUser("123456", "mr.test@email.com", "Mr Test");
@@ -125,7 +125,6 @@ public class ClientTest {
 
     @Test
     public void testStoreUserInPrefsDisabled() {
-        Configuration config = new Configuration("api-key");
         config.setPersistUserBetweenSessions(false);
         Client client = new Client(context, config);
         client.setUser("123456", "mr.test@email.com", "Mr Test");
@@ -139,21 +138,15 @@ public class ClientTest {
 
     @Test
     public void testClearUser() {
-
         // Set a user in prefs
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        sharedPref.edit()
-            .putString("user.id", "123456")
-            .putString("user.email", "mr.test@email.com")
-            .putString("user.name", "Mr Test")
-            .commit();
+        setUserPrefs();
 
         // Clear the user using the command
         Client client = new Client(context, "api-key");
         client.clearUser();
 
         // Check that there is no user information in the prefs anymore
-        sharedPref = getSharedPrefs(context);
+        SharedPreferences sharedPref = getSharedPrefs(context);
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -161,7 +154,6 @@ public class ClientTest {
 
     @Test
     public void testEmptyManifestConfig() {
-        Configuration config = new Configuration("api-key");
         Bundle data = new Bundle();
         Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
 

@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,10 +19,17 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class StacktraceTest {
 
+    private Configuration config;
+    private Throwable exception;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("api-key");
+        exception = new RuntimeException("oops");
+    }
+
     @Test
     public void testBasicException() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
-        Throwable exception = new RuntimeException("oops");
         Stacktrace stacktrace = new Stacktrace(config, exception.getStackTrace());
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
@@ -34,10 +42,8 @@ public class StacktraceTest {
 
     @Test
     public void testInProject() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
         config.setProjectPackages(new String[] {"com.bugsnag.android"});
 
-        Throwable exception = new RuntimeException("oops");
         Stacktrace stacktrace = new Stacktrace(config, exception.getStackTrace());
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 

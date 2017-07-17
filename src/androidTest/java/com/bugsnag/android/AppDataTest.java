@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,9 +17,15 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class AppDataTest {
 
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("some-api-key");
+    }
+
     @Test
     public void testManifestData() throws JSONException, IOException {
-        Configuration config = new Configuration("some-api-key");
         AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
@@ -33,7 +40,6 @@ public class AppDataTest {
 
     @Test
     public void testAppVersionOverride() throws JSONException, IOException {
-        Configuration config = new Configuration("some-api-key");
         config.setAppVersion("1.2.3");
 
         AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
@@ -44,7 +50,6 @@ public class AppDataTest {
 
     @Test
     public void testReleaseStageOverride() throws JSONException, IOException {
-        Configuration config = new Configuration("some-api-key");
         config.setReleaseStage("test-stage");
 
         AppData appData = new AppData(InstrumentationRegistry.getContext(), config);

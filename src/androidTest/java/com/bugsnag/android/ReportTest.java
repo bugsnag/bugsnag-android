@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,12 +17,17 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class ReportTest {
 
-    @Test
-    public void testInMemoryError() throws JSONException, IOException {
+    private Report report;
+
+    @Before
+    public void setUp() throws Exception {
         Configuration config = new Configuration("example-api-key");
         Error error = new Error(config, new RuntimeException("Something broke"));
-        Report report = new Report(config.getApiKey(), error);
+        report = new Report(config.getApiKey(), error);
+    }
 
+    @Test
+    public void testInMemoryError() throws JSONException, IOException {
         JSONObject reportJson = streamableToJson(report);
         assertEquals("example-api-key", reportJson.get("apiKey"));
         assertEquals(1, reportJson.getJSONArray("events").length());
@@ -29,9 +35,6 @@ public class ReportTest {
 
     @Test
     public void testModifyingAPIKey() throws JSONException, IOException {
-        Configuration config = new Configuration("example-api-key");
-        Error error = new Error(config, new RuntimeException("Something broke"));
-        Report report = new Report(config.getApiKey(), error);
         report.setApiKey("other-api-key");
 
         JSONObject reportJson = streamableToJson(report);
@@ -40,9 +43,6 @@ public class ReportTest {
 
     @Test
     public void testModifyingGroupingHash() throws JSONException, IOException {
-        Configuration config = new Configuration("example-api-key");
-        Error error = new Error(config, new RuntimeException("Something broke"));
-        Report report = new Report(config.getApiKey(), error);
         report.getError().setGroupingHash("File.java:300429");
 
         JSONObject reportJson = streamableToJson(report);

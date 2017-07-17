@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,9 +19,15 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class ExceptionsTest {
 
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("api-key");
+    }
+
     @Test
     public void testBasicException() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
         Exceptions exceptions = new Exceptions(config, new RuntimeException("oops"));
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
 
@@ -34,7 +41,6 @@ public class ExceptionsTest {
 
     @Test
     public void testCauseException() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
         Throwable ex = new RuntimeException("oops", new Exception("cause"));
         Exceptions exceptions = new Exceptions(config, ex);
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
@@ -54,8 +60,6 @@ public class ExceptionsTest {
 
     @Test
     public void testNamedException() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
-
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);
         StackTraceElement[] frames = new StackTraceElement[] { element };
         Error error = new Error(config, "RuntimeException", "Example message", frames);
@@ -73,7 +77,6 @@ public class ExceptionsTest {
 
     @Test
     public void testCustomExceptionSerialization() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
         Exceptions exceptions = new Exceptions(config, new CustomException("Failed serialization"));
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);

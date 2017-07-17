@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,9 +19,17 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class ErrorTest {
 
+    private Configuration config;
+    private Error error;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("api-key");
+        error = new Error(config, new RuntimeException("Example message"));
+    }
+
     @Test
     public void testShouldIgnoreClass() {
-        Configuration config = new Configuration("api-key");
         config.setIgnoreClasses(new String[] {"java.io.IOException"});
 
         // Shouldn't ignore classes not in ignoreClasses
@@ -34,25 +43,16 @@ public class ErrorTest {
 
     @Test
     public void testGetExceptionName() {
-        Configuration config = new Configuration("api-key");
-
-        Error error = new Error(config, new RuntimeException("Test"));
         assertEquals("java.lang.RuntimeException", error.getExceptionName());
     }
 
     @Test
     public void testGetExceptionMessage() {
-        Configuration config = new Configuration("api-key");
-
-        Error error = new Error(config, new RuntimeException("Example message"));
         assertEquals("Example message", error.getExceptionMessage());
     }
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
-        Error error = new Error(config, new RuntimeException("Example message"));
-
         JSONObject errorJson = streamableToJson(error);
         assertEquals("warning", errorJson.get("severity"));
         assertEquals("3", errorJson.get("payloadVersion"));
@@ -63,8 +63,6 @@ public class ErrorTest {
 
     @Test
     public void testSetContext() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
-        Error error = new Error(config, new RuntimeException("Example message"));
         error.setContext("ExampleContext");
 
         JSONObject errorJson = streamableToJson(error);
@@ -73,8 +71,6 @@ public class ErrorTest {
 
     @Test
     public void testSetGroupingHash() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
-        Error error = new Error(config, new RuntimeException("Example message"));
         error.setGroupingHash("herpderp");
 
         JSONObject errorJson = streamableToJson(error);
@@ -83,8 +79,6 @@ public class ErrorTest {
 
     @Test
     public void testSetSeverity() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
-        Error error = new Error(config, new RuntimeException("Example message"));
         error.setSeverity(Severity.INFO);
 
         JSONObject errorJson = streamableToJson(error);
