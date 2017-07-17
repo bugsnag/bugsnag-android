@@ -18,6 +18,9 @@ android {
     buildToolsVersion '25.0.2'
 
     defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 25
+
         manifestPlaceholders = [
             bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
             bugsnagBuildUUID: "abc123",
