@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.BreadcrumbType;
 import com.bugsnag.android.Bugsnag;
+import com.bugsnag.android.Callback;
 import com.bugsnag.android.Error;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.Severity;
@@ -63,6 +64,10 @@ public class ExampleActivity extends AppCompatActivity {
                 Thread.sleep(100000);
             }
         }).start();
+    }
+
+    public void sendErrorWithCallback(Callback callback) {
+        Bugsnag.notify(new RuntimeException(), callback);
     }
 
     public void sendError(View view) {
