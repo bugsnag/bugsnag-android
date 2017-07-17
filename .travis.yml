@@ -4,21 +4,24 @@ android:
   components:
     - tools
     - platform-tools
+    - tools
     - build-tools-23.0.1
     - build-tools-25.0.2
-    - android-14
+    - android-15
     - android-19
     - android-21
     - android-23
     - android-25
     - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-14
+    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-19
+    - sys-img-armeabi-v7a-android-15
 
 env:
   matrix:
     - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-14 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-15 ANDROID_ABI=armeabi-v7a
   global:
     - ADB_INSTALL_TIMEOUT=5 # increase from default of 2 mins
 
