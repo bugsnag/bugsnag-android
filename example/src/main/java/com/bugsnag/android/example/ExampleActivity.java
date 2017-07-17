@@ -1,16 +1,18 @@
 package com.bugsnag.android.example;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
+
 import com.bugsnag.android.BeforeNotify;
+import com.bugsnag.android.BreadcrumbType;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Error;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.Severity;
 import com.bugsnag.android.other.Other;
-import com.bugsnag.android.BreadcrumbType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,12 +20,11 @@ import java.util.Map;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class ExampleActivity extends Activity
-{
+public class ExampleActivity extends AppCompatActivity {
+
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 

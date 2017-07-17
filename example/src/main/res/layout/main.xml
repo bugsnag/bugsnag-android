@@ -1,63 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:gravity="center"
+  android:id="@+id/example_root"
     >
 
     <!-- Trigger unhandled exceptions -->
     <TextView
-      android:layout_width="fill_parent"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="10dp"
-      android:text="Unhandled Exceptions"
-      android:textSize="18sp"
-      android:textStyle="bold"
-      android:gravity="center"/>
+      android:layout_marginBottom="8dp"
+      android:text="@string/unhandled_exceptions"
+      style="@style/header_text" />
     <Button
-      android:layout_width="fill_parent"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Crash App"
+      android:text="@string/crash_app"
       android:onClick="crash"
       />
 
     <!-- Separator -->
-    <View android:layout_width="fill_parent" android:layout_height="20dp" />
+    <View android:layout_width="match_parent" android:layout_height="32dp" />
 
     <!-- Trigger handled exceptions -->
     <TextView
-      android:layout_width="fill_parent"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="10dp"
-      android:text="Handled Exceptions"
-      android:textSize="18sp"
-      android:textStyle="bold"
-      android:gravity="center"/>
+      android:layout_marginBottom="8dp"
+      android:text="@string/handled_exceptions"
+      style="@style/header_text"/>
     <Button
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Severity: Error"
+        android:text="@string/severity_error"
         android:onClick="sendError"
         />
     <Button
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Severity: Warning"
+        android:text="@string/severity_warning"
         android:onClick="sendWarning"
         />
     <Button
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Severity: Info"
+        android:text="@string/severity_info"
         android:onClick="sendInfo"
         />
     <Button
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="With MetaData"
+        android:text="@string/with_metadata"
         android:onClick="sendErrorWithMetaData"
         />
 </LinearLayout>

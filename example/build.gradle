@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
         mavenLocal()
     }
     dependencies {
@@ -25,6 +24,7 @@ android {
             bugsnagEnableExceptionHandler: true,
             bugsnagPersistUserBetweenSessions: false,
         ]
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -46,6 +46,8 @@ android {
 
 dependencies {
     compile rootProject
+    compile "com.android.support:appcompat-v7:25.3.1"
+    compile "com.android.support:support-v4:25.3.1"
 }
 
 apply plugin: 'com.bugsnag.android.gradle'
