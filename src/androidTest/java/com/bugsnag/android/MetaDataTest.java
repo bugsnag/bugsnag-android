@@ -33,7 +33,7 @@ public class MetaDataTest {
         metaData.addToTab("example", "array", new String[]{"a", "b"});
         metaData.addToTab("example", "collection", Arrays.asList("Hello", "World"));
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("key", "value");
         metaData.addToTab("example", "map", map);
 
@@ -63,10 +63,10 @@ public class MetaDataTest {
 
     @Test
     public void testNestedMapSerialization() throws JSONException, IOException {
-        Map<String, String> childMap = new HashMap<String, String>();
+        Map<String, String> childMap = new HashMap<>();
         childMap.put("key", "value");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key", childMap);
 
         MetaData metaData = new MetaData();
@@ -133,12 +133,12 @@ public class MetaDataTest {
 
     @Test
     public void testDeepMerge() {
-        Map<String, String> baseMap = new HashMap<String, String>();
+        Map<String, String> baseMap = new HashMap<>();
         baseMap.put("key", "fromBase");
         MetaData base = new MetaData();
         base.addToTab("example", "map", baseMap);
 
-        Map<String, String> overridesMap = new HashMap<String, String>();
+        Map<String, String> overridesMap = new HashMap<>();
         baseMap.put("key", "fromOverrides");
         MetaData overrides = new MetaData();
         overrides.addToTab("example", "map", overridesMap);
@@ -168,7 +168,7 @@ public class MetaDataTest {
 
     @Test
     public void testNestedFiltering() throws JSONException, IOException  {
-        Map<String, String> sensitiveMap = new HashMap<String, String>();
+        Map<String, String> sensitiveMap = new HashMap<>();
         sensitiveMap.put("password", "p4ssw0rd");
         sensitiveMap.put("confirm_password", "p4ssw0rd");
         sensitiveMap.put("normal", "safe");

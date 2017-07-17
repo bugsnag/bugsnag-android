@@ -34,10 +34,12 @@ public class BeforeNotifyTest {
 
     @Test
     public void testRunModifiesError() {
+        final String context = "new-context";
+
         BeforeNotify beforeNotify = new BeforeNotify() {
             @Override
             public boolean run(Error error) {
-                error.setContext("new-context");
+                error.setContext(context);
                 return false;
             }
         };
@@ -45,6 +47,6 @@ public class BeforeNotifyTest {
         Error error = new Error(config, new RuntimeException("Test"));
         beforeNotify.run(error);
 
-        assertEquals("new-context", error.getContext());
+        assertEquals(context, error.getContext());
     }
 }

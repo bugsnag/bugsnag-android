@@ -35,19 +35,21 @@ public class ReportTest {
 
     @Test
     public void testModifyingAPIKey() throws JSONException, IOException {
-        report.setApiKey("other-api-key");
+        String apiKey = "other-api-key";
+        report.setApiKey(apiKey);
 
         JSONObject reportJson = streamableToJson(report);
-        assertEquals("other-api-key", reportJson.get("apiKey"));
+        assertEquals(apiKey, reportJson.get("apiKey"));
     }
 
     @Test
     public void testModifyingGroupingHash() throws JSONException, IOException {
-        report.getError().setGroupingHash("File.java:300429");
+        String groupingHash = "File.java:300429";
+        report.getError().setGroupingHash(groupingHash);
 
         JSONObject reportJson = streamableToJson(report);
         JSONArray events = reportJson.getJSONArray("events");
         JSONObject event = events.getJSONObject(0);
-        assertEquals("File.java:300429", event.getString("groupingHash"));
+        assertEquals(groupingHash, event.getString("groupingHash"));
     }
 }

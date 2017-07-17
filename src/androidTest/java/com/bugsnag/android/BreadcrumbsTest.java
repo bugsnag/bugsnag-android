@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
 import static org.junit.Assert.assertEquals;
@@ -89,7 +90,7 @@ public class BreadcrumbsTest {
     public void testPayloadSizeLimit() throws JSONException, IOException {
         HashMap<String, String> metadata = new HashMap<>();
         for (int i = 0; i < 400; i++) {
-            metadata.put(String.format("%d", i), "!!");
+            metadata.put(String.format(Locale.US, "%d", i), "!!");
         }
         breadcrumbs.add("Rotated Menu", BreadcrumbType.STATE, metadata);
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);

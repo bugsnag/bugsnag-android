@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ public class ErrorStoreTest  {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         config = client.config;
         errorStore = client.errorStore;
+        Assert.assertNotNull(errorStore.path);
         errorStorageDir = new File(errorStore.path);
         FileUtils.clearFilesInDir(errorStorageDir);
     }

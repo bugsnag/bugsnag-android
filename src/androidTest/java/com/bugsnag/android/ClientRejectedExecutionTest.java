@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +28,7 @@ public class ClientRejectedExecutionTest  {
     public void setUp() throws Exception {
         client = new Client(InstrumentationRegistry.getContext(), "api-key");
         ErrorStore errorStore = client.errorStore;
+        assertNotNull(errorStore.path);
         errorStorageDir = new File(errorStore.path);
         FileUtils.clearFilesInDir(errorStorageDir);
     }

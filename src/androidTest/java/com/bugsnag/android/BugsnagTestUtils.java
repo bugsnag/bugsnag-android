@@ -14,7 +14,7 @@ final class BugsnagTestUtils {
 
     private BugsnagTestUtils() {}
 
-    static String streamableToString(JsonStream.Streamable streamable) throws IOException {
+    private static String streamableToString(JsonStream.Streamable streamable) throws IOException {
         StringWriter writer = new StringWriter();
         JsonStream jsonStream = new JsonStream(writer);
         streamable.toStream(jsonStream);

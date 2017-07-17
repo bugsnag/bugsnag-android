@@ -25,6 +25,10 @@ import static org.junit.Assert.assertFalse;
 @RunWith(AndroidJUnit4.class)
 public class ClientTest {
 
+    private static final String USER_ID = "123456";
+    private static final String USER_EMAIL = "mr.test@email.com";
+    private static final String USER_NAME = "Mr Test";
+
     private Context context;
     private Configuration config;
 
@@ -54,9 +58,9 @@ public class ClientTest {
         // Set a user in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
         sharedPref.edit()
-            .putString("user.id", "123456")
-            .putString("user.email", "mr.test@email.com")
-            .putString("user.name", "Mr Test")
+            .putString("user.id", USER_ID)
+            .putString("user.email", USER_EMAIL)
+            .putString("user.name", USER_NAME)
             .commit();
         return sharedPref;
     }
@@ -105,29 +109,29 @@ public class ClientTest {
         client.notify(new RuntimeException("Testing"));
 
         // Check the user details have been set
-        assertEquals("123456", user.getId());
-        assertEquals("mr.test@email.com", user.getEmail());
-        assertEquals("Mr Test", user.getName());
+        assertEquals(USER_ID, user.getId());
+        assertEquals(USER_EMAIL, user.getEmail());
+        assertEquals(USER_NAME, user.getName());
     }
 
     @Test
     public void testStoreUserInPrefs() {
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
-        client.setUser("123456", "mr.test@email.com", "Mr Test");
+        client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
         // Check that the user was store in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
-        assertEquals("123456", sharedPref.getString("user.id", null));
-        assertEquals("mr.test@email.com", sharedPref.getString("user.email", null));
-        assertEquals("Mr Test", sharedPref.getString("user.name", null));
+        assertEquals(USER_ID, sharedPref.getString("user.id", null));
+        assertEquals(USER_EMAIL, sharedPref.getString("user.email", null));
+        assertEquals(USER_NAME, sharedPref.getString("user.name", null));
     }
 
     @Test
     public void testStoreUserInPrefsDisabled() {
         config.setPersistUserBetweenSessions(false);
         Client client = new Client(context, config);
-        client.setUser("123456", "mr.test@email.com", "Mr Test");
+        client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
         // Check that the user was not stored in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);

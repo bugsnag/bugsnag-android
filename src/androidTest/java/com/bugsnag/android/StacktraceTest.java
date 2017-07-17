@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.test.filters.FlakyTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONArray;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@FlakyTest(detail = "Checks a stacktrace's line number, so fails when lines are added/deleted.")
 @RunWith(AndroidJUnit4.class)
 public class StacktraceTest {
 
@@ -34,8 +36,8 @@ public class StacktraceTest {
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
         JSONObject firstFrame = (JSONObject)stacktraceJson.get(0);
-        assertEquals(24, firstFrame.get("lineNumber"));
-        assertEquals("com.bugsnag.android.StacktraceTest.testBasicException", firstFrame.get("method"));
+        assertEquals(30, firstFrame.get("lineNumber"));
+        assertEquals("com.bugsnag.android.StacktraceTest.setUp", firstFrame.get("method"));
         assertEquals("StacktraceTest.java", firstFrame.get("file"));
         assertFalse(firstFrame.has("inProject"));
     }

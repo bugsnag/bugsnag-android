@@ -63,18 +63,20 @@ public class ErrorTest {
 
     @Test
     public void testSetContext() throws JSONException, IOException {
-        error.setContext("ExampleContext");
+        String context = "ExampleContext";
+        error.setContext(context);
 
         JSONObject errorJson = streamableToJson(error);
-        assertEquals("ExampleContext", errorJson.get("context"));
+        assertEquals(context, errorJson.get("context"));
     }
 
     @Test
     public void testSetGroupingHash() throws JSONException, IOException {
-        error.setGroupingHash("herpderp");
+        String groupingHash = "herpderp";
+        error.setGroupingHash(groupingHash);
 
         JSONObject errorJson = streamableToJson(error);
-        assertEquals("herpderp", errorJson.get("groupingHash"));
+        assertEquals(groupingHash, errorJson.get("groupingHash"));
     }
 
     @Test

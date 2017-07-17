@@ -40,21 +40,23 @@ public class AppDataTest {
 
     @Test
     public void testAppVersionOverride() throws JSONException, IOException {
-        config.setAppVersion("1.2.3");
+        String appVersion = "1.2.3";
+        config.setAppVersion(appVersion);
 
         AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
-        assertEquals("1.2.3", appDataJson.get("version"));
+        assertEquals(appVersion, appDataJson.get("version"));
     }
 
     @Test
     public void testReleaseStageOverride() throws JSONException, IOException {
-        config.setReleaseStage("test-stage");
+        String releaseStage = "test-stage";
+        config.setReleaseStage(releaseStage);
 
         AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
-        assertEquals("test-stage", appDataJson.get("releaseStage"));
+        assertEquals(releaseStage, appDataJson.get("releaseStage"));
     }
 }
