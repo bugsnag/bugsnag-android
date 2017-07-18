@@ -6,15 +6,15 @@ android:
     - platform-tools
     - tools
     - build-tools-25.0.2
-    - android-14
+    - android-15
     - android-21
     - android-25
     - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-14
+    - sys-img-armeabi-v7a-android-15
 
 env:
   matrix:
-    - ANDROID_TARGET=android-14 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-15 ANDROID_ABI=armeabi-v7a
   global:
     - ADB_INSTALL_TIMEOUT=5 # increase from default of 2 mins
 
@@ -24,8 +24,7 @@ before_script:
   - jdk_switcher use oraclejdk8
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
-  - adb wait-for-device
-  - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
+  - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
 script: ./gradlew lint connectedCheck
