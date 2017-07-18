@@ -24,7 +24,8 @@ before_script:
   - jdk_switcher use oraclejdk8
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
+  - adb wait-for-device
+  - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
   - adb shell input keyevent 82 &
 
 script: ./gradlew lint connectedCheck
