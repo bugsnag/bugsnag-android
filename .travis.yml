@@ -10,6 +10,7 @@ android:
     - android-21
     - android-25
     - extra-android-m2repository
+    - sys-img-armeabi-v7a-android-14
 
 env:
   matrix:
