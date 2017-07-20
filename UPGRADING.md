@@ -1,6 +1,10 @@
 Upgrading Guide
 ===============
 
+Upgrade from 3.X to 4.X
+-----------------------
+- Increase the `minSdkVersion` to 14 or higher in your app's build.gradle file.
+
 Upgrade from 2.0 to 3.0
 -----------------------
 -   Change any `Bugsnag.register` calls to `Bugsnag.init`:
