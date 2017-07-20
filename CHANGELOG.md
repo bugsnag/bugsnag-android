@@ -2,20 +2,9 @@
 
 ## 4.0.0 (2017-XX-XX)
 
-- `minSdkVersion` increased to API 14
+This is a major release which adds a number of new features to the library. The minimum SDK version supported by Bugsnag is now API 14.
 
-- Handle `RejectionExecutionException` by writing unqueued Error reports to disk
-[Damian Wieczorek](https://github.com/damianw)
-
-- Handle IllegalStateException caused by `CharsetEncoder` on Android 6.0
-[Ben Lee](https://github.com/Bencodes)
-
-- Each implementation of `beforeNotify()` is now only called once, in the order in which it was added
-[jermainedilao](https://github.com/jermainedilao)
-
-- By default, the User ID is now a per-install UUID, whereas previously `Settings.Secure.ANDROID_ID` was used
-[Martin Georgiev](https://github.com/georgiev-martin)
-
+### Enhancements
 - Support loading different API keys for different product flavors, through manifest placeholders
 
 - Support custom HTTP Error Reporting clients, by allowing custom implementations of `ErrorReportApiClient`
@@ -34,6 +23,18 @@
 
 - Added documentation on how Breadcrumbs can be setup to track the Fragment Lifecycle 
 
+### Bug Fixes
+- Handle `RejectionExecutionException` by writing unqueued Error reports to disk
+[Damian Wieczorek](https://github.com/damianw)
+
+- Handle IllegalStateException caused by `CharsetEncoder` on Android 6.0
+[Ben Lee](https://github.com/Bencodes)
+
+- Each implementation of `beforeNotify()` is now only called once, in the order in which it was added
+[jermainedilao](https://github.com/jermainedilao)
+
+- By default, the User ID is now a per-install UUID, whereas previously `Settings.Secure.ANDROID_ID` was used
+[Martin Georgiev](https://github.com/georgiev-martin)
 
 
 ## 3.9.0 (2017-05-08)
