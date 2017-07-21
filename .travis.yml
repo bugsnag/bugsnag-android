@@ -6,21 +6,22 @@ android:
     - platform-tools
     - build-tools-23.0.1
     - build-tools-25.0.2
-    - android-4
-    - android-10
     - android-19
+    - android-21
     - android-23
     - android-25
     - extra-android-m2repository
 
 env:
   matrix:
-    - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
-    - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
+    - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+  global:
+    - ADB_INSTALL_TIMEOUT=5 # increase from default of 2 mins
 
 before_script:
   # Create and start emulator
+  - android list targets
   - jdk_switcher use oraclejdk8
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
@@ -28,6 +29,6 @@ before_script:
   - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
   - adb shell input keyevent 82 &
 
-script: ./gradlew --info lint connectedAndroidTest
+script: ./gradlew lint connectedCheck
 
 sudo: false

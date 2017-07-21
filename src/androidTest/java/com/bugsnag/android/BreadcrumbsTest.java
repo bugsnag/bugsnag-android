@@ -1,15 +1,34 @@
 package com.bugsnag.android;
 
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 
-import org.json.JSONException;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
+import static org.junit.Assert.assertEquals;
 
-public class BreadcrumbsTest extends BugsnagTestCase {
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class BreadcrumbsTest {
+
+    private Breadcrumbs breadcrumbs;
+
+    @Before
+    public void setUp() throws Exception {
+        breadcrumbs = new Breadcrumbs();
+    }
+
+    @Test
     public void testSerialization() throws JSONException, IOException {
-        Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("Started app");
         breadcrumbs.add("Clicked a button");
         breadcrumbs.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
@@ -19,8 +38,8 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim", breadcrumbsJson.getJSONObject(2).getJSONObject("metaData").get("message"));
     }
 
+    @Test
     public void testSizeLimit() throws JSONException, IOException {
-        Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.setSize(5);
         breadcrumbs.add("1");
         breadcrumbs.add("2");
@@ -35,8 +54,8 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
     }
 
+    @Test
     public void testResize() throws JSONException, IOException {
-        Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
         breadcrumbs.add("2");
         breadcrumbs.add("3");
@@ -51,8 +70,8 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
     }
 
+    @Test
     public void testClear() throws JSONException, IOException {
-        Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
         breadcrumbs.add("2");
         breadcrumbs.add("3");
@@ -62,27 +81,27 @@ public class BreadcrumbsTest extends BugsnagTestCase {
         assertEquals(0, breadcrumbsJson.length());
     }
 
+    @Test
     public void testType() throws JSONException, IOException {
-        Breadcrumbs breadcrumbs = new Breadcrumbs();
         breadcrumbs.add("1");
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals("manual", breadcrumbsJson.getJSONObject(0).get("type"));
     }
 
+    @Test
     public void testPayloadSizeLimit() throws JSONException, IOException {
-        Breadcrumbs breadcrumbs = new Breadcrumbs();
-        HashMap<String, String> metadata = new HashMap<String, String>();
+        HashMap<String, String> metadata = new HashMap<>();
         for (int i = 0; i < 400; i++) {
-            metadata.put(String.format("%d", i), "!!");
+            metadata.put(String.format(Locale.US, "%d", i), "!!");
         }
         breadcrumbs.add("Rotated Menu", BreadcrumbType.STATE, metadata);
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(0, breadcrumbsJson.length());
     }
 
+    @Test
     public void testPayloadType() throws JSONException, IOException {
-        Breadcrumbs breadcrumbs = new Breadcrumbs();
-        HashMap<String, String> metadata = new HashMap<String, String>();
+        HashMap<String, String> metadata = new HashMap<>();
         metadata.put("direction", "left");
         breadcrumbs.add("Rotated Menu", BreadcrumbType.STATE, metadata);
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);

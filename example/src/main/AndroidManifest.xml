@@ -13,7 +13,7 @@
 
         <activity android:name="ExampleActivity"
                   android:label="Bugsnag Example App"
-                  android:theme="@android:style/Theme.Light">
+                  android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

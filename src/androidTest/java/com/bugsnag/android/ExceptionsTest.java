@@ -1,15 +1,35 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
-import java.io.IOException;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class ExceptionsTest extends BugsnagTestCase {
+import java.io.IOException;
+
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class ExceptionsTest {
+
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("api-key");
+    }
+
+    @Test
     public void testBasicException() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
         Exceptions exceptions = new Exceptions(config, new RuntimeException("oops"));
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
 
@@ -21,8 +41,8 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertNotNull(firstException.get("stacktrace"));
     }
 
+    @Test
     public void testCauseException() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
         Throwable ex = new RuntimeException("oops", new Exception("cause"));
         Exceptions exceptions = new Exceptions(config, ex);
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
@@ -40,9 +60,8 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertNotNull(causeException.get("stacktrace"));
     }
 
+    @Test
     public void testNamedException() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
-
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);
         StackTraceElement[] frames = new StackTraceElement[] { element };
         Error error = new Error(config, "RuntimeException", "Example message", frames);
@@ -58,8 +77,8 @@ public class ExceptionsTest extends BugsnagTestCase {
         assertEquals(123, stackframeJson.get("lineNumber"));
     }
 
+    @Test
     public void testCustomExceptionSerialization() throws JSONException, IOException {
-        Configuration config = new Configuration("api-key");
         Exceptions exceptions = new Exceptions(config, new CustomException("Failed serialization"));
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);

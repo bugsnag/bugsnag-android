@@ -1,18 +1,30 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class MetaDataTest extends BugsnagTestCase {
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class MetaDataTest {
+
+    @Test
     public void testBasicSerialization() throws JSONException, IOException {
         MetaData metaData = new MetaData();
         metaData.addToTab("example", "string", "value");
@@ -23,7 +35,7 @@ public class MetaDataTest extends BugsnagTestCase {
         metaData.addToTab("example", "array", new String[]{"a", "b"});
         metaData.addToTab("example", "collection", Arrays.asList("Hello", "World"));
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("key", "value");
         metaData.addToTab("example", "map", map);
 
@@ -33,7 +45,7 @@ public class MetaDataTest extends BugsnagTestCase {
         JSONObject tab = metaDataJson.getJSONObject("example");
         assertEquals("value", tab.getString("string"));
         assertEquals(123, tab.getInt("integer"));
-        assertEquals(123.45, tab.getDouble("double"));
+        assertEquals(123.45, tab.getDouble("double"), 0.01);
         assertEquals(true, tab.getBoolean("boolean"));
         assertTrue(tab.isNull("null"));
 
@@ -51,11 +63,12 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("value", mapJson.getString("key"));
     }
 
+    @Test
     public void testNestedMapSerialization() throws JSONException, IOException {
-        Map<String, String> childMap = new HashMap<String, String>();
+        Map<String, String> childMap = new HashMap<>();
         childMap.put("key", "value");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key", childMap);
 
         MetaData metaData = new MetaData();
@@ -68,12 +81,13 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("value", childMapJson.getString("key"));
     }
 
+    @Test
     public void testNestedCollectionSerialization() throws JSONException, IOException {
-        Collection childList = new LinkedList<String>();
+        Collection<String> childList = new LinkedList<>();
         childList.add("james");
         childList.add("test");
 
-        Collection list = new LinkedList();
+        Collection<Collection<String>> list = new LinkedList<>();
         list.add(childList);
 
         MetaData metaData = new MetaData();
@@ -88,6 +102,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("test", childListJson.get(1));
     }
 
+    @Test
     public void testBasicMerge() {
         MetaData base = new MetaData();
         base.addToTab("example", "name", "bob");
@@ -104,6 +119,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals(true, tab.get("awesome"));
     }
 
+    @Test
     public void testNullMerge() {
         MetaData base = new MetaData();
         base.addToTab("example", "name", "bob");
@@ -117,13 +133,14 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("bob", tab.get("name"));
     }
 
+    @Test
     public void testDeepMerge() {
-        Map<String, String> baseMap = new HashMap<String, String>();
+        Map<String, String> baseMap = new HashMap<>();
         baseMap.put("key", "fromBase");
         MetaData base = new MetaData();
         base.addToTab("example", "map", baseMap);
 
-        Map<String, String> overridesMap = new HashMap<String, String>();
+        Map<String, String> overridesMap = new HashMap<>();
         baseMap.put("key", "fromOverrides");
         MetaData overrides = new MetaData();
         overrides.addToTab("example", "map", overridesMap);
@@ -134,6 +151,7 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("fromOverrides", mergedMap.get("key"));
     }
 
+    @Test
     public void testBasicFiltering() throws JSONException, IOException {
         MetaData metaData = new MetaData();
         metaData.setFilters("password");
@@ -150,8 +168,9 @@ public class MetaDataTest extends BugsnagTestCase {
         assertEquals("safe", tabJson.getString("normal"));
     }
 
+    @Test
     public void testNestedFiltering() throws JSONException, IOException  {
-        Map<String, String> sensitiveMap = new HashMap<String, String>();
+        Map<String, String> sensitiveMap = new HashMap<>();
         sensitiveMap.put("password", "p4ssw0rd");
         sensitiveMap.put("confirm_password", "p4ssw0rd");
         sensitiveMap.put("normal", "safe");

@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
         mavenLocal()
     }
     dependencies {
@@ -10,11 +9,18 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 
+repositories {
+    jcenter()
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
 
     defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 25
+
         manifestPlaceholders = [
             bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
             bugsnagBuildUUID: "abc123",
@@ -25,6 +31,7 @@ android {
             bugsnagEnableExceptionHandler: true,
             bugsnagPersistUserBetweenSessions: false,
         ]
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -40,12 +47,24 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 4
+        minSdkVersion 14
     }
 }
 
 dependencies {
     compile rootProject
+    compile "com.android.support:appcompat-v7:25.3.1"
+    compile "com.android.support:support-v4:25.3.1"
+
+    androidTestCompile 'com.android.support.test:runner:0.5', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile 'com.android.support.test:rules:0.5', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }
 
 apply plugin: 'com.bugsnag.android.gradle'

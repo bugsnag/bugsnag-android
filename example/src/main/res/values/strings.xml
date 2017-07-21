@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="unhandled_exceptions">Unhandled Exceptions</string>
+  <string name="crash_app">Crash App</string>
+  <string name="handled_exceptions">Handled Exceptions</string>
+  <string name="severity_error">Severity: Error</string>
+  <string name="severity_warning">Severity: Warning</string>
+  <string name="severity_info">Severity: Info</string>
+  <string name="with_metadata">With MetaData</string>
+  <string name="documentation">Documentation</string>
+  <string name="read_the_docs">Read the Docs</string>
+</resources>

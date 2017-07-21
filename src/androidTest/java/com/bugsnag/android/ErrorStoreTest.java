@@ -1,32 +1,47 @@
 package com.bugsnag.android;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
+
 import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.StringWriter;
 
-public class ErrorStoreTest extends BugsnagTestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class ErrorStoreTest  {
 
     private ErrorStore errorStore;
     private Configuration config;
     private File errorStorageDir;
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-        Client client = new Client(getContext(), "api-key");
+        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         config = client.config;
         errorStore = client.errorStore;
+        Assert.assertNotNull(errorStore.path);
         errorStorageDir = new File(errorStore.path);
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
+    @Test
     public void testWrite() throws Exception {
         Error error = new Error(config, new RuntimeException());
         errorStore.write(error);
