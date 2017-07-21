@@ -29,13 +29,13 @@ before_script:
   - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
   - adb shell input keyevent 82 &
 
-script: ./gradlew lint connectedCheck
+script: ./gradlew lint connectedCheck androidJavadocs
 
 sudo: false
 
 deploy:
   provider: pages
-  localdir: ${TRAVIS_BUILD_DIR}/doc-test
+  localdir: /build/docs/javadoc
   skip_cleanup: true
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   on:
