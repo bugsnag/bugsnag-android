@@ -35,8 +35,8 @@ sudo: false
 
 deploy:
   provider: pages
-  local_dir: docs
+  local_dir: docs # only include the contents of the docs dir
   skip_cleanup: true
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   on:
-    branch: travis-ci-javadocs # deploy when changes pushed to this branch
+    branch: master # deploy when changes pushed to this branch
