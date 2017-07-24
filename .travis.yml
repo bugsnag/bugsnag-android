@@ -6,15 +6,15 @@ android:
     - platform-tools
     - tools
     - build-tools-25.0.2
-    - android-15
+    - android-16
     - android-21
     - android-25
     - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-15
+    - sys-img-armeabi-v7a-android-16
 
 env:
   matrix:
-    - ANDROID_TARGET=android-15 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-16 ANDROID_ABI=armeabi-v7a
   global:
     - ADB_INSTALL_TIMEOUT=5 # increase from default of 2 mins
 
