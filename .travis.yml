@@ -29,9 +29,11 @@ before_script:
   - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
   - adb shell input keyevent 82 &
 
-script: ./gradlew lint connectedCheck javadoc
+script: ./gradlew lint connectedCheck
 
 sudo: false
+
+before_deploy: ./gradlew javadoc
 
 deploy:
   provider: pages
