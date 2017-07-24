@@ -546,6 +546,16 @@ public final class Bugsnag {
     }
 
     /**
+     * Sets whether the SDK should write logs. In production apps, it is recommended that this
+     * should be set to false.
+     *
+     * @param enabled true if logging is enabled
+     */
+    public static void setLoggingEnabled(boolean enabled) {
+        getClient().setLoggingEnabled(enabled);
+    }
+
+    /**
      * Get the current Bugsnag Client instance.
      */
     @NonNull

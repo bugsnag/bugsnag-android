@@ -1048,4 +1048,15 @@ public class Client extends Observable implements Observer {
                 "initializing Bugsnag from a custom Application class.");
         }
     }
+
+    /**
+     * Sets whether the SDK should write logs. In production apps, it is recommended that this
+     * should be set to false.
+     *
+     * @param loggingEnabled true if logging is enabled
+     */
+    public void setLoggingEnabled(boolean loggingEnabled) {
+        Logger.setEnabled(loggingEnabled);
+    }
+
 }
