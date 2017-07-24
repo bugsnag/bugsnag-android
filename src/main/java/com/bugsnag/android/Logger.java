@@ -2,9 +2,12 @@ package com.bugsnag.android;
 
 import android.util.Log;
 
-class Logger {
+final class Logger {
+
     private static final String LOG_TAG = "Bugsnag";
-    private static boolean enabled = true;
+    private static volatile boolean enabled = true;
+
+    private Logger() {}
 
     static void info(String message) {
         if (enabled) {
