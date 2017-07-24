@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -8,8 +11,19 @@ import java.net.URL;
 
 class DefaultHttpClient implements ErrorReportApiClient {
 
+    private final ConnectivityManager connectivityManager;
+
+    DefaultHttpClient(ConnectivityManager connectivityManager) {
+        this.connectivityManager = connectivityManager;
+    }
+
     @Override
     public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+
+        if (!hasNetworkConnection()) { // conserve device battery by avoiding radio use
+            throw new NetworkException(urlString, new RuntimeException("No network connection available"));
+        }
+
         HttpURLConnection conn = null;
         try {
             URL url = new URL(urlString);
@@ -39,6 +53,11 @@ class DefaultHttpClient implements ErrorReportApiClient {
         } finally {
             IOUtils.close(conn);
         }
+    }
+
+    private boolean hasNetworkConnection() {
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
 }
