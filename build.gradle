@@ -54,3 +54,11 @@ if (JavaVersion.current().isJava8Compatible()) {
 
 // Tasks to release the library to maven central
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+
+ext {
+    supportLibVersion = "25.3.1"
+    supportTestVersion = "0.5"
+    espressoVersion = "2.2.2"
+    junitVersion = "4.1.2"
+    mockitoVersion = "1.10.19"
+}

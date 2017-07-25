@@ -9,17 +9,14 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 
-repositories {
-    jcenter()
-}
-
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+
+    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 25
+        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
 
         manifestPlaceholders = [
             bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
@@ -35,36 +32,19 @@ android {
     }
 
     buildTypes {
-
         debug {
             applicationIdSuffix ".debug"
         }
-
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
         }
     }
-
-    defaultConfig {
-        minSdkVersion 14
-    }
 }
 
 dependencies {
     compile rootProject
-    compile "com.android.support:appcompat-v7:25.3.1"
-    compile "com.android.support:support-v4:25.3.1"
-
-    androidTestCompile 'com.android.support.test:runner:0.5', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestCompile 'com.android.support.test:rules:0.5', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
+    compile project(":example-resources")
 }
 
 apply plugin: 'com.bugsnag.android.gradle'
