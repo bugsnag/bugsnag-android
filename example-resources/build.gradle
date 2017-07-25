@@ -25,14 +25,4 @@ android {
 dependencies {
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile "com.android.support:support-v4:$supportLibVersion"
-
-    androidTestCompile "com.android.support.test:runner:$supportTestVersion", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestCompile "com.android.support.test:rules:$supportTestVersion", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
 }
