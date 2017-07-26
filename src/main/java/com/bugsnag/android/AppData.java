@@ -16,6 +16,10 @@ import java.io.IOException;
  * subsequent lookups and to reduce GC overhead.
  */
 class AppData implements JsonStream.Streamable {
+
+    static final String RELEASE_STAGE_DEVELOPMENT = "development";
+    static final String RELEASE_STAGE_PRODUCTION = "production";
+
     @NonNull
     private final Configuration config;
 
@@ -133,15 +137,15 @@ class AppData implements JsonStream.Streamable {
      * android:debuggable flag from AndroidManifest.xml
      */
     @NonNull
-    private static String guessReleaseStage(@NonNull Context appContext) {
+    static String guessReleaseStage(@NonNull Context appContext) {
         try {
             int appFlags = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), 0).flags;
             if ((appFlags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-                return "development";
+                return RELEASE_STAGE_DEVELOPMENT;
             }
         } catch (PackageManager.NameNotFoundException e) {
             Logger.warn("Could not get releaseStage");
         }
-        return "production";
+        return RELEASE_STAGE_PRODUCTION;
     }
 }

@@ -51,9 +51,6 @@ public class ExampleActivity extends AppCompatActivity {
 
         Bugsnag.leaveBreadcrumb("onCreate", BreadcrumbType.NAVIGATION, new HashMap<String, String>());
 
-        // disable log output on production builds
-        Bugsnag.setLoggingEnabled(BuildConfig.DEBUG);
-
         new Thread(new Runnable() {
             public void run() {
                 try {

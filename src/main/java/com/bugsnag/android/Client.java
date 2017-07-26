@@ -171,6 +171,9 @@ public class Client extends Observable implements Observer {
 
         // Flush any on-disk errors
         errorStore.flush(errorReportApiClient);
+
+        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
+        Logger.setEnabled(isNotProduction);
     }
 
     public void notifyBugsnagObservers(@NonNull NotifyType type) {
@@ -384,6 +387,7 @@ public class Client extends Observable implements Observer {
      */
     public void setReleaseStage(String releaseStage) {
         config.setReleaseStage(releaseStage);
+        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
 
     /**
@@ -1052,6 +1056,9 @@ public class Client extends Observable implements Observer {
     /**
      * Sets whether the SDK should write logs. In production apps, it is recommended that this
      * should be set to false.
+     *
+     * Logging is enabled by default unless the release stage is set to 'production', in which case
+     * it will be disabled.
      *
      * @param loggingEnabled true if logging is enabled
      */
