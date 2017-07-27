@@ -3,6 +3,7 @@
   package="com.bugsnag.android.testharness">
 
   <application
+    android:name=".TestHarnessApp"
     android:allowBackup="true"
     android:label="Test harness"
     android:supportsRtl="true"
