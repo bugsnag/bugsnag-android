@@ -15,7 +15,7 @@ class DefaultHttpClient implements ErrorReportApiClient {
             URL url = new URL(urlString);
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
-            conn.setChunkedStreamingMode(0);
+//            conn.setChunkedStreamingMode(0);
             conn.addRequestProperty("Content-Type", "application/json");
 
             OutputStream out = null;
