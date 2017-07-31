@@ -41,5 +41,4 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   on:
-    branch: master # deploy when changes pushed to this branch
-    tags: true
+    tags: true # only deploy when tag is applied to commit
