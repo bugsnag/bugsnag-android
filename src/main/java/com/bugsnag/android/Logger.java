@@ -2,18 +2,33 @@ package com.bugsnag.android;
 
 import android.util.Log;
 
-class Logger {
+final class Logger {
+
     private static final String LOG_TAG = "Bugsnag";
+    private static volatile boolean enabled = true;
+
+    private Logger() {}
 
     static void info(String message) {
-        Log.i(LOG_TAG, message);
+        if (enabled) {
+            Log.i(LOG_TAG, message);
+        }
     }
 
     static void warn(String message) {
-        Log.w(LOG_TAG, message);
+        if (enabled) {
+            Log.w(LOG_TAG, message);
+        }
     }
 
     static void warn(String message, Throwable e) {
-        Log.w(LOG_TAG, message, e);
+        if (enabled) {
+            Log.w(LOG_TAG, message, e);
+        }
     }
+
+    static void setEnabled(boolean enabled) {
+        Logger.enabled = enabled;
+    }
+
 }
