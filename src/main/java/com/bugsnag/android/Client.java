@@ -1,10 +1,15 @@
 package com.bugsnag.android;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -166,7 +171,7 @@ public class Client extends Observable implements Observer {
         }
 
         // register a receiver for automatic breadcrumbs
-        androidContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
+        appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
         config.addObserver(this);
 
         // Flush any on-disk errors
@@ -174,6 +179,21 @@ public class Client extends Observable implements Observer {
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
+
+        appContext.registerReceiver(new ConnectivityChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    private class ConnectivityChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
+
+            if (retryReports) {
+                errorStore.flush(errorReportApiClient);
+            }
+        }
     }
 
     public void notifyBugsnagObservers(@NonNull NotifyType type) {
