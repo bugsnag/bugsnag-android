@@ -28,6 +28,7 @@ android {
         disable 'DefaultLocale', 'Typos'
         abortOnError true
     }
+
 }
 
 dependencies {
@@ -50,6 +51,14 @@ if (JavaVersion.current().isJava8Compatible()) {
         //noinspection SpellCheckingInspection
         options.addStringOption('Xdoclint:none', '-quiet')
     }
+}
+
+task javadoc(type: Javadoc) {
+    description = "Generates javadocs, ignoring any doclint errors, and places the artefact in the root of the project"
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("docs")
+    failOnError false
 }
 
 // Tasks to release the library to maven central
