@@ -21,6 +21,8 @@ This is a major release which adds a number of new features to the library. The 
 
 - Breadcrumbs are automatically logged for most System Intents (e.g. `android.intent.action.CONFIGURATION_CHANGED`)
 
+- Optimize how reports are sent relative to network connectivity to improve battery life
+
 - Added documentation on how Breadcrumbs can be setup to track the Fragment Lifecycle 
 
 ### Bug Fixes
