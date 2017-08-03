@@ -54,26 +54,28 @@ class ErrorStore {
                 public void run() {
                     // Look up all saved error files
                     File exceptionDir = new File(path);
-                    if(!exceptionDir.exists() || !exceptionDir.isDirectory()) return;
+                    if (!exceptionDir.exists() || !exceptionDir.isDirectory()) return;
 
                     File[] errorFiles = exceptionDir.listFiles();
-                    if(errorFiles != null && errorFiles.length > 0) {
+                    if (errorFiles != null && errorFiles.length > 0) {
                         Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", errorFiles.length));
 
-                        for(File errorFile : errorFiles) {
+                        for (File errorFile : errorFiles) {
                             try {
                                 Report report = new Report(config.getApiKey(), errorFile);
                                 errorReportApiClient.postReport(config.getEndpoint(), report);
 
                                 Logger.info("Deleting sent error file " + errorFile.getName());
-                                if (!errorFile.delete())
+                                if (!errorFile.delete()) {
                                     errorFile.deleteOnExit();
+                                }
                             } catch (DefaultHttpClient.NetworkException e) {
                                 Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
                             } catch (Exception e) {
                                 Logger.warn("Problem sending unsent error from disk", e);
-                                if (!errorFile.delete())
+                                if (!errorFile.delete()) {
                                     errorFile.deleteOnExit();
+                                }
                             }
                         }
                     }

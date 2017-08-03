@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -66,8 +66,9 @@ public class Client extends Observable implements Observer {
     protected final User user = new User();
     @NonNull
     protected final ErrorStore errorStore;
+
     private final EventReceiver eventReceiver = new EventReceiver();
-    private ErrorReportApiClient errorReportApiClient = new DefaultHttpClient();
+    private ErrorReportApiClient errorReportApiClient;
 
     /**
      * Initialize a Bugsnag client
@@ -108,6 +109,8 @@ public class Client extends Observable implements Observer {
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
+        ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        errorReportApiClient = new DefaultHttpClient(cm);
 
         if (appContext instanceof Application && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             SdkCompatWrapper sdkCompatWrapper = new SdkCompatWrapper();
@@ -829,7 +832,7 @@ public class Client extends Observable implements Observer {
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
             errorReportApiClient.postReport(config.getEndpoint(), report);
-            Logger.info(String.format(Locale.US, "Sent 1 new error to Bugsnag"));
+            Logger.info("Sent 1 new error to Bugsnag");
         } catch (DefaultHttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
