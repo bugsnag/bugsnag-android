@@ -98,7 +98,7 @@ public class ExampleActivity extends AppCompatActivity {
         nested.put("normalkey", "normalvalue");
         nested.put("password", "s3cr3t");
 
-        Collection list = new ArrayList();
+        Collection<Map<String, String>> list = new ArrayList<>();
         list.add(nested);
 
         MetaData metaData = new MetaData();
