@@ -3,6 +3,7 @@ buildscript {
         jcenter()
         mavenCentral()
         mavenLocal()
+        google()
     }
     dependencies {
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
