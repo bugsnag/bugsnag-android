@@ -1,33 +1,54 @@
 package com.bugsnag.android;
 
-public class BeforeNotifyTest extends BugsnagTestCase {
-    BeforeNotify beforeNotify = new BeforeNotify() {
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class BeforeNotifyTest {
+
+    private BeforeNotify beforeNotify = new BeforeNotify() {
         @Override
         public boolean run(Error error) {
             return true;
         }
     };
 
-    BeforeNotify beforeNotifySkip = new BeforeNotify() {
+    private BeforeNotify beforeNotifySkip = new BeforeNotify() {
         @Override
         public boolean run(Error error) {
             return false;
         }
     };
 
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("api-key");
+    }
+
+    @Test
     public void testRunModifiesError() {
+        final String context = "new-context";
+
         BeforeNotify beforeNotify = new BeforeNotify() {
             @Override
             public boolean run(Error error) {
-                error.setContext("new-context");
+                error.setContext(context);
                 return false;
             }
         };
 
-        Configuration config = new Configuration("api-key");
         Error error = new Error(config, new RuntimeException("Test"));
         beforeNotify.run(error);
 
-        assertEquals("new-context", error.getContext());
+        assertEquals(context, error.getContext());
     }
 }

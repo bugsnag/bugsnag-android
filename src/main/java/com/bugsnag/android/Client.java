@@ -5,13 +5,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -65,7 +66,9 @@ public class Client extends Observable implements Observer {
     protected final User user = new User();
     @NonNull
     protected final ErrorStore errorStore;
+
     private final EventReceiver eventReceiver = new EventReceiver();
+    private ErrorReportApiClient errorReportApiClient;
 
     /**
      * Initialize a Bugsnag client
@@ -106,6 +109,8 @@ public class Client extends Observable implements Observer {
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
+        ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        errorReportApiClient = new DefaultHttpClient(cm);
 
         if (appContext instanceof Application) {
             SdkCompatWrapper sdkCompatWrapper = new SdkCompatWrapper();
@@ -168,7 +173,10 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         // Flush any on-disk errors
-        errorStore.flush();
+        errorStore.flush(errorReportApiClient);
+
+        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
+        Logger.setEnabled(isNotProduction);
     }
 
     public void notifyBugsnagObservers(@NonNull NotifyType type) {
@@ -382,6 +390,7 @@ public class Client extends Observable implements Observer {
      */
     public void setReleaseStage(String releaseStage) {
         config.setReleaseStage(releaseStage);
+        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
 
     /**
@@ -512,6 +521,14 @@ public class Client extends Observable implements Observer {
         if (notify) {
             notifyBugsnagObservers(NotifyType.USER);
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
+        if (errorReportApiClient == null) {
+            throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
+        }
+        this.errorReportApiClient = errorReportApiClient;
     }
 
     /**
@@ -805,7 +822,7 @@ public class Client extends Observable implements Observer {
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
-                errorStore.flush();
+                errorStore.flush(errorReportApiClient);
         }
 
         // Add a breadcrumb for this error occurring
@@ -814,14 +831,14 @@ public class Client extends Observable implements Observer {
 
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
-            HttpClient.post(config.getEndpoint(), report);
-            Logger.info(String.format(Locale.US, "Sent 1 new error to Bugsnag"));
-        } catch (HttpClient.NetworkException e) {
+            errorReportApiClient.postReport(config.getEndpoint(), report);
+            Logger.info("Sent 1 new error to Bugsnag");
+        } catch (DefaultHttpClient.NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
             // Save error to disk for later sending
             errorStore.write(error);
-        } catch (HttpClient.BadResponseException e) {
+        } catch (DefaultHttpClient.BadResponseException e) {
             Logger.info("Bad response when sending data to Bugsnag");
         } catch (Exception e) {
             Logger.warn("Problem sending error to Bugsnag", e);
@@ -1039,4 +1056,18 @@ public class Client extends Observable implements Observer {
                 "initializing Bugsnag from a custom Application class.");
         }
     }
+
+    /**
+     * Sets whether the SDK should write logs. In production apps, it is recommended that this
+     * should be set to false.
+     *
+     * Logging is enabled by default unless the release stage is set to 'production', in which case
+     * it will be disabled.
+     *
+     * @param loggingEnabled true if logging is enabled
+     */
+    public void setLoggingEnabled(boolean loggingEnabled) {
+        Logger.setEnabled(loggingEnabled);
+    }
+
 }

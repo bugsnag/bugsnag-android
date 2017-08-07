@@ -1,10 +1,23 @@
 package com.bugsnag.android;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+
 /**
  * Ensures that BeforeNotify is only called once,
  * and that the callbacks are called in insertion order.
  */
-public class UniqueBeforeNotifyTest extends BugsnagTestCase {
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class UniqueBeforeNotifyTest {
 
     private BeforeNotify firstCb = new BeforeNotify() {
         @Override
@@ -23,25 +36,25 @@ public class UniqueBeforeNotifyTest extends BugsnagTestCase {
     private int callbackCount;
     private Client client;
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         callbackCount = 0;
-        client = new Client(getContext(), "123");
+        client = new Client(InstrumentationRegistry.getContext(), "123");
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         callbackCount = 0;
     }
 
-    public void testBeforeNotify() {
+    @Test
+    public void checkBeforeNotify() {
         client.beforeNotify(firstCb);
         client.notify(new Throwable());
         assertEquals(1, callbackCount);
     }
 
+    @Test
     public void testDuplicateCallback() {
         client.beforeNotify(firstCb);
         client.beforeNotify(firstCb);
@@ -51,6 +64,7 @@ public class UniqueBeforeNotifyTest extends BugsnagTestCase {
         assertEquals(2, callbackCount);
     }
 
+    @Test
     public void testCallbackOrder() {
         client.beforeNotify(new BeforeNotify() {
             @Override

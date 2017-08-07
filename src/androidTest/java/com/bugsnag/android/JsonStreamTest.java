@@ -1,16 +1,35 @@
 package com.bugsnag.android;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class JsonStreamTest extends BugsnagTestCase {
+import java.io.IOException;
+import java.io.StringWriter;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class JsonStreamTest {
+
+    private StringWriter writer;
+    private JsonStream stream;
+
+    @Before
+    public void setUp() throws Exception {
+        writer = new StringWriter();
+        stream = new JsonStream(writer);
+    }
+
+    @Test
     public void testSaneValues() throws JSONException, IOException {
-        StringWriter writer = new StringWriter();
-        JsonStream stream = new JsonStream(writer);
-
         Long nullLong = null;
         Boolean nullBoolean = null;
         String nullString = null;
@@ -27,7 +46,7 @@ public class JsonStreamTest extends BugsnagTestCase {
         stream.name("nullDouble").value(nullDouble);
         stream.name("string").value("string");
         stream.name("int").value(123);
-        stream.name("long").value(123l);
+        stream.name("long").value(123L);
         stream.name("float").value(123.45f);
         stream.endObject();
 
@@ -40,6 +59,6 @@ public class JsonStreamTest extends BugsnagTestCase {
         assertTrue(json.isNull("nullDouble"));
         assertEquals("string", json.getString("string"));
         assertEquals(123, json.getInt("int"));
-        assertEquals(123l, json.getLong("long"));
+        assertEquals(123L, json.getLong("long"));
     }
 }

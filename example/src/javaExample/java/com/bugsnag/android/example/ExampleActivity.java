@@ -1,16 +1,21 @@
 package com.bugsnag.android.example;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
+
 import com.bugsnag.android.BeforeNotify;
+import com.bugsnag.android.BreadcrumbType;
 import com.bugsnag.android.Bugsnag;
+import com.bugsnag.android.Callback;
 import com.bugsnag.android.Error;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.Severity;
 import com.bugsnag.android.other.Other;
-import com.bugsnag.android.BreadcrumbType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,12 +23,11 @@ import java.util.Map;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class ExampleActivity extends Activity
-{
+public class ExampleActivity extends AppCompatActivity {
+
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
@@ -62,6 +66,10 @@ public class ExampleActivity extends Activity
         }).start();
     }
 
+    public void sendErrorWithCallback(Callback callback) {
+        Bugsnag.notify(new RuntimeException(), callback);
+    }
+
     public void sendError(View view) {
         actuallySendError();
     }
@@ -86,11 +94,11 @@ public class ExampleActivity extends Activity
     }
 
     public void sendErrorWithMetaData(View view) {
-        Map<String, String> nested = new HashMap<String, String>();
+        Map<String, String> nested = new HashMap<>();
         nested.put("normalkey", "normalvalue");
         nested.put("password", "s3cr3t");
 
-        Collection list = new ArrayList();
+        Collection<Map<String, String>> list = new ArrayList<>();
         list.add(nested);
 
         MetaData metaData = new MetaData();
@@ -106,5 +114,11 @@ public class ExampleActivity extends Activity
     public void crash(View view) {
         Other other = new Other();
         other.meow();
+    }
+
+    public void readDocs(View view) {
+        Uri uri = Uri.parse("https://docs.bugsnag.com/platforms/android/sdk/");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 }

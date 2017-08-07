@@ -1,20 +1,40 @@
 package com.bugsnag.android;
 
-public class ConfigurationTest extends BugsnagTestCase {
-    public void testEndpoints() {
-        Configuration config = new Configuration("api-key");
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class ConfigurationTest {
+
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("api-key");
+    }
+
+    @Test
+    public void testEndpoints() {
         // Default endpoints
         assertEquals("https://notify.bugsnag.com", config.getEndpoint());
 
         // Setting an endpoint
-        config.setEndpoint("http://localhost:8000");
-        assertEquals("http://localhost:8000", config.getEndpoint());
+        String endpoint = "http://localhost:8000";
+        config.setEndpoint(endpoint);
+        assertEquals(endpoint, config.getEndpoint());
     }
 
+    @Test
     public void testShouldNotify() {
-        Configuration config = new Configuration("api-key");
-
         // Should notify if notifyReleaseStages is null
         assertTrue(config.shouldNotifyForReleaseStage("development"));
 
@@ -23,28 +43,28 @@ public class ConfigurationTest extends BugsnagTestCase {
         assertFalse(config.shouldNotifyForReleaseStage(null));
 
         // Shouldn't notify if releaseStage not in notifyReleaseStages
-        config.setNotifyReleaseStages(new String[] {"production"});
+        String releaseStage = "production";
+        config.setNotifyReleaseStages(new String[] {releaseStage});
         assertFalse(config.shouldNotifyForReleaseStage("not-production"));
 
         // Should notify if releaseStage in notifyReleaseStages
-        config.setNotifyReleaseStages(new String[] {"production"});
-        assertTrue(config.shouldNotifyForReleaseStage("production"));
+        config.setNotifyReleaseStages(new String[] {releaseStage});
+        assertTrue(config.shouldNotifyForReleaseStage(releaseStage));
     }
 
+    @Test
     public void testShouldIgnore() {
-        Configuration config = new Configuration("api-key");
-
         // Should not ignore by default
-        assertFalse(config.shouldIgnoreClass("java.io.IOException"));
+        String className = "java.io.IOException";
+        assertFalse(config.shouldIgnoreClass(className));
 
         // Should ignore when added to ignoreClasses
-        config.setIgnoreClasses(new String[] {"java.io.IOException"});
-        assertTrue(config.shouldIgnoreClass("java.io.IOException"));
+        config.setIgnoreClasses(new String[] {className});
+        assertTrue(config.shouldIgnoreClass(className));
     }
 
+    @Test
     public void testInProject() {
-        Configuration config = new Configuration("api-key");
-
         // Shouldn't be inProject if projectPackages hasn't been set
         assertFalse(config.inProject("com.bugsnag.android.Example"));
 

@@ -1,42 +1,64 @@
 package com.bugsnag.android;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-public class AppDataTest extends BugsnagTestCase {
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class AppDataTest {
+
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration("some-api-key");
+    }
+
+    @Test
     public void testManifestData() throws JSONException, IOException {
-        Configuration config = new Configuration("some-api-key");
-        AppData appData = new AppData(getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
         assertEquals("com.bugsnag.android.test", appDataJson.get("packageName"));
         assertEquals("Bugsnag Android Tests", appDataJson.get("name"));
-        assertEquals(Integer.valueOf(1), appDataJson.get("versionCode"));
+        assertEquals(1, appDataJson.get("versionCode"));
         assertEquals("1.0", appDataJson.get("versionName"));
         assertEquals("1.0", appDataJson.get("version"));
         assertEquals("development", appDataJson.get("releaseStage"));
     }
 
+    @Test
     public void testAppVersionOverride() throws JSONException, IOException {
-        Configuration config = new Configuration("some-api-key");
-        config.setAppVersion("1.2.3");
+        String appVersion = "1.2.3";
+        config.setAppVersion(appVersion);
 
-        AppData appData = new AppData(getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
-        assertEquals("1.2.3", appDataJson.get("version"));
+        assertEquals(appVersion, appDataJson.get("version"));
     }
 
+    @Test
     public void testReleaseStageOverride() throws JSONException, IOException {
-        Configuration config = new Configuration("some-api-key");
-        config.setReleaseStage("test-stage");
+        String releaseStage = "test-stage";
+        config.setReleaseStage(releaseStage);
 
-        AppData appData = new AppData(getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
         JSONObject appDataJson = streamableToJson(appData);
 
-        assertEquals("test-stage", appDataJson.get("releaseStage"));
+        assertEquals(releaseStage, appDataJson.get("releaseStage"));
     }
 }

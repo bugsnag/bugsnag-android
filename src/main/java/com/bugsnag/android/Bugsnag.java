@@ -17,7 +17,7 @@ import java.util.Map;
  * @see Client
  */
 public final class Bugsnag {
-  
+
     @Nullable
     @SuppressLint("StaticFieldLeak")
     static Client client;
@@ -197,8 +197,10 @@ public final class Bugsnag {
      * By default, we'll set this to "development" for debug builds and
      * "production" for non-debug builds.
      *
+     * If the release stage is set to "production", logging will automatically be disabled.
+     *
      * @param  releaseStage  the release stage of the app
-     * @see    #setNotifyReleaseStages
+     * @see    #setNotifyReleaseStages {@link #setLoggingEnabled(boolean)}
      */
     public static void setReleaseStage(final String releaseStage) {
         getClient().setReleaseStage(releaseStage);
@@ -266,6 +268,21 @@ public final class Bugsnag {
      */
     public static void setUserName(final String name) {
         getClient().setUserName(name);
+    }
+
+    /**
+     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
+     * requirements such as certificate pinning to be achieved.
+     * <p/>
+     *
+     * The client implementation, and must be capable of sending Error Reports to the Bugsnag API,
+     * as documented here: <a href="https://docs.bugsnag.com/api/error-reporting/">
+     *     https://docs.bugsnag.com/api/error-reporting/</a>
+     *
+     * @param errorReportApiClient the custom HTTP client implementation
+     */
+    public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
+        getClient().setErrorReportApiClient(errorReportApiClient);
     }
 
     /**
@@ -528,6 +545,19 @@ public final class Bugsnag {
      */
     public static void disableExceptionHandler() {
         getClient().disableExceptionHandler();
+    }
+
+    /**
+     * Sets whether the SDK should write logs. In production apps, it is recommended that this
+     * should be set to false.
+     *
+     * Logging is enabled by default unless the release stage is set to 'production', in which case
+     * it will be disabled.
+     *
+     * @param enabled true if logging is enabled
+     */
+    public static void setLoggingEnabled(boolean enabled) {
+        getClient().setLoggingEnabled(enabled);
     }
 
     /**

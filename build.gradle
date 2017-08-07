@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
     }
 
     dependencies {
@@ -16,12 +15,12 @@ repositories {
 // Tasks to build and test the android library
 apply plugin: 'com.android.library'
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -29,6 +28,7 @@ android {
         disable 'DefaultLocale', 'Typos'
         abortOnError true
     }
+
 }
 
 dependencies {
@@ -53,5 +53,21 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
+task javadoc(type: Javadoc) {
+    description = "Generates javadocs, ignoring any doclint errors, and places the artefact in the root of the project"
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("docs")
+    failOnError false
+}
+
 // Tasks to release the library to maven central
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+
+ext {
+    supportLibVersion = "25.3.1"
+    supportTestVersion = "0.5"
+    espressoVersion = "2.2.2"
+    junitVersion = "4.1.2"
+    mockitoVersion = "1.10.19"
+}
