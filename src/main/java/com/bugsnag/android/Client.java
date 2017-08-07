@@ -112,7 +112,7 @@ public class Client extends Observable implements Observer {
         ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         errorReportApiClient = new DefaultHttpClient(cm);
 
-        if (appContext instanceof Application && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (appContext instanceof Application) {
             SdkCompatWrapper sdkCompatWrapper = new SdkCompatWrapper();
             Application application = (Application) appContext;
             sdkCompatWrapper.setupLifecycleLogger(application);
@@ -845,9 +845,10 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    void cacheAndNotify(@NonNull Throwable exception, Severity severity) {
+    void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
+        error.setMetaData(metaData);
         notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
