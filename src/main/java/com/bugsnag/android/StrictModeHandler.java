@@ -70,11 +70,7 @@ class StrictModeHandler {
 
             if (TextUtils.isDigitsOnly(substring)) {
                 Integer code = Integer.valueOf(substring);
-                String val = POLICY_CODE_MAP.get(code);
-
-                if (val != null) {
-                    return "StrictMode - " + val;
-                }
+                return POLICY_CODE_MAP.get(code);
             }
         }
         return null;

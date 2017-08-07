@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Collections;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
@@ -11,10 +11,12 @@ import java.util.WeakHashMap;
  */
 class ExceptionHandler implements UncaughtExceptionHandler {
 
-    private static final String KEY_STRICT_MODE_VIOLATION = "StrictModeViolation";
+    private static final String STRICT_MODE_TAB = "StrictMode";
+    private static final String STRICT_MODE_KEY = "Violation";
+
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
-    final WeakHashMap<Client, Boolean> clientMap = new WeakHashMap<Client, Boolean>();
+    final Map<Client, Boolean> clientMap = new WeakHashMap<>();
 
     static void enable(@NonNull Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -41,7 +43,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             bugsnagHandler.clientMap.remove(client);
 
             // Remove the Bugsnag ExceptionHandler if no clients are subscribed
-            if (bugsnagHandler.clientMap.size() == 0) {
+            if (bugsnagHandler.clientMap.isEmpty()) {
                 Thread.setDefaultUncaughtExceptionHandler(bugsnagHandler.originalHandler);
             }
         }
@@ -57,16 +59,14 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
         // Notify any subscribed clients of the uncaught exception
         for (Client client : clientMap.keySet()) {
+            MetaData metaData = null;
 
             if (strictModeThrowable) { // add strictmode policy violation to metadata
                 String violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
-                MetaData metaData = new MetaData(
-                    Collections.<String, Object>singletonMap(KEY_STRICT_MODE_VIOLATION, violationDesc));
-                client.cacheAndNotify(e, Severity.ERROR, metaData);
+                metaData = new MetaData();
+                metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
             }
-            else {
-                client.cacheAndNotify(e, Severity.ERROR, null);
-            }
+            client.cacheAndNotify(e, Severity.ERROR, metaData);
         }
 
         // Pass exception on to original exception handler
