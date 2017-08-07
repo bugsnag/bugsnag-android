@@ -10,7 +10,6 @@ import android.support.annotation.RequiresApi;
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class LifecycleBreadcrumbLogger implements Application.ActivityLifecycleCallbacks {
 
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycleCallback";

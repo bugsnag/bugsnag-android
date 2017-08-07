@@ -9,6 +9,10 @@ buildscript {
     }
 }
 
+repositories {
+    jcenter()
+}
+
 // Tasks to build and test the android library
 apply plugin: 'com.android.library'
 android {
@@ -16,8 +20,9 @@ android {
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
-        minSdkVersion 4
+        minSdkVersion 14
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     lintOptions {
@@ -28,6 +33,14 @@ android {
 
 dependencies {
     compile "com.android.support:support-annotations:25.3.1"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }
 
 // Disable doclint:

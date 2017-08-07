@@ -1,49 +1,60 @@
 package com.bugsnag.android;
 
-import android.os.Build;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class StrictModeTest extends BugsnagTestCase {
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
+@SmallTest
+public class StrictModeTest {
 
     private static final String STRICT_MODE_MSG = "android.os.StrictMode$StrictModeViolation: policy=262146 violation=";
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-        StrictModeCompat.setUp();
+        StrictModeWrapper.setUp();
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
-        StrictModeCompat.tearDown();
+        StrictModeWrapper.tearDown();
     }
 
+    @Test
     public void testIsNotStrictModeThrowable() throws Exception {
         assertFalse(strictModeHandler.isStrictModeThrowable(new RuntimeException()));
         assertFalse(strictModeHandler.isStrictModeThrowable(new Throwable()));
     }
 
+    @Test
     public void testIsStrictModeThrowable() throws Exception {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            Exception strictModeException = generateStrictModeException();
+        Exception strictModeException = generateStrictModeException();
 
-            if (strictModeException != null) {
-                assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
+        if (strictModeException != null) {
+            assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
 
-                RuntimeException wrappedException = new RuntimeException(strictModeException);
-                assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
+            RuntimeException wrappedException = new RuntimeException(strictModeException);
+            assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
 
-                RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
-                assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
-            }
+            RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
+            assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
         }
     }
 
+    @Test
     public void testStrictModeInvalidDesc() {
         String[] invalidArgs = {null, ""};
 
@@ -56,6 +67,7 @@ public class StrictModeTest extends BugsnagTestCase {
         }
     }
 
+    @Test
     public void testStrictModeBadDesc() {
         String desc = strictModeHandler.getViolationDescription("Three blind mice, look how they run");
         assertNull(desc);
@@ -64,6 +76,7 @@ public class StrictModeTest extends BugsnagTestCase {
         assertNull(nonNumeric);
     }
 
+    @Test
     public void testStrictModeDesc() {
         String fileReadDesc = strictModeHandler.getViolationDescription(STRICT_MODE_MSG + "2");
         assertEquals("DiskRead", fileReadDesc);
@@ -72,14 +85,13 @@ public class StrictModeTest extends BugsnagTestCase {
         assertEquals("DiskWrite", fileWriteDesc);
     }
 
+    @Test
     public void testStrictModeDescException() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            Exception exception = generateStrictModeException();
+        Exception exception = generateStrictModeException();
 
-            if (exception != null) {
-                String desc = strictModeHandler.getViolationDescription(exception.getMessage());
-                assertEquals("DiskRead", desc);
-            }
+        if (exception != null) {
+            String desc = strictModeHandler.getViolationDescription(exception.getMessage());
+            assertEquals("DiskRead", desc);
         }
     }
 
@@ -103,7 +115,7 @@ public class StrictModeTest extends BugsnagTestCase {
      */
     private void violateStrictModePolicy() {
         try {
-            new FileWriter(new File(getContext().getCacheDir(), "test")).write("test");
+            new FileWriter(new File(InstrumentationRegistry.getContext().getCacheDir(), "test")).write("test");
         } catch (IOException e) {
             e.printStackTrace();
         }

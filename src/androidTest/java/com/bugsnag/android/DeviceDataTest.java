@@ -32,16 +32,14 @@ public class DeviceDataTest extends BugsnagTestCase {
         assertNotNull(deviceDataJson.getString("locale"));
         assertNotNull(deviceDataJson.getString("cpuAbi"));
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO) {
-            // Emulators returned null for android id before android 2.2
-            assertNotNull(deviceDataJson.getString("id"));
+        // Emulators returned null for android id before android 2.2
+        assertNotNull(deviceDataJson.getString("id"));
 
-            // historically Android ID was used, this should no longer be the case
-            ContentResolver cr = getContext().getContentResolver();
-            @SuppressLint("HardwareIds")
-            String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
-            assertNotSame(androidId, deviceDataJson.getString("id"));
-        }
+        // historically Android ID was used, this should no longer be the case
+        ContentResolver cr = getContext().getContentResolver();
+        @SuppressLint("HardwareIds")
+        String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
+        assertNotSame(androidId, deviceDataJson.getString("id"));
 
     }
 }

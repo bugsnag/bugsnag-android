@@ -1,12 +1,12 @@
 package com.bugsnag.android;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 
 import java.io.File;
@@ -198,17 +198,14 @@ class DeviceData implements JsonStream.Streamable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return SupportedAbiWrapper.getSupportedAbis();
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            return Abi2Wrapper.getAbi1andAbi2();
-        }
-        return new String[]{Build.CPU_ABI};
+        return Abi2Wrapper.getAbi1andAbi2();
     }
 
     /**
      * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
      */
     private static class SupportedAbiWrapper {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         public static String[] getSupportedAbis() {
             return Build.SUPPORTED_ABIS;
         }
@@ -219,7 +216,6 @@ class DeviceData implements JsonStream.Streamable {
      */
     private static class Abi2Wrapper {
         @NonNull
-        @TargetApi(Build.VERSION_CODES.FROYO)
         public static String[] getAbi1andAbi2() {
             return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
         }

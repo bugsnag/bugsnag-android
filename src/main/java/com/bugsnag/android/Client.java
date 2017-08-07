@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -108,7 +107,7 @@ public class Client extends Observable implements Observer {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
 
-        if (appContext instanceof Application && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (appContext instanceof Application) {
             SdkCompatWrapper sdkCompatWrapper = new SdkCompatWrapper();
             Application application = (Application) appContext;
             sdkCompatWrapper.setupLifecycleLogger(application);

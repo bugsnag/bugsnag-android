@@ -2,7 +2,7 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
-        mavenLocal()
+//        mavenLocal()
     }
     dependencies {
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
@@ -40,7 +40,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 4
+        minSdkVersion 14
     }
 }
 

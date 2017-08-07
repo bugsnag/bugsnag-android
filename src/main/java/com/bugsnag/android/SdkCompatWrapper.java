@@ -10,12 +10,10 @@ import android.support.annotation.RequiresApi;
  * {@link VerifyError} would be thrown when the implementation class was loaded, as older APIs don't
  * have a method definition for {@link android.app.Application.ActivityLifecycleCallbacks}.
  */
-@RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 final class SdkCompatWrapper {
 
     private final LifecycleBreadcrumbLogger logger = new LifecycleBreadcrumbLogger();
 
-    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     void setupLifecycleLogger(@NonNull Application application) {
         application.registerActivityLifecycleCallbacks(logger);
     }
