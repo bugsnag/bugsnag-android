@@ -66,10 +66,10 @@ public class StrictModeTest extends BugsnagTestCase {
 
     public void testStrictModeDesc() {
         String fileReadDesc = strictModeHandler.getViolationDescription(STRICT_MODE_MSG + "2");
-        assertEquals("StrictMode - DiskRead", fileReadDesc);
+        assertEquals("DiskRead", fileReadDesc);
 
         String fileWriteDesc = strictModeHandler.getViolationDescription(STRICT_MODE_MSG + "1");
-        assertEquals("StrictMode - DiskWrite", fileWriteDesc);
+        assertEquals("DiskWrite", fileWriteDesc);
     }
 
     public void testStrictModeDescException() {
@@ -78,7 +78,7 @@ public class StrictModeTest extends BugsnagTestCase {
 
             if (exception != null) {
                 String desc = strictModeHandler.getViolationDescription(exception.getMessage());
-                assertEquals("StrictMode - DiskRead", desc);
+                assertEquals("DiskRead", desc);
             }
         }
     }
