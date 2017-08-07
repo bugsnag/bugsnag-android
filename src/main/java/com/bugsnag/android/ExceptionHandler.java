@@ -54,7 +54,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     @Override
     public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
-      
+
         // Notify any subscribed clients of the uncaught exception
         for (Client client : clientMap.keySet()) {
 
@@ -64,8 +64,9 @@ class ExceptionHandler implements UncaughtExceptionHandler {
                     Collections.<String, Object>singletonMap(KEY_STRICT_MODE_VIOLATION, violationDesc));
                 client.cacheAndNotify(e, Severity.ERROR, metaData);
             }
-
-            client.cacheAndNotify(e, Severity.ERROR, null);
+            else {
+                client.cacheAndNotify(e, Severity.ERROR, null);
+            }
         }
 
         // Pass exception on to original exception handler
