@@ -16,7 +16,8 @@ import java.util.Map;
  */
 public class EventReceiver extends BroadcastReceiver {
 
-    public static final String INTENT_ACTION_KEY = "Intent Action";
+    private static final String INTENT_ACTION_KEY = "Intent Action";
+
     @NonNull
     private static Map<String, BreadcrumbType> actions = buildActions();
     @NonNull
@@ -30,7 +31,7 @@ public class EventReceiver extends BroadcastReceiver {
             String shortAction = shortenActionNameIfNeeded(intent.getAction());
             meta.put(INTENT_ACTION_KEY, fullAction); // always add the Intent Action
 
-            if (intent.getExtras() != null) { // TODO sort metadata?
+            if (intent.getExtras() != null) {
                 for (String key : intent.getExtras().keySet()) {
                     String val = intent.getExtras().get(key).toString();
 
