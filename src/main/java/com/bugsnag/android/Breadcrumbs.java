@@ -54,7 +54,7 @@ class Breadcrumbs implements JsonStream.Streamable {
 
             // sort metadata alphabetically
             List<String> keys = new ArrayList<>(metadata.keySet());
-            Collections.sort(keys);
+            Collections.sort(keys, String.CASE_INSENSITIVE_ORDER);
 
             for (String key : keys) {
                 writer.name(key).value(metadata.get(key));
