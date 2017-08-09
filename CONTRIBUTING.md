@@ -66,7 +66,7 @@ Building the Example App
 You can build and install the example app to as follows:
 
 ```shell
-./gradlew clean example:installDebug
+./gradlew clean example:installJavaExampleDebug
 ```
 
 This builds the latest version of the library and installs an app onto your
