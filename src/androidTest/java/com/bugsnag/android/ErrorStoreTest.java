@@ -43,11 +43,14 @@ public class ErrorStoreTest  {
 
     @Test
     public void testWrite() throws Exception {
+        File[] files = errorStorageDir.listFiles();
+        int baseline = files.length; // record baseline number of files
+
         Error error = new Error(config, new RuntimeException());
         errorStore.write(error);
 
-        File[] files = errorStorageDir.listFiles();
-        assertEquals(1, files.length);
+        files = errorStorageDir.listFiles();
+        assertEquals(baseline + 1, files.length);
         File file = files[0];
         checkFirstErrorReportFile(file);
     }
