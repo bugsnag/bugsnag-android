@@ -3,7 +3,7 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
-        mavenLocal()
+//        mavenLocal()
     }
     dependencies {
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
@@ -48,7 +48,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
         }
     }
-    
+
     productFlavors {
         javaExample {
             applicationIdSuffix ".java"
