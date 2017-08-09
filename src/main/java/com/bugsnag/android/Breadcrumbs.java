@@ -4,10 +4,12 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.Queue;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -49,9 +51,15 @@ class Breadcrumbs implements JsonStream.Streamable {
             writer.name(TYPE_KEY).value(this.type.toString());
             writer.name(METADATA_KEY);
             writer.beginObject();
-            for (Map.Entry<String, String> entry : this.metadata.entrySet()) {
-                writer.name(entry.getKey()).value(entry.getValue());
+
+            // sort metadata alphabetically
+            List<String> keys = new ArrayList<>(metadata.keySet());
+            Collections.sort(keys, String.CASE_INSENSITIVE_ORDER);
+
+            for (String key : keys) {
+                writer.name(key).value(metadata.get(key));
             }
+
             writer.endObject();
             writer.endObject();
         }

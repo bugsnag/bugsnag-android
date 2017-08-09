@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public class EventReceiver extends BroadcastReceiver {
 
+    private static final String INTENT_ACTION_KEY = "Intent Action";
+
     @NonNull
     private static Map<String, BreadcrumbType> actions = buildActions();
     @NonNull
@@ -25,27 +27,41 @@ public class EventReceiver extends BroadcastReceiver {
     public void onReceive(Context context, @NonNull Intent intent) {
         try {
             Map<String, String> meta = new HashMap<>();
+            String fullAction = intent.getAction();
+            String shortAction = shortenActionNameIfNeeded(intent.getAction());
+            meta.put(INTENT_ACTION_KEY, fullAction); // always add the Intent Action
 
             if (intent.getExtras() != null) {
                 for (String key : intent.getExtras().keySet()) {
-                    meta.put(key, intent.getExtras().get(key).toString());
+                    String val = intent.getExtras().get(key).toString();
+
+                    if (isAndroidKey(key)) { // shorten the Intent action
+                        meta.put("Extra", String.format("%s: %s", shortAction, val));
+                    }
+                    else {
+                        meta.put(key, val);
+                    }
                 }
             }
 
-            String actionName = intent.getAction();
-            if (actionName.contains(".")) {
-                actionName = actionName.substring(actionName.lastIndexOf(".") + 1, actionName.length());
-            }
-
-            BreadcrumbType type = BreadcrumbType.LOG;
-            if (actions.containsKey(intent.getAction())) {
-                type = actions.get(intent.getAction());
-            }
-
-            Bugsnag.leaveBreadcrumb(actionName, type, meta);
+            BreadcrumbType type = actions.containsKey(fullAction) ? actions.get(fullAction) : BreadcrumbType.LOG;
+            Bugsnag.leaveBreadcrumb(shortAction, type, meta);
 
         } catch (Exception ex) {
             Logger.warn("Failed to leave breadcrumb in EventReceiver: " + ex.getMessage());
+        }
+    }
+
+    static boolean isAndroidKey(@NonNull String actionName) {
+        return actionName.startsWith("android.");
+    }
+
+    @NonNull
+    static String shortenActionNameIfNeeded(@NonNull String action) {
+        if (isAndroidKey(action)) {
+            return action.substring(action.lastIndexOf(".") + 1, action.length());
+        } else {
+            return action;
         }
     }
 
@@ -60,22 +76,17 @@ public class EventReceiver extends BroadcastReceiver {
         // This code adds the contents of the files from API 09, and then the diffs for the
         // following versions
         addIntentActionsApi09(actions);
-        addIntentActionsApi10(actions);
         addIntentActionsApi11(actions);
         addIntentActionsApi12(actions);
-        addIntentActionsApi13(actions);
         addIntentActionsApi14(actions);
         addIntentActionsApi15(actions);
         addIntentActionsApi16(actions);
         addIntentActionsApi17(actions);
         addIntentActionsApi18(actions);
         addIntentActionsApi19(actions);
-        addIntentActionsApi20(actions);
         addIntentActionsApi21(actions);
-        addIntentActionsApi22(actions);
         addIntentActionsApi23(actions);
         addIntentActionsApi24(actions);
-        addIntentActionsApi25(actions);
 
         return actions;
     }
@@ -91,22 +102,11 @@ public class EventReceiver extends BroadcastReceiver {
         // This code adds the contents of the files from API 09, and then the diffs for the
         // following versions
         addIntentCategoriesApi09(categories);
-        addIntentCategoriesApi10(categories);
         addIntentCategoriesApi11(categories);
-        addIntentCategoriesApi12(categories);
-        addIntentCategoriesApi13(categories);
-        addIntentCategoriesApi14(categories);
         addIntentCategoriesApi15(categories);
-        addIntentCategoriesApi16(categories);
-        addIntentCategoriesApi17(categories);
-        addIntentCategoriesApi18(categories);
-        addIntentCategoriesApi19(categories);
-        addIntentCategoriesApi20(categories);
         addIntentCategoriesApi21(categories);
-        addIntentCategoriesApi22(categories);
         addIntentCategoriesApi23(categories);
         addIntentCategoriesApi24(categories);
-        addIntentCategoriesApi25(categories);
 
         return categories;
     }
@@ -266,24 +266,6 @@ public class EventReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Adds diffs in the broadcast_actions and categories defined in Android API 10
-     *
-     * @param actions The map to add to
-     */
-    private static void addIntentActionsApi10(Map<String, BreadcrumbType> actions) {
-        // No diffs for the broadcast actions
-    }
-
-    /**
-     * Adds all the categories defined in Android API 10
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi10(List<String> categories) {
-        // No diffs for the categories
-    }
-
-    /**
      * Adds diffs in the broadcast_actions and categories defined in Android API 11
      *
      * @param actions The map to add to
@@ -327,33 +309,6 @@ public class EventReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Adds all the categories defined in Android API 12
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi12(List<String> categories) {
-        // No diffs for the categories
-    }
-
-    /**
-     * Adds diffs in the broadcast_actions and categories defined in Android API 13
-     *
-     * @param actions The map to add to
-     */
-    private static void addIntentActionsApi13(Map<String, BreadcrumbType> actions) {
-        // No diffs for the broadcast actions
-    }
-
-    /**
-     * Adds all the categories defined in Android API 13
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi13(List<String> categories) {
-        // No diffs for the categories
-    }
-
-    /**
      * Adds diffs in the broadcast_actions and categories defined in Android API 14
      *
      * @param actions The map to add to
@@ -373,15 +328,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.net.wifi.p2p.THIS_DEVICE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.provider.Telephony.SMS_CB_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED", BreadcrumbType.LOG);
-    }
-
-    /**
-     * Adds all the categories defined in Android API 14
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi14(List<String> categories) {
-        // No diffs for the categories
     }
 
     /**
@@ -426,15 +372,6 @@ public class EventReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Adds all the categories defined in Android API 16
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi16(List<String> categories) {
-        // No diffs for the categories
-    }
-
-    /**
      * Adds diffs in the broadcast_actions and categories defined in Android API 17
      *
      * @param actions The map to add to
@@ -447,15 +384,6 @@ public class EventReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Adds all the categories defined in Android API 17
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi17(List<String> categories) {
-        // No diffs for the categories
-    }
-
-    /**
      * Adds diffs in the broadcast_actions and categories defined in Android API 18
      *
      * @param actions The map to add to
@@ -464,15 +392,6 @@ public class EventReceiver extends BroadcastReceiver {
 
         actions.put("android.net.conn.CONNECTIVITY_CHANGE", BreadcrumbType.LOG);
         actions.put("android.nfc.action.ADAPTER_STATE_CHANGED", BreadcrumbType.LOG);
-    }
-
-    /**
-     * Adds all the categories defined in Android API 18
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi18(List<String> categories) {
-        // No diffs for the categories
     }
 
     /**
@@ -496,33 +415,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.provider.Telephony.SMS_SERVICE_CATEGORY_PROGRAM_DATA_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.provider.Telephony.WAP_PUSH_DELIVER", BreadcrumbType.LOG);
         actions.put("android.provider.Telephony.WAP_PUSH_RECEIVED", BreadcrumbType.LOG);
-    }
-
-    /**
-     * Adds all the categories defined in Android API 19
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi19(List<String> categories) {
-        // No diffs for the categories
-    }
-
-    /**
-     * Adds diffs in the broadcast_actions and categories defined in Android API 20
-     *
-     * @param actions The map to add to
-     */
-    private static void addIntentActionsApi20(Map<String, BreadcrumbType> actions) {
-        // No diffs for the broadcast actions
-    }
-
-    /**
-     * Adds all the categories defined in Android API 20
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi20(List<String> categories) {
-        // No diffs for the categories
     }
 
     /**
@@ -553,24 +445,6 @@ public class EventReceiver extends BroadcastReceiver {
     private static void addIntentCategoriesApi21(@NonNull List<String> categories) {
         categories.add("android.intent.category.LEANBACK_LAUNCHER");
         categories.add("android.intent.category.NOTIFICATION_PREFERENCES");
-    }
-
-    /**
-     * Adds diffs in the broadcast_actions and categories defined in Android API 22
-     *
-     * @param actions The map to add to
-     */
-    private static void addIntentActionsApi22(Map<String, BreadcrumbType> actions) {
-        // No diffs for the broadcast actions
-    }
-
-    /**
-     * Adds all the categories defined in Android API 22
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi22(List<String> categories) {
-        // No diffs for the categories
     }
 
     /**
@@ -622,23 +496,5 @@ public class EventReceiver extends BroadcastReceiver {
      */
     private static void addIntentCategoriesApi24(@NonNull List<String> categories) {
         categories.add("android.service.quicksettings.action.QS_TILE_PREFERENCES");
-    }
-
-    /**
-     * Adds diffs in the broadcast_actions and categories defined in Android API 25
-     *
-     * @param actions The map to add to
-     */
-    private static void addIntentActionsApi25(Map<String, BreadcrumbType> actions) {
-        // No diffs for the broadcast actions
-    }
-
-    /**
-     * Adds all the categories defined in Android API 25
-     *
-     * @param categories The list to add to
-     */
-    private static void addIntentCategoriesApi25(List<String> categories) {
-        // No diffs for the categories
     }
 }
