@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.0.0 (2017-XX-XX)
+## 4.0.0 (2017-08-15)
 
 This is a major release which adds a number of new features to the library. The minimum SDK version supported by Bugsnag is now API 14.
 
