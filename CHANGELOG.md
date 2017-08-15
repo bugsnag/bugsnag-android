@@ -1,5 +1,51 @@
 # Changelog
 
+## 4.0.0 (2017-08-15)
+
+This is a major release which adds a number of new features to the library. The minimum SDK version supported by Bugsnag is now API 14.
+
+### Enhancements
+- Support loading different API keys for different product flavors, through manifest placeholders
+
+- Support custom HTTP Error Reporting clients, by allowing custom implementations of `ErrorReportApiClient`
+
+- Add nullability annotations throughout application
+
+- Any exceptions caused by StrictMode will automatically add the policy violation type to the Error Report's metadata
+
+- All tests have been updated to use JUnit 4 rather than `AndroidTestCase`
+
+- Javadoc for the public API is now hosted on Github Pages
+
+- Breadcrumbs are automatically logged for each callback in the Activity Lifecycle, for all activities
+
+- Breadcrumbs are automatically logged for most System Intents (e.g. `android.intent.action.CONFIGURATION_CHANGED`)
+
+- Optimize how reports are sent relative to network connectivity to improve battery life
+
+- Added documentation on how Breadcrumbs can be setup to track the Fragment Lifecycle
+
+- Added Kotlin example app and documentation
+
+- Disable logs by default on release builds
+
+### Bug Fixes
+- Handle `RejectionExecutionException` by writing unqueued Error reports to disk
+[Damian Wieczorek](https://github.com/damianw)
+
+- Handle IllegalStateException caused by `CharsetEncoder` on Android 6.0
+[Ben Lee](https://github.com/Bencodes)
+
+- Each implementation of `beforeNotify()` is now only called once, in the order in which it was added
+[jermainedilao](https://github.com/jermainedilao)
+
+- By default, the User ID is now a per-install UUID, whereas previously `Settings.Secure.ANDROID_ID` was used
+[Martin Georgiev](https://github.com/georgiev-martin)
+
+- Update Gradle dependencies
+[Frieder Bluemle](https://github.com/friederbluemle)
+
+
 ## 3.9.0 (2017-05-08)
 
 ### Enhancements
