@@ -4,6 +4,15 @@
 
 This is a major release which adds a number of new features to the library. The minimum SDK version supported by Bugsnag is now API 14.
 
+### Breaking Changes
+
+Identifying devices and users (unless overridden) is now captured and persisted
+through a per-install generated UUID, replacing use of
+`Settings.Secure.ANDROID_ID`. As a result, existing errors may see doubled user
+counts if they continue to happen. If this is an issue, see the [upgrade
+guide](UPGRADING.md#upgrade-from-3x-to-4x)
+for more information and a workaround.
+
 ### Enhancements
 - Support loading different API keys for different product flavors, through manifest placeholders
 
