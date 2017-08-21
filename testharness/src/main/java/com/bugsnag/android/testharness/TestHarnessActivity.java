@@ -10,14 +10,7 @@ public class TestHarnessActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bugsnag.notify(new RuntimeException("whoops"));
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                crashApp();
-//            }
-//        }, 5000);
     }
 
     public void crashApp() {
