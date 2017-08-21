@@ -25,7 +25,7 @@ android {
 }
 
 dependencies {
-    compile rootProject
+    compile project(":sdk")
     compile 'com.android.support:appcompat-v7:25.3.1'
 
     androidTestCompile 'com.android.support.test:runner:0.5', {

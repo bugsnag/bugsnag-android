@@ -60,7 +60,7 @@ android {
 }
 
 dependencies {
-    compile rootProject
+    compile project(":sdk")
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile "com.android.support:support-v4:$supportLibVersion"
     kotlinExampleCompile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
