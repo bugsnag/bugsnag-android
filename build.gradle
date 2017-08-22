@@ -8,66 +8,11 @@ buildscript {
     }
 }
 
-repositories {
-    jcenter()
-}
-
-// Tasks to build and test the android library
-apply plugin: 'com.android.library'
-android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
-
-    defaultConfig {
-        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
-        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    lintOptions {
-        disable 'DefaultLocale', 'Typos'
-        abortOnError true
-    }
-
-}
-
-dependencies {
-    compile "com.android.support:support-annotations:25.3.1"
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-}
-
-// Disable doclint:
-// https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // disable the crazy super-strict doclint tool in Java 8
-        //noinspection SpellCheckingInspection
-        options.addStringOption('Xdoclint:none', '-quiet')
-    }
-}
-
-task javadoc(type: Javadoc) {
-    description = "Generates javadocs, ignoring any doclint errors, and places the artefact in the root of the project"
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("docs")
-    failOnError false
-}
-
-// Tasks to release the library to maven central
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
-
 ext {
     supportLibVersion = "25.3.1"
     supportTestVersion = "0.5"
     espressoVersion = "2.2.2"
-    junitVersion = "4.1.2"
+    junitVersion = "4.12"
     mockitoVersion = "1.10.19"
+    kotlin_version = '1.1.3-2'
 }

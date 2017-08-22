@@ -1,1 +1,1 @@
-include ':example', ':testharness'
+include ':example', ':testharness', ':sdk'

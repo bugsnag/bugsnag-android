@@ -5,15 +5,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
         applicationId "com.bugsnag.android.testharness"
-        minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -25,16 +23,16 @@ android {
 }
 
 dependencies {
-    compile rootProject
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile project(":sdk")
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
 
-    androidTestCompile 'com.android.support.test:runner:0.5', {
+    androidTestCompile "com.android.support.test:runner:$supportTestVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile 'com.android.support.test:rules:0.5', {
+    androidTestCompile "com.android.support.test:rules:$supportTestVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 }

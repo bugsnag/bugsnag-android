@@ -40,7 +40,7 @@ before_deploy: ./gradlew javadoc
 
 deploy:
   provider: pages
-  local_dir: docs # only include the contents of the docs dir
+  local_dir: sdk/docs # only include the contents of the docs dir
   skip_cleanup: true
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   on:
