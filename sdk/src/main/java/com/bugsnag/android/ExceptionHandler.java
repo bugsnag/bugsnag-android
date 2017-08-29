@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Date;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -76,6 +77,13 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             System.err.printf("Exception in thread \"%s\" ", t.getName());
             e.printStackTrace(System.err);
         }
+    }
+
+    boolean isCrashOnLaunch(Client client, Date now) {
+        long launchTimeMs = client.getLaunchTimeMs();
+        long delta = now.getTime() - launchTimeMs;
+        long thresholdMs = client.config.getLaunchCrashThresholdMs();
+        return delta <= thresholdMs;
     }
 
 }
