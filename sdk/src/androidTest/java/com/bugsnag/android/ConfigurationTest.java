@@ -76,4 +76,16 @@ public class ConfigurationTest {
         config.setProjectPackages(new String[] {"com.bugsnag.android"});
         assertFalse(config.inProject("java.io.IOException"));
     }
+
+    @Test
+    public void testLaunchThreshold() throws Exception {
+        assertEquals(10000L, config.getLaunchCrashThresholdMs());
+
+        config.setLaunchCrashThresholdMs(-5);
+        assertEquals(0, config.getLaunchCrashThresholdMs());
+
+        int expected = 1500;
+        config.setLaunchCrashThresholdMs(expected);
+        assertEquals(expected, config.getLaunchCrashThresholdMs());
+    }
 }

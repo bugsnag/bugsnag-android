@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -32,6 +33,8 @@ public class Configuration extends Observable implements Observer {
     private boolean sendThreads = true;
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
+    private long launchCrashThresholdMs = 10 * 1000;
+
     @NonNull
     String defaultExceptionType = "android";
 
@@ -354,6 +357,33 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * Retrieves the threshold in ms for an uncaught error to be considered as a crash on launch.
+     * @return the threshold in ms
+     */
+    public long getLaunchCrashThresholdMs() {
+        return launchCrashThresholdMs;
+    }
+
+    /**
+     * Sets the threshold in ms for an uncaught error to be considered as a crash on launch.
+     * If a crash is detected on launch, Bugsnag will attempt to send the report synchronously.
+     *
+     * The app's launch time is tracked as the time at which {@link Bugsnag#init(Context)} was
+     * called.
+     *
+     * By default, this value is set at 10,000ms.
+     *
+     * @param launchCrashThresholdMs the threshold in ms. Any value below 0 will default to 0.
+     */
+    public void setLaunchCrashThresholdMs(long launchCrashThresholdMs) {
+        if (launchCrashThresholdMs <= 0) {
+            this.launchCrashThresholdMs = 0;
+        } else {
+            this.launchCrashThresholdMs = launchCrashThresholdMs;
+        }
+    }
+
+    /**
      * Checks if the given release stage should be notified or not
      *
      * @param releaseStage the release stage to check
@@ -423,4 +453,5 @@ public class Configuration extends Observable implements Observer {
             }
         }
     }
+
 }
