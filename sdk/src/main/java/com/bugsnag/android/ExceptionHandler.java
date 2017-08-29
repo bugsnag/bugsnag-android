@@ -67,7 +67,12 @@ class ExceptionHandler implements UncaughtExceptionHandler {
                 metaData = new MetaData();
                 metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
             }
-            client.cacheAndNotify(e, Severity.ERROR, metaData);
+
+            if (isCrashOnLaunch(client, new Date())) {
+                client.notifyBlocking(e, Severity.ERROR, metaData);
+            } else {
+                client.cacheAndNotify(e, Severity.ERROR, metaData);
+            }
         }
 
         // Pass exception on to original exception handler
