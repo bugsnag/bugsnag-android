@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -69,6 +70,8 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             }
 
             if (isCrashOnLaunch(client, new Date())) {
+                // allow network on main thread, as we're about to crash anyway...
+                StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitNetwork().build());
                 client.notifyBlocking(e, Severity.ERROR, metaData);
             } else {
                 client.cacheAndNotify(e, Severity.ERROR, metaData);
