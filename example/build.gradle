@@ -49,6 +49,8 @@ android {
         }
     }
 
+    flavorDimensions "regular"
+
     productFlavors {
         javaExample {
             applicationIdSuffix ".java"
