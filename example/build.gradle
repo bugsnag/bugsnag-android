@@ -59,6 +59,10 @@ android {
             applicationIdSuffix ".kotlin"
         }
     }
+    lintOptions {
+        disable 'OnClick'
+        abortOnError true
+    }
 }
 
 dependencies {
