@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
         google()
     }
 
@@ -10,36 +9,11 @@ buildscript {
     }
 }
 
-// Tasks to build and test the android library
-apply plugin: 'com.android.library'
-android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
-
-    defaultConfig {
-        minSdkVersion 4
-        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
-    }
-
-    lintOptions {
-        disable 'DefaultLocale', 'Typos'
-        abortOnError true
-    }
+ext {
+    supportLibVersion = "25.3.1"
+    supportTestVersion = "0.5"
+    espressoVersion = "2.2.2"
+    junitVersion = "4.12"
+    mockitoVersion = "1.10.19"
+    kotlin_version = '1.1.3-2'
 }
-
-dependencies {
-    compile "com.android.support:support-annotations:25.3.1"
-}
-
-// Disable doclint:
-// https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // disable the crazy super-strict doclint tool in Java 8
-        //noinspection SpellCheckingInspection
-        options.addStringOption('Xdoclint:none', '-quiet')
-    }
-}
-
-// Tasks to release the library to maven central
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

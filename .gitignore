@@ -31,3 +31,6 @@ proguard/
 # Android Studio #
 .idea
 *.iml
+
+# Javadoc
+docs/

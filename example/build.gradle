@@ -1,21 +1,31 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
         mavenLocal()
         google()
     }
     dependencies {
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+repositories {
+    jcenter()
+}
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+
+    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
+        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
+
         manifestPlaceholders = [
             bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
             bugsnagBuildUUID: "abc123",
@@ -26,27 +36,44 @@ android {
             bugsnagEnableExceptionHandler: true,
             bugsnagPersistUserBetweenSessions: false,
         ]
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-
         debug {
             applicationIdSuffix ".debug"
         }
-
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
         }
     }
 
-    defaultConfig {
-        minSdkVersion 4
+    productFlavors {
+        javaExample {
+            applicationIdSuffix ".java"
+        }
+        kotlinExample {
+            applicationIdSuffix ".kotlin"
+        }
     }
 }
 
 dependencies {
-    compile rootProject
+    compile project(":sdk")
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
+    compile "com.android.support:support-v4:$supportLibVersion"
+    kotlinExampleCompile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    androidTestCompile "com.android.support.test:runner:$supportTestVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile "com.android.support.test:rules:$supportTestVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }
 
 apply plugin: 'com.bugsnag.android.gradle'
