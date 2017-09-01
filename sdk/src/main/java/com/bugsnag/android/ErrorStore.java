@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
@@ -23,6 +24,24 @@ class ErrorStore {
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final int MAX_STORED_ERRORS = 100;
+
+    static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
+        @Override
+        public int compare(File lhs, File rhs) {
+            if (lhs == null && rhs == null) {
+                return 0;
+            }
+            if (lhs == null) {
+                return 1;
+            }
+            if (rhs == null) {
+                return -1;
+            }
+            String lhsName = lhs.getName().replaceAll(STARTUP_CRASH, "");
+            String rhsName = rhs.getName().replaceAll(STARTUP_CRASH, "");
+            return lhsName.compareTo(rhsName);
+        }
+    };
 
     @NonNull
     private final Configuration config;
@@ -109,7 +128,7 @@ class ErrorStore {
             File[] files = exceptionDir.listFiles();
             if (files != null && files.length >= MAX_STORED_ERRORS) {
                 // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files);
+                Arrays.sort(files, ERROR_REPORT_COMPARATOR); // TODO fixme
                 Logger.warn(String.format("Discarding oldest error as stored error limit reached (%s)", files[0].getPath()));
                 if (!files[0].delete()) {
                     files[0].deleteOnExit();

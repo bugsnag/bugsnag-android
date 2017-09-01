@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.StringWriter;
 
+import static com.bugsnag.android.ErrorStore.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -67,6 +68,30 @@ public class ErrorStoreTest  {
         for (String s : invalid) {
             assertFalse(errorStore.isLaunchCrashReport(new File(s)));
         }
+    }
+
+    @Test
+    public void testComparator() throws Exception {
+        String first = "1504255147933.json";
+        String second = "1505000000000.json";
+        String startup = "1504500000000_startupcrash.json";
+
+        // handle defaults
+        assertEquals(0, ERROR_REPORT_COMPARATOR.compare(null, null));
+        assertEquals(-1, ERROR_REPORT_COMPARATOR.compare(new File(""), null));
+        assertEquals(1, ERROR_REPORT_COMPARATOR.compare(null, new File("")));
+
+        // same value should always be 0
+        assertEquals(0, ERROR_REPORT_COMPARATOR.compare(new File(first), new File(first)));
+        assertEquals(0, ERROR_REPORT_COMPARATOR.compare(new File(startup), new File(startup)));
+
+        // first is before second
+        assertTrue(ERROR_REPORT_COMPARATOR.compare(new File(first), new File(second)) < 0);
+        assertTrue(ERROR_REPORT_COMPARATOR.compare(new File(second), new File(first)) > 0);
+
+        // startup is handled correctly
+        assertTrue(ERROR_REPORT_COMPARATOR.compare(new File(first), new File(startup)) < 0);
+        assertTrue(ERROR_REPORT_COMPARATOR.compare(new File(second), new File(startup)) > 0);
     }
 
     static void checkFirstErrorReportFile(File errorFile) throws Exception {
