@@ -184,7 +184,7 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         // Flush any on-disk errors
-        errorStore.flush(errorReportApiClient);
+        errorStore.flushOnLaunch(errorReportApiClient);
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
@@ -200,7 +200,7 @@ public class Client extends Observable implements Observer {
             boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
 
             if (retryReports) {
-                errorStore.flush(errorReportApiClient);
+                errorStore.flushAsync(errorReportApiClient);
             }
         }
     }
@@ -848,7 +848,7 @@ public class Client extends Observable implements Observer {
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
-                errorStore.flush(errorReportApiClient);
+                errorStore.flushAsync(errorReportApiClient);
         }
 
         // Add a breadcrumb for this error occurring

@@ -69,8 +69,23 @@ class ErrorStore {
         this.path = path;
     }
 
-    // Flush any on-disk errors to Bugsnag
-    void flush(final ErrorReportApiClient errorReportApiClient) {
+    void flushOnLaunch(ErrorReportApiClient errorReportApiClient) {
+        List<File> crashReports = findLaunchCrashReports();
+
+        if (crashReports.isEmpty() && config.getLaunchCrashThresholdMs() > 0) {
+            flushAsync(errorReportApiClient); // if disabled or no startup crash, flush async
+        } else {
+            for (File crashReport : crashReports) { // flush sync as the app may crash very soon
+                // TODO how to handle ANR/StrictMode?
+                flushErrorReport(crashReport, errorReportApiClient);
+            }
+        }
+    }
+
+    /**
+     * Flush any on-disk errors to Bugsnag
+     */
+    void flushAsync(final ErrorReportApiClient errorReportApiClient) {
         if (path == null) {
             return;
         }
@@ -88,22 +103,7 @@ class ErrorStore {
                         Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", errorFiles.length));
 
                         for (File errorFile : errorFiles) {
-                            try {
-                                Report report = new Report(config.getApiKey(), errorFile);
-                                errorReportApiClient.postReport(config.getEndpoint(), report);
-
-                                Logger.info("Deleting sent error file " + errorFile.getName());
-                                if (!errorFile.delete()) {
-                                    errorFile.deleteOnExit();
-                                }
-                            } catch (DefaultHttpClient.NetworkException e) {
-                                Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
-                            } catch (Exception e) {
-                                Logger.warn("Problem sending unsent error from disk", e);
-                                if (!errorFile.delete()) {
-                                    errorFile.deleteOnExit();
-                                }
-                            }
+                            flushErrorReport(errorFile, errorReportApiClient);
                         }
                     }
                 }
@@ -111,6 +111,25 @@ class ErrorStore {
         }
         catch (RejectedExecutionException e) {
             Logger.warn("Failed to flush all on-disk errors, retaining unsent errors for later.");
+        }
+    }
+
+    private void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
+        try {
+            Report report = new Report(config.getApiKey(), errorFile);
+            errorReportApiClient.postReport(config.getEndpoint(), report);
+
+            Logger.info("Deleting sent error file " + errorFile.getName());
+            if (!errorFile.delete()) {
+                errorFile.deleteOnExit();
+            }
+        } catch (DefaultHttpClient.NetworkException e) {
+            Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
+        } catch (Exception e) {
+            Logger.warn("Problem sending unsent error from disk", e);
+            if (!errorFile.delete()) {
+                errorFile.deleteOnExit();
+            }
         }
     }
 
@@ -128,7 +147,7 @@ class ErrorStore {
             File[] files = exceptionDir.listFiles();
             if (files != null && files.length >= MAX_STORED_ERRORS) {
                 // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files, ERROR_REPORT_COMPARATOR); // TODO fixme
+                Arrays.sort(files, ERROR_REPORT_COMPARATOR);
                 Logger.warn(String.format("Discarding oldest error as stored error limit reached (%s)", files[0].getPath()));
                 if (!files[0].delete()) {
                     files[0].deleteOnExit();
@@ -160,7 +179,7 @@ class ErrorStore {
         return name.matches("[0-9]+_startupcrash\\.json");
     }
 
-    List<File> findLaunchCrashReports() {
+    private List<File> findLaunchCrashReports() {
         if (path == null) {
             return Collections.emptyList();
         }
