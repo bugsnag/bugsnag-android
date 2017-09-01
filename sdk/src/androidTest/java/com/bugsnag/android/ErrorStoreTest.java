@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -53,6 +54,19 @@ public class ErrorStoreTest  {
         assertEquals(baseline + 1, files.length);
         File file = files[0];
         checkFirstErrorReportFile(file);
+    }
+
+    @Test
+    public void testIsLaunchCrashReport() throws Exception {
+        String[] valid = {"1504255147933_startupcrash.json"};
+        String[] invalid = {"", ".json", "abcdeAO.json", "!@£)(%)(.txt", "1504255147933.txt", "1504255147933.json"};
+
+        for (String s : valid) {
+            assertTrue(errorStore.isLaunchCrashReport(new File(s)));
+        }
+        for (String s : invalid) {
+            assertFalse(errorStore.isLaunchCrashReport(new File(s)));
+        }
     }
 
     static void checkFirstErrorReportFile(File errorFile) throws Exception {

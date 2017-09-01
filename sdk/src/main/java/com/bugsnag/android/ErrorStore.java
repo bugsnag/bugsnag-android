@@ -7,7 +7,10 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -16,11 +19,14 @@ import java.util.concurrent.RejectedExecutionException;
  * lack of network connectivity.
  */
 class ErrorStore {
+
     private static final String UNSENT_ERROR_PATH = "/bugsnag-errors/";
+    private static final String STARTUP_CRASH = "_startupcrash";
     private static final int MAX_STORED_ERRORS = 100;
 
     @NonNull
-    final Configuration config;
+    private final Configuration config;
+
     @Nullable
     final String path;
 
@@ -33,7 +39,7 @@ class ErrorStore {
 
             File outFile = new File(path);
             outFile.mkdirs();
-            if(!outFile.exists()) {
+            if (!outFile.exists()) {
                 Logger.warn("Could not prepare error storage directory");
                 path = null;
             }
@@ -46,7 +52,9 @@ class ErrorStore {
 
     // Flush any on-disk errors to Bugsnag
     void flush(final ErrorReportApiClient errorReportApiClient) {
-        if(path == null) return;
+        if (path == null) {
+            return;
+        }
 
         try {
             Async.run(new Runnable() {
@@ -87,9 +95,13 @@ class ErrorStore {
         }
     }
 
-    // Write an error to disk, for later sending
-    void write(@NonNull Error error) {
-        if(path == null) return;
+    /**
+     * Write an error to disk, for later sending. Returns the filename of the report location
+     */
+    @Nullable String write(@NonNull Error error) {
+        if (path == null) {
+            return null;
+        }
 
         // Limit number of saved errors to prevent disk space issues
         File exceptionDir = new File(path);
@@ -115,10 +127,40 @@ class ErrorStore {
             stream.close();
 
             Logger.info(String.format("Saved unsent error to disk (%s) ", filename));
+            return filename;
         } catch (Exception e) {
             Logger.warn(String.format("Couldn't save unsent error to disk (%s) ", filename), e);
         } finally {
             IOUtils.closeQuietly(out);
         }
+        return null;
     }
+
+    boolean isLaunchCrashReport(File file) {
+        String name = file.getName();
+        return name.matches("[0-9]+_startupcrash\\.json");
+    }
+
+    List<File> findLaunchCrashReports() {
+        if (path == null) {
+            return Collections.emptyList();
+        }
+
+        File exceptionDir = new File(path);
+        List<File> launchCrashes = new ArrayList<>();
+
+        if (exceptionDir.isDirectory()) {
+            File[] files = exceptionDir.listFiles();
+
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    if (isLaunchCrashReport(file)) {
+                        launchCrashes.add(file);
+                    }
+                }
+            }
+        }
+        return launchCrashes;
+    }
+
 }
