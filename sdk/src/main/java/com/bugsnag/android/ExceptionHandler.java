@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -15,6 +14,8 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
     private static final String STRICT_MODE_TAB = "StrictMode";
     private static final String STRICT_MODE_KEY = "Violation";
+    static final String LAUNCH_CRASH_TAB = "CrashOnLaunch";
+    static final String LAUNCH_CRASH_KEY = "Duration (ms)";
 
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
@@ -51,7 +52,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         }
     }
 
-    public ExceptionHandler(UncaughtExceptionHandler originalHandler) {
+    ExceptionHandler(UncaughtExceptionHandler originalHandler) {
         this.originalHandler = originalHandler;
     }
 
@@ -60,8 +61,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
 
         // Notify any subscribed clients of the uncaught exception
+        Date now = new Date();
+
         for (Client client : clientMap.keySet()) {
-            MetaData metaData = null;
+            MetaData metaData = new MetaData();
 
             if (strictModeThrowable) { // add strictmode policy violation to metadata
                 String violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
@@ -69,13 +72,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
                 metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
             }
 
-            if (isCrashOnLaunch(client, new Date())) {
-                // allow network on main thread, as we're about to crash anyway...
-                StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitNetwork().build());
-                client.notifyBlocking(e, Severity.ERROR, metaData);
-            } else {
-                client.cacheAndNotify(e, Severity.ERROR, metaData);
+            if (isCrashOnLaunch(client, now)) {
+                metaData.addToTab(LAUNCH_CRASH_TAB, LAUNCH_CRASH_KEY, getMsSinceLaunch(client, now));
             }
+            client.cacheAndNotify(e, Severity.ERROR, metaData);
         }
 
         // Pass exception on to original exception handler
@@ -88,10 +88,14 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     boolean isCrashOnLaunch(Client client, Date now) {
-        long launchTimeMs = client.getLaunchTimeMs();
-        long delta = now.getTime() - launchTimeMs;
+        long delta = getMsSinceLaunch(client, now);
         long thresholdMs = client.config.getLaunchCrashThresholdMs();
         return delta <= thresholdMs;
+    }
+
+    private long getMsSinceLaunch(Client client, Date now) {
+        long launchTimeMs = client.getLaunchTimeMs();
+        return now.getTime() - launchTimeMs;
     }
 
 }

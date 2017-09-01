@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -75,10 +76,16 @@ class ErrorStore {
         if (crashReports.isEmpty() && config.getLaunchCrashThresholdMs() > 0) {
             flushAsync(errorReportApiClient); // if disabled or no startup crash, flush async
         } else {
-            for (File crashReport : crashReports) { // flush sync as the app may crash very soon
-                // TODO how to handle ANR/StrictMode?
+            // flush synchronously as the app may crash very soon.
+            // need to disable strictmode and this also risks ANR,
+            // but can capture reports which may not otherwise be sent
+            StrictMode.ThreadPolicy originalThreadPolicy = StrictMode.getThreadPolicy();
+            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
+
+            for (File crashReport : crashReports) {
                 flushErrorReport(crashReport, errorReportApiClient);
             }
+            StrictMode.setThreadPolicy(originalThreadPolicy);
         }
     }
 
@@ -155,7 +162,13 @@ class ErrorStore {
             }
         }
 
-        String filename = String.format(Locale.US, "%s%d.json", path, System.currentTimeMillis());
+        MetaData metaData = error.getMetaData();
+
+        boolean isStartupCrash = metaData != null &&
+            metaData.getTab(ExceptionHandler.LAUNCH_CRASH_TAB)
+                .containsKey(ExceptionHandler.LAUNCH_CRASH_KEY);
+        String suffix = isStartupCrash ? STARTUP_CRASH : "";
+        String filename = String.format(Locale.US, "%s%d%s.json", path, System.currentTimeMillis(), suffix);
         Writer out = null;
         try {
             out = new FileWriter(filename);
