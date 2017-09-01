@@ -59,7 +59,7 @@ public class ExceptionHandlerTest  {
         assertTrue(handler.isCrashOnLaunch(client, now));
 
         client.config.setLaunchCrashThresholdMs(0);
-        assertTrue(handler.isCrashOnLaunch(client, now));
+        assertFalse(handler.isCrashOnLaunch(client, now));
 
         client.config.setLaunchCrashThresholdMs(10000);
         assertFalse(handler.isCrashOnLaunch(client, new Date(now.getTime() + 20000)));

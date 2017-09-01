@@ -88,9 +88,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     boolean isCrashOnLaunch(Client client, Date now) {
+
         long delta = getMsSinceLaunch(client, now);
         long thresholdMs = client.config.getLaunchCrashThresholdMs();
-        return delta <= thresholdMs;
+        return thresholdMs > 0 && delta <= thresholdMs;
     }
 
     private long getMsSinceLaunch(Client client, Date now) {
