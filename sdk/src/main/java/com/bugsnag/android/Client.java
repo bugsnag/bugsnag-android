@@ -10,13 +10,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -71,6 +71,8 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final ErrorStore errorStore;
 
+    private final long launchTimeMs;
+
     private final EventReceiver eventReceiver = new EventReceiver();
     private ErrorReportApiClient errorReportApiClient;
 
@@ -111,6 +113,11 @@ public class Client extends Observable implements Observer {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
+        this(androidContext, configuration, new Date());
+    }
+
+    Client(@NonNull Context androidContext, @NonNull Configuration configuration, Date time) {
+        launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -177,7 +184,7 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         // Flush any on-disk errors
-        errorStore.flush(errorReportApiClient);
+        errorStore.flushOnLaunch(errorReportApiClient);
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
@@ -193,7 +200,7 @@ public class Client extends Observable implements Observer {
             boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
 
             if (retryReports) {
-                errorStore.flush(errorReportApiClient);
+                errorStore.flushAsync(errorReportApiClient);
             }
         }
     }
@@ -841,7 +848,7 @@ public class Client extends Observable implements Observer {
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
-                errorStore.flush(errorReportApiClient);
+                errorStore.flushAsync(errorReportApiClient);
         }
 
         // Add a breadcrumb for this error occurring
@@ -925,6 +932,14 @@ public class Client extends Observable implements Observer {
         Error error = new Error(config, exception);
         error.setMetaData(metaData);
         notify(error, BLOCKING);
+    }
+
+    /**
+     * Retrieves the time at which the client was launched
+     * @return the ms since the java epoch
+     */
+    public long getLaunchTimeMs() {
+        return launchTimeMs;
     }
 
     /**

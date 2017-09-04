@@ -34,14 +34,14 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      * Create an empty MetaData object.
      */
     public MetaData() {
-        store = new ConcurrentHashMap<String, Object>();
+        store = new ConcurrentHashMap<>();
     }
 
     /**
      * Create a MetaData with values copied from an existing Map
      */
     public MetaData(@NonNull Map<String, Object> m) {
-        store = new ConcurrentHashMap<String, Object>(m);
+        store = new ConcurrentHashMap<>(m);
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -105,7 +105,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         Map<String, Object> tab = (Map<String, Object>)store.get(tabName);
 
         if(tab == null) {
-            tab = new ConcurrentHashMap<String, Object>();
+            tab = new ConcurrentHashMap<>();
             store.put(tabName, tab);
         }
 
@@ -120,7 +120,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     @NonNull
     static MetaData merge(@NonNull MetaData... metaDataList) {
-        ArrayList<Map<String, Object>> stores = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> stores = new ArrayList<>();
         List<String> filters = new ArrayList<>();
         for(MetaData metaData : metaDataList) {
             if(metaData != null) {
@@ -146,7 +146,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
             if(map == null) continue;
 
             // Get a set of all possible keys in base and overrides
-            Set<String> allKeys = new HashSet<String>(result.keySet());
+            Set<String> allKeys = new HashSet<>(result.keySet());
             allKeys.addAll(map.keySet());
 
             for(String key : allKeys) {

@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -47,4 +49,20 @@ public class ExceptionHandlerTest  {
 
         assertEquals(2, bugsnagHandler.clientMap.size());
     }
+
+    @Test
+    public void testIsCrashOnLaunch() throws Exception {
+        ExceptionHandler handler = new ExceptionHandler(null);
+        Date now = new Date();
+        Client client = new Client(context, new Configuration("123"), now);
+
+        assertTrue(handler.isCrashOnLaunch(client, now));
+
+        client.config.setLaunchCrashThresholdMs(0);
+        assertFalse(handler.isCrashOnLaunch(client, now));
+
+        client.config.setLaunchCrashThresholdMs(10000);
+        assertFalse(handler.isCrashOnLaunch(client, new Date(now.getTime() + 20000)));
+    }
+
 }
