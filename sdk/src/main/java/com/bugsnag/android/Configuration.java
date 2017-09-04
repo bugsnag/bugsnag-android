@@ -33,7 +33,7 @@ public class Configuration extends Observable implements Observer {
     private boolean sendThreads = true;
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
-    private long launchCrashThresholdMs = 10 * 1000;
+    private long launchCrashThresholdMs = 5 * 1000;
 
     @NonNull
     String defaultExceptionType = "android";

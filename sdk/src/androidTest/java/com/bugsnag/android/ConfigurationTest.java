@@ -79,7 +79,7 @@ public class ConfigurationTest {
 
     @Test
     public void testLaunchThreshold() throws Exception {
-        assertEquals(10000L, config.getLaunchCrashThresholdMs());
+        assertEquals(5000L, config.getLaunchCrashThresholdMs());
 
         config.setLaunchCrashThresholdMs(-5);
         assertEquals(0, config.getLaunchCrashThresholdMs());
