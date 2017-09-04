@@ -371,7 +371,7 @@ public class Configuration extends Observable implements Observer {
      * The app's launch time is tracked as the time at which {@link Bugsnag#init(Context)} was
      * called.
      *
-     * By default, this value is set at 10,000ms.
+     * By default, this value is set at 5,000ms.
      *
      * @param launchCrashThresholdMs the threshold in ms. Any value below 0 will default to 0.
      */
