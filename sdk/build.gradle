@@ -1,5 +1,6 @@
 repositories {
     jcenter()
+    google()
 }
 
 // Tasks to build and test the android library
