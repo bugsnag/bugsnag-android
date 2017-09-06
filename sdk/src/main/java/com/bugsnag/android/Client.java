@@ -587,7 +587,7 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        Error error = new Error(config, exception);
+        Error error = new Error.Builder(config, exception).build();
         notify(error, !BLOCKING);
     }
 
@@ -597,7 +597,7 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notifyBlocking(@NonNull Throwable exception) {
-        Error error = new Error(config, exception);
+        Error error = new Error.Builder(config, exception).build();
         notify(error, BLOCKING);
     }
 
@@ -609,7 +609,7 @@ public class Client extends Observable implements Observer {
      *                 additional modification
      */
     public void notify(@NonNull Throwable exception, Callback callback) {
-        Error error = new Error(config, exception);
+        Error error = new Error.Builder(config, exception).build();
         notify(error, DeliveryStyle.ASYNC, callback);
     }
 
@@ -621,7 +621,7 @@ public class Client extends Observable implements Observer {
      *                 additional modification
      */
     public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
-        Error error = new Error(config, exception);
+        Error error = new Error.Builder(config, exception).build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
@@ -649,7 +649,7 @@ public class Client extends Observable implements Observer {
      *                   additional modification
      */
     public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error(config, name, message, stacktrace);
+        Error error = new Error(config, name, message, stacktrace); // TODO
         notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
@@ -661,8 +661,9 @@ public class Client extends Observable implements Observer {
      *                  Severity.WARNING or Severity.INFO
      */
     public void notify(@NonNull Throwable exception, Severity severity) {
-        Error error = new Error(config, exception);
-        error.setSeverity(severity);
+        Error error = new Error.Builder(config, exception)
+            .withSeverity(severity)
+            .build();
         notify(error, !BLOCKING);
     }
 
@@ -674,8 +675,9 @@ public class Client extends Observable implements Observer {
      *                  Severity.WARNING or Severity.INFO
      */
     public void notifyBlocking(@NonNull Throwable exception, Severity severity) {
-        Error error = new Error(config, exception);
-        error.setSeverity(severity);
+        Error error = new Error.Builder(config, exception)
+            .withSeverity(severity)
+            .build();
         notify(error, BLOCKING);
     }
 
@@ -871,10 +873,17 @@ public class Client extends Observable implements Observer {
         }
     }
 
+    /**
+     * Caches an error then attempts to notify.
+     *
+     * Should only ever be called from the {@link ExceptionHandler}.
+     */
     void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
+        Error error = new Error.Builder(config, exception)
+            .withSeverity(severity)
+            .withMetaData(metaData)
+            .isUnhandled(true)
+            .build();
         notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
@@ -914,8 +923,9 @@ public class Client extends Observable implements Observer {
      *             to send and modify error reports
      */
     public void notify(@NonNull Throwable exception, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setMetaData(metaData);
+        Error error = new Error.Builder(config, exception)
+            .withMetaData(metaData)
+            .build();
         notify(error, !BLOCKING);
     }
 
@@ -929,8 +939,9 @@ public class Client extends Observable implements Observer {
      *             to send and modify error reports
      */
     public void notifyBlocking(@NonNull Throwable exception, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setMetaData(metaData);
+        Error error = new Error.Builder(config, exception)
+            .withMetaData(metaData)
+            .build();
         notify(error, BLOCKING);
     }
 
@@ -955,9 +966,10 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void notify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
+        Error error = new Error.Builder(config, exception)
+            .withMetaData(metaData)
+            .withSeverity(severity)
+            .build();
         notify(error, !BLOCKING);
     }
 
@@ -974,9 +986,10 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void notifyBlocking(@NonNull Throwable exception, Severity severity, MetaData metaData) {
-        Error error = new Error(config, exception);
-        error.setSeverity(severity);
-        error.setMetaData(metaData);
+        Error error = new Error.Builder(config, exception)
+            .withMetaData(metaData)
+            .withSeverity(severity)
+            .build();
         notify(error, BLOCKING);
     }
 
@@ -995,7 +1008,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
+        Error error = new Error(config, name, message, stacktrace); // TODO
         error.setSeverity(severity);
         error.setMetaData(metaData);
         notify(error, !BLOCKING);
@@ -1016,7 +1029,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
+        Error error = new Error(config, name, message, stacktrace); // TODO
         error.setSeverity(severity);
         error.setMetaData(metaData);
         notify(error, BLOCKING);
@@ -1038,7 +1051,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void notify(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
+        Error error = new Error(config, name, message, stacktrace); // TODO
         error.setSeverity(severity);
         error.setMetaData(metaData);
         error.setContext(context);
@@ -1061,7 +1074,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void notifyBlocking(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
-        Error error = new Error(config, name, message, stacktrace);
+        Error error = new Error(config, name, message, stacktrace); // TODO
         error.setSeverity(severity);
         error.setMetaData(metaData);
         error.setContext(context);

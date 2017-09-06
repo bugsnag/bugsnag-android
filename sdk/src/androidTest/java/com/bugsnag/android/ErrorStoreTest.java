@@ -48,7 +48,7 @@ public class ErrorStoreTest  {
         File[] files = errorStorageDir.listFiles();
         int baseline = files.length; // record baseline number of files
 
-        Error error = new Error(config, new RuntimeException());
+        Error error = new Error.Builder(config, new RuntimeException()).build();
         errorStore.write(error);
 
         files = errorStorageDir.listFiles();

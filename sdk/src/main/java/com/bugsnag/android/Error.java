@@ -32,7 +32,7 @@ public class Error implements JsonStream.Streamable {
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
-    private EventHandledState eventHandledState;
+    private EventHandledState eventHandledState = new EventHandledState(Severity.WARNING);
 
     Error(@NonNull Configuration config, @NonNull Throwable exception) {
         this.config = config;
@@ -342,7 +342,11 @@ public class Error implements JsonStream.Streamable {
         }
 
         Error build() {
-            return new Error(config, exception);
+            Error error = new Error(config, exception);
+            error.setSeverity(severity);
+            error.setMetaData(metaData);
+            // TODO unhandled etc
+            return error;
         }
     }
 }
