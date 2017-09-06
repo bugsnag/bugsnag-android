@@ -8,7 +8,7 @@ android:
     - android-16
     - android-19
     - android-21
-    - android-25
+    - android-26
     - extra-android-m2repository
     - sys-img-armeabi-v7a-android-16
     - sys-img-armeabi-v7a-android-19
