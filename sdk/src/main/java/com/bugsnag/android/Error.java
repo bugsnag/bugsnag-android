@@ -32,15 +32,18 @@ public class Error implements JsonStream.Streamable {
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
+    private final EventHandledState eventHandledState;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception, EventHandledState eventHandledState) {
         this.config = config;
         this.exception = exception;
+        this.eventHandledState = eventHandledState;
     }
 
     Error(@NonNull Configuration config, @NonNull String name,
-          @NonNull String message, @NonNull StackTraceElement[] frames) {
+          @NonNull String message, @NonNull StackTraceElement[] frames, EventHandledState eventHandledState) {
         this.config = config;
+        this.eventHandledState = eventHandledState;
         this.exception = new BugsnagException(name, message, frames);
     }
 
@@ -53,6 +56,17 @@ public class Error implements JsonStream.Streamable {
             writer.name("payloadVersion").value(PAYLOAD_VERSION);
             writer.name("context").value(getContext());
             writer.name("severity").value(severity);
+            writer.name("defaultSeverity").value(eventHandledState.isDefaultSeverity(severity));
+
+            boolean unhandled = eventHandledState.isUnhandled();
+            writer.name("unhandled").value(unhandled);
+
+            if (unhandled) {
+                writer.name("severityReason").beginObject();
+                    writer.name("type").value(eventHandledState.getSeverityReasonType());
+                writer.endObject();
+            }
+
             writer.name("metaData").value(mergedMetaData);
 
             if(config.getProjectPackages() != null) {

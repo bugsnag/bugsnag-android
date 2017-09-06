@@ -46,7 +46,7 @@ public class BeforeNotifyTest {
             }
         };
 
-        Error error = new Error(config, new RuntimeException("Test"));
+        Error error = new Error(config, new RuntimeException("Test"), eventHandledState);
         beforeNotify.run(error);
 
         assertEquals(context, error.getContext());

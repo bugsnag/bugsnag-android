@@ -19,6 +19,10 @@ final class EventHandledState {
     private final Severity originalSeverity;
     private final String severityReasonType;
 
+    EventHandledState(Severity originalSeverity) {
+        this(null, originalSeverity);
+    }
+
     EventHandledState(@SeverityReason @Nullable String severityReasonType,
                       @NonNull Severity originalSeverity) {
         this.severityReasonType = severityReasonType;
