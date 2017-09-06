@@ -345,8 +345,10 @@ public class Error implements JsonStream.Streamable {
             EventHandledState eventHandledState = new EventHandledState(severity, unhandled);
             Error error = new Error(config, exception, eventHandledState);
             error.setSeverity(severity);
-            error.setMetaData(metaData);
-            // TODO unhandled etc
+
+            if (metaData != null) {
+                error.setMetaData(metaData);
+            }
             return error;
         }
     }
