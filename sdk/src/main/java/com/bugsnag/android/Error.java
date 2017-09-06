@@ -39,12 +39,6 @@ public class Error implements JsonStream.Streamable {
         this.exception = exception;
     }
 
-    Error(@NonNull Configuration config, @NonNull String name,
-          @NonNull String message, @NonNull StackTraceElement[] frames) {
-        this.config = config;
-        this.exception = new BugsnagException(name, message, frames);
-    }
-
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.getMetaData(), metaData);
@@ -324,6 +318,11 @@ public class Error implements JsonStream.Streamable {
         Builder(@NonNull Configuration config, @NonNull Throwable exception) {
             this.config = config;
             this.exception = exception;
+        }
+
+        Builder(@NonNull Configuration config, @NonNull String name,
+               @NonNull String message, @NonNull StackTraceElement[] frames) {
+            this(config, new BugsnagException(name, message, frames));
         }
 
         Builder withSeverity(Severity severity) {
