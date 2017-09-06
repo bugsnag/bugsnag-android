@@ -15,8 +15,8 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -72,8 +72,11 @@ public class ErrorTest {
             .build();
         JSONObject errorJson = streamableToJson(unhandledErr);
         assertTrue(errorJson.getBoolean("defaultSeverity"));
-        assertFalse(errorJson.getBoolean("unhandled"));
-        assertNull(errorJson.getJSONObject("severityReason"));
+        assertTrue(errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals("exception_handler", severityReason.getString("type"));
     }
 
     @Test
@@ -81,11 +84,21 @@ public class ErrorTest {
         Error handledErr = new Error.Builder(config, new RuntimeException("")).build();
         JSONObject errorJson = streamableToJson(handledErr);
         assertTrue(errorJson.getBoolean("defaultSeverity"));
-        assertTrue(errorJson.getBoolean("unhandled"));
+        assertFalse(errorJson.getBoolean("unhandled"));
 
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals("exception_handler", severityReason.getString("type"));
+        try {
+            errorJson.getJSONObject("severityReason");
+            fail("severityReason should not be present in payload for handled errors");
+        } catch (JSONException ignored) {
+        }
+    }
+
+    @Test
+    public void testSeverityMutation() throws Exception {
+        Error handledErr = new Error.Builder(config, new RuntimeException("")).build();
+        handledErr.setSeverity(Severity.INFO);
+        JSONObject errorJson = streamableToJson(handledErr);
+        assertFalse(errorJson.getBoolean("defaultSeverity"));
     }
 
     @Test

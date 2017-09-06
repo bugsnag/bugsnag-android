@@ -32,11 +32,12 @@ public class Error implements JsonStream.Streamable {
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
-    private EventHandledState eventHandledState = new EventHandledState(Severity.WARNING);
+    private final EventHandledState eventHandledState;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception, EventHandledState eventHandledState) {
         this.config = config;
         this.exception = exception;
+        this.eventHandledState = eventHandledState;
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -341,7 +342,8 @@ public class Error implements JsonStream.Streamable {
         }
 
         Error build() {
-            Error error = new Error(config, exception);
+            EventHandledState eventHandledState = new EventHandledState(severity, unhandled);
+            Error error = new Error(config, exception, eventHandledState);
             error.setSeverity(severity);
             error.setMetaData(metaData);
             // TODO unhandled etc

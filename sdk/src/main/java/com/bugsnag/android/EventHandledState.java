@@ -15,19 +15,14 @@ final class EventHandledState {
 
     static final String ORIGIN_EXCEPTION_HANDLER = "exception_handler";
 
-    private final boolean unhandled;
+    @SeverityReason private final String severityReasonType;
     private final Severity originalSeverity;
-    private final String severityReasonType;
+    private final boolean unhandled;
 
-    EventHandledState(Severity originalSeverity) {
-        this(null, originalSeverity);
-    }
-
-    EventHandledState(@SeverityReason @Nullable String severityReasonType,
-                      @NonNull Severity originalSeverity) {
-        this.severityReasonType = severityReasonType;
-        this.unhandled = severityReasonType != null;
+    EventHandledState(Severity originalSeverity, boolean unhandled) {
         this.originalSeverity = originalSeverity;
+        this.severityReasonType = unhandled ? ORIGIN_EXCEPTION_HANDLER : null;
+        this.unhandled = unhandled;
     }
 
     boolean isDefaultSeverity(Severity currentSeverity) {
