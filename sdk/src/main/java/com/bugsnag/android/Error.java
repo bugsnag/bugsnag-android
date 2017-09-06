@@ -41,7 +41,6 @@ public class Error implements JsonStream.Streamable {
     Error(@NonNull Configuration config, @NonNull String name,
           @NonNull String message, @NonNull StackTraceElement[] frames) {
         this.config = config;
-
         this.exception = new BugsnagException(name, message, frames);
     }
 
