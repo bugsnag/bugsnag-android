@@ -32,18 +32,16 @@ public class Error implements JsonStream.Streamable {
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
-    private final EventHandledState eventHandledState;
+    private EventHandledState eventHandledState;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception, EventHandledState eventHandledState) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception) {
         this.config = config;
         this.exception = exception;
-        this.eventHandledState = eventHandledState;
     }
 
     Error(@NonNull Configuration config, @NonNull String name,
-          @NonNull String message, @NonNull StackTraceElement[] frames, EventHandledState eventHandledState) {
+          @NonNull String message, @NonNull StackTraceElement[] frames) {
         this.config = config;
-        this.eventHandledState = eventHandledState;
         this.exception = new BugsnagException(name, message, frames);
     }
 
@@ -314,5 +312,37 @@ public class Error implements JsonStream.Streamable {
 
     boolean shouldIgnoreClass() {
         return config.shouldIgnoreClass(getExceptionName());
+    }
+
+    static class Builder {
+        private final Configuration config;
+        private final Throwable exception;
+        private Severity severity = Severity.WARNING;
+        private MetaData metaData;
+        private boolean unhandled;
+
+        Builder(@NonNull Configuration config, @NonNull Throwable exception) {
+            this.config = config;
+            this.exception = exception;
+        }
+
+        Builder withSeverity(Severity severity) {
+            this.severity = severity;
+            return this;
+        }
+
+        Builder withMetaData(MetaData metaData) {
+            this.metaData = metaData;
+            return this;
+        }
+
+        Builder isUnhandled(boolean unhandled) {
+            this.unhandled = unhandled;
+            return this;
+        }
+
+        Error build() {
+            return new Error(config, exception);
+        }
     }
 }

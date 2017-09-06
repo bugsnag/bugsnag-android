@@ -24,7 +24,7 @@ public class ReportTest {
     @Before
     public void setUp() throws Exception {
         Configuration config = new Configuration("example-api-key");
-        Error error = new Error(config, new RuntimeException("Something broke"), eventHandledState);
+        Error error = new Error(config, new RuntimeException("Something broke"));
         report = new Report(config.getApiKey(), error);
     }
 

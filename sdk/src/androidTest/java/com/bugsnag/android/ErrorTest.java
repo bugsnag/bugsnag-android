@@ -28,7 +28,7 @@ public class ErrorTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        error = new Error(config, new RuntimeException("Example message"), eventHandledState);
+        error = new Error(config, new RuntimeException("Example message"));
     }
 
     @Test
@@ -36,11 +36,11 @@ public class ErrorTest {
         config.setIgnoreClasses(new String[] {"java.io.IOException"});
 
         // Shouldn't ignore classes not in ignoreClasses
-        Error error = new Error(config, new RuntimeException("Test"), eventHandledState);
+        Error error = new Error(config, new RuntimeException("Test"));
         assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
-        error = new Error(config, new java.io.IOException("Test"), eventHandledState);
+        error = new Error(config, new java.io.IOException("Test"));
         assertTrue(error.shouldIgnoreClass());
     }
 
@@ -67,7 +67,7 @@ public class ErrorTest {
 
     @Test
     public void testUnhandledSerialization() throws Exception {
-        Error unhandledErr = new Error(config, new RuntimeException(""), eventHandledState); // TODO initialise error
+        Error unhandledErr = new Error(config, new RuntimeException("")); // TODO initialise error
         JSONObject errorJson = streamableToJson(unhandledErr);
         assertTrue(errorJson.getBoolean("defaultSeverity"));
         assertFalse(errorJson.getBoolean("unhandled"));
@@ -76,7 +76,7 @@ public class ErrorTest {
 
     @Test
     public void testHandledSerialization() throws Exception {
-        Error handledErr = new Error(config, new RuntimeException(""), eventHandledState); // TODO initialise error
+        Error handledErr = new Error(config, new RuntimeException("")); // TODO initialise error
         JSONObject errorJson = streamableToJson(handledErr);
         assertTrue(errorJson.getBoolean("defaultSeverity"));
         assertTrue(errorJson.getBoolean("unhandled"));
