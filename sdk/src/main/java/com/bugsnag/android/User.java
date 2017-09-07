@@ -12,7 +12,8 @@ class User implements JsonStream.Streamable {
     private String email;
     private String name;
 
-    User() {}
+    User() {
+    }
 
     User(String id, String email, String name) {
         this.id = id;
@@ -27,9 +28,9 @@ class User implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
-            writer.name("id").value(id);
-            writer.name("email").value(email);
-            writer.name("name").value(name);
+        writer.name("id").value(id);
+        writer.name("email").value(email);
+        writer.name("name").value(name);
 
         writer.endObject();
     }

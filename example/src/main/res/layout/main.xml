@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/example_root"
-    >
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:id="@+id/example_root">
+
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,15 +21,17 @@
       android:layout_marginBottom="8dp"
       android:text="@string/unhandled_exceptions"
       style="@style/header_text" />
+
     <Button
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/crash_app"
-      android:onClick="crash"
-      />
+      android:onClick="crash" />
 
     <!-- Separator -->
-    <View android:layout_width="match_parent" android:layout_height="16dp" />
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="16dp" />
 
     <!-- Trigger handled exceptions -->
     <TextView
@@ -37,34 +39,36 @@
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
       android:text="@string/handled_exceptions"
-      style="@style/header_text"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/severity_error"
-        android:onClick="sendError"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/severity_warning"
-        android:onClick="sendWarning"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/severity_info"
-        android:onClick="sendInfo"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/with_metadata"
-        android:onClick="sendErrorWithMetaData"
-        />
+      style="@style/header_text" />
 
-  <!-- Separator -->
-  <View android:layout_width="match_parent" android:layout_height="16dp" />
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/severity_error"
+      android:onClick="sendError" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/severity_warning"
+      android:onClick="sendWarning" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/severity_info"
+      android:onClick="sendInfo" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/with_metadata"
+      android:onClick="sendErrorWithMetaData" />
+
+    <!-- Separator -->
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="16dp" />
 
     <!-- Documentation -->
     <TextView
@@ -72,13 +76,13 @@
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
       android:text="@string/documentation"
-      style="@style/header_text"/>
+      style="@style/header_text" />
+
     <Button
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/read_the_docs"
-      android:onClick="readDocs"
-      />
+      android:onClick="readDocs" />
   </LinearLayout>
 
 </ScrollView>

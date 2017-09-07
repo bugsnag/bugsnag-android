@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class ExceptionHandlerTest  {
+public class ExceptionHandlerTest {
 
     private Context context;
 
@@ -45,7 +45,7 @@ public class ExceptionHandlerTest  {
         clientThree.disableExceptionHandler();
 
         assertTrue(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
-        ExceptionHandler bugsnagHandler = (ExceptionHandler)Thread.getDefaultUncaughtExceptionHandler();
+        ExceptionHandler bugsnagHandler = (ExceptionHandler) Thread.getDefaultUncaughtExceptionHandler();
 
         assertEquals(2, bugsnagHandler.clientMap.size());
     }

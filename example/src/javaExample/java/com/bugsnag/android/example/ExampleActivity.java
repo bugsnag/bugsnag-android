@@ -25,7 +25,9 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 public class ExampleActivity extends AppCompatActivity {
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
