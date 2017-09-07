@@ -157,4 +157,8 @@ class ExampleActivity : AppCompatActivity() {
         metaData.addToTab("CustomMetaData", "CompletedLevels", completedLevels)
         return metaData
     }
+
+    fun sendErrorWithCallback(callback: Callback) {
+        Bugsnag.notify(RuntimeException(), callback)
+    }
 }

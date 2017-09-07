@@ -181,4 +181,8 @@ public class ExampleActivity extends AppCompatActivity {
         metaData.addToTab("CustomMetaData", "CompletedLevels", completedLevels);
         return metaData;
     }
+
+    public void sendErrorWithCallback(Callback callback) {
+        Bugsnag.notify(new RuntimeException(), callback);
+    }
 }
