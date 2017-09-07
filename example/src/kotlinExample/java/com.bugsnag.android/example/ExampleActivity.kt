@@ -17,6 +17,7 @@ class ExampleActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
+        setupToolbarLogo()
 
         // Execute some code before every bugsnag notification
         Bugsnag.beforeNotify { error ->
@@ -48,6 +49,12 @@ class ExampleActivity : AppCompatActivity() {
                 Thread.sleep(100000)
             }
         }).start()
+    }
+
+    private fun setupToolbarLogo() {
+        val actionBar = supportActionBar
+        actionBar?.setDisplayShowHomeEnabled(true)
+        actionBar?.setIcon(R.drawable.ic_bugsnag_svg)
     }
 
     fun sendErrorWithCallback(callback: Callback) {

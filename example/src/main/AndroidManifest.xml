@@ -14,8 +14,8 @@
     android:label="@string/app_name">
     <activity
       android:name=".ExampleActivity"
-      android:label="Bugsnag Example App"
-      android:theme="@style/AppTheme">
+      android:theme="@style/AppTheme"
+      android:label="">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 

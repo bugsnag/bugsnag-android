@@ -3,6 +3,7 @@ package com.bugsnag.android.example;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class ExampleActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        setupToolbarLogo();
 
         // Execute some code before every bugsnag notification
         Bugsnag.beforeNotify(new BeforeNotify() {
@@ -64,6 +66,15 @@ public class ExampleActivity extends AppCompatActivity {
                 Thread.sleep(100000);
             }
         }).start();
+    }
+
+    private void setupToolbarLogo() {
+        ActionBar supportActionBar = getSupportActionBar();
+
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayShowHomeEnabled(true);
+            supportActionBar.setIcon(R.drawable.ic_bugsnag_svg);
+        }
     }
 
     public void sendErrorWithCallback(Callback callback) {
