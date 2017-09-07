@@ -5,7 +5,7 @@ buildscript {
 //        mavenLocal()
     }
     dependencies {
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
