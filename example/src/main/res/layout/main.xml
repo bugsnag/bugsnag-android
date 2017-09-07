@@ -24,15 +24,12 @@
 
     <Button
       style="@style/ButtonTheme"
+      android:id="@+id/btn_fatal_crash"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="crash"
-      android:text="@string/crash_app" />
+      android:text="@string/trigger_fatal_crash" />
 
-    <!-- Separator -->
-    <View
-      android:layout_width="match_parent"
-      android:layout_height="16dp" />
+    <View style="@style/separator" />
 
     <!-- Trigger handled exceptions -->
     <TextView
@@ -46,34 +43,55 @@
       style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="sendError"
-      android:text="@string/severity_error" />
+      android:onClick="crashHandled"
+      android:text="@string/trigger_nonfatal_crash" />
 
     <Button
       style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="sendWarning"
-      android:text="@string/severity_warning" />
+      android:onClick="crashWithCustomSeverity"
+      android:text="@string/custom_severity" />
+
+    <!-- Enhancing error reports -->
+    <View style="@style/separator" />
+
+    <TextView
+      style="@style/header_text"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:text="@string/enhancing_error_reports" />
 
     <Button
       style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="sendInfo"
-      android:text="@string/severity_info" />
+      android:onClick="crashWithUserDetails"
+      android:text="@string/crash_user_details" />
 
     <Button
       style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="sendErrorWithMetaData"
-      android:text="@string/with_metadata" />
+      android:onClick="crashWithMetadata"
+      android:text="@string/crash_with_metadata" />
 
-    <!-- Separator -->
-    <View
+    <Button
+      style="@style/ButtonTheme"
       android:layout_width="match_parent"
-      android:layout_height="16dp" />
+      android:layout_height="wrap_content"
+      android:onClick="crashWithBreadcrumbs"
+      android:text="@string/crash_with_breadcrumbs" />
+
+    <Button
+      style="@style/ButtonTheme"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:onClick="crashWithCallback"
+      android:text="@string/crash_custom_report" />
+
+    <View style="@style/separator" />
 
     <!-- Documentation -->
     <TextView
@@ -89,6 +107,7 @@
       android:layout_height="wrap_content"
       android:onClick="readDocs"
       android:text="@string/read_the_docs" />
+
   </LinearLayout>
 
 </ScrollView>
