@@ -74,6 +74,7 @@ public class ExampleActivity extends AppCompatActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayShowHomeEnabled(true);
             supportActionBar.setIcon(R.drawable.ic_bugsnag_svg);
+            supportActionBar.setTitle(null);
         }
     }
 

@@ -55,6 +55,7 @@ class ExampleActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowHomeEnabled(true)
         actionBar?.setIcon(R.drawable.ic_bugsnag_svg)
+        actionBar?.setTitle(null)
     }
 
     fun sendErrorWithCallback(callback: Callback) {
