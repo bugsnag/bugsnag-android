@@ -111,7 +111,6 @@ public class ExampleActivity extends AppCompatActivity {
      */
     public void crashWithMetadata(View view) {
         RuntimeException e = new RuntimeException("Error report with Additional Metadata");
-
         MetaData metaData = generateUserMetaData();
 
         Bugsnag.notify(e, Severity.ERROR, metaData);
