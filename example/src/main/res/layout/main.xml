@@ -107,7 +107,6 @@
       android:layout_height="wrap_content"
       android:onClick="readDocs"
       android:text="@string/read_the_docs" />
-
   </LinearLayout>
 
 </ScrollView>

@@ -27,13 +27,13 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
 
         manifestPlaceholders = [
-            bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
-            bugsnagBuildUUID: "abc123",
-            bugsnagAppVersion: "1.0.0",
-            bugsnagEndpoint: "https://notify.bugsnag.com",
-            bugsnagReleaseStage: "debug",
-            bugsnagSendThreads: true,
-            bugsnagEnableExceptionHandler: true,
+            bugsnagApiKey                    : "066f5ad3590596f9aa8d601ea89af845",
+            bugsnagBuildUUID                 : "abc123",
+            bugsnagAppVersion                : "1.0.0",
+            bugsnagEndpoint                  : "https://notify.bugsnag.com",
+            bugsnagReleaseStage              : "debug",
+            bugsnagSendThreads               : true,
+            bugsnagEnableExceptionHandler    : true,
             bugsnagPersistUserBetweenSessions: false,
         ]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

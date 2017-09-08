@@ -6,9 +6,8 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
-  <style name="ButtonTheme" parent="Widget.AppCompat.Button.Colored" >
+  <style name="ButtonTheme" parent="Widget.AppCompat.Button.Colored">
   </style>
-
 
   <style name="header_text">
     <item name="android:textSize">18sp</item>

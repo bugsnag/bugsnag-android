@@ -63,7 +63,7 @@ class ErrorStore {
                 Logger.warn("Could not prepare error storage directory");
                 path = null;
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Logger.warn("Could not prepare error storage directory", e);
             path = null;
         }
@@ -115,8 +115,7 @@ class ErrorStore {
                     }
                 }
             });
-        }
-        catch (RejectedExecutionException e) {
+        } catch (RejectedExecutionException e) {
             Logger.warn("Failed to flush all on-disk errors, retaining unsent errors for later.");
         }
     }
@@ -143,7 +142,8 @@ class ErrorStore {
     /**
      * Write an error to disk, for later sending. Returns the filename of the report location
      */
-    @Nullable String write(@NonNull Error error) {
+    @Nullable
+    String write(@NonNull Error error) {
         if (path == null) {
             return null;
         }

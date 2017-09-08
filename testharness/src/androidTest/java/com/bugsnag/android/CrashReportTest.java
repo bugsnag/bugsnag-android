@@ -28,8 +28,7 @@ public class CrashReportTest {
 
         try {
             activity.crashApp();
-        }
-        catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {
         }
     }
 

@@ -47,6 +47,7 @@ class StrictModeHandler {
 
     /**
      * Checks whether a throwable was originally thrown from the StrictMode class
+     *
      * @param e the throwable
      * @return true if the throwable's root cause is a StrictMode policy violation
      */
