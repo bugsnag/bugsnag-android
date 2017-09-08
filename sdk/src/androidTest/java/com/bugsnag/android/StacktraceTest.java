@@ -37,7 +37,7 @@ public class StacktraceTest {
         Stacktrace stacktrace = new Stacktrace(config, exception.getStackTrace());
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
-        JSONObject firstFrame = (JSONObject)stacktraceJson.get(0);
+        JSONObject firstFrame = (JSONObject) stacktraceJson.get(0);
         assertEquals(32, firstFrame.get("lineNumber"));
         assertEquals("com.bugsnag.android.StacktraceTest.setUp", firstFrame.get("method"));
         assertEquals("StacktraceTest.java", firstFrame.get("file"));
@@ -46,12 +46,12 @@ public class StacktraceTest {
 
     @Test
     public void testInProject() throws JSONException, IOException {
-        config.setProjectPackages(new String[] {"com.bugsnag.android"});
+        config.setProjectPackages(new String[]{"com.bugsnag.android"});
 
         Stacktrace stacktrace = new Stacktrace(config, exception.getStackTrace());
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
-        JSONObject firstFrame = (JSONObject)stacktraceJson.get(0);
+        JSONObject firstFrame = (JSONObject) stacktraceJson.get(0);
         assertTrue(firstFrame.getBoolean("inProject"));
     }
 

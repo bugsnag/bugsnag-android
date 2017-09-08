@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app.
  * For example:
- *
- *     Bugsnag.init(this, "your-api-key");
- *     Bugsnag.notify(new RuntimeException("something broke!"));
+ * <p>
+ * Bugsnag.init(this, "your-api-key");
+ * Bugsnag.notify(new RuntimeException("something broke!"));
  *
  * @see Client
  */
@@ -22,12 +22,13 @@ public final class Bugsnag {
     @SuppressLint("StaticFieldLeak")
     static Client client;
 
-    private Bugsnag() {}
+    private Bugsnag() {
+    }
 
     /**
      * Initialize the static Bugsnag client
      *
-     * @param  androidContext  an Android context, usually <code>this</code>
+     * @param androidContext an Android context, usually <code>this</code>
      */
     @Nullable
     public static Client init(@NonNull Context androidContext) {
@@ -39,8 +40,8 @@ public final class Bugsnag {
     /**
      * Initialize the static Bugsnag client
      *
-     * @param  androidContext  an Android context, usually <code>this</code>
-     * @param  apiKey          your Bugsnag API key from your Bugsnag dashboard
+     * @param androidContext an Android context, usually <code>this</code>
+     * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
     @Nullable
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
@@ -52,9 +53,9 @@ public final class Bugsnag {
     /**
      * Initialize the static Bugsnag client
      *
-     * @param  androidContext          an Android context, usually <code>this</code>
-     * @param  apiKey                  your Bugsnag API key from your Bugsnag dashboard
-     * @param  enableExceptionHandler  should we automatically handle uncaught exceptions?
+     * @param androidContext         an Android context, usually <code>this</code>
+     * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
+     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      */
     @Nullable
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
@@ -80,7 +81,7 @@ public final class Bugsnag {
      * Set the application version sent to Bugsnag. By default we'll pull this
      * from your AndroidManifest.xml
      *
-     * @param  appVersion  the app version to send
+     * @param appVersion the app version to send
      */
     public static void setAppVersion(final String appVersion) {
         getClient().setAppVersion(appVersion);
@@ -88,6 +89,7 @@ public final class Bugsnag {
 
     /**
      * Gets the context to be sent to Bugsnag.
+     *
      * @return Context
      */
     public static String getContext() {
@@ -99,7 +101,7 @@ public final class Bugsnag {
      * name of the top-most activity at the time of a report, and use this
      * as the context, but sometime this is not possible.
      *
-     * @param  context  set what was happening at the time of a crash
+     * @param context set what was happening at the time of a crash
      */
     public static void setContext(final String context) {
         getClient().setContext(context);
@@ -111,7 +113,7 @@ public final class Bugsnag {
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
-     * @param  endpoint  the custom endpoint to send report to
+     * @param endpoint the custom endpoint to send report to
      * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoint(String)} instead.
      */
     @Deprecated
@@ -125,7 +127,7 @@ public final class Bugsnag {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param  buildUUID  the buildUUID.
+     * @param buildUUID the buildUUID.
      */
     public static void setBuildUUID(final String buildUUID) {
         getClient().setBuildUUID(buildUUID);
@@ -137,12 +139,12 @@ public final class Bugsnag {
      * or credit card information is stripped from metaData you send to Bugsnag.
      * Any keys in metaData which contain these strings will be marked as
      * [FILTERED] when send to Bugsnag.
-     *
+     * <p>
      * For example:
+     * <p>
+     * Bugsnag.setFilters("password", "credit_card");
      *
-     *     Bugsnag.setFilters("password", "credit_card");
-     *
-     * @param  filters  a list of keys to filter from metaData
+     * @param filters a list of keys to filter from metaData
      */
     public static void setFilters(final String... filters) {
         getClient().setFilters(filters);
@@ -150,12 +152,12 @@ public final class Bugsnag {
 
     /**
      * Set which exception classes should be ignored (not sent) by Bugsnag.
-     *
+     * <p>
      * For example:
+     * <p>
+     * Bugsnag.setIgnoreClasses("java.lang.RuntimeException");
      *
-     *     Bugsnag.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param  ignoreClasses  a list of exception classes to ignore
+     * @param ignoreClasses a list of exception classes to ignore
      */
     public static void setIgnoreClasses(final String... ignoreClasses) {
         getClient().setIgnoreClasses(ignoreClasses);
@@ -164,13 +166,13 @@ public final class Bugsnag {
     /**
      * Set for which releaseStages errors should be sent to Bugsnag.
      * Use this to stop errors from development builds being sent.
-     *
+     * <p>
      * For example:
+     * <p>
+     * Bugsnag.setNotifyReleaseStages("production");
      *
-     *     Bugsnag.setNotifyReleaseStages("production");
-     *
-     * @param  notifyReleaseStages  a list of releaseStages to notify for
-     * @see    #setReleaseStage
+     * @param notifyReleaseStages a list of releaseStages to notify for
+     * @see #setReleaseStage
      */
     public static void setNotifyReleaseStages(final String... notifyReleaseStages) {
         getClient().setNotifyReleaseStages(notifyReleaseStages);
@@ -179,14 +181,14 @@ public final class Bugsnag {
     /**
      * Set which packages should be considered part of your application.
      * Bugsnag uses this to help with error grouping, and stacktrace display.
-     *
+     * <p>
      * For example:
-     *
-     *     Bugsnag.setProjectPackages("com.example.myapp");
-     *
+     * <p>
+     * Bugsnag.setProjectPackages("com.example.myapp");
+     * <p>
      * By default, we'll mark the current package name as part of you app.
      *
-     * @param  projectPackages  a list of package names
+     * @param projectPackages a list of package names
      */
     public static void setProjectPackages(final String... projectPackages) {
         getClient().setProjectPackages(projectPackages);
@@ -196,11 +198,11 @@ public final class Bugsnag {
      * Set the current "release stage" of your application.
      * By default, we'll set this to "development" for debug builds and
      * "production" for non-debug builds.
-     *
+     * <p>
      * If the release stage is set to "production", logging will automatically be disabled.
      *
-     * @param  releaseStage  the release stage of the app
-     * @see    #setNotifyReleaseStages {@link #setLoggingEnabled(boolean)}
+     * @param releaseStage the release stage of the app
+     * @see #setNotifyReleaseStages {@link #setLoggingEnabled(boolean)}
      */
     public static void setReleaseStage(final String releaseStage) {
         getClient().setReleaseStage(releaseStage);
@@ -210,7 +212,7 @@ public final class Bugsnag {
      * Set whether to send thread-state with report.
      * By default, this will be true.
      *
-     * @param  sendThreads  should we send thread-state with report?
+     * @param sendThreads should we send thread-state with report?
      */
     public static void setSendThreads(final boolean sendThreads) {
         getClient().setSendThreads(sendThreads);
@@ -219,14 +221,14 @@ public final class Bugsnag {
     /**
      * Set details of the user currently using your application.
      * You can search for this information in your Bugsnag dashboard.
-     *
+     * <p>
      * For example:
+     * <p>
+     * Bugsnag.setUser("12345", "james@example.com", "James Smith");
      *
-     *     Bugsnag.setUser("12345", "james@example.com", "James Smith");
-     *
-     * @param  id     a unique identifier of the current user (defaults to a unique id)
-     * @param  email  the email address of the current user
-     * @param  name   the name of the current user
+     * @param id    a unique identifier of the current user (defaults to a unique id)
+     * @param email the email address of the current user
+     * @param name  the name of the current user
      */
     public static void setUser(final String id, final String email, final String name) {
         getClient().setUser(id, email, name);
@@ -244,7 +246,7 @@ public final class Bugsnag {
      * By default, this will be an automatically generated unique id
      * You can search for this information in your Bugsnag dashboard.
      *
-     * @param  id  a unique identifier of the current user
+     * @param id a unique identifier of the current user
      */
     public static void setUserId(final String id) {
         getClient().setUserId(id);
@@ -254,7 +256,7 @@ public final class Bugsnag {
      * Set the email address of the current user.
      * You can search for this information in your Bugsnag dashboard.
      *
-     * @param  email  the email address of the current user
+     * @param email the email address of the current user
      */
     public static void setUserEmail(final String email) {
         getClient().setUserEmail(email);
@@ -264,7 +266,7 @@ public final class Bugsnag {
      * Set the name of the current user.
      * You can search for this information in your Bugsnag dashboard.
      *
-     * @param  name   the name of the current user
+     * @param name the name of the current user
      */
     public static void setUserName(final String name) {
         getClient().setUserName(name);
@@ -274,10 +276,10 @@ public final class Bugsnag {
      * Replaces the Default HTTP Client with a custom implementation. This allows for custom
      * requirements such as certificate pinning to be achieved.
      * <p/>
-     *
+     * <p>
      * The client implementation, and must be capable of sending Error Reports to the Bugsnag API,
      * as documented here: <a href="https://docs.bugsnag.com/api/error-reporting/">
-     *     https://docs.bugsnag.com/api/error-reporting/</a>
+     * https://docs.bugsnag.com/api/error-reporting/</a>
      *
      * @param errorReportApiClient the custom HTTP client implementation
      */
@@ -288,22 +290,22 @@ public final class Bugsnag {
     /**
      * Add a "before notify" callback, to execute code before every
      * report to Bugsnag.
-     *
+     * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to halt execution.
-     *
+     * <p>
      * For example:
+     * <p>
+     * Bugsnag.beforeNotify(new BeforeNotify() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
      *
-     *     Bugsnag.beforeNotify(new BeforeNotify() {
-     *         public boolean run(Error error) {
-     *             error.setSeverity(Severity.INFO);
-     *             return true;
-     *         }
-     *     })
-     *
-     * @param  beforeNotify  a callback to run before sending errors to Bugsnag
-     * @see    BeforeNotify
+     * @param beforeNotify a callback to run before sending errors to Bugsnag
+     * @see BeforeNotify
      */
     public static void beforeNotify(final BeforeNotify beforeNotify) {
         getClient().beforeNotify(beforeNotify);
@@ -312,7 +314,7 @@ public final class Bugsnag {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
+     * @param exception the exception to send to Bugsnag
      */
     public static void notify(@NonNull final Throwable exception) {
         getClient().notify(exception);
@@ -345,9 +347,9 @@ public final class Bugsnag {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  severity   the severity of the error, one of Severity.ERROR,
-     *                    Severity.WARNING or Severity.INFO
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
      */
     public static void notify(@NonNull final Throwable exception, final Severity severity) {
         getClient().notify(exception, severity);
@@ -356,11 +358,10 @@ public final class Bugsnag {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  metaData   additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(Throwable,Callback)}
-     *             to send and modify error reports
+     * @param exception the exception to send to Bugsnag
+     * @param metaData  additional information to send with the exception
+     * @deprecated Use {@link #notify(Throwable, Callback)}
+     * to send and modify error reports
      */
     public static void notify(@NonNull final Throwable exception, final MetaData metaData) {
         getClient().notify(exception, new Callback() {
@@ -374,13 +375,12 @@ public final class Bugsnag {
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param  exception  the exception to send to Bugsnag
-     * @param  severity   the severity of the error, one of Severity.ERROR,
-     *                    Severity.WARNING or Severity.INFO
-     * @param  metaData   additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(Throwable,Callback)}
-     *             to send and modify error reports
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
+     * @param metaData  additional information to send with the exception
+     * @deprecated Use {@link #notify(Throwable, Callback)}
+     * to send and modify error reports
      */
     @Deprecated
     public static void notify(@NonNull final Throwable exception, final Severity severity, final MetaData metaData) {
@@ -396,15 +396,14 @@ public final class Bugsnag {
     /**
      * Notify Bugsnag of an error
      *
-     * @param  name        the error name or class
-     * @param  message     the error message
-     * @param  stacktrace  the stackframes associated with the error
-     * @param  severity    the severity of the error, one of Severity.ERROR,
-     *                     Severity.WARNING or Severity.INFO
-     * @param  metaData    additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
-     *             to send and modify error reports
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
      */
     @Deprecated
     public static void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
@@ -422,16 +421,15 @@ public final class Bugsnag {
     /**
      * Notify Bugsnag of an error
      *
-     * @param  name        the error name or class
-     * @param  message     the error message
-     * @param  context     the error context
-     * @param  stacktrace  the stackframes associated with the error
-     * @param  severity    the severity of the error, one of Severity.ERROR,
-     *                     Severity.WARNING or Severity.INFO
-     * @param  metaData    additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
-     *             to send and modify error reports
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
      */
     @Deprecated
     public static void notify(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
@@ -451,15 +449,15 @@ public final class Bugsnag {
     /**
      * Add diagnostic information to every error report.
      * Diagnostic information is collected in "tabs" on your dashboard.
-     *
+     * <p>
      * For example:
+     * <p>
+     * Bugsnag.addToTab("account", "name", "Acme Co.");
+     * Bugsnag.addToTab("account", "payingCustomer", true);
      *
-     *     Bugsnag.addToTab("account", "name", "Acme Co.");
-     *     Bugsnag.addToTab("account", "payingCustomer", true);
-     *
-     * @param  tab    the dashboard tab to add diagnostic data to
-     * @param  key    the name of the diagnostic information
-     * @param  value  the contents of the diagnostic information
+     * @param tab   the dashboard tab to add diagnostic data to
+     * @param key   the name of the diagnostic information
+     * @param value the contents of the diagnostic information
      */
     public static void addToTab(final String tab, final String key, final Object value) {
         getClient().addToTab(tab, key, value);
@@ -468,7 +466,7 @@ public final class Bugsnag {
     /**
      * Remove a tab of app-wide diagnostic information
      *
-     * @param  tabName  the dashboard tab to remove diagnostic data from
+     * @param tabName the dashboard tab to remove diagnostic data from
      */
     public static void clearTab(String tabName) {
         getClient().clearTab(tabName);
@@ -477,7 +475,7 @@ public final class Bugsnag {
     /**
      * Get the global diagnostic information currently stored in MetaData.
      *
-     * @see  MetaData
+     * @see MetaData
      */
     public static MetaData getMetaData() {
         return getClient().getMetaData();
@@ -486,7 +484,7 @@ public final class Bugsnag {
     /**
      * Set the global diagnostic information to be send with every error.
      *
-     * @see  MetaData
+     * @see MetaData
      */
     public static void setMetaData(final MetaData metaData) {
         getClient().setMetaData(metaData);
@@ -496,7 +494,7 @@ public final class Bugsnag {
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
      *
-     * @param  message  the log message to leave (max 140 chars)
+     * @param message the log message to leave (max 140 chars)
      */
     public static void leaveBreadcrumb(@NonNull String message) {
         getClient().leaveBreadcrumb(message);
@@ -519,7 +517,7 @@ public final class Bugsnag {
      * By default, we'll keep and send the 20 most recent breadcrumb log
      * messages.
      *
-     * @param  numBreadcrumbs  number of breadcrumb log messages to send
+     * @param numBreadcrumbs number of breadcrumb log messages to send
      */
     public static void setMaxBreadcrumbs(int numBreadcrumbs) {
         getClient().setMaxBreadcrumbs(numBreadcrumbs);
@@ -550,7 +548,7 @@ public final class Bugsnag {
     /**
      * Sets whether the SDK should write logs. In production apps, it is recommended that this
      * should be set to false.
-     *
+     * <p>
      * Logging is enabled by default unless the release stage is set to 'production', in which case
      * it will be disabled.
      *

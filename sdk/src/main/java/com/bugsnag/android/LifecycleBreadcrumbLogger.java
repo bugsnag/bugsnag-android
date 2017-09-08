@@ -2,10 +2,8 @@ package com.bugsnag.android;
 
 import android.app.Activity;
 import android.app.Application;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 
 import java.util.HashMap;
 import java.util.Map;

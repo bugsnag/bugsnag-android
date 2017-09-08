@@ -37,8 +37,7 @@ public class EventReceiver extends BroadcastReceiver {
 
                     if (isAndroidKey(key)) { // shorten the Intent action
                         meta.put("Extra", String.format("%s: %s", shortAction, val));
-                    }
-                    else {
+                    } else {
                         meta.put(key, val);
                     }
                 }

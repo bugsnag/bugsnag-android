@@ -7,7 +7,8 @@ final class Logger {
     private static final String LOG_TAG = "Bugsnag";
     private static volatile boolean enabled = true;
 
-    private Logger() {}
+    private Logger() {
+    }
 
     static void info(String message) {
         if (enabled) {

@@ -127,8 +127,7 @@ public class Client extends Observable implements Observer {
             SdkCompatWrapper sdkCompatWrapper = new SdkCompatWrapper();
             Application application = (Application) appContext;
             sdkCompatWrapper.setupLifecycleLogger(application);
-        }
-        else {
+        } else {
             Logger.warn("Bugsnag is unable to setup automatic activity lifecycle breadcrumbs on API " +
                 "Levels below 14.");
         }
@@ -269,7 +268,7 @@ public class Client extends Observable implements Observer {
      * Populates the config with meta-data values supplied from the manifest as a Bundle.
      *
      * @param config the config to mutate
-     * @param data the manifest bundle
+     * @param data   the manifest bundle
      * @return the updated config
      */
     @NonNull
@@ -478,7 +477,7 @@ public class Client extends Observable implements Observer {
     /**
      * Sets the user ID with the option to not notify any NDK components of the change
      *
-     * @param id a unique identifier of the current user
+     * @param id     a unique identifier of the current user
      * @param notify whether or not to notify NDK components
      */
     void setUserId(String id, boolean notify) {
@@ -506,7 +505,7 @@ public class Client extends Observable implements Observer {
     /**
      * Sets the user email with the option to not notify any NDK components of the change
      *
-     * @param email the email address of the current user
+     * @param email  the email address of the current user
      * @param notify whether or not to notify NDK components
      */
     void setUserEmail(String email, boolean notify) {
@@ -534,7 +533,7 @@ public class Client extends Observable implements Observer {
     /**
      * Sets the user name with the option to not notify any NDK components of the change
      *
-     * @param name the name of the current user
+     * @param name   the name of the current user
      * @param notify whether or not to notify NDK components
      */
     void setUserName(String name, boolean notify) {
@@ -605,8 +604,8 @@ public class Client extends Observable implements Observer {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback callback invoked on the generated error report for
-     *                 additional modification
+     * @param callback  callback invoked on the generated error report for
+     *                  additional modification
      */
     public void notify(@NonNull Throwable exception, Callback callback) {
         Error error = new Error.Builder(config, exception).build();
@@ -617,8 +616,8 @@ public class Client extends Observable implements Observer {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback callback invoked on the generated error report for
-     *                 additional modification
+     * @param callback  callback invoked on the generated error report for
+     *                  additional modification
      */
     public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
         Error error = new Error.Builder(config, exception).build();
@@ -842,8 +841,7 @@ public class Client extends Observable implements Observer {
                             deliver(finalReport, finalError);
                         }
                     });
-                }
-                catch (RejectedExecutionException e) {
+                } catch (RejectedExecutionException e) {
                     errorStore.write(error);
                     Logger.warn("Exceeded max queue count, saving to disk to send later");
                 }
@@ -904,7 +902,8 @@ public class Client extends Observable implements Observer {
 
     /**
      * Stores the given key value pair into shared preferences
-     * @param key The key to store
+     *
+     * @param key   The key to store
      * @param value The value to store
      * @return Whether the value was stored successfully or not
      */
@@ -918,9 +917,8 @@ public class Client extends Observable implements Observer {
      *
      * @param exception the exception to send to Bugsnag
      * @param metaData  additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(Throwable,Callback)}
-     *             to send and modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)}
+     * to send and modify error reports
      */
     public void notify(@NonNull Throwable exception, MetaData metaData) {
         Error error = new Error.Builder(config, exception)
@@ -934,9 +932,8 @@ public class Client extends Observable implements Observer {
      *
      * @param exception the exception to send to Bugsnag
      * @param metaData  additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(Throwable,Callback)}
-     *             to send and modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)}
+     * to send and modify error reports
      */
     public void notifyBlocking(@NonNull Throwable exception, MetaData metaData) {
         Error error = new Error.Builder(config, exception)
@@ -947,6 +944,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Retrieves the time at which the client was launched
+     *
      * @return the ms since the java epoch
      */
     public long getLaunchTimeMs() {
@@ -960,9 +958,8 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      * @param metaData  additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(Throwable,Callback)} to send and
-     *             modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and
+     * modify error reports
      */
     @Deprecated
     public void notify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
@@ -980,9 +977,8 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      * @param metaData  additional information to send with the exception
-     *
-     * @deprecated Use {@link #notifyBlocking(Throwable,Callback)} to send
-     *             and modify error reports
+     * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send
+     * and modify error reports
      */
     @Deprecated
     public void notifyBlocking(@NonNull Throwable exception, Severity severity, MetaData metaData) {
@@ -1002,9 +998,8 @@ public class Client extends Observable implements Observer {
      * @param severity   the severity of the error, one of Severity.ERROR,
      *                   Severity.WARNING or Severity.INFO
      * @param metaData   additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
-     *             to send and modify error reports
+     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
      */
     @Deprecated
     public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
@@ -1024,9 +1019,8 @@ public class Client extends Observable implements Observer {
      * @param severity   the severity of the error, one of Severity.ERROR,
      *                   Severity.WARNING or Severity.INFO
      * @param metaData   additional information to send with the exception
-     *
-     * @deprecated Use {@link #notifyBlocking(String,String,StackTraceElement[],Callback)}
-     *             to send and modify error reports
+     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
      */
     @Deprecated
     public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
@@ -1047,9 +1041,8 @@ public class Client extends Observable implements Observer {
      * @param severity   the severity of the error, one of Severity.ERROR,
      *                   Severity.WARNING or Severity.INFO
      * @param metaData   additional information to send with the exception
-     *
-     * @deprecated Use {@link #notify(String,String,StackTraceElement[],Callback)}
-     *             to send and modify error reports
+     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
      */
     @Deprecated
     public void notify(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
@@ -1071,9 +1064,8 @@ public class Client extends Observable implements Observer {
      * @param severity   the severity of the error, one of Severity.ERROR,
      *                   Severity.WARNING or Severity.INFO
      * @param metaData   additional information to send with the exception
-     *
-     * @deprecated Use {@link #notifyBlocking(String,String,StackTraceElement[],Callback)}
-     *             to send and modify error reports
+     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
      */
     @Deprecated
     public void notifyBlocking(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
@@ -1087,14 +1079,14 @@ public class Client extends Observable implements Observer {
 
     /**
      * Finalize by removing the receiver
+     *
      * @throws Throwable if something goes wrong
      */
     protected void finalize() throws Throwable {
         if (eventReceiver != null) {
             try {
                 appContext.unregisterReceiver(eventReceiver);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 Logger.warn("Receiver not registered");
             }
         }
@@ -1111,7 +1103,7 @@ public class Client extends Observable implements Observer {
     /**
      * Sets whether the SDK should write logs. In production apps, it is recommended that this
      * should be set to false.
-     *
+     * <p>
      * Logging is enabled by default unless the release stage is set to 'production', in which case
      * it will be disabled.
      *

@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="unhandled_exceptions">Unhandled Exceptions</string>
-  <string name="crash_app">Crash App</string>
+  <string name="trigger_fatal_crash">Trigger a fatal crash</string>
+
   <string name="handled_exceptions">Handled Exceptions</string>
-  <string name="severity_error">Severity: Error</string>
-  <string name="severity_warning">Severity: Warning</string>
-  <string name="severity_info">Severity: Info</string>
-  <string name="with_metadata">With MetaData</string>
+  <string name="trigger_nonfatal_crash">Trigger a non-fatal crash</string>
+  <string name="custom_severity">Alter Error Severity</string>
+
+  <string name="enhancing_error_reports">Enhancing Error Reports</string>
+  <string name="crash_user_details">Add User Details</string>
+  <string name="crash_with_metadata">Send additional Metadata</string>
+  <string name="crash_with_breadcrumbs">Attach custom Breadcrumbs</string>
+  <string name="crash_custom_report">Crash with Callback</string>
+
   <string name="documentation">Documentation</string>
   <string name="read_the_docs">Read the Docs</string>
-  <string name="app_name">Bugsnag Example App</string>
+  <string name="app_name">Bugsnag</string>
 </resources>

@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Information and associated diagnostics relating to a handled or unhandled
  * Exception.
- *
+ * <p>
  * <p>This object is made available in BeforeNotify callbacks, so you can
  * inspect and modify it before it is delivered to Bugsnag.
  *
@@ -46,46 +46,46 @@ public class Error implements JsonStream.Streamable {
 
         // Write error basics
         writer.beginObject();
-            writer.name("payloadVersion").value(PAYLOAD_VERSION);
-            writer.name("context").value(getContext());
-            writer.name("severity").value(severity);
-            writer.name("defaultSeverity").value(eventHandledState.isDefaultSeverity(severity));
+        writer.name("payloadVersion").value(PAYLOAD_VERSION);
+        writer.name("context").value(getContext());
+        writer.name("severity").value(severity);
+        writer.name("defaultSeverity").value(eventHandledState.isDefaultSeverity(severity));
 
-            boolean unhandled = eventHandledState.isUnhandled();
-            writer.name("unhandled").value(unhandled);
+        boolean unhandled = eventHandledState.isUnhandled();
+        writer.name("unhandled").value(unhandled);
 
-            if (unhandled) {
-                writer.name("severityReason").beginObject();
-                    writer.name("type").value(eventHandledState.getSeverityReasonType());
-                writer.endObject();
+        if (unhandled) {
+            writer.name("severityReason").beginObject();
+            writer.name("type").value(eventHandledState.getSeverityReasonType());
+            writer.endObject();
+        }
+
+        writer.name("metaData").value(mergedMetaData);
+
+        if (config.getProjectPackages() != null) {
+            writer.name("projectPackages").beginArray();
+            for (String projectPackage : config.getProjectPackages()) {
+                writer.value(projectPackage);
             }
+            writer.endArray();
+        }
 
-            writer.name("metaData").value(mergedMetaData);
+        // Write exception info
+        writer.name("exceptions").value(new Exceptions(config, exception));
 
-            if(config.getProjectPackages() != null) {
-                writer.name("projectPackages").beginArray();
-                    for (String projectPackage : config.getProjectPackages()) {
-                        writer.value(projectPackage);
-                    }
-                writer.endArray();
-            }
+        // Write user info
+        writer.name("user").value(user);
 
-            // Write exception info
-            writer.name("exceptions").value(new Exceptions(config, exception));
-
-            // Write user info
-            writer.name("user").value(user);
-
-            // Write diagnostics
-            writer.name("app").value(appData);
-            writer.name("appState").value(appState);
-            writer.name("device").value(deviceData);
-            writer.name("deviceState").value(deviceState);
-            writer.name("breadcrumbs").value(breadcrumbs);
-            writer.name("groupingHash").value(groupingHash);
-            if(config.getSendThreads()) {
-                writer.name("threads").value(new ThreadState(config));
-            }
+        // Write diagnostics
+        writer.name("app").value(appData);
+        writer.name("appState").value(appState);
+        writer.name("device").value(deviceData);
+        writer.name("deviceState").value(deviceState);
+        writer.name("breadcrumbs").value(breadcrumbs);
+        writer.name("groupingHash").value(groupingHash);
+        if (config.getSendThreads()) {
+            writer.name("threads").value(new ThreadState(config));
+        }
 
         writer.endObject();
     }
@@ -96,7 +96,7 @@ public class Error implements JsonStream.Streamable {
      * occurred, and use this as the context, but sometimes this is not
      * possible.
      *
-     * @param  context  what was happening at the time of a crash
+     * @param context what was happening at the time of a crash
      */
     public void setContext(String context) {
         this.context = context;
@@ -124,7 +124,7 @@ public class Error implements JsonStream.Streamable {
      * and top-most stacktrace line to calculate this, and we do not recommend
      * you override this.
      *
-     * @param  groupingHash  a string to use when grouping errors
+     * @param groupingHash a string to use when grouping errors
      */
     public void setGroupingHash(String groupingHash) {
         this.groupingHash = groupingHash;
@@ -132,15 +132,15 @@ public class Error implements JsonStream.Streamable {
 
     /**
      * Set the Severity of this Error.
-     *
+     * <p>
      * By default, unhandled exceptions will be Severity.ERROR and handled
      * exceptions sent with bugsnag.notify will be Severity.WARNING.
      *
-     * @param  severity  the severity of this error
-     * @see    Severity
+     * @param severity the severity of this error
+     * @see Severity
      */
     public void setSeverity(@Nullable Severity severity) {
-        if(severity != null) {
+        if (severity != null) {
             this.severity = severity;
         }
     }
@@ -148,7 +148,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * Get the Severity of this Error.
      *
-     * @see  Severity
+     * @see Severity
      */
     @Nullable
     public Severity getSeverity() {
@@ -158,9 +158,9 @@ public class Error implements JsonStream.Streamable {
     /**
      * Set user information associated with this Error
      *
-     * @param  id     the id of the user
-     * @param  email  the email address of the user
-     * @param  name   the name of the user
+     * @param id    the id of the user
+     * @param email the email address of the user
+     * @param name  the name of the user
      */
     public void setUser(String id, String email, String name) {
         this.user = new User(id, email, name);
@@ -176,7 +176,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * Set user id associated with this Error
      *
-     * @param  id  the id of the user
+     * @param id the id of the user
      */
     public void setUserId(String id) {
         this.user = new User(this.user);
@@ -186,7 +186,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * Set user email address associated with this Error
      *
-     * @param  email  the email address of the user
+     * @param email the email address of the user
      */
     public void setUserEmail(String email) {
         this.user = new User(this.user);
@@ -196,7 +196,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * Set user name associated with this Error
      *
-     * @param  name  the name of the user
+     * @param name the name of the user
      */
     public void setUserName(String name) {
         this.user = new User(this.user);
@@ -206,15 +206,15 @@ public class Error implements JsonStream.Streamable {
     /**
      * Add additional diagnostic information to send with this Error.
      * Diagnostic information is collected in "tabs" on your dashboard.
-     *
+     * <p>
      * For example:
+     * <p>
+     * error.addToTab("account", "name", "Acme Co.");
+     * error.addToTab("account", "payingCustomer", true);
      *
-     *     error.addToTab("account", "name", "Acme Co.");
-     *     error.addToTab("account", "payingCustomer", true);
-     *
-     * @param  tabName  the dashboard tab to add diagnostic data to
-     * @param  key      the name of the diagnostic information
-     * @param  value    the contents of the diagnostic information
+     * @param tabName the dashboard tab to add diagnostic data to
+     * @param key     the name of the diagnostic information
+     * @param value   the contents of the diagnostic information
      */
     public void addToTab(String tabName, String key, Object value) {
         metaData.addToTab(tabName, key, value);
@@ -223,7 +223,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * Remove a tab of app-wide diagnostic information from this Error
      *
-     * @param  tabName  the dashboard tab to remove diagnostic data from
+     * @param tabName the dashboard tab to remove diagnostic data from
      */
     public void clearTab(String tabName) {
         metaData.clearTab(tabName);
@@ -231,7 +231,7 @@ public class Error implements JsonStream.Streamable {
 
     /**
      * Get any additional diagnostic MetaData currently attached to this Error.
-     *
+     * <p>
      * This will contain any MetaData set by setMetaData or addToTab.
      *
      * @see Error#setMetaData
@@ -244,13 +244,13 @@ public class Error implements JsonStream.Streamable {
     /**
      * Set additional diagnostic MetaData to send with this Error. This will
      * be merged with any global MetaData you set on the Client.
-     *
+     * <p>
      * Note: This will overwrite any MetaData you provided using
      * Bugsnag.notify, so it is recommended to use addToTab instead.
      *
-     * @param  metaData  additional diagnostic data to send with this Error
-     * @see    Error#addToTab
-     * @see    Error#getMetaData
+     * @param metaData additional diagnostic data to send with this Error
+     * @see Error#addToTab
+     * @see Error#getMetaData
      */
     public void setMetaData(MetaData metaData) {
         this.metaData = metaData;
@@ -260,8 +260,8 @@ public class Error implements JsonStream.Streamable {
      * Get the class name from the exception contained in this Error report.
      */
     public String getExceptionName() {
-        if(exception instanceof BugsnagException) {
-            return ((BugsnagException)exception).getName();
+        if (exception instanceof BugsnagException) {
+            return ((BugsnagException) exception).getName();
         } else {
             return exception.getClass().getName();
         }
