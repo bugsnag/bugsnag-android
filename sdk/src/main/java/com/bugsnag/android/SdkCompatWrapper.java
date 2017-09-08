@@ -1,9 +1,7 @@
 package com.bugsnag.android;
 
 import android.app.Application;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 
 /**
  * This class wraps the {@link LifecycleBreadcrumbLogger}. This is necessary because otherwise

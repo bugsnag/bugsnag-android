@@ -1,5 +1,6 @@
 repositories {
     jcenter()
+    google()
 }
 
 // Tasks to build and test the android library
@@ -11,7 +12,6 @@ android {
 
     defaultConfig {
         minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
-        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 

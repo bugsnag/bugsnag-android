@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * An error report payload.
- *
+ * <p>
  * This payload contains an error report and identifies the source application
  * using your API key.
  */
@@ -38,25 +38,25 @@ public class Report implements JsonStream.Streamable {
         // Create a JSON stream and top-level object
         writer.beginObject();
 
-            // Write the API key
-            writer.name("apiKey").value(apiKey);
+        // Write the API key
+        writer.name("apiKey").value(apiKey);
 
-            // Write the notifier info
-            writer.name("notifier").value(notifier);
+        // Write the notifier info
+        writer.name("notifier").value(notifier);
 
-            // Start events array
-            writer.name("events").beginArray();
+        // Start events array
+        writer.name("events").beginArray();
 
-            // Write in-memory event
-            if (error != null)
-                writer.value(error);
+        // Write in-memory event
+        if (error != null)
+            writer.value(error);
 
-            // Write on-disk event
-            if (errorFile != null)
-                writer.value(errorFile);
+        // Write on-disk event
+        if (errorFile != null)
+            writer.value(errorFile);
 
-            // End events array
-            writer.endArray();
+        // End events array
+        writer.endArray();
 
         // End the main JSON object
         writer.endObject();

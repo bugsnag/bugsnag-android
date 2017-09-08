@@ -1,8 +1,8 @@
 package com.bugsnag.android;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.annotation.SuppressLint;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,9 @@ import java.util.Observer;
  */
 public class NativeInterface {
 
-    /** Static reference used if not using Bugsnag.init() */
+    /**
+     * Static reference used if not using Bugsnag.init()
+     */
     @SuppressLint("StaticFieldLeak")
     private static Client client;
 
@@ -38,7 +40,7 @@ public class NativeInterface {
         try {
             String className = "com.bugsnag.android.ndk.BugsnagObserver";
             Class c = Class.forName(className);
-            Observer o = (Observer)c.newInstance();
+            Observer o = (Observer) c.newInstance();
             client.addObserver(o);
         } catch (ClassNotFoundException e) {
             // ignore this one, will happen if the NDK plugin is not present
@@ -225,7 +227,7 @@ public class NativeInterface {
                     Object value = metaData.get(tab);
 
                     if (value instanceof Map) {
-                        Map map = (Map)value;
+                        Map map = (Map) value;
 
                         for (Object key : map.keySet()) {
                             report.getError().getMetaData().addToTab(tab, key.toString(), map.get(key));

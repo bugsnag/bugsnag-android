@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A container for additional diagnostic information you'd like to send with
  * every error report.
- *
+ * <p>
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
 public class MetaData extends Observable implements JsonStream.Streamable {
@@ -34,14 +34,14 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      * Create an empty MetaData object.
      */
     public MetaData() {
-        store = new ConcurrentHashMap<String, Object>();
+        store = new ConcurrentHashMap<>();
     }
 
     /**
      * Create a MetaData with values copied from an existing Map
      */
     public MetaData(@NonNull Map<String, Object> m) {
-        store = new ConcurrentHashMap<String, Object>(m);
+        store = new ConcurrentHashMap<>(m);
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -50,15 +50,15 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     /**
      * Add diagnostic information to a tab of this MetaData.
-     *
+     * <p>
      * For example:
+     * <p>
+     * metaData.addToTab("account", "name", "Acme Co.");
+     * metaData.addToTab("account", "payingCustomer", true);
      *
-     *     metaData.addToTab("account", "name", "Acme Co.");
-     *     metaData.addToTab("account", "payingCustomer", true);
-     *
-     * @param  tabName  the dashboard tab to add diagnostic data to
-     * @param  key      the name of the diagnostic information
-     * @param  value    the contents of the diagnostic information
+     * @param tabName the dashboard tab to add diagnostic data to
+     * @param key     the name of the diagnostic information
+     * @param value   the contents of the diagnostic information
      */
     public void addToTab(String tabName, String key, Object value) {
         addToTab(tabName, key, value, true);
@@ -66,21 +66,21 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     /**
      * Add diagnostic information to a tab of this MetaData.
-     *
+     * <p>
      * For example:
+     * <p>
+     * metaData.addToTab("account", "name", "Acme Co.");
+     * metaData.addToTab("account", "payingCustomer", true);
      *
-     *     metaData.addToTab("account", "name", "Acme Co.");
-     *     metaData.addToTab("account", "payingCustomer", true);
-     *
-     * @param  tabName  the dashboard tab to add diagnostic data to
-     * @param  key      the name of the diagnostic information
-     * @param  value    the contents of the diagnostic information
-     * @param  notify   whether or not to notify any NDK observers about this change
+     * @param tabName the dashboard tab to add diagnostic data to
+     * @param key     the name of the diagnostic information
+     * @param value   the contents of the diagnostic information
+     * @param notify  whether or not to notify any NDK observers about this change
      */
     void addToTab(String tabName, String key, @Nullable Object value, boolean notify) {
         Map<String, Object> tab = getTab(tabName);
 
-        if(value != null) {
+        if (value != null) {
             tab.put(key, value);
         } else {
             tab.remove(key);
@@ -92,7 +92,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     /**
      * Remove a tab of diagnostic information from this MetaData.
      *
-     * @param  tabName  the dashboard tab to remove diagnostic data from
+     * @param tabName the dashboard tab to remove diagnostic data from
      */
     public void clearTab(String tabName) {
         store.remove(tabName);
@@ -102,10 +102,10 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     @NonNull
     Map<String, Object> getTab(String tabName) {
-        Map<String, Object> tab = (Map<String, Object>)store.get(tabName);
+        Map<String, Object> tab = (Map<String, Object>) store.get(tabName);
 
-        if(tab == null) {
-            tab = new ConcurrentHashMap<String, Object>();
+        if (tab == null) {
+            tab = new ConcurrentHashMap<>();
             store.put(tabName, tab);
         }
 
@@ -120,10 +120,10 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     @NonNull
     static MetaData merge(@NonNull MetaData... metaDataList) {
-        ArrayList<Map<String, Object>> stores = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> stores = new ArrayList<>();
         List<String> filters = new ArrayList<>();
-        for(MetaData metaData : metaDataList) {
-            if(metaData != null) {
+        for (MetaData metaData : metaDataList) {
+            if (metaData != null) {
                 stores.add(metaData.store);
 
                 if (metaData.filters != null) {
@@ -142,21 +142,21 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     private static Map<String, Object> mergeMaps(@NonNull Map<String, Object>... maps) {
         Map<String, Object> result = new ConcurrentHashMap<String, Object>();
 
-        for(Map<String, Object> map : maps) {
-            if(map == null) continue;
+        for (Map<String, Object> map : maps) {
+            if (map == null) continue;
 
             // Get a set of all possible keys in base and overrides
-            Set<String> allKeys = new HashSet<String>(result.keySet());
+            Set<String> allKeys = new HashSet<>(result.keySet());
             allKeys.addAll(map.keySet());
 
-            for(String key : allKeys) {
+            for (String key : allKeys) {
                 Object baseValue = result.get(key);
                 Object overridesValue = map.get(key);
 
-                if(overridesValue != null) {
-                    if(baseValue != null && baseValue instanceof Map && overridesValue instanceof Map) {
+                if (overridesValue != null) {
+                    if (baseValue != null && baseValue instanceof Map && overridesValue instanceof Map) {
                         // Both original and overrides are Maps, go deeper
-                        result.put(key, mergeMaps((Map<String, Object>)baseValue, (Map<String, Object>)overridesValue));
+                        result.put(key, mergeMaps((Map<String, Object>) baseValue, (Map<String, Object>) overridesValue));
                     } else {
                         result.put(key, overridesValue);
                     }
@@ -172,24 +172,24 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     // Write complex/nested values to a JsonStreamer
     private void objectToStream(@Nullable Object obj, @NonNull JsonStream writer) throws IOException {
-        if(obj == null) {
+        if (obj == null) {
             writer.nullValue();
-        } else if(obj instanceof String) {
-            writer.value((String)obj);
-        } else if(obj instanceof Number) {
-            writer.value((Number)obj);
-        } else if(obj instanceof Boolean) {
-            writer.value((Boolean)obj);
-        } else if(obj instanceof Map) {
+        } else if (obj instanceof String) {
+            writer.value((String) obj);
+        } else if (obj instanceof Number) {
+            writer.value((Number) obj);
+        } else if (obj instanceof Boolean) {
+            writer.value((Boolean) obj);
+        } else if (obj instanceof Map) {
             // Map objects
             writer.beginObject();
-            for(Iterator entries = ((Map)obj).entrySet().iterator(); entries.hasNext();) {
-                Map.Entry entry = (Map.Entry)entries.next();
+            for (Iterator entries = ((Map) obj).entrySet().iterator(); entries.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) entries.next();
                 Object keyObj = entry.getKey();
-                if(keyObj instanceof String) {
-                    String key = (String)keyObj;
+                if (keyObj instanceof String) {
+                    String key = (String) keyObj;
                     writer.name(key);
-                    if(shouldFilter(key)) {
+                    if (shouldFilter(key)) {
                         writer.value(FILTERED_PLACEHOLDER);
                     } else {
                         objectToStream(entry.getValue(), writer);
@@ -197,14 +197,14 @@ public class MetaData extends Observable implements JsonStream.Streamable {
                 }
             }
             writer.endObject();
-        } else if(obj instanceof Collection) {
+        } else if (obj instanceof Collection) {
             // Collection objects (Lists, Sets etc)
             writer.beginArray();
-            for(Object entry : (Collection)obj) {
+            for (Object entry : (Collection) obj) {
                 objectToStream(entry, writer);
             }
             writer.endArray();
-        } else if(obj.getClass().isArray()) {
+        } else if (obj.getClass().isArray()) {
             // Primitive array objects
             writer.beginArray();
             int length = Array.getLength(obj);
@@ -219,10 +219,10 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     // Should this key be filtered
     private boolean shouldFilter(@Nullable String key) {
-        if(filters == null || key == null) return false;
+        if (filters == null || key == null) return false;
 
-        for(String filter : filters) {
-            if(key.contains(filter)) {
+        for (String filter : filters) {
+            if (key.contains(filter)) {
                 return true;
             }
         }

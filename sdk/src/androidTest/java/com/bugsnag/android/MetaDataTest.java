@@ -147,7 +147,7 @@ public class MetaDataTest {
 
         MetaData merged = MetaData.merge(base, overrides);
         Map<String, Object> tab = merged.getTab("example");
-        Map<String, String> mergedMap = (Map<String, String>)tab.get("map");
+        Map<String, String> mergedMap = (Map<String, String>) tab.get("map");
         assertEquals("fromOverrides", mergedMap.get("key"));
     }
 
@@ -169,7 +169,7 @@ public class MetaDataTest {
     }
 
     @Test
-    public void testNestedFiltering() throws JSONException, IOException  {
+    public void testNestedFiltering() throws JSONException, IOException {
         Map<String, String> sensitiveMap = new HashMap<>();
         sensitiveMap.put("password", "p4ssw0rd");
         sensitiveMap.put("confirm_password", "p4ssw0rd");

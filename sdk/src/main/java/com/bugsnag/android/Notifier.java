@@ -16,6 +16,7 @@ public class Notifier implements JsonStream.Streamable {
     private String url;
 
     private static final Notifier instance = new Notifier();
+
     @NonNull
     public static Notifier getInstance() {
         return instance;
@@ -29,9 +30,9 @@ public class Notifier implements JsonStream.Streamable {
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-            writer.name("name").value(name);
-            writer.name("version").value(version);
-            writer.name("url").value(url);
+        writer.name("name").value(name);
+        writer.name("version").value(version);
+        writer.name("url").value(url);
         writer.endObject();
     }
 

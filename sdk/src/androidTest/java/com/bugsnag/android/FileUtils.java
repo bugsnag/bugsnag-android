@@ -4,7 +4,8 @@ import java.io.File;
 
 final class FileUtils {
 
-    private FileUtils() {}
+    private FileUtils() {
+    }
 
     static void clearFilesInDir(File storageDir) {
         if (!storageDir.isDirectory()) {

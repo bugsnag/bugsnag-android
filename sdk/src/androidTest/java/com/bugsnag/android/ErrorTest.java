@@ -32,7 +32,7 @@ public class ErrorTest {
 
     @Test
     public void testShouldIgnoreClass() {
-        config.setIgnoreClasses(new String[] {"java.io.IOException"});
+        config.setIgnoreClasses(new String[]{"java.io.IOException"});
 
         // Shouldn't ignore classes not in ignoreClasses
         Error error = new Error(config, new RuntimeException("Test"));

@@ -23,16 +23,16 @@ class Stacktrace implements JsonStream.Streamable {
         for (StackTraceElement el : stacktrace) {
             try {
                 writer.beginObject();
-                    writer.name("method").value(el.getClassName() + "." + el.getMethodName());
-                    writer.name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName());
-                    writer.name("lineNumber").value(el.getLineNumber());
+                writer.name("method").value(el.getClassName() + "." + el.getMethodName());
+                writer.name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName());
+                writer.name("lineNumber").value(el.getLineNumber());
 
-                    if (config.inProject(el.getClassName())) {
-                        writer.name("inProject").value(true);
-                    }
+                if (config.inProject(el.getClassName())) {
+                    writer.name("inProject").value(true);
+                }
 
                 writer.endObject();
-            } catch(Exception lineEx) {
+            } catch (Exception lineEx) {
                 lineEx.printStackTrace(System.err);
             }
         }

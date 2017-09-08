@@ -39,16 +39,16 @@ public class ConfigurationTest {
         assertTrue(config.shouldNotifyForReleaseStage("development"));
 
         // Shouldn't notify if notifyReleaseStages is set and releaseStage is null
-        config.setNotifyReleaseStages(new String[] {"example"});
+        config.setNotifyReleaseStages(new String[]{"example"});
         assertFalse(config.shouldNotifyForReleaseStage(null));
 
         // Shouldn't notify if releaseStage not in notifyReleaseStages
         String releaseStage = "production";
-        config.setNotifyReleaseStages(new String[] {releaseStage});
+        config.setNotifyReleaseStages(new String[]{releaseStage});
         assertFalse(config.shouldNotifyForReleaseStage("not-production"));
 
         // Should notify if releaseStage in notifyReleaseStages
-        config.setNotifyReleaseStages(new String[] {releaseStage});
+        config.setNotifyReleaseStages(new String[]{releaseStage});
         assertTrue(config.shouldNotifyForReleaseStage(releaseStage));
     }
 
@@ -59,7 +59,7 @@ public class ConfigurationTest {
         assertFalse(config.shouldIgnoreClass(className));
 
         // Should ignore when added to ignoreClasses
-        config.setIgnoreClasses(new String[] {className});
+        config.setIgnoreClasses(new String[]{className});
         assertTrue(config.shouldIgnoreClass(className));
     }
 
@@ -69,11 +69,23 @@ public class ConfigurationTest {
         assertFalse(config.inProject("com.bugsnag.android.Example"));
 
         // Should be inProject if class in projectPackages
-        config.setProjectPackages(new String[] {"com.bugsnag.android"});
+        config.setProjectPackages(new String[]{"com.bugsnag.android"});
         assertTrue(config.inProject("com.bugsnag.android.Example"));
 
         // Shouldn't be inProject if class not in projectPackages
-        config.setProjectPackages(new String[] {"com.bugsnag.android"});
+        config.setProjectPackages(new String[]{"com.bugsnag.android"});
         assertFalse(config.inProject("java.io.IOException"));
+    }
+
+    @Test
+    public void testLaunchThreshold() throws Exception {
+        assertEquals(5000L, config.getLaunchCrashThresholdMs());
+
+        config.setLaunchCrashThresholdMs(-5);
+        assertEquals(0, config.getLaunchCrashThresholdMs());
+
+        int expected = 1500;
+        config.setLaunchCrashThresholdMs(expected);
+        assertEquals(expected, config.getLaunchCrashThresholdMs());
     }
 }

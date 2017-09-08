@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -32,6 +33,8 @@ public class Configuration extends Observable implements Observer {
     private boolean sendThreads = true;
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
+    private long launchCrashThresholdMs = 5 * 1000;
+
     @NonNull
     String defaultExceptionType = "android";
 
@@ -345,12 +348,40 @@ public class Configuration extends Observable implements Observer {
     /**
      * Set whether or not Bugsnag should persist user information between application settings
      * if set then any user information set will be re-used until
-     * @see Client#clearUser() is called
      *
      * @param persistUserBetweenSessions whether or not Bugsnag should persist user information
+     * @see Client#clearUser() is called
      */
     public void setPersistUserBetweenSessions(boolean persistUserBetweenSessions) {
         this.persistUserBetweenSessions = persistUserBetweenSessions;
+    }
+
+    /**
+     * Retrieves the threshold in ms for an uncaught error to be considered as a crash on launch.
+     *
+     * @return the threshold in ms
+     */
+    public long getLaunchCrashThresholdMs() {
+        return launchCrashThresholdMs;
+    }
+
+    /**
+     * Sets the threshold in ms for an uncaught error to be considered as a crash on launch.
+     * If a crash is detected on launch, Bugsnag will attempt to send the report synchronously.
+     * <p>
+     * The app's launch time is tracked as the time at which {@link Bugsnag#init(Context)} was
+     * called.
+     * <p>
+     * By default, this value is set at 5,000ms.
+     *
+     * @param launchCrashThresholdMs the threshold in ms. Any value below 0 will default to 0.
+     */
+    public void setLaunchCrashThresholdMs(long launchCrashThresholdMs) {
+        if (launchCrashThresholdMs <= 0) {
+            this.launchCrashThresholdMs = 0;
+        } else {
+            this.launchCrashThresholdMs = launchCrashThresholdMs;
+        }
     }
 
     /**
@@ -360,7 +391,7 @@ public class Configuration extends Observable implements Observer {
      * @return true if the release state should be notified else false
      */
     protected boolean shouldNotifyForReleaseStage(String releaseStage) {
-        if(this.notifyReleaseStages == null)
+        if (this.notifyReleaseStages == null)
             return true;
 
         List<String> stages = Arrays.asList(this.notifyReleaseStages);
@@ -374,7 +405,7 @@ public class Configuration extends Observable implements Observer {
      * @return true if the exception class should be ignored else false
      */
     protected boolean shouldIgnoreClass(String className) {
-        if(this.ignoreClasses == null)
+        if (this.ignoreClasses == null)
             return false;
 
         List<String> classes = Arrays.asList(this.ignoreClasses);
@@ -397,9 +428,9 @@ public class Configuration extends Observable implements Observer {
      * @return true if the class should be considered in the project else false
      */
     protected boolean inProject(@NonNull String className) {
-        if(projectPackages != null) {
-            for(String packageName : projectPackages) {
-                if(packageName != null && className.startsWith(packageName)) {
+        if (projectPackages != null) {
+            for (String packageName : projectPackages) {
+                if (packageName != null && className.startsWith(packageName)) {
                     return true;
                 }
             }
@@ -423,4 +454,5 @@ public class Configuration extends Observable implements Observer {
             }
         }
     }
+
 }

@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Date;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -13,6 +14,8 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
     private static final String STRICT_MODE_TAB = "StrictMode";
     private static final String STRICT_MODE_KEY = "Violation";
+    static final String LAUNCH_CRASH_TAB = "CrashOnLaunch";
+    static final String LAUNCH_CRASH_KEY = "Duration (ms)";
 
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
@@ -49,7 +52,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         }
     }
 
-    public ExceptionHandler(UncaughtExceptionHandler originalHandler) {
+    ExceptionHandler(UncaughtExceptionHandler originalHandler) {
         this.originalHandler = originalHandler;
     }
 
@@ -58,13 +61,19 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
 
         // Notify any subscribed clients of the uncaught exception
+        Date now = new Date();
+
         for (Client client : clientMap.keySet()) {
-            MetaData metaData = null;
+            MetaData metaData = new MetaData();
 
             if (strictModeThrowable) { // add strictmode policy violation to metadata
                 String violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
                 metaData = new MetaData();
                 metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
+            }
+
+            if (isCrashOnLaunch(client, now)) {
+                metaData.addToTab(LAUNCH_CRASH_TAB, LAUNCH_CRASH_KEY, getMsSinceLaunch(client, now));
             }
             client.cacheAndNotify(e, Severity.ERROR, metaData);
         }
@@ -76,6 +85,18 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             System.err.printf("Exception in thread \"%s\" ", t.getName());
             e.printStackTrace(System.err);
         }
+    }
+
+    boolean isCrashOnLaunch(Client client, Date now) {
+
+        long delta = getMsSinceLaunch(client, now);
+        long thresholdMs = client.config.getLaunchCrashThresholdMs();
+        return thresholdMs > 0 && delta <= thresholdMs;
+    }
+
+    private long getMsSinceLaunch(Client client, Date now) {
+        long launchTimeMs = client.getLaunchTimeMs();
+        return now.getTime() - launchTimeMs;
     }
 
 }
