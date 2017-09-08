@@ -6,10 +6,19 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
+  <style name="ButtonTheme" parent="Widget.AppCompat.Button.Colored">
+  </style>
+
   <style name="header_text">
     <item name="android:textSize">18sp</item>
     <item name="android:textStyle">bold</item>
     <item name="android:gravity">center</item>
+    <item name="android:textColor">@color/headingColor</item>
+  </style>
+
+  <style name="separator">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">16dp</item>
   </style>
 
 </resources>

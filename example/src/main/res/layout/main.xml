@@ -1,88 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
+  android:id="@+id/example_root"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:id="@+id/example_root">
+  android:orientation="vertical">
 
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="32dp"
+    android:orientation="vertical"
     android:paddingBottom="32dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:orientation="vertical">
+    android:paddingTop="32dp">
 
     <!-- Trigger unhandled exceptions -->
     <TextView
+      style="@style/header_text"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
-      android:text="@string/unhandled_exceptions"
-      style="@style/header_text" />
+      android:text="@string/unhandled_exceptions" />
 
     <Button
+      style="@style/ButtonTheme"
+      android:id="@+id/btn_fatal_crash"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/crash_app"
-      android:onClick="crash" />
+      android:text="@string/trigger_fatal_crash" />
 
-    <!-- Separator -->
-    <View
-      android:layout_width="match_parent"
-      android:layout_height="16dp" />
+    <View style="@style/separator" />
 
     <!-- Trigger handled exceptions -->
     <TextView
+      style="@style/header_text"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
-      android:text="@string/handled_exceptions"
-      style="@style/header_text" />
+      android:text="@string/handled_exceptions" />
 
     <Button
+      style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/severity_error"
-      android:onClick="sendError" />
+      android:onClick="crashHandled"
+      android:text="@string/trigger_nonfatal_crash" />
 
     <Button
+      style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/severity_warning"
-      android:onClick="sendWarning" />
+      android:onClick="crashWithCustomSeverity"
+      android:text="@string/custom_severity" />
+
+    <!-- Enhancing error reports -->
+    <View style="@style/separator" />
+
+    <TextView
+      style="@style/header_text"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:text="@string/enhancing_error_reports" />
 
     <Button
+      style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/severity_info"
-      android:onClick="sendInfo" />
+      android:onClick="crashWithUserDetails"
+      android:text="@string/crash_user_details" />
 
     <Button
+      style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/with_metadata"
-      android:onClick="sendErrorWithMetaData" />
+      android:onClick="crashWithMetadata"
+      android:text="@string/crash_with_metadata" />
 
-    <!-- Separator -->
-    <View
+    <Button
+      style="@style/ButtonTheme"
       android:layout_width="match_parent"
-      android:layout_height="16dp" />
+      android:layout_height="wrap_content"
+      android:onClick="crashWithBreadcrumbs"
+      android:text="@string/crash_with_breadcrumbs" />
+
+    <Button
+      style="@style/ButtonTheme"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:onClick="crashWithCallback"
+      android:text="@string/crash_custom_report" />
+
+    <View style="@style/separator" />
 
     <!-- Documentation -->
     <TextView
+      style="@style/header_text"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
-      android:text="@string/documentation"
-      style="@style/header_text" />
+      android:text="@string/documentation" />
 
     <Button
+      style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/read_the_docs"
-      android:onClick="readDocs" />
+      android:onClick="readDocs"
+      android:text="@string/read_the_docs" />
   </LinearLayout>
 
 </ScrollView>
