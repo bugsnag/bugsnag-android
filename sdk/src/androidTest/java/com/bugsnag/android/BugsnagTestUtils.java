@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.test.InstrumentationRegistry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,5 +32,20 @@ final class BugsnagTestUtils {
 
     static SharedPreferences getSharedPrefs(Context context) {
         return context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
+    }
+
+    static Client generateClient() {
+        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
+        client.setErrorReportApiClient(generateErrorReportApiClient());
+        return client;
+    }
+
+    static ErrorReportApiClient generateErrorReportApiClient() { // no-op
+        return new ErrorReportApiClient() {
+            @Override
+            public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+
+            }
+        };
     }
 }

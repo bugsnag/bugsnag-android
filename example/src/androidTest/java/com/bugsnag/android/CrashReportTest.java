@@ -35,6 +35,13 @@ public class CrashReportTest {
         // send report via activity
         final ExampleActivity activity = activityTestRule.getActivity();
         assertNotNull(activity);
+
+        Bugsnag.setErrorReportApiClient(new ErrorReportApiClient() {
+            @Override
+            public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+                // no-op
+            }
+        });
         activity.sendErrorWithCallback(new Callback() {
             @Override
             public void beforeNotify(Report report) {

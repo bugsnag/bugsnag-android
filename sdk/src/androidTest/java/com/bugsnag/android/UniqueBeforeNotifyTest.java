@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -39,7 +38,7 @@ public class UniqueBeforeNotifyTest {
     @Before
     public void setUp() throws Exception {
         callbackCount = 0;
-        client = new Client(InstrumentationRegistry.getContext(), "123");
+        client = BugsnagTestUtils.generateClient();
     }
 
     @After

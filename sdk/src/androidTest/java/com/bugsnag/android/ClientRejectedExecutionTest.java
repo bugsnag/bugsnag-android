@@ -29,6 +29,7 @@ public class ClientRejectedExecutionTest  {
     @Before
     public void setUp() throws Exception {
         client = new Client(InstrumentationRegistry.getContext(), "api-key");
+        client.setEndpoint("http://example.com");
         ErrorStore errorStore = client.errorStore;
         assertNotNull(errorStore.path);
         errorStorageDir = new File(errorStore.path);
