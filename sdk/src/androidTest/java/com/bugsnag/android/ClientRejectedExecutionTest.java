@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class ClientRejectedExecutionTest  {
+public class ClientRejectedExecutionTest {
 
     private static final int MAX_ALLOWED_TASKS = 128;
     private static final int TASK_COUNT = MAX_ALLOWED_TASKS * 2;

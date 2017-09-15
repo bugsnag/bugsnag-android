@@ -13,7 +13,8 @@ import java.io.StringWriter;
 
 final class BugsnagTestUtils {
 
-    private BugsnagTestUtils() {}
+    private BugsnagTestUtils() {
+    }
 
     private static String streamableToString(JsonStream.Streamable streamable) throws IOException {
         StringWriter writer = new StringWriter();
@@ -26,7 +27,7 @@ final class BugsnagTestUtils {
         return new JSONObject(streamableToString(streamable));
     }
 
-    static JSONArray streamableToJsonArray(JsonStream.Streamable streamable) throws JSONException, IOException  {
+    static JSONArray streamableToJsonArray(JsonStream.Streamable streamable) throws JSONException, IOException {
         return new JSONArray(streamableToString(streamable));
     }
 

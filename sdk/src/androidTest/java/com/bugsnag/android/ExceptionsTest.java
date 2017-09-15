@@ -35,7 +35,7 @@ public class ExceptionsTest {
 
         assertEquals(1, exceptionsJson.length());
 
-        JSONObject firstException = (JSONObject)exceptionsJson.get(0);
+        JSONObject firstException = (JSONObject) exceptionsJson.get(0);
         assertEquals("java.lang.RuntimeException", firstException.get("errorClass"));
         assertEquals("oops", firstException.get("message"));
         assertNotNull(firstException.get("stacktrace"));
@@ -49,12 +49,12 @@ public class ExceptionsTest {
 
         assertEquals(2, exceptionsJson.length());
 
-        JSONObject firstException = (JSONObject)exceptionsJson.get(0);
+        JSONObject firstException = (JSONObject) exceptionsJson.get(0);
         assertEquals("java.lang.RuntimeException", firstException.get("errorClass"));
         assertEquals("oops", firstException.get("message"));
         assertNotNull(firstException.get("stacktrace"));
 
-        JSONObject causeException = (JSONObject)exceptionsJson.get(1);
+        JSONObject causeException = (JSONObject) exceptionsJson.get(1);
         assertEquals("java.lang.Exception", causeException.get("errorClass"));
         assertEquals("cause", causeException.get("message"));
         assertNotNull(causeException.get("stacktrace"));
@@ -63,7 +63,7 @@ public class ExceptionsTest {
     @Test
     public void testNamedException() throws JSONException, IOException {
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);
-        StackTraceElement[] frames = new StackTraceElement[] { element };
+        StackTraceElement[] frames = new StackTraceElement[]{element};
         Error error = new Error.Builder(config, "RuntimeException", "Example message", frames).build();
         Exceptions exceptions = new Exceptions(config, error.getException());
 
@@ -101,17 +101,19 @@ class CustomException extends Exception implements JsonStream.Streamable {
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-            writer.name("errorClass").value("CustomizedException");
-            writer.name("message").value(getLocalizedMessage());
-            writer.name("stacktrace");
-            writer.beginArray();
-                writer.beginObject();
-                    writer.name("file").value("MyFile.java");
-                    writer.name("lineNumber").value(408);
-                    writer.name("offset").value(18);
-                    writer.name("method").value("MyFile.run");
-                writer.endObject();
-            writer.endArray();
+        writer.name("errorClass").value("CustomizedException");
+        writer.name("message").value(getLocalizedMessage());
+        writer.name("stacktrace");
+        writer.beginArray();
+
+        writer.beginObject();
+        writer.name("file").value("MyFile.java");
+        writer.name("lineNumber").value(408);
+        writer.name("offset").value(18);
+        writer.name("method").value("MyFile.run");
+        writer.endObject();
+
+        writer.endArray();
         writer.endObject();
     }
 }

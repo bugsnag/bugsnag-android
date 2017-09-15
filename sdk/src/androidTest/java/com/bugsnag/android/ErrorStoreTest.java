@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.StringWriter;
 
-import static com.bugsnag.android.ErrorStore.*;
+import static com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class ErrorStoreTest  {
+public class ErrorStoreTest {
 
     private ErrorStore errorStore;
     private Configuration config;

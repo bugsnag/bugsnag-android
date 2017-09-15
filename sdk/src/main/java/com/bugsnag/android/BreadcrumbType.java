@@ -7,35 +7,35 @@ public enum BreadcrumbType {
     /**
      * An error was sent to Bugsnag (internal use only)
      */
-    ERROR ("error"),
+    ERROR("error"),
     /**
      * A log message
      */
-    LOG ("log"),
+    LOG("log"),
     /**
      * A manual invocation of `leaveBreadcrumb` (default)
      */
-    MANUAL ("manual"),
+    MANUAL("manual"),
     /**
      * A navigation event, such as a window opening or closing
      */
-    NAVIGATION ("navigation"),
+    NAVIGATION("navigation"),
     /**
      * A background process such as a database query
      */
-    PROCESS ("process"),
+    PROCESS("process"),
     /**
      * A network request
      */
-    REQUEST ("request"),
+    REQUEST("request"),
     /**
      * A change in application state, such as launch or memory warning
      */
-    STATE ("state"),
+    STATE("state"),
     /**
      * A user action, such as tapping a button
      */
-    USER ("user");
+    USER("user");
 
     private final String type;
 
@@ -43,6 +43,8 @@ public enum BreadcrumbType {
         this.type = type;
     }
 
-    public String toString() { return type; }
+    public String toString() {
+        return type;
+    }
 }
 

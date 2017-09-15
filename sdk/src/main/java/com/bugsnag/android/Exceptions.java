@@ -23,7 +23,7 @@ class Exceptions implements JsonStream.Streamable {
         Throwable currentEx = exception;
         while (currentEx != null) {
             if (currentEx instanceof JsonStream.Streamable) {
-                ((JsonStream.Streamable)currentEx).toStream(writer);
+                ((JsonStream.Streamable) currentEx).toStream(writer);
             } else {
                 exceptionToStream(writer, getExceptionName(currentEx), currentEx.getLocalizedMessage(), currentEx.getStackTrace());
             }
@@ -38,7 +38,7 @@ class Exceptions implements JsonStream.Streamable {
      */
     private String getExceptionName(@NonNull Throwable t) {
         if (t instanceof BugsnagException) {
-            return ((BugsnagException)t).getName();
+            return ((BugsnagException) t).getName();
         } else {
             return t.getClass().getName();
         }
@@ -47,10 +47,10 @@ class Exceptions implements JsonStream.Streamable {
     private void exceptionToStream(@NonNull JsonStream writer, String name, String message, StackTraceElement[] frames) throws IOException {
         Stacktrace stacktrace = new Stacktrace(config, frames);
         writer.beginObject();
-            writer.name("errorClass").value(name);
-            writer.name("message").value(message);
-            writer.name("type").value(config.defaultExceptionType);
-            writer.name("stacktrace").value(stacktrace);
+        writer.name("errorClass").value(name);
+        writer.name("message").value(message);
+        writer.name("type").value(config.defaultExceptionType);
+        writer.name("stacktrace").value(stacktrace);
         writer.endObject();
     }
 }
