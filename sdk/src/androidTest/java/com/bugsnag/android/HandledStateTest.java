@@ -7,11 +7,11 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
 
-public class EventHandledStateTest {
+public class HandledStateTest {
 
     @Test
     public void testHandledEventState() throws Exception {
-        EventHandledState state = new EventHandledState(Severity.WARNING, false);
+        HandledState state = new HandledState(Severity.WARNING, false);
         assertNotNull(state);
         assertNull(state.getSeverityReasonType());
         assertFalse(state.isUnhandled());
@@ -21,7 +21,7 @@ public class EventHandledStateTest {
 
     @Test
     public void testUnhandledEventState() throws Exception {
-        EventHandledState state = new EventHandledState(Severity.ERROR, true);
+        HandledState state = new HandledState(Severity.ERROR, true);
         assertNotNull(state);
         assertNotNull(state.getSeverityReasonType());
         assertTrue(state.isUnhandled());

@@ -32,12 +32,12 @@ public class Error implements JsonStream.Streamable {
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
-    private final EventHandledState eventHandledState;
+    private final HandledState handledState;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception, EventHandledState eventHandledState) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception, HandledState handledState) {
         this.config = config;
         this.exception = exception;
-        this.eventHandledState = eventHandledState;
+        this.handledState = handledState;
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -49,14 +49,14 @@ public class Error implements JsonStream.Streamable {
             writer.name("payloadVersion").value(PAYLOAD_VERSION);
             writer.name("context").value(getContext());
             writer.name("severity").value(severity);
-            writer.name("defaultSeverity").value(eventHandledState.isDefaultSeverity(severity));
+            writer.name("defaultSeverity").value(handledState.isDefaultSeverity(severity));
 
-            boolean unhandled = eventHandledState.isUnhandled();
+            boolean unhandled = handledState.isUnhandled();
             writer.name("unhandled").value(unhandled);
 
             if (unhandled) {
                 writer.name("severityReason").beginObject();
-                    writer.name("type").value(eventHandledState.getSeverityReasonType());
+                    writer.name("type").value(handledState.getSeverityReasonType());
                 writer.endObject();
             }
 
@@ -342,8 +342,8 @@ public class Error implements JsonStream.Streamable {
         }
 
         Error build() {
-            EventHandledState eventHandledState = new EventHandledState(severity, unhandled);
-            Error error = new Error(config, exception, eventHandledState);
+            HandledState handledState = new HandledState(severity, unhandled);
+            Error error = new Error(config, exception, handledState);
             error.setSeverity(severity);
 
             if (metaData != null) {
