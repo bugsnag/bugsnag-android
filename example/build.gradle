@@ -4,7 +4,7 @@ buildscript {
 //        mavenLocal()
     }
     dependencies {
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:+'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -29,7 +29,7 @@ android {
             bugsnagApiKey: "066f5ad3590596f9aa8d601ea89af845",
             bugsnagBuildUUID: "abc123",
             bugsnagAppVersion: "1.0.0",
-            bugsnagEndpoint: "https://notify.bugsnag.com",
+            bugsnagEndpoint: "http://localhost:9999",
             bugsnagReleaseStage: "debug",
             bugsnagSendThreads: true,
             bugsnagEnableExceptionHandler: true,
