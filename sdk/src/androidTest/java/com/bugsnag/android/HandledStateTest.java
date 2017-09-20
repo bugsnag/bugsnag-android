@@ -11,7 +11,7 @@ public class HandledStateTest {
 
     @Test
     public void testHandled() throws Exception {
-        HandledState handled = HandledState.valueOf(HandledState.REASON_HANDLED_EXCEPTION);
+        HandledState handled = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         assertNotNull(handled);
         assertFalse(handled.isUnhandled());
         assertEquals(Severity.WARNING, handled.getCurrentSeverity());
@@ -19,7 +19,7 @@ public class HandledStateTest {
 
     @Test
     public void testUnhandled() throws Exception {
-        HandledState unhandled = HandledState.valueOf(HandledState.REASON_UNHANDLED_EXCEPTION);
+        HandledState unhandled = HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION);
         assertNotNull(unhandled);
         assertTrue(unhandled.isUnhandled());
         assertEquals(Severity.ERROR, unhandled.getCurrentSeverity());
@@ -27,7 +27,7 @@ public class HandledStateTest {
 
     @Test
     public void testUserSpecified() throws Exception {
-        HandledState userSpecified = HandledState.valueOf(HandledState.REASON_USER_SPECIFIED, Severity.INFO, null);
+        HandledState userSpecified = HandledState.newInstance(HandledState.REASON_USER_SPECIFIED, Severity.INFO, null);
         assertNotNull(userSpecified);
         assertFalse(userSpecified.isUnhandled());
         assertEquals(Severity.INFO, userSpecified.getCurrentSeverity());
@@ -35,7 +35,7 @@ public class HandledStateTest {
 
     @Test
     public void testStrictMode() throws Exception {
-        HandledState strictMode = HandledState.valueOf(HandledState.REASON_STRICT_MODE, null, "Test");
+        HandledState strictMode = HandledState.newInstance(HandledState.REASON_STRICT_MODE, null, "Test");
         assertNotNull(strictMode);
         assertTrue(strictMode.isUnhandled());
         assertEquals(Severity.WARNING, strictMode.getCurrentSeverity());
@@ -44,7 +44,7 @@ public class HandledStateTest {
 
     @Test
     public void testCallbackSpecified() throws Exception {
-        HandledState handled = HandledState.valueOf(HandledState.REASON_HANDLED_EXCEPTION);
+        HandledState handled = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         assertEquals(HandledState.REASON_HANDLED_EXCEPTION,
             handled.calculateSeverityReasonType());
 
@@ -55,12 +55,12 @@ public class HandledStateTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidUserSpecified() throws Exception {
-        HandledState.valueOf(HandledState.REASON_CALLBACK_SPECIFIED);
+        HandledState.newInstance(HandledState.REASON_CALLBACK_SPECIFIED);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidStrictmodeVal() throws Exception {
-        HandledState.valueOf(HandledState.REASON_STRICT_MODE);
+        HandledState.newInstance(HandledState.REASON_STRICT_MODE);
     }
 
 }

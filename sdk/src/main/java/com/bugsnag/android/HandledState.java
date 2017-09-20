@@ -34,13 +34,13 @@ final class HandledState implements JsonStream.Streamable {
     private Severity currentSeverity;
     private final boolean unhandled;
 
-    static HandledState valueOf(@SeverityReason String severityReasonType) {
-        return valueOf(severityReasonType, null, null);
+    static HandledState newInstance(@SeverityReason String severityReasonType) {
+        return newInstance(severityReasonType, null, null);
     }
 
-    static HandledState valueOf(@SeverityReason String severityReasonType,
-                                @Nullable Severity severity,
-                                @Nullable String attributeValue) {
+    static HandledState newInstance(@SeverityReason String severityReasonType,
+                                    @Nullable Severity severity,
+                                    @Nullable String attributeValue) {
 
         if (severityReasonType.equals(REASON_STRICT_MODE) && TextUtils.isEmpty(attributeValue)) {
             throw new IllegalArgumentException("No reason supplied for strictmode");

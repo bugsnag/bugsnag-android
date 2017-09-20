@@ -346,7 +346,7 @@ public class Error implements JsonStream.Streamable {
 
         Error build() {
             HandledState handledState =
-                HandledState.valueOf(severityReasonType, severity, strictModeValue);
+                HandledState.newInstance(severityReasonType, severity, strictModeValue);
             Error error = new Error(config, exception, handledState, severity);
 
             if (metaData != null) {
