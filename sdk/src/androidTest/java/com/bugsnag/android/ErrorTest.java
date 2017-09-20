@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -63,42 +62,6 @@ public class ErrorTest {
         assertNotNull(errorJson.get("severity"));
         assertNotNull(errorJson.get("metaData"));
         assertNotNull(errorJson.get("threads"));
-    }
-
-    @Test
-    public void testUnhandledSerialization() throws Exception {
-        Error unhandledErr = new Error.Builder(config, new RuntimeException(""))
-            .isUnhandled(true)
-            .build();
-        JSONObject errorJson = streamableToJson(unhandledErr);
-        assertTrue(errorJson.getBoolean("defaultSeverity"));
-        assertTrue(errorJson.getBoolean("unhandled"));
-
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals("exception_handler", severityReason.getString("type"));
-    }
-
-    @Test
-    public void testHandledSerialization() throws Exception {
-        Error handledErr = new Error.Builder(config, new RuntimeException("")).build();
-        JSONObject errorJson = streamableToJson(handledErr);
-        assertTrue(errorJson.getBoolean("defaultSeverity"));
-        assertFalse(errorJson.getBoolean("unhandled"));
-
-        try {
-            errorJson.getJSONObject("severityReason");
-            fail("severityReason should not be present in payload for handled errors");
-        } catch (JSONException ignored) {
-        }
-    }
-
-    @Test
-    public void testSeverityMutation() throws Exception {
-        Error handledErr = new Error.Builder(config, new RuntimeException("")).build();
-        handledErr.setSeverity(Severity.INFO);
-        JSONObject errorJson = streamableToJson(handledErr);
-        assertFalse(errorJson.getBoolean("defaultSeverity"));
     }
 
     @Test

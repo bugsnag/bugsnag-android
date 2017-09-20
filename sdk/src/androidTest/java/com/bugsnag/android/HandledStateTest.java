@@ -2,31 +2,63 @@ package com.bugsnag.android;
 
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
 
 public class HandledStateTest {
 
     @Test
-    public void testHandledEventState() throws Exception {
-        HandledState state = new HandledState(Severity.WARNING, false);
-        assertNotNull(state);
-        assertNull(state.getSeverityReasonType());
-        assertFalse(state.isUnhandled());
-        assertTrue(state.isDefaultSeverity(Severity.WARNING));
-        assertFalse(state.isDefaultSeverity(Severity.INFO));
+    public void testHandled() throws Exception {
+        HandledState handled = HandledState.valueOf(HandledState.REASON_HANDLED_EXCEPTION);
+        assertNotNull(handled);
+        assertFalse(handled.isUnhandled());
+        assertEquals(Severity.WARNING, handled.getSeverity());
     }
 
     @Test
-    public void testUnhandledEventState() throws Exception {
-        HandledState state = new HandledState(Severity.ERROR, true);
-        assertNotNull(state);
-        assertNotNull(state.getSeverityReasonType());
-        assertTrue(state.isUnhandled());
-        assertTrue(state.isDefaultSeverity(Severity.ERROR));
-        assertFalse(state.isDefaultSeverity(Severity.WARNING));
+    public void testUnhandled() throws Exception {
+        HandledState unhandled = HandledState.valueOf(HandledState.REASON_UNHANDLED_EXCEPTION);
+        assertNotNull(unhandled);
+        assertTrue(unhandled.isUnhandled());
+        assertEquals(Severity.ERROR, unhandled.getSeverity());
+    }
+
+    @Test
+    public void testUserSpecified() throws Exception {
+        HandledState userSpecified = HandledState.valueOf(HandledState.REASON_USER_SPECIFIED, Severity.INFO, null);
+        assertNotNull(userSpecified);
+        assertFalse(userSpecified.isUnhandled());
+        assertEquals(Severity.INFO, userSpecified.getSeverity());
+    }
+
+    @Test
+    public void testStrictMode() throws Exception {
+        HandledState strictMode = HandledState.valueOf(HandledState.REASON_STRICT_MODE, null, "Test");
+        assertNotNull(strictMode);
+        assertTrue(strictMode.isUnhandled());
+        assertEquals(Severity.WARNING, strictMode.getSeverity());
+        assertEquals("Test", strictMode.getAttributeValue());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidUserSpecified() throws Exception {
+        HandledState.valueOf(HandledState.REASON_CALLBACK_SPECIFIED);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidStrictmodeVal() throws Exception {
+        HandledState.valueOf(HandledState.REASON_STRICT_MODE);
+    }
+
+    @Test
+    public void testSeverityReasonCalculation() throws Exception {
+        HandledState handled = HandledState.valueOf(HandledState.REASON_HANDLED_EXCEPTION);
+        assertEquals(HandledState.REASON_HANDLED_EXCEPTION,
+            handled.calculateSeverityReasonType(Severity.WARNING));
+        assertEquals(HandledState.REASON_CALLBACK_SPECIFIED,
+            handled.calculateSeverityReasonType(Severity.INFO));
     }
 
 }

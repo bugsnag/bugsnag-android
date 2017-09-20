@@ -48,19 +48,11 @@ public class Error implements JsonStream.Streamable {
         writer.beginObject();
         writer.name("payloadVersion").value(PAYLOAD_VERSION);
         writer.name("context").value(getContext());
-        writer.name("severity").value(severity);
-        writer.name("defaultSeverity").value(handledState.isDefaultSeverity(severity));
-
-        boolean unhandled = handledState.isUnhandled();
-        writer.name("unhandled").value(unhandled);
-
-        if (unhandled) {
-            writer.name("severityReason").beginObject();
-            writer.name("type").value(handledState.getSeverityReasonType());
-            writer.endObject();
-        }
-
         writer.name("metaData").value(mergedMetaData);
+
+        writer.name("severity").value(severity);
+        writer.name("severityReason").value(handledState);
+        writer.name("unhandled").value(handledState.isUnhandled());
 
         if (config.getProjectPackages() != null) {
             writer.name("projectPackages").beginArray();
@@ -314,11 +306,15 @@ public class Error implements JsonStream.Streamable {
         private final Throwable exception;
         private Severity severity = Severity.WARNING;
         private MetaData metaData;
-        private boolean unhandled;
+        private String strictModeValue;
+
+        @HandledState.SeverityReason
+        private String severityReasonType;
 
         Builder(@NonNull Configuration config, @NonNull Throwable exception) {
             this.config = config;
             this.exception = exception;
+            this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
         }
 
         Builder(@NonNull Configuration config, @NonNull String name,
@@ -326,23 +322,29 @@ public class Error implements JsonStream.Streamable {
             this(config, new BugsnagException(name, message, frames));
         }
 
-        Builder withSeverity(Severity severity) {
+        Builder severityReasonType(@HandledState.SeverityReason String severityReasonType) {
+            this.severityReasonType = severityReasonType;
+            return this;
+        }
+
+        Builder strictModeValue(String value) {
+            this.strictModeValue = value;
+            return this;
+        }
+
+        Builder severity(Severity severity) {
             this.severity = severity;
             return this;
         }
 
-        Builder withMetaData(MetaData metaData) {
+        Builder metaData(MetaData metaData) {
             this.metaData = metaData;
             return this;
         }
 
-        Builder isUnhandled(boolean unhandled) {
-            this.unhandled = unhandled;
-            return this;
-        }
-
         Error build() {
-            HandledState handledState = new HandledState(severity, unhandled);
+            HandledState handledState =
+                HandledState.valueOf(severityReasonType, severity, strictModeValue);
             Error error = new Error(config, exception, handledState);
             error.setSeverity(severity);
 
