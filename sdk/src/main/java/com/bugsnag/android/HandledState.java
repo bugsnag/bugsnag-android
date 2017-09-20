@@ -76,8 +76,8 @@ final class HandledState implements JsonStream.Streamable {
         return defaultSeverity == currentSeverity ? severityReasonType : REASON_CALLBACK_SPECIFIED;
     }
 
-    Severity getSeverity() {
-        return defaultSeverity;
+    Severity getCurrentSeverity() {
+        return currentSeverity;
     }
 
     boolean isUnhandled() {

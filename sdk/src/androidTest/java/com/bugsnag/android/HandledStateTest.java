@@ -14,7 +14,7 @@ public class HandledStateTest {
         HandledState handled = HandledState.valueOf(HandledState.REASON_HANDLED_EXCEPTION);
         assertNotNull(handled);
         assertFalse(handled.isUnhandled());
-        assertEquals(Severity.WARNING, handled.getSeverity());
+        assertEquals(Severity.WARNING, handled.getCurrentSeverity());
     }
 
     @Test
@@ -22,7 +22,7 @@ public class HandledStateTest {
         HandledState unhandled = HandledState.valueOf(HandledState.REASON_UNHANDLED_EXCEPTION);
         assertNotNull(unhandled);
         assertTrue(unhandled.isUnhandled());
-        assertEquals(Severity.ERROR, unhandled.getSeverity());
+        assertEquals(Severity.ERROR, unhandled.getCurrentSeverity());
     }
 
     @Test
@@ -30,7 +30,7 @@ public class HandledStateTest {
         HandledState userSpecified = HandledState.valueOf(HandledState.REASON_USER_SPECIFIED, Severity.INFO, null);
         assertNotNull(userSpecified);
         assertFalse(userSpecified.isUnhandled());
-        assertEquals(Severity.INFO, userSpecified.getSeverity());
+        assertEquals(Severity.INFO, userSpecified.getCurrentSeverity());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class HandledStateTest {
         HandledState strictMode = HandledState.valueOf(HandledState.REASON_STRICT_MODE, null, "Test");
         assertNotNull(strictMode);
         assertTrue(strictMode.isUnhandled());
-        assertEquals(Severity.WARNING, strictMode.getSeverity());
+        assertEquals(Severity.WARNING, strictMode.getCurrentSeverity());
         assertEquals("Test", strictMode.getAttributeValue());
     }
 
