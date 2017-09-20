@@ -586,7 +586,9 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception).build();
+        Error error = new Error.Builder(config, exception)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
         notify(error, !BLOCKING);
     }
 
@@ -596,7 +598,9 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notifyBlocking(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception).build();
+        Error error = new Error.Builder(config, exception)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
         notify(error, BLOCKING);
     }
 
@@ -608,7 +612,9 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notify(@NonNull Throwable exception, Callback callback) {
-        Error error = new Error.Builder(config, exception).build();
+        Error error = new Error.Builder(config, exception)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
         notify(error, DeliveryStyle.ASYNC, callback);
     }
 
@@ -620,7 +626,9 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
-        Error error = new Error.Builder(config, exception).build();
+        Error error = new Error.Builder(config, exception)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
@@ -634,7 +642,9 @@ public class Client extends Observable implements Observer {
      *                   additional modification
      */
     public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace).build();
+        Error error = new Error.Builder(config, name, message, stacktrace)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
         notify(error, DeliveryStyle.ASYNC, callback);
     }
 
@@ -648,7 +658,9 @@ public class Client extends Observable implements Observer {
      *                   additional modification
      */
     public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace).build();
+        Error error = new Error.Builder(config, name, message, stacktrace)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
@@ -926,6 +938,7 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull Throwable exception, MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .metaData(metaData)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, !BLOCKING);
     }
@@ -940,6 +953,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception, MetaData metaData) {
         Error error = new Error.Builder(config, exception)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .metaData(metaData)
             .build();
         notify(error, BLOCKING);
