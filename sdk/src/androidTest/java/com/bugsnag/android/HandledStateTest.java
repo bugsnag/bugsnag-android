@@ -42,6 +42,17 @@ public class HandledStateTest {
         assertEquals("Test", strictMode.getAttributeValue());
     }
 
+    @Test
+    public void testCallbackSpecified() throws Exception {
+        HandledState handled = HandledState.valueOf(HandledState.REASON_HANDLED_EXCEPTION);
+        assertEquals(HandledState.REASON_HANDLED_EXCEPTION,
+            handled.calculateSeverityReasonType());
+
+        handled.setCurrentSeverity(Severity.INFO);
+        assertEquals(HandledState.REASON_CALLBACK_SPECIFIED,
+            handled.calculateSeverityReasonType());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidUserSpecified() throws Exception {
         HandledState.valueOf(HandledState.REASON_CALLBACK_SPECIFIED);
@@ -50,15 +61,6 @@ public class HandledStateTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidStrictmodeVal() throws Exception {
         HandledState.valueOf(HandledState.REASON_STRICT_MODE);
-    }
-
-    @Test
-    public void testSeverityReasonCalculation() throws Exception {
-        HandledState handled = HandledState.valueOf(HandledState.REASON_HANDLED_EXCEPTION);
-        assertEquals(HandledState.REASON_HANDLED_EXCEPTION,
-            handled.calculateSeverityReasonType(Severity.WARNING));
-        assertEquals(HandledState.REASON_CALLBACK_SPECIFIED,
-            handled.calculateSeverityReasonType(Severity.INFO));
     }
 
 }

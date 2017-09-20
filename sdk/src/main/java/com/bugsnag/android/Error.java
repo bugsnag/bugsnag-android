@@ -28,16 +28,17 @@ public class Error implements JsonStream.Streamable {
     private User user;
     private Throwable exception;
     @Nullable
-    private Severity severity = Severity.WARNING;
+    private Severity severity;
     private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
     private final HandledState handledState;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception, HandledState handledState) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception, HandledState handledState, Severity severity) {
         this.config = config;
         this.exception = exception;
         this.handledState = handledState;
+        this.severity = severity;
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -134,6 +135,7 @@ public class Error implements JsonStream.Streamable {
     public void setSeverity(@Nullable Severity severity) {
         if (severity != null) {
             this.severity = severity;
+            this.handledState.setCurrentSeverity(severity);
         }
     }
 
@@ -345,8 +347,7 @@ public class Error implements JsonStream.Streamable {
         Error build() {
             HandledState handledState =
                 HandledState.valueOf(severityReasonType, severity, strictModeValue);
-            Error error = new Error(config, exception, handledState);
-            error.setSeverity(severity);
+            Error error = new Error(config, exception, handledState, severity);
 
             if (metaData != null) {
                 error.setMetaData(metaData);

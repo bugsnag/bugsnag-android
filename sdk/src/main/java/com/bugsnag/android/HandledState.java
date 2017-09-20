@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 
 final class HandledState implements JsonStream.Streamable {
 
+
     @StringDef({REASON_UNHANDLED_EXCEPTION, REASON_STRICT_MODE, REASON_HANDLED_EXCEPTION,
         REASON_USER_SPECIFIED, REASON_CALLBACK_SPECIFIED})
     @Retention(RetentionPolicy.SOURCE)
@@ -30,6 +31,7 @@ final class HandledState implements JsonStream.Streamable {
     private final String attributeValue;
 
     private final Severity defaultSeverity;
+    private Severity currentSeverity;
     private final boolean unhandled;
 
     static HandledState valueOf(@SeverityReason String severityReasonType) {
@@ -46,9 +48,6 @@ final class HandledState implements JsonStream.Streamable {
         if (!severityReasonType.equals(REASON_STRICT_MODE) && !TextUtils.isEmpty(attributeValue)) {
             throw new IllegalArgumentException("attributeValue should not be supplied");
         }
-        if (severity != null && !severityReasonType.equals(REASON_USER_SPECIFIED)) {
-            throw new IllegalArgumentException("Should not supply severity for non-user specified err");
-        }
 
         switch (severityReasonType) {
             case REASON_UNHANDLED_EXCEPTION:
@@ -64,16 +63,17 @@ final class HandledState implements JsonStream.Streamable {
         }
     }
 
-    private HandledState(String severityReasonType, Severity severity, boolean unhandled,
+    private HandledState(String severityReasonType, Severity currentSeverity, boolean unhandled,
                          @Nullable String attributeValue) {
         this.severityReasonType = severityReasonType;
-        this.defaultSeverity = severity;
+        this.defaultSeverity = currentSeverity;
         this.unhandled = unhandled;
         this.attributeValue = attributeValue;
+        this.currentSeverity = currentSeverity;
     }
 
-    String calculateSeverityReasonType(Severity severity) {
-        return defaultSeverity == severity ? severityReasonType : REASON_CALLBACK_SPECIFIED;
+    String calculateSeverityReasonType() {
+        return defaultSeverity == currentSeverity ? severityReasonType : REASON_CALLBACK_SPECIFIED;
     }
 
     Severity getSeverity() {
@@ -89,18 +89,20 @@ final class HandledState implements JsonStream.Streamable {
         return attributeValue;
     }
 
+    void setCurrentSeverity(Severity severity) {
+        this.currentSeverity = severity;
+    }
+
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
-        writer.beginObject();
-        writer.name("severityReason").beginObject()
-            .name("type").value(severityReasonType);
+        writer.beginObject().name("type").value(calculateSeverityReasonType());
 
         if (attributeValue != null) {
             writer.name("attributes").beginObject()
                 .name("violationType").value(attributeValue)
                 .endObject();
         }
-        writer.endObject().endObject();
+        writer.endObject();
     }
 
 }
