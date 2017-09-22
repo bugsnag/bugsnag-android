@@ -692,6 +692,33 @@ public class Client extends Observable implements Observer {
         notify(error, BLOCKING);
     }
 
+    void internalClientNotify(@NonNull Throwable exception,
+                              Map<String, Object> clientData,
+                              boolean blocking,
+                              Callback callback) {
+        String severity = getKeyFromClientData(clientData, "severity");
+        String severityReason = getKeyFromClientData(clientData, "severityReason");
+
+        @SuppressWarnings("WrongConstant")
+        Error error = new Error.Builder(config, exception)
+            .severity(Severity.fromString(severity))
+            .severityReasonType(severityReason)
+            .build();
+
+        DeliveryStyle deliveryStyle = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
+        notify(error, deliveryStyle, callback);
+    }
+
+    @NonNull
+    private String getKeyFromClientData(Map<String, Object> clientData, String key) {
+        Object value = clientData.get(key);
+        if (value instanceof String) {
+             return (String) value;
+        } else {
+            throw new IllegalStateException("Failed to set " + key + " in client data!");
+        }
+    }
+
     /**
      * Add diagnostic information to every error report.
      * Diagnostic information is collected in "tabs" on your dashboard.
