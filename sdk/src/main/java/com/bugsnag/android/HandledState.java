@@ -59,7 +59,9 @@ final class HandledState implements JsonStream.Streamable {
             case REASON_USER_SPECIFIED:
                 return new HandledState(severityReasonType, severity, false, null);
             default:
-                throw new IllegalArgumentException("Invalid arg for reason: " + severityReasonType);
+                String msg = String.format("Invalid argument '%s' for severityReason",
+                    severityReasonType);
+                throw new IllegalArgumentException(msg);
         }
     }
 

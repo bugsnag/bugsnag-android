@@ -699,6 +699,10 @@ public class Client extends Observable implements Observer {
         String severity = getKeyFromClientData(clientData, "severity");
         String severityReason = getKeyFromClientData(clientData, "severityReason");
 
+        String msg = String.format("Internal client notify, severity = '%s'," +
+            " severityReason = '%s'", severity, severityReason);
+        Logger.info(msg);
+
         @SuppressWarnings("WrongConstant")
         Error error = new Error.Builder(config, exception)
             .severity(Severity.fromString(severity))
