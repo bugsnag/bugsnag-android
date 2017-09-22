@@ -452,8 +452,9 @@ public final class Bugsnag {
      */
     public static void internalClientNotify(@NonNull final Throwable exception,
                                             Map<String, Object> clientData,
-                                            boolean blocking) {
-        getClient().internalClientNotify(exception, clientData, blocking);
+                                            boolean blocking,
+                                            Callback callback) {
+        getClient().internalClientNotify(exception, clientData, blocking, callback);
     }
 
     /**
