@@ -11,7 +11,8 @@ public class HandledStateTest {
 
     @Test
     public void testHandled() throws Exception {
-        HandledState handled = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        HandledState handled = HandledState.newInstance(
+            HandledState.REASON_HANDLED_EXCEPTION);
         assertNotNull(handled);
         assertFalse(handled.isUnhandled());
         assertEquals(Severity.WARNING, handled.getCurrentSeverity());
@@ -19,7 +20,8 @@ public class HandledStateTest {
 
     @Test
     public void testUnhandled() throws Exception {
-        HandledState unhandled = HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION);
+        HandledState unhandled = HandledState.newInstance(
+            HandledState.REASON_UNHANDLED_EXCEPTION);
         assertNotNull(unhandled);
         assertTrue(unhandled.isUnhandled());
         assertEquals(Severity.ERROR, unhandled.getCurrentSeverity());
@@ -27,7 +29,8 @@ public class HandledStateTest {
 
     @Test
     public void testUserSpecified() throws Exception {
-        HandledState userSpecified = HandledState.newInstance(HandledState.REASON_USER_SPECIFIED, Severity.INFO, null);
+        HandledState userSpecified = HandledState.newInstance(
+            HandledState.REASON_USER_SPECIFIED, Severity.INFO, null);
         assertNotNull(userSpecified);
         assertFalse(userSpecified.isUnhandled());
         assertEquals(Severity.INFO, userSpecified.getCurrentSeverity());
@@ -35,11 +38,21 @@ public class HandledStateTest {
 
     @Test
     public void testStrictMode() throws Exception {
-        HandledState strictMode = HandledState.newInstance(HandledState.REASON_STRICT_MODE, null, "Test");
+        HandledState strictMode = HandledState.newInstance(
+            HandledState.REASON_STRICT_MODE, null, "Test");
         assertNotNull(strictMode);
         assertTrue(strictMode.isUnhandled());
         assertEquals(Severity.WARNING, strictMode.getCurrentSeverity());
         assertEquals("Test", strictMode.getAttributeValue());
+    }
+
+    @Test
+    public void testPromiseRejection() throws Exception { // invoked via react native
+        HandledState unhandled = HandledState.newInstance(
+            HandledState.REASON_PROMISE_REJECTION);
+        assertNotNull(unhandled);
+        assertTrue(unhandled.isUnhandled());
+        assertEquals(Severity.ERROR, unhandled.getCurrentSeverity());
     }
 
     @Test

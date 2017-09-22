@@ -111,6 +111,29 @@ public class ErrorTest {
     }
 
     @Test
+    public void testPromiseRejectionSerialisation() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException())
+            .severityReasonType(HandledState.REASON_PROMISE_REJECTION)
+            .severity(Severity.ERROR)
+            .build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+        assertEquals("error", errorJson.getString("severity"));
+        assertEquals(true, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_PROMISE_REJECTION, severityReason.getString("type"));
+
+        try {
+            severityReason.getJSONObject("attributes");
+            fail();
+        } catch (JSONException ignored) {
+        }
+    }
+
+    @Test
     public void testUserSpecifiedSerialisation() throws Exception {
         JSONObject errorJson = streamableToJson(error);
         assertNotNull(errorJson);
