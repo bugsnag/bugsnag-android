@@ -101,13 +101,15 @@ class Breadcrumbs implements JsonStream.Streamable {
     }
 
     void setSize(int size) {
-        if (size > store.size()) {
-            this.maxSize = size;
-        } else {
-            // Remove oldest breadcrumbs until reaching the required size
-            while (store.size() > size) {
-                store.poll();
-            }
+        if (size < 0) {
+            Logger.warn("Ignoring invalid breadcrumb capacity. Must be >= 0.");
+            return;
+        }
+
+        this.maxSize = size;
+        // Remove oldest breadcrumbs until reaching the required size
+        while (store.size() > size) {
+            store.poll();
         }
     }
 
@@ -117,11 +119,11 @@ class Breadcrumbs implements JsonStream.Streamable {
                 Logger.warn("Dropping breadcrumb because payload exceeds 4KB limit");
                 return;
             }
-            if (store.size() >= maxSize) {
+            store.add(breadcrumb);
+            if (store.size() > maxSize) {
                 // Remove oldest breadcrumb
                 store.poll();
             }
-            store.add(breadcrumb);
         } catch (IOException ex) {
             Logger.warn("Dropping breadcrumb because it could not be serialized", ex);
         }

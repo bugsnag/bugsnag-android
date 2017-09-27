@@ -55,6 +55,47 @@ public class BreadcrumbsTest {
     }
 
     @Test
+    public void testResizePersists() throws JSONException, IOException {
+        breadcrumbs.add("1");
+        breadcrumbs.add("2");
+        breadcrumbs.add("3");
+        breadcrumbs.add("4");
+        breadcrumbs.add("5");
+        breadcrumbs.add("6");
+        breadcrumbs.setSize(5);
+        breadcrumbs.add("7");
+
+        JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
+        assertEquals(5, breadcrumbsJson.length());
+        assertEquals("3", breadcrumbsJson.getJSONObject(0).getJSONObject("metaData").get("message"));
+        assertEquals("7", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
+    }
+
+    @Test
+    public void testResizeEmpty() throws JSONException, IOException {
+        breadcrumbs.add("1");
+        breadcrumbs.add("2");
+        breadcrumbs.setSize(0);
+        breadcrumbs.add("3");
+        breadcrumbs.add("4");
+        breadcrumbs.add("5");
+        breadcrumbs.add("6");
+
+        JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
+        assertEquals(0, breadcrumbsJson.length());
+    }
+
+    @Test
+    public void testResizeNegative() throws JSONException, IOException {
+        breadcrumbs.add("1");
+        breadcrumbs.add("2");
+        breadcrumbs.setSize(-1);
+
+        JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
+        assertEquals(2, breadcrumbsJson.length());
+    }
+
+    @Test
     public void testResize() throws JSONException, IOException {
         breadcrumbs.add("1");
         breadcrumbs.add("2");
