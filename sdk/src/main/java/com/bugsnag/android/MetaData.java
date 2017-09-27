@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -44,6 +43,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         store = new ConcurrentHashMap<>(m);
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         objectToStream(store, writer);
     }
@@ -183,8 +183,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         } else if (obj instanceof Map) {
             // Map objects
             writer.beginObject();
-            for (Iterator entries = ((Map) obj).entrySet().iterator(); entries.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) entries.next();
+            for (Object o : ((Map) obj).entrySet()) {
+                Map.Entry entry = (Map.Entry) o;
                 Object keyObj = entry.getKey();
                 if (keyObj instanceof String) {
                     String key = (String) keyObj;
