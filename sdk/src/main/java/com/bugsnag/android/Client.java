@@ -787,7 +787,7 @@ public class Client extends Observable implements Observer {
         notify(error, style, null);
     }
 
-    private void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
+    void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;
