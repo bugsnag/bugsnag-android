@@ -322,7 +322,14 @@ public class Configuration extends Observable implements Observer {
      */
     protected void setMetaData(@NonNull MetaData metaData) {
         this.metaData.deleteObserver(this);
-        this.metaData = metaData;
+
+        //noinspection ConstantConditions
+        if (metaData == null) {
+            this.metaData = new MetaData();
+        } else {
+            this.metaData = metaData;
+        }
+
         this.metaData.addObserver(this);
         notifyBugsnagObservers(NotifyType.META);
     }

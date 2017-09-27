@@ -246,7 +246,12 @@ public class Error implements JsonStream.Streamable {
      * @see Error#getMetaData
      */
     public void setMetaData(@NonNull MetaData metaData) {
-        this.metaData = metaData;
+        //noinspection ConstantConditions
+        if (metaData == null) {
+            this.metaData = new MetaData();
+        } else {
+            this.metaData = metaData;
+        }
     }
 
     /**
