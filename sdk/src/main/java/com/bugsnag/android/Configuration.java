@@ -38,7 +38,7 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     String defaultExceptionType = "android";
 
-    private MetaData metaData;
+    @NonNull private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
 
     /**
@@ -216,7 +216,7 @@ public class Configuration extends Observable implements Observer {
      * @param notifyReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public void setNotifyReleaseStages(String[] notifyReleaseStages) {
+    public void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         this.notifyReleaseStages = notifyReleaseStages;
         notifyBugsnagObservers(NotifyType.RELEASE_STAGES);
     }
@@ -310,6 +310,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return meta data
      */
+    @NonNull
     protected MetaData getMetaData() {
         return metaData;
     }
@@ -319,7 +320,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param metaData meta data
      */
-    protected void setMetaData(MetaData metaData) {
+    protected void setMetaData(@NonNull MetaData metaData) {
         this.metaData.deleteObserver(this);
         this.metaData = metaData;
         this.metaData.addObserver(this);

@@ -140,7 +140,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     @NonNull
     private static Map<String, Object> mergeMaps(@NonNull Map<String, Object>... maps) {
-        Map<String, Object> result = new ConcurrentHashMap<String, Object>();
+        Map<String, Object> result = new ConcurrentHashMap<>();
 
         for (Map<String, Object> map : maps) {
             if (map == null) continue;
