@@ -692,7 +692,7 @@ public class Client extends Observable implements Observer {
         notify(error, BLOCKING);
     }
 
-    void internalClientNotify(@NonNull Throwable exception,
+    public void internalClientNotify(@NonNull Throwable exception,
                               Map<String, Object> clientData,
                               boolean blocking,
                               Callback callback) {

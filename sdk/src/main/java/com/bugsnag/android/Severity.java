@@ -37,4 +37,8 @@ public enum Severity implements JsonStream.Streamable {
                 return null;
         }
     }
+
+    public String getName() {
+        return name;
+    }
 }
