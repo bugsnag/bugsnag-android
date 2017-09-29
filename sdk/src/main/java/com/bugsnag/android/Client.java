@@ -709,7 +709,7 @@ public class Client extends Observable implements Observer {
      *
      * @see MetaData
      */
-    public MetaData getMetaData() {
+    @NonNull public MetaData getMetaData() {
         return config.getMetaData();
     }
 
@@ -718,7 +718,7 @@ public class Client extends Observable implements Observer {
      *
      * @see MetaData
      */
-    public void setMetaData(MetaData metaData) {
+    public void setMetaData(@NonNull MetaData metaData) {
         config.setMetaData(metaData);
     }
 
@@ -787,7 +787,7 @@ public class Client extends Observable implements Observer {
         notify(error, style, null);
     }
 
-    private void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
+    void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;
@@ -869,7 +869,8 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
+    void cacheAndNotify(@NonNull Throwable exception, Severity severity,
+                        @NonNull MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -911,7 +912,8 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable, Callback)}
      * to send and modify error reports
      */
-    public void notify(@NonNull Throwable exception, MetaData metaData) {
+    public void notify(@NonNull Throwable exception,
+                       @NonNull MetaData metaData) {
         Error error = new Error(config, exception);
         error.setMetaData(metaData);
         notify(error, !BLOCKING);
@@ -925,7 +927,8 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable, Callback)}
      * to send and modify error reports
      */
-    public void notifyBlocking(@NonNull Throwable exception, MetaData metaData) {
+    public void notifyBlocking(@NonNull Throwable exception,
+                               @NonNull MetaData metaData) {
         Error error = new Error(config, exception);
         error.setMetaData(metaData);
         notify(error, BLOCKING);
@@ -951,7 +954,8 @@ public class Client extends Observable implements Observer {
      * modify error reports
      */
     @Deprecated
-    public void notify(@NonNull Throwable exception, Severity severity, MetaData metaData) {
+    public void notify(@NonNull Throwable exception, Severity severity,
+                       @NonNull MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -969,7 +973,8 @@ public class Client extends Observable implements Observer {
      * and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception, Severity severity, MetaData metaData) {
+    public void notifyBlocking(@NonNull Throwable exception, Severity severity,
+                               @NonNull MetaData metaData) {
         Error error = new Error(config, exception);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -989,7 +994,9 @@ public class Client extends Observable implements Observer {
      * to send and modify error reports
      */
     @Deprecated
-    public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notify(@NonNull String name, @NonNull String message,
+                       @NonNull StackTraceElement[] stacktrace, Severity severity,
+                       @NonNull MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -1009,7 +1016,9 @@ public class Client extends Observable implements Observer {
      * to send and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notifyBlocking(@NonNull String name, @NonNull String message,
+                               @NonNull StackTraceElement[] stacktrace, Severity severity,
+                               @NonNull MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -1030,7 +1039,9 @@ public class Client extends Observable implements Observer {
      * to send and modify error reports
      */
     @Deprecated
-    public void notify(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notify(@NonNull String name, @NonNull String message, String context,
+                       @NonNull StackTraceElement[] stacktrace, Severity severity,
+                       @NonNull MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);
@@ -1052,7 +1063,9 @@ public class Client extends Observable implements Observer {
      * to send and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public void notifyBlocking(@NonNull String name, @NonNull String message, String context,
+                               @NonNull StackTraceElement[] stacktrace, Severity severity,
+                               @NonNull MetaData metaData) {
         Error error = new Error(config, name, message, stacktrace);
         error.setSeverity(severity);
         error.setMetaData(metaData);

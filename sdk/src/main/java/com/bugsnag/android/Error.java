@@ -29,7 +29,7 @@ public class Error implements JsonStream.Streamable {
     private Throwable exception;
     @Nullable
     private Severity severity = Severity.WARNING;
-    private MetaData metaData = new MetaData();
+    @NonNull private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
 
@@ -40,9 +40,7 @@ public class Error implements JsonStream.Streamable {
 
     Error(@NonNull Configuration config, @NonNull String name,
           @NonNull String message, @NonNull StackTraceElement[] frames) {
-        this.config = config;
-
-        this.exception = new BugsnagException(name, message, frames);
+        this(config, new BugsnagException(name, message, frames));
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -231,6 +229,7 @@ public class Error implements JsonStream.Streamable {
      * @see Error#setMetaData
      * @see Error#addToTab
      */
+    @NonNull
     public MetaData getMetaData() {
         return metaData;
     }
@@ -246,8 +245,13 @@ public class Error implements JsonStream.Streamable {
      * @see Error#addToTab
      * @see Error#getMetaData
      */
-    public void setMetaData(MetaData metaData) {
-        this.metaData = metaData;
+    public void setMetaData(@NonNull MetaData metaData) {
+        //noinspection ConstantConditions
+        if (metaData == null) {
+            this.metaData = new MetaData();
+        } else {
+            this.metaData = metaData;
+        }
     }
 
     /**
