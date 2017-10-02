@@ -65,9 +65,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
         for (Client client : clientMap.keySet()) {
             MetaData metaData = new MetaData();
+            String violationDesc = null;
 
             if (strictModeThrowable) { // add strictmode policy violation to metadata
-                String violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
+                violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
                 metaData = new MetaData();
                 metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
             }
@@ -75,7 +76,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             if (isCrashOnLaunch(client, now)) {
                 metaData.addToTab(LAUNCH_CRASH_TAB, LAUNCH_CRASH_KEY, getMsSinceLaunch(client, now));
             }
-            client.cacheAndNotify(e, Severity.ERROR, metaData);
+            
+            String severityReason = strictModeThrowable
+                ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
+            client.cacheAndNotify(e, Severity.ERROR, metaData, severityReason, violationDesc);
         }
 
         // Pass exception on to original exception handler

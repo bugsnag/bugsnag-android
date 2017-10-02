@@ -27,20 +27,17 @@ public class Error implements JsonStream.Streamable {
     private Breadcrumbs breadcrumbs;
     private User user;
     private Throwable exception;
-    @Nullable
     private Severity severity = Severity.WARNING;
     @NonNull private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
+    private final HandledState handledState;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception, HandledState handledState, Severity severity) {
         this.config = config;
         this.exception = exception;
-    }
-
-    Error(@NonNull Configuration config, @NonNull String name,
-          @NonNull String message, @NonNull StackTraceElement[] frames) {
-        this(config, new BugsnagException(name, message, frames));
+        this.handledState = handledState;
+        this.severity = severity;
     }
 
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -51,8 +48,11 @@ public class Error implements JsonStream.Streamable {
         writer.beginObject();
         writer.name("payloadVersion").value(PAYLOAD_VERSION);
         writer.name("context").value(getContext());
-        writer.name("severity").value(severity);
         writer.name("metaData").value(mergedMetaData);
+
+        writer.name("severity").value(severity);
+        writer.name("severityReason").value(handledState);
+        writer.name("unhandled").value(handledState.isUnhandled());
 
         if (config.getProjectPackages() != null) {
             writer.name("projectPackages").beginArray();
@@ -134,6 +134,7 @@ public class Error implements JsonStream.Streamable {
     public void setSeverity(@Nullable Severity severity) {
         if (severity != null) {
             this.severity = severity;
+            this.handledState.setCurrentSeverity(severity);
         }
     }
 
@@ -305,5 +306,58 @@ public class Error implements JsonStream.Streamable {
 
     boolean shouldIgnoreClass() {
         return config.shouldIgnoreClass(getExceptionName());
+    }
+
+    static class Builder {
+        private final Configuration config;
+        private final Throwable exception;
+        private Severity severity = Severity.WARNING;
+        private MetaData metaData;
+        private String strictModeValue;
+
+        @HandledState.SeverityReason
+        private String severityReasonType;
+
+        Builder(@NonNull Configuration config, @NonNull Throwable exception) {
+            this.config = config;
+            this.exception = exception;
+            this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
+        }
+
+        Builder(@NonNull Configuration config, @NonNull String name,
+               @NonNull String message, @NonNull StackTraceElement[] frames) {
+            this(config, new BugsnagException(name, message, frames));
+        }
+
+        Builder severityReasonType(@HandledState.SeverityReason String severityReasonType) {
+            this.severityReasonType = severityReasonType;
+            return this;
+        }
+
+        Builder strictModeValue(String value) {
+            this.strictModeValue = value;
+            return this;
+        }
+
+        Builder severity(Severity severity) {
+            this.severity = severity;
+            return this;
+        }
+
+        Builder metaData(MetaData metaData) {
+            this.metaData = metaData;
+            return this;
+        }
+
+        Error build() {
+            HandledState handledState =
+                HandledState.newInstance(severityReasonType, severity, strictModeValue);
+            Error error = new Error(config, exception, handledState, severity);
+
+            if (metaData != null) {
+                error.setMetaData(metaData);
+            }
+            return error;
+        }
     }
 }

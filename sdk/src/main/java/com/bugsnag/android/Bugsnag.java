@@ -453,6 +453,17 @@ public final class Bugsnag {
     }
 
     /**
+     * Intended for use by other clients (React Native/Unity). Calling this method directly from
+     * Android is not supported.
+     */
+    public static void internalClientNotify(@NonNull final Throwable exception,
+                                            Map<String, Object> clientData,
+                                            boolean blocking,
+                                            Callback callback) {
+        getClient().internalClientNotify(exception, clientData, blocking, callback);
+    }
+
+    /**
      * Add diagnostic information to every error report.
      * Diagnostic information is collected in "tabs" on your dashboard.
      * <p>

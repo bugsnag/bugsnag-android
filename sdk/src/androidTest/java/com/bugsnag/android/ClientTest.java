@@ -75,7 +75,7 @@ public class ClientTest {
     @Test
     public void testNotify() {
         // Notify should not crash
-        Client client = new Client(context, "api-key");
+        Client client = BugsnagTestUtils.generateClient();
         client.notify(new RuntimeException("Testing"));
     }
 
@@ -84,6 +84,7 @@ public class ClientTest {
         config.setEndpoint("new-endpoint");
 
         Client client = new Client(context, config);
+        client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
 
         // Notify should not crash
         client.notify(new RuntimeException("Testing"));
@@ -95,6 +96,8 @@ public class ClientTest {
 
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
+        client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
+
         final User user = new User();
 
         client.beforeNotify(new BeforeNotify() {

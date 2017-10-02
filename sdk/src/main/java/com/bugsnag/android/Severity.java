@@ -24,4 +24,21 @@ public enum Severity implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.value(name);
     }
+
+    static Severity fromString(String s) {
+        switch (s) {
+            case "error":
+                return ERROR;
+            case "warning":
+                return WARNING;
+            case "info":
+                return INFO;
+            default:
+                return null;
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
 }

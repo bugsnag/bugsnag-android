@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -27,7 +28,7 @@ public class ErrorTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        error = new Error(config, new RuntimeException("Example message"));
+        error = new Error.Builder(config, new RuntimeException("Example message")).build();
     }
 
     @Test
@@ -35,11 +36,11 @@ public class ErrorTest {
         config.setIgnoreClasses(new String[]{"java.io.IOException"});
 
         // Shouldn't ignore classes not in ignoreClasses
-        Error error = new Error(config, new RuntimeException("Test"));
+        Error error = new Error.Builder(config, new RuntimeException("Test")).build();
         assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
-        error = new Error(config, new java.io.IOException("Test"));
+        error = new Error.Builder(config, new java.io.IOException("Test")).build();
         assertTrue(error.shouldIgnoreClass());
     }
 
@@ -57,10 +58,132 @@ public class ErrorTest {
     public void testBasicSerialization() throws JSONException, IOException {
         JSONObject errorJson = streamableToJson(error);
         assertEquals("warning", errorJson.get("severity"));
+
         assertEquals("3", errorJson.get("payloadVersion"));
         assertNotNull(errorJson.get("severity"));
         assertNotNull(errorJson.get("metaData"));
         assertNotNull(errorJson.get("threads"));
+    }
+
+    @Test
+    public void testHandledSerialisation() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException())
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+        assertEquals("warning", errorJson.getString("severity"));
+        assertEquals(false, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_HANDLED_EXCEPTION, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
+    }
+
+    @Test
+    public void testUnhandledSerialisation() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException())
+            .severityReasonType(HandledState.REASON_UNHANDLED_EXCEPTION)
+            .severity(Severity.ERROR)
+            .build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+        assertEquals("error", errorJson.getString("severity"));
+        assertEquals(true, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_UNHANDLED_EXCEPTION, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
+    }
+
+    @Test
+    public void testPromiseRejectionSerialisation() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException())
+            .severityReasonType(HandledState.REASON_PROMISE_REJECTION)
+            .severity(Severity.ERROR)
+            .build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+        assertEquals("error", errorJson.getString("severity"));
+        assertEquals(true, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_PROMISE_REJECTION, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
+    }
+
+    @Test
+    public void testLogSerialisation() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException())
+            .severityReasonType(HandledState.REASON_LOG)
+            .severity(Severity.WARNING)
+            .build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+        assertEquals("warning", errorJson.getString("severity"));
+        assertEquals(false, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_LOG, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
+    }
+
+    @Test
+    public void testUserSpecifiedSerialisation() throws Exception {
+        JSONObject errorJson = streamableToJson(error);
+        assertNotNull(errorJson);
+        assertEquals("warning", errorJson.getString("severity"));
+        assertEquals(false, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_USER_SPECIFIED, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
+    }
+
+    @Test
+    public void testStrictModeSerialisation() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException())
+            .severityReasonType(HandledState.REASON_STRICT_MODE)
+            .strictModeValue("Test")
+            .build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+        assertEquals("warning", errorJson.getString("severity"));
+        assertEquals(true, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_STRICT_MODE, severityReason.getString("type"));
+
+        JSONObject attributes = severityReason.getJSONObject("attributes");
+        assertNotNull(attributes);
+        assertEquals(1, attributes.length());
+        assertEquals("Test", attributes.getString("violationType"));
+    }
+
+    @Test
+    public void testCallbackSpecified() throws Exception {
+        error.setSeverity(Severity.INFO); // mutate severity
+
+        JSONObject errorJson = streamableToJson(error);
+        assertNotNull(errorJson);
+        assertEquals("info", errorJson.getString("severity"));
+        assertEquals(false, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_CALLBACK_SPECIFIED, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
     }
 
     @Test
@@ -87,5 +210,13 @@ public class ErrorTest {
 
         JSONObject errorJson = streamableToJson(error);
         assertEquals("info", errorJson.get("severity"));
+    }
+
+    private void validateEmptyAttributes(JSONObject severityReason) {
+        try {
+            severityReason.getJSONObject("attributes");
+            fail();
+        } catch (JSONException ignored) {
+        }
     }
 }
