@@ -76,6 +76,11 @@ device/emulator.
 Releasing a New Version
 -----------------------
 
+## Release Checklist
+Please follow the testing instructions in [the platforms release checklist](https://github.com/bugsnag/platforms-release-checklist/blob/master/README.md), and any additional steps directly below.
+
+### Instructions
+
 If you are a project maintainer, you can build and release a new version of
 `bugsnag-android` as follows:
 

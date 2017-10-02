@@ -27,9 +27,8 @@ public class Error implements JsonStream.Streamable {
     private Breadcrumbs breadcrumbs;
     private User user;
     private Throwable exception;
-    @Nullable
-    private Severity severity;
-    private MetaData metaData = new MetaData();
+    private Severity severity = Severity.WARNING;
+    @NonNull private MetaData metaData = new MetaData();
     private String groupingHash;
     private String context;
     private final HandledState handledState;
@@ -231,6 +230,7 @@ public class Error implements JsonStream.Streamable {
      * @see Error#setMetaData
      * @see Error#addToTab
      */
+    @NonNull
     public MetaData getMetaData() {
         return metaData;
     }
@@ -246,8 +246,13 @@ public class Error implements JsonStream.Streamable {
      * @see Error#addToTab
      * @see Error#getMetaData
      */
-    public void setMetaData(MetaData metaData) {
-        this.metaData = metaData;
+    public void setMetaData(@NonNull MetaData metaData) {
+        //noinspection ConstantConditions
+        if (metaData == null) {
+            this.metaData = new MetaData();
+        } else {
+            this.metaData = metaData;
+        }
     }
 
     /**

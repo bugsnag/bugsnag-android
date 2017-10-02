@@ -1,9 +1,12 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
@@ -12,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import static com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR;
@@ -54,7 +58,7 @@ public class ErrorStoreTest {
         files = errorStorageDir.listFiles();
         assertEquals(baseline + 1, files.length);
         File file = files[0];
-        checkFirstErrorReportFile(file);
+        checkFileMatchesErrorReport(file, error);
     }
 
     @Test
@@ -94,17 +98,44 @@ public class ErrorStoreTest {
         assertTrue(ERROR_REPORT_COMPARATOR.compare(new File(second), new File(startup)) > 0);
     }
 
-    static void checkFirstErrorReportFile(File errorFile) throws Exception {
+
+    /**
+     * Ensures that the file can be serialised back into a JSON report, and contains the same info
+     * as the original
+     */
+    private static void checkFileMatchesErrorReport(File file, Error error) throws Exception {
         // ensure that the file isn't empty
-        assertFalse(errorFile.length() <= 0);
+        assertFalse(file.length() <= 0);
 
         // ensure the file can be serialised into JSON report
-        Report report = new Report("abc", errorFile);
+        JSONObject memory = getJsonObjectFromReport(new Report("abc", file));
+        JSONObject disk = getJsonObjectFromReport(new Report("abc", error));
+
+        // validate info
+        validateReportPayload(memory);
+        validateReportPayload(disk);
+    }
+
+    static void validateReportPayload(JSONObject payload) throws JSONException {
+        assertNotNull(payload);
+        assertEquals(3, payload.length());
+
+        JSONArray events = payload.getJSONArray("events");
+        assertNotNull(events);
+        assertEquals(1, events.length());
+
+        JSONObject error = events.getJSONObject(0);
+        assertNotNull(error);
+
+        JSONObject metaData = error.getJSONObject("metaData");
+        assertNotNull(metaData);
+    }
+
+    @NonNull
+    static JSONObject getJsonObjectFromReport(Report report) throws IOException, JSONException {
         StringWriter stringWriter = new StringWriter();
         report.toStream(new JsonStream(stringWriter));
-        JSONObject payload = new JSONObject(stringWriter.toString());
-        assertNotNull(payload);
-        assertEquals(1, payload.getJSONArray("events").length());
+        return new JSONObject(stringWriter.toString());
     }
 
 }

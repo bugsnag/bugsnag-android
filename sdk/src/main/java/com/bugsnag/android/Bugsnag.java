@@ -363,7 +363,8 @@ public final class Bugsnag {
      * @deprecated Use {@link #notify(Throwable, Callback)}
      * to send and modify error reports
      */
-    public static void notify(@NonNull final Throwable exception, final MetaData metaData) {
+    public static void notify(@NonNull final Throwable exception,
+                              @NonNull final MetaData metaData) {
         getClient().notify(exception, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
@@ -383,7 +384,8 @@ public final class Bugsnag {
      * to send and modify error reports
      */
     @Deprecated
-    public static void notify(@NonNull final Throwable exception, final Severity severity, final MetaData metaData) {
+    public static void notify(@NonNull final Throwable exception, final Severity severity,
+                              @NonNull final MetaData metaData) {
         getClient().notify(exception, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
@@ -406,7 +408,9 @@ public final class Bugsnag {
      * to send and modify error reports
      */
     @Deprecated
-    public static void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public static void notify(@NonNull String name, @NonNull String message,
+                              @NonNull StackTraceElement[] stacktrace, Severity severity,
+                              @NonNull MetaData metaData) {
         final Severity finalSeverity = severity;
         final MetaData finalMetaData = metaData;
         getClient().notify(name, message, stacktrace, new Callback() {
@@ -432,7 +436,9 @@ public final class Bugsnag {
      * to send and modify error reports
      */
     @Deprecated
-    public static void notify(@NonNull String name, @NonNull String message, String context, @NonNull StackTraceElement[] stacktrace, Severity severity, MetaData metaData) {
+    public static void notify(@NonNull String name, @NonNull String message, String context,
+                              @NonNull StackTraceElement[] stacktrace, Severity severity,
+                              @NonNull MetaData metaData) {
         final String finalContext = context;
         final Severity finalSeverity = severity;
         final MetaData finalMetaData = metaData;
@@ -488,7 +494,7 @@ public final class Bugsnag {
      *
      * @see MetaData
      */
-    public static MetaData getMetaData() {
+    @NonNull public static MetaData getMetaData() {
         return getClient().getMetaData();
     }
 
@@ -497,7 +503,7 @@ public final class Bugsnag {
      *
      * @see MetaData
      */
-    public static void setMetaData(final MetaData metaData) {
+    public static void setMetaData(@NonNull final MetaData metaData) {
         getClient().setMetaData(metaData);
     }
 

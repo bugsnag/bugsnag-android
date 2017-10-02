@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +58,8 @@ public class ClientRejectedExecutionTest {
         File[] files = errorStorageDir.listFiles();
         assertTrue(files.length > 0);
         File errorFile = files[0];
-        ErrorStoreTest.checkFirstErrorReportFile(errorFile);
+
+        JSONObject payload = ErrorStoreTest.getJsonObjectFromReport(new Report("api", errorFile));
+        ErrorStoreTest.validateReportPayload(payload);
     }
 }
