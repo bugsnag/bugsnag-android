@@ -56,6 +56,14 @@ public class HandledStateTest {
     }
 
     @Test
+    public void testLog() throws Exception { // invoked via Unity
+        HandledState unhandled = HandledState.newInstance(HandledState.REASON_LOG, Severity.WARNING, null);
+        assertNotNull(unhandled);
+        assertFalse(unhandled.isUnhandled());
+        assertEquals(Severity.WARNING, unhandled.getCurrentSeverity());
+    }
+
+    @Test
     public void testCallbackSpecified() throws Exception {
         HandledState handled = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         assertEquals(HandledState.REASON_HANDLED_EXCEPTION,

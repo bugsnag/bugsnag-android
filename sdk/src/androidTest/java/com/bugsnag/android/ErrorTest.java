@@ -79,12 +79,7 @@ public class ErrorTest {
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
         assertEquals(HandledState.REASON_HANDLED_EXCEPTION, severityReason.getString("type"));
-
-        try {
-            severityReason.getJSONObject("attributes");
-            fail();
-        } catch (JSONException ignored) {
-        }
+        validateEmptyAttributes(severityReason);
     }
 
     @Test
@@ -102,12 +97,7 @@ public class ErrorTest {
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
         assertEquals(HandledState.REASON_UNHANDLED_EXCEPTION, severityReason.getString("type"));
-
-        try {
-            severityReason.getJSONObject("attributes");
-            fail();
-        } catch (JSONException ignored) {
-        }
+        validateEmptyAttributes(severityReason);
     }
 
     @Test
@@ -125,12 +115,25 @@ public class ErrorTest {
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
         assertEquals(HandledState.REASON_PROMISE_REJECTION, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
+    }
 
-        try {
-            severityReason.getJSONObject("attributes");
-            fail();
-        } catch (JSONException ignored) {
-        }
+    @Test
+    public void testLogSerialisation() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException())
+            .severityReasonType(HandledState.REASON_LOG)
+            .severity(Severity.WARNING)
+            .build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+        assertEquals("warning", errorJson.getString("severity"));
+        assertEquals(false, errorJson.getBoolean("unhandled"));
+
+        JSONObject severityReason = errorJson.getJSONObject("severityReason");
+        assertNotNull(severityReason);
+        assertEquals(HandledState.REASON_LOG, severityReason.getString("type"));
+        validateEmptyAttributes(severityReason);
     }
 
     @Test
@@ -143,12 +146,7 @@ public class ErrorTest {
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
         assertEquals(HandledState.REASON_USER_SPECIFIED, severityReason.getString("type"));
-
-        try {
-            severityReason.getJSONObject("attributes");
-            fail();
-        } catch (JSONException ignored) {
-        }
+        validateEmptyAttributes(severityReason);
     }
 
     @Test
@@ -185,12 +183,7 @@ public class ErrorTest {
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
         assertEquals(HandledState.REASON_CALLBACK_SPECIFIED, severityReason.getString("type"));
-
-        try {
-            severityReason.getJSONObject("attributes");
-            fail();
-        } catch (JSONException ignored) {
-        }
+        validateEmptyAttributes(severityReason);
     }
 
     @Test
@@ -217,5 +210,13 @@ public class ErrorTest {
 
         JSONObject errorJson = streamableToJson(error);
         assertEquals("info", errorJson.get("severity"));
+    }
+
+    private void validateEmptyAttributes(JSONObject severityReason) {
+        try {
+            severityReason.getJSONObject("attributes");
+            fail();
+        } catch (JSONException ignored) {
+        }
     }
 }
