@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.0 (2017-10-02)
+- The SDK now automatically tracks whether an error is handled or unhandled.
+- Fix for NPE in MetaData callback [Boris](https://github.com/borhub)
+- Updated example app.
+- Setting the maxSize of breadcrumbs now removes any surplus breadcrumbs.
+- Crash reports on application startup are automatically sent synchronously on the next launch (configurable via `setLaunchCrashThresholdMs`).
+
 ## 4.0.0 (2017-08-15)
 
 This is a major release which adds a number of new features to the library. The minimum SDK version supported by Bugsnag is now API 14.
