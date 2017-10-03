@@ -179,7 +179,15 @@ public class Client extends Observable implements Observer {
         }
 
         // register a receiver for automatic breadcrumbs
-        appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
+
+        Async.run(new Runnable() {
+            @Override
+            public void run() {
+                appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
+                appContext.registerReceiver(new ConnectivityChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+            }
+        });
+
         config.addObserver(this);
 
         // Flush any on-disk errors
@@ -188,7 +196,7 @@ public class Client extends Observable implements Observer {
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
 
-        appContext.registerReceiver(new ConnectivityChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        Logger.warn("Launch time: " + (new Date().getTime() - launchTimeMs));
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -967,7 +975,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable, Callback)}
      * to send and modify error reports
      */
-    public void notify(@NonNull Throwable exception, 
+    public void notify(@NonNull Throwable exception,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .metaData(metaData)
@@ -984,7 +992,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable, Callback)}
      * to send and modify error reports
      */
-    public void notifyBlocking(@NonNull Throwable exception, 
+    public void notifyBlocking(@NonNull Throwable exception,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
@@ -1013,7 +1021,7 @@ public class Client extends Observable implements Observer {
      * modify error reports
      */
     @Deprecated
-    public void notify(@NonNull Throwable exception, Severity severity, 
+    public void notify(@NonNull Throwable exception, Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .metaData(metaData)
@@ -1033,7 +1041,7 @@ public class Client extends Observable implements Observer {
      * and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception, Severity severity, 
+    public void notifyBlocking(@NonNull Throwable exception, Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .metaData(metaData)
@@ -1055,7 +1063,7 @@ public class Client extends Observable implements Observer {
      * to send and modify error reports
      */
     @Deprecated
-    public void notify(@NonNull String name, @NonNull String message, 
+    public void notify(@NonNull String name, @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace, Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message, stacktrace)
