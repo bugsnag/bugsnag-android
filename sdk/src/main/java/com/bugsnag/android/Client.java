@@ -195,8 +195,6 @@ public class Client extends Observable implements Observer {
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
-
-        Logger.warn("Launch time: " + (new Date().getTime() - launchTimeMs));
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
