@@ -48,7 +48,7 @@ final class HandledState implements JsonStream.Streamable {
         if (severityReasonType.equals(REASON_STRICT_MODE) && TextUtils.isEmpty(attributeValue)) {
             throw new IllegalArgumentException("No reason supplied for strictmode");
         }
-        if (!severityReasonType.equals(REASON_STRICT_MODE) && !TextUtils.isEmpty(attributeValue)) {
+        if (!(severityReasonType.equals(REASON_STRICT_MODE) || severityReasonType.equals(REASON_LOG)) && !TextUtils.isEmpty(attributeValue)) {
             throw new IllegalArgumentException("attributeValue should not be supplied");
         }
 
@@ -64,7 +64,7 @@ final class HandledState implements JsonStream.Streamable {
             case REASON_PROMISE_REJECTION:
                 return new HandledState(severityReasonType, Severity.ERROR, true, null);
             case REASON_LOG:
-                return new HandledState(severityReasonType, severity, false, null);
+                return new HandledState(severityReasonType, severity, false, attributeValue);
             default:
                 String msg = String.format("Invalid argument '%s' for severityReason",
                     severityReasonType);
@@ -107,9 +107,22 @@ final class HandledState implements JsonStream.Streamable {
         writer.beginObject().name("type").value(calculateSeverityReasonType());
 
         if (attributeValue != null) {
-            writer.name("attributes").beginObject()
-                .name("violationType").value(attributeValue)
-                .endObject();
+            String attributeKey = null;
+            switch (severityReasonType) {
+                case REASON_LOG:
+                    attributeKey = "level";
+                    break;
+                case REASON_STRICT_MODE:
+                    attributeKey = "violationType";
+                    break;
+                default:
+                    break;
+            }
+            if (attributeKey != null) {
+                writer.name("attributes").beginObject()
+                    .name(attributeKey).value(attributeValue)
+                    .endObject();
+            }
         }
         writer.endObject();
     }

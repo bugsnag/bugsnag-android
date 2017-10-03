@@ -123,6 +123,7 @@ public class ErrorTest {
         Error err = new Error.Builder(config, new RuntimeException())
             .severityReasonType(HandledState.REASON_LOG)
             .severity(Severity.WARNING)
+            .attributeValue("warning")
             .build();
 
         JSONObject errorJson = streamableToJson(err);
@@ -133,7 +134,10 @@ public class ErrorTest {
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
         assertEquals(HandledState.REASON_LOG, severityReason.getString("type"));
-        validateEmptyAttributes(severityReason);
+        JSONObject attributes = severityReason.getJSONObject("attributes");
+        assertNotNull(attributes);
+        assertEquals(1, attributes.length());
+        assertEquals("warning", attributes.getString("level"));
     }
 
     @Test
@@ -153,7 +157,7 @@ public class ErrorTest {
     public void testStrictModeSerialisation() throws Exception {
         Error err = new Error.Builder(config, new RuntimeException())
             .severityReasonType(HandledState.REASON_STRICT_MODE)
-            .strictModeValue("Test")
+            .attributeValue("Test")
             .build();
 
         JSONObject errorJson = streamableToJson(err);
