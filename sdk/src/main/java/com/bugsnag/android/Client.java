@@ -696,8 +696,9 @@ public class Client extends Observable implements Observer {
                               Map<String, Object> clientData,
                               boolean blocking,
                               Callback callback) {
-        String severity = getKeyFromClientData(clientData, "severity");
-        String severityReason = getKeyFromClientData(clientData, "severityReason");
+        String severity = getKeyFromClientData(clientData, "severity", true);
+        String severityReason = getKeyFromClientData(clientData, "severityReason", true);
+        String logLevel = getKeyFromClientData(clientData, "logLevel", false);
 
         String msg = String.format("Internal client notify, severity = '%s'," +
             " severityReason = '%s'", severity, severityReason);
@@ -707,6 +708,7 @@ public class Client extends Observable implements Observer {
         Error error = new Error.Builder(config, exception)
             .severity(Severity.fromString(severity))
             .severityReasonType(severityReason)
+            .attributeValue(logLevel)
             .build();
 
         DeliveryStyle deliveryStyle = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
@@ -714,13 +716,14 @@ public class Client extends Observable implements Observer {
     }
 
     @NonNull
-    private String getKeyFromClientData(Map<String, Object> clientData, String key) {
+    private String getKeyFromClientData(Map<String, Object> clientData, String key, boolean required) {
         Object value = clientData.get(key);
         if (value instanceof String) {
              return (String) value;
-        } else {
+        } else if (required) {
             throw new IllegalStateException("Failed to set " + key + " in client data!");
         }
+        return null;
     }
 
     /**
@@ -921,12 +924,12 @@ public class Client extends Observable implements Observer {
      */
     void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData,
                         @HandledState.SeverityReason String severityReason,
-                        @Nullable String strictModeValue) {
+                        @Nullable String attributeValue) {
         Error error = new Error.Builder(config, exception)
             .severity(severity)
             .metaData(metaData)
             .severityReasonType(severityReason)
-            .strictModeValue(strictModeValue)
+            .attributeValue(attributeValue)
             .build();
 
         notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
@@ -967,7 +970,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable, Callback)}
      * to send and modify error reports
      */
-    public void notify(@NonNull Throwable exception, 
+    public void notify(@NonNull Throwable exception,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .metaData(metaData)
@@ -984,7 +987,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable, Callback)}
      * to send and modify error reports
      */
-    public void notifyBlocking(@NonNull Throwable exception, 
+    public void notifyBlocking(@NonNull Throwable exception,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
@@ -1013,7 +1016,7 @@ public class Client extends Observable implements Observer {
      * modify error reports
      */
     @Deprecated
-    public void notify(@NonNull Throwable exception, Severity severity, 
+    public void notify(@NonNull Throwable exception, Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .metaData(metaData)
@@ -1033,7 +1036,7 @@ public class Client extends Observable implements Observer {
      * and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception, Severity severity, 
+    public void notifyBlocking(@NonNull Throwable exception, Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception)
             .metaData(metaData)
@@ -1055,7 +1058,7 @@ public class Client extends Observable implements Observer {
      * to send and modify error reports
      */
     @Deprecated
-    public void notify(@NonNull String name, @NonNull String message, 
+    public void notify(@NonNull String name, @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace, Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message, stacktrace)

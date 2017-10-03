@@ -313,7 +313,7 @@ public class Error implements JsonStream.Streamable {
         private final Throwable exception;
         private Severity severity = Severity.WARNING;
         private MetaData metaData;
-        private String strictModeValue;
+        private String attributeValue;
 
         @HandledState.SeverityReason
         private String severityReasonType;
@@ -334,8 +334,8 @@ public class Error implements JsonStream.Streamable {
             return this;
         }
 
-        Builder strictModeValue(String value) {
-            this.strictModeValue = value;
+        Builder attributeValue(String value) {
+            this.attributeValue = value;
             return this;
         }
 
@@ -351,7 +351,7 @@ public class Error implements JsonStream.Streamable {
 
         Error build() {
             HandledState handledState =
-                HandledState.newInstance(severityReasonType, severity, strictModeValue);
+                HandledState.newInstance(severityReasonType, severity, attributeValue);
             Error error = new Error(config, exception, handledState, severity);
 
             if (metaData != null) {
