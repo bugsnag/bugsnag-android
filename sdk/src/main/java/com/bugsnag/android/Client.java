@@ -179,7 +179,15 @@ public class Client extends Observable implements Observer {
         }
 
         // register a receiver for automatic breadcrumbs
-        appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
+
+        Async.run(new Runnable() {
+            @Override
+            public void run() {
+                appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
+                appContext.registerReceiver(new ConnectivityChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+            }
+        });
+
         config.addObserver(this);
 
         // Flush any on-disk errors
@@ -187,8 +195,6 @@ public class Client extends Observable implements Observer {
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
-
-        appContext.registerReceiver(new ConnectivityChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {

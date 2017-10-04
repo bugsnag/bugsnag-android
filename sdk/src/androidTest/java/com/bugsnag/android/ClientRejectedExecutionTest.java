@@ -40,6 +40,7 @@ public class ClientRejectedExecutionTest {
     @After
     public void tearDown() throws Exception {
         FileUtils.clearFilesInDir(errorStorageDir);
+        Async.POOL_WORK_QUEUE.clear();
     }
 
     /**

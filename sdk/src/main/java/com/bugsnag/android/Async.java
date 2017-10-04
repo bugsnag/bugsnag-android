@@ -19,7 +19,7 @@ class Async {
     private static final int CORE_POOL_SIZE = Math.max(1, Math.min(CPU_COUNT - 1, 4));
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
     private static final int KEEP_ALIVE_SECONDS = 30;
-    private static final BlockingQueue<Runnable> POOL_WORK_QUEUE =
+    static final BlockingQueue<Runnable> POOL_WORK_QUEUE =
         new LinkedBlockingQueue<>(128);
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
         private final AtomicInteger count = new AtomicInteger(1);
@@ -36,4 +36,5 @@ class Async {
     static void run(@NonNull Runnable task) throws RejectedExecutionException {
         EXECUTOR.execute(task);
     }
+
 }
