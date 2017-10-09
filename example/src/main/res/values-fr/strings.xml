@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="unhandled_exceptions">FR</string>
+  <string name="trigger_fatal_crash">FR</string>
+
+  <string name="handled_exceptions">FR</string>
+  <string name="trigger_nonfatal_crash">FR</string>
+  <string name="custom_severity">FR</string>
+
+  <string name="enhancing_error_reports">FR</string>
+  <string name="crash_user_details">FR</string>
+  <string name="crash_with_metadata">FR</string>
+  <string name="crash_with_breadcrumbs">FR</string>
+  <string name="crash_custom_report">FR</string>
+
+  <string name="documentation">FR</string>
+  <string name="read_the_docs">FR</string>
+  <string name="app_name">FR</string>
+</resources>
