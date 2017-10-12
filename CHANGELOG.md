@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.1.1 (2017-10-12)
+- Performance improvements to reduce execution time of `Bugsnag.init`
+
 ## 4.1.0 (2017-10-02)
 - The SDK now automatically tracks whether an error is handled or unhandled.
 - Fix for NPE in MetaData callback [Boris](https://github.com/borhub)
