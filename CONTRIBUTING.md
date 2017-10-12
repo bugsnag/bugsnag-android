@@ -100,7 +100,7 @@ This process is a little ridiculous...
     ensuring both kinds of reports are sent.
 -   Update the `CHANGELOG` and `README.md` with any new features
 
--   Update the version numbers in `gradle.properties` and `src/main/java/com/bugsnag/android/Notifier.java`
+-   Update the version number by running make VERSION=[number] bump
 
 -   Commit and tag the release
 
