@@ -2,10 +2,10 @@ buildscript {
     repositories {
         jcenter()
         google()
-//        mavenLocal()
+        mavenLocal()
     }
     dependencies {
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta5'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -38,6 +38,8 @@ android {
         ]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    flavorDimensions "red"
 
     buildTypes {
         debug {
