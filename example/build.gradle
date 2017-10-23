@@ -5,7 +5,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta5'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta6'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -27,7 +27,7 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
 
         manifestPlaceholders = [
-            bugsnagApiKey                    : "066f5ad3590596f9aa8d601ea89af845",
+            bugsnagApiKey                    : "5e31163b19d60ba4df10a65503b6b18e",
             bugsnagBuildUUID                 : "abc123",
             bugsnagAppVersion                : "1.0.0",
             bugsnagEndpoint                  : "https://notify.bugsnag.com",
@@ -39,8 +39,6 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    flavorDimensions "red"
-
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -51,6 +49,25 @@ android {
         }
     }
 
+
+    // Disabled for now - https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
+    splits {
+        density {
+          enable true
+          reset()
+          include "mdpi", "hdpi"//, "xhdpi", "xxhdpi", "xxxhdpi"
+        }
+        abi {
+          enable true
+          reset()
+          include 'armeabi-v7a', 'x86'
+          universalApk true
+        }
+    }
+
+
+    flavorDimensions "regular"
+
     productFlavors {
         javaExample {
             applicationIdSuffix ".java"
@@ -59,21 +76,26 @@ android {
             applicationIdSuffix ".kotlin"
         }
     }
+    lintOptions {
+        disable 'OnClick'
+        abortOnError true
+    }
+    buildToolsVersion '26.0.2'
 }
 
 dependencies {
-    compile project(":sdk")
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile "com.android.support:support-v4:$supportLibVersion"
-    kotlinExampleCompile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation project(":sdk")
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
+    kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
-    androidTestCompile "com.android.support.test:runner:$supportTestVersion", {
+    androidTestImplementation "com.android.support.test:runner:$supportTestVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile "com.android.support.test:rules:$supportTestVersion", {
+    androidTestImplementation "com.android.support.test:rules:$supportTestVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion", {
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 }

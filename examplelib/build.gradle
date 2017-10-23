@@ -7,7 +7,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta5'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta6'
     }
 }
 
@@ -26,7 +26,6 @@ android {
         }
     }
 }
-
 
 apply plugin: 'com.bugsnag.android.gradle'
 
