@@ -19,7 +19,8 @@ class ExampleActivity : AppCompatActivity() {
         setupToolbarLogo()
         performAdditionalBugsnagSetup()
 
-        findViewById(R.id.btn_fatal_crash).setOnClickListener { it -> crashUnhandled(it) }
+        val view: View = findViewById(R.id.btn_fatal_crash)
+        view.setOnClickListener { it -> crashUnhandled(it) }
     }
 
     private fun performAdditionalBugsnagSetup() {
