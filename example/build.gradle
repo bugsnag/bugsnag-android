@@ -69,7 +69,6 @@ android {
         disable 'OnClick'
         abortOnError true
     }
-    buildToolsVersion '26.0.2'
 }
 
 dependencies {
