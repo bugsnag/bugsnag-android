@@ -5,7 +5,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta3'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta5'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -15,6 +15,7 @@ apply plugin: 'kotlin-android'
 
 repositories {
     jcenter()
+    google()
 }
 
 android {
@@ -48,21 +49,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
         }
     }
-//    splits {
-//        density {
-//            enable true
-//        }
-//    }
-//        abi {
-//            enable true
-//            reset()
-//            include "x86", "mips"
-//        }
-//        language {
-//            enable true
-//            include "en"
-////        }
-//    }
+    splits {
+        density {
+            enable true
+        }
+    }
 
     flavorDimensions "regular"
 
