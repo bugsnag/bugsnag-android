@@ -33,7 +33,7 @@ class IOUtils {
     public static int copy(@NonNull final Reader input, @NonNull final Writer output) throws IOException {
         char[] buffer = new char[DEFAULT_BUFFER_SIZE];
         long count = 0;
-        int n = 0;
+        int n;
         while (EOF != (n = input.read(buffer))) {
             output.write(buffer, 0, n);
             count += n;

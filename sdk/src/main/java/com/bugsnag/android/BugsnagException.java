@@ -8,7 +8,7 @@ public class BugsnagException extends Throwable {
     /**
      * The name of the exception (used instead of the exception class)
      */
-    private String name;
+    private final String name;
 
     /**
      * Constructor

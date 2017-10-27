@@ -28,6 +28,7 @@ public class Notifier implements JsonStream.Streamable {
         this.url = NOTIFIER_URL;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("name").value(name);

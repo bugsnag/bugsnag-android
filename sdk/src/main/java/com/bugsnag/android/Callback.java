@@ -11,5 +11,5 @@ package com.bugsnag.android;
  */
 public interface Callback {
 
-    public abstract void beforeNotify(Report report);
+    void beforeNotify(Report report);
 }

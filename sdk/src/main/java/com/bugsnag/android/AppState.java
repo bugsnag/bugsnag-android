@@ -30,9 +30,6 @@ class AppState implements JsonStream.Streamable {
     @Nullable
     private final Boolean lowMemory;
 
-    static void init() {
-    }
-
     AppState(@NonNull Context appContext) {
         duration = getDuration();
         inForeground = isInForeground(appContext);
@@ -41,6 +38,7 @@ class AppState implements JsonStream.Streamable {
         lowMemory = isLowMemory(appContext);
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
