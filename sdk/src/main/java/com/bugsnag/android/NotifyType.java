@@ -16,7 +16,7 @@ public enum NotifyType {
     BREADCRUMB(8),
     META(9);
 
-    private Integer intValue;
+    private final Integer intValue;
 
     NotifyType(Integer intValue) {
         this.intValue = intValue;

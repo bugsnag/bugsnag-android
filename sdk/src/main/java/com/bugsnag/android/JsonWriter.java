@@ -219,7 +219,7 @@ public class JsonWriter implements Closeable {
     @Nullable
     private final Writer out;
 
-    private final List<JsonScope> stack = new ArrayList<JsonScope>();
+    private final List<JsonScope> stack = new ArrayList<>();
 
     {
         stack.add(JsonScope.EMPTY_DOCUMENT);

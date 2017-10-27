@@ -85,7 +85,7 @@ class DeviceState implements JsonStream.Streamable {
      */
     @Nullable
     private static String getOrientation(@NonNull Context appContext) {
-        String orientation = null;
+        String orientation;
         switch (appContext.getResources().getConfiguration().orientation) {
             case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
                 orientation = "landscape";

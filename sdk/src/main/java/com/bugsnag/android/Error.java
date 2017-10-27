@@ -26,7 +26,7 @@ public class Error implements JsonStream.Streamable {
     private DeviceState deviceState;
     private Breadcrumbs breadcrumbs;
     private User user;
-    private Throwable exception;
+    private final Throwable exception;
     private Severity severity = Severity.WARNING;
     @NonNull private MetaData metaData = new MetaData();
     private String groupingHash;
