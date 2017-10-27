@@ -120,7 +120,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     @NonNull
     static MetaData merge(@NonNull MetaData... metaDataList) {
-        ArrayList<Map<String, Object>> stores = new ArrayList<>();
+        List<Map<String, Object>> stores = new ArrayList<>();
         List<String> filters = new ArrayList<>();
         for (MetaData metaData : metaDataList) {
             if (metaData != null) {
