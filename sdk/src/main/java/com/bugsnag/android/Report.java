@@ -34,6 +34,7 @@ public class Report implements JsonStream.Streamable {
         this.notifier = Notifier.getInstance();
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Create a JSON stream and top-level object
         writer.beginObject();

@@ -16,6 +16,7 @@ class Exceptions implements JsonStream.Streamable {
         this.exception = exception;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 

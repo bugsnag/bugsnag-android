@@ -20,6 +20,7 @@ class ThreadState implements JsonStream.Streamable {
         this.config = config;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         long currentId = Thread.currentThread().getId();
         Map<Thread, StackTraceElement[]> liveThreads = Thread.getAllStackTraces();

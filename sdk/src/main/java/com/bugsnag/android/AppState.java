@@ -41,6 +41,7 @@ class AppState implements JsonStream.Streamable {
         lowMemory = isLowMemory(appContext);
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 

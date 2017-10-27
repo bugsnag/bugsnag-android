@@ -40,6 +40,7 @@ public class Error implements JsonStream.Streamable {
         this.severity = severity;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.getMetaData(), metaData);

@@ -99,6 +99,7 @@ class CustomException extends Exception implements JsonStream.Streamable {
         super(message);
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("errorClass").value("CustomizedException");

@@ -17,6 +17,7 @@ class Stacktrace implements JsonStream.Streamable {
         this.stacktrace = stacktrace;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 

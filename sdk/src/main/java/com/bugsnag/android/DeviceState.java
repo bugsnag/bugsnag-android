@@ -53,6 +53,7 @@ class DeviceState implements JsonStream.Streamable {
         time = getTime();
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 

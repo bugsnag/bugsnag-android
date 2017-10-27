@@ -53,6 +53,7 @@ class DeviceData implements JsonStream.Streamable {
         cpuAbi = getCpuAbi();
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
