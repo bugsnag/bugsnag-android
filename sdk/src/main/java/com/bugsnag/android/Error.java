@@ -281,6 +281,15 @@ public class Error implements JsonStream.Streamable {
         return exception;
     }
 
+    /**
+     * Sets the device ID. This can be set to null for privacy concerns.
+     *
+     * @param id the device id
+     */
+    public void setDeviceId(@Nullable String id) {
+        deviceData.id = id;
+    }
+
     void setAppData(AppData appData) {
         this.appData = appData;
     }
