@@ -11,9 +11,6 @@ clean:
 test:
 	./gradlew :connectedCheck
 
-release:
-	./gradlew clean :uploadArchives
-
 bump:
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number bump`)
@@ -24,4 +21,10 @@ endif
 	 sdk/src/main/java/com/bugsnag/android/Notifier.java
 
 
-
+# Makes a release
+release:
+ifeq ($(VERSION),)g
+	@$(error VERSION is not defined. Run with `make VERSION=number release`)
+endif
+	make VERSION=$(VERSION) bump && git commit -am "v$(VERSION)" && git tag v$(VERSION) \
+	&& git push origin && git push --tags && ./gradlew clean :uploadArchives
