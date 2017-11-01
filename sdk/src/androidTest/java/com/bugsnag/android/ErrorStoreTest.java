@@ -108,8 +108,8 @@ public class ErrorStoreTest {
         assertFalse(file.length() <= 0);
 
         // ensure the file can be serialised into JSON report
-        JSONObject memory = getJsonObjectFromReport(new Report("abc", file));
-        JSONObject disk = getJsonObjectFromReport(new Report("abc", error));
+        JSONObject memory = getJsonObjectFromReport(new Report(file));
+        JSONObject disk = getJsonObjectFromReport(new Report(error));
 
         // validate info
         validateReportPayload(memory);
@@ -118,7 +118,7 @@ public class ErrorStoreTest {
 
     static void validateReportPayload(JSONObject payload) throws JSONException {
         assertNotNull(payload);
-        assertEquals(3, payload.length());
+        assertEquals(2, payload.length());
 
         JSONArray events = payload.getJSONArray("events");
         assertNotNull(events);

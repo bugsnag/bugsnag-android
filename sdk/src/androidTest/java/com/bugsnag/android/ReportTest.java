@@ -20,28 +20,19 @@ import static org.junit.Assert.assertEquals;
 public class ReportTest {
 
     private Report report;
+    private Configuration config;
 
     @Before
     public void setUp() throws Exception {
-        Configuration config = new Configuration("example-api-key");
+        config = new Configuration("example-api-key");
         Error error = new Error.Builder(config, new RuntimeException("Something broke")).build();
-        report = new Report(config.getApiKey(), error);
+        report = new Report(error);
     }
 
     @Test
     public void testInMemoryError() throws JSONException, IOException {
         JSONObject reportJson = streamableToJson(report);
-        assertEquals("example-api-key", reportJson.get("apiKey"));
         assertEquals(1, reportJson.getJSONArray("events").length());
-    }
-
-    @Test
-    public void testModifyingAPIKey() throws JSONException, IOException {
-        String apiKey = "other-api-key";
-        report.setApiKey(apiKey);
-
-        JSONObject reportJson = streamableToJson(report);
-        assertEquals(apiKey, reportJson.get("apiKey"));
     }
 
     @Test

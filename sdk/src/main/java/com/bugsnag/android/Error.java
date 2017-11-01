@@ -16,7 +16,6 @@ import java.io.IOException;
  * @see BeforeNotify
  */
 public class Error implements JsonStream.Streamable {
-    private static final String PAYLOAD_VERSION = "3";
 
     @NonNull
     final Configuration config;
@@ -47,7 +46,6 @@ public class Error implements JsonStream.Streamable {
 
         // Write error basics
         writer.beginObject();
-        writer.name("payloadVersion").value(PAYLOAD_VERSION);
         writer.name("context").value(getContext());
         writer.name("metaData").value(mergedMetaData);
 

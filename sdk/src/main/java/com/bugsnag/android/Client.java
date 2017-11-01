@@ -893,7 +893,7 @@ public class Client extends Observable implements Observer {
         }
 
         // Build the report
-        Report report = new Report(config.getApiKey(), error);
+        Report report = new Report(error);
 
         if (callback != null) {
             callback.beforeNotify(report);

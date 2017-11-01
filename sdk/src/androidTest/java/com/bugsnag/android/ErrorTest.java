@@ -58,8 +58,6 @@ public class ErrorTest {
     public void testBasicSerialization() throws JSONException, IOException {
         JSONObject errorJson = streamableToJson(error);
         assertEquals("warning", errorJson.get("severity"));
-
-        assertEquals("3", errorJson.get("payloadVersion"));
         assertNotNull(errorJson.get("severity"));
         assertNotNull(errorJson.get("metaData"));
         assertNotNull(errorJson.get("threads"));

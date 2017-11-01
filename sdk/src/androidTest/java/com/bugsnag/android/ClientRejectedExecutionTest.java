@@ -60,7 +60,7 @@ public class ClientRejectedExecutionTest {
         assertTrue(files.length > 0);
         File errorFile = files[0];
 
-        JSONObject payload = ErrorStoreTest.getJsonObjectFromReport(new Report("api", errorFile));
+        JSONObject payload = ErrorStoreTest.getJsonObjectFromReport(new Report(errorFile));
         ErrorStoreTest.validateReportPayload(payload);
     }
 }
