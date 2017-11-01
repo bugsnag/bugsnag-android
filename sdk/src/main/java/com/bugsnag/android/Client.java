@@ -74,6 +74,7 @@ public class Client extends Observable implements Observer {
     private final long launchTimeMs;
 
     private final EventReceiver eventReceiver = new EventReceiver();
+    private final SessionTracker sessionTracker = new SessionTracker();
     private ErrorReportApiClient errorReportApiClient;
 
     /**
@@ -291,6 +292,17 @@ public class Client extends Observable implements Observer {
         config.setPersistUserBetweenSessions(data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
         config.setEnableExceptionHandler(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
         return config;
+    }
+
+    /**
+     * Manually starts tracking a new session.
+     *
+     * Automatic session tracking can be enabled via
+     * {@link Configuration#setAutoCaptureSessions(boolean)}, which will automatically create a new
+     * session everytime the app enters the foreground.
+     */
+    public void startSession() {
+        sessionTracker.startNewSession(new Date(), user);
     }
 
     /**

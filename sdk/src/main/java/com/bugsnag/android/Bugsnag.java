@@ -576,6 +576,17 @@ public final class Bugsnag {
     }
 
     /**
+     * Manually starts tracking a new session.
+     *
+     * Automatic session tracking can be enabled via
+     * {@link Configuration#setAutoCaptureSessions(boolean)}, which will automatically create a new
+     * session everytime the app enters the foreground.
+     */
+    public static void startSession() {
+        getClient().startSession();
+    }
+
+    /**
      * Get the current Bugsnag Client instance.
      */
     @NonNull
