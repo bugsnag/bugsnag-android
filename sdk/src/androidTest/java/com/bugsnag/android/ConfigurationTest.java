@@ -88,4 +88,9 @@ public class ConfigurationTest {
         config.setLaunchCrashThresholdMs(expected);
         assertEquals(expected, config.getLaunchCrashThresholdMs());
     }
+
+    @Test
+    public void testDefaults() throws Exception {
+        assertFalse(config.shouldAutoCaptureSessions());
+    }
 }

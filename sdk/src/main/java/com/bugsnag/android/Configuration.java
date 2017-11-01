@@ -34,11 +34,13 @@ public class Configuration extends Observable implements Observer {
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
+    private boolean autoCaptureSessions = false;
 
     @NonNull
     String defaultExceptionType = "android";
 
-    @NonNull private MetaData metaData;
+    @NonNull
+    private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
 
     /**
@@ -305,7 +307,28 @@ public class Configuration extends Observable implements Observer {
         this.enableExceptionHandler = enableExceptionHandler;
     }
 
-    /*
+    /**
+     * Get whether or not User sessions are captured automatically.
+     *
+     * @return true if sessions are captured automatically
+     */
+    public boolean shouldAutoCaptureSessions() {
+        return autoCaptureSessions;
+    }
+
+    /**
+     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
+     * the app enters the foreground.
+     * <p>
+     * By default this behavior is disabled.
+     *
+     * @param autoCapture whether sessions should be captured automatically
+     */
+    public void setAutoCaptureSessions(boolean autoCapture) {
+        this.autoCaptureSessions = autoCapture;
+    }
+
+    /**
      * Gets any meta data associated with the error
      *
      * @return meta data
