@@ -9,22 +9,43 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 class SessionTracker {
 
-    private Session currentSession;
+    private final Object lock = new Object();
     private final Queue<Session> sessionQueue = new ConcurrentLinkedQueue<>();
-
-    @Nullable Session getCurrentSession() {
-        return currentSession;
-    }
+    private Session currentSession;
 
     void startNewSession(Date date, User user) {
-        Session session = new Session();
-        session.setId(UUID.randomUUID().toString());
-        session.setStartedAt(date);
-        session.setUser(user);
+        synchronized (lock) {
+            Session session = new Session();
+            session.setId(UUID.randomUUID().toString());
+            session.setStartedAt(date);
+            session.setUser(user);
 
-        // TODO handle sending/storing sessions here!
-        sessionQueue.add(session); // store previous session
-        currentSession = session;
+            // TODO handle sending/storing sessions here!
+            sessionQueue.add(session); // store previous session
+            currentSession = session;
+        }
+    }
+
+    @Nullable Session getCurrentSession() {
+        synchronized (lock) {
+            return currentSession;
+        }
+    }
+
+    void incrementUnhandledError() {
+        synchronized (lock) {
+            if (currentSession != null) {
+                currentSession.incrementUnhandledErrCount();
+            }
+        }
+    }
+
+    void incrementHandledError() {
+        synchronized (lock) {
+            if (currentSession != null) {
+                currentSession.incrementHandledErrCount();
+            }
+        }
     }
 
 }

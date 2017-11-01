@@ -316,6 +316,10 @@ public class Error implements JsonStream.Streamable {
         return config.shouldIgnoreClass(getExceptionName());
     }
 
+    HandledState getHandledState() {
+        return handledState;
+    }
+
     static class Builder {
         private final Configuration config;
         private final Throwable exception;

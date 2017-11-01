@@ -899,6 +899,14 @@ public class Client extends Observable implements Observer {
             callback.beforeNotify(report);
         }
 
+        HandledState handledState = report.getError().getHandledState();
+
+        if (handledState.isUnhandled()) {
+            sessionTracker.incrementHandledError();
+        } else {
+            sessionTracker.incrementUnhandledError();
+        }
+
         switch (style) {
             case SAME_THREAD:
                 deliver(report, error);

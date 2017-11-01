@@ -79,7 +79,6 @@ class DeviceData implements JsonStream.Streamable {
             writer.value(s);
         }
         writer.endArray();
-
         writer.endObject();
     }
 

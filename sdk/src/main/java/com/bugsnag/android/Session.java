@@ -7,6 +7,8 @@ class Session {
     private String id;
     private Date startedAt;
     private User user;
+    private int unhandledCount;
+    private int handledCount;
 
     public String getId() {
         return id;
@@ -30,5 +32,29 @@ class Session {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getUnhandledCount() {
+        return unhandledCount;
+    }
+
+    public void setUnhandledCount(int unhandledCount) {
+        this.unhandledCount = unhandledCount;
+    }
+
+    public int getHandledCount() {
+        return handledCount;
+    }
+
+    public void setHandledCount(int handledCount) {
+        this.handledCount = handledCount;
+    }
+
+    public void incrementHandledErrCount() {
+        handledCount++;
+    }
+
+    public void incrementUnhandledErrCount() {
+        unhandledCount++;
     }
 }
