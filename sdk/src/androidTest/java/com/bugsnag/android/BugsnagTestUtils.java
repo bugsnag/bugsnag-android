@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 
 import org.json.JSONArray;
@@ -39,7 +40,18 @@ final class BugsnagTestUtils {
     static Client generateClient() {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         client.setErrorReportApiClient(generateErrorReportApiClient());
+        client.setSessionTrackingApiClient(generateSessionTrackingApiClient());
         return client;
+    }
+
+    @NonNull
+    static SessionTrackingApiClient generateSessionTrackingApiClient() {
+        return new SessionTrackingApiClient() {
+            @Override
+            public void postSessionTrackingPayload(String urlString, SessionTrackingPayload payload, Map<String, String> headers) throws NetworkException, BadResponseException {
+
+            }
+        };
     }
 
     static ErrorReportApiClient generateErrorReportApiClient() { // no-op

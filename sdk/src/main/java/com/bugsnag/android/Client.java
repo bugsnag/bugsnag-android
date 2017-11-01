@@ -76,6 +76,7 @@ public class Client extends Observable implements Observer {
     private final EventReceiver eventReceiver = new EventReceiver();
     private final SessionTracker sessionTracker = new SessionTracker();
     private ErrorReportApiClient errorReportApiClient;
+    private SessionTrackingApiClient sessionTrackingApiClient;
 
     /**
      * Initialize a Bugsnag client
@@ -121,8 +122,11 @@ public class Client extends Observable implements Observer {
         launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
+
         ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        errorReportApiClient = new DefaultHttpClient(cm);
+        DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
+        errorReportApiClient = defaultHttpClient;
+        sessionTrackingApiClient = defaultHttpClient;
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -570,6 +574,14 @@ public class Client extends Observable implements Observer {
             throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
         }
         this.errorReportApiClient = errorReportApiClient;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
+        if (apiClient == null) {
+            throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");
+        }
+        this.sessionTrackingApiClient = apiClient;
     }
 
     /**

@@ -85,6 +85,7 @@ public class ClientTest {
 
         Client client = new Client(context, config);
         client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
+        client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
 
         // Notify should not crash
         client.notify(new RuntimeException("Testing"));
@@ -97,6 +98,7 @@ public class ClientTest {
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
         client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
+        client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
 
         final User user = new User();
 
