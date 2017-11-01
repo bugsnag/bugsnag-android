@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -38,7 +39,7 @@ public class CrashReportTest {
 
         Bugsnag.setErrorReportApiClient(new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+            public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
                 // no-op
             }
         });

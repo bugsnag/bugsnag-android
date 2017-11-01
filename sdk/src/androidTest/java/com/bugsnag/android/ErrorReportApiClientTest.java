@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -42,7 +44,7 @@ public class ErrorReportApiClientTest {
         private Report report;
 
         @Override
-        public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+        public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
             this.report = report;
         }
     }

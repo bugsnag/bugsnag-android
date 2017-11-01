@@ -919,14 +919,14 @@ public class Client extends Observable implements Observer {
 
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
-            errorReportApiClient.postReport(config.getEndpoint(), report);
+            errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
             Logger.info("Sent 1 new error to Bugsnag");
-        } catch (DefaultHttpClient.NetworkException e) {
+        } catch (NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
             // Save error to disk for later sending
             errorStore.write(error);
-        } catch (DefaultHttpClient.BadResponseException e) {
+        } catch (BadResponseException e) {
             Logger.info("Bad response when sending data to Bugsnag");
         } catch (Exception e) {
             Logger.warn("Problem sending error to Bugsnag", e);

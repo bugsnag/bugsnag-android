@@ -7,8 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
@@ -93,4 +96,20 @@ public class ConfigurationTest {
     public void testDefaults() throws Exception {
         assertFalse(config.shouldAutoCaptureSessions());
     }
+
+    @Test
+    public void testErrorApiHeaders() throws Exception {
+        Map<String, String> headers = config.getErrorApiHeaders();
+        assertEquals(config.getApiKey(), headers.get("Bugsnag-API-Key"));
+        assertNotNull(headers.get("Bugsnag-Payload-Version"));
+    }
+
+    @Test
+    public void testSessionApiHeaders() throws Exception {
+        Map<String, String> headers = config.getSessionApiHeaders();
+        assertEquals(config.getApiKey(), headers.get("Bugsnag-API-Key"));
+        assertNotNull(headers.get("Bugsnag-Sent-At"));
+        assertNotNull(headers.get("Bugsnag-Payload-Version"));
+    }
+
 }

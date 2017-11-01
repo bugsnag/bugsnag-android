@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 
 final class BugsnagTestUtils {
 
@@ -44,7 +45,7 @@ final class BugsnagTestUtils {
     static ErrorReportApiClient generateErrorReportApiClient() { // no-op
         return new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+            public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
 
             }
         };

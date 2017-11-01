@@ -5,6 +5,8 @@ import android.support.test.InstrumentationRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Map;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
@@ -26,7 +28,7 @@ public class NullMetadataTest {
         Bugsnag.init(InstrumentationRegistry.getContext(), config);
         Bugsnag.setErrorReportApiClient(new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+            public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
 
             }
         });

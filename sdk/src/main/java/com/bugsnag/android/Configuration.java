@@ -6,8 +6,11 @@ import android.support.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,6 +20,10 @@ import java.util.Observer;
  */
 public class Configuration extends Observable implements Observer {
     static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
+
+    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
+    private static final String HEADER_API_KEY = "Bugsnag-API-Key";
+    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
 
     @NonNull
     private final String apiKey;
@@ -413,6 +420,21 @@ public class Configuration extends Observable implements Observer {
         } else {
             this.launchCrashThresholdMs = launchCrashThresholdMs;
         }
+    }
+
+    Map<String, String>getErrorApiHeaders() {
+        Map<String, String> map = new HashMap<>();
+        map.put(HEADER_API_PAYLOAD_VERSION, "4");
+        map.put(HEADER_API_KEY, apiKey);
+        return map;
+    }
+
+    Map<String, String>getSessionApiHeaders() {
+        Map<String, String> map = new HashMap<>();
+        map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
+        map.put(HEADER_API_KEY, apiKey);
+        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toISO8601(new Date()));
+        return map;
     }
 
     /**

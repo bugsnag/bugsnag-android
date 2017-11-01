@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 class DefaultHttpClient implements ErrorReportApiClient {
 
@@ -18,7 +19,7 @@ class DefaultHttpClient implements ErrorReportApiClient {
     }
 
     @Override
-    public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+    public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
 
         if (!hasNetworkConnection()) { // conserve device battery by avoiding radio use
             throw new NetworkException(urlString, new RuntimeException("No network connection available"));
@@ -31,6 +32,10 @@ class DefaultHttpClient implements ErrorReportApiClient {
             conn.setDoOutput(true);
             conn.setChunkedStreamingMode(0);
             conn.addRequestProperty("Content-Type", "application/json");
+
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                conn.addRequestProperty(entry.getKey(), entry.getValue());
+            }
 
             OutputStream out = null;
             try {
