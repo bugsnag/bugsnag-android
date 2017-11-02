@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateSession;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +29,7 @@ public class ErrorTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        error = new Error.Builder(config, new RuntimeException("Example message")).build();
+        error = new Error.Builder(config, new RuntimeException("Example message"), null).build();
     }
 
     @Test
@@ -36,11 +37,11 @@ public class ErrorTest {
         config.setIgnoreClasses(new String[]{"java.io.IOException"});
 
         // Shouldn't ignore classes not in ignoreClasses
-        Error error = new Error.Builder(config, new RuntimeException("Test")).build();
+        Error error = new Error.Builder(config, new RuntimeException("Test"), null).build();
         assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
-        error = new Error.Builder(config, new java.io.IOException("Test")).build();
+        error = new Error.Builder(config, new java.io.IOException("Test"), null).build();
         assertTrue(error.shouldIgnoreClass());
     }
 
@@ -65,7 +66,7 @@ public class ErrorTest {
 
     @Test
     public void testHandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException())
+        Error err = new Error.Builder(config, new RuntimeException(), null)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
 
@@ -82,7 +83,7 @@ public class ErrorTest {
 
     @Test
     public void testUnhandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException())
+        Error err = new Error.Builder(config, new RuntimeException(), null)
             .severityReasonType(HandledState.REASON_UNHANDLED_EXCEPTION)
             .severity(Severity.ERROR)
             .build();
@@ -100,7 +101,7 @@ public class ErrorTest {
 
     @Test
     public void testPromiseRejectionSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException())
+        Error err = new Error.Builder(config, new RuntimeException(), null)
             .severityReasonType(HandledState.REASON_PROMISE_REJECTION)
             .severity(Severity.ERROR)
             .build();
@@ -118,7 +119,7 @@ public class ErrorTest {
 
     @Test
     public void testLogSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException())
+        Error err = new Error.Builder(config, new RuntimeException(), null)
             .severityReasonType(HandledState.REASON_LOG)
             .severity(Severity.WARNING)
             .attributeValue("warning")
@@ -153,7 +154,7 @@ public class ErrorTest {
 
     @Test
     public void testStrictModeSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException())
+        Error err = new Error.Builder(config, new RuntimeException(), null)
             .severityReasonType(HandledState.REASON_STRICT_MODE)
             .attributeValue("Test")
             .build();
@@ -212,6 +213,41 @@ public class ErrorTest {
 
         JSONObject errorJson = streamableToJson(error);
         assertEquals("info", errorJson.get("severity"));
+    }
+
+    @Test
+    public void testSessionIncluded() throws Exception {
+        Session session = generateSession();
+        Error err = new Error.Builder(config, new RuntimeException(), session).build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+
+        JSONObject sessionNode = errorJson.getJSONObject("session");
+        assertNotNull(sessionNode);
+        assertEquals(3, sessionNode.length());
+        assertEquals(session.getId(), sessionNode.getString("id"));
+        assertEquals(DateUtils.toISO8601(session.getStartedAt()), sessionNode.getString("startedAt"));
+
+        JSONObject eventsNode = sessionNode.getJSONObject("events");
+        assertNotNull(eventsNode);
+        assertEquals(2, eventsNode.length());
+        assertEquals(0, eventsNode.get("handled"));
+        assertEquals(0, eventsNode.get("handled"));
+    }
+
+    @Test
+    public void testSessionExcluded() throws Exception {
+        Error err = new Error.Builder(config, new RuntimeException(), null).build();
+
+        JSONObject errorJson = streamableToJson(err);
+        assertNotNull(errorJson);
+
+        try {
+            errorJson.getJSONObject("session");
+            fail("Should not serialise null session");
+        } catch (JSONException ignored) {
+        }
     }
 
     private void validateEmptyAttributes(JSONObject severityReason) {

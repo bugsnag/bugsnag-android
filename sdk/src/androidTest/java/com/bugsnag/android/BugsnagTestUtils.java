@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Map;
 
 final class BugsnagTestUtils {
@@ -42,6 +43,14 @@ final class BugsnagTestUtils {
         client.setErrorReportApiClient(generateErrorReportApiClient());
         client.setSessionTrackingApiClient(generateSessionTrackingApiClient());
         return client;
+    }
+
+    static Session generateSession() {
+        Session session = new Session();
+        session.setId("test");
+        session.setStartedAt(new Date());
+        session.setUser(new User());
+        return session;
     }
 
     @NonNull
