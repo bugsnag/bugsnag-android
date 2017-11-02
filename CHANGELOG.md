@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.1.2 (2017-11-02)
+- Allow setting device ID to null
+
 ## 4.1.1 (2017-10-12)
 - Performance improvements to reduce execution time of `Bugsnag.init`
 
