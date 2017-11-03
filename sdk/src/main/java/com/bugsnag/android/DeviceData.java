@@ -1,9 +1,18 @@
 package com.bugsnag.android;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Environment;
+import android.os.StatFs;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -11,6 +20,7 @@ import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -26,27 +36,32 @@ class DeviceData implements JsonStream.Streamable {
     private static final String INSTALL_ID_KEY = "install.iud";
 
     @Nullable
-    protected final Float screenDensity;
+    final Float screenDensity;
+
     @Nullable
-    protected final Integer dpi;
+    final Integer dpi;
+
     @Nullable
-    protected final String screenResolution;
+    final String screenResolution;
+    private Context appContext;
+
+    @Nullable
+    final Boolean rooted;
+
     @NonNull
-    protected final Long totalMemory;
-    @Nullable
-    protected final Boolean rooted;
-    @NonNull
-    protected final String locale;
+    final String locale;
+
     @Nullable
     protected String id;
+
     @NonNull
-    protected final String[] cpuAbi;
+    final String[] cpuAbi;
 
     DeviceData(@NonNull Context appContext, @NonNull SharedPreferences sharedPref) {
         screenDensity = getScreenDensity(appContext);
         dpi = getScreenDensityDpi(appContext);
         screenResolution = getScreenResolution(appContext);
-        totalMemory = getTotalMemory();
+        this.appContext = appContext;
         rooted = isRooted();
         locale = getLocale();
         id = retrieveUniqueInstallId(sharedPref);
@@ -57,24 +72,36 @@ class DeviceData implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
+        // SESSION API fields
         writer
-            .name("id").value(id)
             .name("jailbroken").value(rooted)
             .name("manufacturer").value(android.os.Build.MANUFACTURER)
             .name("model").value(android.os.Build.MODEL)
-
-            // TODO add modelNumber here
-
             .name("osName").value("android")
             .name("osVersion").value(android.os.Build.VERSION.RELEASE);
 
 
-        // TODO migrate these fields
+        // ERROR API fields
+        writer
+            .name("batteryLevel").value(getBatteryLevel(appContext))
+            .name("charging").value(isCharging(appContext))
+            .name("freeDisk").value(getFreeDisk())
+            .name("freeMemory").value(Runtime.getRuntime().freeMemory())
+            .name("id").value(id)
+            .name("totalMemory").value(getTotalMemory())
+            .name("locationStatus").value(getLocationStatus(appContext))
+            .name("orientation").value(getOrientation(appContext))
+            .name("networkAccess").value(getNetworkAccess(appContext))
+            .name("time").value(getTime());
+
+
+
+
+        // TODO migrate these fields to events[].metaData.device
         writer.name("brand").value(android.os.Build.BRAND);
         writer.name("apiLevel").value(android.os.Build.VERSION.SDK_INT);
         writer.name("osBuild").value(android.os.Build.DISPLAY);
         writer.name("locale").value(locale);
-        writer.name("totalMemory").value(totalMemory);
         writer.name("screenDensity").value(screenDensity);
         writer.name("dpi").value(dpi);
         writer.name("screenResolution").value(screenResolution);
@@ -88,7 +115,7 @@ class DeviceData implements JsonStream.Streamable {
     }
 
     @NonNull
-    public String getUserId() {
+    String getUserId() {
         return id;
     }
 
@@ -134,7 +161,7 @@ class DeviceData implements JsonStream.Streamable {
      * Get the total memory available on the current Android device, in bytes
      */
     @NonNull
-    private static Long getTotalMemory() {
+    static Long getTotalMemory() {
         if (Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
             return Runtime.getRuntime().maxMemory();
         } else {
@@ -229,4 +256,144 @@ class DeviceData implements JsonStream.Streamable {
             return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
         }
     }
+
+
+    /**
+     * Get the free disk space on the smallest disk
+     */
+    @Nullable
+    private static Long getFreeDisk() {
+        try {
+            StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+            long externalBytesAvailable = (long) externalStat.getBlockSize() * (long) externalStat.getBlockCount();
+
+            StatFs internalStat = new StatFs(Environment.getDataDirectory().getPath());
+            long internalBytesAvailable = (long) internalStat.getBlockSize() * (long) internalStat.getBlockCount();
+
+            return Math.min(internalBytesAvailable, externalBytesAvailable);
+        } catch (Exception e) {
+            Logger.warn("Could not get freeDisk");
+        }
+        return null;
+    }
+
+    /**
+     * Get the amount of memory remaining that the VM can allocate
+     */
+    @NonNull
+    private static Long getFreeMemory() {
+        if (Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
+            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
+        } else {
+            return Runtime.getRuntime().freeMemory();
+        }
+    }
+
+    /**
+     * Get the device orientation, eg. "landscape"
+     */
+    @Nullable
+    private static String getOrientation(@NonNull Context appContext) {
+        String orientation;
+        switch (appContext.getResources().getConfiguration().orientation) {
+            case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
+                orientation = "landscape";
+                break;
+            case android.content.res.Configuration.ORIENTATION_PORTRAIT:
+                orientation = "portrait";
+                break;
+            default:
+                orientation = null;
+                break;
+        }
+        return orientation;
+    }
+
+    /**
+     * Get the current battery charge level, eg 0.3
+     */
+    @Nullable
+    private static Float getBatteryLevel(@NonNull Context appContext) {
+        try {
+            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            Intent batteryStatus = appContext.registerReceiver(null, ifilter);
+
+            return batteryStatus.getIntExtra("level", -1) / (float) batteryStatus.getIntExtra("scale", -1);
+        } catch (Exception e) {
+            Logger.warn("Could not get batteryLevel");
+        }
+        return null;
+    }
+
+    /**
+     * Is the device currently charging/full battery?
+     */
+    @Nullable
+    private static Boolean isCharging(@NonNull Context appContext) {
+        try {
+            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            Intent batteryStatus = appContext.registerReceiver(null, ifilter);
+
+            int status = batteryStatus.getIntExtra("status", -1);
+            return (status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL);
+        } catch (Exception e) {
+            Logger.warn("Could not get charging status");
+        }
+        return null;
+    }
+
+    /**
+     * Get the current status of location services
+     */
+    @Nullable
+    private static String getLocationStatus(@NonNull Context appContext) {
+        try {
+            ContentResolver cr = appContext.getContentResolver();
+            String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            if (providersAllowed != null && providersAllowed.length() > 0) {
+                return "allowed";
+            } else {
+                return "disallowed";
+            }
+        } catch (Exception e) {
+            Logger.warn("Could not get locationStatus");
+        }
+        return null;
+    }
+
+    /**
+     * Get the current status of network access, eg "cellular"
+     */
+    @Nullable
+    private static String getNetworkAccess(@NonNull Context appContext) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                if (activeNetwork.getType() == 1) {
+                    return "wifi";
+                } else if (activeNetwork.getType() == 9) {
+                    return "ethernet";
+                } else {
+                    // We default to cellular as the other enums are all cellular in some
+                    // form or another
+                    return "cellular";
+                }
+            } else {
+                return "none";
+            }
+        } catch (Exception e) {
+            Logger.warn("Could not get network access information, we recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
+        }
+        return null;
+    }
+
+    /**
+     * Get the current time on the device, in ISO8601 format.
+     */
+    @NonNull
+    private String getTime() {
+        return DateUtils.toISO8601(new Date());
+    }
+
 }

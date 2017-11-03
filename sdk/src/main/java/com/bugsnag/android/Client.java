@@ -878,7 +878,6 @@ public class Client extends Observable implements Observer {
         error.setAppData(appData);
         error.setDeviceData(deviceData);
         error.setAppState(new AppState(appContext));
-        error.setDeviceState(new DeviceState(appContext));
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);

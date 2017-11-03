@@ -22,7 +22,6 @@ public class Error implements JsonStream.Streamable {
     private AppData appData;
     private DeviceData deviceData;
     private AppState appState;
-    private DeviceState deviceState;
     private Breadcrumbs breadcrumbs;
     private User user;
     private final Throwable exception;
@@ -74,7 +73,6 @@ public class Error implements JsonStream.Streamable {
         writer.name("app").value(appData);
         writer.name("appState").value(appState);
         writer.name("device").value(deviceData);
-        writer.name("deviceState").value(deviceState);
         writer.name("breadcrumbs").value(breadcrumbs);
         writer.name("groupingHash").value(groupingHash);
 
@@ -314,10 +312,6 @@ public class Error implements JsonStream.Streamable {
 
     void setAppState(AppState appState) {
         this.appState = appState;
-    }
-
-    void setDeviceState(DeviceState deviceState) {
-        this.deviceState = deviceState;
     }
 
     void setUser(User user) {

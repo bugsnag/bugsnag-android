@@ -119,7 +119,7 @@ public class NativeInterface {
     }
 
     public static double getDeviceTotalMemory() {
-        return getClient().deviceData.totalMemory;
+        return DeviceData.getTotalMemory();
     }
 
     @Nullable
