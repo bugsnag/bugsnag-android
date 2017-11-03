@@ -69,7 +69,25 @@ class DeviceData extends DeviceDataSummary {
 
         serialiseMinimalDeviceData(writer);
 
-        // ERROR API fields
+        // TODO serialise missing fields from Apiary, migrate metadata values
+
+//        "device": {
+//            "hostname": "web1.internal",
+//                "id": "fd124e87760c4281aef",
+//                "manufacturer": "LGE",
+//                "model": "Nexus 6P",
+//                "modelNumber": "600",
+//                "osName": "android",
+//                "osVersion": "8.0.1",
+//                "freeMemory": 183879616,
+//                "totalMemory": 201326592,
+//                "freeDisk": 13478064128,
+//                "browserName": "Chrome",
+//                "browserVersion": "61.0.3163.100",
+//                "jailbroken": false,
+//                "orientation": "portrait"
+//        },
+
         writer
             .name("batteryLevel").value(getBatteryLevel(appContext))
             .name("charging").value(isCharging(appContext))
@@ -81,14 +99,6 @@ class DeviceData extends DeviceDataSummary {
             .name("orientation").value(getOrientation(appContext))
             .name("networkAccess").value(getNetworkAccess(appContext))
             .name("time").value(getTime());
-
-        serialiseDeviceMetaData(writer);
-        writer.endArray();
-        writer.endObject();
-    }
-
-    private void serialiseDeviceMetaData(@NonNull JsonStream writer) throws IOException {
-        // TODO migrate these fields to events[].metaData.device (persistence serialisation issues)
 
         writer.name("brand").value(Build.BRAND);
         writer.name("apiLevel").value(Build.VERSION.SDK_INT);
@@ -102,6 +112,8 @@ class DeviceData extends DeviceDataSummary {
         for (String s : cpuAbi) {
             writer.value(s);
         }
+        writer.endArray();
+        writer.endObject();
     }
 
     @NonNull

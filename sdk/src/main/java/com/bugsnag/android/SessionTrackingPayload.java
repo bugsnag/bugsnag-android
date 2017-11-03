@@ -11,8 +11,10 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
     private final Notifier notifier;
     private final Collection<Session> sessions;
     private final DeviceDataSummary deviceDataSummary = new DeviceDataSummary();
+    private final AppDataSummary appDataSummary;
 
-    SessionTrackingPayload(Collection<Session> sessions) {
+    SessionTrackingPayload(Collection<Session> sessions, AppData appDataSummary) {
+        this.appDataSummary = appDataSummary;
         this.notifier = Notifier.getInstance();
         this.sessions = new ArrayList<>();
         this.sessions.addAll(sessions);
@@ -21,12 +23,10 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
+
         writer.name("notifier").value(notifier);
-
-        // TODO serialize app, device
-//        writer.name("app");
+        writer.name("app").value(appDataSummary);
         writer.name("device").value(deviceDataSummary);
-
         writer.name("sessions").beginArray();
 
         for (Session session : sessions) {

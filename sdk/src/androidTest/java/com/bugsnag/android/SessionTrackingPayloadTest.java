@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.test.InstrumentationRegistry;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -20,7 +22,8 @@ public class SessionTrackingPayloadTest {
     @Before
     public void setUp() throws Exception {
         session = generateSession();
-        SessionTrackingPayload payload = new SessionTrackingPayload(Collections.singleton(session));
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), new Configuration("a"));
+        SessionTrackingPayload payload = new SessionTrackingPayload(Collections.singleton(session), appData);
         rootNode = streamableToJson(payload);
     }
 

@@ -21,7 +21,6 @@ public class Error implements JsonStream.Streamable {
     final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
-    private AppState appState;
     private Breadcrumbs breadcrumbs;
     private User user;
     private final Throwable exception;
@@ -71,7 +70,6 @@ public class Error implements JsonStream.Streamable {
 
         // Write diagnostics
         writer.name("app").value(appData);
-        writer.name("appState").value(appState);
         writer.name("device").value(deviceData);
         writer.name("breadcrumbs").value(breadcrumbs);
         writer.name("groupingHash").value(groupingHash);
@@ -116,8 +114,8 @@ public class Error implements JsonStream.Streamable {
             return context;
         } else if (config.getContext() != null) {
             return config.getContext();
-        } else if (appState != null) {
-            return appState.getActiveScreenClass();
+        } else if (appData != null) {
+            return appData.getActiveScreenClass();
         } else {
             return null;
         }
@@ -308,10 +306,6 @@ public class Error implements JsonStream.Streamable {
 
     void setDeviceData(DeviceData deviceData) {
         this.deviceData = deviceData;
-    }
-
-    void setAppState(AppState appState) {
-        this.appState = appState;
     }
 
     void setUser(User user) {

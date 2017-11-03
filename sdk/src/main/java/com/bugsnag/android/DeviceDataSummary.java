@@ -23,7 +23,7 @@ class DeviceDataSummary implements JsonStream.Streamable {
             .name("jailbroken").value(rooted)
             .name("manufacturer").value(android.os.Build.MANUFACTURER)
             .name("model").value(android.os.Build.MODEL)
-            .name("osName").value("android") // TODO handle RN/Unity
+            .name("osName").value("android")
             .name("osVersion").value(android.os.Build.VERSION.RELEASE);
     }
 

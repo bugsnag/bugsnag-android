@@ -877,7 +877,6 @@ public class Client extends Observable implements Observer {
         // Capture the state of the app and device and attach diagnostics to the error
         error.setAppData(appData);
         error.setDeviceData(deviceData);
-        error.setAppState(new AppState(appContext));
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);

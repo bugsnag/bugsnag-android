@@ -14,6 +14,8 @@ import java.io.IOException;
 
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -38,6 +40,10 @@ public class AppDataTest {
         assertEquals("1.0", appDataJson.get("versionName"));
         assertEquals("1.0", appDataJson.get("version"));
         assertEquals("development", appDataJson.get("releaseStage"));
+
+        assertTrue(appDataJson.getLong("memoryUsage") > 0);
+        assertNotNull(appDataJson.getBoolean("lowMemory"));
+        assertTrue(appDataJson.getLong("duration") >= 0);
     }
 
     @Test
