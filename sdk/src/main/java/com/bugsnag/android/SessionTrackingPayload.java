@@ -10,6 +10,7 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
 
     private final Notifier notifier;
     private final Collection<Session> sessions;
+    private final DeviceDataSummary deviceDataSummary = new DeviceDataSummary();
 
     SessionTrackingPayload(Collection<Session> sessions) {
         this.notifier = Notifier.getInstance();
@@ -24,7 +25,7 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
 
         // TODO serialize app, device
 //        writer.name("app");
-//        writer.name("device");
+        writer.name("device").value(deviceDataSummary);
 
         writer.name("sessions").beginArray();
 

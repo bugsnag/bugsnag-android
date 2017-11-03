@@ -124,7 +124,7 @@ public class NativeInterface {
 
     @Nullable
     public static Boolean getDeviceRooted() {
-        return getClient().deviceData.rooted;
+        return DeviceDataSummary.isRooted();
     }
 
     public static float getDeviceScreenDensity() {

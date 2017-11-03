@@ -18,7 +18,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
@@ -31,7 +30,7 @@ import java.util.UUID;
  * App information in this class is cached during construction for faster
  * subsequent lookups and to reduce GC overhead.
  */
-class DeviceData implements JsonStream.Streamable {
+class DeviceData extends DeviceDataSummary {
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
@@ -44,9 +43,6 @@ class DeviceData implements JsonStream.Streamable {
     @Nullable
     final String screenResolution;
     private Context appContext;
-
-    @Nullable
-    final Boolean rooted;
 
     @NonNull
     final String locale;
@@ -62,7 +58,6 @@ class DeviceData implements JsonStream.Streamable {
         dpi = getScreenDensityDpi(appContext);
         screenResolution = getScreenResolution(appContext);
         this.appContext = appContext;
-        rooted = isRooted();
         locale = getLocale();
         id = retrieveUniqueInstallId(sharedPref);
         cpuAbi = getCpuAbi();
@@ -72,21 +67,14 @@ class DeviceData implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
-        // SESSION API fields
-        writer
-            .name("jailbroken").value(rooted)
-            .name("manufacturer").value(android.os.Build.MANUFACTURER)
-            .name("model").value(android.os.Build.MODEL)
-            .name("osName").value("android")
-            .name("osVersion").value(android.os.Build.VERSION.RELEASE);
-
+        serialiseMinimalDeviceData(writer);
 
         // ERROR API fields
         writer
             .name("batteryLevel").value(getBatteryLevel(appContext))
             .name("charging").value(isCharging(appContext))
             .name("freeDisk").value(getFreeDisk())
-            .name("freeMemory").value(Runtime.getRuntime().freeMemory())
+            .name("freeMemory").value(getFreeMemory())
             .name("id").value(id)
             .name("totalMemory").value(getTotalMemory())
             .name("locationStatus").value(getLocationStatus(appContext))
@@ -94,13 +82,17 @@ class DeviceData implements JsonStream.Streamable {
             .name("networkAccess").value(getNetworkAccess(appContext))
             .name("time").value(getTime());
 
+        serialiseDeviceMetaData(writer);
+        writer.endArray();
+        writer.endObject();
+    }
 
+    private void serialiseDeviceMetaData(@NonNull JsonStream writer) throws IOException {
+        // TODO migrate these fields to events[].metaData.device (persistence serialisation issues)
 
-
-        // TODO migrate these fields to events[].metaData.device
-        writer.name("brand").value(android.os.Build.BRAND);
-        writer.name("apiLevel").value(android.os.Build.VERSION.SDK_INT);
-        writer.name("osBuild").value(android.os.Build.DISPLAY);
+        writer.name("brand").value(Build.BRAND);
+        writer.name("apiLevel").value(Build.VERSION.SDK_INT);
+        writer.name("osBuild").value(Build.DISPLAY);
         writer.name("locale").value(locale);
         writer.name("screenDensity").value(screenDensity);
         writer.name("dpi").value(dpi);
@@ -110,8 +102,6 @@ class DeviceData implements JsonStream.Streamable {
         for (String s : cpuAbi) {
             writer.value(s);
         }
-        writer.endArray();
-        writer.endObject();
     }
 
     @NonNull
@@ -167,41 +157,6 @@ class DeviceData implements JsonStream.Streamable {
         } else {
             return Runtime.getRuntime().totalMemory();
         }
-    }
-
-    private static final String[] ROOT_INDICATORS = new String[]{
-        // Common binaries
-        "/system/xbin/su",
-        "/system/bin/su",
-        // < Android 5.0
-        "/system/app/Superuser.apk",
-        "/system/app/SuperSU.apk",
-        // >= Android 5.0
-        "/system/app/Superuser",
-        "/system/app/SuperSU",
-        // Fallback
-        "/system/xbin/daemonsu",
-        // Systemless root
-        "/su/bin"
-    };
-
-    /**
-     * Check if the current Android device is rooted
-     */
-    @Nullable
-    private static Boolean isRooted() {
-        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys"))
-            return true;
-
-        try {
-            for (String candidate : ROOT_INDICATORS) {
-                if (new File(candidate).exists())
-                    return true;
-            }
-        } catch (Exception ignore) {
-            return null;
-        }
-        return false;
     }
 
     /**
