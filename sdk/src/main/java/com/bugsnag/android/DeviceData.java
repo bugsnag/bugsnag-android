@@ -57,19 +57,24 @@ class DeviceData implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
-        writer.name("osName").value("android");
-        writer.name("manufacturer").value(android.os.Build.MANUFACTURER);
+        writer
+            .name("id").value(id)
+            .name("jailbroken").value(rooted)
+            .name("manufacturer").value(android.os.Build.MANUFACTURER)
+            .name("model").value(android.os.Build.MODEL)
+
+            // TODO add modelNumber here
+
+            .name("osName").value("android")
+            .name("osVersion").value(android.os.Build.VERSION.RELEASE);
+
+
+        // TODO migrate these fields
         writer.name("brand").value(android.os.Build.BRAND);
-        writer.name("model").value(android.os.Build.MODEL);
-        writer.name("id").value(id);
         writer.name("apiLevel").value(android.os.Build.VERSION.SDK_INT);
-        writer.name("osVersion").value(android.os.Build.VERSION.RELEASE);
         writer.name("osBuild").value(android.os.Build.DISPLAY);
-
         writer.name("locale").value(locale);
-
         writer.name("totalMemory").value(totalMemory);
-        writer.name("jailbroken").value(rooted);
         writer.name("screenDensity").value(screenDensity);
         writer.name("dpi").value(dpi);
         writer.name("screenResolution").value(screenResolution);

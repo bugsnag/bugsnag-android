@@ -48,17 +48,22 @@ class AppData implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
-        writer.name("id").value(packageName);
+        writer
+            .name("id").value(packageName)
+
+        // TODO "type"
+
+            .name("releaseStage").value(getReleaseStage())
+            .name("version").value(getAppVersion())
+            .name("versionCode").value(versionCode);
+        // TODO codeBundleId for React Native
+
+
+        // TODO migrate
         writer.name("name").value(appName);
         writer.name("packageName").value(packageName);
         writer.name("versionName").value(versionName);
-        writer.name("versionCode").value(versionCode);
         writer.name("buildUUID").value(config.getBuildUUID());
-
-        // Prefer user-configured appVersion + releaseStage
-        writer.name("version").value(getAppVersion());
-        writer.name("releaseStage").value(getReleaseStage());
-
         writer.endObject();
     }
 

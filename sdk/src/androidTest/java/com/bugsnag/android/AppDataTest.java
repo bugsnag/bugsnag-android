@@ -61,4 +61,5 @@ public class AppDataTest {
 
         assertEquals(releaseStage, appDataJson.get("releaseStage"));
     }
+
 }
