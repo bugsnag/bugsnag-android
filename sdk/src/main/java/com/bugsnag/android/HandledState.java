@@ -62,7 +62,7 @@ final class HandledState implements JsonStream.Streamable {
             case REASON_USER_SPECIFIED:
                 return new HandledState(severityReasonType, severity, false, null);
             case REASON_CALLBACK_SPECIFIED:
-                return new HandledState(severityReasonType, severity, false, attributeValue);
+                return new HandledState(severityReasonType, severity, false, null);
             case REASON_PROMISE_REJECTION:
                 return new HandledState(severityReasonType, Severity.ERROR, true, null);
             case REASON_LOG:
