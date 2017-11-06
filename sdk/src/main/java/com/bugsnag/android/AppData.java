@@ -25,8 +25,8 @@ class AppData extends AppDataSummary {
     @Nullable
     final String appName;
 
-    @NonNull
-    private final Long duration;
+    private final long duration;
+    private final long durationInForeground;
 
     @Nullable
     private final Boolean inForeground;
@@ -43,11 +43,13 @@ class AppData extends AppDataSummary {
     @NonNull
     protected final String packageName;
 
-    AppData(@NonNull Context appContext, @NonNull Configuration config) {
+    AppData(@NonNull Context appContext, @NonNull Configuration config, SessionTracker sessionTracker) {
         super(appContext, config);
         appName = getAppName(appContext);
         duration = getDuration();
-        inForeground = isInForeground(appContext); // TODO use lifecyclelogger instead
+        inForeground = sessionTracker.isInForeground();
+        durationInForeground = sessionTracker.getDurationInForeground();
+
         activeScreen = getActiveScreen(appContext);
         memoryUsage = getMemoryUsage();
         lowMemory = isLowMemory(appContext);
@@ -62,7 +64,7 @@ class AppData extends AppDataSummary {
         writer.name("id").value(packageName);
         writer.name("buildUUID").value(config.getBuildUUID());
         writer.name("duration").value(duration);
-        // TODO track durationInForeground
+        writer.name("durationInForeground").value(durationInForeground);
         writer.name("inForeground").value(inForeground);
 
 
@@ -148,32 +150,9 @@ class AppData extends AppDataSummary {
     }
 
     /**
-     * Get the name of the top-most activity. Requires the GET_TASKS permission,
-     * which defaults to true in Android 5.0+.
-     */
-    @Nullable
-    private static Boolean isInForeground(@NonNull Context appContext) {
-        try {
-            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
-            if (tasks.isEmpty()) {
-                return false;
-            }
-
-            ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
-            return runningTask.topActivity.getPackageName().equalsIgnoreCase(appContext.getPackageName());
-        } catch (Exception e) {
-            Logger.warn("Could not check if app is in the foreground, we recommend granting the 'android.permission.GET_TASKS' permission");
-        }
-
-        return null;
-    }
-
-    /**
      * Get the time in milliseconds since Bugsnag was initialized, which is a
      * good approximation for how long the app has been running.
      */
-    @NonNull
     private static long getDuration() {
         return SystemClock.elapsedRealtime() - startTime;
     }

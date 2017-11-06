@@ -22,6 +22,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private final Object lock = new Object();
     private final Queue<Session> sessionQueue = new ConcurrentLinkedQueue<>();
     private final Set<String> foregroundActivities = new HashSet<>();
+
     private Session currentSession;
 
     void startNewSession(Date date, User user) {
@@ -106,11 +107,10 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
     void updateForegroundTracker(String activityName, boolean inForeground) {
         if (inForeground) {
-            foregroundActivities.add(activityName);
-
-            if (getCurrentSession() == null) { // TODO should be expired via timeout
+            if (foregroundActivities.isEmpty()) {
                 startNewSession(new Date(), null); // TODO serialise user
             }
+            foregroundActivities.add(activityName);
         } else {
             foregroundActivities.remove(activityName);
         }
@@ -119,4 +119,14 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     boolean isInForeground() {
         return !foregroundActivities.isEmpty();
     }
+
+    long getDurationInForeground() {
+        long duration = 0;
+
+        if (currentSession != null) {
+            duration = currentSession.getStartedAt().getTime() - System.currentTimeMillis();
+        }
+        return duration > 0 ? duration : 0;
+    }
+
 }

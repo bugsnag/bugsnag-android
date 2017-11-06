@@ -21,7 +21,7 @@ public class SessionTrackerTest {
 
     @Before
     public void setUp() throws Exception {
-        sessionTracker = new SessionTracker();
+        sessionTracker = new SessionTracker(configuration);
         user = new User();
     }
 
