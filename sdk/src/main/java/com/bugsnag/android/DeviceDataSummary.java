@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -21,7 +22,7 @@ class DeviceDataSummary implements JsonStream.Streamable {
         writer
             .name("manufacturer").value(android.os.Build.MANUFACTURER)
             .name("model").value(android.os.Build.MODEL)
-            // TODO modelNumber
+            .name("modelNumber").value(Build.MODEL)
             .name("jailbroken").value(rooted)
             .name("osName").value("android")
             .name("osVersion").value(android.os.Build.VERSION.RELEASE);
