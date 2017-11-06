@@ -22,7 +22,7 @@ public class SessionTrackingPayloadTest {
     @Before
     public void setUp() throws Exception {
         session = generateSession();
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), new Configuration("a"));
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), new Configuration("a"), new SessionTracker());
         SessionTrackingPayload payload = new SessionTrackingPayload(Collections.singleton(session), appData);
         rootNode = streamableToJson(payload);
     }

@@ -158,7 +158,7 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(appContext, config);
+        appData = new AppData(appContext, config, sessionTracker);
         deviceData = new DeviceData(appContext, sharedPref);
 
         // Set up breadcrumbs

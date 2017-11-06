@@ -30,7 +30,7 @@ public class AppDataTest {
 
     @Test
     public void testManifestData() throws JSONException, IOException {
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, new SessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
@@ -51,7 +51,7 @@ public class AppDataTest {
         String appVersion = "1.2.3";
         config.setAppVersion(appVersion);
 
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, new SessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals(appVersion, appDataJson.get("version"));
@@ -62,7 +62,7 @@ public class AppDataTest {
         String releaseStage = "test-stage";
         config.setReleaseStage(releaseStage);
 
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, new SessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals(releaseStage, appDataJson.get("releaseStage"));
