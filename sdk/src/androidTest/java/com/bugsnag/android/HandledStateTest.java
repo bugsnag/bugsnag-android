@@ -74,9 +74,15 @@ public class HandledStateTest {
             handled.calculateSeverityReasonType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidUserSpecified() throws Exception {
-        HandledState.newInstance(HandledState.REASON_CALLBACK_SPECIFIED);
+        HandledState handled = HandledState.newInstance(HandledState.REASON_CALLBACK_SPECIFIED);
+        assertEquals(HandledState.REASON_CALLBACK_SPECIFIED,
+            handled.calculateSeverityReasonType());
+
+        handled.setCurrentSeverity(Severity.INFO);
+        assertEquals(HandledState.REASON_CALLBACK_SPECIFIED,
+            handled.calculateSeverityReasonType());
     }
 
     @Test(expected = IllegalArgumentException.class)
