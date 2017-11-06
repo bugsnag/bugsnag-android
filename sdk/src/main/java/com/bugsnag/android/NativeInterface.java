@@ -61,7 +61,7 @@ public class NativeInterface {
 
     @Nullable
     public static String getErrorStorePath() {
-        return getClient().errorStore.path;
+        return getClient().errorStore.storeDirectory;
     }
 
     public static String getUserId() {

@@ -32,8 +32,8 @@ public class ClientRejectedExecutionTest {
         client = new Client(InstrumentationRegistry.getContext(), "api-key");
         client.setEndpoint("http://example.com");
         ErrorStore errorStore = client.errorStore;
-        assertNotNull(errorStore.path);
-        errorStorageDir = new File(errorStore.path);
+        assertNotNull(errorStore.storeDirectory);
+        errorStorageDir = new File(errorStore.storeDirectory);
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 

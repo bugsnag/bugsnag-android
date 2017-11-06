@@ -37,8 +37,8 @@ public class ErrorStoreTest {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         config = client.config;
         errorStore = client.errorStore;
-        Assert.assertNotNull(errorStore.path);
-        errorStorageDir = new File(errorStore.path);
+        Assert.assertNotNull(errorStore.storeDirectory);
+        errorStorageDir = new File(errorStore.storeDirectory);
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 

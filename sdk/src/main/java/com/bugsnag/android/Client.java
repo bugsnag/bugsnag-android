@@ -71,6 +71,8 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final ErrorStore errorStore;
 
+    final SessionStore sessionStore;
+
     private final long launchTimeMs;
 
     private final EventReceiver eventReceiver = new EventReceiver();
@@ -175,6 +177,7 @@ public class Client extends Observable implements Observer {
 
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext);
+        sessionStore = new SessionStore(config, appContext);
 
         // Install a default exception handler with this client
         if (config.getEnableExceptionHandler()) {
