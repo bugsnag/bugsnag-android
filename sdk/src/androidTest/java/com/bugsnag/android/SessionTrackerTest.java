@@ -6,11 +6,15 @@ import org.junit.Test;
 import java.util.Date;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 
 public class SessionTrackerTest {
+
+    private static final String ACTIVITY_NAME = "test";
 
     private SessionTracker sessionTracker;
     private User user;
@@ -63,6 +67,28 @@ public class SessionTrackerTest {
         Session nextSession = sessionTracker.getCurrentSession();
         assertEquals(0, nextSession.getHandledCount());
         assertEquals(0, nextSession.getUnhandledCount());
+    }
+
+    @Test
+    public void testBasicInForeground() throws Exception {
+        assertFalse(sessionTracker.isInForeground());
+        assertNull(sessionTracker.getCurrentSession());
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true);
+        assertTrue(sessionTracker.isInForeground());
+        Session firstSession = sessionTracker.getCurrentSession();
+        assertNotNull(firstSession);
+
+        sessionTracker.updateForegroundTracker("other", true);
+        assertTrue(sessionTracker.isInForeground());
+        assertEquals(firstSession, sessionTracker.getCurrentSession());
+
+        sessionTracker.updateForegroundTracker("other", false);
+        assertTrue(sessionTracker.isInForeground());
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false);
+        assertFalse(sessionTracker.isInForeground());
+        assertEquals(firstSession, sessionTracker.getCurrentSession());
     }
 
 }

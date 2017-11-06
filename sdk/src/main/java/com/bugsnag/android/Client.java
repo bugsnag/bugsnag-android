@@ -41,6 +41,7 @@ enum DeliveryStyle {
  */
 public class Client extends Observable implements Observer {
 
+    private static final long DEFAULT_SESSION_TIMEOUT_MS = 10 * 1000;
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
@@ -132,7 +133,7 @@ public class Client extends Observable implements Observer {
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
-            application.registerActivityLifecycleCallbacks(new LifecycleBreadcrumbLogger());
+            application.registerActivityLifecycleCallbacks(sessionTracker);
         } else {
             Logger.warn("Bugsnag is unable to setup automatic activity lifecycle breadcrumbs on API " +
                 "Levels below 14.");

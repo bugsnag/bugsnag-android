@@ -20,7 +20,7 @@ import java.util.List;
  */
 class AppData extends AppDataSummary {
 
-    private static final Long startTime = SystemClock.elapsedRealtime();
+    private static final long startTime = SystemClock.elapsedRealtime();
 
     @Nullable
     final String appName;
@@ -47,7 +47,7 @@ class AppData extends AppDataSummary {
         super(appContext, config);
         appName = getAppName(appContext);
         duration = getDuration();
-        inForeground = isInForeground(appContext);
+        inForeground = isInForeground(appContext); // TODO use lifecyclelogger instead
         activeScreen = getActiveScreen(appContext);
         memoryUsage = getMemoryUsage();
         lowMemory = isLowMemory(appContext);
@@ -174,7 +174,7 @@ class AppData extends AppDataSummary {
      * good approximation for how long the app has been running.
      */
     @NonNull
-    private static Long getDuration() {
+    private static long getDuration() {
         return SystemClock.elapsedRealtime() - startTime;
     }
 
