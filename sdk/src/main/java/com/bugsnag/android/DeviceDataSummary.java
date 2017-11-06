@@ -18,11 +18,11 @@ class DeviceDataSummary implements JsonStream.Streamable {
     }
 
     void serialiseMinimalDeviceData(@NonNull JsonStream writer) throws IOException {
-        // SESSION API fields
         writer
-            .name("jailbroken").value(rooted)
             .name("manufacturer").value(android.os.Build.MANUFACTURER)
             .name("model").value(android.os.Build.MODEL)
+            // TODO modelNumber
+            .name("jailbroken").value(rooted)
             .name("osName").value("android")
             .name("osVersion").value(android.os.Build.VERSION.RELEASE);
     }

@@ -40,6 +40,9 @@ class AppData extends AppDataSummary {
     @Nullable
     private final Boolean lowMemory;
 
+    @NonNull
+    protected final String packageName;
+
     AppData(@NonNull Context appContext, @NonNull Configuration config) {
         super(appContext, config);
         appName = getAppName(appContext);
@@ -48,42 +51,25 @@ class AppData extends AppDataSummary {
         activeScreen = getActiveScreen(appContext);
         memoryUsage = getMemoryUsage();
         lowMemory = isLowMemory(appContext);
+        packageName = getPackageName(appContext);
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-
         serialiseMinimalAppData(writer);
 
-        // TODO serialise missing fields from Apiary, migrate metadata values
-
-//        "app": {
-//            "id": "com.bugsnag.android.example.debug",
-//                "version": "1.1.3",
-//                "versionCode": 12,
-//                "bundleVersion": "1.0.2",
-//                "codeBundleId": "1.0-1234",
-//                "buildUUID": "BE5BA3D0-971C-4418-9ECF-E2D1ABCB66BE",
-//                "releaseStage": "staging",
-//                "type": "rails",
-//                "dsymUUIDs": [
-//            "e6173678256785afd940392abee"
-//        ],
-//            "duration": 1275,
-//                "durationInForeground": 983,
-//                "inForeground": true
-//        },
+        writer.name("id").value(packageName);
+        writer.name("buildUUID").value(config.getBuildUUID());
+        writer.name("duration").value(duration);
+        // TODO track durationInForeground
+        writer.name("inForeground").value(inForeground);
 
 
+        // TODO migrate legacy fields
         writer.name("name").value(appName);
         writer.name("packageName").value(packageName);
         writer.name("versionName").value(versionName);
-        writer.name("buildUUID").value(config.getBuildUUID());
-
-
-        writer.name("duration").value(duration);
-        writer.name("inForeground").value(inForeground);
         writer.name("activeScreen").value(activeScreen);
         writer.name("memoryUsage").value(memoryUsage);
         writer.name("lowMemory").value(lowMemory);
@@ -190,5 +176,14 @@ class AppData extends AppDataSummary {
     @NonNull
     private static Long getDuration() {
         return SystemClock.elapsedRealtime() - startTime;
+    }
+
+
+    /**
+     * The package name of the running Android app, eg: com.example.myapp
+     */
+    @NonNull
+    private static String getPackageName(@NonNull Context appContext) {
+        return appContext.getPackageName();
     }
 }

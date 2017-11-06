@@ -23,9 +23,6 @@ class AppDataSummary implements JsonStream.Streamable {
     @NonNull
     protected final Configuration config;
 
-    @NonNull
-    protected final String packageName;
-
     @Nullable
     protected final Integer versionCode;
 
@@ -35,8 +32,13 @@ class AppDataSummary implements JsonStream.Streamable {
     @NonNull
     private final String guessedReleaseStage;
 
+    @Nullable
+    private String notifierType = "android";
+
+    @Nullable
+    private String codeBundleId;
+
     AppDataSummary(@NonNull Context appContext, @NonNull Configuration config) {
-        packageName = getPackageName(appContext);
         versionCode = getVersionCode(appContext);
         versionName = getVersionName(appContext);
         guessedReleaseStage = guessReleaseStage(appContext);
@@ -52,12 +54,11 @@ class AppDataSummary implements JsonStream.Streamable {
 
     void serialiseMinimalAppData(@NonNull JsonStream writer) throws IOException {
         writer
-            .name("id").value(packageName)
-            .name("type").value("android") // TODO handle RN/unity
+            .name("type").value(notifierType)
             .name("releaseStage").value(getReleaseStage())
             .name("version").value(getAppVersion())
-            .name("versionCode").value(versionCode);
-        // TODO codeBundleId for React Native
+            .name("versionCode").value(versionCode)
+            .name("codeBundleId").value(codeBundleId);
     }
 
     @NonNull
@@ -78,14 +79,13 @@ class AppDataSummary implements JsonStream.Streamable {
         }
     }
 
-    /**
-     * The package name of the running Android app, eg: com.example.myapp
-     */
-    @NonNull
-    private static String getPackageName(@NonNull Context appContext) {
-        return appContext.getPackageName();
+    void setNotifierType(@Nullable String type) { // TODO handle RN/unity
+        this.notifierType = type;
     }
 
+    void setCodeBundleId(String codeBundleId) { // TODO codeBundleId for React Native
+        this.codeBundleId = codeBundleId;
+    }
 
     /**
      * The version code of the running Android app, from android:versionCode

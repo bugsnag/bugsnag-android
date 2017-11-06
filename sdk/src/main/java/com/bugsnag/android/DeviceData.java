@@ -66,47 +66,31 @@ class DeviceData extends DeviceDataSummary {
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-
         serialiseMinimalDeviceData(writer);
 
-        // TODO serialise missing fields from Apiary, migrate metadata values
+        writer
+            .name("id").value(id)
+            .name("freeMemory").value(getFreeMemory())
+            .name("totalMemory").value(getTotalMemory())
+            .name("freeDisk").value(getFreeDisk())
+            .name("orientation").value(getOrientation(appContext));
 
-//        "device": {
-//            "hostname": "web1.internal",
-//                "id": "fd124e87760c4281aef",
-//                "manufacturer": "LGE",
-//                "model": "Nexus 6P",
-//                "modelNumber": "600",
-//                "osName": "android",
-//                "osVersion": "8.0.1",
-//                "freeMemory": 183879616,
-//                "totalMemory": 201326592,
-//                "freeDisk": 13478064128,
-//                "browserName": "Chrome",
-//                "browserVersion": "61.0.3163.100",
-//                "jailbroken": false,
-//                "orientation": "portrait"
-//        },
+
+        // TODO migrate metadata values
 
         writer
             .name("batteryLevel").value(getBatteryLevel(appContext))
             .name("charging").value(isCharging(appContext))
-            .name("freeDisk").value(getFreeDisk())
-            .name("freeMemory").value(getFreeMemory())
-            .name("id").value(id)
-            .name("totalMemory").value(getTotalMemory())
             .name("locationStatus").value(getLocationStatus(appContext))
-            .name("orientation").value(getOrientation(appContext))
             .name("networkAccess").value(getNetworkAccess(appContext))
-            .name("time").value(getTime());
-
-        writer.name("brand").value(Build.BRAND);
-        writer.name("apiLevel").value(Build.VERSION.SDK_INT);
-        writer.name("osBuild").value(Build.DISPLAY);
-        writer.name("locale").value(locale);
-        writer.name("screenDensity").value(screenDensity);
-        writer.name("dpi").value(dpi);
-        writer.name("screenResolution").value(screenResolution);
+            .name("time").value(getTime())
+            .name("brand").value(Build.BRAND)
+            .name("apiLevel").value(Build.VERSION.SDK_INT)
+            .name("osBuild").value(Build.DISPLAY)
+            .name("locale").value(locale)
+            .name("screenDensity").value(screenDensity)
+            .name("dpi").value(dpi)
+            .name("screenResolution").value(screenResolution);
 
         writer.name("cpuAbi").beginArray();
         for (String s : cpuAbi) {
