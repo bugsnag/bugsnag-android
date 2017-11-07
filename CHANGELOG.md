@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.3 (2017-11-07)
+- Compile annotations dependency as api rather than implementation
+- Support handled state case for React Native
+
 ## 4.1.2 (2017-11-02)
 - Allow setting device ID to null
 
