@@ -83,7 +83,7 @@ class AppDataSummary implements JsonStream.Streamable {
         this.notifierType = type;
     }
 
-    void setCodeBundleId(String codeBundleId) { // TODO codeBundleId for React Native
+    void setCodeBundleId(@Nullable String codeBundleId) { // TODO codeBundleId for React Native
         this.codeBundleId = codeBundleId;
     }
 

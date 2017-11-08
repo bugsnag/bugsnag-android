@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -21,7 +21,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
     private final Object lock = new Object();
-    private final Queue<Session> sessionQueue = new ConcurrentLinkedQueue<>();
+    final Collection<Session> sessionQueue = new ConcurrentLinkedQueue<>();
     private final Set<String> foregroundActivities = new HashSet<>();
     private final Configuration configuration;
     private final long timeoutMs;

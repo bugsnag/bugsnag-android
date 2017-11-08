@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -41,7 +42,7 @@ enum DeliveryStyle {
  */
 public class Client extends Observable implements Observer {
 
-    private static final long DEFAULT_SESSION_TIMEOUT_MS = 10 * 1000;
+    private static final long SESSION_LOOP_MS = 5 * 1000; // TODO change to X mins
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
@@ -80,6 +81,7 @@ public class Client extends Observable implements Observer {
     private final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
+    private final Handler handler;
 
     /**
      * Initialize a Bugsnag client
@@ -202,6 +204,22 @@ public class Client extends Observable implements Observer {
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
+
+        handler = new Handler(appContext.getMainLooper());
+        handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    handler.postDelayed(this, SESSION_LOOP_MS);
+
+                    Async.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            Logger.info("Should report sessions!"); // TODO
+                        }
+                    });
+
+                }
+            }, SESSION_LOOP_MS);
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
