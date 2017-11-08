@@ -77,7 +77,7 @@ public class Client extends Observable implements Observer {
     private final long launchTimeMs;
 
     private final EventReceiver eventReceiver = new EventReceiver();
-    private final SessionTracker sessionTracker = new SessionTracker();
+    private final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
 
@@ -125,7 +125,7 @@ public class Client extends Observable implements Observer {
         launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-
+        sessionTracker = new SessionTracker(configuration);
         ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
         errorReportApiClient = defaultHttpClient;

@@ -53,6 +53,14 @@ final class BugsnagTestUtils {
         return session;
     }
 
+    static Configuration generateConfiguration() {
+        return new Configuration("test");
+    }
+
+    static SessionTracker generateSessionTracker() {
+        return new SessionTracker(generateConfiguration());
+    }
+
     @NonNull
     static SessionTrackingApiClient generateSessionTrackingApiClient() {
         return new SessionTrackingApiClient() {

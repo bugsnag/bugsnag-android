@@ -18,10 +18,13 @@ public class SessionTrackerTest {
 
     private SessionTracker sessionTracker;
     private User user;
+    private Configuration configuration;
 
     @Before
     public void setUp() throws Exception {
-        sessionTracker = new SessionTracker();
+        configuration = new Configuration("test");
+        sessionTracker = new SessionTracker(configuration);
+        configuration.setAutoCaptureSessions(true);
         user = new User();
     }
 
@@ -37,6 +40,20 @@ public class SessionTrackerTest {
         assertNotNull(newSession.getId());
         assertEquals(date.getTime(), newSession.getStartedAt().getTime());
         assertNotNull(newSession.getUser());
+    }
+
+    @Test
+    public void startSessionDisabled() throws Exception {
+        assertNull(sessionTracker.getCurrentSession());
+        configuration.setAutoCaptureSessions(false);
+
+        Date date = new Date();
+        sessionTracker.startNewSession(date, user);
+        assertNull(sessionTracker.getCurrentSession());
+
+        configuration.setAutoCaptureSessions(true);
+        sessionTracker.startNewSession(date, user);
+        assertNotNull(sessionTracker.getCurrentSession());
     }
 
     @Test

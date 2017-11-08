@@ -22,19 +22,35 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private final Object lock = new Object();
     private final Queue<Session> sessionQueue = new ConcurrentLinkedQueue<>();
     private final Set<String> foregroundActivities = new HashSet<>();
+    private final Configuration configuration;
 
     private Session currentSession;
 
-    void startNewSession(Date date, User user) {
-        synchronized (lock) {
-            Session session = new Session();
-            session.setId(UUID.randomUUID().toString());
-            session.setStartedAt(date);
-            session.setUser(user);
+    SessionTracker(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
-            // TODO handle sending/storing sessions here!
-            sessionQueue.add(session); // store previous session
-            currentSession = session;
+    /**
+     * Starts a new session with the given date and user.
+     *
+     * A session will only be created if {@link Configuration#shouldAutoCaptureSessions()} returns
+     * true.
+     *
+     * @param date the session start date
+     * @param user the session user (if any)
+     */
+    void startNewSession(@NonNull Date date, @Nullable User user) {
+        synchronized (lock) {
+            if (configuration.shouldAutoCaptureSessions()) {
+                Session session = new Session();
+                session.setId(UUID.randomUUID().toString());
+                session.setStartedAt(date);
+                session.setUser(user);
+
+                // TODO handle sending/storing sessions here!
+                sessionQueue.add(session); // store previous session
+                currentSession = session;
+            }
         }
     }
 

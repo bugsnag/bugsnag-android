@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -22,7 +23,7 @@ public class SessionTrackingPayloadTest {
     @Before
     public void setUp() throws Exception {
         session = generateSession();
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), new Configuration("a"), new SessionTracker());
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), new Configuration("a"), generateSessionTracker());
         SessionTrackingPayload payload = new SessionTrackingPayload(Collections.singleton(session), appData);
         rootNode = streamableToJson(payload);
     }

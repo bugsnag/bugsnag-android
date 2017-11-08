@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,7 +31,7 @@ public class AppDataTest {
 
     @Test
     public void testManifestData() throws JSONException, IOException {
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, new SessionTracker());
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, generateSessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
@@ -51,7 +52,7 @@ public class AppDataTest {
         String appVersion = "1.2.3";
         config.setAppVersion(appVersion);
 
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, new SessionTracker());
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, generateSessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals(appVersion, appDataJson.get("version"));
@@ -62,7 +63,7 @@ public class AppDataTest {
         String releaseStage = "test-stage";
         config.setReleaseStage(releaseStage);
 
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, new SessionTracker());
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, generateSessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals(releaseStage, appDataJson.get("releaseStage"));
