@@ -91,21 +91,56 @@ public class SessionTrackerTest {
         assertFalse(sessionTracker.isInForeground());
         assertNull(sessionTracker.getCurrentSession());
 
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true);
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, System.currentTimeMillis());
         assertTrue(sessionTracker.isInForeground());
         Session firstSession = sessionTracker.getCurrentSession();
         assertNotNull(firstSession);
 
-        sessionTracker.updateForegroundTracker("other", true);
+        sessionTracker.updateForegroundTracker("other", true, System.currentTimeMillis());
         assertTrue(sessionTracker.isInForeground());
         assertEquals(firstSession, sessionTracker.getCurrentSession());
 
-        sessionTracker.updateForegroundTracker("other", false);
+        sessionTracker.updateForegroundTracker("other", false, System.currentTimeMillis());
         assertTrue(sessionTracker.isInForeground());
 
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false);
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, System.currentTimeMillis());
         assertFalse(sessionTracker.isInForeground());
         assertEquals(firstSession, sessionTracker.getCurrentSession());
     }
 
+    @Test
+    public void testZeroSessionTimeout() throws Exception {
+        sessionTracker = new SessionTracker(configuration, 0);
+
+        long now = System.currentTimeMillis();
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        Session firstSession = sessionTracker.getCurrentSession();
+        assertNotNull(firstSession);
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        assertNotEquals(firstSession, sessionTracker.getCurrentSession());
+    }
+
+    @Test
+    public void testSessionTimeout() throws Exception {
+        sessionTracker = new SessionTracker(configuration, 100);
+
+        long now = System.currentTimeMillis();
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        Session firstSession = sessionTracker.getCurrentSession();
+        assertNotNull(firstSession);
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now + 5);
+        assertEquals(firstSession, sessionTracker.getCurrentSession());
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now + 99);
+        assertEquals(firstSession, sessionTracker.getCurrentSession());
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now + 100);
+        assertNotEquals(firstSession, sessionTracker.getCurrentSession());
+    }
 }
