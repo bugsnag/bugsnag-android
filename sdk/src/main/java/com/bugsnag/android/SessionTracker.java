@@ -124,7 +124,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     void updateForegroundTracker(String activityName, boolean inForeground) {
         if (inForeground) {
             if (foregroundActivities.isEmpty()) {
-                startNewSession(new Date(), null); // TODO serialise user
+                startNewSession(new Date(), Bugsnag.getClient().user);
             }
             foregroundActivities.add(activityName);
         } else {
