@@ -32,6 +32,7 @@ android {
             bugsnagBuildUUID                 : "abc123",
             bugsnagAppVersion                : "1.0.0",
             bugsnagEndpoint                  : "https://notify.bugsnag.com",
+            bugsnagSessionsEndpoint           : "https://sessions.bugsnag.com",
             bugsnagReleaseStage              : "debug",
             bugsnagSendThreads               : true,
             bugsnagEnableExceptionHandler    : true,

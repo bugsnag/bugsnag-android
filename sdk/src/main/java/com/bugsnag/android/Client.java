@@ -54,6 +54,7 @@ public class Client extends Observable implements Observer {
     static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
     static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
     static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
+    static final String MF_SESSIONS_ENDPOINT = BUGSNAG_NAMESPACE + ".SESSIONS_ENDPOINT";
     static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
     static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
     static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
@@ -315,6 +316,11 @@ public class Client extends Observable implements Observer {
 
         if (endpoint != null) {
             config.setEndpoint(endpoint);
+        }
+        String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);
+
+        if (sessionEndpoint != null) {
+            config.setSessionEndpoint(sessionEndpoint);
         }
 
         config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
