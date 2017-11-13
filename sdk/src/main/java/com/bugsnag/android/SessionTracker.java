@@ -122,7 +122,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         leaveLifecycleBreadcrumb(activity, "onDestroy()");
     }
 
-
     private synchronized void leaveLifecycleBreadcrumb(@NonNull Activity activity, String lifecycleCallback) {
         String activityName = activity.getClass().getSimpleName();
         Map<String, String> metadata = new HashMap<>();

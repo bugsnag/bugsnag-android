@@ -19,9 +19,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
+    private final SessionSender sessionSender;
     final Map<Client, Boolean> clientMap = new WeakHashMap<>();
 
-    static void enable(@NonNull Client client) {
+    static void enable(@NonNull Client client, SessionSender sessionSender) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
 
         // Find or create the Bugsnag ExceptionHandler
@@ -29,7 +30,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         if (currentHandler instanceof ExceptionHandler) {
             bugsnagHandler = (ExceptionHandler) currentHandler;
         } else {
-            bugsnagHandler = new ExceptionHandler(currentHandler);
+            bugsnagHandler = new ExceptionHandler(currentHandler, sessionSender);
             Thread.setDefaultUncaughtExceptionHandler(bugsnagHandler);
         }
 
@@ -52,13 +53,15 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         }
     }
 
-    ExceptionHandler(UncaughtExceptionHandler originalHandler) {
+    ExceptionHandler(UncaughtExceptionHandler originalHandler, SessionSender sessionSender) {
         this.originalHandler = originalHandler;
+        this.sessionSender = sessionSender;
     }
 
     @Override
     public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
+        sessionSender.storeAllSessions();
 
         // Notify any subscribed clients of the uncaught exception
         Date now = new Date();
@@ -76,7 +79,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             if (isCrashOnLaunch(client, now)) {
                 metaData.addToTab(LAUNCH_CRASH_TAB, LAUNCH_CRASH_KEY, getMsSinceLaunch(client, now));
             }
-            
+
             String severityReason = strictModeThrowable
                 ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
             client.cacheAndNotify(e, Severity.ERROR, metaData, severityReason, violationDesc);
@@ -92,7 +95,6 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     boolean isCrashOnLaunch(Client client, Date now) {
-
         long delta = getMsSinceLaunch(client, now);
         long thresholdMs = client.config.getLaunchCrashThresholdMs();
         return thresholdMs > 0 && delta <= thresholdMs;

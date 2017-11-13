@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import java.io.File;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Store and flush Sessions which couldn't be sent immediately due to
@@ -38,7 +39,7 @@ class SessionStore extends FileStore<SessionTrackingPayload> {
     @NonNull
     @Override
     String getFilename(SessionTrackingPayload session) {
-        return String.format(Locale.US, "%s%d.json", storeDirectory, System.currentTimeMillis());
+        return String.format(Locale.US, "%s%s%d.json", storeDirectory, UUID.randomUUID().toString(), System.currentTimeMillis());
     }
 
 }

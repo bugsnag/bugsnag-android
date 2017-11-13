@@ -82,6 +82,7 @@ public class Client extends Observable implements Observer {
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
     private final Handler handler;
+    private final SessionSender sessionSender;
 
     /**
      * Initialize a Bugsnag client
@@ -123,7 +124,7 @@ public class Client extends Observable implements Observer {
         this(androidContext, configuration, new Date());
     }
 
-    Client(@NonNull Context androidContext, @NonNull Configuration configuration, Date time) {
+    Client(@NonNull Context androidContext, @NonNull final Configuration configuration, Date time) {
         launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
@@ -205,8 +206,10 @@ public class Client extends Observable implements Observer {
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
 
+        sessionSender = new SessionSender(sessionTracker, sessionStore, sessionTrackingApiClient, appContext, configuration);
+
         handler = new Handler(appContext.getMainLooper());
-        handler.postDelayed(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 handler.postDelayed(this, SESSION_LOOP_MS);
@@ -214,12 +217,12 @@ public class Client extends Observable implements Observer {
                 Async.run(new Runnable() {
                     @Override
                     public void run() {
-                        Logger.info("Should report sessions!"); // TODO
+                        Logger.info("Sending session data");
+                        sessionSender.send();
                     }
                 });
-
             }
-        }, SESSION_LOOP_MS);
+        });
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -870,7 +873,7 @@ public class Client extends Observable implements Observer {
      * By default, this is automatically enabled in the constructor.
      */
     public void enableExceptionHandler() {
-        ExceptionHandler.enable(this);
+        ExceptionHandler.enable(this, sessionSender);
     }
 
     /**

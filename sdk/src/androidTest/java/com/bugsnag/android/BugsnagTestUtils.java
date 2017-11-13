@@ -61,6 +61,15 @@ final class BugsnagTestUtils {
         return new SessionTracker(generateConfiguration());
     }
 
+    static SessionSender generateSessionSender() {
+        return new SessionSender(generateSessionTracker(),
+            new SessionStore(generateConfiguration(),
+                InstrumentationRegistry.getContext()),
+            generateSessionTrackingApiClient(),
+            InstrumentationRegistry.getContext(),
+            generateConfiguration());
+    }
+
     @NonNull
     static SessionTrackingApiClient generateSessionTrackingApiClient() {
         return new SessionTrackingApiClient() {

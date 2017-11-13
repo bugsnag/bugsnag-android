@@ -52,7 +52,7 @@ public class ExceptionHandlerTest {
 
     @Test
     public void testIsCrashOnLaunch() throws Exception {
-        ExceptionHandler handler = new ExceptionHandler(null);
+        ExceptionHandler handler = new ExceptionHandler(null, BugsnagTestUtils.generateSessionSender());
         Date now = new Date();
         Client client = new Client(context, new Configuration("123"), now);
 

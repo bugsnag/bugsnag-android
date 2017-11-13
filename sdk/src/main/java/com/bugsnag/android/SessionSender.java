@@ -35,12 +35,24 @@ class SessionSender {
         this.endpoint = "https://sessions.bugsnag.com/";
     }
 
+    /**
+     * Attempts to send all sessions (both from memory + disk)
+     */
     synchronized void send() {
+        send(getSessionTrackingPayload());
+        flushStoredSessions();
+    }
+
+    synchronized void storeAllSessions() {
+        sessionStore.write(getSessionTrackingPayload());
+    }
+
+    private synchronized SessionTrackingPayload getSessionTrackingPayload() {
         List<Session> sessions = new ArrayList<>();
         sessions.addAll(sessionTracker.sessionQueue);
         sessionTracker.sessionQueue.clear();
-        send(sessions);
-        flushStoredSessions();
+        AppData appData = new AppData(context, config, sessionTracker);
+        return new SessionTrackingPayload(sessions, appData);
     }
 
     /**
@@ -67,10 +79,7 @@ class SessionSender {
     /**
      * Attempts to send any tracked sessions to the API, and store in the event of failure
      */
-    private synchronized void send(List<Session> sessions) {
-        AppData appData = new AppData(context, config, sessionTracker);
-        SessionTrackingPayload payload = new SessionTrackingPayload(sessions, appData);
-
+    private synchronized void send(SessionTrackingPayload payload) {
         try {
             apiClient.postSessionTrackingPayload(endpoint, payload, config.getSessionApiHeaders());
         } catch (NetworkException e) { // store for later sending
