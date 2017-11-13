@@ -19,7 +19,6 @@ import java.util.Observer;
  * specified at the client level, api-key and endpoint configuration.
  */
 public class Configuration extends Observable implements Observer {
-    static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     private static final String HEADER_API_KEY = "Bugsnag-API-Key";
@@ -30,7 +29,9 @@ public class Configuration extends Observable implements Observer {
     private String buildUUID;
     private String appVersion;
     private String context;
-    private String endpoint = DEFAULT_ENDPOINT;
+    private String endpoint = "https://notify.bugsnag.com";
+    private String sessionEndpoint = "https://sessions.bugsnag.com";
+
     private String[] filters = new String[]{"password"};
     private String[] ignoreClasses;
     @Nullable
@@ -131,6 +132,27 @@ public class Configuration extends Observable implements Observer {
      */
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    /**
+     * Gets the Session Tracking API endpoint
+     *
+     * @return the endpoint
+     */
+    public String getSessionEndpoint() {
+        return sessionEndpoint;
+    }
+
+    /**
+     * Set the endpoint to send Session Tracking data to. By default we'll send reports to
+     * the standard https://session.bugsnag.com endpoint, but you can override
+     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
+     * endpoint.
+     *
+     * @param endpoint the custom endpoint to send session data to
+     */
+    public void setSessionEndpoint(String endpoint) {
+        this.sessionEndpoint = endpoint;
     }
 
     /**
@@ -422,14 +444,14 @@ public class Configuration extends Observable implements Observer {
         }
     }
 
-    Map<String, String>getErrorApiHeaders() {
+    Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4");
         map.put(HEADER_API_KEY, apiKey);
         return map;
     }
 
-    Map<String, String>getSessionApiHeaders() {
+    Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);

@@ -37,6 +37,17 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void testSessionEndpoints() {
+        // Default endpoints
+        assertEquals("https://sessions.bugsnag.com", config.getSessionEndpoint());
+
+        // Setting an endpoint
+        String endpoint = "http://localhost:8000";
+        config.setSessionEndpoint(endpoint);
+        assertEquals(endpoint, config.getSessionEndpoint());
+    }
+
+    @Test
     public void testShouldNotify() {
         // Should notify if notifyReleaseStages is null
         assertTrue(config.shouldNotifyForReleaseStage("development"));

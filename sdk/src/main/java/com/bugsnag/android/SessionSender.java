@@ -24,15 +24,12 @@ class SessionSender {
                   SessionTrackingApiClient apiClient,
                   Context context,
                   Configuration configuration) {
-
         this.sessionTracker = sessionTracker;
         this.sessionStore = sessionStore;
         this.apiClient = apiClient;
         this.context = context;
         this.config = configuration;
-
-        // TODO endpoint config
-        this.endpoint = "https://sessions.bugsnag.com/";
+        this.endpoint = config.getSessionEndpoint();
     }
 
     /**
