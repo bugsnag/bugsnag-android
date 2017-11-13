@@ -2,7 +2,9 @@ package com.bugsnag.android;
 
 import android.content.Context;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,6 +17,7 @@ class SessionSender {
     private final SessionTrackingApiClient apiClient;
     private final Context context;
     private final Configuration config;
+    private final String endpoint;
 
     SessionSender(SessionTracker sessionTracker,
                   SessionStore sessionStore,
@@ -27,37 +30,55 @@ class SessionSender {
         this.apiClient = apiClient;
         this.context = context;
         this.config = configuration;
+
+        // TODO endpoint config
+        this.endpoint = "https://sessions.bugsnag.com/";
+    }
+
+    synchronized void send() {
+        List<Session> sessions = new ArrayList<>();
+        sessions.addAll(sessionTracker.sessionQueue);
+        sessionTracker.sessionQueue.clear();
+        send(sessions);
+        flushStoredSessions();
+    }
+
+    /**
+     * Attempts to flush session payloads stored on disk
+     */
+    private void flushStoredSessions() {
+        Collection<File> storedFiles = sessionStore.findStoredFiles();
+
+        for (File storedFile : storedFiles) {
+            SessionTrackingPayload payload = new SessionTrackingPayload(storedFile);
+
+            try {
+                apiClient.postSessionTrackingPayload(endpoint, payload, config.getSessionApiHeaders());
+                storedFile.delete();
+            } catch (NetworkException e) { // store for later sending
+                Logger.info("Failed to post stored session payload");
+            } catch (BadResponseException e) { // drop bad data
+                Logger.warn("Invalid session tracking payload", e);
+                storedFile.delete();
+            }
+        }
     }
 
     /**
      * Attempts to send any tracked sessions to the API, and store in the event of failure
      */
-    synchronized void send() {
-        List<Session> sessions = new ArrayList<>();
-        sessions.addAll(sessionTracker.sessionQueue);
-        sessionTracker.sessionQueue.clear();
-
+    private synchronized void send(List<Session> sessions) {
         AppData appData = new AppData(context, config, sessionTracker);
         SessionTrackingPayload payload = new SessionTrackingPayload(sessions, appData);
-
-        // TODO endpoint
-        String endpoint = "";
 
         try {
             apiClient.postSessionTrackingPayload(endpoint, payload, config.getSessionApiHeaders());
         } catch (NetworkException e) { // store for later sending
-            store(payload);
+            Logger.info("Failed to post session payload, storing on disk");
+            sessionStore.write(payload);
         } catch (BadResponseException e) { // drop bad data
             Logger.warn("Invalid session tracking payload", e);
         }
-    }
-
-    /**
-     * Persists any sessions which haven't been sent to the API yet
-     */
-    synchronized void store(SessionTrackingPayload payload) {
-        sessionStore.write(payload);
-        // TODO handle read + send of payload
     }
 
 }

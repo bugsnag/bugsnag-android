@@ -207,19 +207,19 @@ public class Client extends Observable implements Observer {
 
         handler = new Handler(appContext.getMainLooper());
         handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    handler.postDelayed(this, SESSION_LOOP_MS);
+            @Override
+            public void run() {
+                handler.postDelayed(this, SESSION_LOOP_MS);
 
-                    Async.run(new Runnable() {
-                        @Override
-                        public void run() {
-                            Logger.info("Should report sessions!"); // TODO
-                        }
-                    });
+                Async.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Logger.info("Should report sessions!"); // TODO
+                    }
+                });
 
-                }
-            }, SESSION_LOOP_MS);
+            }
+        }, SESSION_LOOP_MS);
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {

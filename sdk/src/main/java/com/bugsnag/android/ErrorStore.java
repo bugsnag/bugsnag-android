@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -72,16 +72,13 @@ class ErrorStore extends FileStore<Error> {
         try {
             Async.run(new Runnable() {
                 @Override
-                public void run() {
-                    // Look up all saved error files
-                    File exceptionDir = new File(storeDirectory);
-                    if (!exceptionDir.exists() || !exceptionDir.isDirectory()) return;
+                public void run() { // Look up all saved error files
+                    Collection<File> storedFiles = findStoredFiles();
 
-                    File[] errorFiles = exceptionDir.listFiles();
-                    if (errorFiles != null && errorFiles.length > 0) {
-                        Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", errorFiles.length));
+                    if (!storedFiles.isEmpty()) {
+                        Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", storedFiles.size()));
 
-                        for (File errorFile : errorFiles) {
+                        for (File errorFile : storedFiles) {
                             flushErrorReport(errorFile, errorReportApiClient);
                         }
                     }
@@ -117,22 +114,12 @@ class ErrorStore extends FileStore<Error> {
     }
 
     private List<File> findLaunchCrashReports() {
-        if (storeDirectory == null) {
-            return Collections.emptyList();
-        }
-
-        File exceptionDir = new File(storeDirectory);
+        Collection<File> storedFiles = findStoredFiles();
         List<File> launchCrashes = new ArrayList<>();
 
-        if (exceptionDir.isDirectory()) {
-            File[] files = exceptionDir.listFiles();
-
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    if (isLaunchCrashReport(file)) {
-                        launchCrashes.add(file);
-                    }
-                }
+        for (File file : storedFiles) {
+            if (isLaunchCrashReport(file)) {
+                launchCrashes.add(file);
             }
         }
         return launchCrashes;
