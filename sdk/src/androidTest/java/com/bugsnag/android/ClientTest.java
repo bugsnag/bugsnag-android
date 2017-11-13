@@ -20,6 +20,7 @@ import static com.bugsnag.android.Client.MF_ENDPOINT;
 import static com.bugsnag.android.Client.MF_PERSIST_USER_BETWEEN_SESSIONS;
 import static com.bugsnag.android.Client.MF_RELEASE_STAGE;
 import static com.bugsnag.android.Client.MF_SEND_THREADS;
+import static com.bugsnag.android.Client.MF_SESSIONS_ENDPOINT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -173,6 +174,7 @@ public class ClientTest {
         assertEquals(config.getAppVersion(), newConfig.getAppVersion());
         assertEquals(config.getReleaseStage(), newConfig.getReleaseStage());
         assertEquals(config.getEndpoint(), newConfig.getEndpoint());
+        assertEquals(config.getSessionEndpoint(), newConfig.getSessionEndpoint());
         assertEquals(config.getSendThreads(), newConfig.getSendThreads());
         assertEquals(config.getEnableExceptionHandler(), newConfig.getEnableExceptionHandler());
         assertEquals(config.getPersistUserBetweenSessions(), newConfig.getPersistUserBetweenSessions());
@@ -184,11 +186,13 @@ public class ClientTest {
         String appVersion = "v1.0";
         String releaseStage = "debug";
         String endpoint = "http://example.com";
+        String sessionEndpoint = "http://session-example.com";
 
         Bundle data = new Bundle();
         data.putString(MF_BUILD_UUID, buildUuid);
         data.putString(MF_APP_VERSION, appVersion);
         data.putString(MF_RELEASE_STAGE, releaseStage);
+        data.putString(MF_SESSIONS_ENDPOINT, sessionEndpoint);
         data.putString(MF_ENDPOINT, endpoint);
         data.putBoolean(MF_SEND_THREADS, false);
         data.putBoolean(MF_ENABLE_EXCEPTION_HANDLER, false);
@@ -199,6 +203,7 @@ public class ClientTest {
         assertEquals(appVersion, newConfig.getAppVersion());
         assertEquals(releaseStage, newConfig.getReleaseStage());
         assertEquals(endpoint, newConfig.getEndpoint());
+        assertEquals(sessionEndpoint, newConfig.getSessionEndpoint());
         assertEquals(false, newConfig.getSendThreads());
         assertEquals(false, newConfig.getEnableExceptionHandler());
         assertEquals(true, newConfig.getPersistUserBetweenSessions());

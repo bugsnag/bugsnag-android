@@ -55,7 +55,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 session.setStartedAt(date);
                 session.setUser(user);
 
-                // TODO handle sending/storing sessions here!
                 sessionQueue.add(session); // store previous session
                 currentSession = session;
             }
