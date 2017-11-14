@@ -21,7 +21,7 @@ import java.util.Observer;
 public class Configuration extends Observable implements Observer {
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
-    private static final String HEADER_API_KEY = "Bugsnag-API-Key";
+    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
     private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
 
     @NonNull

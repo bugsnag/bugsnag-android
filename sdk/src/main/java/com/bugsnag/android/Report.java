@@ -36,6 +36,8 @@ public class Report implements JsonStream.Streamable {
         // Create a JSON stream and top-level object
         writer.beginObject();
 
+        writer.name("apiKey").value("9f2996871fb381de73bfb0bea455c28b"); // TODO remove (bug in scheduling service)
+
         // Write the notifier info
         writer.name("notifier").value(notifier);
 

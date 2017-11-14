@@ -28,7 +28,7 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
 
         manifestPlaceholders = [
-            bugsnagApiKey                    : "a0f5e56c125d7eeac31fd66e4f0cbd79",
+            bugsnagApiKey                    : "9f2996871fb381de73bfb0bea455c28b",
             bugsnagBuildUUID                 : "abc123",
             bugsnagAppVersion                : "1.0.0",
             bugsnagEndpoint                  : "http://10.0.2.2:8000",

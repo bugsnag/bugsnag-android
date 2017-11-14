@@ -111,14 +111,14 @@ public class ConfigurationTest {
     @Test
     public void testErrorApiHeaders() throws Exception {
         Map<String, String> headers = config.getErrorApiHeaders();
-        assertEquals(config.getApiKey(), headers.get("Bugsnag-API-Key"));
+        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
         assertNotNull(headers.get("Bugsnag-Payload-Version"));
     }
 
     @Test
     public void testSessionApiHeaders() throws Exception {
         Map<String, String> headers = config.getSessionApiHeaders();
-        assertEquals(config.getApiKey(), headers.get("Bugsnag-API-Key"));
+        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
         assertNotNull(headers.get("Bugsnag-Sent-At"));
         assertNotNull(headers.get("Bugsnag-Payload-Version"));
     }
