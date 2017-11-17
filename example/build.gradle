@@ -5,7 +5,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -54,6 +54,23 @@ android {
             enable true
         }
     }
+
+    flavorDimensions "regular"
+
+    splits {
+        density {
+          enable true
+          reset()
+          include "mdpi", "hdpi"//, "xhdpi", "xxhdpi", "xxxhdpi"
+        }
+        abi {
+          enable true
+          reset()
+          include 'armeabi-v7a', 'x86'
+          universalApk true
+        }
+    }
+
 
     flavorDimensions "regular"
 
