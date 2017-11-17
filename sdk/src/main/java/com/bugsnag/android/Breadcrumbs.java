@@ -44,6 +44,7 @@ class Breadcrumbs implements JsonStream.Streamable {
             this.name = name;
         }
 
+        @Override
         public void toStream(@NonNull JsonStream writer) throws IOException {
             writer.beginObject();
             writer.name(TIMESTAMP_KEY).value(this.timestamp);
@@ -78,6 +79,7 @@ class Breadcrumbs implements JsonStream.Streamable {
     final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
     private int maxSize = DEFAULT_MAX_SIZE;
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 

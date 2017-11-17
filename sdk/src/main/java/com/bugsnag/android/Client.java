@@ -124,9 +124,8 @@ public class Client extends Observable implements Observer {
         errorReportApiClient = new DefaultHttpClient(cm);
 
         if (appContext instanceof Application) {
-            SdkCompatWrapper sdkCompatWrapper = new SdkCompatWrapper();
             Application application = (Application) appContext;
-            sdkCompatWrapper.setupLifecycleLogger(application);
+            application.registerActivityLifecycleCallbacks(new LifecycleBreadcrumbLogger());
         } else {
             Logger.warn("Bugsnag is unable to setup automatic activity lifecycle breadcrumbs on API " +
                 "Levels below 14.");
@@ -153,7 +152,6 @@ public class Client extends Observable implements Observer {
 
         appData = new AppData(appContext, config);
         deviceData = new DeviceData(appContext, sharedPref);
-        AppState.init();
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs();

@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public class Notifier implements JsonStream.Streamable {
     static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    static final String NOTIFIER_VERSION = "4.1.1";
+    static final String NOTIFIER_VERSION = "4.1.3";
     static final String NOTIFIER_URL = "https://bugsnag.com";
     private String name;
     private String version;
@@ -28,6 +28,7 @@ public class Notifier implements JsonStream.Streamable {
         this.url = NOTIFIER_URL;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("name").value(name);

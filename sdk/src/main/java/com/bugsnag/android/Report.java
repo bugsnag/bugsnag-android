@@ -34,6 +34,7 @@ public class Report implements JsonStream.Streamable {
         this.notifier = Notifier.getInstance();
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Create a JSON stream and top-level object
         writer.beginObject();
@@ -48,12 +49,14 @@ public class Report implements JsonStream.Streamable {
         writer.name("events").beginArray();
 
         // Write in-memory event
-        if (error != null)
+        if (error != null) {
             writer.value(error);
+        }
 
         // Write on-disk event
-        if (errorFile != null)
+        if (errorFile != null) {
             writer.value(errorFile);
+        }
 
         // End events array
         writer.endArray();

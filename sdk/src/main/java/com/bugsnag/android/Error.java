@@ -26,7 +26,7 @@ public class Error implements JsonStream.Streamable {
     private DeviceState deviceState;
     private Breadcrumbs breadcrumbs;
     private User user;
-    private Throwable exception;
+    private final Throwable exception;
     private Severity severity = Severity.WARNING;
     @NonNull private MetaData metaData = new MetaData();
     private String groupingHash;
@@ -40,6 +40,7 @@ public class Error implements JsonStream.Streamable {
         this.severity = severity;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
         MetaData mergedMetaData = MetaData.merge(config.getMetaData(), metaData);
@@ -278,6 +279,15 @@ public class Error implements JsonStream.Streamable {
      */
     public Throwable getException() {
         return exception;
+    }
+
+    /**
+     * Sets the device ID. This can be set to null for privacy concerns.
+     *
+     * @param id the device id
+     */
+    public void setDeviceId(@Nullable String id) {
+        deviceData.id = id;
     }
 
     void setAppData(AppData appData) {

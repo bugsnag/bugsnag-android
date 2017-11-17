@@ -9,13 +9,14 @@ import java.io.IOException;
  */
 class Exceptions implements JsonStream.Streamable {
     private final Configuration config;
-    private Throwable exception;
+    private final Throwable exception;
 
     Exceptions(Configuration config, Throwable exception) {
         this.config = config;
         this.exception = exception;
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
 

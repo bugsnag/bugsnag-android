@@ -19,9 +19,9 @@ public class EventReceiver extends BroadcastReceiver {
     private static final String INTENT_ACTION_KEY = "Intent Action";
 
     @NonNull
-    private static Map<String, BreadcrumbType> actions = buildActions();
+    private static final Map<String, BreadcrumbType> actions = buildActions();
     @NonNull
-    private static List<String> categories = buildCategories();
+    private static final List<String> categories = buildCategories();
 
     @Override
     public void onReceive(Context context, @NonNull Intent intent) {

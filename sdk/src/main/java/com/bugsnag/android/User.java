@@ -25,6 +25,7 @@ class User implements JsonStream.Streamable {
         this(u.id, u.email, u.name);
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 

@@ -38,7 +38,7 @@ class DeviceData implements JsonStream.Streamable {
     @NonNull
     protected final String locale;
     @Nullable
-    protected final String id;
+    protected String id;
     @NonNull
     protected final String[] cpuAbi;
 
@@ -53,6 +53,7 @@ class DeviceData implements JsonStream.Streamable {
         cpuAbi = getCpuAbi();
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 
@@ -85,6 +86,10 @@ class DeviceData implements JsonStream.Streamable {
     @NonNull
     public String getUserId() {
         return id;
+    }
+
+    void setId(@Nullable String id) {
+        this.id = id;
     }
 
     /**

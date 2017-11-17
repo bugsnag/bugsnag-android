@@ -44,6 +44,7 @@ class AppData implements JsonStream.Streamable {
         guessedReleaseStage = guessReleaseStage(appContext);
     }
 
+    @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
 

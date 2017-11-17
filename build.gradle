@@ -10,10 +10,10 @@ buildscript {
 }
 
 ext {
-    supportLibVersion = "25.3.1"
+    supportLibVersion = "27.0.0"
     supportTestVersion = "0.5"
     espressoVersion = "2.2.2"
     junitVersion = "4.12"
     mockitoVersion = "1.10.19"
-    kotlin_version = '1.1.3-2'
+    kotlin_version = '1.1.51'
 }

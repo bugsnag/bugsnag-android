@@ -15,6 +15,7 @@ apply plugin: 'kotlin-android'
 
 repositories {
     jcenter()
+    google()
 }
 
 android {
@@ -48,6 +49,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
         }
     }
+    splits {
+        density {
+            enable true
+        }
+    }
+
+    flavorDimensions "regular"
 
     splits {
         density {
