@@ -49,8 +49,6 @@ android {
         }
     }
 
-
-    // Disabled for now - https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
     splits {
         density {
           enable true
