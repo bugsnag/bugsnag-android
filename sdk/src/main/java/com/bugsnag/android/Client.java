@@ -120,17 +120,17 @@ public class Client extends Observable implements Observer {
         launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-        ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        errorReportApiClient = new DefaultHttpClient(cm);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
-            application.registerActivityLifecycleCallbacks(new LifecycleBreadcrumbLogger());
+            application.registerActivityLifecycleCallbacks(new LifecycleBreadcrumbLogger(this));
         } else {
             Logger.warn("Bugsnag is unable to setup automatic activity lifecycle breadcrumbs on API " +
                 "Levels below 14.");
         }
 
+        ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        errorReportApiClient = new DefaultHttpClient(cm);
         config = configuration;
 
         // populate from manifest (in the case where the constructor was called directly by the
