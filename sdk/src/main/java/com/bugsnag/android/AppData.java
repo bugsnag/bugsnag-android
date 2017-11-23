@@ -25,34 +25,18 @@ class AppData extends AppDataSummary {
     @Nullable
     final String appName;
 
-    private final long duration;
-    private final long durationInForeground;
-
-    @Nullable
-    private final Boolean inForeground;
-
-    @Nullable
-    private final String activeScreen;
-
     @NonNull
-    private final Long memoryUsage;
-
-    @Nullable
-    private final Boolean lowMemory;
+    private final Context appContext;
+    private final SessionTracker sessionTracker;
 
     @NonNull
     protected final String packageName;
 
     AppData(@NonNull Context appContext, @NonNull Configuration config, SessionTracker sessionTracker) {
         super(appContext, config);
+        this.appContext = appContext;
+        this.sessionTracker = sessionTracker;
         appName = getAppName(appContext);
-        duration = getDuration();
-        inForeground = sessionTracker.isInForeground();
-        durationInForeground = sessionTracker.getDurationInForeground();
-
-        activeScreen = getActiveScreen(appContext);
-        memoryUsage = getMemoryUsage();
-        lowMemory = isLowMemory(appContext);
         packageName = getPackageName(appContext);
     }
 
@@ -63,22 +47,19 @@ class AppData extends AppDataSummary {
 
         writer.name("id").value(packageName);
         writer.name("buildUUID").value(config.getBuildUUID());
-        writer.name("duration").value(duration);
-        writer.name("durationInForeground").value(durationInForeground);
-        writer.name("inForeground").value(inForeground);
-
+        writer.name("duration").value(getDuration());
+        writer.name("durationInForeground").value(sessionTracker.getDurationInForeground());
+        writer.name("inForeground").value(sessionTracker.isInForeground());
 
         // TODO migrate legacy fields
         writer.name("name").value(appName);
         writer.name("packageName").value(packageName);
         writer.name("versionName").value(versionName);
-        writer.name("activeScreen").value(activeScreen);
-        writer.name("memoryUsage").value(memoryUsage);
-        writer.name("lowMemory").value(lowMemory);
+        writer.name("activeScreen").value(getActiveScreenClass());
+        writer.name("memoryUsage").value(getMemoryUsage());
+        writer.name("lowMemory").value(isLowMemory(appContext));
         writer.endObject();
     }
-
-
 
     /**
      * The name of the running Android app, from android:label in
@@ -99,11 +80,15 @@ class AppData extends AppDataSummary {
 
     @Nullable
     String getActiveScreenClass() {
-        if (activeScreen != null) {
-            return activeScreen.substring(activeScreen.lastIndexOf('.') + 1);
-        } else {
-            return null;
+        try {
+            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
+            ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
+            return runningTask.topActivity.getClassName();
+        } catch (Exception e) {
+            Logger.warn("Could not get active screen information, we recommend granting the 'android.permission.GET_TASKS' permission");
         }
+        return null;
     }
 
     /**
@@ -128,23 +113,6 @@ class AppData extends AppDataSummary {
             return memInfo.lowMemory;
         } catch (Exception e) {
             Logger.warn("Could not check lowMemory status");
-        }
-        return null;
-    }
-
-    /**
-     * Get the name of the top-most activity. Requires the GET_TASKS permission,
-     * which defaults to true in Android 5.0+.
-     */
-    @Nullable
-    private static String getActiveScreen(@NonNull Context appContext) {
-        try {
-            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
-            ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
-            return runningTask.topActivity.getClassName();
-        } catch (Exception e) {
-            Logger.warn("Could not get active screen information, we recommend granting the 'android.permission.GET_TASKS' permission");
         }
         return null;
     }
