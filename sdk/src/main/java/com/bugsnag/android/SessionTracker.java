@@ -53,13 +53,14 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      * @param date the session start date
      * @param user the session user (if any)
      */
-    synchronized void startNewSession(@NonNull Date date, @Nullable User user) {
+    synchronized void startNewSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
         sessionStartMs = date.getTime();
 
         Session session = new Session();
         session.setId(UUID.randomUUID().toString());
         session.setStartedAt(date);
         session.setUser(user);
+        session.setAutoCaptured(autoCaptured);
 
         if (configuration.shouldAutoCaptureSessions()) {
             sessionQueue.add(session); // store session for sending
@@ -158,7 +159,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             long delta = now - lastForegroundMs;
 
             if (foregroundActivities.isEmpty() && delta >= timeoutMs && configuration.shouldAutoCaptureSessions()) {
-                startNewSession(new Date(now), Bugsnag.getClient().user);
+                startNewSession(new Date(now), Bugsnag.getClient().user, true);
             }
             foregroundActivities.add(activityName);
         } else {

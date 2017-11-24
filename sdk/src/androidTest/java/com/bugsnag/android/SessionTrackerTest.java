@@ -63,7 +63,7 @@ public class SessionTrackerTest {
         assertNotNull(sessionTracker);
         assertNull(sessionTracker.getCurrentSession());
         Date date = new Date();
-        sessionTracker.startNewSession(date, user);
+        sessionTracker.startNewSession(date, user, false);
 
         Session newSession = sessionTracker.getCurrentSession();
         assertNotNull(newSession);
@@ -78,29 +78,29 @@ public class SessionTrackerTest {
         configuration.setAutoCaptureSessions(false);
 
         Date date = new Date();
-        sessionTracker.startNewSession(date, user);
+        sessionTracker.startNewSession(date, user, false);
         assertTrue(sessionTracker.sessionQueue.isEmpty());
         assertNotNull(sessionTracker.getCurrentSession());
 
         configuration.setAutoCaptureSessions(true);
-        sessionTracker.startNewSession(date, user);
+        sessionTracker.startNewSession(date, user, false);
         assertEquals(1, sessionTracker.sessionQueue.size());
         assertNotNull(sessionTracker.getCurrentSession());
     }
 
     @Test
     public void testUniqueSessionIds() throws Exception {
-        sessionTracker.startNewSession(new Date(), user);
+        sessionTracker.startNewSession(new Date(), user, false);
         Session firstSession = sessionTracker.getCurrentSession();
 
-        sessionTracker.startNewSession(new Date(), user);
+        sessionTracker.startNewSession(new Date(), user, false);
         Session secondSession = sessionTracker.getCurrentSession();
         assertNotEquals(firstSession, secondSession);
     }
 
     @Test
     public void testIncrementCounts() throws Exception {
-        sessionTracker.startNewSession(new Date(), user);
+        sessionTracker.startNewSession(new Date(), user, false);
         sessionTracker.incrementHandledError();
         sessionTracker.incrementHandledError();
         sessionTracker.incrementUnhandledError();
@@ -112,7 +112,7 @@ public class SessionTrackerTest {
         assertEquals(2, session.getHandledCount());
         assertEquals(3, session.getUnhandledCount());
 
-        sessionTracker.startNewSession(new Date(), user);
+        sessionTracker.startNewSession(new Date(), user, false);
         Session nextSession = sessionTracker.getCurrentSession();
         assertEquals(0, nextSession.getHandledCount());
         assertEquals(0, nextSession.getUnhandledCount());

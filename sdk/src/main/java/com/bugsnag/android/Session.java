@@ -10,6 +10,8 @@ class Session {
     private int unhandledCount;
     private int handledCount;
 
+    private boolean autoCaptured;
+
     String getId() {
         return id;
     }
@@ -48,5 +50,13 @@ class Session {
 
     synchronized void incrementUnhandledErrCount() {
         unhandledCount++;
+    }
+
+    boolean isAutoCaptured() {
+        return autoCaptured;
+    }
+
+    void setAutoCaptured(boolean autoCaptured) {
+        this.autoCaptured = autoCaptured;
     }
 }

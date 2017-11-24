@@ -339,7 +339,12 @@ public class Error implements JsonStream.Streamable {
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
-            this.session = session;
+
+            if (session != null  && !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
+                this.session = null;
+            } else {
+                this.session = session;
+            }
         }
 
         Builder(@NonNull Configuration config, @NonNull String name,

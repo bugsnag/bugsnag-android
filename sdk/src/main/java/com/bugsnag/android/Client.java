@@ -340,7 +340,7 @@ public class Client extends Observable implements Observer {
      * session everytime the app enters the foreground.
      */
     public void startSession() {
-        sessionTracker.startNewSession(new Date(), user);
+        sessionTracker.startNewSession(new Date(), user, false);
     }
 
     /**
