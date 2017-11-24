@@ -26,6 +26,8 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
 
         if (status / 100 != 2) {
             throw new BadResponseException(urlString, status);
+        } else {
+            Logger.info("Completed error API request");
         }
     }
 
@@ -37,6 +39,8 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
 
         if (status != 202) {
             throw new BadResponseException(urlString, status);
+        } else {
+            Logger.info("Completed session tracking request");
         }
     }
 
