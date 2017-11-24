@@ -20,7 +20,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
-    private final Object lock = new Object();
     final Collection<Session> sessionQueue = new ConcurrentLinkedQueue<>();
     private final Set<String> foregroundActivities = new HashSet<>();
     private final Configuration configuration;
@@ -49,42 +48,32 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      * @param date the session start date
      * @param user the session user (if any)
      */
-    void startNewSession(@NonNull Date date, @Nullable User user) {
-        synchronized (lock) {
-            sessionStartMs = date.getTime();
+    synchronized void startNewSession(@NonNull Date date, @Nullable User user) {
+        sessionStartMs = date.getTime();
 
-            if (configuration.shouldAutoCaptureSessions()) {
-                Session session = new Session();
-                session.setId(UUID.randomUUID().toString());
-                session.setStartedAt(date);
-                session.setUser(user);
+        Session session = new Session();
+        session.setId(UUID.randomUUID().toString());
+        session.setStartedAt(date);
+        session.setUser(user);
 
-                sessionQueue.add(session); // store previous session
-                currentSession = session;
-            }
-        }
+        sessionQueue.add(session); // store session for sending
+        currentSession = session;
     }
 
     @Nullable
-    Session getCurrentSession() {
-        synchronized (lock) {
-            return currentSession;
+    synchronized Session getCurrentSession() {
+        return currentSession;
+    }
+
+    synchronized void incrementUnhandledError() {
+        if (currentSession != null) {
+            currentSession.incrementUnhandledErrCount();
         }
     }
 
-    void incrementUnhandledError() {
-        synchronized (lock) {
-            if (currentSession != null) {
-                currentSession.incrementUnhandledErrCount();
-            }
-        }
-    }
-
-    void incrementHandledError() {
-        synchronized (lock) {
-            if (currentSession != null) {
-                currentSession.incrementHandledErrCount();
-            }
+    synchronized void incrementHandledError() {
+        if (currentSession != null) {
+            currentSession.incrementHandledErrCount();
         }
     }
 
@@ -148,7 +137,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         if (inForeground) {
             long delta = now - lastForegroundMs;
 
-            if (foregroundActivities.isEmpty() && delta >= timeoutMs) {
+            if (foregroundActivities.isEmpty() && delta >= timeoutMs && configuration.shouldAutoCaptureSessions()) {
                 startNewSession(new Date(now), Bugsnag.getClient().user);
             }
             foregroundActivities.add(activityName);
