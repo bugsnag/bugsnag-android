@@ -109,6 +109,24 @@ public class SessionTrackerTest {
     }
 
     @Test
+    public void testInForegroundDuration() throws Exception {
+        long now = System.currentTimeMillis();
+        sessionTracker = new SessionTracker(configuration, 0);
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        assertEquals(0, sessionTracker.getDurationInForeground(now));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        assertEquals(0, sessionTracker.getDurationInForeground(now));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        assertEquals(100, sessionTracker.getDurationInForeground(now + 100));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        assertEquals(0, sessionTracker.getDurationInForeground(now + 200));
+    }
+
+    @Test
     public void testZeroSessionTimeout() throws Exception {
         sessionTracker = new SessionTracker(configuration, 0);
 

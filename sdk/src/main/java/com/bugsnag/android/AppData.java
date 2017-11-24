@@ -48,7 +48,7 @@ class AppData extends AppDataSummary {
         writer.name("id").value(packageName);
         writer.name("buildUUID").value(config.getBuildUUID());
         writer.name("duration").value(getDuration());
-        writer.name("durationInForeground").value(sessionTracker.getDurationInForeground());
+        writer.name("durationInForeground").value(sessionTracker.getDurationInForeground(System.currentTimeMillis()));
         writer.name("inForeground").value(sessionTracker.isInForeground());
 
         // TODO migrate legacy fields

@@ -25,7 +25,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private final Set<String> foregroundActivities = new HashSet<>();
     private final Configuration configuration;
     private final long timeoutMs;
+
     private long lastForegroundMs;
+    private Long sessionStartMs;
 
     private Session currentSession;
 
@@ -49,6 +51,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      */
     void startNewSession(@NonNull Date date, @Nullable User user) {
         synchronized (lock) {
+            sessionStartMs = date.getTime();
+
             if (configuration.shouldAutoCaptureSessions()) {
                 Session session = new Session();
                 session.setId(UUID.randomUUID().toString());
@@ -145,7 +149,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             long delta = now - lastForegroundMs;
 
             if (foregroundActivities.isEmpty() && delta >= timeoutMs) {
-                startNewSession(new Date(), Bugsnag.getClient().user);
+                startNewSession(new Date(now), Bugsnag.getClient().user);
             }
             foregroundActivities.add(activityName);
         } else {
@@ -158,11 +162,11 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         return !foregroundActivities.isEmpty();
     }
 
-    long getDurationInForeground() {
+    long getDurationInForeground(long now) {
         long duration = 0;
 
-        if (currentSession != null) {
-            duration = currentSession.getStartedAt().getTime() - System.currentTimeMillis();
+        if (isInForeground() && sessionStartMs != null) {
+            duration = now - sessionStartMs;
         }
         return duration > 0 ? duration : 0;
     }

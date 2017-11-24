@@ -32,7 +32,7 @@ android {
             bugsnagBuildUUID                 : "abc123",
             bugsnagAppVersion                : "1.0.0",
             bugsnagEndpoint                  : "http://10.0.2.2:8000",
-            bugsnagSessionsEndpoint          : "http://10.0.2.2:10000",
+            bugsnagSessionsEndpoint          : "http://10.0.2.2:1234",
             bugsnagReleaseStage              : "debug",
             bugsnagSendThreads               : true,
             bugsnagEnableExceptionHandler    : true,
