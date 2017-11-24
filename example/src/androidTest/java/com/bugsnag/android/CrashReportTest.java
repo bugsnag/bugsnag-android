@@ -54,7 +54,7 @@ public class CrashReportTest {
         assertNotNull(report);
         JSONObject json = getJson(report);
 
-        assertEquals("066f5ad3590596f9aa8d601ea89af845", json.getString("apiKey"));
+        assertNotNull(json.getString("apiKey"));
         assertEquals(3, json.length());
 
         JSONObject event = json.getJSONArray("events").getJSONObject(0);

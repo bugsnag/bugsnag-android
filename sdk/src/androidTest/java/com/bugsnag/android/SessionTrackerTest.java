@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.util.Pair;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,6 +17,10 @@ import static org.junit.Assert.assertNotEquals;
 public class SessionTrackerTest {
 
     private static final String ACTIVITY_NAME = "test";
+    private static final String FIRST_ACTIVITY = "MyActivity";
+    private static final String SECOND_ACTIVITY = "SecondActivity";
+    private static final String FIRST_CB = "onCreate";
+    private static final String SECOND_CB = "onStart";
 
     private SessionTracker sessionTracker;
     private User user;
@@ -23,9 +29,33 @@ public class SessionTrackerTest {
     @Before
     public void setUp() throws Exception {
         configuration = new Configuration("test");
-        sessionTracker = new SessionTracker(configuration);
+        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient());
         configuration.setAutoCaptureSessions(true);
         user = new User();
+    }
+
+    @Test
+    public void testLifecycleQueueing() throws Exception {
+        sessionTracker = new SessionTracker(configuration, null);
+        sessionTracker.leaveLifecycleBreadcrumb(FIRST_ACTIVITY, FIRST_CB);
+        sessionTracker.leaveLifecycleBreadcrumb(SECOND_ACTIVITY, SECOND_CB);
+
+        assertEquals(2, sessionTracker.breadcrumbQueue.size());
+
+        Pair<String, String> poll = sessionTracker.breadcrumbQueue.poll();
+        assertEquals(FIRST_ACTIVITY, poll.first);
+        assertEquals(FIRST_CB, poll.second);
+
+        poll = sessionTracker.breadcrumbQueue.poll();
+        assertEquals(SECOND_ACTIVITY, poll.first);
+        assertEquals(SECOND_CB, poll.second);
+    }
+
+    @Test
+    public void testLifecycleLogging() throws Exception {
+        sessionTracker.leaveLifecycleBreadcrumb(FIRST_ACTIVITY, FIRST_CB);
+        sessionTracker.leaveLifecycleBreadcrumb(SECOND_ACTIVITY, SECOND_CB);
+        assertTrue(sessionTracker.breadcrumbQueue.isEmpty());
     }
 
     @Test
@@ -49,10 +79,12 @@ public class SessionTrackerTest {
 
         Date date = new Date();
         sessionTracker.startNewSession(date, user);
-        assertNull(sessionTracker.getCurrentSession());
+        assertTrue(sessionTracker.sessionQueue.isEmpty());
+        assertNotNull(sessionTracker.getCurrentSession());
 
         configuration.setAutoCaptureSessions(true);
         sessionTracker.startNewSession(date, user);
+        assertEquals(1, sessionTracker.sessionQueue.size());
         assertNotNull(sessionTracker.getCurrentSession());
     }
 
@@ -111,7 +143,7 @@ public class SessionTrackerTest {
     @Test
     public void testInForegroundDuration() throws Exception {
         long now = System.currentTimeMillis();
-        sessionTracker = new SessionTracker(configuration, 0);
+        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient(), 0);
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
         assertEquals(0, sessionTracker.getDurationInForeground(now));
@@ -128,7 +160,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testZeroSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, 0);
+        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient(), 0);
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -142,7 +174,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, 100);
+        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient(), 100);
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);

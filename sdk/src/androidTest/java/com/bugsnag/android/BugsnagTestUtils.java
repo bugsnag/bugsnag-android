@@ -58,7 +58,7 @@ final class BugsnagTestUtils {
     }
 
     static SessionTracker generateSessionTracker() {
-        return new SessionTracker(generateConfiguration());
+        return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient());
     }
 
     static SessionSender generateSessionSender() {

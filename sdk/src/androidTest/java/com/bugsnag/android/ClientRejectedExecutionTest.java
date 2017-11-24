@@ -44,7 +44,7 @@ public class ClientRejectedExecutionTest {
     }
 
     /**
-     * Checks that an exception is not thrown when the max task queue is reached, and that the
+     * Checks that an exception is not thrown when the max task breadcrumbQueue is reached, and that the
      * error is written to disk
      */
     @Test

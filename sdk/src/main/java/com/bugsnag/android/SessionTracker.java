@@ -5,12 +5,14 @@ import android.app.Application;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -21,21 +23,24 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
     final Collection<Session> sessionQueue = new ConcurrentLinkedQueue<>();
+    final Queue<Pair<String, String>> breadcrumbQueue = new ConcurrentLinkedQueue<>();
+
     private final Set<String> foregroundActivities = new HashSet<>();
     private final Configuration configuration;
     private final long timeoutMs;
+    private final Client client;
 
     private long lastForegroundMs;
     private Long sessionStartMs;
-
     private Session currentSession;
 
-    SessionTracker(Configuration configuration) {
-        this(configuration, DEFAULT_TIMEOUT_MS);
+    SessionTracker(Configuration configuration, Client client) {
+        this(configuration, client, DEFAULT_TIMEOUT_MS);
     }
 
-    SessionTracker(Configuration configuration, long timeoutMs) {
+    SessionTracker(Configuration configuration, Client client, long timeoutMs) {
         this.configuration = configuration;
+        this.client = client;
         this.timeoutMs = timeoutMs;
     }
 
@@ -56,7 +61,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         session.setStartedAt(date);
         session.setUser(user);
 
-        sessionQueue.add(session); // store session for sending
+        if (configuration.shouldAutoCaptureSessions()) {
+            sessionQueue.add(session); // store session for sending
+        }
         currentSession = session;
     }
 
@@ -79,46 +86,59 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
-        leaveLifecycleBreadcrumb(activity, "onCreate()");
+        leaveLifecycleBreadcrumb(getActivityName(activity), "onCreate()");
     }
 
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(activity, "onStart()");
-        updateForegroundTracker(activity.getClass().getCanonicalName(), true, System.currentTimeMillis());
+        leaveLifecycleBreadcrumb(getActivityName(activity), "onStart()");
     }
 
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(activity, "onResume()");
+        leaveLifecycleBreadcrumb(getActivityName(activity), "onResume()");
     }
 
     @Override
     public void onActivityPaused(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(activity, "onPause()");
+        leaveLifecycleBreadcrumb(getActivityName(activity), "onPause()");
     }
 
     @Override
     public void onActivityStopped(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(activity, "onStop()");
-        updateForegroundTracker(activity.getClass().getCanonicalName(), false, System.currentTimeMillis());
+        leaveLifecycleBreadcrumb(getActivityName(activity), "onStop()");
     }
 
     @Override
     public void onActivitySaveInstanceState(@NonNull Activity activity, Bundle outState) {
-        leaveLifecycleBreadcrumb(activity, "onSaveInstanceState()");
+        leaveLifecycleBreadcrumb(getActivityName(activity), "onSaveInstanceState()");
     }
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(activity, "onDestroy()");
+        leaveLifecycleBreadcrumb(getActivityName(activity), "onDestroy()");
     }
 
-    private synchronized void leaveLifecycleBreadcrumb(@NonNull Activity activity, String lifecycleCallback) {
-        String activityName = activity.getClass().getSimpleName();
+    private String getActivityName(@NonNull Activity activity) {
+        return activity.getClass().getSimpleName();
+    }
+
+    synchronized void leaveLifecycleBreadcrumb(String activityName, String lifecycleCallback) {
+        if (client == null) { // not initialised yet, enqueue breadcrumbs for later
+            breadcrumbQueue.add(new Pair<>(activityName, lifecycleCallback));
+        } else {
+            while (!breadcrumbQueue.isEmpty()) {
+                Pair<String, String> pair = breadcrumbQueue.poll();
+                leaveBreadcrumb(pair.first, pair.second);
+            }
+            leaveBreadcrumb(activityName, lifecycleCallback);
+        }
+    }
+
+    private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
         Map<String, String> metadata = new HashMap<>();
         metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
-        Bugsnag.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
+        client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
     }
 
     /**

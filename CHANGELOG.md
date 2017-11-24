@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.1.4 (2017-11-23)
+- Enqueue activity lifecycle events when initialisation not complete to prevent NPE
+- Add example of using Bugsnag within a library module
+
+## 4.1.3 (2017-11-07)
+- Compile annotations dependency as api rather than implementation
+- Support handled state case for React Native
+
+## 4.1.2 (2017-11-02)
+- Allow setting device ID to null
+
 ## 4.1.1 (2017-10-12)
 - Performance improvements to reduce execution time of `Bugsnag.init`
 

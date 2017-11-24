@@ -100,16 +100,6 @@ This process is a little ridiculous...
     ensuring both kinds of reports are sent.
 -   Update the `CHANGELOG` and `README.md` with any new features
 
--   Update the version number by running make VERSION=[number] bump
-
--   Commit and tag the release
-
-    ```shell
-    git commit -am "v3.x.x"
-    git tag v3.x.x
-    git push origin master && git push --tags
-    ```
-
 ### 3. Release to Maven Central
 
 -   Create a file `~/.gradle/gradle.properties` with the following contents:
@@ -128,9 +118,7 @@ This process is a little ridiculous...
 
 -   Build and upload the new version
 
-    ```shell
-    ./gradlew clean :uploadArchives
-    ```
+-   Update the version number, tag a release, and upload an archive by running `make VERSION=[number] release`
 
 -   "Promote" the release build on Maven Central
 

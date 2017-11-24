@@ -130,7 +130,7 @@ public class Client extends Observable implements Observer {
         launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-        sessionTracker = new SessionTracker(configuration);
+        sessionTracker = new SessionTracker(configuration, this);
         ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
         errorReportApiClient = defaultHttpClient;
@@ -144,6 +144,7 @@ public class Client extends Observable implements Observer {
                 "Levels below 14.");
         }
 
+        errorReportApiClient = new DefaultHttpClient(cm);
         config = configuration;
 
         // populate from manifest (in the case where the constructor was called directly by the
@@ -958,7 +959,7 @@ public class Client extends Observable implements Observer {
                     });
                 } catch (RejectedExecutionException e) {
                     errorStore.write(error);
-                    Logger.warn("Exceeded max queue count, saving to disk to send later");
+                    Logger.warn("Exceeded max breadcrumbQueue count, saving to disk to send later");
                 }
                 break;
             case ASYNC_WITH_CACHE:
