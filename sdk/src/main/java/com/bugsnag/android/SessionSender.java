@@ -35,7 +35,7 @@ class SessionSender {
     /**
      * Attempts to send all sessions (both from memory + disk)
      */
-    synchronized void send() {
+    void send() {
         SessionTrackingPayload payload = getSessionTrackingPayload();
 
         if (payload != null) {
@@ -44,7 +44,7 @@ class SessionSender {
         flushStoredSessions();
     }
 
-    synchronized void storeAllSessions() {
+    void storeAllSessions() {
         SessionTrackingPayload payload = getSessionTrackingPayload();
 
         if (payload != null) {
@@ -52,7 +52,7 @@ class SessionSender {
         }
     }
 
-    private synchronized SessionTrackingPayload getSessionTrackingPayload() {
+    private SessionTrackingPayload getSessionTrackingPayload() {
         List<Session> sessions = new ArrayList<>();
         sessions.addAll(sessionTracker.sessionQueue);
 
@@ -68,7 +68,7 @@ class SessionSender {
     /**
      * Attempts to flush session payloads stored on disk
      */
-    private void flushStoredSessions() {
+    private synchronized void flushStoredSessions() {
         Collection<File> storedFiles = sessionStore.findStoredFiles();
 
         for (File storedFile : storedFiles) {
@@ -89,7 +89,7 @@ class SessionSender {
     /**
      * Attempts to send any tracked sessions to the API, and store in the event of failure
      */
-    private void send(SessionTrackingPayload payload) {
+    private synchronized void send(SessionTrackingPayload payload) {
         try {
             apiClient.postSessionTrackingPayload(endpoint, payload, config.getSessionApiHeaders());
         } catch (NetworkException e) { // store for later sending
