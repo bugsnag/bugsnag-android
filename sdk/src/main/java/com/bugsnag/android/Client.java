@@ -84,6 +84,7 @@ public class Client extends Observable implements Observer {
     private SessionTrackingApiClient sessionTrackingApiClient;
     private final Handler handler;
     private final SessionSender sessionSender;
+    private Runnable runnable;
 
     /**
      * Initialize a Bugsnag client
@@ -210,7 +211,7 @@ public class Client extends Observable implements Observer {
         sessionSender = new SessionSender(sessionTracker, sessionStore, sessionTrackingApiClient, appContext, configuration);
 
         handler = new Handler(appContext.getMainLooper());
-        handler.post(new Runnable() {
+        runnable = new Runnable() {
             @Override
             public void run() {
                 handler.postDelayed(this, SESSION_LOOP_MS);
@@ -223,7 +224,8 @@ public class Client extends Observable implements Observer {
                     }
                 });
             }
-        });
+        };
+        handler.post(runnable);
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -931,9 +933,11 @@ public class Client extends Observable implements Observer {
         HandledState handledState = report.getError().getHandledState();
 
         if (handledState.isUnhandled()) {
-            sessionTracker.incrementHandledError();
-        } else {
             sessionTracker.incrementUnhandledError();
+            handler.removeCallbacks(runnable);
+            sessionSender.storeAllSessions();
+        } else {
+            sessionTracker.incrementHandledError();
         }
 
         switch (style) {

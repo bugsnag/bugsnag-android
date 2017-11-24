@@ -61,7 +61,6 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     @Override
     public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
-        sessionSender.storeAllSessions();
 
         // Notify any subscribed clients of the uncaught exception
         Date now = new Date();
