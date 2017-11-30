@@ -11,7 +11,7 @@ public class ExampleApplication extends Application {
         super.onCreate();
 
         // Initialize the Bugsnag client
-        Bugsnag.init(this);
+        Bugsnag.init(this, "api-key");
     }
 
 }
