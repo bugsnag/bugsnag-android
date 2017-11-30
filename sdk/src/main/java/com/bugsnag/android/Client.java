@@ -882,7 +882,7 @@ public class Client extends Observable implements Observer {
      * By default, this is automatically enabled in the constructor.
      */
     public void enableExceptionHandler() {
-        ExceptionHandler.enable(this, sessionSender);
+        ExceptionHandler.enable(this);
     }
 
     /**

@@ -19,10 +19,9 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
-    private final SessionSender sessionSender;
     final Map<Client, Boolean> clientMap = new WeakHashMap<>();
 
-    static void enable(@NonNull Client client, SessionSender sessionSender) {
+    static void enable(@NonNull Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
 
         // Find or create the Bugsnag ExceptionHandler
@@ -30,7 +29,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         if (currentHandler instanceof ExceptionHandler) {
             bugsnagHandler = (ExceptionHandler) currentHandler;
         } else {
-            bugsnagHandler = new ExceptionHandler(currentHandler, sessionSender);
+            bugsnagHandler = new ExceptionHandler(currentHandler);
             Thread.setDefaultUncaughtExceptionHandler(bugsnagHandler);
         }
 
@@ -53,9 +52,8 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         }
     }
 
-    ExceptionHandler(UncaughtExceptionHandler originalHandler, SessionSender sessionSender) {
+    ExceptionHandler(UncaughtExceptionHandler originalHandler) {
         this.originalHandler = originalHandler;
-        this.sessionSender = sessionSender;
     }
 
     @Override
