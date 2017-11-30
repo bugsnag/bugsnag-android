@@ -4,36 +4,30 @@ import java.util.Date;
 
 class Session {
 
-    private String id;
-    private Date startedAt;
-    private User user;
+    private final String id;
+    private final Date startedAt;
+    private final User user;
+
+    public Session(String id, Date startedAt, User user) {
+        this.id = id;
+        this.startedAt = startedAt;
+        this.user = user;
+    }
+
     private int unhandledCount;
     private int handledCount;
-
-    private boolean autoCaptured;
+    private transient boolean autoCaptured;
 
     String getId() {
         return id;
-    }
-
-    void setId(String id) {
-        this.id = id;
     }
 
     Date getStartedAt() {
         return startedAt;
     }
 
-    void setStartedAt(Date startedAt) {
-        this.startedAt = startedAt;
-    }
-
     User getUser() {
         return user;
-    }
-
-    void setUser(User user) {
-        this.user = user;
     }
 
     synchronized int getUnhandledCount() {

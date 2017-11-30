@@ -46,11 +46,7 @@ final class BugsnagTestUtils {
     }
 
     static Session generateSession() {
-        Session session = new Session();
-        session.setId("test");
-        session.setStartedAt(new Date());
-        session.setUser(new User());
-        return session;
+        return new Session("test", new Date(), new User());
     }
 
     static Configuration generateConfiguration() {

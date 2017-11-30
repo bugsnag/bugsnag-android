@@ -56,10 +56,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     synchronized void startNewSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
         sessionStartMs = date.getTime();
 
-        Session session = new Session();
-        session.setId(UUID.randomUUID().toString());
-        session.setStartedAt(date);
-        session.setUser(user);
+        Session session = new Session(UUID.randomUUID().toString(), date, user);
         session.setAutoCaptured(autoCaptured);
 
         if (configuration.shouldAutoCaptureSessions()) {
