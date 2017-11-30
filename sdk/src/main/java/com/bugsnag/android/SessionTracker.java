@@ -159,7 +159,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             long delta = now - lastForegroundMs;
 
             if (foregroundActivities.isEmpty() && delta >= timeoutMs && configuration.shouldAutoCaptureSessions()) {
-                startNewSession(new Date(now), Bugsnag.getClient().user, true);
+                User user = client != null ? client.user : null;
+                startNewSession(new Date(now), user, true);
             }
             foregroundActivities.add(activityName);
         } else {

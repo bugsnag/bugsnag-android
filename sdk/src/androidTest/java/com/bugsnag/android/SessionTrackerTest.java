@@ -52,6 +52,13 @@ public class SessionTrackerTest {
     }
 
     @Test
+    public void testNullClientUpdate() throws Exception {
+        // shouldn't throw npe attempting to access client
+        sessionTracker = new SessionTracker(configuration, null);
+        sessionTracker.updateForegroundTracker(FIRST_ACTIVITY, true, System.currentTimeMillis());
+    }
+
+    @Test
     public void testLifecycleLogging() throws Exception {
         sessionTracker.leaveLifecycleBreadcrumb(FIRST_ACTIVITY, FIRST_CB);
         sessionTracker.leaveLifecycleBreadcrumb(SECOND_ACTIVITY, SECOND_CB);
@@ -193,4 +200,5 @@ public class SessionTrackerTest {
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now + 100);
         assertNotEquals(firstSession, sessionTracker.getCurrentSession());
     }
+
 }
