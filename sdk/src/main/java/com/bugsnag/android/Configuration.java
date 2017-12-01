@@ -30,7 +30,7 @@ public class Configuration extends Observable implements Observer {
     private String appVersion;
     private String context;
     private String endpoint = "https://notify.bugsnag.com";
-    private String sessionEndpoint = "https://sessions.bugsnag.com";
+    private String sessionEndpoint = "https://fake.example.com"; // avoid sending to session endpoint for now
 
     private String[] filters = new String[]{"password"};
     private String[] ignoreClasses;
