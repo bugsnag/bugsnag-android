@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -90,7 +89,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     @NonNull abstract String getFilename(T streamable);
 
-    Collection<File> findStoredFiles() {
+    List<File> findStoredFiles() {
         List<File> files = new ArrayList<>();
 
         if (storeDirectory != null) {

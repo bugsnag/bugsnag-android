@@ -1,8 +1,11 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
+import java.io.IOException;
 import java.util.Date;
 
-class Session {
+class Session implements JsonStream.Streamable {
 
     private final String id;
     private final Date startedAt;
@@ -52,5 +55,17 @@ class Session {
 
     void setAutoCaptured(boolean autoCaptured) {
         this.autoCaptured = autoCaptured;
+    }
+
+    @Override
+    public void toStream(@NonNull JsonStream writer) throws IOException {
+        writer.beginObject()
+            .name("id").value(id)
+            .name("startedAt").value(DateUtils.toISO8601(startedAt));
+
+        if (user != null) {
+            writer.name("user").value(user);
+        }
+        writer.endObject();
     }
 }

@@ -6,57 +6,54 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class SessionTrackingPayload implements JsonStream.Streamable {
 
-    private final File payloadFile;
     private final Notifier notifier;
     private final Collection<Session> sessions;
     private final DeviceDataSummary deviceDataSummary = new DeviceDataSummary();
     private final AppDataSummary appDataSummary;
+    private final List<File> files;
 
-    SessionTrackingPayload(File payloadFile) {
-        this.payloadFile = payloadFile;
-        this.appDataSummary = null;
-        this.notifier = null;
+    SessionTrackingPayload(List<File> files, AppData appDataSummary) {
+        this.appDataSummary = appDataSummary;
+        this.notifier = Notifier.getInstance();
         this.sessions = null;
+        this.files = files;
     }
-
     SessionTrackingPayload(Collection<Session> sessions, AppData appDataSummary) {
         this.appDataSummary = appDataSummary;
         this.notifier = Notifier.getInstance();
         this.sessions = new ArrayList<>();
         this.sessions.addAll(sessions);
-        this.payloadFile = null;
+        this.files = null;
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
-        if (payloadFile != null) {
-            writer.value(payloadFile);
-        } else {
-            writer.beginObject();
-            writer.name("notifier").value(notifier);
-            writer.name("app").value(appDataSummary);
-            writer.name("device").value(deviceDataSummary);
-            writer.name("sessions").beginArray();
+        writer.beginObject();
+        writer.name("notifier").value(notifier);
+        writer.name("app").value(appDataSummary);
+        writer.name("device").value(deviceDataSummary);
 
-            for (Session session : sessions) {
-                writer.beginObject()
-                    .name("id").value(session.getId())
-                    .name("startedAt").value(DateUtils.toISO8601(session.getStartedAt()));
+        writer.name("sessions").beginArray();
 
-                User user = session.getUser();
-
-                if (user != null) {
-                    writer.name("user").value(user);
-                }
-                writer.endObject();
+        if (sessions == null) {
+            for (File file : files) {
+                writer.value(file);
             }
-
-            writer.endArray();
-            writer.endObject();
+        } else {
+            for (Session session : sessions) {
+                writer.value(session);
+            }
         }
+
+        writer.endArray();
+        writer.endObject();
     }
 
+    Collection<Session> getSessions() {
+        return sessions;
+    }
 }

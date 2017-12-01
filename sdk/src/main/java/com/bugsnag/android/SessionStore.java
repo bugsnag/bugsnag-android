@@ -12,7 +12,7 @@ import java.util.UUID;
  * Store and flush Sessions which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-class SessionStore extends FileStore<SessionTrackingPayload> {
+class SessionStore extends FileStore<Session> {
 
     static final Comparator<File> SESSION_COMPARATOR = new Comparator<File>() {
         @Override
@@ -38,7 +38,7 @@ class SessionStore extends FileStore<SessionTrackingPayload> {
 
     @NonNull
     @Override
-    String getFilename(SessionTrackingPayload session) {
+    String getFilename(Session session) {
         return String.format(Locale.US, "%s%s%d.json", storeDirectory, UUID.randomUUID().toString(), System.currentTimeMillis());
     }
 

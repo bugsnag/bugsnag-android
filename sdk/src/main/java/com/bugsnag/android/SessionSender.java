@@ -36,53 +36,52 @@ class SessionSender {
      * Attempts to send all sessions (both from memory + disk)
      */
     void send() {
-        SessionTrackingPayload payload = getSessionTrackingPayload();
-
-        if (payload != null) {
-            send(payload);
-        }
+        AppData appData = new AppData(context, config, sessionTracker);
+        SessionTrackingPayload payload = new SessionTrackingPayload(getPendingSessions(), appData);
+        send(payload);
         flushStoredSessions();
     }
 
     void storeAllSessions() {
-        SessionTrackingPayload payload = getSessionTrackingPayload();
+        Collection<Session> sessions = getPendingSessions();
 
-        if (payload != null) {
-            sessionStore.write(payload);
+        if (!sessions.isEmpty()) {
+            for (Session session : sessions) {
+                sessionStore.write(session);
+            }
         }
     }
 
-    private SessionTrackingPayload getSessionTrackingPayload() {
+    private Collection<Session> getPendingSessions() {
         List<Session> sessions = new ArrayList<>();
         sessions.addAll(sessionTracker.sessionQueue);
-
-        if (sessions.isEmpty()) {
-            return null;
-        } else {
-            sessionTracker.sessionQueue.clear();
-            AppData appData = new AppData(context, config, sessionTracker);
-            return new SessionTrackingPayload(sessions, appData);
-        }
+        sessionTracker.sessionQueue.clear();
+        return sessions;
     }
 
     /**
      * Attempts to flush session payloads stored on disk
      */
     private synchronized void flushStoredSessions() {
-        Collection<File> storedFiles = sessionStore.findStoredFiles();
+        List<File> storedFiles = sessionStore.findStoredFiles();
+        AppData appData = new AppData(context, config, sessionTracker);
+        SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
 
+        try {
+            apiClient.postSessionTrackingPayload(endpoint, payload, config.getSessionApiHeaders());
+
+            deleteStoredFiles(storedFiles);
+        } catch (NetworkException e) { // store for later sending
+            Logger.info("Failed to post stored session payload");
+        } catch (BadResponseException e) { // drop bad data
+            Logger.warn("Invalid session tracking payload", e);
+            deleteStoredFiles(storedFiles);
+        }
+    }
+
+    private void deleteStoredFiles(Collection<File> storedFiles) {
         for (File storedFile : storedFiles) {
-            SessionTrackingPayload payload = new SessionTrackingPayload(storedFile);
-
-            try {
-                apiClient.postSessionTrackingPayload(endpoint, payload, config.getSessionApiHeaders());
-                storedFile.delete();
-            } catch (NetworkException e) { // store for later sending
-                Logger.info("Failed to post stored session payload");
-            } catch (BadResponseException e) { // drop bad data
-                Logger.warn("Invalid session tracking payload", e);
-                storedFile.delete();
-            }
+            storedFile.delete();
         }
     }
 
@@ -94,7 +93,10 @@ class SessionSender {
             apiClient.postSessionTrackingPayload(endpoint, payload, config.getSessionApiHeaders());
         } catch (NetworkException e) { // store for later sending
             Logger.info("Failed to post session payload, storing on disk");
-            sessionStore.write(payload);
+
+            for (Session session : payload.getSessions()) {
+                sessionStore.write(session);
+            }
         } catch (BadResponseException e) { // drop bad data
             Logger.warn("Invalid session tracking payload", e);
         }

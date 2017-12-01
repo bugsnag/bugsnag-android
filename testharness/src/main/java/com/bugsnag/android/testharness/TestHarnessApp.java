@@ -17,6 +17,7 @@ public class TestHarnessApp extends Application {
         super.onCreate();
         Configuration configuration = new Configuration("123");
         configuration.setEndpoint(MACHINE_IP);
+        configuration.setSessionEndpoint("http://10.0.2.2:10000"); // localhost
         Bugsnag.init(this, configuration);
     }
 
