@@ -446,7 +446,7 @@ public class Configuration extends Observable implements Observer {
 
     Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
-        map.put(HEADER_API_PAYLOAD_VERSION, "4");
+        map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
         return map;
     }
