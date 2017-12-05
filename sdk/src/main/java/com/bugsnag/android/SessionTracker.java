@@ -105,7 +105,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
         try {
             apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
-
             deleteStoredFiles(storedFiles);
         } catch (NetworkException e) { // store for later sending
             Logger.info("Failed to post stored session payload");

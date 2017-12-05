@@ -233,21 +233,15 @@ public class ErrorTest {
         assertNotNull(eventsNode);
         assertEquals(2, eventsNode.length());
         assertEquals(0, eventsNode.get("handled"));
-        assertEquals(0, eventsNode.get("handled"));
     }
 
-    @Test
+    @Test(expected = JSONException.class)
     public void testSessionExcluded() throws Exception {
         Error err = new Error.Builder(config, new RuntimeException(), null).build();
 
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
-
-        try {
-            errorJson.getJSONObject("session");
-            fail("Should not serialise null session");
-        } catch (JSONException ignored) {
-        }
+        errorJson.getJSONObject("session"); // session should not be serialised
     }
 
     private void validateEmptyAttributes(JSONObject severityReason) {

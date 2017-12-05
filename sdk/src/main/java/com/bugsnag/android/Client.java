@@ -12,6 +12,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -210,19 +212,17 @@ public class Client extends Observable implements Observer {
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
 
-        handler = new Handler(appContext.getMainLooper());
+
+        HandlerThread handlerThread = new HandlerThread("Bugsnag Delivery Thread");
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        handler = new Handler(looper);
         runnable = new Runnable() {
             @Override
             public void run() {
+                Logger.info("Bugsnag Loop");
+                sessionTracker.flushStoredSessions();
                 handler.postDelayed(this, SESSION_LOOP_MS);
-
-                Async.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        Logger.info("Bugsnag Loop");
-                        sessionTracker.flushStoredSessions();
-                    }
-                });
             }
         };
         handler.post(runnable);
@@ -957,7 +957,7 @@ public class Client extends Observable implements Observer {
                     });
                 } catch (RejectedExecutionException e) {
                     errorStore.write(error);
-                    Logger.warn("Exceeded max breadcrumbQueue count, saving to disk to send later");
+                    Logger.warn("Exceeded max queue count, saving to disk to send later");
                 }
                 break;
             case ASYNC_WITH_CACHE:

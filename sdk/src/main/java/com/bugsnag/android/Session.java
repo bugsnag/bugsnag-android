@@ -13,8 +13,8 @@ class Session implements JsonStream.Streamable {
 
     public Session(String id, Date startedAt, User user) {
         this.id = id;
-        this.startedAt = startedAt;
-        this.user = user;
+        this.startedAt = new Date(startedAt.getTime());
+        this.user = new User(user);
     }
 
     private int unhandledCount;
@@ -26,11 +26,11 @@ class Session implements JsonStream.Streamable {
     }
 
     Date getStartedAt() {
-        return startedAt;
+        return new Date(startedAt.getTime());
     }
 
     User getUser() {
-        return user;
+        return new User(user);
     }
 
     synchronized int getUnhandledCount() {
