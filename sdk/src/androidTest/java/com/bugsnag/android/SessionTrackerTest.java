@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.test.InstrumentationRegistry;
 import android.util.Pair;
 
 import org.junit.Before;
@@ -7,6 +8,7 @@ import org.junit.Test;
 
 import java.util.Date;
 
+import static com.bugsnag.android.BugsnagTestUtils.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -29,14 +31,16 @@ public class SessionTrackerTest {
     @Before
     public void setUp() throws Exception {
         configuration = new Configuration("test");
-        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient());
+        sessionTracker = new SessionTracker(configuration, generateClient(), generateSessionStore(),
+            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
         configuration.setAutoCaptureSessions(true);
         user = new User();
     }
 
     @Test
     public void testLifecycleQueueing() throws Exception {
-        sessionTracker = new SessionTracker(configuration, null);
+        sessionTracker = new SessionTracker(configuration, null, generateSessionStore(),
+            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
         sessionTracker.leaveLifecycleBreadcrumb(FIRST_ACTIVITY, FIRST_CB);
         sessionTracker.leaveLifecycleBreadcrumb(SECOND_ACTIVITY, SECOND_CB);
 
@@ -54,7 +58,8 @@ public class SessionTrackerTest {
     @Test
     public void testNullClientUpdate() throws Exception {
         // shouldn't throw npe attempting to access client
-        sessionTracker = new SessionTracker(configuration, null);
+        sessionTracker = new SessionTracker(configuration, null, generateSessionStore(),
+            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
         sessionTracker.updateForegroundTracker(FIRST_ACTIVITY, true, System.currentTimeMillis());
     }
 
@@ -150,7 +155,8 @@ public class SessionTrackerTest {
     @Test
     public void testInForegroundDuration() throws Exception {
         long now = System.currentTimeMillis();
-        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient(), 0);
+        sessionTracker = new SessionTracker(configuration, generateClient(), 0, generateSessionStore(),
+            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
         assertEquals(0, sessionTracker.getDurationInForeground(now));
@@ -167,7 +173,8 @@ public class SessionTrackerTest {
 
     @Test
     public void testZeroSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient(), 0);
+        sessionTracker = new SessionTracker(configuration, generateClient(), 0, generateSessionStore(),
+            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -181,7 +188,8 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, BugsnagTestUtils.generateClient(), 100);
+        sessionTracker = new SessionTracker(configuration, generateClient(), 100, generateSessionStore(),
+            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);

@@ -2,15 +2,18 @@ package com.bugsnag.android;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -29,19 +32,29 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private final Configuration configuration;
     private final long timeoutMs;
     private final Client client;
+    private final SessionStore sessionStore;
+    private final SessionTrackingApiClient apiClient;
+    private final Context context;
+    private final String endpoint;
 
     private long lastForegroundMs;
     private Long sessionStartMs;
     private Session currentSession;
 
-    SessionTracker(Configuration configuration, Client client) {
-        this(configuration, client, DEFAULT_TIMEOUT_MS);
+    SessionTracker(Configuration configuration, Client client, SessionStore sessionStore,
+                   SessionTrackingApiClient apiClient, Context context) {
+        this(configuration, client, DEFAULT_TIMEOUT_MS, sessionStore, apiClient, context);
     }
 
-    SessionTracker(Configuration configuration, Client client, long timeoutMs) {
+    SessionTracker(Configuration configuration, Client client, long timeoutMs,
+                   SessionStore sessionStore, SessionTrackingApiClient apiClient, Context context) {
         this.configuration = configuration;
         this.client = client;
         this.timeoutMs = timeoutMs;
+        this.sessionStore = sessionStore;
+        this.apiClient = apiClient;
+        this.context = context;
+        this.endpoint = configuration.getSessionEndpoint();
     }
 
     /**
@@ -79,6 +92,32 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     synchronized void incrementHandledError() {
         if (currentSession != null) {
             currentSession.incrementHandledErrCount();
+        }
+    }
+
+    /**
+     * Attempts to flush session payloads stored on disk
+     */
+    synchronized void flushStoredSessions() {
+        List<File> storedFiles = sessionStore.findStoredFiles();
+        AppData appData = new AppData(context, configuration, this);
+        SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
+
+        try {
+            apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
+
+            deleteStoredFiles(storedFiles);
+        } catch (NetworkException e) { // store for later sending
+            Logger.info("Failed to post stored session payload");
+        } catch (BadResponseException e) { // drop bad data
+            Logger.warn("Invalid session tracking payload", e);
+            deleteStoredFiles(storedFiles);
+        }
+    }
+
+    private void deleteStoredFiles(Collection<File> storedFiles) {
+        for (File storedFile : storedFiles) {
+            storedFile.delete();
         }
     }
 

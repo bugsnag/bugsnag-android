@@ -54,16 +54,13 @@ final class BugsnagTestUtils {
     }
 
     static SessionTracker generateSessionTracker() {
-        return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient());
+        return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient(),
+            generateSessionStore(), generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
     }
 
-    static SessionSender generateSessionSender() {
-        return new SessionSender(generateSessionTracker(),
-            new SessionStore(generateConfiguration(),
-                InstrumentationRegistry.getContext()),
-            generateSessionTrackingApiClient(),
-            InstrumentationRegistry.getContext(),
-            generateConfiguration());
+    @NonNull
+    static SessionStore generateSessionStore() {
+        return new SessionStore(generateConfiguration(), InstrumentationRegistry.getContext());
     }
 
     @NonNull

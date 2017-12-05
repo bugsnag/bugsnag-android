@@ -83,7 +83,6 @@ public class Client extends Observable implements Observer {
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
     private final Handler handler;
-    private final SessionSender sessionSender;
     private Runnable runnable;
 
     /**
@@ -130,11 +129,15 @@ public class Client extends Observable implements Observer {
         launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-        sessionTracker = new SessionTracker(configuration, this);
+        config = configuration;
+        sessionStore = new SessionStore(config, appContext);
+
         ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
         errorReportApiClient = defaultHttpClient;
         sessionTrackingApiClient = defaultHttpClient;
+
+        sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient, appContext);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -145,7 +148,6 @@ public class Client extends Observable implements Observer {
         }
 
         errorReportApiClient = new DefaultHttpClient(cm);
-        config = configuration;
 
         // populate from manifest (in the case where the constructor was called directly by the
         // User or no UUID was supplied)
@@ -184,7 +186,6 @@ public class Client extends Observable implements Observer {
 
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext);
-        sessionStore = new SessionStore(config, appContext);
 
         // Install a default exception handler with this client
         if (config.getEnableExceptionHandler()) {
@@ -209,8 +210,6 @@ public class Client extends Observable implements Observer {
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
 
-        sessionSender = new SessionSender(sessionTracker, sessionStore, sessionTrackingApiClient, appContext, configuration);
-
         handler = new Handler(appContext.getMainLooper());
         runnable = new Runnable() {
             @Override
@@ -221,7 +220,7 @@ public class Client extends Observable implements Observer {
                     @Override
                     public void run() {
                         Logger.info("Bugsnag Loop");
-                        sessionSender.send();
+                        sessionTracker.flushStoredSessions();
                     }
                 });
             }
@@ -936,7 +935,6 @@ public class Client extends Observable implements Observer {
         if (handledState.isUnhandled()) {
             sessionTracker.incrementUnhandledError();
             handler.removeCallbacks(runnable);
-            sessionSender.storeAllSessions();
         } else {
             sessionTracker.incrementHandledError();
         }
