@@ -90,7 +90,7 @@ public class SessionTrackerTest {
         configuration.setAutoCaptureSessions(false);
 
         Date date = new Date();
-        sessionTracker.startNewSession(date, user, false);
+        sessionTracker.startNewSession(date, user, true);
         assertTrue(sessionTracker.sessionQueue.isEmpty());
         assertNotNull(sessionTracker.getCurrentSession());
 
