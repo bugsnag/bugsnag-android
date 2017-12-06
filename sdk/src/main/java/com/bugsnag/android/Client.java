@@ -44,7 +44,7 @@ enum DeliveryStyle {
  */
 public class Client extends Observable implements Observer {
 
-    private static final long SESSION_LOOP_MS = 10 * 1000; // TODO change to X mins
+    private static final long SESSION_LOOP_MS = 60 * 1000;
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
