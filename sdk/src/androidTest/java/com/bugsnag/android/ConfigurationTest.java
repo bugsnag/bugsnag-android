@@ -39,7 +39,7 @@ public class ConfigurationTest {
     @Test
     public void testSessionEndpoints() {
         // Default endpoints
-        assertEquals("http://10.0.2.2:10000", config.getSessionEndpoint());
+        assertEquals("https://sessions.bugsnag.com", config.getSessionEndpoint());
 
         // Setting an endpoint
         String endpoint = "http://localhost:8000";

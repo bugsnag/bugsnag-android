@@ -10,11 +10,13 @@ public class ExampleApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Bugsnag.init(this);
+//        Bugsnag.init(this);
 
         Configuration config = new Configuration("9f2996871fb381de73bfb0bea455c28b");
         config.setSessionEndpoint("http://10.0.2.2:10000");
         config.setEndpoint("http://10.0.2.2:8000");
+
+        Bugsnag.startSession();
 //        config.setAutoCaptureSessions(true);
         Bugsnag.init(this, config);
     }
