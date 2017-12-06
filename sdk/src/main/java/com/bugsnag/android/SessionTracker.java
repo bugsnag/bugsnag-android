@@ -129,7 +129,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onStart()");
+        String activityName = getActivityName(activity);
+        leaveLifecycleBreadcrumb(activityName, "onStart()");
+        updateForegroundTracker(activityName, true, System.currentTimeMillis());
     }
 
     @Override
@@ -144,7 +146,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityStopped(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onStop()");
+        String activityName = getActivityName(activity);
+        leaveLifecycleBreadcrumb(activityName, "onStop()");
+        updateForegroundTracker(activityName, false, System.currentTimeMillis());
     }
 
     @Override
