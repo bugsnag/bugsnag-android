@@ -7,9 +7,7 @@ class ExampleApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        // Initialize the Bugsnag client
-        Bugsnag.init(this, "api-key")
+        Bugsnag.init(this)
     }
 
 }

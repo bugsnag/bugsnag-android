@@ -30,7 +30,7 @@ public class Configuration extends Observable implements Observer {
     private String appVersion;
     private String context;
     private String endpoint = "https://notify.bugsnag.com";
-    private String sessionEndpoint = "http://10.0.2.2:10000"; // TODO udpate to endpoint
+    private String sessionEndpoint = "https://sessions.bugsnag.com";
 
     private String[] filters = new String[]{"password"};
     private String[] ignoreClasses;

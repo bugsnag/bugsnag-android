@@ -28,11 +28,11 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
 
         manifestPlaceholders = [
-            bugsnagApiKey                    : "9f2996871fb381de73bfb0bea455c28b",
+            bugsnagApiKey                    : "your-api-key",
             bugsnagBuildUUID                 : "abc123",
             bugsnagAppVersion                : "1.0.0",
-            bugsnagEndpoint                  : "http://10.0.2.2:8000",
-            bugsnagSessionsEndpoint          : "http://10.0.2.2:1234",
+            bugsnagEndpoint                  : "https://notify.bugsnag.com",
+            bugsnagSessionsEndpoint          : "http://sessions.bugsnag.com",
             bugsnagReleaseStage              : "debug",
             bugsnagSendThreads               : true,
             bugsnagEnableExceptionHandler    : true,

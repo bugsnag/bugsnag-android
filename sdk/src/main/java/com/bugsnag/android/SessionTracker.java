@@ -101,17 +101,20 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     void flushStoredSessions() {
         synchronized (sessionStore) {
             List<File> storedFiles = sessionStore.findStoredFiles();
-            AppData appData = new AppData(context, configuration, this);
-            SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
 
-            try {
-                apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
-                deleteStoredFiles(storedFiles);
-            } catch (NetworkException e) { // store for later sending
-                Logger.info("Failed to post stored session payload");
-            } catch (BadResponseException e) { // drop bad data
-                Logger.warn("Invalid session tracking payload", e);
-                deleteStoredFiles(storedFiles);
+            if (!storedFiles.isEmpty()) {
+                AppData appData = new AppData(context, configuration, this);
+                SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
+
+                try {
+                    apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
+                    deleteStoredFiles(storedFiles);
+                } catch (NetworkException e) { // store for later sending
+                    Logger.info("Failed to post stored session payload");
+                } catch (BadResponseException e) { // drop bad data
+                    Logger.warn("Invalid session tracking payload", e);
+                    deleteStoredFiles(storedFiles);
+                }
             }
         }
     }
