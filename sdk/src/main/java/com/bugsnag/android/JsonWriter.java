@@ -675,7 +675,7 @@ public class JsonWriter implements Closeable {
      *             permitted as top-level elements.
      */
     @SuppressWarnings("fallthrough")
-    private void beforeValue(boolean root) throws IOException {
+    void beforeValue(boolean root) throws IOException {
         switch (peek()) {
             case NONEMPTY_DOCUMENT:
                 if (!lenient) {
