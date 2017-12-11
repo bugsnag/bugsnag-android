@@ -141,6 +141,10 @@ public class Client extends Observable implements Observer {
 
         sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient, appContext);
 
+        if (configuration.shouldAutoCaptureSessions()) { // create initial session
+            sessionTracker.startNewSession(new Date(), null, true);
+        }
+
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
             application.registerActivityLifecycleCallbacks(sessionTracker);
