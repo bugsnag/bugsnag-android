@@ -22,6 +22,10 @@ env:
   global:
     - ADB_INSTALL_TIMEOUT=5 # increase from default of 2 mins
 
+# see https://github.com/travis-ci/travis-ci/issues/8874
+before_install:
+  - yes | sdkmanager "platforms;android-27"
+
 before_script:
   # Create and start emulator
   - android list targets
