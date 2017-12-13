@@ -270,6 +270,39 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.provider.action.DEFAULT_SMS_PACKAGE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.provider.action.EXTERNAL_PROVIDER_CHANGE", BreadcrumbType.LOG);
         actions.put("android.provider.action.SYNC_VOICEMAIL", BreadcrumbType.LOG);
+
+        // api 26
+        actions.put("android.accounts.LOGIN_ACCOUNTS_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.accounts.action.ACCOUNT_REMOVED", BreadcrumbType.LOG);
+        actions.put("android.app.action.APPLICATION_DELEGATION_SCOPES_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.appwidget.action.APPWIDGET_DELETED", BreadcrumbType.LOG);
+        actions.put("android.appwidget.action.APPWIDGET_DISABLED", BreadcrumbType.LOG);
+        actions.put("android.appwidget.action.APPWIDGET_ENABLED", BreadcrumbType.LOG);
+        actions.put("android.appwidget.action.APPWIDGET_HOST_RESTORED", BreadcrumbType.LOG);
+        actions.put("android.appwidget.action.APPWIDGET_RESTORED", BreadcrumbType.LOG);
+        actions.put("android.appwidget.action.APPWIDGET_UPDATE", BreadcrumbType.LOG);
+        actions.put("android.appwidget.action.APPWIDGET_UPDATE_OPTIONS", BreadcrumbType.LOG);
+        actions.put("android.bluetooth.inputhost.profile.action.CONNECTION_STATE_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.content.pm.action.SESSION_COMMITTED", BreadcrumbType.LOG);
+        actions.put("android.hardware.usb.action.USB_ACCESSORY_ATTACHED", BreadcrumbType.USER);
+        actions.put("android.hardware.usb.action.USB_ACCESSORY_DETACHED", BreadcrumbType.USER);
+        actions.put("android.hardware.usb.action.USB_DEVICE_ATTACHED", BreadcrumbType.USER);
+        actions.put("android.hardware.usb.action.USB_DEVICE_DETACHED", BreadcrumbType.USER);
+        actions.put("android.intent.action.CLOSE_SYSTEM_DIALOGS", BreadcrumbType.LOG);
+        actions.put("android.intent.action.DROPBOX_ENTRY_ADDED", BreadcrumbType.LOG);
+        actions.put("android.intent.action.UMS_CONNECTED", BreadcrumbType.LOG);
+        actions.put("android.intent.action.UMS_DISCONNECTED", BreadcrumbType.LOG);
+        actions.put("android.media.tv.action.INITIALIZE_PROGRAMS", BreadcrumbType.LOG);
+        actions.put("android.media.tv.action.PREVIEW_PROGRAM_ADDED_TO_WATCH_NEXT", BreadcrumbType.LOG);
+        actions.put("android.media.tv.action.PREVIEW_PROGRAM_BROWSABLE_DISABLED", BreadcrumbType.LOG);
+        actions.put("android.media.tv.action.WATCH_NEXT_PROGRAM_BROWSABLE_DISABLED", BreadcrumbType.LOG);
+        actions.put("android.net.wifi.aware.action.WIFI_AWARE_STATE_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.security.STORAGE_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.security.action.KEYCHAIN_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.security.action.KEY_ACCESS_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.security.action.TRUST_STORE_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.telephony.action.DEFAULT_SMS_SUBSCRIPTION_CHANGED", BreadcrumbType.LOG);
+        actions.put("android.telephony.action.DEFAULT_SUBSCRIPTION_CHANGED", BreadcrumbType.LOG);
         return actions;
     }
 
