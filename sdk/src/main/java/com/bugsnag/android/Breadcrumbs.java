@@ -74,7 +74,7 @@ class Breadcrumbs implements JsonStream.Streamable {
         }
     }
 
-    private static final int DEFAULT_MAX_SIZE = 20;
+    private static final int DEFAULT_MAX_SIZE = 32;
     private static final int MAX_PAYLOAD_SIZE = 4096;
     final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
     private int maxSize = DEFAULT_MAX_SIZE;
