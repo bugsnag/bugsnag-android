@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.5 (2017-12-14)
+- Automatically capture breadcrumbs for new API 26 Intents
+- Increase max breadcrumb limit
+- Remove known noisy breadcrumbs from automatic capture
+
 ## 4.1.4 (2017-11-23)
 - Enqueue activity lifecycle events when initialisation not complete to prevent NPE
 - Add example of using Bugsnag within a library module

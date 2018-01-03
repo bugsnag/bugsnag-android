@@ -30,7 +30,7 @@ public final class Bugsnag {
      *
      * @param androidContext an Android context, usually <code>this</code>
      */
-    @Nullable
+    @NonNull
     public static Client init(@NonNull Context androidContext) {
         client = new Client(androidContext);
         NativeInterface.configureClientObservers(client);
@@ -43,7 +43,7 @@ public final class Bugsnag {
      * @param androidContext an Android context, usually <code>this</code>
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
-    @Nullable
+    @NonNull
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
         client = new Client(androidContext, apiKey);
         NativeInterface.configureClientObservers(client);
@@ -57,7 +57,7 @@ public final class Bugsnag {
      * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
      * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      */
-    @Nullable
+    @NonNull
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
         client = new Client(androidContext, apiKey, enableExceptionHandler);
         NativeInterface.configureClientObservers(client);
@@ -70,7 +70,7 @@ public final class Bugsnag {
      * @param androidContext an Android context, usually <code>this</code>
      * @param config         a configuration for the Client
      */
-    @Nullable
+    @NonNull
     public static Client init(@NonNull Context androidContext, @NonNull Configuration config) {
         client = new Client(androidContext, config);
         NativeInterface.configureClientObservers(client);
