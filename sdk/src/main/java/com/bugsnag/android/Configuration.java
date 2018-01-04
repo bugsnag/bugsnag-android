@@ -50,6 +50,8 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
+    private String codeBundleId;
+    private String notifierType;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -442,6 +444,30 @@ public class Configuration extends Observable implements Observer {
         } else {
             this.launchCrashThresholdMs = launchCrashThresholdMs;
         }
+    }
+
+    /**
+     * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
+     * @param notifierType the notifier type
+     */
+    public void setNotifierType(String notifierType) {
+        this.notifierType = notifierType;
+    }
+
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     * @param codeBundleId the code bundle id
+     */
+    public void setCodeBundleId(String codeBundleId) {
+        this.codeBundleId = codeBundleId;
+    }
+
+    String getCodeBundleId() {
+        return codeBundleId;
+    }
+
+    String getNotifierType() {
+        return notifierType;
     }
 
     Map<String, String> getErrorApiHeaders() {

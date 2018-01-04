@@ -43,6 +43,13 @@ class AppDataSummary implements JsonStream.Streamable {
         versionName = getVersionName(appContext);
         guessedReleaseStage = guessReleaseStage(appContext);
         this.config = config;
+
+        codeBundleId = config.getCodeBundleId();
+        String configType = config.getNotifierType();
+
+        if (configType != null) {
+            notifierType = configType;
+        }
     }
 
     @Override
@@ -77,14 +84,6 @@ class AppDataSummary implements JsonStream.Streamable {
         } else {
             return versionName;
         }
-    }
-
-    void setNotifierType(@Nullable String type) { // TODO handle RN/unity
-        this.notifierType = type;
-    }
-
-    void setCodeBundleId(@Nullable String codeBundleId) { // TODO codeBundleId for React Native
-        this.codeBundleId = codeBundleId;
     }
 
     /**
