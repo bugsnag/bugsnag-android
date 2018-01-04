@@ -12,11 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Information about the running Android app which doesn't change over time,
- * including app name, version and release stage.
- * <p/>
- * App information in this class is cached during construction for faster
- * subsequent lookups and to reduce GC overhead.
+ * Information about the running Android app, including app name, version and release stage.
  */
 class AppData extends AppDataSummary {
 
