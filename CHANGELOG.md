@@ -1,4 +1,7 @@
 # Changelog
+## 4.2.0 (2018-01-05)
+- Adds support for tracking sessions and overall crash rate by setting `config.track_sessions` to `true`.
+In addition, sessions can be indicated manually using `Bugsnag.startSession` [#217](https://github.com/bugsnag/bugsnag-android/pull/217)
 
 ## 4.1.5 (2017-12-14)
 - Automatically capture breadcrumbs for new API 26 Intents
