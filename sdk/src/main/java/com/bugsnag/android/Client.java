@@ -1249,4 +1249,13 @@ public class Client extends Observable implements Observer {
         Logger.setEnabled(loggingEnabled);
     }
 
+    /**
+     * Returns the configuration used to initialise the client
+     * @return the config
+     */
+    @NonNull
+    public Configuration getConfig() {
+        return config;
+    }
+
 }
