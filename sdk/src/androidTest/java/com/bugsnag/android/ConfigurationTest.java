@@ -7,8 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
@@ -31,6 +34,17 @@ public class ConfigurationTest {
         String endpoint = "http://localhost:8000";
         config.setEndpoint(endpoint);
         assertEquals(endpoint, config.getEndpoint());
+    }
+
+    @Test
+    public void testSessionEndpoints() {
+        // Default endpoints
+        assertEquals("https://sessions.bugsnag.com", config.getSessionEndpoint());
+
+        // Setting an endpoint
+        String endpoint = "http://localhost:8000";
+        config.setSessionEndpoint(endpoint);
+        assertEquals(endpoint, config.getSessionEndpoint());
     }
 
     @Test
@@ -88,4 +102,26 @@ public class ConfigurationTest {
         config.setLaunchCrashThresholdMs(expected);
         assertEquals(expected, config.getLaunchCrashThresholdMs());
     }
+
+    @Test
+    public void testDefaults() throws Exception {
+        assertFalse(config.shouldAutoCaptureSessions());
+    }
+
+    @Test
+    public void testErrorApiHeaders() throws Exception {
+        Map<String, String> headers = config.getErrorApiHeaders();
+        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
+        assertNotNull(headers.get("Bugsnag-Sent-At"));
+        assertNotNull(headers.get("Bugsnag-Payload-Version"));
+    }
+
+    @Test
+    public void testSessionApiHeaders() throws Exception {
+        Map<String, String> headers = config.getSessionApiHeaders();
+        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
+        assertNotNull(headers.get("Bugsnag-Sent-At"));
+        assertNotNull(headers.get("Bugsnag-Payload-Version"));
+    }
+
 }

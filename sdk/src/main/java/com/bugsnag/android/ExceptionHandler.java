@@ -76,7 +76,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             if (isCrashOnLaunch(client, now)) {
                 metaData.addToTab(LAUNCH_CRASH_TAB, LAUNCH_CRASH_KEY, getMsSinceLaunch(client, now));
             }
-            
+
             String severityReason = strictModeThrowable
                 ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
             client.cacheAndNotify(e, Severity.ERROR, metaData, severityReason, violationDesc);
@@ -92,7 +92,6 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     boolean isCrashOnLaunch(Client client, Date now) {
-
         long delta = getMsSinceLaunch(client, now);
         long thresholdMs = client.config.getLaunchCrashThresholdMs();
         return thresholdMs > 0 && delta <= thresholdMs;

@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -38,7 +39,7 @@ public class CrashReportTest {
 
         Bugsnag.setErrorReportApiClient(new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString, Report report) throws NetworkException, BadResponseException {
+            public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
                 // no-op
             }
         });
@@ -53,12 +54,11 @@ public class CrashReportTest {
         assertNotNull(report);
         JSONObject json = getJson(report);
 
-        assertNotNull(json.getString("apiKey"));
-        assertEquals(3, json.length());
+        assertEquals(2, json.length());
 
         JSONObject event = json.getJSONArray("events").getJSONObject(0);
         assertNotNull(event);
-        assertEquals("ExampleActivity", event.getString("context"));
+        assertEquals("com.bugsnag.android.example.ExampleActivity", event.getString("context"));
 
         JSONArray exceptions = event.getJSONArray("exceptions");
         assertEquals(1, exceptions.length());

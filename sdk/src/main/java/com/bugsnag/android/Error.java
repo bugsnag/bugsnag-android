@@ -16,14 +16,11 @@ import java.io.IOException;
  * @see BeforeNotify
  */
 public class Error implements JsonStream.Streamable {
-    private static final String PAYLOAD_VERSION = "3";
 
     @NonNull
     final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
-    private AppState appState;
-    private DeviceState deviceState;
     private Breadcrumbs breadcrumbs;
     private User user;
     private final Throwable exception;
@@ -32,12 +29,15 @@ public class Error implements JsonStream.Streamable {
     private String groupingHash;
     private String context;
     private final HandledState handledState;
+    private final Session session;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception, HandledState handledState, Severity severity) {
+    Error(@NonNull Configuration config, @NonNull Throwable exception,
+          HandledState handledState, Severity severity, Session session) {
         this.config = config;
         this.exception = exception;
         this.handledState = handledState;
         this.severity = severity;
+        this.session = session;
     }
 
     @Override
@@ -47,7 +47,6 @@ public class Error implements JsonStream.Streamable {
 
         // Write error basics
         writer.beginObject();
-        writer.name("payloadVersion").value(PAYLOAD_VERSION);
         writer.name("context").value(getContext());
         writer.name("metaData").value(mergedMetaData);
 
@@ -71,13 +70,24 @@ public class Error implements JsonStream.Streamable {
 
         // Write diagnostics
         writer.name("app").value(appData);
-        writer.name("appState").value(appState);
         writer.name("device").value(deviceData);
-        writer.name("deviceState").value(deviceState);
         writer.name("breadcrumbs").value(breadcrumbs);
         writer.name("groupingHash").value(groupingHash);
+
         if (config.getSendThreads()) {
             writer.name("threads").value(new ThreadState(config));
+        }
+
+        if (session != null) {
+            writer.name("session").beginObject();
+            writer.name("id").value(session.getId());
+            writer.name("startedAt").value(DateUtils.toISO8601(session.getStartedAt()));
+
+            writer.name("events").beginObject();
+            writer.name("handled").value(session.getHandledCount());
+            writer.name("unhandled").value(session.getUnhandledCount());
+            writer.endObject();
+            writer.endObject();
         }
 
         writer.endObject();
@@ -104,8 +114,8 @@ public class Error implements JsonStream.Streamable {
             return context;
         } else if (config.getContext() != null) {
             return config.getContext();
-        } else if (appState != null) {
-            return appState.getActiveScreenClass();
+        } else if (appData != null) {
+            return appData.getActiveScreenClass();
         } else {
             return null;
         }
@@ -298,14 +308,6 @@ public class Error implements JsonStream.Streamable {
         this.deviceData = deviceData;
     }
 
-    void setAppState(AppState appState) {
-        this.appState = appState;
-    }
-
-    void setDeviceState(DeviceState deviceState) {
-        this.deviceState = deviceState;
-    }
-
     void setUser(User user) {
         this.user = user;
     }
@@ -318,9 +320,14 @@ public class Error implements JsonStream.Streamable {
         return config.shouldIgnoreClass(getExceptionName());
     }
 
+    HandledState getHandledState() {
+        return handledState;
+    }
+
     static class Builder {
         private final Configuration config;
         private final Throwable exception;
+        private final Session session;
         private Severity severity = Severity.WARNING;
         private MetaData metaData;
         private String attributeValue;
@@ -328,15 +335,21 @@ public class Error implements JsonStream.Streamable {
         @HandledState.SeverityReason
         private String severityReasonType;
 
-        Builder(@NonNull Configuration config, @NonNull Throwable exception) {
+        Builder(@NonNull Configuration config, @NonNull Throwable exception, Session session) {
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
+
+            if (session != null  && !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
+                this.session = null;
+            } else {
+                this.session = session;
+            }
         }
 
         Builder(@NonNull Configuration config, @NonNull String name,
-               @NonNull String message, @NonNull StackTraceElement[] frames) {
-            this(config, new BugsnagException(name, message, frames));
+               @NonNull String message, @NonNull StackTraceElement[] frames, Session session) {
+            this(config, new BugsnagException(name, message, frames), session);
         }
 
         Builder severityReasonType(@HandledState.SeverityReason String severityReasonType) {
@@ -362,7 +375,7 @@ public class Error implements JsonStream.Streamable {
         Error build() {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
-            Error error = new Error(config, exception, handledState, severity);
+            Error error = new Error(config, exception, handledState, severity, session);
 
             if (metaData != null) {
                 error.setMetaData(metaData);

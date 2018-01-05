@@ -61,7 +61,7 @@ public class NativeInterface {
 
     @Nullable
     public static String getErrorStorePath() {
-        return getClient().errorStore.path;
+        return getClient().errorStore.storeDirectory;
     }
 
     public static String getUserId() {
@@ -119,12 +119,12 @@ public class NativeInterface {
     }
 
     public static double getDeviceTotalMemory() {
-        return getClient().deviceData.totalMemory;
+        return DeviceData.getTotalMemory();
     }
 
     @Nullable
     public static Boolean getDeviceRooted() {
-        return getClient().deviceData.rooted;
+        return DeviceDataSummary.isRooted();
     }
 
     public static float getDeviceScreenDensity() {

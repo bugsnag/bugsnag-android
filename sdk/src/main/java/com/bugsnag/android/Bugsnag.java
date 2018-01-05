@@ -288,6 +288,20 @@ public final class Bugsnag {
     }
 
     /**
+     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
+     * requirements such as certificate pinning to be achieved.
+     * <p/>
+     * <p>
+     * The client implementation, and must be capable of sending Session Tracking Payloads to
+     * the Bugsnag API.
+     *
+     * @param apiClient the custom HTTP client implementation
+     */
+    public static void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
+        getClient().setSessionTrackingApiClient(apiClient);
+    }
+
+    /**
      * Add a "before notify" callback, to execute code before every
      * report to Bugsnag.
      * <p>
@@ -573,6 +587,17 @@ public final class Bugsnag {
      */
     public static void setLoggingEnabled(boolean enabled) {
         getClient().setLoggingEnabled(enabled);
+    }
+
+    /**
+     * Manually starts tracking a new session.
+     *
+     * Automatic session tracking can be enabled via
+     * {@link Configuration#setAutoCaptureSessions(boolean)}, which will automatically create a new
+     * session everytime the app enters the foreground.
+     */
+    public static void startSession() {
+        getClient().startSession();
     }
 
     /**

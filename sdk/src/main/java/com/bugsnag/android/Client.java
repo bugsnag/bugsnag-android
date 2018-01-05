@@ -11,6 +11,9 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -41,6 +44,7 @@ enum DeliveryStyle {
  */
 public class Client extends Observable implements Observer {
 
+    private static final long SESSION_LOOP_MS = 60 * 1000;
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
@@ -52,6 +56,7 @@ public class Client extends Observable implements Observer {
     static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
     static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
     static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
+    static final String MF_SESSIONS_ENDPOINT = BUGSNAG_NAMESPACE + ".SESSIONS_ENDPOINT";
     static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
     static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
     static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
@@ -71,10 +76,16 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final ErrorStore errorStore;
 
+    final SessionStore sessionStore;
+
     private final long launchTimeMs;
 
     private final EventReceiver eventReceiver = new EventReceiver();
+    private final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
+    private SessionTrackingApiClient sessionTrackingApiClient;
+    private final Handler handler;
+    private Runnable runnable;
 
     /**
      * Initialize a Bugsnag client
@@ -116,22 +127,33 @@ public class Client extends Observable implements Observer {
         this(androidContext, configuration, new Date());
     }
 
-    Client(@NonNull Context androidContext, @NonNull Configuration configuration, Date time) {
+    Client(@NonNull Context androidContext, @NonNull final Configuration configuration, Date time) {
         launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
+        config = configuration;
+        sessionStore = new SessionStore(config, appContext);
+
+        ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
+        errorReportApiClient = defaultHttpClient;
+        sessionTrackingApiClient = defaultHttpClient;
+
+        sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient, appContext);
+
+        if (configuration.shouldAutoCaptureSessions()) { // create initial session
+            sessionTracker.startNewSession(new Date(), null, true);
+        }
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
-            application.registerActivityLifecycleCallbacks(new LifecycleBreadcrumbLogger(this));
+            application.registerActivityLifecycleCallbacks(sessionTracker);
         } else {
             Logger.warn("Bugsnag is unable to setup automatic activity lifecycle breadcrumbs on API " +
                 "Levels below 14.");
         }
 
-        ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         errorReportApiClient = new DefaultHttpClient(cm);
-        config = configuration;
 
         // populate from manifest (in the case where the constructor was called directly by the
         // User or no UUID was supplied)
@@ -150,7 +172,7 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(appContext, config);
+        appData = new AppData(appContext, config, sessionTracker);
         deviceData = new DeviceData(appContext, sharedPref);
 
         // Set up breadcrumbs
@@ -193,6 +215,21 @@ public class Client extends Observable implements Observer {
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
+
+
+        HandlerThread handlerThread = new HandlerThread("Bugsnag Delivery Thread");
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        handler = new Handler(looper);
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                Logger.info("Bugsnag Loop");
+                sessionTracker.flushStoredSessions();
+                handler.postDelayed(this, SESSION_LOOP_MS);
+            }
+        };
+        handler.post(runnable);
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -286,11 +323,27 @@ public class Client extends Observable implements Observer {
         if (endpoint != null) {
             config.setEndpoint(endpoint);
         }
+        String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);
+
+        if (sessionEndpoint != null) {
+            config.setSessionEndpoint(sessionEndpoint);
+        }
 
         config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
         config.setPersistUserBetweenSessions(data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
         config.setEnableExceptionHandler(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
         return config;
+    }
+
+    /**
+     * Manually starts tracking a new session.
+     *
+     * Automatic session tracking can be enabled via
+     * {@link Configuration#setAutoCaptureSessions(boolean)}, which will automatically create a new
+     * session everytime the app enters the foreground.
+     */
+    public void startSession() {
+        sessionTracker.startNewSession(new Date(), user, false);
     }
 
     /**
@@ -560,6 +613,14 @@ public class Client extends Observable implements Observer {
         this.errorReportApiClient = errorReportApiClient;
     }
 
+    @SuppressWarnings("ConstantConditions")
+    void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
+        if (apiClient == null) {
+            throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");
+        }
+        this.sessionTrackingApiClient = apiClient;
+    }
+
     /**
      * Add a "before notify" callback, to execute code before every
      * report to Bugsnag.
@@ -590,7 +651,7 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, !BLOCKING);
@@ -602,7 +663,7 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notifyBlocking(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, BLOCKING);
@@ -616,7 +677,7 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notify(@NonNull Throwable exception, Callback callback) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -630,7 +691,7 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -646,7 +707,7 @@ public class Client extends Observable implements Observer {
      *                   additional modification
      */
     public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace)
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -662,7 +723,7 @@ public class Client extends Observable implements Observer {
      *                   additional modification
      */
     public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace)
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -676,7 +737,7 @@ public class Client extends Observable implements Observer {
      *                  Severity.WARNING or Severity.INFO
      */
     public void notify(@NonNull Throwable exception, Severity severity) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severity(severity)
             .build();
         notify(error, !BLOCKING);
@@ -690,7 +751,7 @@ public class Client extends Observable implements Observer {
      *                  Severity.WARNING or Severity.INFO
      */
     public void notifyBlocking(@NonNull Throwable exception, Severity severity) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severity(severity)
             .build();
         notify(error, BLOCKING);
@@ -709,7 +770,7 @@ public class Client extends Observable implements Observer {
         Logger.info(msg);
 
         @SuppressWarnings("WrongConstant")
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severity(Severity.fromString(severity))
             .severityReasonType(severityReason)
             .attributeValue(logLevel)
@@ -853,8 +914,6 @@ public class Client extends Observable implements Observer {
         // Capture the state of the app and device and attach diagnostics to the error
         error.setAppData(appData);
         error.setDeviceData(deviceData);
-        error.setAppState(new AppState(appContext));
-        error.setDeviceState(new DeviceState(appContext));
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);
@@ -869,10 +928,19 @@ public class Client extends Observable implements Observer {
         }
 
         // Build the report
-        Report report = new Report(config.getApiKey(), error);
+        Report report = new Report(error);
 
         if (callback != null) {
             callback.beforeNotify(report);
+        }
+
+        HandledState handledState = report.getError().getHandledState();
+
+        if (handledState.isUnhandled()) {
+            sessionTracker.incrementUnhandledError();
+            handler.removeCallbacks(runnable);
+        } else {
+            sessionTracker.incrementHandledError();
         }
 
         switch (style) {
@@ -907,14 +975,14 @@ public class Client extends Observable implements Observer {
 
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
-            errorReportApiClient.postReport(config.getEndpoint(), report);
+            errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
             Logger.info("Sent 1 new error to Bugsnag");
-        } catch (DefaultHttpClient.NetworkException e) {
+        } catch (NetworkException e) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
             // Save error to disk for later sending
             errorStore.write(error);
-        } catch (DefaultHttpClient.BadResponseException e) {
+        } catch (BadResponseException e) {
             Logger.info("Bad response when sending data to Bugsnag");
         } catch (Exception e) {
             Logger.warn("Problem sending error to Bugsnag", e);
@@ -929,7 +997,7 @@ public class Client extends Observable implements Observer {
     void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData,
                         @HandledState.SeverityReason String severityReason,
                         @Nullable String attributeValue) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .severityReasonType(severityReason)
@@ -976,7 +1044,7 @@ public class Client extends Observable implements Observer {
      */
     public void notify(@NonNull Throwable exception,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .metaData(metaData)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -993,7 +1061,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .metaData(metaData)
             .build();
@@ -1022,7 +1090,7 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notify(@NonNull Throwable exception, Severity severity,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .metaData(metaData)
             .severity(severity)
             .build();
@@ -1042,7 +1110,7 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notifyBlocking(@NonNull Throwable exception, Severity severity,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception)
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .metaData(metaData)
             .severity(severity)
             .build();
@@ -1065,7 +1133,7 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull String name, @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace, Severity severity,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace)
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1088,7 +1156,7 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull String name, @NonNull String message,
                                @NonNull StackTraceElement[] stacktrace, Severity severity,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace)
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1112,7 +1180,7 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull String name, @NonNull String message, String context,
                        @NonNull StackTraceElement[] stacktrace, Severity severity,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace)
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1137,7 +1205,7 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull String name, @NonNull String message, String context,
                                @NonNull StackTraceElement[] stacktrace, Severity severity,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace)
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1179,6 +1247,15 @@ public class Client extends Observable implements Observer {
      */
     public void setLoggingEnabled(boolean loggingEnabled) {
         Logger.setEnabled(loggingEnabled);
+    }
+
+    /**
+     * Returns the configuration used to initialise the client
+     * @return the config
+     */
+    @NonNull
+    public Configuration getConfig() {
+        return config;
     }
 
 }

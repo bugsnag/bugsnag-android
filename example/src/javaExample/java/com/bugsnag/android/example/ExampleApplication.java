@@ -9,9 +9,8 @@ public class ExampleApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Initialize the Bugsnag client
         Bugsnag.init(this);
+
     }
 
 }

@@ -62,5 +62,13 @@ public class DeviceDataTest {
         String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
         assertNotSame(androidId, deviceDataJson.getString("id"));
 
+        assertTrue(deviceDataJson.getLong("freeMemory") > 0);
+        assertNotNull(deviceDataJson.get("orientation"));
+        assertTrue(deviceDataJson.getDouble("batteryLevel") > 0);
+        assertTrue(deviceDataJson.getBoolean("charging"));
+        assertEquals("allowed", deviceDataJson.getString("locationStatus"));
+        assertNotNull(deviceDataJson.get("networkAccess"));
+        assertNotNull(deviceDataJson.get("time"));
     }
+
 }

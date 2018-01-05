@@ -45,6 +45,7 @@ public class JsonStream extends JsonWriter {
      */
     public void value(@NonNull File file) throws IOException {
         super.flush();
+        beforeValue(false); // add comma if in array
 
         // Copy the file contents onto the stream
         FileReader input = null;

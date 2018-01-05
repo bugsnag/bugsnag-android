@@ -37,8 +37,8 @@ public class ErrorStoreTest {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         config = client.config;
         errorStore = client.errorStore;
-        Assert.assertNotNull(errorStore.path);
-        errorStorageDir = new File(errorStore.path);
+        Assert.assertNotNull(errorStore.storeDirectory);
+        errorStorageDir = new File(errorStore.storeDirectory);
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
@@ -52,7 +52,7 @@ public class ErrorStoreTest {
         File[] files = errorStorageDir.listFiles();
         int baseline = files.length; // record baseline number of files
 
-        Error error = new Error.Builder(config, new RuntimeException()).build();
+        Error error = new Error.Builder(config, new RuntimeException(), null).build();
         errorStore.write(error);
 
         files = errorStorageDir.listFiles();
@@ -108,8 +108,8 @@ public class ErrorStoreTest {
         assertFalse(file.length() <= 0);
 
         // ensure the file can be serialised into JSON report
-        JSONObject memory = getJsonObjectFromReport(new Report("abc", file));
-        JSONObject disk = getJsonObjectFromReport(new Report("abc", error));
+        JSONObject memory = getJsonObjectFromReport(new Report(file));
+        JSONObject disk = getJsonObjectFromReport(new Report(error));
 
         // validate info
         validateReportPayload(memory);
@@ -118,7 +118,7 @@ public class ErrorStoreTest {
 
     static void validateReportPayload(JSONObject payload) throws JSONException {
         assertNotNull(payload);
-        assertEquals(3, payload.length());
+        assertEquals(2, payload.length());
 
         JSONArray events = payload.getJSONArray("events");
         assertNotNull(events);

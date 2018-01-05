@@ -12,8 +12,11 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -28,7 +31,7 @@ public class AppDataTest {
 
     @Test
     public void testManifestData() throws JSONException, IOException {
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, generateSessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
@@ -38,6 +41,10 @@ public class AppDataTest {
         assertEquals("1.0", appDataJson.get("versionName"));
         assertEquals("1.0", appDataJson.get("version"));
         assertEquals("development", appDataJson.get("releaseStage"));
+
+        assertTrue(appDataJson.getLong("memoryUsage") > 0);
+        assertNotNull(appDataJson.getBoolean("lowMemory"));
+        assertTrue(appDataJson.getLong("duration") >= 0);
     }
 
     @Test
@@ -45,7 +52,7 @@ public class AppDataTest {
         String appVersion = "1.2.3";
         config.setAppVersion(appVersion);
 
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, generateSessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals(appVersion, appDataJson.get("version"));
@@ -56,9 +63,10 @@ public class AppDataTest {
         String releaseStage = "test-stage";
         config.setReleaseStage(releaseStage);
 
-        AppData appData = new AppData(InstrumentationRegistry.getContext(), config);
+        AppData appData = new AppData(InstrumentationRegistry.getContext(), config, generateSessionTracker());
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals(releaseStage, appDataJson.get("releaseStage"));
     }
+
 }

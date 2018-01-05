@@ -64,7 +64,7 @@ public class ExceptionsTest {
     public void testNamedException() throws JSONException, IOException {
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);
         StackTraceElement[] frames = new StackTraceElement[]{element};
-        Error error = new Error.Builder(config, "RuntimeException", "Example message", frames).build();
+        Error error = new Error.Builder(config, "RuntimeException", "Example message", frames, null).build();
         Exceptions exceptions = new Exceptions(config, error.getException());
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);

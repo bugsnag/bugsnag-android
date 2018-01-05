@@ -42,6 +42,9 @@
       android:name="com.bugsnag.android.ENDPOINT"
       android:value="${bugsnagEndpoint}" />
     <meta-data
+      android:name="com.bugsnag.android.SESSIONS_ENDPOINT"
+      android:value="${bugsnagSessionsEndpoint}" />
+    <meta-data
       android:name="com.bugsnag.android.RELEASE_STAGE"
       android:value="${bugsnagReleaseStage}" />
     <meta-data

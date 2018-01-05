@@ -6,8 +6,11 @@ import android.support.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,14 +19,19 @@ import java.util.Observer;
  * specified at the client level, api-key and endpoint configuration.
  */
 public class Configuration extends Observable implements Observer {
-    static final String DEFAULT_ENDPOINT = "https://notify.bugsnag.com";
+
+    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
+    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
+    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
 
     @NonNull
     private final String apiKey;
     private String buildUUID;
     private String appVersion;
     private String context;
-    private String endpoint = DEFAULT_ENDPOINT;
+    private String endpoint = "https://notify.bugsnag.com";
+    private String sessionEndpoint = "https://sessions.bugsnag.com";
+
     private String[] filters = new String[]{"password"};
     private String[] ignoreClasses;
     @Nullable
@@ -34,12 +42,16 @@ public class Configuration extends Observable implements Observer {
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
+    private boolean autoCaptureSessions = false;
 
     @NonNull
     String defaultExceptionType = "android";
 
-    @NonNull private MetaData metaData;
+    @NonNull
+    private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
+    private String codeBundleId;
+    private String notifierType;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -122,6 +134,27 @@ public class Configuration extends Observable implements Observer {
      */
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    /**
+     * Gets the Session Tracking API endpoint
+     *
+     * @return the endpoint
+     */
+    public String getSessionEndpoint() {
+        return sessionEndpoint;
+    }
+
+    /**
+     * Set the endpoint to send Session Tracking data to. By default we'll send reports to
+     * the standard https://session.bugsnag.com endpoint, but you can override
+     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
+     * endpoint.
+     *
+     * @param endpoint the custom endpoint to send session data to
+     */
+    public void setSessionEndpoint(String endpoint) {
+        this.sessionEndpoint = endpoint;
     }
 
     /**
@@ -305,7 +338,28 @@ public class Configuration extends Observable implements Observer {
         this.enableExceptionHandler = enableExceptionHandler;
     }
 
-    /*
+    /**
+     * Get whether or not User sessions are captured automatically.
+     *
+     * @return true if sessions are captured automatically
+     */
+    public boolean shouldAutoCaptureSessions() {
+        return autoCaptureSessions;
+    }
+
+    /**
+     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
+     * the app enters the foreground.
+     * <p>
+     * By default this behavior is disabled.
+     *
+     * @param autoCapture whether sessions should be captured automatically
+     */
+    public void setAutoCaptureSessions(boolean autoCapture) {
+        this.autoCaptureSessions = autoCapture;
+    }
+
+    /**
      * Gets any meta data associated with the error
      *
      * @return meta data
@@ -390,6 +444,46 @@ public class Configuration extends Observable implements Observer {
         } else {
             this.launchCrashThresholdMs = launchCrashThresholdMs;
         }
+    }
+
+    /**
+     * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
+     * @param notifierType the notifier type
+     */
+    public void setNotifierType(String notifierType) {
+        this.notifierType = notifierType;
+    }
+
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     * @param codeBundleId the code bundle id
+     */
+    public void setCodeBundleId(String codeBundleId) {
+        this.codeBundleId = codeBundleId;
+    }
+
+    String getCodeBundleId() {
+        return codeBundleId;
+    }
+
+    String getNotifierType() {
+        return notifierType;
+    }
+
+    Map<String, String> getErrorApiHeaders() {
+        Map<String, String> map = new HashMap<>();
+        map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
+        map.put(HEADER_API_KEY, apiKey);
+        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toISO8601(new Date()));
+        return map;
+    }
+
+    Map<String, String> getSessionApiHeaders() {
+        Map<String, String> map = new HashMap<>();
+        map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
+        map.put(HEADER_API_KEY, apiKey);
+        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toISO8601(new Date()));
+        return map;
     }
 
     /**

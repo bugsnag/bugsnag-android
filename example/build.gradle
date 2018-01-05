@@ -28,14 +28,15 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
 
         manifestPlaceholders = [
-            bugsnagApiKey                    : "572dd1154e6c5b291e5d1b42e506ae34",
+            bugsnagApiKey                    : "your-api-key",
             bugsnagBuildUUID                 : "abc123",
             bugsnagAppVersion                : "1.0.0",
             bugsnagEndpoint                  : "https://notify.bugsnag.com",
+            bugsnagSessionsEndpoint          : "http://sessions.bugsnag.com",
             bugsnagReleaseStage              : "debug",
             bugsnagSendThreads               : true,
             bugsnagEnableExceptionHandler    : true,
-            bugsnagPersistUserBetweenSessions: false,
+            bugsnagPersistUserBetweenSessions: false
         ]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -70,9 +71,6 @@ android {
           universalApk true
         }
     }
-
-
-    flavorDimensions "regular"
 
     productFlavors {
         javaExample {
