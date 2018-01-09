@@ -1,4 +1,8 @@
 # Changelog
+
+## 4.2.1 (2018-01-09)
+- Misc Session Tracking fixes and enhancements
+
 ## 4.2.0 (2018-01-05)
 - Adds support for tracking sessions and overall crash rate by setting `config.setAutoCaptureSessions` to `true`.
 In addition, sessions can be indicated manually using `Bugsnag.startSession` [#217](https://github.com/bugsnag/bugsnag-android/pull/217)
