@@ -91,7 +91,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      */
     private void trackSessionIfNeeded(boolean autoCaptured, Session session) {
         String releaseStage = getReleaseStage();
-        boolean notifyForRelease = client != null && configuration.shouldNotifyForReleaseStage(releaseStage);
+        boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(releaseStage);
 
         if ((configuration.shouldAutoCaptureSessions() || !autoCaptured) && notifyForRelease) {
             sessionQueue.add(session);
