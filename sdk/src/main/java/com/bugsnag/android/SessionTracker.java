@@ -73,13 +73,24 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             Session session = new Session(UUID.randomUUID().toString(), date, user);
             session.setAutoCaptured(autoCaptured);
 
-            if (configuration.shouldAutoCaptureSessions() || !autoCaptured) {
+            String releaseStage = getReleaseStage();
+            boolean notifyForRelease = client != null && configuration.shouldNotifyForReleaseStage(releaseStage);
+
+            if ((configuration.shouldAutoCaptureSessions() || !autoCaptured) && notifyForRelease) {
                 sessionQueue.add(session);
                 sessionStore.write(session); // store session for sending
             }
             currentSession = session;
         }
 
+    }
+
+    private String getReleaseStage() {
+        if (configuration.getReleaseStage() != null) {
+            return configuration.getReleaseStage();
+        } else {
+            return AppDataSummary.guessReleaseStage(context);
+        }
     }
 
     @Nullable
