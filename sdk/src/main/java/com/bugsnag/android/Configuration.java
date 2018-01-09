@@ -357,6 +357,15 @@ public class Configuration extends Observable implements Observer {
      */
     public void setAutoCaptureSessions(boolean autoCapture) {
         this.autoCaptureSessions = autoCapture;
+
+        if (autoCapture) { // track any existing sessions
+            Client client = Bugsnag.getClient();
+
+            //noinspection ConstantConditions
+            if (client != null && client.sessionTracker != null) {
+                client.sessionTracker.onAutoCaptureEnabled();
+            }
+        }
     }
 
     /**

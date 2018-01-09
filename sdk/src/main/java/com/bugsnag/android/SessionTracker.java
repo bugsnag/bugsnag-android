@@ -40,6 +40,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private long lastForegroundMs;
     private Long sessionStartMs;
     private Session currentSession;
+    private boolean trackedFirstSession = false;
 
     SessionTracker(Configuration configuration, Client client, SessionStore sessionStore,
                    SessionTrackingApiClient apiClient, Context context) {
@@ -68,21 +69,42 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      */
     void startNewSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
         synchronized (sessionStore) {
-            sessionStartMs = date.getTime();
-
-            Session session = new Session(UUID.randomUUID().toString(), date, user);
-            session.setAutoCaptured(autoCaptured);
-
-            String releaseStage = getReleaseStage();
-            boolean notifyForRelease = client != null && configuration.shouldNotifyForReleaseStage(releaseStage);
-
-            if ((configuration.shouldAutoCaptureSessions() || !autoCaptured) && notifyForRelease) {
-                sessionQueue.add(session);
-                sessionStore.write(session); // store session for sending
-            }
-            currentSession = session;
+            currentSession = generateSession(date, user, autoCaptured);
+            trackSessionIfNeeded(autoCaptured, currentSession);
         }
+    }
 
+    @NonNull
+    private Session generateSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
+        sessionStartMs = date.getTime();
+        Session session = new Session(UUID.randomUUID().toString(), date, user);
+        session.setAutoCaptured(autoCaptured);
+        return session;
+    }
+
+    private void trackSessionIfNeeded(boolean autoCaptured, Session session) {
+        String releaseStage = getReleaseStage();
+        boolean notifyForRelease = client != null && configuration.shouldNotifyForReleaseStage(releaseStage);
+
+        if ((configuration.shouldAutoCaptureSessions() || !autoCaptured) && notifyForRelease) {
+            sessionQueue.add(session);
+            sessionStore.write(session); // store session for sending
+            trackedFirstSession = true;
+        }
+    }
+
+    /**
+     * Track a new session when auto capture is enabled via config after initialisation.
+     */
+    void onAutoCaptureEnabled() {
+        synchronized (sessionStore) {
+            if (!trackedFirstSession) {
+                if (currentSession == null) { // unlikely case, will be initialised later
+                    return;
+                }
+                trackSessionIfNeeded(currentSession.isAutoCaptured(), currentSession);
+            }
+        }
     }
 
     private String getReleaseStage() {
