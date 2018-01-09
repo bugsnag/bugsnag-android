@@ -82,6 +82,13 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         return session;
     }
 
+    /**
+     * Determines whether or not a session should be tracked. If this is true, the session will be
+     * stored and sent to the Bugsnag API, otherwise no action will occur in this method.
+     *
+     * @param autoCaptured whether the session was automatically captured by the SDK or not
+     * @param session      the session
+     */
     private void trackSessionIfNeeded(boolean autoCaptured, Session session) {
         String releaseStage = getReleaseStage();
         boolean notifyForRelease = client != null && configuration.shouldNotifyForReleaseStage(releaseStage);
