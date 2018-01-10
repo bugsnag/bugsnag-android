@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.2.2 (2018-01-09)
+
+### Bug fixes
+
+* Fix possible crash during session tracking initialization
+  [#220](https://github.com/bugsnag/bugsnag-android/pull/220)
+  [James Smith](https://github.com/loopj)
+
 ## 4.2.1 (2018-01-09)
 - Misc Session Tracking fixes and enhancements
 
