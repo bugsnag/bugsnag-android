@@ -42,13 +42,17 @@ public class ClientRejectedExecutionTest {
         ErrorStore errorStore = client.errorStore;
         assertNotNull(errorStore.storeDirectory);
         errorStorageDir = new File(errorStore.storeDirectory);
-        FileUtils.clearFilesInDir(errorStorageDir);
+        clearPendingErrors();
     }
 
     @After
     public void tearDown() throws Exception {
-        FileUtils.clearFilesInDir(errorStorageDir);
+        clearPendingErrors();
+    }
+
+    private void clearPendingErrors() {
         Async.POOL_WORK_QUEUE.clear();
+        FileUtils.clearFilesInDir(errorStorageDir);
     }
 
     /**
