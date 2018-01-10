@@ -219,6 +219,18 @@ public final class Bugsnag {
     }
 
     /**
+     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
+     * the app enters the foreground.
+     * <p>
+     * By default this behavior is disabled.
+     *
+     * @param autoCapture whether sessions should be captured automatically
+     */
+    public static void setAutoCaptureSessions(boolean autoCapture) {
+        getClient().setAutoCaptureSessions(autoCapture);
+    }
+
+    /**
      * Set details of the user currently using your application.
      * You can search for this information in your Bugsnag dashboard.
      * <p>

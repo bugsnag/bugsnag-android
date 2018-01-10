@@ -81,7 +81,7 @@ public class Client extends Observable implements Observer {
     private final long launchTimeMs;
 
     private final EventReceiver eventReceiver = new EventReceiver();
-    private final SessionTracker sessionTracker;
+    final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
     private final Handler handler;
@@ -141,9 +141,29 @@ public class Client extends Observable implements Observer {
 
         sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient, appContext);
 
-        if (configuration.shouldAutoCaptureSessions()) { // create initial session
-            sessionTracker.startNewSession(new Date(), null, true);
+        // Set up and collect constant app and device diagnostics
+        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+
+        appData = new AppData(appContext, config, sessionTracker);
+        deviceData = new DeviceData(appContext, sharedPref);
+
+        // Set up breadcrumbs
+        breadcrumbs = new Breadcrumbs();
+
+        // Set sensible defaults
+        setProjectPackages(appContext.getPackageName());
+
+        if (config.getPersistUserBetweenSessions()) {
+            // Check to see if a user was stored in the SharedPreferences
+            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
+            user.setName(sharedPref.getString(USER_NAME_KEY, null));
+            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
+        } else {
+            user.setId(deviceData.getUserId());
         }
+
+        // create initial session
+        sessionTracker.startNewSession(new Date(), user, true);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -167,27 +187,6 @@ public class Client extends Observable implements Observer {
             if (buildUUID != null) {
                 config.setBuildUUID(buildUUID);
             }
-        }
-
-        // Set up and collect constant app and device diagnostics
-        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-
-        appData = new AppData(appContext, config, sessionTracker);
-        deviceData = new DeviceData(appContext, sharedPref);
-
-        // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs();
-
-        // Set sensible defaults
-        setProjectPackages(appContext.getPackageName());
-
-        if (config.getPersistUserBetweenSessions()) {
-            // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
-            user.setName(sharedPref.getString(USER_NAME_KEY, null));
-            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
-        } else {
-            user.setId(deviceData.getUserId());
         }
 
         // Create the error store that is used in the exception handler
@@ -483,6 +482,26 @@ public class Client extends Observable implements Observer {
      */
     public void setSendThreads(boolean sendThreads) {
         config.setSendThreads(sendThreads);
+    }
+
+
+    /**
+     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
+     * the app enters the foreground.
+     * <p>
+     * By default this behavior is disabled.
+     *
+     * @param autoCapture whether sessions should be captured automatically
+     */
+    public void setAutoCaptureSessions(boolean autoCapture) {
+        config.setAutoCaptureSessions(autoCapture);
+
+        if (autoCapture) { // track any existing sessions
+            //noinspection ConstantConditions
+            if (sessionTracker != null) {
+                sessionTracker.onAutoCaptureEnabled();
+            }
+        }
     }
 
     /**
