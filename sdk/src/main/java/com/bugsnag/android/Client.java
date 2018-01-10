@@ -484,6 +484,26 @@ public class Client extends Observable implements Observer {
         config.setSendThreads(sendThreads);
     }
 
+
+    /**
+     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
+     * the app enters the foreground.
+     * <p>
+     * By default this behavior is disabled.
+     *
+     * @param autoCapture whether sessions should be captured automatically
+     */
+    public void setAutoCaptureSessions(boolean autoCapture) {
+        config.setAutoCaptureSessions(autoCapture);
+
+        if (autoCapture) { // track any existing sessions
+            //noinspection ConstantConditions
+            if (sessionTracker != null) {
+                sessionTracker.onAutoCaptureEnabled();
+            }
+        }
+    }
+
     /**
      * Set details of the user currently using your application.
      * You can search for this information in your Bugsnag dashboard.
