@@ -30,9 +30,11 @@ public class Error implements JsonStream.Streamable {
     private String context;
     private final HandledState handledState;
     private final Session session;
+    private final ThreadState threadState;
 
     Error(@NonNull Configuration config, @NonNull Throwable exception,
-          HandledState handledState, Severity severity, Session session) {
+          HandledState handledState, Severity severity, Session session, ThreadState threadState) {
+        this.threadState = threadState;
         this.config = config;
         this.exception = exception;
         this.handledState = handledState;
@@ -75,7 +77,7 @@ public class Error implements JsonStream.Streamable {
         writer.name("groupingHash").value(groupingHash);
 
         if (config.getSendThreads()) {
-            writer.name("threads").value(new ThreadState(config));
+            writer.name("threads").value(threadState);
         }
 
         if (session != null) {
@@ -328,6 +330,7 @@ public class Error implements JsonStream.Streamable {
         private final Configuration config;
         private final Throwable exception;
         private final Session session;
+        private final ThreadState threadState;
         private Severity severity = Severity.WARNING;
         private MetaData metaData;
         private String attributeValue;
@@ -336,6 +339,7 @@ public class Error implements JsonStream.Streamable {
         private String severityReasonType;
 
         Builder(@NonNull Configuration config, @NonNull Throwable exception, Session session) {
+            this.threadState = new ThreadState(config);
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
@@ -375,7 +379,7 @@ public class Error implements JsonStream.Streamable {
         Error build() {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
-            Error error = new Error(config, exception, handledState, severity, session);
+            Error error = new Error(config, exception, handledState, severity, session, threadState);
 
             if (metaData != null) {
                 error.setMetaData(metaData);

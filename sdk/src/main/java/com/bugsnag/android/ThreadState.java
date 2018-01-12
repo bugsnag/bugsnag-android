@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,38 +16,54 @@ class ThreadState implements JsonStream.Streamable {
     private static final String THREAD_TYPE = "android";
 
     final Configuration config;
+    private final Thread[] threads;
+    private final Map<Thread, StackTraceElement[]> stackTraces;
 
     ThreadState(Configuration config) {
         this.config = config;
+        stackTraces = Thread.getAllStackTraces();
+        threads = sanitiseThreads(Thread.currentThread().getId(), stackTraces);
     }
 
-    @Override
-    public void toStream(@NonNull JsonStream writer) throws IOException {
-        long currentId = Thread.currentThread().getId();
-        Map<Thread, StackTraceElement[]> liveThreads = Thread.getAllStackTraces();
-
+    /**
+     * Returns an array of threads excluding the current thread, sorted by thread id
+     *
+     * @param currentThreadId the current thread id
+     * @param liveThreads     all live threads
+     */
+    private Thread[] sanitiseThreads(long currentThreadId,
+                                     Map<Thread, StackTraceElement[]> liveThreads) {
         Set<Thread> threadSet = liveThreads.keySet();
-        Thread[] keys = threadSet.toArray(new Thread[threadSet.size()]);
-        Arrays.sort(keys, new Comparator<Thread>() {
+
+        // remove current thread
+        for (Iterator<Thread> iterator = threadSet.iterator(); iterator.hasNext(); ) {
+            Thread thread = iterator.next();
+            if (thread.getId() == currentThreadId) {
+                iterator.remove();
+            }
+        }
+
+        Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
+        Arrays.sort(threads, new Comparator<Thread>() {
             public int compare(@NonNull Thread a, @NonNull Thread b) {
                 return Long.valueOf(a.getId()).compareTo(b.getId());
             }
         });
+        return threads;
+    }
 
+    @Override
+    public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
-        for (Thread thread : keys) {
-            // Don't show the current stacktrace here. It'll point at this method
-            // rather than at the point they crashed.
-            if (thread.getId() != currentId) {
-                StackTraceElement[] stacktrace = liveThreads.get(thread);
+        for (Thread thread : threads) {
+            StackTraceElement[] stacktrace = stackTraces.get(thread);
 
-                writer.beginObject();
-                writer.name("id").value(thread.getId());
-                writer.name("name").value(thread.getName());
-                writer.name("type").value(THREAD_TYPE);
-                writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
-                writer.endObject();
-            }
+            writer.beginObject();
+            writer.name("id").value(thread.getId());
+            writer.name("name").value(thread.getName());
+            writer.name("type").value(THREAD_TYPE);
+            writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
+            writer.endObject();
         }
         writer.endArray();
     }
