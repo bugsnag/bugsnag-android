@@ -6,9 +6,13 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
 }
-
+repositories {
+    google()
+    jcenter()
+}
 ext {
     supportLibVersion = "27.0.0"
     supportTestVersion = "0.5"
