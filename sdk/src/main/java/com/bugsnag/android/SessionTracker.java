@@ -225,7 +225,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     }
 
     private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
-        if (configuration.isAutomaticallyCollectBreadcrumbs()) {
+        if (configuration.isAutomaticallyCollectingBreadcrumbs()) {
             Map<String, String> metadata = new HashMap<>();
             metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
             client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);

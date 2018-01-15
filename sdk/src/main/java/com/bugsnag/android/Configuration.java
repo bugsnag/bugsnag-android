@@ -451,7 +451,7 @@ public class Configuration extends Observable implements Observer {
      * Returns whether automatic breadcrumb capture or common application events is enabled.
      * @return true if automatic capture is enabled, otherwise false.
      */
-    public boolean isAutomaticallyCollectBreadcrumbs() {
+    public boolean isAutomaticallyCollectingBreadcrumbs() {
         return automaticallyCollectBreadcrumbs;
     }
 
