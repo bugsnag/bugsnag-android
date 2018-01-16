@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static com.bugsnag.android.Client.MF_APP_VERSION;
+import static com.bugsnag.android.Client.MF_AUTO_CAPTURE_SESSIONS;
 import static com.bugsnag.android.Client.MF_BUILD_UUID;
 import static com.bugsnag.android.Client.MF_ENABLE_EXCEPTION_HANDLER;
 import static com.bugsnag.android.Client.MF_ENDPOINT;
@@ -197,6 +198,7 @@ public class ClientTest {
         data.putBoolean(MF_SEND_THREADS, false);
         data.putBoolean(MF_ENABLE_EXCEPTION_HANDLER, false);
         data.putBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, true);
+        data.putBoolean(MF_AUTO_CAPTURE_SESSIONS, true);
 
         Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
         assertEquals(buildUuid, newConfig.getBuildUUID());
@@ -207,6 +209,7 @@ public class ClientTest {
         assertEquals(false, newConfig.getSendThreads());
         assertEquals(false, newConfig.getEnableExceptionHandler());
         assertEquals(true, newConfig.getPersistUserBetweenSessions());
+        assertEquals(true, newConfig.shouldAutoCaptureSessions());
     }
 
 }
