@@ -27,4 +27,4 @@ ifeq ($(VERSION),)g
 	@$(error VERSION is not defined. Run with `make VERSION=number release`)
 endif
 	make VERSION=$(VERSION) bump && git commit -am "v$(VERSION)" && git tag v$(VERSION) \
-	&& git push origin && git push --tags && ./gradlew clean uploadArchives
+	&& git push origin && git push --tags && ./gradlew clean assemble uploadArchives bintrayUpload
