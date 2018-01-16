@@ -60,8 +60,10 @@ task javadoc(type: Javadoc) {
 // Tasks to release the library to maven central
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
 
-group = "${project.GROUP}"
+
 version = "${project.VERSION_NAME}"
+group = "${project.GROUP}"
+archivesBaseName = "bugsnag-android" // rename aars from 'sdk' to 'bugsnag-android'
 
 publishing {
     publications {
@@ -69,6 +71,7 @@ publishing {
             groupId 'com.bugsnag'
             artifactId 'bugsnag-android'
             version "${project.VERSION_NAME}"
+
 
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
@@ -101,6 +104,7 @@ bintray {
         userOrg = 'bugsnag'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/bugsnag/bugsnag-android.git'
+
         version {
             name = "${project.VERSION_NAME}"
             vcsTag = "v${project.VERSION_NAME}"
