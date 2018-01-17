@@ -13,15 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
-import static com.bugsnag.android.Client.MF_APP_VERSION;
-import static com.bugsnag.android.Client.MF_AUTO_CAPTURE_SESSIONS;
-import static com.bugsnag.android.Client.MF_BUILD_UUID;
-import static com.bugsnag.android.Client.MF_ENABLE_EXCEPTION_HANDLER;
-import static com.bugsnag.android.Client.MF_ENDPOINT;
-import static com.bugsnag.android.Client.MF_PERSIST_USER_BETWEEN_SESSIONS;
-import static com.bugsnag.android.Client.MF_RELEASE_STAGE;
-import static com.bugsnag.android.Client.MF_SEND_THREADS;
-import static com.bugsnag.android.Client.MF_SESSIONS_ENDPOINT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -190,15 +181,15 @@ public class ClientTest {
         String sessionEndpoint = "http://session-example.com";
 
         Bundle data = new Bundle();
-        data.putString(MF_BUILD_UUID, buildUuid);
-        data.putString(MF_APP_VERSION, appVersion);
-        data.putString(MF_RELEASE_STAGE, releaseStage);
-        data.putString(MF_SESSIONS_ENDPOINT, sessionEndpoint);
-        data.putString(MF_ENDPOINT, endpoint);
-        data.putBoolean(MF_SEND_THREADS, false);
-        data.putBoolean(MF_ENABLE_EXCEPTION_HANDLER, false);
-        data.putBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, true);
-        data.putBoolean(MF_AUTO_CAPTURE_SESSIONS, true);
+        data.putString("com.bugsnag.android.BUILD_UUID", buildUuid);
+        data.putString("com.bugsnag.android.APP_VERSION", appVersion);
+        data.putString("com.bugsnag.android.RELEASE_STAGE", releaseStage);
+        data.putString("com.bugsnag.android.SESSIONS_ENDPOINT", sessionEndpoint);
+        data.putString("com.bugsnag.android.ENDPOINT", endpoint);
+        data.putBoolean("com.bugsnag.android.SEND_THREADS", false);
+        data.putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false);
+        data.putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true);
+        data.putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", true);
 
         Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
         assertEquals(buildUuid, newConfig.getBuildUUID());
