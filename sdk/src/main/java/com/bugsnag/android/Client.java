@@ -61,6 +61,7 @@ public class Client extends Observable implements Observer {
     static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
     static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
     static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
+    static final String MF_AUTO_CAPTURE_SESSIONS = BUGSNAG_NAMESPACE + ".AUTO_CAPTURE_SESSIONS";
 
 
     @NonNull
@@ -331,6 +332,7 @@ public class Client extends Observable implements Observer {
 
         config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
         config.setPersistUserBetweenSessions(data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
+        config.setAutoCaptureSessions(data.getBoolean(MF_AUTO_CAPTURE_SESSIONS, false));
         config.setEnableExceptionHandler(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
         return config;
     }
