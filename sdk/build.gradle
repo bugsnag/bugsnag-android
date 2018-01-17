@@ -16,6 +16,12 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
+    }
+
     lintOptions {
         disable 'DefaultLocale', 'Typos'
         abortOnError true
