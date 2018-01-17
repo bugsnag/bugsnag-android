@@ -26,6 +26,12 @@ public class EventReceiver extends BroadcastReceiver {
     @NonNull
     private static final List<String> categories = buildCategories();
 
+    private final Client client;
+
+    public EventReceiver(Client client) {
+        this.client = client;
+    }
+
     @Override
     public void onReceive(Context context, @NonNull Intent intent) {
         try {
@@ -47,7 +53,10 @@ public class EventReceiver extends BroadcastReceiver {
             }
 
             BreadcrumbType type = actions.containsKey(fullAction) ? actions.get(fullAction) : BreadcrumbType.LOG;
-            Bugsnag.leaveBreadcrumb(shortAction, type, meta);
+
+            if (client.getConfig().isAutomaticallyCollectingBreadcrumbs()) {
+                client.leaveBreadcrumb(shortAction, type, meta);
+            }
 
         } catch (Exception ex) {
             Logger.warn("Failed to leave breadcrumb in EventReceiver: " + ex.getMessage());

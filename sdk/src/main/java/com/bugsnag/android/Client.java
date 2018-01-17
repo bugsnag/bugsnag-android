@@ -80,7 +80,7 @@ public class Client extends Observable implements Observer {
 
     private final long launchTimeMs;
 
-    private final EventReceiver eventReceiver = new EventReceiver();
+    private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
@@ -140,6 +140,7 @@ public class Client extends Observable implements Observer {
         sessionTrackingApiClient = defaultHttpClient;
 
         sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient, appContext);
+        eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
         SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
