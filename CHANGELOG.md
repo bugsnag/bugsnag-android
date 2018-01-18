@@ -1,10 +1,17 @@
 # Changelog
 
+## 4.3.0 (2018-01-18)
+
+- Move capture of thread stacktraces to start of notify process
+- Add configuration option to disable automatic breadcrumb capture
+- Update Gradle Wrapper
+- Parse manifest meta-data for Session Auto-Capture boolean flag
+
 ## 4.2.2 (2018-01-09)
 
 ### Bug fixes
 
-* Fix possible crash during session tracking initialization
+- Fix possible crash during session tracking initialization
   [#220](https://github.com/bugsnag/bugsnag-android/pull/220)
   [James Smith](https://github.com/loopj)
 
