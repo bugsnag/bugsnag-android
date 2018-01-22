@@ -91,7 +91,7 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
         try {
-            Report report = new Report(errorFile);
+            Report report = new Report(config.getApiKey(), errorFile);
             errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
 
             Logger.info("Deleting sent error file " + errorFile.getName());
