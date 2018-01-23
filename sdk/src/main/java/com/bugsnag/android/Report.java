@@ -18,23 +18,28 @@ public class Report implements JsonStream.Streamable {
     @Nullable
     private Error error;
     private Notifier notifier;
+    private String apiKey;
 
-    Report(@Nullable File errorFile) {
+    Report(@NonNull String apiKey, @Nullable File errorFile) {
         this.error = null;
         this.errorFile = errorFile;
         this.notifier = Notifier.getInstance();
+        this.apiKey = apiKey;
     }
 
-    Report(@Nullable Error error) {
+    Report(@NonNull String apiKey, @Nullable Error error) {
         this.error = error;
         this.errorFile = null;
         this.notifier = Notifier.getInstance();
+        this.apiKey = apiKey;
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Create a JSON stream and top-level object
         writer.beginObject();
+
+        writer.name("apiKey").value(apiKey);
 
         // Write the notifier info
         writer.name("notifier").value(notifier);
@@ -64,8 +69,8 @@ public class Report implements JsonStream.Streamable {
         return error;
     }
 
-    @Deprecated
     public void setApiKey(@NonNull String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public void setNotifierVersion(@NonNull String version) {
