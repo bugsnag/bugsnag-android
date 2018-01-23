@@ -23,7 +23,6 @@ class ErrorStore extends FileStore<Error> {
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
-    private volatile long waitMs = 0;
     private volatile boolean completed = false;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
@@ -59,7 +58,6 @@ class ErrorStore extends FileStore<Error> {
             // The request itself will run in a background thread and will continue after the 2
             // second period until the request completes, or the app crashes.
             completed = false;
-            waitMs = 0;
 
             HandlerThread handlerThread = new HandlerThread("Bugsnag Launch Crash Thread");
             handlerThread.start();
@@ -77,6 +75,8 @@ class ErrorStore extends FileStore<Error> {
                     completed = true;
                 }
             });
+
+            long waitMs = 0;
 
             while (!completed && waitMs < LAUNCH_CRASH_TIMEOUT_MS) {
                 try {
