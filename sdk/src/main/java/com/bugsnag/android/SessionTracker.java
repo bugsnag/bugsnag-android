@@ -41,6 +41,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private Long sessionStartMs;
     private Session currentSession;
     private boolean trackedFirstSession = false;
+    private volatile boolean isFlushingRequest = false;
 
     SessionTracker(Configuration configuration, Client client, SessionStore sessionStore,
                    SessionTrackingApiClient apiClient, Context context) {
@@ -143,6 +144,10 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      * Attempts to flush session payloads stored on disk
      */
     void flushStoredSessions() {
+        if (isFlushingRequest) {
+            return;
+        }
+        isFlushingRequest = true;
         List<File> storedFiles;
 
         synchronized (sessionStore) {
@@ -163,6 +168,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 deleteStoredFiles(storedFiles);
             }
         }
+        isFlushingRequest = false;
     }
 
     private void deleteStoredFiles(Collection<File> storedFiles) {
