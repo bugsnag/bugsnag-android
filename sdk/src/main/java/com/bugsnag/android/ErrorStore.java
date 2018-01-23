@@ -1,8 +1,6 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 
 import java.io.File;
@@ -23,7 +21,7 @@ class ErrorStore extends FileStore<Error> {
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
-    private volatile boolean completed = false;
+    private volatile boolean flushOnLaunchCompleted = false;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -57,13 +55,9 @@ class ErrorStore extends FileStore<Error> {
             // Block the main thread for a 2 second interval as the app may crash very soon.
             // The request itself will run in a background thread and will continue after the 2
             // second period until the request completes, or the app crashes.
-            completed = false;
+            flushOnLaunchCompleted = false;
 
-            HandlerThread handlerThread = new HandlerThread("Bugsnag Launch Crash Thread");
-            handlerThread.start();
-            Handler handler = new Handler(handlerThread.getLooper());
-
-            handler.post(new Runnable() {
+            Async.run(new Runnable() {
                 @Override
                 public void run() {
                     Logger.info("Attempting to send launch crash reports");
@@ -72,13 +66,13 @@ class ErrorStore extends FileStore<Error> {
                         flushErrorReport(crashReport, errorReportApiClient);
                     }
                     Logger.info("Delivered all launch crash reports");
-                    completed = true;
+                    flushOnLaunchCompleted = true;
                 }
             });
 
             long waitMs = 0;
 
-            while (!completed && waitMs < LAUNCH_CRASH_TIMEOUT_MS) {
+            while (!flushOnLaunchCompleted && waitMs < LAUNCH_CRASH_TIMEOUT_MS) {
                 try {
                     Thread.sleep(LAUNCH_CRASH_POLL_MS);
                     waitMs += LAUNCH_CRASH_POLL_MS;
@@ -86,7 +80,6 @@ class ErrorStore extends FileStore<Error> {
                     Logger.warn("Interrupted while waiting for launch crash report request");
                 }
             }
-            handlerThread.quit();
             Logger.info("Continuing with Bugsnag initialisation");
         }
     }
