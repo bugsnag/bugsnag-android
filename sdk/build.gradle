@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.kt3k.coveralls'
 
 repositories {
     jcenter()
@@ -28,6 +29,9 @@ android {
     }
 }
 
+coveralls {
+    jacocoReportPath = "$buildDir/reports/coverage/debug/report.xml"
+}
 dependencies {
     api "com.android.support:support-annotations:$supportLibVersion"
     testImplementation "junit:junit:$junitVersion"
