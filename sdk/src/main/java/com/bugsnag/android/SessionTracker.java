@@ -143,29 +143,33 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      * Attempts to flush session payloads stored on disk
      */
     void flushStoredSessions() {
+        List<File> storedFiles;
+
         synchronized (sessionStore) {
-            List<File> storedFiles = sessionStore.findStoredFiles();
+            storedFiles = sessionStore.findStoredFiles();
+        }
 
-            if (!storedFiles.isEmpty()) {
-                AppData appData = new AppData(context, configuration, this);
-                SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
+        if (!storedFiles.isEmpty()) {
+            AppData appData = new AppData(context, configuration, this);
+            SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
 
-                try {
-                    apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
-                    deleteStoredFiles(storedFiles);
-                } catch (NetworkException e) { // store for later sending
-                    Logger.info("Failed to post stored session payload");
-                } catch (BadResponseException e) { // drop bad data
-                    Logger.warn("Invalid session tracking payload", e);
-                    deleteStoredFiles(storedFiles);
-                }
+            try {
+                apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
+                deleteStoredFiles(storedFiles);
+            } catch (NetworkException e) { // store for later sending
+                Logger.info("Failed to post stored session payload");
+            } catch (BadResponseException e) { // drop bad data
+                Logger.warn("Invalid session tracking payload", e);
+                deleteStoredFiles(storedFiles);
             }
         }
     }
 
     private void deleteStoredFiles(Collection<File> storedFiles) {
-        for (File storedFile : storedFiles) {
-            storedFile.delete();
+        synchronized (sessionStore) {
+            for (File storedFile : storedFiles) {
+                storedFile.delete();
+            }
         }
     }
 
