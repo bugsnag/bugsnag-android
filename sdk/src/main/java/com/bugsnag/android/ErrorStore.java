@@ -1,7 +1,8 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.os.StrictMode;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 
 import java.io.File;
@@ -19,6 +20,11 @@ import java.util.concurrent.RejectedExecutionException;
 class ErrorStore extends FileStore<Error> {
 
     private static final String STARTUP_CRASH = "_startupcrash";
+    private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
+    private static final int LAUNCH_CRASH_POLL_MS = 50;
+
+    private volatile long waitMs = 0;
+    private volatile boolean completed = false;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -42,22 +48,46 @@ class ErrorStore extends FileStore<Error> {
         super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
     }
 
-    void flushOnLaunch(ErrorReportApiClient errorReportApiClient) {
-        List<File> crashReports = findLaunchCrashReports();
+    void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
+        final List<File> crashReports = findLaunchCrashReports();
 
         if (crashReports.isEmpty() && config.getLaunchCrashThresholdMs() > 0) {
             flushAsync(errorReportApiClient); // if disabled or no startup crash, flush async
         } else {
-            // flush synchronously as the app may crash very soon.
-            // need to disable strictmode and this also risks ANR,
-            // but can capture reports which may not otherwise be sent
-            StrictMode.ThreadPolicy originalThreadPolicy = StrictMode.getThreadPolicy();
-            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
 
-            for (File crashReport : crashReports) {
-                flushErrorReport(crashReport, errorReportApiClient);
+            // Block the main thread for a 2 second interval as the app may crash very soon.
+            // The request itself will run in a background thread and will continue after the 2
+            // second period until the request completes, or the app crashes.
+            completed = false;
+            waitMs = 0;
+
+            HandlerThread handlerThread = new HandlerThread("Bugsnag Launch Crash Thread");
+            handlerThread.start();
+            Handler handler = new Handler(handlerThread.getLooper());
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Logger.info("Attempting to send launch crash reports");
+
+                    for (File crashReport : crashReports) {
+                        flushErrorReport(crashReport, errorReportApiClient);
+                    }
+                    Logger.info("Delivered all launch crash reports");
+                    completed = true;
+                }
+            });
+
+            while (!completed && waitMs < LAUNCH_CRASH_TIMEOUT_MS) {
+                try {
+                    Thread.sleep(LAUNCH_CRASH_POLL_MS);
+                    waitMs += LAUNCH_CRASH_POLL_MS;
+                } catch (InterruptedException e) {
+                    Logger.warn("Interrupted while waiting for launch crash report request");
+                }
             }
-            StrictMode.setThreadPolicy(originalThreadPolicy);
+            handlerThread.quit();
+            Logger.info("Continuing with Bugsnag initialisation");
         }
     }
 
