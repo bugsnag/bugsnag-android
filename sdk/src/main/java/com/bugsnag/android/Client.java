@@ -154,9 +154,6 @@ public class Client extends Observable implements Observer {
             user.setId(deviceData.getUserId());
         }
 
-        // create initial session
-        sessionTracker.startNewSession(new Date(), user, true);
-
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
             application.registerActivityLifecycleCallbacks(sessionTracker);
