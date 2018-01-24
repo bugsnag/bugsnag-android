@@ -10,7 +10,6 @@ public class ExampleApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Bugsnag.init(this);
-        Bugsnag.setAutoCaptureSessions(true);
     }
 
 }

@@ -58,7 +58,7 @@
       android:value="${bugsnagPersistUserBetweenSessions}" />
     <meta-data
       android:name="com.bugsnag.android.AUTO_CAPTURE_SESSIONS"
-      android:value="false" />
+      android:value="true" />
 
   </application>
 
