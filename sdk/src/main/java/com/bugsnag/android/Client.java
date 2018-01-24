@@ -1235,4 +1235,13 @@ public class Client extends Observable implements Observer {
         return config;
     }
 
+    /**
+     * Retrieves the time at which the client was launched
+     *
+     * @return the ms since the java epoch
+     */
+    public long getLaunchTimeMs() {
+        return AppData.getDurationMs();
+    }
+
 }
