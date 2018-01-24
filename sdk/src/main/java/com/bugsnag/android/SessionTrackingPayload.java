@@ -11,22 +11,22 @@ import java.util.List;
 public class SessionTrackingPayload implements JsonStream.Streamable {
 
     private final Notifier notifier;
-    private final Collection<Session> sessions;
+    private final Session session;
     private final DeviceDataSummary deviceDataSummary = new DeviceDataSummary();
-    private final AppDataSummary appDataSummary;
+    private final AppData appData;
     private final List<File> files;
 
-    SessionTrackingPayload(List<File> files, AppData appDataSummary) {
-        this.appDataSummary = appDataSummary;
+    SessionTrackingPayload(List<File> files, AppData appData) {
+        this.appData = appData;
         this.notifier = Notifier.getInstance();
-        this.sessions = null;
+        this.session = null;
         this.files = files;
     }
-    SessionTrackingPayload(Collection<Session> sessions, AppData appDataSummary) {
-        this.appDataSummary = appDataSummary;
+
+    SessionTrackingPayload(Session session, AppData appDataSummary) {
+        this.appData = appDataSummary;
         this.notifier = Notifier.getInstance();
-        this.sessions = new ArrayList<>();
-        this.sessions.addAll(sessions);
+        this.session = session;
         this.files = null;
     }
 
@@ -34,26 +34,21 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("notifier").value(notifier);
-        writer.name("app").value(appDataSummary);
+        writer.name("app").value(appData);
         writer.name("device").value(deviceDataSummary);
 
         writer.name("sessions").beginArray();
 
-        if (sessions == null) {
+        if (session == null) {
             for (File file : files) {
                 writer.value(file);
             }
         } else {
-            for (Session session : sessions) {
-                writer.value(session);
-            }
+            writer.value(session);
         }
 
         writer.endArray();
         writer.endObject();
     }
 
-    Collection<Session> getSessions() {
-        return sessions;
-    }
 }

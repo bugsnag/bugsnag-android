@@ -44,7 +44,6 @@ enum DeliveryStyle {
  */
 public class Client extends Observable implements Observer {
 
-    private static final long SESSION_LOOP_MS = 60 * 1000;
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
@@ -79,14 +78,10 @@ public class Client extends Observable implements Observer {
 
     final SessionStore sessionStore;
 
-    private final long launchTimeMs;
-
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
-    private final Handler handler;
-    private Runnable runnable;
 
     /**
      * Initialize a Bugsnag client
@@ -125,11 +120,6 @@ public class Client extends Observable implements Observer {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
-        this(androidContext, configuration, new Date());
-    }
-
-    Client(@NonNull Context androidContext, @NonNull final Configuration configuration, Date time) {
-        launchTimeMs = time.getTime();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
@@ -140,7 +130,7 @@ public class Client extends Observable implements Observer {
         errorReportApiClient = defaultHttpClient;
         sessionTrackingApiClient = defaultHttpClient;
 
-        sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient, appContext);
+        sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient);
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
@@ -216,21 +206,6 @@ public class Client extends Observable implements Observer {
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
-
-
-        HandlerThread handlerThread = new HandlerThread("Bugsnag Delivery Thread");
-        handlerThread.start();
-        Looper looper = handlerThread.getLooper();
-        handler = new Handler(looper);
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                Logger.info("Bugsnag Loop");
-                sessionTracker.flushStoredSessions();
-                handler.postDelayed(this, SESSION_LOOP_MS);
-            }
-        };
-        handler.post(runnable);
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -500,10 +475,7 @@ public class Client extends Observable implements Observer {
         config.setAutoCaptureSessions(autoCapture);
 
         if (autoCapture) { // track any existing sessions
-            //noinspection ConstantConditions
-            if (sessionTracker != null) {
-                sessionTracker.onAutoCaptureEnabled();
-            }
+            sessionTracker.onAutoCaptureEnabled();
         }
     }
 
@@ -538,7 +510,7 @@ public class Client extends Observable implements Observer {
             .remove(USER_ID_KEY)
             .remove(USER_EMAIL_KEY)
             .remove(USER_NAME_KEY)
-            .commit();
+            .apply();
         notifyBugsnagObservers(NotifyType.USER);
     }
 
@@ -960,7 +932,6 @@ public class Client extends Observable implements Observer {
 
         if (handledState.isUnhandled()) {
             sessionTracker.incrementUnhandledError();
-            handler.removeCallbacks(runnable);
         } else {
             sessionTracker.incrementHandledError();
         }
@@ -1088,15 +1059,6 @@ public class Client extends Observable implements Observer {
             .metaData(metaData)
             .build();
         notify(error, BLOCKING);
-    }
-
-    /**
-     * Retrieves the time at which the client was launched
-     *
-     * @return the ms since the java epoch
-     */
-    public long getLaunchTimeMs() {
-        return launchTimeMs;
     }
 
     /**

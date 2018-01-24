@@ -159,16 +159,16 @@ public class SessionTrackerTest {
             generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        assertEquals(0, sessionTracker.getDurationInForeground(now));
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
-        assertEquals(0, sessionTracker.getDurationInForeground(now));
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
-        assertEquals(100, sessionTracker.getDurationInForeground(now + 100));
+        assertEquals(100, sessionTracker.getDurationInForegroundMs(now + 100));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        assertEquals(0, sessionTracker.getDurationInForeground(now + 200));
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 200));
     }
 
     @Test

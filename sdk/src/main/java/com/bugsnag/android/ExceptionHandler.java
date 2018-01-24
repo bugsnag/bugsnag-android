@@ -14,8 +14,6 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
     private static final String STRICT_MODE_TAB = "StrictMode";
     private static final String STRICT_MODE_KEY = "Violation";
-    static final String LAUNCH_CRASH_TAB = "CrashOnLaunch";
-    static final String LAUNCH_CRASH_KEY = "Duration (ms)";
 
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
@@ -61,8 +59,6 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
 
         // Notify any subscribed clients of the uncaught exception
-        Date now = new Date();
-
         for (Client client : clientMap.keySet()) {
             MetaData metaData = new MetaData();
             String violationDesc = null;
@@ -71,10 +67,6 @@ class ExceptionHandler implements UncaughtExceptionHandler {
                 violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
                 metaData = new MetaData();
                 metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
-            }
-
-            if (isCrashOnLaunch(client, now)) {
-                metaData.addToTab(LAUNCH_CRASH_TAB, LAUNCH_CRASH_KEY, getMsSinceLaunch(client, now));
             }
 
             String severityReason = strictModeThrowable
@@ -90,16 +82,4 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             e.printStackTrace(System.err);
         }
     }
-
-    boolean isCrashOnLaunch(Client client, Date now) {
-        long delta = getMsSinceLaunch(client, now);
-        long thresholdMs = client.config.getLaunchCrashThresholdMs();
-        return thresholdMs > 0 && delta <= thresholdMs;
-    }
-
-    private long getMsSinceLaunch(Client client, Date now) {
-        long launchTimeMs = client.getLaunchTimeMs();
-        return now.getTime() - launchTimeMs;
-    }
-
 }
