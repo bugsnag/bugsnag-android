@@ -46,10 +46,10 @@ Running Tests
 
 Running the test suite requires a connected android device or emulator.
 
-You can run the test suite on a device/emulator as follows:
+You can run the test suite on a device/emulator as follows from within the sdk directory:
 
 ```shell
-./gradlew clean :connectedCheck
+../gradlew connectedCheck
 ```
 
 Running Lint
@@ -146,6 +146,6 @@ This process is a little ridiculous...
 
 -    Make releases to downstream libraries, if appropriate (generally for bug
      fixes)
-     
+
 ### 7. Update Method Count Badge
--   Update the version number specified in the URL for the method count badge in the README. 
+-   Update the version number specified in the URL for the method count badge in the README.
