@@ -19,10 +19,6 @@ import static org.junit.Assert.assertNotEquals;
 public class SessionTrackerTest {
 
     private static final String ACTIVITY_NAME = "test";
-    private static final String FIRST_ACTIVITY = "MyActivity";
-    private static final String SECOND_ACTIVITY = "SecondActivity";
-    private static final String FIRST_CB = "onCreate";
-    private static final String SECOND_CB = "onStart";
 
     private SessionTracker sessionTracker;
     private User user;
@@ -36,7 +32,7 @@ public class SessionTrackerTest {
         configuration.setAutoCaptureSessions(true);
         user = new User();
     }
-    
+
     @Test
     public void startNewSession() throws Exception {
         assertNotNull(sessionTracker);
