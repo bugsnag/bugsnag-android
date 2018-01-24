@@ -15,8 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * lack of network connectivity.
  */
 class SessionStore extends FileStore<Session> {
-    private AtomicBoolean sessionsOnDisk = new AtomicBoolean(false);
-
+    
     static final Comparator<File> SESSION_COMPARATOR = new Comparator<File>() {
         @Override
         public int compare(File lhs, File rhs) {
