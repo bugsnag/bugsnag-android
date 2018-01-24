@@ -2,20 +2,18 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Store and flush Sessions which couldn't be sent immediately due to
  * lack of network connectivity.
  */
 class SessionStore extends FileStore<Session> {
-    
+
     static final Comparator<File> SESSION_COMPARATOR = new Comparator<File>() {
         @Override
         public int compare(File lhs, File rhs) {

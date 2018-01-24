@@ -305,7 +305,6 @@ public class Error implements JsonStream.Streamable {
     void setAppData(AppData appData) {
         this.appData = appData;
     }
-    AppData getAppData() { return this.appData; }
 
     void setDeviceData(DeviceData deviceData) {
         this.deviceData = deviceData;
