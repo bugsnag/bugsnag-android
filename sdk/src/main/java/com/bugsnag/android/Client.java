@@ -11,9 +11,6 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -1017,11 +1014,10 @@ public class Client extends Observable implements Observer {
      *
      * @param key   The key to store
      * @param value The value to store
-     * @return Whether the value was stored successfully or not
      */
-    private boolean storeInSharedPrefs(String key, String value) {
+    private void storeInSharedPrefs(String key, String value) {
         SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        return sharedPref.edit().putString(key, value).commit();
+        sharedPref.edit().putString(key, value).apply();
     }
 
     /**
