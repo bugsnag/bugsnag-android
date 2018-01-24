@@ -86,19 +86,19 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 Async.run(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO:SM It would be good to optimise this
-                        flushStoredSessions();
+                    //TODO:SM It would be good to optimise this
+                    flushStoredSessions();
 
-                        SessionTrackingPayload payload = new SessionTrackingPayload(session, client.appData);
+                    SessionTrackingPayload payload = new SessionTrackingPayload(session, client.appData);
 
-                        try {
-                            apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
-                        } catch (NetworkException e) { // store for later sending
-                            Logger.info("Failed to post session payload");
-                            sessionStore.write(session);
-                        } catch (BadResponseException e) { // drop bad data
-                            Logger.warn("Invalid session tracking payload", e);
-                        }
+                    try {
+                        apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
+                    } catch (NetworkException e) { // store for later sending
+                        Logger.info("Failed to post session payload");
+                        sessionStore.write(session);
+                    } catch (BadResponseException e) { // drop bad data
+                        Logger.warn("Invalid session tracking payload", e);
+                    }
                     }
                 });
             } catch (RejectedExecutionException e) {
@@ -113,7 +113,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      */
     void onAutoCaptureEnabled() {
         Session session = currentSession.get();
-        if (session != null) {
+        if (session != null && !foregroundActivities.isEmpty()) {
             // If there is no session we will wait for one to be created
             trackSessionIfNeeded(session);
         }

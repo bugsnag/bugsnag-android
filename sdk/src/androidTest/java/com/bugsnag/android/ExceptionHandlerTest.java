@@ -52,17 +52,7 @@ public class ExceptionHandlerTest {
 
     @Test
     public void testIsCrashOnLaunch() throws Exception {
-        ExceptionHandler handler = new ExceptionHandler(null);
-        Date now = new Date();
-        Client client = new Client(context, new Configuration("123"), now);
-
-        assertTrue(handler.isCrashOnLaunch(client, now));
-
-        client.config.setLaunchCrashThresholdMs(0);
-        assertFalse(handler.isCrashOnLaunch(client, now));
-
-        client.config.setLaunchCrashThresholdMs(10000);
-        assertFalse(handler.isCrashOnLaunch(client, new Date(now.getTime() + 20000)));
+        //TODO:SM Replace this
     }
 
 }
