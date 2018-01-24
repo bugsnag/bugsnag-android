@@ -48,7 +48,7 @@ class ErrorStore extends FileStore<Error> {
     void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
         final List<File> crashReports = findLaunchCrashReports();
 
-        if (crashReports.isEmpty() && config.getLaunchCrashThresholdMs() == 0) {
+        if (crashReports.isEmpty() || config.getLaunchCrashThresholdMs() == 0) {
             flushAsync(errorReportApiClient); // if disabled or no startup crash, flush async
         } else {
 
