@@ -30,7 +30,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private final Client client;
     private final SessionStore sessionStore;
     private final SessionTrackingApiClient apiClient;
-    private final String endpoint;
 
     // This most recent time an Activity was stopped.
     private AtomicLong activityLastStoppedAtMs = new AtomicLong(0);
@@ -52,7 +51,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
         this.apiClient = apiClient;
-        this.endpoint = configuration.getSessionEndpoint();
     }
 
     /**
@@ -83,6 +81,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured()) &&
             session.isTracked().compareAndSet(false, true)) {
             try {
+                final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
                     @Override
                     public void run() {
@@ -157,6 +156,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
                     //TODO:SM Reduce duplication here and above
                     try {
+                        final String endpoint = configuration.getSessionEndpoint();
                         apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
                         deleteStoredFiles(storedFiles);
                     } catch (NetworkException e) { // store for later sending
