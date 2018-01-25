@@ -234,6 +234,22 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     }
 
     /**
+     * Tracks a session if a session has not yet been captured,
+     * recording the session as auto-captured. Requires the current activity.
+     *
+     * @param activity the current activity
+     */
+    void startFirstSession(Activity activity) {
+        Session session = currentSession.get();
+        if (session == null) {
+            long nowMs = System.currentTimeMillis();
+            activityFirstStartedAtMs.set(nowMs);
+            startNewSession(new Date(nowMs), client.user, true);
+            foregroundActivities.put(getActivityName(activity), true);
+        }
+    }
+
+    /**
      * Tracks whether an activity is in the foreground or not.
      * <p>
      * If an activity leaves the foreground, a timeout should be recorded (e.g. 30s), during which

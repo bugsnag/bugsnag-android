@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -315,6 +316,16 @@ public class Client extends Observable implements Observer {
      */
     public void startSession() {
         sessionTracker.startNewSession(new Date(), user, false);
+    }
+
+    /**
+     * Starts tracking a new session only if no sessions have yet been tracked
+     *
+     * This is an integration point for custom libraries implementing automatic session capture
+     * which differs from the default activity-based initialization.
+     */
+    public void startFirstSession(Activity activity) {
+        sessionTracker.startFirstSession(activity);
     }
 
     /**
