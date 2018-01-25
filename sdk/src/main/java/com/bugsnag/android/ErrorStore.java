@@ -42,7 +42,7 @@ class ErrorStore extends FileStore<Error> {
     };
 
     ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
-        super(config, appContext, "/bugsnag-errors/", 12800, ERROR_REPORT_COMPARATOR);
+        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
     }
 
     void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
