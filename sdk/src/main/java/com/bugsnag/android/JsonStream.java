@@ -3,9 +3,13 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 
 public class JsonStream extends JsonWriter {
@@ -58,4 +62,26 @@ public class JsonStream extends JsonWriter {
 
         out.flush();
     }
+
+    /**
+     * Validates whether an object contains valid JSON, by writing it to a Stream then parsing
+     * the contents as JSON
+     *
+     * @param streamable the streamable to test
+     * @return whether the streamable is valid JSON or not
+     */
+    static boolean isValidJson(Streamable streamable) {
+        StringWriter stringWriter = new StringWriter();
+
+        try {
+            streamable.toStream(new JsonStream(stringWriter));
+            new JSONObject(stringWriter.toString());
+            return true;
+        } catch (IOException | JSONException e) {
+            return false;
+        } finally {
+            IOUtils.closeQuietly(stringWriter);
+        }
+    }
+
 }

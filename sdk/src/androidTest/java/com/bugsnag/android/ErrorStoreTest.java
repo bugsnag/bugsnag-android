@@ -108,8 +108,13 @@ public class ErrorStoreTest {
         assertFalse(file.length() <= 0);
 
         // ensure the file can be serialised into JSON report
-        JSONObject memory = getJsonObjectFromReport(new Report("api-key", file));
-        JSONObject disk = getJsonObjectFromReport(new Report("api-key", error));
+        Report fileReport = new Report("api-key", file);
+        Report memReport = new Report("api-key", error);
+        assertTrue(JsonStream.isValidJson(fileReport));
+        assertTrue(JsonStream.isValidJson(memReport));
+
+        JSONObject memory = getJsonObjectFromReport(fileReport);
+        JSONObject disk = getJsonObjectFromReport(memReport);
 
         // validate info
         validateReportPayload(memory);

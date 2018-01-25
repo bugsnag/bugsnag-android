@@ -42,7 +42,7 @@ class ErrorStore extends FileStore<Error> {
     };
 
     ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+        super(config, appContext, "/bugsnag-errors/", 12800, ERROR_REPORT_COMPARATOR);
     }
 
     void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
@@ -115,9 +115,18 @@ class ErrorStore extends FileStore<Error> {
     private void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
         try {
             Report report = new Report(config.getApiKey(), errorFile);
-            errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
+            boolean validJson = JsonStream.isValidJson(report);
+            String logMsg;
 
-            Logger.info("Deleting sent error file " + errorFile.getName());
+            if (validJson) {
+                errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
+                logMsg = "Deleting sent error file ";
+            } else {
+                logMsg = "Deleting cached file (invalid JSON)";
+            }
+
+            Logger.info(logMsg + errorFile.getName());
+
             if (!errorFile.delete()) {
                 errorFile.deleteOnExit();
             }
