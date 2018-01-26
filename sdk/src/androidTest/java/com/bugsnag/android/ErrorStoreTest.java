@@ -98,6 +98,18 @@ public class ErrorStoreTest {
         assertTrue(ERROR_REPORT_COMPARATOR.compare(new File(second), new File(startup)) > 0);
     }
 
+    @Test
+    public void isStartupCrash() throws Exception {
+        assertTrue(errorStore.isStartupCrash(0));
+
+        config.setLaunchCrashThresholdMs(0);
+        assertFalse(errorStore.isStartupCrash(0));
+
+        config.setLaunchCrashThresholdMs(10000);
+        assertTrue(errorStore.isStartupCrash(5345));
+        assertTrue(errorStore.isStartupCrash(9999));
+        assertFalse(errorStore.isStartupCrash(10000));
+    }
 
     /**
      * Ensures that the file can be serialised back into a JSON report, and contains the same info

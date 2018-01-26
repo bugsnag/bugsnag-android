@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Date;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -48,11 +46,6 @@ public class ExceptionHandlerTest {
         ExceptionHandler bugsnagHandler = (ExceptionHandler) Thread.getDefaultUncaughtExceptionHandler();
 
         assertEquals(2, bugsnagHandler.clientMap.size());
-    }
-
-    @Test
-    public void testIsCrashOnLaunch() throws Exception {
-        //TODO:SM Replace this
     }
 
 }
