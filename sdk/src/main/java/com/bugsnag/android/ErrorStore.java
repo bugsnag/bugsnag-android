@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -132,8 +133,7 @@ class ErrorStore extends FileStore<Error> {
     }
 
     boolean isLaunchCrashReport(File file) {
-        String name = file.getName();
-        return name.matches("[0-9]+_startupcrash\\.json");
+        return file.getName().endsWith("_startupcrash.json");
     }
 
     private List<File> findLaunchCrashReports() {
@@ -153,7 +153,7 @@ class ErrorStore extends FileStore<Error> {
     String getFilename(Error error) {
         boolean isStartupCrash = AppData.getDurationMs() < config.getLaunchCrashThresholdMs();
         String suffix = isStartupCrash ? STARTUP_CRASH : "";
-        return String.format(Locale.US, "%s%d%s.json", storeDirectory, System.currentTimeMillis(), suffix);
+        return String.format(Locale.US, "%s%d_%s%s.json",  storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
     }
 
 }

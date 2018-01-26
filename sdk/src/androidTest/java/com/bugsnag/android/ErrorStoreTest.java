@@ -63,7 +63,7 @@ public class ErrorStoreTest {
 
     @Test
     public void testIsLaunchCrashReport() throws Exception {
-        String[] valid = {"1504255147933_startupcrash.json"};
+        String[] valid = {"1504255147933__30b7e350-dcd1-4032-969e-98d30be62bbc_startupcrash.json"};
         String[] invalid = {"", ".json", "abcdeAO.json", "!@£)(%)(", "1504255147933.txt", "1504255147933.json"};
 
         for (String s : valid) {
@@ -76,9 +76,9 @@ public class ErrorStoreTest {
 
     @Test
     public void testComparator() throws Exception {
-        String first = "1504255147933.json";
-        String second = "1505000000000.json";
-        String startup = "1504500000000_startupcrash.json";
+        String first = "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json";
+        String second = "1505000000000_683c6b92-b325-4987-80ad-77086509ca1e.json";
+        String startup = "1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json";
 
         // handle defaults
         assertEquals(0, ERROR_REPORT_COMPARATOR.compare(null, null));
