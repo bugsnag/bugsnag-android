@@ -151,9 +151,13 @@ class ErrorStore extends FileStore<Error> {
     @NonNull
     @Override
     String getFilename(Error error) {
-        boolean isStartupCrash = AppData.getDurationMs() < config.getLaunchCrashThresholdMs();
+        boolean isStartupCrash = isStartupCrash(AppData.getDurationMs());
         String suffix = isStartupCrash ? STARTUP_CRASH : "";
         return String.format(Locale.US, "%s%d%s.json", storeDirectory, System.currentTimeMillis(), suffix);
+    }
+
+    boolean isStartupCrash(long durationMs) {
+        return durationMs < config.getLaunchCrashThresholdMs();
     }
 
 }
