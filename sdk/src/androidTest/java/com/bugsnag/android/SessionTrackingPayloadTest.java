@@ -39,7 +39,7 @@ public class SessionTrackingPayloadTest {
 
         session = generateSession();
         appData = new AppData(InstrumentationRegistry.getContext(), new Configuration("a"), generateSessionTracker());
-        SessionTrackingPayload payload = new SessionTrackingPayload(Collections.singleton(session), appData);
+        SessionTrackingPayload payload = new SessionTrackingPayload(session, appData);
         rootNode = streamableToJson(payload);
     }
 
@@ -62,17 +62,6 @@ public class SessionTrackingPayloadTest {
         assertNotNull(rootNode.getJSONObject("notifier"));
         assertNotNull(rootNode.getJSONObject("device"));
         assertNotNull(rootNode.getJSONObject("app"));
-    }
-
-    @Test
-    public void testMultipleSessions() throws Exception {
-        SessionTrackingPayload payload = new SessionTrackingPayload(Arrays.asList(session, session), appData);
-        rootNode = streamableToJson(payload);
-
-        assertNotNull(rootNode);
-        JSONArray sessions = rootNode.getJSONArray("sessions");
-        assertNotNull(sessions);
-        assertEquals(2, sessions.length());
     }
 
     /**

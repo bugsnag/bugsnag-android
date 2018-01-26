@@ -20,11 +20,10 @@ import static org.junit.Assert.assertEquals;
 public class ReportTest {
 
     private Report report;
-    private Configuration config;
 
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("example-api-key");
+        Configuration config = new Configuration("example-api-key");
         Error error = new Error.Builder(config, new RuntimeException("Something broke"), null).build();
         report = new Report("api-key", error);
     }

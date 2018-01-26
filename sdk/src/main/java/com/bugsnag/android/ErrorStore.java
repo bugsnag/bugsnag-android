@@ -48,7 +48,7 @@ class ErrorStore extends FileStore<Error> {
     void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
         final List<File> crashReports = findLaunchCrashReports();
 
-        if (crashReports.isEmpty() && config.getLaunchCrashThresholdMs() > 0) {
+        if (crashReports.isEmpty() || config.getLaunchCrashThresholdMs() == 0) {
             flushAsync(errorReportApiClient); // if disabled or no startup crash, flush async
         } else {
 
@@ -151,11 +151,7 @@ class ErrorStore extends FileStore<Error> {
     @NonNull
     @Override
     String getFilename(Error error) {
-        MetaData metaData = error.getMetaData();
-
-        boolean isStartupCrash = metaData != null &&
-            metaData.getTab(ExceptionHandler.LAUNCH_CRASH_TAB)
-                .containsKey(ExceptionHandler.LAUNCH_CRASH_KEY);
+        boolean isStartupCrash = AppData.getDurationMs() < config.getLaunchCrashThresholdMs();
         String suffix = isStartupCrash ? STARTUP_CRASH : "";
         return String.format(Locale.US, "%s%d%s.json", storeDirectory, System.currentTimeMillis(), suffix);
     }

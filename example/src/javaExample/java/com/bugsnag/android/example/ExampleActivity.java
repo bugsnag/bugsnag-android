@@ -30,6 +30,7 @@ public class ExampleActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bugsnag.setAutoCaptureSessions(true);
         setContentView(R.layout.main);
         setupToolbarLogo();
         performAdditionalBugsnagSetup();

@@ -172,7 +172,7 @@ class DeviceData extends DeviceDataSummary {
 
         if (installId == null) {
             installId = UUID.randomUUID().toString();
-            sharedPref.edit().putString(INSTALL_ID_KEY, installId).commit();
+            sharedPref.edit().putString(INSTALL_ID_KEY, installId).apply();
         }
         return installId;
     }

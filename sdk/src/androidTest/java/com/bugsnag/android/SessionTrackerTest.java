@@ -19,10 +19,6 @@ import static org.junit.Assert.assertNotEquals;
 public class SessionTrackerTest {
 
     private static final String ACTIVITY_NAME = "test";
-    private static final String FIRST_ACTIVITY = "MyActivity";
-    private static final String SECOND_ACTIVITY = "SecondActivity";
-    private static final String FIRST_CB = "onCreate";
-    private static final String SECOND_CB = "onStart";
 
     private SessionTracker sessionTracker;
     private User user;
@@ -32,42 +28,9 @@ public class SessionTrackerTest {
     public void setUp() throws Exception {
         configuration = new Configuration("test");
         sessionTracker = new SessionTracker(configuration, generateClient(), generateSessionStore(),
-            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
+            generateSessionTrackingApiClient());
         configuration.setAutoCaptureSessions(true);
         user = new User();
-    }
-
-    @Test
-    public void testLifecycleQueueing() throws Exception {
-        sessionTracker = new SessionTracker(configuration, null, generateSessionStore(),
-            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
-        sessionTracker.leaveLifecycleBreadcrumb(FIRST_ACTIVITY, FIRST_CB);
-        sessionTracker.leaveLifecycleBreadcrumb(SECOND_ACTIVITY, SECOND_CB);
-
-        assertEquals(2, sessionTracker.breadcrumbQueue.size());
-
-        Pair<String, String> poll = sessionTracker.breadcrumbQueue.poll();
-        assertEquals(FIRST_ACTIVITY, poll.first);
-        assertEquals(FIRST_CB, poll.second);
-
-        poll = sessionTracker.breadcrumbQueue.poll();
-        assertEquals(SECOND_ACTIVITY, poll.first);
-        assertEquals(SECOND_CB, poll.second);
-    }
-
-    @Test
-    public void testNullClientUpdate() throws Exception {
-        // shouldn't throw npe attempting to access client
-        sessionTracker = new SessionTracker(configuration, null, generateSessionStore(),
-            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
-        sessionTracker.updateForegroundTracker(FIRST_ACTIVITY, true, System.currentTimeMillis());
-    }
-
-    @Test
-    public void testLifecycleLogging() throws Exception {
-        sessionTracker.leaveLifecycleBreadcrumb(FIRST_ACTIVITY, FIRST_CB);
-        sessionTracker.leaveLifecycleBreadcrumb(SECOND_ACTIVITY, SECOND_CB);
-        assertTrue(sessionTracker.breadcrumbQueue.isEmpty());
     }
 
     @Test
@@ -91,12 +54,10 @@ public class SessionTrackerTest {
 
         Date date = new Date();
         sessionTracker.startNewSession(date, user, true);
-        assertTrue(sessionTracker.sessionQueue.isEmpty());
         assertNotNull(sessionTracker.getCurrentSession());
 
         configuration.setAutoCaptureSessions(true);
         sessionTracker.startNewSession(date, user, false);
-        assertEquals(1, sessionTracker.sessionQueue.size());
         assertNotNull(sessionTracker.getCurrentSession());
     }
 
@@ -156,25 +117,25 @@ public class SessionTrackerTest {
     public void testInForegroundDuration() throws Exception {
         long now = System.currentTimeMillis();
         sessionTracker = new SessionTracker(configuration, generateClient(), 0, generateSessionStore(),
-            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
+            generateSessionTrackingApiClient());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        assertEquals(0, sessionTracker.getDurationInForeground(now));
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
-        assertEquals(0, sessionTracker.getDurationInForeground(now));
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
-        assertEquals(100, sessionTracker.getDurationInForeground(now + 100));
+        assertEquals(100, sessionTracker.getDurationInForegroundMs(now + 100));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        assertEquals(0, sessionTracker.getDurationInForeground(now + 200));
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 200));
     }
 
     @Test
     public void testZeroSessionTimeout() throws Exception {
         sessionTracker = new SessionTracker(configuration, generateClient(), 0, generateSessionStore(),
-            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
+            generateSessionTrackingApiClient());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -189,7 +150,7 @@ public class SessionTrackerTest {
     @Test
     public void testSessionTimeout() throws Exception {
         sessionTracker = new SessionTracker(configuration, generateClient(), 100, generateSessionStore(),
-            generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
+            generateSessionTrackingApiClient());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);

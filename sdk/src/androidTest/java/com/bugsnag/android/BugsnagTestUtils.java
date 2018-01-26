@@ -46,7 +46,7 @@ final class BugsnagTestUtils {
     }
 
     static Session generateSession() {
-        return new Session("test", new Date(), new User());
+        return new Session("test", new Date(), new User(), false);
     }
 
     static Configuration generateConfiguration() {
@@ -55,7 +55,7 @@ final class BugsnagTestUtils {
 
     static SessionTracker generateSessionTracker() {
         return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient(),
-            generateSessionStore(), generateSessionTrackingApiClient(), InstrumentationRegistry.getContext());
+            generateSessionStore(), generateSessionTrackingApiClient());
     }
 
     @NonNull

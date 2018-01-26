@@ -16,12 +16,9 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     @NonNull
     protected final Configuration config;
-
     @Nullable
     final String storeDirectory;
-
     private final int maxStoreCount;
-
     private final Comparator<File> comparator;
 
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,

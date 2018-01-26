@@ -16,7 +16,7 @@ import java.util.List;
  */
 class AppData extends AppDataSummary {
 
-    private static final long startTime = SystemClock.elapsedRealtime();
+    private static final long startTimeMs = SystemClock.elapsedRealtime();
 
     @Nullable
     final String appName;
@@ -43,8 +43,8 @@ class AppData extends AppDataSummary {
 
         writer.name("id").value(packageName);
         writer.name("buildUUID").value(config.getBuildUUID());
-        writer.name("duration").value(getDuration());
-        writer.name("durationInForeground").value(sessionTracker.getDurationInForeground(System.currentTimeMillis()));
+        writer.name("duration").value(getDurationMs());
+        writer.name("durationInForeground").value(sessionTracker.getDurationInForegroundMs(System.currentTimeMillis()));
         writer.name("inForeground").value(sessionTracker.isInForeground());
 
         // TODO migrate legacy fields
@@ -117,8 +117,8 @@ class AppData extends AppDataSummary {
      * Get the time in milliseconds since Bugsnag was initialized, which is a
      * good approximation for how long the app has been running.
      */
-    private static long getDuration() {
-        return SystemClock.elapsedRealtime() - startTime;
+    static long getDurationMs() {
+        return SystemClock.elapsedRealtime() - startTimeMs;
     }
 
 
