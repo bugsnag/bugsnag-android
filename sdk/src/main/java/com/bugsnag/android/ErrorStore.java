@@ -115,9 +115,18 @@ class ErrorStore extends FileStore<Error> {
     private void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
         try {
             Report report = new Report(config.getApiKey(), errorFile);
-            errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
+            boolean validJson = JsonStream.isValidJson(report);
+            String logMsg;
 
-            Logger.info("Deleting sent error file " + errorFile.getName());
+            if (validJson) {
+                errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
+                logMsg = "Deleting sent error file ";
+            } else {
+                logMsg = "Deleting cached file (invalid JSON)";
+            }
+
+            Logger.info(logMsg + errorFile.getName());
+
             if (!errorFile.delete()) {
                 errorFile.deleteOnExit();
             }
