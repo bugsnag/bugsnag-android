@@ -85,7 +85,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 Async.run(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO:SM It would be good to optimise this
+                        //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
                         SessionTrackingPayload payload = new SessionTrackingPayload(session, client.appData);
@@ -154,7 +154,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 if (!storedFiles.isEmpty()) {
                     SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, client.appData);
 
-                    //TODO:SM Reduce duplication here and above
+                    //FUTURE:SM Reduce duplication here and above
                     try {
                         final String endpoint = configuration.getSessionEndpoint();
                         apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
@@ -266,7 +266,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         if (activityStarting) {
             long noActivityRunningForMs = nowMs - activityLastStoppedAtMs.get();
 
-            //TODO:SM Race condition between isEmpty and put
+            //FUTURE:SM Race condition between isEmpty and put
             if (foregroundActivities.isEmpty() &&
                 noActivityRunningForMs >= timeoutMs &&
                 configuration.shouldAutoCaptureSessions()) {
@@ -285,7 +285,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         return !foregroundActivities.isEmpty();
     }
 
-    //TODO:SM This shouldnt be here
+    //FUTURE:SM This shouldnt be here
     long getDurationInForegroundMs(long nowMs) {
         long durationMs = 0;
         long sessionStartTimeMs = activityFirstStartedAtMs.get();
