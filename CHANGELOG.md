@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.3.1 (2018-01-26)
+
+### Bug fixes
+
+* Fix possible ANR when enabling session tracking via
+  `Bugsnag.setAutoCaptureSessions()` and connecting to latent networks.
+  [#231](https://github.com/bugsnag/bugsnag-android/pull/231)
+
+* Fix invalid payloads being sent when processing multiple Bugsnag events in the
+  same millisecond
+  [#235](https://github.com/bugsnag/bugsnag-android/pull/235)
+
+* Re-add API key to error report HTTP request body to preserve backwards
+  compatibility with older versions of the error reporting API
+  [#228](https://github.com/bugsnag/bugsnag-android/pull/228)
+
 ## 4.3.0 (2018-01-18)
 
 - Move capture of thread stacktraces to start of notify process
