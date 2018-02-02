@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -28,15 +27,6 @@ class Breadcrumbs implements JsonStream.Streamable {
 
     void add(@NonNull Breadcrumb breadcrumb) {
         addToStore(breadcrumb);
-    }
-
-    void add(@NonNull String message) { // TODO remove me
-        addToStore(new Breadcrumb(message));
-    }
-
-    // TODO remove me
-    void add(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
-        addToStore(new Breadcrumb(name, type, metadata));
     }
 
     void clear() {

@@ -981,7 +981,8 @@ public class Client extends Observable implements Observer {
         }
 
         // Add a breadcrumb for this error occurring
-        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
+        Map<String, String> message = Collections.singletonMap("message", error.getExceptionMessage());
+        leaveBreadcrumb(error.getExceptionName(), BreadcrumbType.ERROR, message);
     }
 
     void deliver(@NonNull Report report, @NonNull Error error) {
