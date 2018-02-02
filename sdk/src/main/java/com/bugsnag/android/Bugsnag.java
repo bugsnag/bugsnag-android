@@ -337,6 +337,10 @@ public final class Bugsnag {
         getClient().beforeNotify(beforeNotify);
     }
 
+    public static void beforeBreadcrumb(final BeforeBreadcrumb beforeBreadcrumb) { // TODO docs
+        getClient().beforeBreadcrumb(beforeBreadcrumb);
+    }
+
     /**
      * Notify Bugsnag of a handled exception
      *

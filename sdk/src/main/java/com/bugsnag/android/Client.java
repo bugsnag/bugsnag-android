@@ -644,6 +644,10 @@ public class Client extends Observable implements Observer {
         config.beforeNotify(beforeNotify);
     }
 
+    public void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) { // TODO docs
+        config.beforeBreadcrumb(beforeBreadcrumb);
+    }
+
     /**
      * Notify Bugsnag of a handled exception
      *
@@ -841,8 +845,12 @@ public class Client extends Observable implements Observer {
      * @param breadcrumb the log message to leave (max 140 chars)
      */
     public void leaveBreadcrumb(@NonNull String breadcrumb) {
-        breadcrumbs.add(breadcrumb);
-        notifyBugsnagObservers(NotifyType.BREADCRUMB);
+        Map<String, String> metaData = Collections.emptyMap();
+
+        if (runBeforeBreadcrumbTasks(breadcrumb, BreadcrumbType.MANUAL, metaData)) {
+            breadcrumbs.add(breadcrumb);
+            notifyBugsnagObservers(NotifyType.BREADCRUMB);
+        }
     }
 
     public void leaveBreadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
@@ -853,10 +861,12 @@ public class Client extends Observable implements Observer {
                          @NonNull BreadcrumbType type,
                          @NonNull Map<String, String> metadata,
                          boolean notify) {
-        breadcrumbs.add(name, type, metadata);
+        if (runBeforeBreadcrumbTasks(name, type, metadata)) {
+            breadcrumbs.add(name, type, metadata);
 
-        if (notify) {
-            notifyBugsnagObservers(NotifyType.BREADCRUMB);
+            if (notify) {
+                notifyBugsnagObservers(NotifyType.BREADCRUMB);
+            }
         }
     }
 
@@ -1019,6 +1029,22 @@ public class Client extends Observable implements Observer {
         // By default, allow the error to be sent if there were no objections
         return true;
     }
+
+    private boolean runBeforeBreadcrumbTasks(@NonNull String name,
+                                             @NonNull BreadcrumbType breadcrumbType,
+                                             @NonNull Map<String, String> metaData) {
+        for (BeforeBreadcrumb beforeBreadcrumb : config.getBeforeBreadcrumbTasks()) {
+            try {
+                if (!beforeBreadcrumb.send(name, breadcrumbType, metaData)) {
+                    return false;
+                }
+            } catch (Throwable ex) {
+                Logger.warn("BeforeBreadcrumb threw an Exception", ex);
+            }
+        }
+        return true;
+    }
+
 
     /**
      * Stores the given key value pair into shared preferences

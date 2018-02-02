@@ -51,6 +51,7 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
+    private final Collection<BeforeBreadcrumb> beforeBreadcrumbTasks = new LinkedHashSet<>();
     private String codeBundleId;
     private String notifierType;
 
@@ -544,6 +545,10 @@ public class Configuration extends Observable implements Observer {
         this.beforeNotifyTasks.add(beforeNotify);
     }
 
+    protected void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) { // TODO docs
+        this.beforeBreadcrumbTasks.add(beforeBreadcrumb);
+    }
+
     /**
      * Checks if the given class name should be marked as in the project or not
      *
@@ -578,4 +583,7 @@ public class Configuration extends Observable implements Observer {
         }
     }
 
+    protected Collection<BeforeBreadcrumb> getBeforeBreadcrumbTasks() { // TODO docs
+        return beforeBreadcrumbTasks;
+    }
 }
