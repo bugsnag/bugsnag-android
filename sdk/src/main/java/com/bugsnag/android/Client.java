@@ -846,9 +846,10 @@ public class Client extends Observable implements Observer {
      */
     public void leaveBreadcrumb(@NonNull String breadcrumb) {
         Map<String, String> metaData = Collections.emptyMap();
+        Breadcrumb crumb = new Breadcrumb(breadcrumb, BreadcrumbType.MANUAL, metaData);
 
-        if (runBeforeBreadcrumbTasks(breadcrumb, BreadcrumbType.MANUAL, metaData)) {
-            breadcrumbs.add(breadcrumb);
+        if (runBeforeBreadcrumbTasks(crumb)) {
+            breadcrumbs.add(crumb);
             notifyBugsnagObservers(NotifyType.BREADCRUMB);
         }
     }
@@ -861,8 +862,10 @@ public class Client extends Observable implements Observer {
                          @NonNull BreadcrumbType type,
                          @NonNull Map<String, String> metadata,
                          boolean notify) {
-        if (runBeforeBreadcrumbTasks(name, type, metadata)) {
-            breadcrumbs.add(name, type, metadata);
+        Breadcrumb crumb = new Breadcrumb(name, type, metadata);
+
+        if (runBeforeBreadcrumbTasks(crumb)) {
+            breadcrumbs.add(crumb);
 
             if (notify) {
                 notifyBugsnagObservers(NotifyType.BREADCRUMB);
@@ -1030,12 +1033,10 @@ public class Client extends Observable implements Observer {
         return true;
     }
 
-    private boolean runBeforeBreadcrumbTasks(@NonNull String name,
-                                             @NonNull BreadcrumbType breadcrumbType,
-                                             @NonNull Map<String, String> metaData) {
+    private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
         for (BeforeBreadcrumb beforeBreadcrumb : config.getBeforeBreadcrumbTasks()) {
             try {
-                if (!beforeBreadcrumb.send(name, breadcrumbType, metaData)) {
+                if (!beforeBreadcrumb.send(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {

@@ -10,9 +10,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -38,7 +38,7 @@ public class BeforeBreadcrumbsTest {
     public void falseCallback() throws Exception {
         client.beforeBreadcrumb(new BeforeBreadcrumb() {
             @Override
-            public boolean send(@NonNull String name, @NonNull BreadcrumbType breadcrumbType, @NonNull Map<String, String> metadata) {
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         });
@@ -50,7 +50,7 @@ public class BeforeBreadcrumbsTest {
     public void trueCallback() throws Exception {
         client.beforeBreadcrumb(new BeforeBreadcrumb() {
             @Override
-            public boolean send(@NonNull String name, @NonNull BreadcrumbType breadcrumbType, @NonNull Map<String, String> metadata) {
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
@@ -62,13 +62,13 @@ public class BeforeBreadcrumbsTest {
     public void multipleCallbacks() throws Exception {
         client.beforeBreadcrumb(new BeforeBreadcrumb() {
             @Override
-            public boolean send(@NonNull String name, @NonNull BreadcrumbType breadcrumbType, @NonNull Map<String, String> metadata) {
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
         client.beforeBreadcrumb(new BeforeBreadcrumb() {
             @Override
-            public boolean send(@NonNull String name, @NonNull BreadcrumbType breadcrumbType, @NonNull Map<String, String> metadata) {
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         });
@@ -81,14 +81,14 @@ public class BeforeBreadcrumbsTest {
         final int[] count = {0};
         client.beforeBreadcrumb(new BeforeBreadcrumb() {
             @Override
-            public boolean send(@NonNull String name, @NonNull BreadcrumbType breadcrumbType, @NonNull Map<String, String> metadata) {
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         });
         client.beforeBreadcrumb(new BeforeBreadcrumb() {
             @Override
-            public boolean send(@NonNull String name, @NonNull BreadcrumbType breadcrumbType, @NonNull Map<String, String> metadata) {
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
@@ -106,7 +106,7 @@ public class BeforeBreadcrumbsTest {
 
         BeforeBreadcrumb beforeBreadcrumb = new BeforeBreadcrumb() {
             @Override
-            public boolean send(@NonNull String name, @NonNull BreadcrumbType breadcrumbType, @NonNull Map<String, String> metadata) {
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
@@ -114,6 +114,25 @@ public class BeforeBreadcrumbsTest {
         client.beforeBreadcrumb(beforeBreadcrumb);
         client.beforeBreadcrumb(beforeBreadcrumb);
         client.leaveBreadcrumb("Foo");
+        assertEquals(1, count[0]);
+    }
+
+    @Test
+    public void checkBreadrumbFields() throws Exception {
+        final int[] count = {0};
+
+        BeforeBreadcrumb beforeBreadcrumb = new BeforeBreadcrumb() {
+            @Override
+            public boolean send(@NonNull Breadcrumb breadcrumb) {
+                count[0] += 1;
+                assertEquals("Hello", breadcrumb.getName());
+                assertEquals(BreadcrumbType.MANUAL, breadcrumb.getType());
+                assertFalse(breadcrumb.getMetadata().isEmpty());
+                return true;
+            }
+        };
+        client.beforeBreadcrumb(beforeBreadcrumb);
+        client.leaveBreadcrumb("Hello");
         assertEquals(1, count[0]);
     }
 
