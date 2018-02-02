@@ -337,7 +337,25 @@ public final class Bugsnag {
         getClient().beforeNotify(beforeNotify);
     }
 
-    public static void beforeBreadcrumb(final BeforeBreadcrumb beforeBreadcrumb) { // TODO docs
+    /**
+     * Add a "before breadcrumb" callback, to execute code before every
+     * breadcrumb captured by Bugsnag.
+     * <p>
+     * You can use this to modify breadcrumbs before they are stored by Bugsnag.
+     * You can also return <code>false</code> from any callback to ignore a breadcrumb.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.beforeBreadcrumb(new BeforeBreadcrumb() {
+     * public boolean send(Breadcrumb breadcrumb) {
+     * return false; // ignore the breadcrumb
+     * }
+     * })
+     *
+     * @param beforeBreadcrumb a callback to run before a breadcrumb is captured
+     * @see BeforeBreadcrumb
+     */
+    public static void beforeBreadcrumb(final BeforeBreadcrumb beforeBreadcrumb) {
         getClient().beforeBreadcrumb(beforeBreadcrumb);
     }
 

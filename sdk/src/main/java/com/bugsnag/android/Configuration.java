@@ -545,7 +545,12 @@ public class Configuration extends Observable implements Observer {
         this.beforeNotifyTasks.add(beforeNotify);
     }
 
-    protected void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) { // TODO docs
+    /**
+     * Adds a new before breadcrumb task
+     *
+     * @param beforeBreadcrumb the new before breadcrumb task
+     */
+    protected void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) {
         this.beforeBreadcrumbTasks.add(beforeBreadcrumb);
     }
 
@@ -583,7 +588,12 @@ public class Configuration extends Observable implements Observer {
         }
     }
 
-    protected Collection<BeforeBreadcrumb> getBeforeBreadcrumbTasks() { // TODO docs
+    /**
+     * Gets any before breadcrumb tasks to run
+     *
+     * @return the before breadcrumb tasks
+     */
+    protected Collection<BeforeBreadcrumb> getBeforeBreadcrumbTasks() {
         return beforeBreadcrumbTasks;
     }
 }

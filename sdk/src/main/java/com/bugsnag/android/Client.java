@@ -644,7 +644,25 @@ public class Client extends Observable implements Observer {
         config.beforeNotify(beforeNotify);
     }
 
-    public void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) { // TODO docs
+    /**
+     * Add a "before breadcrumb" callback, to execute code before every
+     * breadcrumb captured by Bugsnag.
+     * <p>
+     * You can use this to modify breadcrumbs before they are stored by Bugsnag.
+     * You can also return <code>false</code> from any callback to ignore a breadcrumb.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.beforeBreadcrumb(new BeforeBreadcrumb() {
+     * public boolean send(Breadcrumb breadcrumb) {
+     * return false; // ignore the breadcrumb
+     * }
+     * })
+     *
+     * @param beforeBreadcrumb a callback to run before a breadcrumb is captured
+     * @see BeforeBreadcrumb
+     */
+    public void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) {
         config.beforeBreadcrumb(beforeBreadcrumb);
     }
 
