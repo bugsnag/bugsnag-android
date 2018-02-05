@@ -27,6 +27,6 @@ public interface BeforeRecordBreadcrumb {
      * @param breadcrumb the breadcrumb to be captured by Bugsnag
      * @see Breadcrumb
      */
-    boolean send(@NonNull Breadcrumb breadcrumb);
+    boolean shouldRecord(@NonNull Breadcrumb breadcrumb);
 
 }

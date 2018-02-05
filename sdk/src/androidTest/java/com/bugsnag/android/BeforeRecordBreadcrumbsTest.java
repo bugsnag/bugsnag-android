@@ -38,7 +38,7 @@ public class BeforeRecordBreadcrumbsTest {
     public void falseCallback() throws Exception {
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         });
@@ -50,7 +50,7 @@ public class BeforeRecordBreadcrumbsTest {
     public void trueCallback() throws Exception {
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
@@ -62,13 +62,13 @@ public class BeforeRecordBreadcrumbsTest {
     public void multipleCallbacks() throws Exception {
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         });
@@ -81,14 +81,14 @@ public class BeforeRecordBreadcrumbsTest {
         final int[] count = {0};
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         });
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
@@ -106,7 +106,7 @@ public class BeforeRecordBreadcrumbsTest {
 
         BeforeRecordBreadcrumb beforeRecordBreadcrumb = new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
@@ -123,7 +123,7 @@ public class BeforeRecordBreadcrumbsTest {
 
         BeforeRecordBreadcrumb beforeRecordBreadcrumb = new BeforeRecordBreadcrumb() {
             @Override
-            public boolean send(@NonNull Breadcrumb breadcrumb) {
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 assertEquals("Hello", breadcrumb.getName());
                 assertEquals(BreadcrumbType.MANUAL, breadcrumb.getType());

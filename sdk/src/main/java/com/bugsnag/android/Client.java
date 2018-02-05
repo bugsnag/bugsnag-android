@@ -1055,7 +1055,7 @@ public class Client extends Observable implements Observer {
     private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
         for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : config.getBeforeRecordBreadcrumbTasks()) {
             try {
-                if (!beforeRecordBreadcrumb.send(breadcrumb)) {
+                if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {
