@@ -346,17 +346,17 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeBreadcrumb(new BeforeBreadcrumb() {
+     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
      * public boolean send(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeBreadcrumb
+     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
+     * @see BeforeRecordBreadcrumb
      */
-    public static void beforeBreadcrumb(final BeforeBreadcrumb beforeBreadcrumb) {
-        getClient().beforeBreadcrumb(beforeBreadcrumb);
+    public static void beforeRecordBreadcrumb(final BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+        getClient().beforeRecordBreadcrumb(beforeRecordBreadcrumb);
     }
 
     /**

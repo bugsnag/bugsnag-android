@@ -11,17 +11,17 @@ import android.support.annotation.NonNull;
  * <p>
  * For example:
  * <p>
- * Bugsnag.beforeBreadcrumb(new BeforeBreadcrumb() {
+ * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
  * public boolean send(Breadcrumb breadcrumb) {
  * return false; // ignore the breadcrumb
  * }
  * })
  */
-public interface BeforeBreadcrumb {
+public interface BeforeRecordBreadcrumb {
 
     /**
      * Runs the "before breadcrumb" callback. If the callback returns
-     * <code>false</code> any further BeforeBreadcrumb callbacks will not be called
+     * <code>false</code> any further BeforeRecordBreadcrumb callbacks will not be called
      * and the breadcrumb will not be captured by Bugsnag.
      *
      * @param breadcrumb the breadcrumb to be captured by Bugsnag

@@ -16,7 +16,7 @@ import static junit.framework.Assert.assertFalse;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class BeforeBreadcrumbsTest {
+public class BeforeRecordBreadcrumbsTest {
 
     private Client client;
 
@@ -36,7 +36,7 @@ public class BeforeBreadcrumbsTest {
 
     @Test
     public void falseCallback() throws Exception {
-        client.beforeBreadcrumb(new BeforeBreadcrumb() {
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return false;
@@ -48,7 +48,7 @@ public class BeforeBreadcrumbsTest {
 
     @Test
     public void trueCallback() throws Exception {
-        client.beforeBreadcrumb(new BeforeBreadcrumb() {
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return true;
@@ -60,13 +60,13 @@ public class BeforeBreadcrumbsTest {
 
     @Test
     public void multipleCallbacks() throws Exception {
-        client.beforeBreadcrumb(new BeforeBreadcrumb() {
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
-        client.beforeBreadcrumb(new BeforeBreadcrumb() {
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 return false;
@@ -79,14 +79,14 @@ public class BeforeBreadcrumbsTest {
     @Test
     public void ensureBothCalled() throws Exception {
         final int[] count = {0};
-        client.beforeBreadcrumb(new BeforeBreadcrumb() {
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         });
-        client.beforeBreadcrumb(new BeforeBreadcrumb() {
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
@@ -104,15 +104,15 @@ public class BeforeBreadcrumbsTest {
     public void ensureOnlyCalledOnce() throws Exception {
         final int[] count = {0};
 
-        BeforeBreadcrumb beforeBreadcrumb = new BeforeBreadcrumb() {
+        BeforeRecordBreadcrumb beforeRecordBreadcrumb = new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         };
-        client.beforeBreadcrumb(beforeBreadcrumb);
-        client.beforeBreadcrumb(beforeBreadcrumb);
+        client.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+        client.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
         client.leaveBreadcrumb("Foo");
         assertEquals(1, count[0]);
     }
@@ -121,7 +121,7 @@ public class BeforeBreadcrumbsTest {
     public void checkBreadrumbFields() throws Exception {
         final int[] count = {0};
 
-        BeforeBreadcrumb beforeBreadcrumb = new BeforeBreadcrumb() {
+        BeforeRecordBreadcrumb beforeRecordBreadcrumb = new BeforeRecordBreadcrumb() {
             @Override
             public boolean send(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
@@ -131,7 +131,7 @@ public class BeforeBreadcrumbsTest {
                 return true;
             }
         };
-        client.beforeBreadcrumb(beforeBreadcrumb);
+        client.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
         client.leaveBreadcrumb("Hello");
         assertEquals(1, count[0]);
     }

@@ -51,7 +51,7 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
-    private final Collection<BeforeBreadcrumb> beforeBreadcrumbTasks = new LinkedHashSet<>();
+    private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks = new LinkedHashSet<>();
     private String codeBundleId;
     private String notifierType;
 
@@ -548,10 +548,10 @@ public class Configuration extends Observable implements Observer {
     /**
      * Adds a new before breadcrumb task
      *
-     * @param beforeBreadcrumb the new before breadcrumb task
+     * @param beforeRecordBreadcrumb the new before breadcrumb task
      */
-    protected void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) {
-        this.beforeBreadcrumbTasks.add(beforeBreadcrumb);
+    protected void beforeRecordBreadcrumb(BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+        this.beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
     }
 
     /**
@@ -593,7 +593,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the before breadcrumb tasks
      */
-    protected Collection<BeforeBreadcrumb> getBeforeBreadcrumbTasks() {
-        return beforeBreadcrumbTasks;
+    protected Collection<BeforeRecordBreadcrumb> getBeforeRecordBreadcrumbTasks() {
+        return beforeRecordBreadcrumbTasks;
     }
 }

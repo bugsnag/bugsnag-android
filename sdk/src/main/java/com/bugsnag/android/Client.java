@@ -653,17 +653,17 @@ public class Client extends Observable implements Observer {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeBreadcrumb(new BeforeBreadcrumb() {
+     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
      * public boolean send(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeBreadcrumb
+     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
+     * @see BeforeRecordBreadcrumb
      */
-    public void beforeBreadcrumb(BeforeBreadcrumb beforeBreadcrumb) {
-        config.beforeBreadcrumb(beforeBreadcrumb);
+    public void beforeRecordBreadcrumb(BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+        config.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
     }
 
     /**
@@ -1053,13 +1053,13 @@ public class Client extends Observable implements Observer {
     }
 
     private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        for (BeforeBreadcrumb beforeBreadcrumb : config.getBeforeBreadcrumbTasks()) {
+        for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : config.getBeforeRecordBreadcrumbTasks()) {
             try {
-                if (!beforeBreadcrumb.send(breadcrumb)) {
+                if (!beforeRecordBreadcrumb.send(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("BeforeBreadcrumb threw an Exception", ex);
+                Logger.warn("BeforeRecordBreadcrumb threw an Exception", ex);
             }
         }
         return true;
