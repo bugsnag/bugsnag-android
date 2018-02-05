@@ -12,7 +12,7 @@ import android.support.annotation.NonNull;
  * For example:
  * <p>
  * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
- * public boolean send(Breadcrumb breadcrumb) {
+ * public boolean shouldRecord(Breadcrumb breadcrumb) {
  * return false; // ignore the breadcrumb
  * }
  * })
