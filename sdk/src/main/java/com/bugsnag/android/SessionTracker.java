@@ -38,6 +38,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private AtomicLong activityFirstStartedAtMs = new AtomicLong(0);
     private AtomicReference<Session> currentSession = new AtomicReference<>();
     private Semaphore flushingRequest = new Semaphore(1);
+    private final AtomicReference<String> contextActivity = new AtomicReference<>();
 
     SessionTracker(Configuration configuration, Client client, SessionStore sessionStore,
                    SessionTrackingApiClient apiClient) {
@@ -275,8 +276,10 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 startNewSession(new Date(nowMs), client.user, true);
             }
             foregroundActivities.put(activityName, true);
+            contextActivity.set(activityName);
         } else {
             foregroundActivities.remove(activityName);
+            contextActivity.set(null);
             activityLastStoppedAtMs.set(nowMs);
         }
     }
@@ -294,6 +297,10 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             durationMs = nowMs - sessionStartTimeMs;
         }
         return durationMs > 0 ? durationMs : 0;
+    }
+
+    @Nullable String getContextActivity() {
+        return contextActivity.get();
     }
 
 }
