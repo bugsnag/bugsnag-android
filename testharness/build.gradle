@@ -37,3 +37,5 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 }
+
+apply from: "../checkstyle.gradle"

@@ -104,3 +104,4 @@ dependencies {
 }
 
 apply plugin: 'com.bugsnag.android.gradle'
+apply from: "../checkstyle.gradle"
