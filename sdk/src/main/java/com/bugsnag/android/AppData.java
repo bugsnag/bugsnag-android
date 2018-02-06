@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Information about the running Android app, including app name, version and release stage.
@@ -76,15 +75,7 @@ class AppData extends AppDataSummary {
 
     @Nullable
     String getActiveScreenClass() {
-        try {
-            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
-            ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
-            return runningTask.topActivity.getClassName();
-        } catch (Exception e) {
-            Logger.warn("Could not get active screen information, we recommend granting the 'android.permission.GET_TASKS' permission");
-        }
-        return null;
+        return sessionTracker.getContextActivity();
     }
 
     /**
@@ -103,10 +94,12 @@ class AppData extends AppDataSummary {
     private static Boolean isLowMemory(@NonNull Context appContext) {
         try {
             ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-            ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
-            activityManager.getMemoryInfo(memInfo);
 
-            return memInfo.lowMemory;
+            if (activityManager != null) {
+                ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+                activityManager.getMemoryInfo(memInfo);
+                return memInfo.lowMemory;
+            }
         } catch (Exception e) {
             Logger.warn("Could not check lowMemory status");
         }
