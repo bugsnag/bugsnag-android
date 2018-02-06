@@ -28,7 +28,9 @@ class AppData extends AppDataSummary {
     @NonNull
     protected final String packageName;
 
-    AppData(@NonNull Context appContext, @NonNull Configuration config, SessionTracker sessionTracker) {
+    AppData(@NonNull Context appContext,
+            @NonNull Configuration config,
+            SessionTracker sessionTracker) {
         super(appContext, config);
         this.appContext = appContext;
         this.sessionTracker = sessionTracker;
@@ -44,7 +46,8 @@ class AppData extends AppDataSummary {
         writer.name("id").value(packageName);
         writer.name("buildUUID").value(config.getBuildUUID());
         writer.name("duration").value(getDurationMs());
-        writer.name("durationInForeground").value(sessionTracker.getDurationInForegroundMs(System.currentTimeMillis()));
+        long foregroundMs = sessionTracker.getDurationInForegroundMs(System.currentTimeMillis());
+        writer.name("durationInForeground").value(foregroundMs);
         writer.name("inForeground").value(sessionTracker.isInForeground());
 
         // TODO migrate legacy fields
@@ -65,7 +68,8 @@ class AppData extends AppDataSummary {
     private static String getAppName(@NonNull Context appContext) {
         try {
             PackageManager packageManager = appContext.getPackageManager();
-            ApplicationInfo appInfo = packageManager.getApplicationInfo(appContext.getPackageName(), 0);
+            String packageName = appContext.getPackageName();
+            ApplicationInfo appInfo = packageManager.getApplicationInfo(packageName, 0);
 
             return (String) packageManager.getApplicationLabel(appInfo);
         } catch (PackageManager.NameNotFoundException e) {
@@ -77,12 +81,15 @@ class AppData extends AppDataSummary {
     @Nullable
     String getActiveScreenClass() {
         try {
-            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
+            ActivityManager activityManager =
+                (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks =
+                activityManager.getRunningTasks(1);
             ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
             return runningTask.topActivity.getClassName();
         } catch (Exception e) {
-            Logger.warn("Could not get active screen information, we recommend granting the 'android.permission.GET_TASKS' permission");
+            Logger.warn("Could not get active screen information," +
+                " we recommend granting the 'android.permission.GET_TASKS' permission");
         }
         return null;
     }
@@ -102,7 +109,8 @@ class AppData extends AppDataSummary {
     @Nullable
     private static Boolean isLowMemory(@NonNull Context appContext) {
         try {
-            ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager activityManager =
+                (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
             activityManager.getMemoryInfo(memInfo);
 

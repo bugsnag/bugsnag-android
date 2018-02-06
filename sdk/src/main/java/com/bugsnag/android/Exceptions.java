@@ -26,7 +26,10 @@ class Exceptions implements JsonStream.Streamable {
             if (currentEx instanceof JsonStream.Streamable) {
                 ((JsonStream.Streamable) currentEx).toStream(writer);
             } else {
-                exceptionToStream(writer, getExceptionName(currentEx), currentEx.getLocalizedMessage(), currentEx.getStackTrace());
+                String exceptionName = getExceptionName(currentEx);
+                String localizedMessage = currentEx.getLocalizedMessage();
+                StackTraceElement[] stackTrace = currentEx.getStackTrace();
+                exceptionToStream(writer, exceptionName, localizedMessage, stackTrace);
             }
             currentEx = currentEx.getCause();
         }
@@ -45,7 +48,10 @@ class Exceptions implements JsonStream.Streamable {
         }
     }
 
-    private void exceptionToStream(@NonNull JsonStream writer, String name, String message, StackTraceElement[] frames) throws IOException {
+    private void exceptionToStream(@NonNull JsonStream writer,
+                                   String name,
+                                   String message,
+                                   StackTraceElement[] frames) throws IOException {
         Stacktrace stacktrace = new Stacktrace(config, frames);
         writer.beginObject();
         writer.name("errorClass").value(name);
