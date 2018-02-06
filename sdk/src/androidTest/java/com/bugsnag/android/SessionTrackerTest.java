@@ -108,7 +108,7 @@ public class SessionTrackerTest {
 
         sessionTracker.updateForegroundTracker("other", false, System.currentTimeMillis());
         assertTrue(sessionTracker.isInForeground());
-        assertNull(sessionTracker.getContextActivity());
+        assertEquals(ACTIVITY_NAME, sessionTracker.getContextActivity());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, System.currentTimeMillis());
         assertFalse(sessionTracker.isInForeground());
