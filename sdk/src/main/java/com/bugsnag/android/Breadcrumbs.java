@@ -18,10 +18,10 @@ class Breadcrumbs implements JsonStream.Streamable {
         private static final int MAX_MESSAGE_LENGTH = 140;
         private static final String DEFAULT_NAME = "manual";
         private static final String MESSAGE_METAKEY = "message";
-        private final String TIMESTAMP_KEY = "timestamp";
-        private final String NAME_KEY = "name";
-        private final String METADATA_KEY = "metaData";
-        private final String TYPE_KEY = "type";
+        private static final String TIMESTAMP_KEY = "timestamp";
+        private static final String NAME_KEY = "name";
+        private static final String METADATA_KEY = "metaData";
+        private static final String TYPE_KEY = "type";
         final String timestamp;
         @NonNull
         final String name;

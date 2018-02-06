@@ -37,8 +37,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 Logger.warn("Could not prepare file storage directory");
                 path = null;
             }
-        } catch (Exception e) {
-            Logger.warn("Could not prepare file storage directory", e);
+        } catch (Exception exception) {
+            Logger.warn("Could not prepare file storage directory", exception);
             path = null;
         }
         this.storeDirectory = path;
@@ -76,8 +76,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
-        } catch (Exception e) {
-            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ", filename), e);
+        } catch (Exception exception) {
+            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ", filename), exception);
         } finally {
             IOUtils.closeQuietly(out);
         }

@@ -75,8 +75,8 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
 
             // End the request, get the response code
             return conn.getResponseCode();
-        } catch (IOException e) {
-            throw new NetworkException(urlString, e);
+        } catch (IOException exception) {
+            throw new NetworkException(urlString, exception);
         } finally {
             IOUtils.close(conn);
         }

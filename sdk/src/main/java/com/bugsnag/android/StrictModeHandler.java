@@ -48,11 +48,11 @@ class StrictModeHandler {
     /**
      * Checks whether a throwable was originally thrown from the StrictMode class
      *
-     * @param e the throwable
+     * @param throwable the throwable
      * @return true if the throwable's root cause is a StrictMode policy violation
      */
-    boolean isStrictModeThrowable(Throwable e) {
-        Throwable cause = getRootCause(e);
+    boolean isStrictModeThrowable(Throwable throwable) {
+        Throwable cause = getRootCause(throwable);
         Class<? extends Throwable> causeClass = cause.getClass();
         String simpleName = causeClass.getName();
         return simpleName.startsWith(STRICT_MODE_CLZ_NAME);
@@ -63,10 +63,10 @@ class StrictModeHandler {
         if (TextUtils.isEmpty(exceptionMessage)) {
             throw new IllegalArgumentException();
         }
-        int i = exceptionMessage.lastIndexOf("violation=");
+        int indexOf = exceptionMessage.lastIndexOf("violation=");
 
-        if (i != -1) {
-            String substring = exceptionMessage.substring(i);
+        if (indexOf != -1) {
+            String substring = exceptionMessage.substring(indexOf);
             substring = substring.replace("violation=", "");
 
             if (TextUtils.isDigitsOnly(substring)) {
@@ -80,14 +80,14 @@ class StrictModeHandler {
     /**
      * Recurse the stack to get the original cause of the throwable
      *
-     * @param t the throwable
+     * @param throwable the throwable
      * @return the root cause of the throwable
      */
-    private Throwable getRootCause(Throwable t) {
-        Throwable cause = t.getCause();
+    private Throwable getRootCause(Throwable throwable) {
+        Throwable cause = throwable.getCause();
 
         if (cause == null) {
-            return t;
+            return throwable;
         } else {
             return getRootCause(cause);
         }

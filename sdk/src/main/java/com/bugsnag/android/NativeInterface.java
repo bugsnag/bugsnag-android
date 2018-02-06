@@ -39,16 +39,16 @@ public class NativeInterface {
         // Should only happen if the NDK library is present
         try {
             String className = "com.bugsnag.android.ndk.BugsnagObserver";
-            Class c = Class.forName(className);
-            Observer o = (Observer) c.newInstance();
-            client.addObserver(o);
-        } catch (ClassNotFoundException e) {
+            Class clz = Class.forName(className);
+            Observer observer = (Observer) clz.newInstance();
+            client.addObserver(observer);
+        } catch (ClassNotFoundException exception) {
             // ignore this one, will happen if the NDK plugin is not present
             Logger.info("Bugsnag NDK integration not available");
-        } catch (InstantiationException e) {
-            Logger.warn("Failed to instantiate NDK observer", e);
-        } catch (IllegalAccessException e) {
-            Logger.warn("Could not access NDK observer", e);
+        } catch (InstantiationException exception) {
+            Logger.warn("Failed to instantiate NDK observer", exception);
+        } catch (IllegalAccessException exception) {
+            Logger.warn("Could not access NDK observer", exception);
         }
 
         // Should make NDK components configure
