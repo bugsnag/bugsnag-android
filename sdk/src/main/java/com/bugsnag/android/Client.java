@@ -890,6 +890,7 @@ public class Client extends Observable implements Observer {
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
                 errorStore.flushAsync(errorReportApiClient);
+                break;
             default:
                 break;
         }
@@ -1050,6 +1051,14 @@ public class Client extends Observable implements Observer {
         notify(error, BLOCKING);
     }
 
+    /**
+     * Intended for internal use only
+     *
+     * @param exception the exception
+     * @param clientData the clientdata
+     * @param blocking whether to block when notifying
+     * @param callback a callback when notifying
+     */
     public void internalClientNotify(@NonNull Throwable exception,
                               Map<String, Object> clientData,
                               boolean blocking,
