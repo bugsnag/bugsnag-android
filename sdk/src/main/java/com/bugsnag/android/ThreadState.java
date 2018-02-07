@@ -56,12 +56,12 @@ class ThreadState implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
         for (Thread thread : threads) {
-            StackTraceElement[] stacktrace = stackTraces.get(thread);
-
             writer.beginObject();
             writer.name("id").value(thread.getId());
             writer.name("name").value(thread.getName());
             writer.name("type").value(THREAD_TYPE);
+
+            StackTraceElement[] stacktrace = stackTraces.get(thread);
             writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
             writer.endObject();
         }
