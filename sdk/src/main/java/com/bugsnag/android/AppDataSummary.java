@@ -94,7 +94,7 @@ class AppDataSummary implements JsonStream.Streamable {
     private static Integer getVersionCode(@NonNull Context appContext) {
         try {
             return appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException exception) {
             Logger.warn("Could not get versionCode");
         }
         return null;
@@ -108,7 +108,7 @@ class AppDataSummary implements JsonStream.Streamable {
     private static String getVersionName(@NonNull Context appContext) {
         try {
             return appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException exception) {
             Logger.warn("Could not get versionName");
         }
         return null;
@@ -125,7 +125,7 @@ class AppDataSummary implements JsonStream.Streamable {
             if ((appFlags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
                 return RELEASE_STAGE_DEVELOPMENT;
             }
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException exception) {
             Logger.warn("Could not get releaseStage");
         }
         return RELEASE_STAGE_PRODUCTION;

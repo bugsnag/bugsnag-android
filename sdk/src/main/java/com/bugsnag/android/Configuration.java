@@ -568,7 +568,7 @@ public class Configuration extends Observable implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (arg instanceof Integer) {
             NotifyType type = NotifyType.fromInt((Integer) arg);
 

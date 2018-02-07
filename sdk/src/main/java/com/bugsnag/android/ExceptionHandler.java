@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Date;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -55,8 +54,8 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     @Override
-    public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-        boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(e);
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(throwable);
 
         // Notify any subscribed clients of the uncaught exception
         for (Client client : clientMap.keySet()) {
@@ -64,22 +63,22 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             String violationDesc = null;
 
             if (strictModeThrowable) { // add strictmode policy violation to metadata
-                violationDesc = strictModeHandler.getViolationDescription(e.getMessage());
+                violationDesc = strictModeHandler.getViolationDescription(throwable.getMessage());
                 metaData = new MetaData();
                 metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
             }
 
             String severityReason = strictModeThrowable
                 ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
-            client.cacheAndNotify(e, Severity.ERROR, metaData, severityReason, violationDesc);
+            client.cacheAndNotify(throwable, Severity.ERROR, metaData, severityReason, violationDesc);
         }
 
         // Pass exception on to original exception handler
         if (originalHandler != null) {
-            originalHandler.uncaughtException(t, e);
+            originalHandler.uncaughtException(thread, throwable);
         } else {
-            System.err.printf("Exception in thread \"%s\" ", t.getName());
-            e.printStackTrace(System.err);
+            System.err.printf("Exception in thread \"%s\" ", thread.getName());
+            throwable.printStackTrace(System.err);
         }
     }
 }
