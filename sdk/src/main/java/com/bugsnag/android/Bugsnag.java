@@ -16,6 +16,7 @@ import java.util.Map;
  *
  * @see Client
  */
+@SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
 public final class Bugsnag {
 
     @Nullable
@@ -466,6 +467,8 @@ public final class Bugsnag {
      * to send and modify error reports
      */
     @Deprecated
+    @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
+
     public static void notify(@NonNull String name, @NonNull String message, String context,
                               @NonNull StackTraceElement[] stacktrace, Severity severity,
                               @NonNull MetaData metaData) {

@@ -199,7 +199,7 @@ public class NativeInterface {
 
     /**
      * Sets the user
-     * 
+     *
      * @param id id
      * @param email email
      * @param name name

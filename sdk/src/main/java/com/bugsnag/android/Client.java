@@ -34,6 +34,7 @@ import java.util.concurrent.RejectedExecutionException;
  *
  * @see Bugsnag
  */
+@SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
 public class Client extends Observable implements Observer {
 
     private static final boolean BLOCKING = true;
@@ -1269,6 +1270,7 @@ public class Client extends Observable implements Observer {
      *
      * @throws Throwable if something goes wrong
      */
+    @SuppressWarnings("checkstyle:NoFinalizer")
     protected void finalize() throws Throwable {
         if (eventReceiver != null) {
             try {
