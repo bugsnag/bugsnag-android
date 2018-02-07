@@ -514,8 +514,9 @@ public class Configuration extends Observable implements Observer {
      * @return true if the release state should be notified else false
      */
     protected boolean shouldNotifyForReleaseStage(String releaseStage) {
-        if (this.notifyReleaseStages == null)
+        if (this.notifyReleaseStages == null) {
             return true;
+        }
 
         List<String> stages = Arrays.asList(this.notifyReleaseStages);
         return stages.contains(releaseStage);
@@ -528,8 +529,9 @@ public class Configuration extends Observable implements Observer {
      * @return true if the exception class should be ignored else false
      */
     protected boolean shouldIgnoreClass(String className) {
-        if (this.ignoreClasses == null)
+        if (this.ignoreClasses == null) {
             return false;
+        }
 
         List<String> classes = Arrays.asList(this.ignoreClasses);
         return classes.contains(className);

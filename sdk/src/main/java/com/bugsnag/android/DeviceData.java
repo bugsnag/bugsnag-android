@@ -115,8 +115,9 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static Float getScreenDensity(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
-        if (resources == null)
+        if (resources == null) {
             return null;
+        }
         return resources.getDisplayMetrics().density;
     }
 
@@ -126,8 +127,9 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static Integer getScreenDensityDpi(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
-        if (resources == null)
+        if (resources == null) {
             return null;
+        }
         return resources.getDisplayMetrics().densityDpi;
     }
 
