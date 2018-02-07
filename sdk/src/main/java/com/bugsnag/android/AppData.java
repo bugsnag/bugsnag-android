@@ -72,7 +72,7 @@ class AppData extends AppDataSummary {
             ApplicationInfo appInfo = packageManager.getApplicationInfo(packageName, 0);
 
             return (String) packageManager.getApplicationLabel(appInfo);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException exception) {
             Logger.warn("Could not get app name");
         }
         return null;
@@ -87,7 +87,7 @@ class AppData extends AppDataSummary {
                 activityManager.getRunningTasks(1);
             ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
             return runningTask.topActivity.getClassName();
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get active screen information," +
                 " we recommend granting the 'android.permission.GET_TASKS' permission");
         }
@@ -115,7 +115,7 @@ class AppData extends AppDataSummary {
             activityManager.getMemoryInfo(memInfo);
 
             return memInfo.lowMemory;
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not check lowMemory status");
         }
         return null;

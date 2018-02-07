@@ -95,15 +95,15 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         try {
                             apiClient.postSessionTrackingPayload(endpoint, payload,
                                 configuration.getSessionApiHeaders());
-                        } catch (NetworkException e) { // store for later sending
+                        } catch (NetworkException exception) { // store for later sending
                             Logger.info("Failed to post session payload");
                             sessionStore.write(session);
-                        } catch (BadResponseException e) { // drop bad data
-                            Logger.warn("Invalid session tracking payload", e);
+                        } catch (BadResponseException exception) { // drop bad data
+                            Logger.warn("Invalid session tracking payload", exception);
                         }
                     }
                 });
-            } catch (RejectedExecutionException e) {
+            } catch (RejectedExecutionException exception) {
                 // This is on the current thread but there isn't much else we can do
                 sessionStore.write(session);
             }
@@ -164,10 +164,10 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         apiClient.postSessionTrackingPayload(endpoint, payload,
                             configuration.getSessionApiHeaders());
                         deleteStoredFiles(storedFiles);
-                    } catch (NetworkException e) { // store for later sending
+                    } catch (NetworkException exception) { // store for later sending
                         Logger.info("Failed to post stored session payload");
-                    } catch (BadResponseException e) { // drop bad data
-                        Logger.warn("Invalid session tracking payload", e);
+                    } catch (BadResponseException exception) { // drop bad data
+                        Logger.warn("Invalid session tracking payload", exception);
                         deleteStoredFiles(storedFiles);
                     }
                 }

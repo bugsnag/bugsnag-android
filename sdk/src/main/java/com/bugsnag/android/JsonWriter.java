@@ -614,16 +614,16 @@ public class JsonWriter implements Closeable {
         int last = 0;
         int length = value.length();
         for (int i = 0; i < length; i++) {
-            char c = value.charAt(i);
+            char charAt = value.charAt(i);
             String replacement;
-            if (c < 128) {
-                replacement = replacements[c];
+            if (charAt < 128) {
+                replacement = replacements[charAt];
                 if (replacement == null) {
                     continue;
                 }
-            } else if (c == '\u2028') {
+            } else if (charAt == '\u2028') {
                 replacement = "\\u2028";
-            } else if (c == '\u2029') {
+            } else if (charAt == '\u2029') {
                 replacement = "\\u2029";
             } else {
                 continue;

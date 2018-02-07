@@ -39,8 +39,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     /**
      * Create a MetaData with values copied from an existing Map
      */
-    public MetaData(@NonNull Map<String, Object> m) {
-        store = new ConcurrentHashMap<>(m);
+    public MetaData(@NonNull Map<String, Object> map) {
+        store = new ConcurrentHashMap<>(map);
     }
 
     @Override

@@ -78,7 +78,7 @@ class ErrorStore extends FileStore<Error> {
                 try {
                     Thread.sleep(LAUNCH_CRASH_POLL_MS);
                     waitMs += LAUNCH_CRASH_POLL_MS;
-                } catch (InterruptedException e) {
+                } catch (InterruptedException exception) {
                     Logger.warn("Interrupted while waiting for launch crash report request");
                 }
             }
@@ -110,7 +110,7 @@ class ErrorStore extends FileStore<Error> {
                     }
                 }
             });
-        } catch (RejectedExecutionException e) {
+        } catch (RejectedExecutionException exception) {
             Logger.warn("Failed to flush all on-disk errors, retaining unsent errors for later.");
         }
     }
@@ -125,11 +125,11 @@ class ErrorStore extends FileStore<Error> {
             if (!errorFile.delete()) {
                 errorFile.deleteOnExit();
             }
-        } catch (NetworkException e) {
+        } catch (NetworkException exception) {
             Logger.warn("Could not send previously saved error(s)" +
-                " to Bugsnag, will try again later", e);
-        } catch (Exception e) {
-            Logger.warn("Problem sending unsent error from disk", e);
+                " to Bugsnag, will try again later", exception);
+        } catch (Exception exception) {
+            Logger.warn("Problem sending unsent error from disk", exception);
             if (!errorFile.delete()) {
                 errorFile.deleteOnExit();
             }

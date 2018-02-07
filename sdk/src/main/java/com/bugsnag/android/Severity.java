@@ -26,8 +26,8 @@ public enum Severity implements JsonStream.Streamable {
         writer.value(name);
     }
 
-    static Severity fromString(String s) {
-        switch (s) {
+    static Severity fromString(String input) {
+        switch (input) {
             case "error":
                 return ERROR;
             case "warning":

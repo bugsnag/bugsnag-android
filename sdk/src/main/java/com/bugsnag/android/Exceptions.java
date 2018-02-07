@@ -40,11 +40,11 @@ class Exceptions implements JsonStream.Streamable {
     /**
      * Get the class name from the exception contained in this Error report.
      */
-    private String getExceptionName(@NonNull Throwable t) {
-        if (t instanceof BugsnagException) {
-            return ((BugsnagException) t).getName();
+    private String getExceptionName(@NonNull Throwable throwable) {
+        if (throwable instanceof BugsnagException) {
+            return ((BugsnagException) throwable).getName();
         } else {
-            return t.getClass().getName();
+            return throwable.getClass().getName();
         }
     }
 

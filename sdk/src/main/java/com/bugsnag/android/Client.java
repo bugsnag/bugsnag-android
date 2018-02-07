@@ -237,7 +237,7 @@ public class Client extends Observable implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (arg instanceof Integer) {
             NotifyType type = NotifyType.fromInt((Integer) arg);
 
@@ -998,7 +998,7 @@ public class Client extends Observable implements Observer {
                             deliver(finalReport, finalError);
                         }
                     });
-                } catch (RejectedExecutionException e) {
+                } catch (RejectedExecutionException exception) {
                     errorStore.write(error);
                     Logger.warn("Exceeded max queue count, saving to disk to send later");
                 }
@@ -1019,15 +1019,15 @@ public class Client extends Observable implements Observer {
             errorReportApiClient.postReport(config.getEndpoint(), report,
                 config.getErrorApiHeaders());
             Logger.info("Sent 1 new error to Bugsnag");
-        } catch (NetworkException e) {
+        } catch (NetworkException exception) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
             // Save error to disk for later sending
             errorStore.write(error);
-        } catch (BadResponseException e) {
+        } catch (BadResponseException exception) {
             Logger.info("Bad response when sending data to Bugsnag");
-        } catch (Exception e) {
-            Logger.warn("Problem sending error to Bugsnag", e);
+        } catch (Exception exception) {
+            Logger.warn("Problem sending error to Bugsnag", exception);
         }
     }
 
@@ -1259,7 +1259,7 @@ public class Client extends Observable implements Observer {
         if (eventReceiver != null) {
             try {
                 appContext.unregisterReceiver(eventReceiver);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException exception) {
                 Logger.warn("Receiver not registered");
             }
         }

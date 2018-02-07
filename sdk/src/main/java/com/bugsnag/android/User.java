@@ -21,8 +21,8 @@ class User implements JsonStream.Streamable {
         this.name = name;
     }
 
-    User(@NonNull User u) {
-        this(u.id, u.email, u.name);
+    User(@NonNull User user) {
+        this(user.id, user.email, user.name);
     }
 
     @Override

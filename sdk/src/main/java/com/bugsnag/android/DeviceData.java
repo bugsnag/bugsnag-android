@@ -227,7 +227,7 @@ class DeviceData extends DeviceDataSummary {
                 (long) internalStat.getBlockSize() * (long) internalStat.getBlockCount();
 
             return Math.min(internalBytesAvailable, externalBytesAvailable);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get freeDisk");
         }
         return null;
@@ -277,7 +277,7 @@ class DeviceData extends DeviceDataSummary {
 
             return batteryStatus.getIntExtra("level", -1) /
                 (float) batteryStatus.getIntExtra("scale", -1);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get batteryLevel");
         }
         return null;
@@ -295,7 +295,7 @@ class DeviceData extends DeviceDataSummary {
             int status = batteryStatus.getIntExtra("status", -1);
             return (status == BatteryManager.BATTERY_STATUS_CHARGING ||
                 status == BatteryManager.BATTERY_STATUS_FULL);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get charging status");
         }
         return null;
@@ -315,7 +315,7 @@ class DeviceData extends DeviceDataSummary {
             } else {
                 return "disallowed";
             }
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get locationStatus");
         }
         return null;
@@ -343,7 +343,7 @@ class DeviceData extends DeviceDataSummary {
             } else {
                 return "none";
             }
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get network access information, we " +
                 "recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
         }
