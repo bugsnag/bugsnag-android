@@ -78,7 +78,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (Exception exception) {
-            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ", filename), exception);
+            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
+                filename), exception);
         } finally {
             IOUtils.closeQuietly(out);
         }

@@ -70,7 +70,8 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
             String severityReason = strictModeThrowable
                 ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
-            client.cacheAndNotify(throwable, Severity.ERROR, metaData, severityReason, violationDesc);
+            client.cacheAndNotify(throwable, Severity.ERROR,
+                metaData, severityReason, violationDesc);
         }
 
         // Pass exception on to original exception handler

@@ -415,6 +415,21 @@ public class JsonWriter implements Closeable {
     }
 
     /**
+     * Flushes and closes this writer and the underlying {@link Writer}.
+     *
+     * @throws IOException if the JSON document is incomplete.
+     */
+    public void close() throws IOException {
+        out.close();
+
+        int size = stack.size();
+        if (size > 1 || size == 1 && stack.get(size - 1) != JsonScope.NONEMPTY_DOCUMENT) {
+            throw new IOException("Incomplete document");
+        }
+        stack.clear();
+    }
+
+    /**
      * Returns the value on the top of the stack.
      */
     private JsonScope peek() {
@@ -462,23 +477,6 @@ public class JsonWriter implements Closeable {
     }
 
     /**
-     * Encodes {@code value}.
-     *
-     * @param value the literal string value, or null to encode a null literal.
-     * @return this writer.
-     */
-    @NonNull
-    public JsonWriter value(@Nullable String value) throws IOException {
-        if (value == null) {
-            return nullValue();
-        }
-        writeDeferredName();
-        beforeValue(false);
-        string(value);
-        return this;
-    }
-
-    /**
      * Encodes {@code null}.
      *
      * @return this writer.
@@ -495,6 +493,23 @@ public class JsonWriter implements Closeable {
         }
         beforeValue(false);
         out.write("null");
+        return this;
+    }
+
+    /**
+     * Encodes {@code value}.
+     *
+     * @param value the literal string value, or null to encode a null literal.
+     * @return this writer.
+     */
+    @NonNull
+    public JsonWriter value(@Nullable String value) throws IOException {
+        if (value == null) {
+            return nullValue();
+        }
+        writeDeferredName();
+        beforeValue(false);
+        string(value);
         return this;
     }
 
@@ -591,21 +606,6 @@ public class JsonWriter implements Closeable {
             throw new IllegalStateException("JsonWriter is closed.");
         }
         out.flush();
-    }
-
-    /**
-     * Flushes and closes this writer and the underlying {@link Writer}.
-     *
-     * @throws IOException if the JSON document is incomplete.
-     */
-    public void close() throws IOException {
-        out.close();
-
-        int size = stack.size();
-        if (size > 1 || size == 1 && stack.get(size - 1) != JsonScope.NONEMPTY_DOCUMENT) {
-            throw new IOException("Incomplete document");
-        }
-        stack.clear();
     }
 
     private void string(@NonNull String value) throws IOException {
