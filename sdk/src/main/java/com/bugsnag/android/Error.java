@@ -83,7 +83,7 @@ public class Error implements JsonStream.Streamable {
         if (session != null) {
             writer.name("session").beginObject();
             writer.name("id").value(session.getId());
-            writer.name("startedAt").value(DateUtils.toISO8601(session.getStartedAt()));
+            writer.name("startedAt").value(DateUtils.toIso8601(session.getStartedAt()));
 
             writer.name("events").beginObject();
             writer.name("handled").value(session.getHandledCount());

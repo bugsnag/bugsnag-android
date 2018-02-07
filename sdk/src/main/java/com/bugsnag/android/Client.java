@@ -168,18 +168,18 @@ public class Client extends Observable implements Observer {
         // populate from manifest (in the case where the constructor was called directly by the
         // User or no UUID was supplied)
         if (config.getBuildUUID() == null) {
-            String buildUUID = null;
+            String buildUuid = null;
             try {
                 PackageManager packageManager = appContext.getPackageManager();
                 String packageName = appContext.getPackageName();
                 ApplicationInfo ai =
                     packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                buildUUID = ai.metaData.getString(MF_BUILD_UUID);
+                buildUuid = ai.metaData.getString(MF_BUILD_UUID);
             } catch (Exception ignore) {
                 Logger.warn("Bugsnag is unable to read build UUID from manifest.");
             }
-            if (buildUUID != null) {
-                config.setBuildUUID(buildUUID);
+            if (buildUuid != null) {
+                config.setBuildUUID(buildUuid);
             }
         }
 
@@ -401,6 +401,7 @@ public class Client extends Observable implements Observer {
      *
      * @param buildUUID the buildUUID.
      */
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setBuildUUID(final String buildUUID) {
         config.setBuildUUID(buildUUID);
     }

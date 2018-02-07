@@ -95,6 +95,7 @@ public class NativeInterface {
         return getClient().appData.versionCode;
     }
 
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public static String getBuildUUID() {
         return getClient().config.getBuildUUID();
     }

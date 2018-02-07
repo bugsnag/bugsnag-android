@@ -357,7 +357,7 @@ class DeviceData extends DeviceDataSummary {
      */
     @NonNull
     private String getTime() {
-        return DateUtils.toISO8601(new Date());
+        return DateUtils.toIso8601(new Date());
     }
 
 }

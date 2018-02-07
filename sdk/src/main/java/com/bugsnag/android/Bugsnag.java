@@ -131,6 +131,7 @@ public final class Bugsnag {
      *
      * @param buildUUID the buildUUID.
      */
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public static void setBuildUUID(final String buildUUID) {
         getClient().setBuildUUID(buildUUID);
     }

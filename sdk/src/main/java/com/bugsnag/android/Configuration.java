@@ -26,7 +26,7 @@ public class Configuration extends Observable implements Observer {
 
     @NonNull
     private final String apiKey;
-    private String buildUUID;
+    private String buildUuid;
     private String appVersion;
     private String context;
     private String endpoint = "https://notify.bugsnag.com";
@@ -163,8 +163,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return build UUID
      */
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public String getBuildUUID() {
-        return buildUUID;
+        return buildUuid;
     }
 
     /**
@@ -173,10 +174,11 @@ public class Configuration extends Observable implements Observer {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param buildUUID the buildUUID.
+     * @param buildUuid the buildUUID.
      */
-    public void setBuildUUID(String buildUUID) {
-        this.buildUUID = buildUUID;
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public void setBuildUUID(String buildUuid) {
+        this.buildUuid = buildUuid;
         notifyBugsnagObservers(NotifyType.APP);
     }
 
@@ -495,7 +497,7 @@ public class Configuration extends Observable implements Observer {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
-        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toISO8601(new Date()));
+        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
         return map;
     }
 
@@ -503,7 +505,7 @@ public class Configuration extends Observable implements Observer {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);
-        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toISO8601(new Date()));
+        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
         return map;
     }
 
