@@ -783,7 +783,7 @@ public class Client extends Observable implements Observer {
     private String getKeyFromClientData(Map<String, Object> clientData, String key, boolean required) {
         Object value = clientData.get(key);
         if (value instanceof String) {
-             return (String) value;
+            return (String) value;
         } else if (required) {
             throw new IllegalStateException("Failed to set " + key + " in client data!");
         }
@@ -1036,8 +1036,7 @@ public class Client extends Observable implements Observer {
      *
      * @param exception the exception to send to Bugsnag
      * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)}
-     * to send and modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
     public void notify(@NonNull Throwable exception,
                        @NonNull MetaData metaData) {
@@ -1053,8 +1052,7 @@ public class Client extends Observable implements Observer {
      *
      * @param exception the exception to send to Bugsnag
      * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)}
-     * to send and modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
     public void notifyBlocking(@NonNull Throwable exception,
                                @NonNull MetaData metaData) {
@@ -1072,8 +1070,7 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and
-     * modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
     @Deprecated
     public void notify(@NonNull Throwable exception, Severity severity,
@@ -1092,8 +1089,7 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send
-     * and modify error reports
+     * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send and modify error reports
      */
     @Deprecated
     public void notifyBlocking(@NonNull Throwable exception, Severity severity,
