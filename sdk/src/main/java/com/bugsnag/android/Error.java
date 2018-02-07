@@ -172,6 +172,10 @@ public class Error implements JsonStream.Streamable {
         this.user = new User(id, email, name);
     }
 
+    void setUser(User user) {
+        this.user = user;
+    }
+
     /**
      * @return user information associated with this Error
      */
@@ -308,10 +312,6 @@ public class Error implements JsonStream.Streamable {
 
     void setDeviceData(DeviceData deviceData) {
         this.deviceData = deviceData;
-    }
-
-    void setUser(User user) {
-        this.user = user;
     }
 
     void setBreadcrumbs(Breadcrumbs breadcrumbs) {

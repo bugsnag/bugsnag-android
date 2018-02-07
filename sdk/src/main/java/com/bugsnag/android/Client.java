@@ -660,18 +660,6 @@ public class Client extends Observable implements Observer {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     */
-    public void notifyBlocking(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
      * @param callback  callback invoked on the generated error report for
      *                  additional modification
      */
@@ -680,20 +668,6 @@ public class Client extends Observable implements Observer {
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
-     *                  additional modification
-     */
-    public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
     /**
@@ -710,22 +684,6 @@ public class Client extends Observable implements Observer {
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
-     *                   additional modification
-     */
-    public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
 
     /**
@@ -746,6 +704,192 @@ public class Client extends Observable implements Observer {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
+     * @param metaData  additional information to send with the exception
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
+     */
+    public void notify(@NonNull Throwable exception,
+                       @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
+            .metaData(metaData)
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
+        notify(error, !BLOCKING);
+    }
+
+    private void notify(@NonNull Error error, boolean blocking) {
+        DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
+        notify(error, style, null);
+    }
+
+    void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
+        // Don't notify if this error class should be ignored
+        if (error.shouldIgnoreClass()) {
+            return;
+        }
+
+        // Don't notify unless releaseStage is in notifyReleaseStages
+        if (!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
+            return;
+        }
+
+        // Capture the state of the app and device and attach diagnostics to the error
+        error.setAppData(appData);
+        error.setDeviceData(deviceData);
+
+        // Attach breadcrumbs to the error
+        error.setBreadcrumbs(breadcrumbs);
+
+        // Attach user info to the error
+        error.setUser(user);
+
+        // Run beforeNotify tasks, don't notify if any return true
+        if (!runBeforeNotifyTasks(error)) {
+            Logger.info("Skipping notification - beforeNotify task returned false");
+            return;
+        }
+
+        // Build the report
+        Report report = new Report(config.getApiKey(), error);
+
+        if (callback != null) {
+            callback.beforeNotify(report);
+        }
+
+        HandledState handledState = report.getError().getHandledState();
+
+        if (handledState.isUnhandled()) {
+            sessionTracker.incrementUnhandledError();
+        } else {
+            sessionTracker.incrementHandledError();
+        }
+
+        switch (style) {
+            case SAME_THREAD:
+                deliver(report, error);
+                break;
+            case ASYNC:
+                final Report finalReport = report;
+                final Error finalError = error;
+
+                // Attempt to send the report in the background
+                try {
+                    Async.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            deliver(finalReport, finalError);
+                        }
+                    });
+                } catch (RejectedExecutionException e) {
+                    errorStore.write(error);
+                    Logger.warn("Exceeded max queue count, saving to disk to send later");
+                }
+                break;
+            case ASYNC_WITH_CACHE:
+                errorStore.write(error);
+                errorStore.flushAsync(errorReportApiClient);
+        }
+
+        // Add a breadcrumb for this error occurring
+        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
+     * @param metaData  additional information to send with the exception
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
+     */
+    @Deprecated
+    public void notify(@NonNull Throwable exception, Severity severity,
+                       @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
+            .metaData(metaData)
+            .severity(severity)
+            .build();
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
+     */
+    @Deprecated
+    public void notify(@NonNull String name, @NonNull String message,
+                       @NonNull StackTraceElement[] stacktrace, Severity severity,
+                       @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+            .severity(severity)
+            .metaData(metaData)
+            .build();
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
+     */
+    @Deprecated
+    public void notify(@NonNull String name, @NonNull String message, String context,
+                       @NonNull StackTraceElement[] stacktrace, Severity severity,
+                       @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+            .severity(severity)
+            .metaData(metaData)
+            .build();
+        error.setContext(context);
+        notify(error, !BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     */
+    public void notifyBlocking(@NonNull Throwable exception) {
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param callback  callback invoked on the generated error report for
+     *                  additional modification
+     */
+    public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
+        notify(error, DeliveryStyle.SAME_THREAD, callback);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      */
@@ -753,6 +897,105 @@ public class Client extends Observable implements Observer {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
             .severity(severity)
             .build();
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param metaData  additional information to send with the exception
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
+     */
+    public void notifyBlocking(@NonNull Throwable exception,
+                               @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .metaData(metaData)
+            .build();
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param severity  the severity of the error, one of Severity.ERROR,
+     *                  Severity.WARNING or Severity.INFO
+     * @param metaData  additional information to send with the exception
+     * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send and modify error reports
+     */
+    @Deprecated
+    public void notifyBlocking(@NonNull Throwable exception, Severity severity,
+                               @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
+            .metaData(metaData)
+            .severity(severity)
+            .build();
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
+     */
+    @Deprecated
+    public void notifyBlocking(@NonNull String name, @NonNull String message,
+                               @NonNull StackTraceElement[] stacktrace, Severity severity,
+                               @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+            .severity(severity)
+            .metaData(metaData)
+            .build();
+        notify(error, BLOCKING);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param callback   callback invoked on the generated error report for
+     *                   additional modification
+     */
+    public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
+            .build();
+        notify(error, DeliveryStyle.SAME_THREAD, callback);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param context    the error context
+     * @param stacktrace the stackframes associated with the error
+     * @param severity   the severity of the error, one of Severity.ERROR,
+     *                   Severity.WARNING or Severity.INFO
+     * @param metaData   additional information to send with the exception
+     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
+     * to send and modify error reports
+     */
+    @Deprecated
+    public void notifyBlocking(@NonNull String name, @NonNull String message, String context,
+                               @NonNull StackTraceElement[] stacktrace, Severity severity,
+                               @NonNull MetaData metaData) {
+        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+            .severity(severity)
+            .metaData(metaData)
+            .build();
+        error.setContext(context);
         notify(error, BLOCKING);
     }
 
@@ -894,83 +1137,6 @@ public class Client extends Observable implements Observer {
         ExceptionHandler.disable(this);
     }
 
-    private void notify(@NonNull Error error, boolean blocking) {
-        DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(error, style, null);
-    }
-
-    void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
-        // Don't notify if this error class should be ignored
-        if (error.shouldIgnoreClass()) {
-            return;
-        }
-
-        // Don't notify unless releaseStage is in notifyReleaseStages
-        if (!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
-            return;
-        }
-
-        // Capture the state of the app and device and attach diagnostics to the error
-        error.setAppData(appData);
-        error.setDeviceData(deviceData);
-
-        // Attach breadcrumbs to the error
-        error.setBreadcrumbs(breadcrumbs);
-
-        // Attach user info to the error
-        error.setUser(user);
-
-        // Run beforeNotify tasks, don't notify if any return true
-        if (!runBeforeNotifyTasks(error)) {
-            Logger.info("Skipping notification - beforeNotify task returned false");
-            return;
-        }
-
-        // Build the report
-        Report report = new Report(config.getApiKey(), error);
-
-        if (callback != null) {
-            callback.beforeNotify(report);
-        }
-
-        HandledState handledState = report.getError().getHandledState();
-
-        if (handledState.isUnhandled()) {
-            sessionTracker.incrementUnhandledError();
-        } else {
-            sessionTracker.incrementHandledError();
-        }
-
-        switch (style) {
-            case SAME_THREAD:
-                deliver(report, error);
-                break;
-            case ASYNC:
-                final Report finalReport = report;
-                final Error finalError = error;
-
-                // Attempt to send the report in the background
-                try {
-                    Async.run(new Runnable() {
-                        @Override
-                        public void run() {
-                            deliver(finalReport, finalError);
-                        }
-                    });
-                } catch (RejectedExecutionException e) {
-                    errorStore.write(error);
-                    Logger.warn("Exceeded max queue count, saving to disk to send later");
-                }
-                break;
-            case ASYNC_WITH_CACHE:
-                errorStore.write(error);
-                errorStore.flushAsync(errorReportApiClient);
-        }
-
-        // Add a breadcrumb for this error occurring
-        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
-    }
-
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
             errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
@@ -1029,172 +1195,6 @@ public class Client extends Observable implements Observer {
     private void storeInSharedPrefs(String key, String value) {
         SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         sharedPref.edit().putString(key, value).apply();
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    public void notify(@NonNull Throwable exception,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
-            .metaData(metaData)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    public void notifyBlocking(@NonNull Throwable exception,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .metaData(metaData)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull Throwable exception, Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
-            .metaData(metaData)
-            .severity(severity)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception, Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
-            .metaData(metaData)
-            .severity(severity)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull String name, @NonNull String message,
-                       @NonNull StackTraceElement[] stacktrace, Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull String name, @NonNull String message,
-                               @NonNull StackTraceElement[] stacktrace, Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull String name, @NonNull String message, String context,
-                       @NonNull StackTraceElement[] stacktrace, Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        error.setContext(context);
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull String name, @NonNull String message, String context,
-                               @NonNull StackTraceElement[] stacktrace, Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        error.setContext(context);
-        notify(error, BLOCKING);
     }
 
     /**
