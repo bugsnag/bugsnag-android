@@ -30,7 +30,8 @@ class IOUtils {
         }
     }
 
-    public static int copy(@NonNull final Reader input, @NonNull final Writer output) throws IOException {
+    public static int copy(@NonNull final Reader input,
+                           @NonNull final Writer output) throws IOException {
         char[] buffer = new char[DEFAULT_BUFFER_SIZE];
         long count = 0;
         int read;

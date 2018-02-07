@@ -56,9 +56,12 @@ public class Client extends Observable implements Observer {
     static final String MF_SESSIONS_ENDPOINT = BUGSNAG_NAMESPACE + ".SESSIONS_ENDPOINT";
     static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
     static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
-    static final String MF_ENABLE_EXCEPTION_HANDLER = BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
-    static final String MF_PERSIST_USER_BETWEEN_SESSIONS = BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
-    static final String MF_AUTO_CAPTURE_SESSIONS = BUGSNAG_NAMESPACE + ".AUTO_CAPTURE_SESSIONS";
+    static final String MF_ENABLE_EXCEPTION_HANDLER =
+        BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
+    static final String MF_PERSIST_USER_BETWEEN_SESSIONS =
+        BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
+    static final String MF_AUTO_CAPTURE_SESSIONS =
+        BUGSNAG_NAMESPACE + ".AUTO_CAPTURE_SESSIONS";
 
 
     @NonNull
@@ -107,8 +110,11 @@ public class Client extends Observable implements Observer {
      * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
      * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      */
-    public Client(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
-        this(androidContext, createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
+    public Client(@NonNull Context androidContext,
+                  @Nullable String apiKey,
+                  boolean enableExceptionHandler) {
+        this(androidContext,
+            createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
     }
 
     /**
@@ -123,16 +129,19 @@ public class Client extends Observable implements Observer {
         config = configuration;
         sessionStore = new SessionStore(config, appContext);
 
-        ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm =
+            (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
         errorReportApiClient = defaultHttpClient;
         sessionTrackingApiClient = defaultHttpClient;
 
-        sessionTracker = new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient);
+        sessionTracker =
+            new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient);
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
-        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        SharedPreferences sharedPref =
+            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appData = new AppData(appContext, config, sessionTracker);
         deviceData = new DeviceData(appContext, sharedPref);
@@ -156,8 +165,8 @@ public class Client extends Observable implements Observer {
             Application application = (Application) appContext;
             application.registerActivityLifecycleCallbacks(sessionTracker);
         } else {
-            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle breadcrumbs on API " +
-                "Levels below 14.");
+            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle " +
+                "breadcrumbs on API Levels below 14.");
         }
 
         errorReportApiClient = new DefaultHttpClient(cm);
@@ -167,7 +176,10 @@ public class Client extends Observable implements Observer {
         if (config.getBuildUUID() == null) {
             String buildUUID = null;
             try {
-                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                PackageManager packageManager = appContext.getPackageManager();
+                String packageName = appContext.getPackageName();
+                ApplicationInfo ai =
+                    packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
                 buildUUID = ai.metaData.getString(MF_BUILD_UUID);
             } catch (Exception ignore) {
             }
@@ -190,7 +202,8 @@ public class Client extends Observable implements Observer {
             @Override
             public void run() {
                 appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
-                appContext.registerReceiver(new ConnectivityChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                appContext.registerReceiver(new ConnectivityChangeReceiver(),
+                    new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
             }
         });
 
@@ -199,14 +212,16 @@ public class Client extends Observable implements Observer {
         // Flush any on-disk errors
         errorStore.flushOnLaunch(errorReportApiClient);
 
-        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(AppData.guessReleaseStage(appContext));
+        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
+            AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = cm.getActiveNetworkInfo();
             boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
 
@@ -242,7 +257,9 @@ public class Client extends Observable implements Observer {
      * @return The created config
      */
     @NonNull
-    private static Configuration createNewConfiguration(@NonNull Context androidContext, String apiKey, boolean enableExceptionHandler) {
+    private static Configuration createNewConfiguration(@NonNull Context androidContext,
+                                                        String apiKey,
+                                                        boolean enableExceptionHandler) {
         Context appContext = androidContext.getApplicationContext();
 
         // Attempt to load API key and other config from AndroidManifest.xml, if not passed in
@@ -250,7 +267,10 @@ public class Client extends Observable implements Observer {
 
         if (loadFromManifest) {
             try {
-                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                PackageManager packageManager = appContext.getPackageManager();
+                String packageName = appContext.getPackageName();
+                ApplicationInfo ai =
+                    packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
                 Bundle data = ai.metaData;
                 apiKey = data.getString(MF_API_KEY);
             } catch (Exception ignore) {
@@ -267,7 +287,10 @@ public class Client extends Observable implements Observer {
 
         if (loadFromManifest) {
             try {
-                ApplicationInfo ai = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+                PackageManager packageManager = appContext.getPackageManager();
+                String packageName = appContext.getPackageName();
+                ApplicationInfo ai =
+                    packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
                 Bundle data = ai.metaData;
                 populateConfigFromManifest(newConfig, data);
             } catch (Exception ignore) {
@@ -284,7 +307,8 @@ public class Client extends Observable implements Observer {
      * @return the updated config
      */
     @NonNull
-    static Configuration populateConfigFromManifest(@NonNull Configuration config, @NonNull Bundle data) {
+    static Configuration populateConfigFromManifest(@NonNull Configuration config,
+                                                    @NonNull Bundle data) {
         config.setBuildUUID(data.getString(MF_BUILD_UUID));
         config.setAppVersion(data.getString(MF_APP_VERSION));
         config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
@@ -301,9 +325,11 @@ public class Client extends Observable implements Observer {
         }
 
         config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
-        config.setPersistUserBetweenSessions(data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
+        config.setPersistUserBetweenSessions(
+            data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
         config.setAutoCaptureSessions(data.getBoolean(MF_AUTO_CAPTURE_SESSIONS, false));
-        config.setEnableExceptionHandler(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
+        config.setEnableExceptionHandler(
+            data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
         return config;
     }
 
@@ -510,7 +536,8 @@ public class Client extends Observable implements Observer {
         user.setEmail(null);
         user.setName(null);
 
-        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        SharedPreferences sharedPref =
+            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         sharedPref.edit()
             .remove(USER_ID_KEY)
             .remove(USER_EMAIL_KEY)
@@ -705,8 +732,12 @@ public class Client extends Observable implements Observer {
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
-    public void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+    public void notify(@NonNull String name,
+                       @NonNull String message,
+                       @NonNull StackTraceElement[] stacktrace,
+                       Callback callback) {
+        Error error = new Error.Builder(config, name, message, stacktrace,
+            sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -721,8 +752,12 @@ public class Client extends Observable implements Observer {
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
-    public void notifyBlocking(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+    public void notifyBlocking(@NonNull String name,
+                               @NonNull String message,
+                               @NonNull StackTraceElement[] stacktrace,
+                               Callback callback) {
+        Error error = new Error.Builder(config, name, message,
+            stacktrace, sessionTracker.getCurrentSession())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -780,7 +815,9 @@ public class Client extends Observable implements Observer {
     }
 
     @NonNull
-    private String getKeyFromClientData(Map<String, Object> clientData, String key, boolean required) {
+    private String getKeyFromClientData(Map<String, Object> clientData,
+                                        String key,
+                                        boolean required) {
         Object value = clientData.get(key);
         if (value instanceof String) {
              return (String) value;
@@ -845,7 +882,9 @@ public class Client extends Observable implements Observer {
         notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
-    public void leaveBreadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
+    public void leaveBreadcrumb(@NonNull String name,
+                                @NonNull BreadcrumbType type,
+                                @NonNull Map<String, String> metadata) {
         leaveBreadcrumb(name, type, metadata, true);
     }
 
@@ -899,7 +938,9 @@ public class Client extends Observable implements Observer {
         notify(error, style, null);
     }
 
-    void notify(@NonNull Error error, @NonNull DeliveryStyle style, @Nullable Callback callback) {
+    void notify(@NonNull Error error,
+                @NonNull DeliveryStyle style,
+                @Nullable Callback callback) {
         // Don't notify if this error class should be ignored
         if (error.shouldIgnoreClass()) {
             return;
@@ -968,12 +1009,15 @@ public class Client extends Observable implements Observer {
         }
 
         // Add a breadcrumb for this error occurring
-        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, Collections.singletonMap("message", error.getExceptionMessage()));
+        String exceptionMessage = error.getExceptionMessage();
+        Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
+        breadcrumbs.add(error.getExceptionName(), BreadcrumbType.ERROR, message);
     }
 
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
-            errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
+            errorReportApiClient.postReport(config.getEndpoint(), report,
+                config.getErrorApiHeaders());
             Logger.info("Sent 1 new error to Bugsnag");
         } catch (NetworkException exception) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
@@ -1027,7 +1071,8 @@ public class Client extends Observable implements Observer {
      * @param value The value to store
      */
     private void storeInSharedPrefs(String key, String value) {
-        SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        SharedPreferences sharedPref =
+            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         sharedPref.edit().putString(key, value).apply();
     }
 
@@ -1121,7 +1166,8 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull String name, @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace, Severity severity,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+        Error error = new Error.Builder(config, name, message,
+            stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1144,7 +1190,8 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull String name, @NonNull String message,
                                @NonNull StackTraceElement[] stacktrace, Severity severity,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+        Error error = new Error.Builder(config, name, message,
+            stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1168,7 +1215,8 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull String name, @NonNull String message, String context,
                        @NonNull StackTraceElement[] stacktrace, Severity severity,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+        Error error = new Error.Builder(config, name, message,
+            stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1193,7 +1241,8 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull String name, @NonNull String message, String context,
                                @NonNull StackTraceElement[] stacktrace, Severity severity,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message, stacktrace, sessionTracker.getCurrentSession())
+        Error error = new Error.Builder(config, name, message,
+            stacktrace, sessionTracker.getCurrentSession())
             .severity(severity)
             .metaData(metaData)
             .build();

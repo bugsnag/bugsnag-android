@@ -24,7 +24,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
-    private final ConcurrentHashMap<String, Boolean> foregroundActivities = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Boolean>
+        foregroundActivities = new ConcurrentHashMap<>();
     private final Configuration configuration;
     private final long timeoutMs;
     private final Client client;
@@ -88,10 +89,12 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
-                        SessionTrackingPayload payload = new SessionTrackingPayload(session, client.appData);
+                        SessionTrackingPayload payload =
+                            new SessionTrackingPayload(session, client.appData);
 
                         try {
-                            apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
+                            apiClient.postSessionTrackingPayload(endpoint, payload,
+                                configuration.getSessionApiHeaders());
                         } catch (NetworkException exception) { // store for later sending
                             Logger.info("Failed to post session payload");
                             sessionStore.write(session);
@@ -152,12 +155,14 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 storedFiles = sessionStore.findStoredFiles();
 
                 if (!storedFiles.isEmpty()) {
-                    SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, client.appData);
+                    SessionTrackingPayload payload =
+                        new SessionTrackingPayload(storedFiles, client.appData);
 
                     //FUTURE:SM Reduce duplication here and above
                     try {
                         final String endpoint = configuration.getSessionEndpoint();
-                        apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
+                        apiClient.postSessionTrackingPayload(endpoint, payload,
+                            configuration.getSessionApiHeaders());
                         deleteStoredFiles(storedFiles);
                     } catch (NetworkException exception) { // store for later sending
                         Logger.info("Failed to post stored session payload");

@@ -154,9 +154,12 @@ public class MetaData extends Observable implements JsonStream.Streamable {
                 Object overridesValue = map.get(key);
 
                 if (overridesValue != null) {
-                    if (baseValue != null && baseValue instanceof Map && overridesValue instanceof Map) {
+                    if (baseValue != null &&
+                        baseValue instanceof Map &&
+                        overridesValue instanceof Map) {
                         // Both original and overrides are Maps, go deeper
-                        result.put(key, mergeMaps((Map<String, Object>) baseValue, (Map<String, Object>) overridesValue));
+                        result.put(key, mergeMaps((Map<String, Object>) baseValue,
+                            (Map<String, Object>) overridesValue));
                     } else {
                         result.put(key, overridesValue);
                     }
@@ -171,7 +174,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     }
 
     // Write complex/nested values to a JsonStreamer
-    private void objectToStream(@Nullable Object obj, @NonNull JsonStream writer) throws IOException {
+    private void objectToStream(@Nullable Object obj,
+                                @NonNull JsonStream writer) throws IOException {
         if (obj == null) {
             writer.nullValue();
         } else if (obj instanceof String) {

@@ -219,8 +219,9 @@ public class NativeInterface {
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(severity);
-                report.getError().config.defaultExceptionType = "c";
+                Error error = report.getError();
+                error.setSeverity(severity);
+                error.config.defaultExceptionType = "c";
 
                 for (String tab : metaData.keySet()) {
 
@@ -230,10 +231,10 @@ public class NativeInterface {
                         Map map = (Map) value;
 
                         for (Object key : map.keySet()) {
-                            report.getError().getMetaData().addToTab(tab, key.toString(), map.get(key));
+                            error.getMetaData().addToTab(tab, key.toString(), map.get(key));
                         }
                     } else {
-                        report.getError().getMetaData().addToTab("custom", tab, value);
+                        error.getMetaData().addToTab("custom", tab, value);
                     }
                 }
             }

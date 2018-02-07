@@ -33,11 +33,14 @@ class Breadcrumbs implements JsonStream.Streamable {
         Breadcrumb(@NonNull String message) {
             this.timestamp = DateUtils.toISO8601(new Date());
             this.type = BreadcrumbType.MANUAL;
-            this.metadata = Collections.singletonMap(MESSAGE_METAKEY, message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH)));
+            String msg = message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH));
+            this.metadata = Collections.singletonMap(MESSAGE_METAKEY, msg);
             this.name = DEFAULT_NAME;
         }
 
-        Breadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
+        Breadcrumb(@NonNull String name,
+                   @NonNull BreadcrumbType type,
+                   @NonNull Map<String, String> metadata) {
             this.timestamp = DateUtils.toISO8601(new Date());
             this.type = type;
             this.metadata = metadata;
@@ -94,7 +97,9 @@ class Breadcrumbs implements JsonStream.Streamable {
         addToStore(new Breadcrumb(message));
     }
 
-    void add(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
+    void add(@NonNull String name,
+             @NonNull BreadcrumbType type,
+             @NonNull Map<String, String> metadata) {
         addToStore(new Breadcrumb(name, type, metadata));
     }
 
