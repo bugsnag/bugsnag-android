@@ -78,9 +78,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private void trackSessionIfNeeded(final Session session) {
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
 
-        if (notifyForRelease &&
-            (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured()) &&
-            session.isTracked().compareAndSet(false, true)) {
+        if (notifyForRelease
+            && (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured())
+            && session.isTracked().compareAndSet(false, true)) {
             try {
                 final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
@@ -272,9 +272,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             long noActivityRunningForMs = nowMs - activityLastStoppedAtMs.get();
 
             //FUTURE:SM Race condition between isEmpty and put
-            if (foregroundActivities.isEmpty() &&
-                noActivityRunningForMs >= timeoutMs &&
-                configuration.shouldAutoCaptureSessions()) {
+            if (foregroundActivities.isEmpty()
+                && noActivityRunningForMs >= timeoutMs
+                && configuration.shouldAutoCaptureSessions()) {
 
                 activityFirstStartedAtMs.set(nowMs);
                 startNewSession(new Date(nowMs), client.user, true);

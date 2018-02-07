@@ -344,8 +344,8 @@ public class Error implements JsonStream.Streamable {
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
 
-            if (session != null &&
-                !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
+            if (session != null
+                && !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
                 this.session = null;
             } else {
                 this.session = session;

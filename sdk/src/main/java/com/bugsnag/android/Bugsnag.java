@@ -623,8 +623,8 @@ public final class Bugsnag {
     @NonNull
     public static Client getClient() {
         if (client == null) {
-            throw new IllegalStateException("You must call Bugsnag.init before any" +
-                " other Bugsnag methods");
+            throw new IllegalStateException("You must call Bugsnag.init before any"
+                + " other Bugsnag methods");
         }
 
         return client;

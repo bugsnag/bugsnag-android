@@ -165,8 +165,8 @@ public class Client extends Observable implements Observer {
             Application application = (Application) appContext;
             application.registerActivityLifecycleCallbacks(sessionTracker);
         } else {
-            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle " +
-                "breadcrumbs on API Levels below 14.");
+            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle "
+                + "breadcrumbs on API Levels below 14.");
         }
 
         errorReportApiClient = new DefaultHttpClient(cm);
@@ -1057,8 +1057,8 @@ public class Client extends Observable implements Observer {
             getKeyFromClientData(clientData, "severityReason", true);
         String logLevel = getKeyFromClientData(clientData, "logLevel", false);
 
-        String msg = String.format("Internal client notify, severity = '%s'," +
-            " severityReason = '%s'", severity, severityReason);
+        String msg = String.format("Internal client notify, severity = '%s',"
+            + " severityReason = '%s'", severity, severityReason);
         Logger.info(msg);
 
         @SuppressWarnings("WrongConstant")
@@ -1271,8 +1271,8 @@ public class Client extends Observable implements Observer {
 
     private static void warnIfNotAppContext(Context androidContext) {
         if (!(androidContext instanceof Application)) {
-            Logger.warn("Warning - Non-Application context detected! Please ensure that you are " +
-                "initializing Bugsnag from a custom Application class.");
+            Logger.warn("Warning - Non-Application context detected! Please ensure that you are "
+                + "initializing Bugsnag from a custom Application class.");
         }
     }
 
