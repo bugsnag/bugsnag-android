@@ -23,12 +23,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.RejectedExecutionException;
 
-enum DeliveryStyle {
-    SAME_THREAD,
-    ASYNC,
-    ASYNC_WITH_CACHE
-}
-
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
  * Typically you'd instead use the static access provided in the Bugsnag class.
