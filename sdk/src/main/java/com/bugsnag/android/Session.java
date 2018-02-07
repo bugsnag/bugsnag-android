@@ -53,7 +53,9 @@ class Session implements JsonStream.Streamable {
         unhandledCount.incrementAndGet();
     }
 
-    AtomicBoolean isTracked() { return tracked; }
+    AtomicBoolean isTracked() {
+        return tracked;
+    }
 
     boolean isAutoCaptured() {
         return autoCaptured.get();
