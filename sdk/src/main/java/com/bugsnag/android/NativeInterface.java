@@ -39,16 +39,16 @@ public class NativeInterface {
         // Should only happen if the NDK library is present
         try {
             String className = "com.bugsnag.android.ndk.BugsnagObserver";
-            Class c = Class.forName(className);
-            Observer o = (Observer) c.newInstance();
-            client.addObserver(o);
-        } catch (ClassNotFoundException e) {
+            Class clz = Class.forName(className);
+            Observer observer = (Observer) clz.newInstance();
+            client.addObserver(observer);
+        } catch (ClassNotFoundException exception) {
             // ignore this one, will happen if the NDK plugin is not present
             Logger.info("Bugsnag NDK integration not available");
-        } catch (InstantiationException e) {
-            Logger.warn("Failed to instantiate NDK observer", e);
-        } catch (IllegalAccessException e) {
-            Logger.warn("Could not access NDK observer", e);
+        } catch (InstantiationException exception) {
+            Logger.warn("Failed to instantiate NDK observer", exception);
+        } catch (IllegalAccessException exception) {
+            Logger.warn("Could not access NDK observer", exception);
         }
 
         // Should make NDK components configure
@@ -219,8 +219,9 @@ public class NativeInterface {
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(severity);
-                report.getError().config.defaultExceptionType = "c";
+                Error error = report.getError();
+                error.setSeverity(severity);
+                error.config.defaultExceptionType = "c";
 
                 for (String tab : metaData.keySet()) {
 
@@ -230,10 +231,10 @@ public class NativeInterface {
                         Map map = (Map) value;
 
                         for (Object key : map.keySet()) {
-                            report.getError().getMetaData().addToTab(tab, key.toString(), map.get(key));
+                            error.getMetaData().addToTab(tab, key.toString(), map.get(key));
                         }
                     } else {
-                        report.getError().getMetaData().addToTab("custom", tab, value);
+                        error.getMetaData().addToTab("custom", tab, value);
                     }
                 }
             }

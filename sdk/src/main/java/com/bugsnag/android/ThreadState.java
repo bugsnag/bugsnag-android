@@ -45,8 +45,8 @@ class ThreadState implements JsonStream.Streamable {
 
         Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
         Arrays.sort(threads, new Comparator<Thread>() {
-            public int compare(@NonNull Thread a, @NonNull Thread b) {
-                return Long.valueOf(a.getId()).compareTo(b.getId());
+            public int compare(@NonNull Thread lhs, @NonNull Thread rhs) {
+                return Long.valueOf(lhs.getId()).compareTo(rhs.getId());
             }
         });
         return threads;

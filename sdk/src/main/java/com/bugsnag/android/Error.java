@@ -344,7 +344,8 @@ public class Error implements JsonStream.Streamable {
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
 
-            if (session != null  && !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
+            if (session != null &&
+                !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
                 this.session = null;
             } else {
                 this.session = session;
@@ -379,7 +380,8 @@ public class Error implements JsonStream.Streamable {
         Error build() {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
-            Error error = new Error(config, exception, handledState, severity, session, threadState);
+            Error error = new Error(config, exception, handledState,
+                severity, session, threadState);
 
             if (metaData != null) {
                 error.setMetaData(metaData);

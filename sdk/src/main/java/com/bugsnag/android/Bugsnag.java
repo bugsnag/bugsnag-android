@@ -58,7 +58,9 @@ public final class Bugsnag {
      * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      */
     @NonNull
-    public static Client init(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
+    public static Client init(@NonNull Context androidContext,
+                              @Nullable String apiKey,
+                              boolean enableExceptionHandler) {
         client = new Client(androidContext, apiKey, enableExceptionHandler);
         NativeInterface.configureClientObservers(client);
         return client;
@@ -366,7 +368,10 @@ public final class Bugsnag {
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
-    public static void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
+    public static void notify(@NonNull String name,
+                              @NonNull String message,
+                              @NonNull StackTraceElement[] stacktrace,
+                              Callback callback) {
         getClient().notify(name, message, stacktrace, callback);
     }
 
@@ -549,7 +554,9 @@ public final class Bugsnag {
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
-    public static void leaveBreadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
+    public static void leaveBreadcrumb(@NonNull String name,
+                                       @NonNull BreadcrumbType type,
+                                       @NonNull Map<String, String> metadata) {
         getClient().leaveBreadcrumb(name, type, metadata);
     }
 
@@ -616,7 +623,8 @@ public final class Bugsnag {
     @NonNull
     public static Client getClient() {
         if (client == null) {
-            throw new IllegalStateException("You must call Bugsnag.init before any other Bugsnag methods");
+            throw new IllegalStateException("You must call Bugsnag.init before any" +
+                " other Bugsnag methods");
         }
 
         return client;
