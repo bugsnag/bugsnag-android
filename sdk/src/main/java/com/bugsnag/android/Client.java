@@ -23,12 +23,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.RejectedExecutionException;
 
-enum DeliveryStyle {
-    SAME_THREAD,
-    ASYNC,
-    ASYNC_WITH_CACHE
-}
-
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
  * Typically you'd instead use the static access provided in the Bugsnag class.
@@ -40,6 +34,7 @@ enum DeliveryStyle {
  *
  * @see Bugsnag
  */
+@SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
 public class Client extends Observable implements Observer {
 
     private static final boolean BLOCKING = true;
@@ -165,8 +160,8 @@ public class Client extends Observable implements Observer {
             Application application = (Application) appContext;
             application.registerActivityLifecycleCallbacks(sessionTracker);
         } else {
-            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle " +
-                "breadcrumbs on API Levels below 14.");
+            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle "
+                + "breadcrumbs on API Levels below 14.");
         }
 
         errorReportApiClient = new DefaultHttpClient(cm);
@@ -174,17 +169,18 @@ public class Client extends Observable implements Observer {
         // populate from manifest (in the case where the constructor was called directly by the
         // User or no UUID was supplied)
         if (config.getBuildUUID() == null) {
-            String buildUUID = null;
+            String buildUuid = null;
             try {
                 PackageManager packageManager = appContext.getPackageManager();
                 String packageName = appContext.getPackageName();
                 ApplicationInfo ai =
                     packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                buildUUID = ai.metaData.getString(MF_BUILD_UUID);
+                buildUuid = ai.metaData.getString(MF_BUILD_UUID);
             } catch (Exception ignore) {
+                Logger.warn("Bugsnag is unable to read build UUID from manifest.");
             }
-            if (buildUUID != null) {
-                config.setBuildUUID(buildUUID);
+            if (buildUuid != null) {
+                config.setBuildUUID(buildUuid);
             }
         }
 
@@ -274,6 +270,7 @@ public class Client extends Observable implements Observer {
                 Bundle data = ai.metaData;
                 apiKey = data.getString(MF_API_KEY);
             } catch (Exception ignore) {
+                Logger.warn("Bugsnag is unable to read api key from manifest.");
             }
         }
 
@@ -294,6 +291,7 @@ public class Client extends Observable implements Observer {
                 Bundle data = ai.metaData;
                 populateConfigFromManifest(newConfig, data);
             } catch (Exception ignore) {
+                Logger.warn("Bugsnag is unable to read config from manifest.");
             }
         }
         return newConfig;
@@ -402,10 +400,11 @@ public class Client extends Observable implements Observer {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param buildUUID the buildUUID.
+     * @param buildUuid the buildUuid.
      */
-    public void setBuildUUID(final String buildUUID) {
-        config.setBuildUUID(buildUUID);
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public void setBuildUUID(final String buildUuid) {
+        config.setBuildUUID(buildUuid);
     }
 
 
@@ -818,6 +817,7 @@ public class Client extends Observable implements Observer {
         error.setContext(context);
         notify(error, !BLOCKING);
     }
+
     private void notify(@NonNull Error error, boolean blocking) {
         DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
         notify(error, style, null);
@@ -891,6 +891,9 @@ public class Client extends Observable implements Observer {
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
                 errorStore.flushAsync(errorReportApiClient);
+                break;
+            default:
+                break;
         }
 
         // Add a breadcrumb for this error occurring
@@ -924,6 +927,7 @@ public class Client extends Observable implements Observer {
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
     }
+
     /**
      * Notify Bugsnag of an error
      *
@@ -1048,6 +1052,14 @@ public class Client extends Observable implements Observer {
         notify(error, BLOCKING);
     }
 
+    /**
+     * Intended for internal use only
+     *
+     * @param exception the exception
+     * @param clientData the clientdata
+     * @param blocking whether to block when notifying
+     * @param callback a callback when notifying
+     */
     public void internalClientNotify(@NonNull Throwable exception,
                               Map<String, Object> clientData,
                               boolean blocking,
@@ -1057,8 +1069,8 @@ public class Client extends Observable implements Observer {
             getKeyFromClientData(clientData, "severityReason", true);
         String logLevel = getKeyFromClientData(clientData, "logLevel", false);
 
-        String msg = String.format("Internal client notify, severity = '%s'," +
-            " severityReason = '%s'", severity, severityReason);
+        String msg = String.format("Internal client notify, severity = '%s',"
+            + " severityReason = '%s'", severity, severityReason);
         Logger.info(msg);
 
         @SuppressWarnings("WrongConstant")
@@ -1196,15 +1208,15 @@ public class Client extends Observable implements Observer {
             errorReportApiClient.postReport(config.getEndpoint(), report,
                 config.getErrorApiHeaders());
             Logger.info("Sent 1 new error to Bugsnag");
-        } catch (NetworkException e) {
+        } catch (NetworkException exception) {
             Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
 
             // Save error to disk for later sending
             errorStore.write(error);
-        } catch (BadResponseException e) {
+        } catch (BadResponseException exception) {
             Logger.info("Bad response when sending data to Bugsnag");
-        } catch (Exception e) {
-            Logger.warn("Problem sending error to Bugsnag", e);
+        } catch (Exception exception) {
+            Logger.warn("Problem sending error to Bugsnag", exception);
         }
     }
 
@@ -1258,6 +1270,7 @@ public class Client extends Observable implements Observer {
      *
      * @throws Throwable if something goes wrong
      */
+    @SuppressWarnings("checkstyle:NoFinalizer")
     protected void finalize() throws Throwable {
         if (eventReceiver != null) {
             try {
@@ -1271,8 +1284,8 @@ public class Client extends Observable implements Observer {
 
     private static void warnIfNotAppContext(Context androidContext) {
         if (!(androidContext instanceof Application)) {
-            Logger.warn("Warning - Non-Application context detected! Please ensure that you are " +
-                "initializing Bugsnag from a custom Application class.");
+            Logger.warn("Warning - Non-Application context detected! Please ensure that you are "
+                + "initializing Bugsnag from a custom Application class.");
         }
     }
 

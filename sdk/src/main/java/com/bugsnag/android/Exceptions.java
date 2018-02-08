@@ -52,11 +52,12 @@ class Exceptions implements JsonStream.Streamable {
                                    String name,
                                    String message,
                                    StackTraceElement[] frames) throws IOException {
-        Stacktrace stacktrace = new Stacktrace(config, frames);
         writer.beginObject();
         writer.name("errorClass").value(name);
         writer.name("message").value(message);
         writer.name("type").value(config.defaultExceptionType);
+
+        Stacktrace stacktrace = new Stacktrace(config, frames);
         writer.name("stacktrace").value(stacktrace);
         writer.endObject();
     }

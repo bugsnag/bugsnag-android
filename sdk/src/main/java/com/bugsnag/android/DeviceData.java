@@ -115,8 +115,9 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static Float getScreenDensity(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
-        if (resources == null)
+        if (resources == null) {
             return null;
+        }
         return resources.getDisplayMetrics().density;
     }
 
@@ -126,8 +127,9 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static Integer getScreenDensityDpi(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
-        if (resources == null)
+        if (resources == null) {
             return null;
+        }
         return resources.getDisplayMetrics().densityDpi;
     }
 
@@ -275,8 +277,8 @@ class DeviceData extends DeviceDataSummary {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
-            return batteryStatus.getIntExtra("level", -1) /
-                (float) batteryStatus.getIntExtra("scale", -1);
+            return batteryStatus.getIntExtra("level", -1)
+                / (float) batteryStatus.getIntExtra("scale", -1);
         } catch (Exception exception) {
             Logger.warn("Could not get batteryLevel");
         }
@@ -293,8 +295,8 @@ class DeviceData extends DeviceDataSummary {
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
             int status = batteryStatus.getIntExtra("status", -1);
-            return (status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                status == BatteryManager.BATTERY_STATUS_FULL);
+            return (status == BatteryManager.BATTERY_STATUS_CHARGING
+                || status == BatteryManager.BATTERY_STATUS_FULL);
         } catch (Exception exception) {
             Logger.warn("Could not get charging status");
         }
@@ -344,8 +346,8 @@ class DeviceData extends DeviceDataSummary {
                 return "none";
             }
         } catch (Exception exception) {
-            Logger.warn("Could not get network access information, we " +
-                "recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
+            Logger.warn("Could not get network access information, we "
+                + "recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
         }
         return null;
     }
@@ -355,7 +357,7 @@ class DeviceData extends DeviceDataSummary {
      */
     @NonNull
     private String getTime() {
-        return DateUtils.toISO8601(new Date());
+        return DateUtils.toIso8601(new Date());
     }
 
 }

@@ -126,8 +126,8 @@ class ErrorStore extends FileStore<Error> {
                 errorFile.deleteOnExit();
             }
         } catch (NetworkException exception) {
-            Logger.warn("Could not send previously saved error(s)" +
-                " to Bugsnag, will try again later", exception);
+            Logger.warn("Could not send previously saved error(s)"
+                + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
             Logger.warn("Problem sending unsent error from disk", exception);
             if (!errorFile.delete()) {

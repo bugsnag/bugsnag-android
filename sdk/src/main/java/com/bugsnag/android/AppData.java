@@ -88,8 +88,8 @@ class AppData extends AppDataSummary {
             ActivityManager.RunningTaskInfo runningTask = tasks.get(0);
             return runningTask.topActivity.getClassName();
         } catch (Exception exception) {
-            Logger.warn("Could not get active screen information," +
-                " we recommend granting the 'android.permission.GET_TASKS' permission");
+            Logger.warn("Could not get active screen information,"
+                + " we recommend granting the 'android.permission.GET_TASKS' permission");
         }
         return null;
     }

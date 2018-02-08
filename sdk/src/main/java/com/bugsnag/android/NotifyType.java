@@ -26,6 +26,11 @@ public enum NotifyType {
         return intValue;
     }
 
+    /**
+     * Maps the notifyType from an int
+     * @param intValue the int
+     * @return the notifytype
+     */
     @Nullable
     public static NotifyType fromInt(@Nullable Integer intValue) {
         if (intValue != null) {

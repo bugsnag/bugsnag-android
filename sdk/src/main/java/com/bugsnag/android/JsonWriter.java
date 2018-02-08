@@ -123,6 +123,7 @@ import java.util.List;
  * @author Jesse Wilson
  * @since 1.6
  */
+@SuppressWarnings({"checkstyle:AvoidEscapedUnicodeCharacters", "checkstyle:IllegalTokenText"})
 public class JsonWriter implements Closeable {
 
     /**

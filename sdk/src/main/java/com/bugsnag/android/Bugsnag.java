@@ -16,6 +16,7 @@ import java.util.Map;
  *
  * @see Client
  */
+@SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
 public final class Bugsnag {
 
     @Nullable
@@ -129,10 +130,11 @@ public final class Bugsnag {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param buildUUID the buildUUID.
+     * @param buildUuid the buildUuid.
      */
-    public static void setBuildUUID(final String buildUUID) {
-        getClient().setBuildUUID(buildUUID);
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public static void setBuildUUID(final String buildUuid) {
+        getClient().setBuildUUID(buildUuid);
     }
 
     /**
@@ -465,6 +467,8 @@ public final class Bugsnag {
      * to send and modify error reports
      */
     @Deprecated
+    @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
+
     public static void notify(@NonNull String name, @NonNull String message, String context,
                               @NonNull StackTraceElement[] stacktrace, Severity severity,
                               @NonNull MetaData metaData) {
@@ -623,8 +627,8 @@ public final class Bugsnag {
     @NonNull
     public static Client getClient() {
         if (client == null) {
-            throw new IllegalStateException("You must call Bugsnag.init before any" +
-                " other Bugsnag methods");
+            throw new IllegalStateException("You must call Bugsnag.init before any"
+                + " other Bugsnag methods");
         }
 
         return client;
