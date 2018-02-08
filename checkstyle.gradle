@@ -1,0 +1,12 @@
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = "6.16"
+}
+
+task("checkstyle", type: Checkstyle) {
+    configFile rootProject.file("config/checkstyle/checkstyle.xml")
+    source "src/main/java"
+    include "**/*.java"
+    classpath = files()
+}

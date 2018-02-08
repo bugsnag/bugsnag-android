@@ -21,7 +21,9 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
     @Override
     public void postReport(String urlString,
                            Report report,
-                           Map<String, String> headers) throws NetworkException, BadResponseException {
+                           Map<String, String> headers)
+        throws NetworkException, BadResponseException {
+
         int status = makeRequest(urlString, report, headers);
 
         if (status / 100 != 2) {
@@ -34,7 +36,9 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
     @Override
     public void postSessionTrackingPayload(String urlString,
                                            SessionTrackingPayload payload,
-                                           Map<String, String> headers) throws NetworkException, BadResponseException {
+                                           Map<String, String> headers)
+        throws NetworkException, BadResponseException {
+
         int status = makeRequest(urlString, payload, headers);
 
         if (status != 202) {
@@ -75,8 +79,8 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
 
             // End the request, get the response code
             return conn.getResponseCode();
-        } catch (IOException e) {
-            throw new NetworkException(urlString, e);
+        } catch (IOException exception) {
+            throw new NetworkException(urlString, exception);
         } finally {
             IOUtils.close(conn);
         }
@@ -85,8 +89,10 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
     private void checkHasNetworkConnection(String urlString) throws NetworkException {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
-        if (!(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())) { // conserve device battery by avoiding radio use
-            throw new NetworkException(urlString, new RuntimeException("No network connection available"));
+        // conserve device battery by avoiding radio use
+        if (!(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())) {
+            RuntimeException rex = new RuntimeException("No network connection available");
+            throw new NetworkException(urlString, rex);
         }
     }
 

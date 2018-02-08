@@ -147,3 +147,5 @@ bintray {
         }
     }
 }
+
+apply from: "../checkstyle.gradle"

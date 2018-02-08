@@ -83,7 +83,7 @@ public class Error implements JsonStream.Streamable {
         if (session != null) {
             writer.name("session").beginObject();
             writer.name("id").value(session.getId());
-            writer.name("startedAt").value(DateUtils.toISO8601(session.getStartedAt()));
+            writer.name("startedAt").value(DateUtils.toIso8601(session.getStartedAt()));
 
             writer.name("events").beginObject();
             writer.name("handled").value(session.getHandledCount());
@@ -170,6 +170,10 @@ public class Error implements JsonStream.Streamable {
      */
     public void setUser(String id, String email, String name) {
         this.user = new User(id, email, name);
+    }
+
+    void setUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -310,10 +314,6 @@ public class Error implements JsonStream.Streamable {
         this.deviceData = deviceData;
     }
 
-    void setUser(User user) {
-        this.user = user;
-    }
-
     void setBreadcrumbs(Breadcrumbs breadcrumbs) {
         this.breadcrumbs = breadcrumbs;
     }
@@ -344,7 +344,8 @@ public class Error implements JsonStream.Streamable {
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
 
-            if (session != null  && !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
+            if (session != null
+                && !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
                 this.session = null;
             } else {
                 this.session = session;
@@ -379,7 +380,8 @@ public class Error implements JsonStream.Streamable {
         Error build() {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
-            Error error = new Error(config, exception, handledState, severity, session, threadState);
+            Error error = new Error(config, exception, handledState,
+                severity, session, threadState);
 
             if (metaData != null) {
                 error.setMetaData(metaData);

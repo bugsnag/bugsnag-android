@@ -22,9 +22,9 @@ final class Logger {
         }
     }
 
-    static void warn(String message, Throwable e) {
+    static void warn(String message, Throwable throwable) {
         if (enabled) {
-            Log.w(LOG_TAG, message, e);
+            Log.w(LOG_TAG, message, throwable);
         }
     }
 

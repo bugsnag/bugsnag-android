@@ -25,8 +25,8 @@ class Async {
         private final AtomicInteger count = new AtomicInteger(1);
 
         @NonNull
-        public Thread newThread(@NonNull Runnable r) {
-            return new Thread(r, "Bugsnag Thread #" + count.getAndIncrement());
+        public Thread newThread(@NonNull Runnable runnable) {
+            return new Thread(runnable, "Bugsnag Thread #" + count.getAndIncrement());
         }
     };
     private static final Executor EXECUTOR = new ThreadPoolExecutor(

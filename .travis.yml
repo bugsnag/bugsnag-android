@@ -36,7 +36,7 @@ before_script:
   - while [[ `adb shell pm path android` == 'Error'* ]]; do sleep 2; done
   - adb shell input keyevent 82 &
 
-script: ./gradlew lint createDebugCoverageReport coveralls
+script: ./gradlew lint checkstyle createDebugCoverageReport coveralls
 
 sudo: false
 

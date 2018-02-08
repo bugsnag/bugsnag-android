@@ -1,9 +1,11 @@
 package com.bugsnag.android.testharness;
 
-import android.app.Application;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
+
+import android.app.Application;
+
 
 public class TestHarnessApp extends Application {
 

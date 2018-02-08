@@ -15,6 +15,11 @@ public class JsonStream extends JsonWriter {
 
     private final Writer out;
 
+    /**
+     * Constructs a JSONStream
+     *
+     * @param out the writer
+     */
     public JsonStream(Writer out) {
         super(out);
         setSerializeNulls(false);

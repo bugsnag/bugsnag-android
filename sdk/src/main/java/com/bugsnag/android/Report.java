@@ -81,6 +81,7 @@ public class Report implements JsonStream.Streamable {
         notifier.setName(name);
     }
 
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setNotifierURL(@NonNull String url) {
         notifier.setURL(url);
     }

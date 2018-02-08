@@ -33,22 +33,26 @@ public class NativeInterface {
         configureClientObservers(client);
     }
 
+    /**
+     * Sets up observers for the NDK client
+     * @param client the client
+     */
     public static void configureClientObservers(@NonNull Client client) {
 
         // Ensure that the bugsnag observer is registered
         // Should only happen if the NDK library is present
         try {
             String className = "com.bugsnag.android.ndk.BugsnagObserver";
-            Class c = Class.forName(className);
-            Observer o = (Observer) c.newInstance();
-            client.addObserver(o);
-        } catch (ClassNotFoundException e) {
+            Class clz = Class.forName(className);
+            Observer observer = (Observer) clz.newInstance();
+            client.addObserver(observer);
+        } catch (ClassNotFoundException exception) {
             // ignore this one, will happen if the NDK plugin is not present
             Logger.info("Bugsnag NDK integration not available");
-        } catch (InstantiationException e) {
-            Logger.warn("Failed to instantiate NDK observer", e);
-        } catch (IllegalAccessException e) {
-            Logger.warn("Could not access NDK observer", e);
+        } catch (InstantiationException exception) {
+            Logger.warn("Failed to instantiate NDK observer", exception);
+        } catch (IllegalAccessException exception) {
+            Logger.warn("Could not access NDK observer", exception);
         }
 
         // Should make NDK components configure
@@ -95,6 +99,7 @@ public class NativeInterface {
         return getClient().appData.versionCode;
     }
 
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public static String getBuildUUID() {
         return getClient().config.getBuildUUID();
     }
@@ -183,11 +188,22 @@ public class NativeInterface {
         return getClient().config.getFilters();
     }
 
+    /**
+     * Retrieves the release stages
+     * @return the release stages
+     */
     @Nullable
     public static String[] getReleaseStages() {
         return getClient().config.getNotifyReleaseStages();
     }
 
+    /**
+     * Sets the user
+     *
+     * @param id id
+     * @param email email
+     * @param name name
+     */
     public static void setUser(final String id,
                                final String email,
                                final String name) {
@@ -210,6 +226,15 @@ public class NativeInterface {
         getClient().config.getMetaData().addToTab(tab, key, value, false);
     }
 
+    /**
+     * Notifies using the Android SDK
+     *
+     * @param name the error name
+     * @param message the error message
+     * @param severity the error severity
+     * @param stacktrace a stacktrace
+     * @param metaData any metadata
+     */
     public static void notify(@NonNull final String name,
                               @NonNull final String message,
                               final Severity severity,
@@ -219,8 +244,9 @@ public class NativeInterface {
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(severity);
-                report.getError().config.defaultExceptionType = "c";
+                Error error = report.getError();
+                error.setSeverity(severity);
+                error.config.defaultExceptionType = "c";
 
                 for (String tab : metaData.keySet()) {
 
@@ -230,10 +256,10 @@ public class NativeInterface {
                         Map map = (Map) value;
 
                         for (Object key : map.keySet()) {
-                            report.getError().getMetaData().addToTab(tab, key.toString(), map.get(key));
+                            error.getMetaData().addToTab(tab, key.toString(), map.get(key));
                         }
                     } else {
-                        report.getError().getMetaData().addToTab("custom", tab, value);
+                        error.getMetaData().addToTab("custom", tab, value);
                     }
                 }
             }

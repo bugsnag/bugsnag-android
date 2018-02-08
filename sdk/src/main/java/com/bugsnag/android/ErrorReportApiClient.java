@@ -15,7 +15,8 @@ public interface ErrorReportApiClient {
     /**
      * Posts an Error Report to the Bugsnag API.
      * <p>
-     * See <a href="https://docs.bugsnag.com/api/error-reporting/">https://docs.bugsnag.com/api/error-reporting/</a>
+     * See <a href="https://docs.bugsnag.com/api/error-reporting/">
+     *     https://docs.bugsnag.com/api/error-reporting/</a>
      *
      * @param urlString the Bugsnag endpoint
      * @param report    The error report
@@ -23,6 +24,7 @@ public interface ErrorReportApiClient {
      * @throws NetworkException     if the client was unable to complete the request
      * @throws BadResponseException when a non-200 response code is received from the server
      */
-    void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException;
+    void postReport(String urlString, Report report, Map<String, String> headers)
+        throws NetworkException, BadResponseException;
 
 }

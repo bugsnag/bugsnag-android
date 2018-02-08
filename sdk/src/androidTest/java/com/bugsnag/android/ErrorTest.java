@@ -227,7 +227,7 @@ public class ErrorTest {
         assertNotNull(sessionNode);
         assertEquals(3, sessionNode.length());
         assertEquals(session.getId(), sessionNode.getString("id"));
-        assertEquals(DateUtils.toISO8601(session.getStartedAt()), sessionNode.getString("startedAt"));
+        assertEquals(DateUtils.toIso8601(session.getStartedAt()), sessionNode.getString("startedAt"));
 
         JSONObject eventsNode = sessionNode.getJSONObject("events");
         assertNotNull(eventsNode);

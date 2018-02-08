@@ -115,8 +115,9 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static Float getScreenDensity(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
-        if (resources == null)
+        if (resources == null) {
             return null;
+        }
         return resources.getDisplayMetrics().density;
     }
 
@@ -126,8 +127,9 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static Integer getScreenDensityDpi(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
-        if (resources == null)
+        if (resources == null) {
             return null;
+        }
         return resources.getDisplayMetrics().densityDpi;
     }
 
@@ -137,10 +139,13 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static String getScreenResolution(@NonNull Context appContext) {
         Resources resources = appContext.getResources();
-        if (resources == null)
+        if (resources == null) {
             return null;
+        }
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        return String.format(Locale.US, "%dx%d", Math.max(metrics.widthPixels, metrics.heightPixels), Math.min(metrics.widthPixels, metrics.heightPixels));
+        int max = Math.max(metrics.widthPixels, metrics.heightPixels);
+        int min = Math.min(metrics.widthPixels, metrics.heightPixels);
+        return String.format(Locale.US, "%dx%d", max, min);
     }
 
     /**
@@ -216,13 +221,15 @@ class DeviceData extends DeviceDataSummary {
     private static Long getFreeDisk() {
         try {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-            long externalBytesAvailable = (long) externalStat.getBlockSize() * (long) externalStat.getBlockCount();
+            long externalBytesAvailable =
+                (long) externalStat.getBlockSize() * (long) externalStat.getBlockCount();
 
             StatFs internalStat = new StatFs(Environment.getDataDirectory().getPath());
-            long internalBytesAvailable = (long) internalStat.getBlockSize() * (long) internalStat.getBlockCount();
+            long internalBytesAvailable =
+                (long) internalStat.getBlockSize() * (long) internalStat.getBlockCount();
 
             return Math.min(internalBytesAvailable, externalBytesAvailable);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get freeDisk");
         }
         return null;
@@ -233,10 +240,11 @@ class DeviceData extends DeviceDataSummary {
      */
     @NonNull
     private static Long getFreeMemory() {
-        if (Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
-            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
+        Runtime runtime = Runtime.getRuntime();
+        if (runtime.maxMemory() != Long.MAX_VALUE) {
+            return runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
         } else {
-            return Runtime.getRuntime().freeMemory();
+            return runtime.freeMemory();
         }
     }
 
@@ -269,8 +277,9 @@ class DeviceData extends DeviceDataSummary {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
-            return batteryStatus.getIntExtra("level", -1) / (float) batteryStatus.getIntExtra("scale", -1);
-        } catch (Exception e) {
+            return batteryStatus.getIntExtra("level", -1)
+                / (float) batteryStatus.getIntExtra("scale", -1);
+        } catch (Exception exception) {
             Logger.warn("Could not get batteryLevel");
         }
         return null;
@@ -286,8 +295,9 @@ class DeviceData extends DeviceDataSummary {
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
             int status = batteryStatus.getIntExtra("status", -1);
-            return (status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL);
-        } catch (Exception e) {
+            return (status == BatteryManager.BATTERY_STATUS_CHARGING
+                || status == BatteryManager.BATTERY_STATUS_FULL);
+        } catch (Exception exception) {
             Logger.warn("Could not get charging status");
         }
         return null;
@@ -300,13 +310,14 @@ class DeviceData extends DeviceDataSummary {
     private static String getLocationStatus(@NonNull Context appContext) {
         try {
             ContentResolver cr = appContext.getContentResolver();
-            String providersAllowed = Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            String providersAllowed =
+                Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             if (providersAllowed != null && providersAllowed.length() > 0) {
                 return "allowed";
             } else {
                 return "disallowed";
             }
-        } catch (Exception e) {
+        } catch (Exception exception) {
             Logger.warn("Could not get locationStatus");
         }
         return null;
@@ -318,7 +329,8 @@ class DeviceData extends DeviceDataSummary {
     @Nullable
     private static String getNetworkAccess(@NonNull Context appContext) {
         try {
-            ConnectivityManager cm = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm =
+                (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 if (activeNetwork.getType() == 1) {
@@ -333,8 +345,9 @@ class DeviceData extends DeviceDataSummary {
             } else {
                 return "none";
             }
-        } catch (Exception e) {
-            Logger.warn("Could not get network access information, we recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
+        } catch (Exception exception) {
+            Logger.warn("Could not get network access information, we "
+                + "recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
         }
         return null;
     }
@@ -344,7 +357,7 @@ class DeviceData extends DeviceDataSummary {
      */
     @NonNull
     private String getTime() {
-        return DateUtils.toISO8601(new Date());
+        return DateUtils.toIso8601(new Date());
     }
 
 }

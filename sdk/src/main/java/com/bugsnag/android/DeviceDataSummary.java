@@ -47,13 +47,15 @@ class DeviceDataSummary implements JsonStream.Streamable {
      */
     @Nullable
     static Boolean isRooted() {
-        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys"))
+        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys")) {
             return true;
+        }
 
         try {
             for (String candidate : ROOT_INDICATORS) {
-                if (new File(candidate).exists())
+                if (new File(candidate).exists()) {
                     return true;
+                }
             }
         } catch (Exception ignore) {
             return null;

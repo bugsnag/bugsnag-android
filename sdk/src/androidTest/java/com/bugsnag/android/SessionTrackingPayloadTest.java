@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
@@ -56,7 +54,7 @@ public class SessionTrackingPayloadTest {
         JSONObject sessionNode = sessions.getJSONObject(0);
         assertNotNull(sessionNode);
         assertEquals("test", sessionNode.getString("id"));
-        assertEquals(DateUtils.toISO8601(session.getStartedAt()), sessionNode.getString("startedAt"));
+        assertEquals(DateUtils.toIso8601(session.getStartedAt()), sessionNode.getString("startedAt"));
         assertNotNull(sessionNode.getJSONObject("user"));
 
         assertNotNull(rootNode.getJSONObject("notifier"));
