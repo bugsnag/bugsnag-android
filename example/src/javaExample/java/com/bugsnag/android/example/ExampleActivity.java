@@ -1,12 +1,6 @@
 package com.bugsnag.android.example;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Toast;
+import static android.widget.Toast.LENGTH_SHORT;
 
 import com.bugsnag.android.BeforeNotify;
 import com.bugsnag.android.BreadcrumbType;
@@ -18,12 +12,18 @@ import com.bugsnag.android.Report;
 import com.bugsnag.android.Severity;
 import com.bugsnag.android.other.CrashyClass;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Toast;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class ExampleActivity extends AppCompatActivity {
 
@@ -78,8 +78,8 @@ public class ExampleActivity extends AppCompatActivity {
     public void crashHandled(View view) {
         try {
             throw new RuntimeException("Non-Fatal Crash");
-        } catch (RuntimeException e) {
-            Bugsnag.notify(e);
+        } catch (RuntimeException exception) {
+            Bugsnag.notify(exception);
         }
         displayToastNotification();
     }
@@ -89,8 +89,8 @@ public class ExampleActivity extends AppCompatActivity {
      * exceptions which occur often but are not visible to the user.
      */
     public void crashWithCustomSeverity(View view) {
-        RuntimeException e = new RuntimeException("Error Report with altered Severity");
-        Bugsnag.notify(e, Severity.INFO);
+        RuntimeException exception = new RuntimeException("Error Report with altered Severity");
+        Bugsnag.notify(exception, Severity.INFO);
         displayToastNotification();
     }
 
@@ -100,8 +100,8 @@ public class ExampleActivity extends AppCompatActivity {
      */
     public void crashWithUserDetails(View view) {
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs");
-        RuntimeException e = new RuntimeException("Error Report with User Info");
-        Bugsnag.notify(e);
+        RuntimeException exception = new RuntimeException("Error Report with User Info");
+        Bugsnag.notify(exception);
         displayToastNotification();
     }
 
@@ -111,10 +111,10 @@ public class ExampleActivity extends AppCompatActivity {
      * with {@link Bugsnag#beforeNotify(BeforeNotify)} that adds metadata to the report.
      */
     public void crashWithMetadata(View view) {
-        RuntimeException e = new RuntimeException("Error report with Additional Metadata");
+        RuntimeException exception = new RuntimeException("Error report with Additional Metadata");
         MetaData metaData = generateUserMetaData();
 
-        Bugsnag.notify(e, Severity.ERROR, metaData);
+        Bugsnag.notify(exception, Severity.ERROR, metaData);
         displayToastNotification();
     }
 
@@ -130,8 +130,8 @@ public class ExampleActivity extends AppCompatActivity {
         metadata.put("reason", "Incorrect password");
         Bugsnag.leaveBreadcrumb("WebAuthFailure", BreadcrumbType.ERROR, metadata);
 
-        RuntimeException e = new RuntimeException("Error Report with Breadcrumbs");
-        Bugsnag.notify(e);
+        RuntimeException exception = new RuntimeException("Error Report with Breadcrumbs");
+        Bugsnag.notify(exception);
         displayToastNotification();
     }
 
@@ -140,9 +140,9 @@ public class ExampleActivity extends AppCompatActivity {
      * to be modified before it is sent.
      */
     public void crashWithCallback(View view) {
-        RuntimeException e = new RuntimeException("Customized Error Report");
+        RuntimeException exception = new RuntimeException("Customized Error Report");
 
-        Bugsnag.notify(e, new Callback() {
+        Bugsnag.notify(exception, new Callback() {
             @Override
             public void beforeNotify(Report report) { // modify the report
                 report.getError().setMetaData(generateUserMetaData());
@@ -165,6 +165,11 @@ public class ExampleActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Reads the android bugsnag docs
+     * 
+     * @param view the XML layout view
+     */
     public void readDocs(View view) {
         Uri uri = Uri.parse("https://docs.bugsnag.com/platforms/android/sdk/");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -172,13 +177,15 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     private MetaData generateUserMetaData() {
-        List<String> completedLevels = Arrays.asList("Level 1 - The Beginning", "Level 2 - Tower Defence");
         Map<String, String> userDetails = new HashMap<>();
         userDetails.put("playerName", "Joe Bloggs the Invincible");
 
         MetaData metaData = new MetaData();
         metaData.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true);
         metaData.addToTab("CustomMetaData", "UserDetails", userDetails);
+
+        List<String> completedLevels =
+            Arrays.asList("Level 1 - The Beginning", "Level 2 - Tower Defence");
         metaData.addToTab("CustomMetaData", "CompletedLevels", completedLevels);
         return metaData;
     }

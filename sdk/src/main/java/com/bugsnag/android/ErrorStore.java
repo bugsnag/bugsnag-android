@@ -43,7 +43,8 @@ class ErrorStore extends FileStore<Error> {
     };
 
     ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+        super(config, appContext,
+            "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
     }
 
     void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
@@ -77,7 +78,7 @@ class ErrorStore extends FileStore<Error> {
                 try {
                     Thread.sleep(LAUNCH_CRASH_POLL_MS);
                     waitMs += LAUNCH_CRASH_POLL_MS;
-                } catch (InterruptedException e) {
+                } catch (InterruptedException exception) {
                     Logger.warn("Interrupted while waiting for launch crash report request");
                 }
             }
@@ -100,7 +101,8 @@ class ErrorStore extends FileStore<Error> {
                     Collection<File> storedFiles = findStoredFiles();
 
                     if (!storedFiles.isEmpty()) {
-                        Logger.info(String.format(Locale.US, "Sending %d saved error(s) to Bugsnag", storedFiles.size()));
+                        Logger.info(String.format(Locale.US,
+                            "Sending %d saved error(s) to Bugsnag", storedFiles.size()));
 
                         for (File errorFile : storedFiles) {
                             flushErrorReport(errorFile, errorReportApiClient);
@@ -108,7 +110,7 @@ class ErrorStore extends FileStore<Error> {
                     }
                 }
             });
-        } catch (RejectedExecutionException e) {
+        } catch (RejectedExecutionException exception) {
             Logger.warn("Failed to flush all on-disk errors, retaining unsent errors for later.");
         }
     }
@@ -116,16 +118,18 @@ class ErrorStore extends FileStore<Error> {
     private void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
         try {
             Report report = new Report(config.getApiKey(), errorFile);
-            errorReportApiClient.postReport(config.getEndpoint(), report, config.getErrorApiHeaders());
+            errorReportApiClient.postReport(config.getEndpoint(), report,
+                config.getErrorApiHeaders());
 
             Logger.info("Deleting sent error file " + errorFile.getName());
             if (!errorFile.delete()) {
                 errorFile.deleteOnExit();
             }
-        } catch (NetworkException e) {
-            Logger.warn("Could not send previously saved error(s) to Bugsnag, will try again later", e);
-        } catch (Exception e) {
-            Logger.warn("Problem sending unsent error from disk", e);
+        } catch (NetworkException exception) {
+            Logger.warn("Could not send previously saved error(s)"
+                + " to Bugsnag, will try again later", exception);
+        } catch (Exception exception) {
+            Logger.warn("Problem sending unsent error from disk", exception);
             if (!errorFile.delete()) {
                 errorFile.deleteOnExit();
             }
@@ -153,7 +157,8 @@ class ErrorStore extends FileStore<Error> {
     String getFilename(Error error) {
         boolean isStartupCrash = isStartupCrash(AppData.getDurationMs());
         String suffix = isStartupCrash ? STARTUP_CRASH : "";
-        return String.format(Locale.US, "%s%d_%s%s.json",  storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
+        return String.format(Locale.US, "%s%d_%s%s.json",
+            storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
     }
 
     boolean isStartupCrash(long durationMs) {

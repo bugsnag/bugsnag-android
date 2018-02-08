@@ -41,6 +41,7 @@ public class Notifier implements JsonStream.Streamable {
         this.version = version;
     }
 
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setURL(@NonNull String url) {
         this.url = url;
     }

@@ -25,7 +25,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
-    private final Set<String> foregroundActivities = new LinkedHashSet<>();
+    private final Set<String>
+        foregroundActivities = new LinkedHashSet<>();
     private final Configuration configuration;
     private final long timeoutMs;
     private final Client client;
@@ -78,9 +79,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private void trackSessionIfNeeded(final Session session) {
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
 
-        if (notifyForRelease &&
-            (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured()) &&
-            session.isTracked().compareAndSet(false, true)) {
+        if (notifyForRelease
+            && (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured())
+            && session.isTracked().compareAndSet(false, true)) {
             try {
                 final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
@@ -89,19 +90,21 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
-                        SessionTrackingPayload payload = new SessionTrackingPayload(session, client.appData);
+                        SessionTrackingPayload payload =
+                            new SessionTrackingPayload(session, client.appData);
 
                         try {
-                            apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
-                        } catch (NetworkException e) { // store for later sending
+                            apiClient.postSessionTrackingPayload(endpoint, payload,
+                                configuration.getSessionApiHeaders());
+                        } catch (NetworkException exception) { // store for later sending
                             Logger.info("Failed to post session payload");
                             sessionStore.write(session);
-                        } catch (BadResponseException e) { // drop bad data
-                            Logger.warn("Invalid session tracking payload", e);
+                        } catch (BadResponseException exception) { // drop bad data
+                            Logger.warn("Invalid session tracking payload", exception);
                         }
                     }
                 });
-            } catch (RejectedExecutionException e) {
+            } catch (RejectedExecutionException exception) {
                 // This is on the current thread but there isn't much else we can do
                 sessionStore.write(session);
             }
@@ -153,17 +156,19 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 storedFiles = sessionStore.findStoredFiles();
 
                 if (!storedFiles.isEmpty()) {
-                    SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, client.appData);
+                    SessionTrackingPayload payload =
+                        new SessionTrackingPayload(storedFiles, client.appData);
 
                     //FUTURE:SM Reduce duplication here and above
                     try {
                         final String endpoint = configuration.getSessionEndpoint();
-                        apiClient.postSessionTrackingPayload(endpoint, payload, configuration.getSessionApiHeaders());
+                        apiClient.postSessionTrackingPayload(endpoint, payload,
+                            configuration.getSessionApiHeaders());
                         deleteStoredFiles(storedFiles);
-                    } catch (NetworkException e) { // store for later sending
+                    } catch (NetworkException exception) { // store for later sending
                         Logger.info("Failed to post stored session payload");
-                    } catch (BadResponseException e) { // drop bad data
-                        Logger.warn("Invalid session tracking payload", e);
+                    } catch (BadResponseException exception) { // drop bad data
+                        Logger.warn("Invalid session tracking payload", exception);
                         deleteStoredFiles(storedFiles);
                     }
                 }
@@ -268,9 +273,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             long noActivityRunningForMs = nowMs - activityLastStoppedAtMs.get();
 
             //FUTURE:SM Race condition between isEmpty and put
-            if (foregroundActivities.isEmpty() &&
-                noActivityRunningForMs >= timeoutMs &&
-                configuration.shouldAutoCaptureSessions()) {
+            if (foregroundActivities.isEmpty()
+                && noActivityRunningForMs >= timeoutMs
+                && configuration.shouldAutoCaptureSessions()) {
 
                 activityFirstStartedAtMs.set(nowMs);
                 startNewSession(new Date(nowMs), client.user, true);

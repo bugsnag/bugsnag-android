@@ -53,7 +53,9 @@ class Session implements JsonStream.Streamable {
         unhandledCount.incrementAndGet();
     }
 
-    AtomicBoolean isTracked() { return tracked; }
+    AtomicBoolean isTracked() {
+        return tracked;
+    }
 
     boolean isAutoCaptured() {
         return autoCaptured.get();
@@ -67,7 +69,7 @@ class Session implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject()
             .name("id").value(id)
-            .name("startedAt").value(DateUtils.toISO8601(startedAt));
+            .name("startedAt").value(DateUtils.toIso8601(startedAt));
 
         if (user != null) {
             writer.name("user").value(user);

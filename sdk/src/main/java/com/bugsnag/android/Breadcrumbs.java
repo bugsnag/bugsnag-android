@@ -18,10 +18,10 @@ class Breadcrumbs implements JsonStream.Streamable {
         private static final int MAX_MESSAGE_LENGTH = 140;
         private static final String DEFAULT_NAME = "manual";
         private static final String MESSAGE_METAKEY = "message";
-        private final String TIMESTAMP_KEY = "timestamp";
-        private final String NAME_KEY = "name";
-        private final String METADATA_KEY = "metaData";
-        private final String TYPE_KEY = "type";
+        private static final String TIMESTAMP_KEY = "timestamp";
+        private static final String NAME_KEY = "name";
+        private static final String METADATA_KEY = "metaData";
+        private static final String TYPE_KEY = "type";
         final String timestamp;
         @NonNull
         final String name;
@@ -31,14 +31,17 @@ class Breadcrumbs implements JsonStream.Streamable {
         final Map<String, String> metadata;
 
         Breadcrumb(@NonNull String message) {
-            this.timestamp = DateUtils.toISO8601(new Date());
+            this.timestamp = DateUtils.toIso8601(new Date());
             this.type = BreadcrumbType.MANUAL;
-            this.metadata = Collections.singletonMap(MESSAGE_METAKEY, message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH)));
+            String msg = message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH));
+            this.metadata = Collections.singletonMap(MESSAGE_METAKEY, msg);
             this.name = DEFAULT_NAME;
         }
 
-        Breadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
-            this.timestamp = DateUtils.toISO8601(new Date());
+        Breadcrumb(@NonNull String name,
+                   @NonNull BreadcrumbType type,
+                   @NonNull Map<String, String> metadata) {
+            this.timestamp = DateUtils.toIso8601(new Date());
             this.type = type;
             this.metadata = metadata;
             this.name = name;
@@ -94,7 +97,9 @@ class Breadcrumbs implements JsonStream.Streamable {
         addToStore(new Breadcrumb(message));
     }
 
-    void add(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
+    void add(@NonNull String name,
+             @NonNull BreadcrumbType type,
+             @NonNull Map<String, String> metadata) {
         addToStore(new Breadcrumb(name, type, metadata));
     }
 
