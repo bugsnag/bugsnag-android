@@ -130,7 +130,7 @@ public class ErrorStoreTest {
 
     static void validateReportPayload(JSONObject payload) throws JSONException {
         assertNotNull(payload);
-        assertEquals(3, payload.length());
+        assertEquals(4, payload.length());
 
         JSONArray events = payload.getJSONArray("events");
         assertNotNull(events);
