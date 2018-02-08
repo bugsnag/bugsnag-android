@@ -130,11 +130,11 @@ public final class Bugsnag {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param buildUUID the buildUUID.
+     * @param buildUuid the buildUuid.
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public static void setBuildUUID(final String buildUUID) {
-        getClient().setBuildUUID(buildUUID);
+    public static void setBuildUUID(final String buildUuid) {
+        getClient().setBuildUUID(buildUuid);
     }
 
     /**

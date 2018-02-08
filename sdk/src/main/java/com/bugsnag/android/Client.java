@@ -400,11 +400,11 @@ public class Client extends Observable implements Observer {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param buildUUID the buildUUID.
+     * @param buildUuid the buildUuid.
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(final String buildUUID) {
-        config.setBuildUUID(buildUUID);
+    public void setBuildUUID(final String buildUuid) {
+        config.setBuildUUID(buildUuid);
     }
 
 
