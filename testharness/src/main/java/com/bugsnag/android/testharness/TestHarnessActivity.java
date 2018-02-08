@@ -1,9 +1,10 @@
 package com.bugsnag.android.testharness;
 
+import com.bugsnag.android.Bugsnag;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.bugsnag.android.Bugsnag;
 
 public class TestHarnessActivity extends AppCompatActivity {
 

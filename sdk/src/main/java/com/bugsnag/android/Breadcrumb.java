@@ -37,8 +37,10 @@ public final class Breadcrumb implements JsonStream.Streamable {
             message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH))));
     }
 
-    Breadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
-        this.timestamp = DateUtils.toISO8601(new Date());
+    Breadcrumb(@NonNull String name,
+               @NonNull BreadcrumbType type,
+               @NonNull Map<String, String> metadata) {
+        this.timestamp = DateUtils.toIso8601(new Date());
         this.type = type;
         this.metadata = metadata;
         this.name = name;

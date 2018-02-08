@@ -16,6 +16,7 @@ import java.util.Map;
  *
  * @see Client
  */
+@SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
 public final class Bugsnag {
 
     @Nullable
@@ -58,7 +59,9 @@ public final class Bugsnag {
      * @param enableExceptionHandler should we automatically handle uncaught exceptions?
      */
     @NonNull
-    public static Client init(@NonNull Context androidContext, @Nullable String apiKey, boolean enableExceptionHandler) {
+    public static Client init(@NonNull Context androidContext,
+                              @Nullable String apiKey,
+                              boolean enableExceptionHandler) {
         client = new Client(androidContext, apiKey, enableExceptionHandler);
         NativeInterface.configureClientObservers(client);
         return client;
@@ -127,10 +130,11 @@ public final class Bugsnag {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param buildUUID the buildUUID.
+     * @param buildUuid the buildUuid.
      */
-    public static void setBuildUUID(final String buildUUID) {
-        getClient().setBuildUUID(buildUUID);
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public static void setBuildUUID(final String buildUuid) {
+        getClient().setBuildUUID(buildUuid);
     }
 
     /**
@@ -388,7 +392,10 @@ public final class Bugsnag {
      * @param callback   callback invoked on the generated error report for
      *                   additional modification
      */
-    public static void notify(@NonNull String name, @NonNull String message, @NonNull StackTraceElement[] stacktrace, Callback callback) {
+    public static void notify(@NonNull String name,
+                              @NonNull String message,
+                              @NonNull StackTraceElement[] stacktrace,
+                              Callback callback) {
         getClient().notify(name, message, stacktrace, callback);
     }
 
@@ -408,8 +415,7 @@ public final class Bugsnag {
      *
      * @param exception the exception to send to Bugsnag
      * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)}
-     * to send and modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
     public static void notify(@NonNull final Throwable exception,
                               @NonNull final MetaData metaData) {
@@ -428,8 +434,7 @@ public final class Bugsnag {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)}
-     * to send and modify error reports
+     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
     @Deprecated
     public static void notify(@NonNull final Throwable exception, final Severity severity,
@@ -484,6 +489,8 @@ public final class Bugsnag {
      * to send and modify error reports
      */
     @Deprecated
+    @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
+
     public static void notify(@NonNull String name, @NonNull String message, String context,
                               @NonNull StackTraceElement[] stacktrace, Severity severity,
                               @NonNull MetaData metaData) {
@@ -573,7 +580,9 @@ public final class Bugsnag {
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
-    public static void leaveBreadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, String> metadata) {
+    public static void leaveBreadcrumb(@NonNull String name,
+                                       @NonNull BreadcrumbType type,
+                                       @NonNull Map<String, String> metadata) {
         getClient().leaveBreadcrumb(name, type, metadata);
     }
 
@@ -640,7 +649,8 @@ public final class Bugsnag {
     @NonNull
     public static Client getClient() {
         if (client == null) {
-            throw new IllegalStateException("You must call Bugsnag.init before any other Bugsnag methods");
+            throw new IllegalStateException("You must call Bugsnag.init before any"
+                + " other Bugsnag methods");
         }
 
         return client;

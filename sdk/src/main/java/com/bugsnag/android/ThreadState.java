@@ -45,8 +45,8 @@ class ThreadState implements JsonStream.Streamable {
 
         Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
         Arrays.sort(threads, new Comparator<Thread>() {
-            public int compare(@NonNull Thread a, @NonNull Thread b) {
-                return Long.valueOf(a.getId()).compareTo(b.getId());
+            public int compare(@NonNull Thread lhs, @NonNull Thread rhs) {
+                return Long.valueOf(lhs.getId()).compareTo(rhs.getId());
             }
         });
         return threads;
@@ -56,12 +56,12 @@ class ThreadState implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
         for (Thread thread : threads) {
-            StackTraceElement[] stacktrace = stackTraces.get(thread);
-
             writer.beginObject();
             writer.name("id").value(thread.getId());
             writer.name("name").value(thread.getName());
             writer.name("type").value(THREAD_TYPE);
+
+            StackTraceElement[] stacktrace = stackTraces.get(thread);
             writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
             writer.endObject();
         }

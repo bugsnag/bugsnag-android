@@ -39,8 +39,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     /**
      * Create a MetaData with values copied from an existing Map
      */
-    public MetaData(@NonNull Map<String, Object> m) {
-        store = new ConcurrentHashMap<>(m);
+    public MetaData(@NonNull Map<String, Object> map) {
+        store = new ConcurrentHashMap<>(map);
     }
 
     @Override
@@ -143,7 +143,9 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         Map<String, Object> result = new ConcurrentHashMap<>();
 
         for (Map<String, Object> map : maps) {
-            if (map == null) continue;
+            if (map == null) {
+                continue;
+            }
 
             // Get a set of all possible keys in base and overrides
             Set<String> allKeys = new HashSet<>(result.keySet());
@@ -154,9 +156,12 @@ public class MetaData extends Observable implements JsonStream.Streamable {
                 Object overridesValue = map.get(key);
 
                 if (overridesValue != null) {
-                    if (baseValue != null && baseValue instanceof Map && overridesValue instanceof Map) {
+                    if (baseValue != null
+                        && baseValue instanceof Map
+                        && overridesValue instanceof Map) {
                         // Both original and overrides are Maps, go deeper
-                        result.put(key, mergeMaps((Map<String, Object>) baseValue, (Map<String, Object>) overridesValue));
+                        result.put(key, mergeMaps((Map<String, Object>) baseValue,
+                            (Map<String, Object>) overridesValue));
                     } else {
                         result.put(key, overridesValue);
                     }
@@ -171,7 +176,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     }
 
     // Write complex/nested values to a JsonStreamer
-    private void objectToStream(@Nullable Object obj, @NonNull JsonStream writer) throws IOException {
+    private void objectToStream(@Nullable Object obj,
+                                @NonNull JsonStream writer) throws IOException {
         if (obj == null) {
             writer.nullValue();
         } else if (obj instanceof String) {
@@ -219,7 +225,9 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     // Should this key be filtered
     private boolean shouldFilter(@Nullable String key) {
-        if (filters == null || key == null) return false;
+        if (filters == null || key == null) {
+            return false;
+        }
 
         for (String filter : filters) {
             if (key.contains(filter)) {

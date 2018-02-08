@@ -37,8 +37,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 Logger.warn("Could not prepare file storage directory");
                 path = null;
             }
-        } catch (Exception e) {
-            Logger.warn("Could not prepare file storage directory", e);
+        } catch (Exception exception) {
+            Logger.warn("Could not prepare file storage directory", exception);
             path = null;
         }
         this.storeDirectory = path;
@@ -57,7 +57,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             if (files != null && files.length >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
                 Arrays.sort(files, comparator);
-                Logger.warn(String.format("Discarding oldest error as stored error limit reached (%s)", files[0].getPath()));
+                Logger.warn(String.format("Discarding oldest error as stored "
+                    + "error limit reached (%s)", files[0].getPath()));
                 if (!files[0].delete()) {
                     files[0].deleteOnExit();
                 }
@@ -76,8 +77,9 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
-        } catch (Exception e) {
-            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ", filename), e);
+        } catch (Exception exception) {
+            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
+                filename), exception);
         } finally {
             IOUtils.closeQuietly(out);
         }

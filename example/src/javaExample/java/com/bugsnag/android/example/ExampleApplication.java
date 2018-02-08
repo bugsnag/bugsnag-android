@@ -1,8 +1,8 @@
 package com.bugsnag.android.example;
 
-import android.app.Application;
-
 import com.bugsnag.android.Bugsnag;
+
+import android.app.Application;
 
 public class ExampleApplication extends Application {
 

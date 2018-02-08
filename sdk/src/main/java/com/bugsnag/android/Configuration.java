@@ -26,7 +26,7 @@ public class Configuration extends Observable implements Observer {
 
     @NonNull
     private final String apiKey;
-    private String buildUUID;
+    private String buildUuid;
     private String appVersion;
     private String context;
     private String endpoint = "https://notify.bugsnag.com";
@@ -51,7 +51,8 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
-    private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks = new LinkedHashSet<>();
+    private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
+        = new LinkedHashSet<>();
     private String codeBundleId;
     private String notifierType;
 
@@ -164,8 +165,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return build UUID
      */
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public String getBuildUUID() {
-        return buildUUID;
+        return buildUuid;
     }
 
     /**
@@ -174,10 +176,11 @@ public class Configuration extends Observable implements Observer {
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
      *
-     * @param buildUUID the buildUUID.
+     * @param buildUuid the buildUUID.
      */
-    public void setBuildUUID(String buildUUID) {
-        this.buildUUID = buildUUID;
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public void setBuildUUID(String buildUuid) {
+        this.buildUuid = buildUuid;
         notifyBugsnagObservers(NotifyType.APP);
     }
 
@@ -496,7 +499,7 @@ public class Configuration extends Observable implements Observer {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
-        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toISO8601(new Date()));
+        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
         return map;
     }
 
@@ -504,7 +507,7 @@ public class Configuration extends Observable implements Observer {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);
-        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toISO8601(new Date()));
+        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
         return map;
     }
 
@@ -515,8 +518,9 @@ public class Configuration extends Observable implements Observer {
      * @return true if the release state should be notified else false
      */
     protected boolean shouldNotifyForReleaseStage(String releaseStage) {
-        if (this.notifyReleaseStages == null)
+        if (this.notifyReleaseStages == null) {
             return true;
+        }
 
         List<String> stages = Arrays.asList(this.notifyReleaseStages);
         return stages.contains(releaseStage);
@@ -529,8 +533,9 @@ public class Configuration extends Observable implements Observer {
      * @return true if the exception class should be ignored else false
      */
     protected boolean shouldIgnoreClass(String className) {
-        if (this.ignoreClasses == null)
+        if (this.ignoreClasses == null) {
             return false;
+        }
 
         List<String> classes = Arrays.asList(this.ignoreClasses);
         return classes.contains(className);
@@ -578,7 +583,7 @@ public class Configuration extends Observable implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (arg instanceof Integer) {
             NotifyType type = NotifyType.fromInt((Integer) arg);
 
