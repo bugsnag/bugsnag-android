@@ -40,6 +40,7 @@ public class Report implements JsonStream.Streamable {
         writer.beginObject();
 
         writer.name("apiKey").value(apiKey);
+        writer.name("payloadVersion").value("4.0");
 
         // Write the notifier info
         writer.name("notifier").value(notifier);
