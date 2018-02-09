@@ -90,6 +90,7 @@ class DeviceData extends DeviceDataSummary {
             .name("locale").value(locale)
             .name("screenDensity").value(screenDensity)
             .name("dpi").value(dpi)
+            .name("emulator").value(isEmulator())
             .name("screenResolution").value(screenResolution);
 
         writer.name("cpuAbi").beginArray();
@@ -107,6 +108,18 @@ class DeviceData extends DeviceDataSummary {
 
     void setId(@Nullable String id) {
         this.id = id;
+    }
+
+    /**
+     * Guesses whether the current device is an emulator or not, erring on the side of caution
+     *
+     * @return true if the current device is an emulator
+     */
+    private boolean isEmulator() {
+        String fingerprint = Build.FINGERPRINT;
+        return fingerprint.startsWith("unknown")
+            || fingerprint.contains("generic")
+            || fingerprint.contains("vbox"); // genymotion
     }
 
     /**
