@@ -342,6 +342,28 @@ public final class Bugsnag {
     }
 
     /**
+     * Add a "before breadcrumb" callback, to execute code before every
+     * breadcrumb captured by Bugsnag.
+     * <p>
+     * You can use this to modify breadcrumbs before they are stored by Bugsnag.
+     * You can also return <code>false</code> from any callback to ignore a breadcrumb.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * return false; // ignore the breadcrumb
+     * }
+     * })
+     *
+     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
+     * @see BeforeRecordBreadcrumb
+     */
+    public static void beforeRecordBreadcrumb(final BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+        getClient().beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    }
+
+    /**
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag

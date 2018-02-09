@@ -51,6 +51,8 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
+    private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
+        = new LinkedHashSet<>();
     private String codeBundleId;
     private String notifierType;
 
@@ -549,6 +551,15 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * Adds a new before breadcrumb task
+     *
+     * @param beforeRecordBreadcrumb the new before breadcrumb task
+     */
+    protected void beforeRecordBreadcrumb(BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+        this.beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
+    }
+
+    /**
      * Checks if the given class name should be marked as in the project or not
      *
      * @param className the class to check
@@ -582,4 +593,12 @@ public class Configuration extends Observable implements Observer {
         }
     }
 
+    /**
+     * Gets any before breadcrumb tasks to run
+     *
+     * @return the before breadcrumb tasks
+     */
+    protected Collection<BeforeRecordBreadcrumb> getBeforeRecordBreadcrumbTasks() {
+        return beforeRecordBreadcrumbTasks;
+    }
 }
