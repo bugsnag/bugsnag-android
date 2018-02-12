@@ -132,7 +132,10 @@ public class SessionTrackerTest {
         assertEquals(100, sessionTracker.getDurationInForegroundMs(now + 100));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 200));
+        assertEquals(200, sessionTracker.getDurationInForegroundMs(now + 200));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 300));
     }
 
     @Test

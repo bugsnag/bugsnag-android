@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,8 +27,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
-    private final Set<String>
-        foregroundActivities = new LinkedHashSet<>();
+    private final Collection<String>
+        foregroundActivities = new ConcurrentLinkedDeque<>();
     private final Configuration configuration;
     private final long timeoutMs;
     private final Client client;
