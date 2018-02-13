@@ -28,7 +28,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
     private final Collection<String>
-        foregroundActivities = new ConcurrentLinkedDeque<>();
+        foregroundActivities = new ConcurrentLinkedQueue<>();
     private final Configuration configuration;
     private final long timeoutMs;
     private final Client client;
