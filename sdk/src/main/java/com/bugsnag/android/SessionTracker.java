@@ -10,10 +10,13 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
@@ -24,8 +27,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
-    private final ConcurrentHashMap<String, Boolean>
-        foregroundActivities = new ConcurrentHashMap<>();
+    private final Collection<String>
+        foregroundActivities = new ConcurrentLinkedQueue<>();
     private final Configuration configuration;
     private final long timeoutMs;
     private final Client client;
@@ -73,7 +76,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      * Determines whether or not a session should be tracked. If this is true, the session will be
      * stored and sent to the Bugsnag API, otherwise no action will occur in this method.
      *
-     * @param session      the session
+     * @param session the session
      */
     private void trackSessionIfNeeded(final Session session) {
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
@@ -250,7 +253,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             long nowMs = System.currentTimeMillis();
             activityFirstStartedAtMs.set(nowMs);
             startNewSession(new Date(nowMs), client.user, true);
-            foregroundActivities.put(getActivityName(activity), true);
+            foregroundActivities.add(getActivityName(activity));
         }
     }
 
@@ -263,9 +266,9 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      * If an activity comes to the foreground and is the only foreground activity, a new session
      * should be started, unless the app is within a timeout period.
      *
-     * @param activityName the activity name
+     * @param activityName     the activity name
      * @param activityStarting whether the activity is being started or not
-     * @param nowMs The current time in ms
+     * @param nowMs            The current time in ms
      */
     void updateForegroundTracker(String activityName, boolean activityStarting, long nowMs) {
         if (activityStarting) {
@@ -279,7 +282,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 activityFirstStartedAtMs.set(nowMs);
                 startNewSession(new Date(nowMs), client.user, true);
             }
-            foregroundActivities.put(activityName, true);
+            foregroundActivities.add(activityName);
         } else {
             foregroundActivities.remove(activityName);
             activityLastStoppedAtMs.set(nowMs);
@@ -299,6 +302,19 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
             durationMs = nowMs - sessionStartTimeMs;
         }
         return durationMs > 0 ? durationMs : 0;
+    }
+
+    @Nullable
+    String getContextActivity() {
+        if (foregroundActivities.isEmpty()) {
+            return null;
+        } else {
+            // linked hash set retains order of added activity and ensures uniqueness
+            // therefore obtain the most recently added
+            int size = foregroundActivities.size();
+            String[] activities = foregroundActivities.toArray(new String[size]);
+            return activities[size - 1];
+        }
     }
 
 }

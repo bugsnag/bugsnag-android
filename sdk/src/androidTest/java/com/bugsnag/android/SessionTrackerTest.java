@@ -1,14 +1,13 @@
 package com.bugsnag.android;
 
-import android.support.test.InstrumentationRegistry;
-import android.util.Pair;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
 
-import static com.bugsnag.android.BugsnagTestUtils.*;
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionStore;
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTrackingApiClient;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -95,6 +94,7 @@ public class SessionTrackerTest {
     public void testBasicInForeground() throws Exception {
         assertFalse(sessionTracker.isInForeground());
         assertNull(sessionTracker.getCurrentSession());
+        assertNull(sessionTracker.getContextActivity());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, System.currentTimeMillis());
         assertTrue(sessionTracker.isInForeground());
@@ -104,13 +104,16 @@ public class SessionTrackerTest {
         sessionTracker.updateForegroundTracker("other", true, System.currentTimeMillis());
         assertTrue(sessionTracker.isInForeground());
         assertEquals(firstSession, sessionTracker.getCurrentSession());
+        assertEquals("other", sessionTracker.getContextActivity());
 
         sessionTracker.updateForegroundTracker("other", false, System.currentTimeMillis());
         assertTrue(sessionTracker.isInForeground());
+        assertEquals(ACTIVITY_NAME, sessionTracker.getContextActivity());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, System.currentTimeMillis());
         assertFalse(sessionTracker.isInForeground());
         assertEquals(firstSession, sessionTracker.getCurrentSession());
+        assertNull(sessionTracker.getContextActivity());
     }
 
     @Test
@@ -129,7 +132,10 @@ public class SessionTrackerTest {
         assertEquals(100, sessionTracker.getDurationInForegroundMs(now + 100));
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 200));
+        assertEquals(200, sessionTracker.getDurationInForegroundMs(now + 200));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 300));
     }
 
     @Test
