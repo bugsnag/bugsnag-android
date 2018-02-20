@@ -13,9 +13,8 @@ fi
 echo "Killing any extant app process"
 adb shell am force-stop "$APP_BUNDLE"
 
-# TODO doesn't need to run for each step
 # Clear any existing data
-echo "Launching MainActivity"
+echo "Clearing package data"
 adb shell clear "$APP_BUNDLE"
 
 
