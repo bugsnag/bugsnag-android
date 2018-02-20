@@ -3,7 +3,7 @@
 [![Build status](https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master)](https://travis-ci.org/bugsnag/bugsnag-android)
 [![Method count and size](https://img.shields.io/badge/Methods%20and%20size-core:%20742%20|%20deps:%2032%20|%2090%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.bugsnag%3Abugsnag-android%3A4.0.0)
 
-Get comprehensive Android crash reports to quickly debug errors.
+Get comprehensive [Android crash reports](https://www.bugsnag.com/platforms/android/) to quickly debug errors.
 
 Bugsnag's [Android crash reporting](https://www.bugsnag.com/platforms/android/)
 library automatically detects crashes in your Android apps, collecting
