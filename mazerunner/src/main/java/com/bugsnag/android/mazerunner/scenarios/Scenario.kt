@@ -34,4 +34,9 @@ abstract internal class Scenario {
         disableReportDelivery()
     }
 
+    /**
+     * Returns a throwable with the message as the current classname
+     */
+    protected fun generateException(): Throwable = RuntimeException(javaClass.simpleName)
+
 }

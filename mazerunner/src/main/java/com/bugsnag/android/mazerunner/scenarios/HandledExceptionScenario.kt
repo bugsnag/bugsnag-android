@@ -8,7 +8,7 @@ import com.bugsnag.android.Bugsnag
 internal class HandledExceptionScenario : Scenario() {
 
     override fun run() {
-        Bugsnag.notify(RuntimeException("HandledExceptionScenario"))
+        Bugsnag.notify(generateException())
     }
 
 }
