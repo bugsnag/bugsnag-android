@@ -8,7 +8,7 @@ internal class TestCaseFactory {
     fun testCaseForName(eventType: String?): Scenario {
         return when (eventType) {
             // TODO add test cases
-            "HandledExceptionScenario" -> HandledExceptionScenario()//TODO
+            "HandledExceptionScenario" -> HandledExceptionScenario()
             else -> throw UnsupportedOperationException("Failed to find test case for eventType $eventType")
         }
     }
