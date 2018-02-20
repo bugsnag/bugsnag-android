@@ -9,7 +9,7 @@ public class HandledExceptionJavaScenario extends Scenario {
 
     @Override
     public void run() {
-        Bugsnag.notify(generateException());
+        Bugsnag.notify(new RuntimeException(getClass().getSimpleName()));
     }
 
 }
