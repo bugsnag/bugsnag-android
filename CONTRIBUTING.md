@@ -138,7 +138,7 @@ This process is a little ridiculous...
 ### 5. Update documentation
 
 -    Update installation instructions in the quickstart
-     guides on the website with any new content (in `_android.slim`)
+     guides on the website with the new version number and any other changes
 -    Bump the version number in the installation instructions on
      docs.bugsnag.com/platforms/android, and add any new content
 
