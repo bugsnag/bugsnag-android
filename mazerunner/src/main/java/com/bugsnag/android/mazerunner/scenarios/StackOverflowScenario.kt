@@ -6,7 +6,10 @@ package com.bugsnag.android.mazerunner.scenarios
 internal class StackOverflowScenario : Scenario() {
 
     override fun run() {
-        run()
+        calculateValue(0)
     }
 
+    private fun calculateValue(count: Long): Long {
+        return calculateValue(count + 1) + calculateValue(count - 1)
+    }
 }
