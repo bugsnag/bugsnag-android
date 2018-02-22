@@ -35,7 +35,7 @@ class MainActivity : Activity() {
     private fun executeTestCase() {
         val eventType = intent.getStringExtra("EVENT_TYPE")
         Log.d("Bugsnag", "Received test case, executing " + eventType)
-        val testCase = factory.testCaseForName(eventType)
+        val testCase = factory.testCaseForName(eventType, this)
         testCase.run()
     }
 
