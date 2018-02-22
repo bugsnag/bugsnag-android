@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 class MainActivity : Activity() {
@@ -18,7 +17,6 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        initialiseBugsnag()
         enqueueTestCase()
     }
 
@@ -35,18 +33,16 @@ class MainActivity : Activity() {
     private fun executeTestCase() {
         val eventType = intent.getStringExtra("EVENT_TYPE")
         Log.d("Bugsnag", "Received test case, executing " + eventType)
-        val testCase = factory.testCaseForName(eventType)
+        val testCase = factory.testCaseForName(eventType, prepareConfig(), this)
         testCase.run()
     }
 
-    private fun initialiseBugsnag() {
+    private fun prepareConfig(): Configuration {
         val config = Configuration(intent.getStringExtra("BUGSNAG_API_KEY"))
         val port = intent.getStringExtra("BUGSNAG_PORT")
         config.endpoint = "${findHostname()}:$port"
         config.sessionEndpoint = "${findHostname()}:$port"
-
-        Bugsnag.init(this, config)
-        Bugsnag.setLoggingEnabled(true)
+        return config
     }
 
     private fun findHostname(): String {

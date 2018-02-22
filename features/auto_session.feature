@@ -1,7 +1,8 @@
 Feature: Android support
 
-Scenario: Manual Session Tracking
-    When I run "ManualSessionScenario" with the defaults
+Scenario: Automatic Session Tracking
+    When I run "AutoSessionScenario" with the defaults
+    And I wait for 1 seconds
     Then I should receive a request
     And the request is a valid for the session tracking API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"

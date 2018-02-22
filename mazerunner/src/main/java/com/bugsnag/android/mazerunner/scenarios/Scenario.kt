@@ -1,11 +1,17 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.content.Context
 import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
 import com.bugsnag.android.NetworkException
 
-abstract internal class Scenario {
+abstract internal class Scenario(protected val config: Configuration,
+                                 protected val context: Context) {
 
-    abstract fun run()
+    open fun run() {
+        Bugsnag.init(context, config)
+        Bugsnag.setLoggingEnabled(true)
+    }
 
     /**
      * Sets a NOP implementation for the Session Tracking API, preventing delivery
