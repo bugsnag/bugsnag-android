@@ -1,20 +1,23 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.os.StrictMode
-import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
- * Generates a strictmode exception caused by writing to disc on main thread
+ * Generates a strictmode exception caused by performing a network request on the main thread
  */
 internal class StrictModeNetworkScenario : Scenario() {
 
     override fun run() {
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-            .detectDiskWrites()
+            .detectNetwork()
             .penaltyDeath()
             .build())
-        val file = File(context?.cacheDir, "fake")
-        file.writeBytes("test".toByteArray())
+
+        val urlConnection = URL("http://example.com").openConnection() as HttpURLConnection
+        urlConnection.doOutput = true
+        urlConnection.responseMessage
     }
 
 }

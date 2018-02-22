@@ -5,4 +5,4 @@ Scenario: Test handled Android Exception
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "errorClass" equals "android.os.StrictMode$StrictModeViolation"
-    And the exception "message" equals "policy=262145 violation=1"
+    And the exception "message" equals "policy=262148 violation=4"
