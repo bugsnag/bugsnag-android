@@ -9,7 +9,7 @@ internal class UserEnabledScenario : Scenario() {
 
     override fun run() {
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
-        Bugsnag.notify(RuntimeException("UserEnabledScenario"))
+        Bugsnag.notify(generateException())
     }
 
 }

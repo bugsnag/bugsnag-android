@@ -3,12 +3,12 @@ package com.bugsnag.android.mazerunner.scenarios
 import com.bugsnag.android.Bugsnag
 
 /**
- * Sends a handled exception to Bugsnag, which does not include user data.
+ * Sends a handled exception to Bugsnag, which only includes a user's id
  */
-internal class UserDisabledScenario : Scenario() {
+internal class UserIdScenario : Scenario() {
 
     override fun run() {
-        Bugsnag.setUser(null, null, null)
+        Bugsnag.setUser("abc", null, null)
         Bugsnag.notify(generateException())
     }
 
