@@ -1,9 +1,12 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.NetworkException
 
 abstract internal class Scenario {
+
+    var context: Context? = null
 
     abstract fun run()
 
