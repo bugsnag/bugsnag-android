@@ -244,6 +244,16 @@ public class ErrorTest {
         errorJson.getJSONObject("session"); // session should not be serialised
     }
 
+    @Test
+    public void checkExceptionMessageNullity() throws Exception {
+        String msg = "Foo";
+        Error err = new Error.Builder(config, new RuntimeException(msg), null).build();
+        assertEquals(msg, err.getExceptionMessage());
+
+        err = new Error.Builder(config, new RuntimeException(), null).build();
+        assertEquals("", err.getExceptionMessage());
+    }
+
     private void validateEmptyAttributes(JSONObject severityReason) {
         try {
             severityReason.getJSONObject("attributes");
