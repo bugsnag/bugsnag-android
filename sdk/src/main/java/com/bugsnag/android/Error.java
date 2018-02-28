@@ -286,8 +286,9 @@ public class Error implements JsonStream.Streamable {
     /**
      * Get the message from the exception contained in this Error report.
      */
-    public String getExceptionMessage() {
-        return exception.getLocalizedMessage();
+    @NonNull public String getExceptionMessage() {
+        String localizedMessage = exception.getLocalizedMessage();
+        return localizedMessage != null ? localizedMessage : "";
     }
 
     /**
