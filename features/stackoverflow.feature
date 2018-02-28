@@ -3,7 +3,7 @@ Feature: Android support
 Scenario: Stack Overflow
     When I run "StackOverflowScenario" with the defaults
 #   Need to wait a while to trigger this in release mode
-    And I wait for 1 seconds
+    And I wait for 30 seconds
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
