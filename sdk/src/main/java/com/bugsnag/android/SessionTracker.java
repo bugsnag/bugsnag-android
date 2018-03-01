@@ -10,12 +10,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
@@ -33,7 +30,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private final long timeoutMs;
     private final Client client;
     private final SessionStore sessionStore;
-    private final SessionTrackingApiClient apiClient;
+    private SessionTrackingApiClient apiClient;
 
     // This most recent time an Activity was stopped.
     private AtomicLong activityLastStoppedAtMs = new AtomicLong(0);
@@ -70,6 +67,14 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);
         currentSession.set(session);
         trackSessionIfNeeded(session);
+    }
+
+    void setApiClient(SessionTrackingApiClient apiClient) {
+        this.apiClient = apiClient;
+    }
+
+    SessionTrackingApiClient getApiClient() {
+        return apiClient;
     }
 
     /**
