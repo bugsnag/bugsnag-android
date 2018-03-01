@@ -63,7 +63,6 @@ public class Configuration extends Observable implements Observer {
     public Configuration(@NonNull String apiKey) {
         this.apiKey = apiKey;
         this.metaData = new MetaData();
-        setDefaultMetaDataFilters();
         this.metaData.addObserver(this);
     }
 
@@ -388,10 +387,6 @@ public class Configuration extends Observable implements Observer {
             this.metaData = metaData;
         }
 
-        if (this.metaData.getFilters() == null) {
-            setDefaultMetaDataFilters();
-        }
-
         this.metaData.addObserver(this);
         notifyBugsnagObservers(NotifyType.META);
     }
@@ -578,10 +573,6 @@ public class Configuration extends Observable implements Observer {
         }
 
         return false;
-    }
-
-    private void setDefaultMetaDataFilters() {
-        metaData.setFilters("password");
     }
 
     private void notifyBugsnagObservers(@NonNull NotifyType type) {
