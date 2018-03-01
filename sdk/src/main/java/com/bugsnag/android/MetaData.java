@@ -118,6 +118,10 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         notifyBugsnagObservers(NotifyType.FILTERS);
     }
 
+    String[] getFilters() {
+        return filters;
+    }
+
     @NonNull
     static MetaData merge(@NonNull MetaData... metaDataList) {
         List<Map<String, Object>> stores = new ArrayList<>();
