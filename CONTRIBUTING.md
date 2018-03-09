@@ -49,7 +49,7 @@ Running the test suite requires a connected android device or emulator.
 You can run the test suite on a device/emulator as follows from within the sdk directory:
 
 ```shell
-../gradlew connectedCheck
+./gradlew connectedCheck
 ```
 
 Running Lint
