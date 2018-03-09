@@ -31,16 +31,12 @@ public class ConcurrentCallbackTest {
         client.beforeNotify(new BeforeNotify() {
             @Override
             public boolean run(Error error) {
-                beforeNotifyTasks.clear();
+                beforeNotifyTasks.add(new BeforeNotifySkeleton());
+                // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        client.beforeNotify(new BeforeNotify() {
-            @Override
-            public boolean run(Error error) {
-                return true;
-            }
-        });
+        client.beforeNotify(new BeforeNotifySkeleton());
         client.notify(new RuntimeException());
     }
 
@@ -51,19 +47,28 @@ public class ConcurrentCallbackTest {
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override
             public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
-                breadcrumbTasks.clear();
+                breadcrumbTasks.add(new BeforeRecordBreadcrumbSkeleton());
+                // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-            @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
-                return true;
-            }
-        });
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumbSkeleton());
         client.leaveBreadcrumb("Whoops");
         client.notify(new RuntimeException());
     }
 
+    static class BeforeNotifySkeleton implements BeforeNotify {
+        @Override
+        public boolean run(Error error) {
+            return true;
+        }
+    }
+
+    static class BeforeRecordBreadcrumbSkeleton implements BeforeRecordBreadcrumb {
+        @Override
+        public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            return true;
+        }
+    }
 
 }
