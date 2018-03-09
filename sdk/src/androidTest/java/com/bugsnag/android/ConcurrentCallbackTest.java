@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -10,12 +11,12 @@ import org.junit.runner.RunWith;
 import java.util.Collection;
 
 /**
- * Ensures that if a {@link BeforeNotify} is added or removed during iteration, a
+ * Ensures that if a callback is added or removed during iteration, a
  * {@link java.util.ConcurrentModificationException} is not thrown
  */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class ConcurrentBeforeNotifyTest {
+public class ConcurrentCallbackTest {
 
     private Client client;
 
@@ -42,5 +43,27 @@ public class ConcurrentBeforeNotifyTest {
         });
         client.notify(new RuntimeException());
     }
+
+    @Test
+    public void testClientBreadcrumbModification() throws Exception {
+        final Collection<BeforeRecordBreadcrumb> breadcrumbTasks = client.config.getBeforeRecordBreadcrumbTasks();
+
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+            @Override
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+                breadcrumbTasks.clear();
+                return true;
+            }
+        });
+        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+            @Override
+            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+                return true;
+            }
+        });
+        client.leaveBreadcrumb("Whoops");
+        client.notify(new RuntimeException());
+    }
+
 
 }
