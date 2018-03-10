@@ -41,9 +41,6 @@ public class Client extends Observable implements Observer {
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
-    private static final String USER_ID_KEY = "user.id";
-    private static final String USER_NAME_KEY = "user.name";
-    private static final String USER_EMAIL_KEY = "user.email";
 
     static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
     static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
@@ -78,6 +75,7 @@ public class Client extends Observable implements Observer {
     final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
+    private final SharedPreferences sharedPref;
 
     /**
      * Initialize a Bugsnag client
@@ -135,8 +133,7 @@ public class Client extends Observable implements Observer {
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appData = new AppData(appContext, config, sessionTracker);
         deviceData = new DeviceData(appContext, sharedPref);
@@ -149,14 +146,9 @@ public class Client extends Observable implements Observer {
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user = User.builder()
-                .id(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()))
-                .name(sharedPref.getString(USER_NAME_KEY, null))
-                .email(sharedPref.getString(USER_EMAIL_KEY, null))
-                .build();
-        } else {
-            user = User.builder().id(deviceData.getUserId()).build();
+            user = new User.Repo(sharedPref).get();
         }
+        if (user == null) user = User.builder().id(deviceData.getUserId()).build();
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -525,22 +517,11 @@ public class Client extends Observable implements Observer {
      * @param notify whether or not to notify NDK components
      */
     void setUser(@Nullable User user, boolean notify) {
-        if (user != null) {
-            this.user = user;
-            if (config.getPersistUserBetweenSessions()) {
-                storeInSharedPrefs(USER_ID_KEY, user.getId());
-                storeInSharedPrefs(USER_EMAIL_KEY, user.getEmail());
-                storeInSharedPrefs(USER_NAME_KEY, user.getName());
-            }
-        } else {
-            this.user = User.builder().id(deviceData.getUserId()).build();
-            SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-            sharedPref.edit()
-                .remove(USER_ID_KEY)
-                .remove(USER_EMAIL_KEY)
-                .remove(USER_NAME_KEY)
-                .apply();
+        if (user == null || config.getPersistUserBetweenSessions()) {
+            new User.Repo(sharedPref).set(user);
         }
+
+        this.user = user != null ? user : User.builder().id(deviceData.getUserId()).build();
 
         if (notify) notifyBugsnagObservers(NotifyType.USER);
     }
@@ -1259,19 +1240,6 @@ public class Client extends Observable implements Observer {
             }
         }
         return true;
-    }
-
-
-    /**
-     * Stores the given key value pair into shared preferences
-     *
-     * @param key   The key to store
-     * @param value The value to store
-     */
-    private void storeInSharedPrefs(String key, String value) {
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit().putString(key, value).apply();
     }
 
     /**

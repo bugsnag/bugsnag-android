@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -45,6 +46,11 @@ class User implements JsonStream.Streamable {
         return name;
     }
 
+    /**
+     * Use this to create a new object holding user related details
+     *
+     * @return a builder for {@link User}
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -108,6 +114,41 @@ class User implements JsonStream.Streamable {
 
         public User build() {
             return new User(this);
+        }
+    }
+
+    static class Repo {
+        private static final String USER_ID_KEY = "user.id";
+        private static final String USER_NAME_KEY = "user.name";
+        private static final String USER_EMAIL_KEY = "user.email";
+        private final SharedPreferences preferences;
+
+        Repo(SharedPreferences preferences) {
+            this.preferences = preferences;
+        }
+
+        void set(@Nullable User user) {
+            if (user != null) {
+                preferences.edit()
+                    .putString(USER_ID_KEY, user.getId())
+                    .putString(USER_EMAIL_KEY, user.getEmail())
+                    .putString(USER_NAME_KEY, user.getName())
+                    .apply();
+            } else {
+                preferences.edit().remove(USER_ID_KEY).remove(USER_NAME_KEY).remove(USER_EMAIL_KEY).apply();
+            }
+        }
+
+        @Nullable
+        User get() {
+            User user = User.builder()
+                .id(preferences.getString(USER_ID_KEY, null))
+                .name(preferences.getString(USER_NAME_KEY, null))
+                .email(preferences.getString(USER_EMAIL_KEY, null))
+                .build();
+
+            if (user.getId() != null || user.getEmail() != null || user.getName() != null) return user;
+            else return null;
         }
     }
 }
