@@ -235,55 +235,55 @@ public final class Bugsnag {
     }
 
     /**
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
+     */
+    @Deprecated
+    public static void setUser(final String id, final String email, final String name) {
+        getClient().setUser(User.builder().id(id).email(email).name(name).build());
+    }
+
+    /**
      * Set details of the user currently using your application.
      * You can search for this information in your Bugsnag dashboard.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.setUser("12345", "james@example.com", "James Smith");
+     * Bugsnag.setUser(User.builder().id("12345").email("james@example.com").name("James Smith"));
      *
-     * @param id    a unique identifier of the current user (defaults to a unique id)
-     * @param email the email address of the current user
-     * @param name  the name of the current user
+     * @param user The user information to set or NULL to reset to defaults.
      */
-    public static void setUser(final String id, final String email, final String name) {
-        getClient().setUser(id, email, name);
+    public static void setUser(@Nullable User user) {
+        getClient().setUser(user);
     }
 
     /**
-     * Removes the current user data and sets it back to defaults
+     * @deprecated Use {@link #setUser(User)} and pass NULL<p>
      */
+    @Deprecated
     public static void clearUser() {
-        getClient().clearUser();
+        getClient().setUser(null);
     }
 
     /**
-     * Set a unique identifier for the user currently using your application.
-     * By default, this will be an automatically generated unique id
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param id a unique identifier of the current user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public static void setUserId(final String id) {
         getClient().setUserId(id);
     }
 
     /**
-     * Set the email address of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param email the email address of the current user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public static void setUserEmail(final String email) {
         getClient().setUserEmail(email);
     }
 
     /**
-     * Set the name of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param name the name of the current user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public static void setUserName(final String name) {
         getClient().setUserName(name);
     }
@@ -549,7 +549,8 @@ public final class Bugsnag {
      *
      * @see MetaData
      */
-    @NonNull public static MetaData getMetaData() {
+    @NonNull
+    public static MetaData getMetaData() {
         return getClient().getMetaData();
     }
 

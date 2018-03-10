@@ -17,8 +17,7 @@ import java.io.IOException;
  */
 public class Error implements JsonStream.Streamable {
 
-    @NonNull
-    final Configuration config;
+    @NonNull final Configuration config;
     private AppData appData;
     private DeviceData deviceData;
     private Breadcrumbs breadcrumbs;
@@ -162,17 +161,19 @@ public class Error implements JsonStream.Streamable {
     }
 
     /**
-     * Set user information associated with this Error
-     *
-     * @param id    the id of the user
-     * @param email the email address of the user
-     * @param name  the name of the user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public void setUser(String id, String email, String name) {
-        this.user = new User(id, email, name);
+        this.user = User.builder().id(id).email(email).name(name).build();
     }
 
-    void setUser(User user) {
+    /**
+     * Set user information associated with just this Error
+     *
+     * @param user the user information you want to supply
+     */
+    void setUser(@Nullable User user) {
         this.user = user;
     }
 
@@ -184,33 +185,27 @@ public class Error implements JsonStream.Streamable {
     }
 
     /**
-     * Set user id associated with this Error
-     *
-     * @param id the id of the user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public void setUserId(String id) {
-        this.user = new User(this.user);
-        this.user.setId(id);
+        setUser(User.builder(user).id(id).build());
     }
 
     /**
-     * Set user email address associated with this Error
-     *
-     * @param email the email address of the user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public void setUserEmail(String email) {
-        this.user = new User(this.user);
-        this.user.setEmail(email);
+        this.user = User.builder(user).email(email).build();
     }
 
     /**
-     * Set user name associated with this Error
-     *
-     * @param name the name of the user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public void setUserName(String name) {
-        this.user = new User(this.user);
-        this.user.setName(name);
+        this.user = User.builder(user).name(name).build();
     }
 
     /**
@@ -286,7 +281,8 @@ public class Error implements JsonStream.Streamable {
     /**
      * Get the message from the exception contained in this Error report.
      */
-    @NonNull public String getExceptionMessage() {
+    @NonNull
+    public String getExceptionMessage() {
         String localizedMessage = exception.getLocalizedMessage();
         return localizedMessage != null ? localizedMessage : "";
     }
@@ -354,7 +350,7 @@ public class Error implements JsonStream.Streamable {
         }
 
         Builder(@NonNull Configuration config, @NonNull String name,
-               @NonNull String message, @NonNull StackTraceElement[] frames, Session session) {
+                @NonNull String message, @NonNull StackTraceElement[] frames, Session session) {
             this(config, new BugsnagException(name, message, frames), session);
         }
 

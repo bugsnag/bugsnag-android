@@ -13,6 +13,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -93,31 +97,33 @@ public class ClientTest {
         client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
         client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
 
-        final User user = new User();
+        final User[] user = new User[1];
 
         client.beforeNotify(new BeforeNotify() {
             @Override
             public boolean run(Error error) {
                 // Pull out the user information
-                user.setId(error.getUser().getId());
-                user.setEmail(error.getUser().getEmail());
-                user.setName(error.getUser().getName());
+                user[0] = error.getUser();
                 return true;
             }
         });
 
         client.notify(new RuntimeException("Testing"));
 
+        assertThat(user[0], is(not(nullValue())));
+
         // Check the user details have been set
-        assertEquals(USER_ID, user.getId());
-        assertEquals(USER_EMAIL, user.getEmail());
-        assertEquals(USER_NAME, user.getName());
+        assertEquals(USER_ID, user[0].getId());
+        assertEquals(USER_EMAIL, user[0].getEmail());
+        assertEquals(USER_NAME, user[0].getName());
     }
 
+    @Deprecated
     @Test
-    public void testStoreUserInPrefs() {
+    public void testStoreUserInPrefs_deprecated() {
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
+        //noinspection deprecation
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
         // Check that the user was store in prefs
@@ -128,12 +134,56 @@ public class ClientTest {
     }
 
     @Test
-    public void testStoreUserInPrefsDisabled() {
+    public void testStoreUserInPrefs() {
+        config.setPersistUserBetweenSessions(true);
+        Client client = new Client(context, config);
+        client.setUser(User.builder().id(USER_ID).email(USER_EMAIL).name(USER_NAME).build());
+
+        // Check that the user was store in prefs
+        SharedPreferences sharedPref = getSharedPrefs(context);
+        assertEquals(USER_ID, sharedPref.getString("user.id", null));
+        assertEquals(USER_EMAIL, sharedPref.getString("user.email", null));
+        assertEquals(USER_NAME, sharedPref.getString("user.name", null));
+    }
+
+    @Deprecated
+    @Test
+    public void testStoreUserInPrefsDisabled_deprecated() {
         config.setPersistUserBetweenSessions(false);
         Client client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
         // Check that the user was not stored in prefs
+        SharedPreferences sharedPref = getSharedPrefs(context);
+        assertFalse(sharedPref.contains("user.id"));
+        assertFalse(sharedPref.contains("user.email"));
+        assertFalse(sharedPref.contains("user.name"));
+    }
+
+    @Test
+    public void testStoreUserInPrefsDisabled() {
+        config.setPersistUserBetweenSessions(false);
+        Client client = new Client(context, config);
+        client.setUser(User.builder().id(USER_ID).email(USER_EMAIL).name(USER_NAME).build());
+
+        // Check that the user was not stored in prefs
+        SharedPreferences sharedPref = getSharedPrefs(context);
+        assertFalse(sharedPref.contains("user.id"));
+        assertFalse(sharedPref.contains("user.email"));
+        assertFalse(sharedPref.contains("user.name"));
+    }
+
+    @Deprecated
+    @Test
+    public void testClearUser_deprecated() {
+        // Set a user in prefs
+        setUserPrefs();
+
+        // Clear the user using the command
+        Client client = new Client(context, "api-key");
+        client.clearUser();
+
+        // Check that there is no user information in the prefs anymore
         SharedPreferences sharedPref = getSharedPrefs(context);
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
@@ -147,7 +197,7 @@ public class ClientTest {
 
         // Clear the user using the command
         Client client = new Client(context, "api-key");
-        client.clearUser();
+        client.setUser(null);
 
         // Check that there is no user information in the prefs anymore
         SharedPreferences sharedPref = getSharedPrefs(context);
