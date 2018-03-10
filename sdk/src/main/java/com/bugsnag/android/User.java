@@ -135,7 +135,11 @@ class User implements JsonStream.Streamable {
                     .putString(USER_NAME_KEY, user.getName())
                     .apply();
             } else {
-                preferences.edit().remove(USER_ID_KEY).remove(USER_NAME_KEY).remove(USER_EMAIL_KEY).apply();
+                preferences.edit()
+                    .remove(USER_ID_KEY)
+                    .remove(USER_NAME_KEY)
+                    .remove(USER_EMAIL_KEY)
+                    .apply();
             }
         }
 
@@ -147,8 +151,11 @@ class User implements JsonStream.Streamable {
                 .email(preferences.getString(USER_EMAIL_KEY, null))
                 .build();
 
-            if (user.getId() != null || user.getEmail() != null || user.getName() != null) return user;
-            else return null;
+            if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
+                return user;
+            } else {
+                return null;
+            }
         }
     }
 }

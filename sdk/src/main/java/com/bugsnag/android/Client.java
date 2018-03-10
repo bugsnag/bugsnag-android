@@ -148,7 +148,9 @@ public class Client extends Observable implements Observer {
             // Check to see if a user was stored in the SharedPreferences
             user = new User.Repo(sharedPref).get();
         }
-        if (user == null) user = User.builder().id(deviceData.getUserId()).build();
+        if (user == null) {
+            user = User.builder().id(deviceData.getUserId()).build();
+        }
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -504,6 +506,13 @@ public class Client extends Observable implements Observer {
     }
 
     /**
+     * @return the current user information associated with the Bugsnag {@link Client}
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
      * Set the user information that the Bugsnag {@link Client} supplies with every error.<p>
      * Pass NULL to clear the current user data, i.e. reset it to defaults.
      *
@@ -523,14 +532,9 @@ public class Client extends Observable implements Observer {
 
         this.user = user != null ? user : User.builder().id(deviceData.getUserId()).build();
 
-        if (notify) notifyBugsnagObservers(NotifyType.USER);
-    }
-
-    /**
-     * @return the current user information associated with the Bugsnag {@link Client}
-     */
-    public User getUser() {
-        return user;
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
+        }
     }
 
     /**
