@@ -198,19 +198,20 @@ public class NativeInterface {
     }
 
     /**
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
+     */
+    @Deprecated
+    public static void setUser(String id, String email, String name) {
+        setUser(User.builder().id(id).email(email).name(name).build());
+    }
+
+    /**
      * Sets the user
      *
-     * @param id id
-     * @param email email
-     * @param name name
+     * @param user the user object to set
      */
-    public static void setUser(final String id,
-                               final String email,
-                               final String name) {
-
-        getClient().setUserId(id, false);
-        getClient().setUserEmail(email, false);
-        getClient().setUserName(name, false);
+    public static void setUser(User user) {
+        getClient().setUser(user, false);
     }
 
     public static void leaveBreadcrumb(@NonNull final String name,

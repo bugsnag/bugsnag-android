@@ -207,6 +207,14 @@ public class ClientTest {
     }
 
     @Test
+    public void testSetGetUser() {
+        User user = User.builder().build();
+        Client client = new Client(context, "api-key");
+        client.setUser(user);
+        assertThat(client.getUser(), is(user));
+    }
+
+    @Test
     public void testEmptyManifestConfig() {
         Bundle data = new Bundle();
         Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);

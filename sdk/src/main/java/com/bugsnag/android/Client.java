@@ -573,15 +573,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void setUserId(String id) {
-        setUserId(id, true);
-    }
-
-    /**
-     * @deprecated Use {@link #setUser(User, boolean)} and {@link com.bugsnag.android.User.Builder}<p>
-     */
-    @Deprecated
-    void setUserId(String id, boolean notify) {
-        setUser(User.builder(user).id(id).build(), notify);
+        setUser(User.builder(user).id(id).build(), true);
     }
 
     /**
@@ -589,15 +581,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void setUserEmail(String email) {
-        setUserEmail(email, true);
-    }
-
-    /**
-     * @deprecated Use {@link #setUser(User, boolean)} and {@link com.bugsnag.android.User.Builder}<p>
-     */
-    @Deprecated
-    void setUserEmail(String email, boolean notify) {
-        setUser(User.builder(user).email(email).build(), notify);
+        setUser(User.builder(user).email(email).build(), true);
     }
 
     /**
@@ -605,15 +589,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void setUserName(String name) {
-        setUserName(name, true);
-    }
-
-    /**
-     * @deprecated Use {@link #setUser(User, boolean)} and {@link com.bugsnag.android.User.Builder}<p>
-     */
-    @Deprecated
-    void setUserName(String name, boolean notify) {
-        setUser(User.builder(user).name(name).build(), notify);
+        setUser(User.builder(user).name(name).build(), true);
     }
 
     @SuppressWarnings("ConstantConditions")
