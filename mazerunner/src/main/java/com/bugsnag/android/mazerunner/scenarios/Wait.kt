@@ -16,5 +16,4 @@ internal class Wait(config: Configuration, context: Context) : Scenario(config, 
             flushAllSessions()
         }
     }
-
 }

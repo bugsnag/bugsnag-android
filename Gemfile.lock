@@ -1,5 +1,6 @@
-PATH
-  remote: ../../..
+GIT
+  remote: git@github.com:bugsnag/maze-runner
+  revision: 65bdcb7a135ef0a5864d03c454f7a1654f850237
   specs:
     bugsnag-maze-runner (1.0.0)
       cucumber (~> 3.1.0)

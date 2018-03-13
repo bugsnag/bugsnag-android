@@ -47,7 +47,7 @@ class MainActivity : Activity() {
 
     private fun findHostname(): String {
         val isEmulator = Build.FINGERPRINT.startsWith("unknown")
-                || Build.FINGERPRINT.contains("generic")
+            || Build.FINGERPRINT.contains("generic")
         return when {
             isEmulator -> "http://10.0.2.2"
             else -> "http://localhost"
