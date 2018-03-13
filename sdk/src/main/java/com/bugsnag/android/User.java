@@ -10,9 +10,9 @@ import java.io.IOException;
  * Information about the current user of your application.
  */
 public class User implements JsonStream.Streamable {
-    @Nullable private String id;
-    @Nullable private String email;
-    @Nullable private String name;
+    @Nullable private final String id;
+    @Nullable private final String email;
+    @Nullable private final String name;
 
     User(Builder builder) {
         this.id = builder.id;
