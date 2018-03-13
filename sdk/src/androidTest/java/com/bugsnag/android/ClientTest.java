@@ -120,7 +120,7 @@ public class ClientTest {
 
     @Deprecated
     @Test
-    public void testStoreUserInPrefs_deprecated() {
+    public void testStoreUserInPrefsDeprecated() {
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
         //noinspection deprecation
@@ -137,7 +137,7 @@ public class ClientTest {
     public void testStoreUserInPrefs() {
         config.setPersistUserBetweenSessions(true);
         Client client = new Client(context, config);
-        client.setUser(User.builder().id(USER_ID).email(USER_EMAIL).name(USER_NAME).build());
+        client.setUser(new User.Builder().id(USER_ID).email(USER_EMAIL).name(USER_NAME).build());
 
         // Check that the user was store in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
@@ -148,7 +148,7 @@ public class ClientTest {
 
     @Deprecated
     @Test
-    public void testStoreUserInPrefsDisabled_deprecated() {
+    public void testStoreUserInPrefsDisabledDeprecated() {
         config.setPersistUserBetweenSessions(false);
         Client client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
@@ -164,7 +164,7 @@ public class ClientTest {
     public void testStoreUserInPrefsDisabled() {
         config.setPersistUserBetweenSessions(false);
         Client client = new Client(context, config);
-        client.setUser(User.builder().id(USER_ID).email(USER_EMAIL).name(USER_NAME).build());
+        client.setUser(new User.Builder().id(USER_ID).email(USER_EMAIL).name(USER_NAME).build());
 
         // Check that the user was not stored in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
@@ -175,7 +175,7 @@ public class ClientTest {
 
     @Deprecated
     @Test
-    public void testClearUser_deprecated() {
+    public void testClearUserDeprecated() {
         // Set a user in prefs
         setUserPrefs();
 
@@ -208,7 +208,7 @@ public class ClientTest {
 
     @Test
     public void testSetGetUser() {
-        User user = User.builder().build();
+        User user = new User.Builder().build();
         Client client = new Client(context, "api-key");
         client.setUser(user);
         assertThat(client.getUser(), is(user));

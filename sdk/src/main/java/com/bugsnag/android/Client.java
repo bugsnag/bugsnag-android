@@ -507,6 +507,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * @return the current user information associated with the Bugsnag {@link Client}
+     * @see #setUser(User)
      */
     public User getUser() {
         return user;

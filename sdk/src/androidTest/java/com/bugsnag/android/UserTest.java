@@ -19,22 +19,14 @@ import static org.hamcrest.core.Is.is;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class UserTest {
-    @Test
-    public void testBuilder_defaults() {
-        User user = User.builder().build();
-
-        assertThat(user.getId(), is(nullValue()));
-        assertThat(user.getEmail(), is(nullValue()));
-        assertThat(user.getName(), is(nullValue()));
-    }
 
     @Test
-    public void testBuilder_values() {
+    public void testToBuilder() {
         final String id = UUID.randomUUID().toString();
         final String email = UUID.randomUUID().toString();
         final String name = UUID.randomUUID().toString();
 
-        User user = User.builder().name(name).id(id).email(email).build();
+        User user = new User.Builder().name(name).id(id).email(email).build().toBuilder().build();
 
         assertThat(user.getId(), is(id));
         assertThat(user.getEmail(), is(email));
@@ -42,13 +34,35 @@ public class UserTest {
     }
 
     @Test
-    public void testBuilder_fromPrevious() {
+    public void testBuilderDefaults() {
+        User user = new User.Builder().build();
+
+        assertThat(user.getId(), is(nullValue()));
+        assertThat(user.getEmail(), is(nullValue()));
+        assertThat(user.getName(), is(nullValue()));
+    }
+
+    @Test
+    public void testBuilderDefaultConstructor() {
         final String id = UUID.randomUUID().toString();
         final String email = UUID.randomUUID().toString();
         final String name = UUID.randomUUID().toString();
 
-        User previous = User.builder().name(name).id(id).email(email).build();
-        User successor = User.builder(previous).build();
+        User user = new User.Builder().name(name).id(id).email(email).build();
+
+        assertThat(user.getId(), is(id));
+        assertThat(user.getEmail(), is(email));
+        assertThat(user.getName(), is(name));
+    }
+
+    @Test
+    public void testBuilderUserArgument() {
+        final String id = UUID.randomUUID().toString();
+        final String email = UUID.randomUUID().toString();
+        final String name = UUID.randomUUID().toString();
+
+        User previous = new User.Builder().name(name).id(id).email(email).build();
+        User successor = new User.Builder(previous).build();
 
         assertThat(successor.getId(), is(id));
         assertThat(successor.getEmail(), is(email));
@@ -56,16 +70,32 @@ public class UserTest {
     }
 
     @Test
+    public void testBuilderNullArgument() {
+        final String id = UUID.randomUUID().toString();
+        final String email = UUID.randomUUID().toString();
+        final String name = UUID.randomUUID().toString();
+
+        User user = new User.Builder(null).name(name).id(id).email(email).build();
+
+        assertThat(user.getId(), is(id));
+        assertThat(user.getEmail(), is(email));
+        assertThat(user.getName(), is(name));
+    }
+
+    @Test
     public void testRepo() {
         SharedPreferences sharedPref = getSharedPrefs(InstrumentationRegistry.getContext());
+        sharedPref.edit().clear().apply();
 
-        User pre = User.builder()
+        User pre = new User.Builder()
             .name(UUID.randomUUID().toString())
             .id(UUID.randomUUID().toString())
             .email(UUID.randomUUID().toString())
             .build();
 
         User.Repo repo = new User.Repo(sharedPref);
+        assertThat(repo.get(),is(nullValue()));
+
         repo.set(pre);
 
         User post = repo.get();
