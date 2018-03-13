@@ -239,7 +239,7 @@ public final class Bugsnag {
      */
     @Deprecated
     public static void setUser(final String id, final String email, final String name) {
-        getClient().setUser(User.builder().id(id).email(email).name(name).build());
+        getClient().setUser(id, email, name);
     }
 
     /**

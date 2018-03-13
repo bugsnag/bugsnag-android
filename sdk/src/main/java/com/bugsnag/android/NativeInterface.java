@@ -202,7 +202,7 @@ public class NativeInterface {
      */
     @Deprecated
     public static void setUser(String id, String email, String name) {
-        setUser(User.builder().id(id).email(email).name(name).build());
+        getClient().setUser(id, email, name);
     }
 
     /**

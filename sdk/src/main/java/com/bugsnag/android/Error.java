@@ -165,7 +165,7 @@ public class Error implements JsonStream.Streamable {
      */
     @Deprecated
     public void setUser(String id, String email, String name) {
-        this.user = User.builder().id(id).email(email).name(name).build();
+        this.user = new User.Builder(user).id(id).email(email).name(name).build();
     }
 
     /**
@@ -189,7 +189,7 @@ public class Error implements JsonStream.Streamable {
      */
     @Deprecated
     public void setUserId(String id) {
-        setUser(User.builder(user).id(id).build());
+        setUser(new User.Builder(user).id(id).build());
     }
 
     /**
@@ -197,7 +197,7 @@ public class Error implements JsonStream.Streamable {
      */
     @Deprecated
     public void setUserEmail(String email) {
-        this.user = User.builder(user).email(email).build();
+        this.user = new User.Builder(user).email(email).build();
     }
 
     /**
@@ -205,7 +205,7 @@ public class Error implements JsonStream.Streamable {
      */
     @Deprecated
     public void setUserName(String name) {
-        this.user = User.builder(user).name(name).build();
+        this.user = new User.Builder(user).name(name).build();
     }
 
     /**

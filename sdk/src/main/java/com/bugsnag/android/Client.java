@@ -65,7 +65,7 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final DeviceData deviceData;
     @NonNull final Breadcrumbs breadcrumbs;
-    protected User user = User.builder().build();
+    protected User user = new User.Builder().build();
     @NonNull
     protected final ErrorStore errorStore;
 
@@ -149,7 +149,7 @@ public class Client extends Observable implements Observer {
             user = new User.Repo(sharedPref).get();
         }
         if (user == null) {
-            user = User.builder().id(deviceData.getUserId()).build();
+            user = new User.Builder().id(deviceData.getUserId()).build();
         }
 
         if (appContext instanceof Application) {
@@ -516,7 +516,7 @@ public class Client extends Observable implements Observer {
      * Set the user information that the Bugsnag {@link Client} supplies with every error.<p>
      * Pass NULL to clear the current user data, i.e. reset it to defaults.
      *
-     * @param user a {@link User} object made by {@link User#builder()} or NULL
+     * @param user a {@link User} object made by {@link com.bugsnag.android.User.Builder} or NULL
      */
     public void setUser(@Nullable User user) {
         setUser(user, true);
@@ -530,7 +530,7 @@ public class Client extends Observable implements Observer {
             new User.Repo(sharedPref).set(user);
         }
 
-        this.user = user != null ? user : User.builder().id(deviceData.getUserId()).build();
+        this.user = user != null ? user : new User.Builder().id(deviceData.getUserId()).build();
 
         if (notify) {
             notifyBugsnagObservers(NotifyType.USER);
@@ -542,7 +542,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void setUser(String id, String email, String name) {
-        setUser(User.builder().id(id).email(email).name(name).build());
+        setUser(user.toBuilder().id(id).email(email).name(name).build());
     }
 
     /**
@@ -558,7 +558,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void setUserId(String id) {
-        setUser(User.builder(user).id(id).build(), true);
+        setUser(user.toBuilder().id(id).build(), true);
     }
 
     /**
@@ -566,7 +566,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void setUserEmail(String email) {
-        setUser(User.builder(user).email(email).build(), true);
+        setUser(user.toBuilder().email(email).build(), true);
     }
 
     /**
@@ -574,7 +574,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void setUserName(String name) {
-        setUser(User.builder(user).name(name).build(), true);
+        setUser(user.toBuilder().name(name).build(), true);
     }
 
     @SuppressWarnings("ConstantConditions")

@@ -47,21 +47,10 @@ public class User implements JsonStream.Streamable {
     }
 
     /**
-     * Use this to create a new object holding user related details
-     *
-     * @return a builder for {@link User}
+     * Convenience method. The same as calling {@link Builder#Builder(User)}
      */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Create a new user object based on a previous user object.
-     *
-     * @param user the previous user object.
-     */
-    public static Builder builder(User user) {
-        return new Builder(user);
+    public Builder toBuilder() {
+        return new Builder(this);
     }
 
     public static class Builder {
@@ -69,13 +58,23 @@ public class User implements JsonStream.Streamable {
         @Nullable String email;
         @Nullable String name;
 
+        /**
+         * A builder to create a {@link User} object
+         */
         public Builder() {
         }
 
-        public Builder(User user) {
-            id(user.getId());
-            email(user.getEmail());
-            name(user.getName());
+        /**
+         * A builder to create a {@link User} object
+         *
+         * @param user use an existing user object or pass NULL for an empty builder.
+         */
+        public Builder(@Nullable User user) {
+            if (user != null) {
+                id(user.getId());
+                email(user.getEmail());
+                name(user.getName());
+            }
         }
 
         /**
@@ -145,7 +144,7 @@ public class User implements JsonStream.Streamable {
 
         @Nullable
         User get() {
-            User user = User.builder()
+            User user = new User.Builder()
                 .id(preferences.getString(USER_ID_KEY, null))
                 .name(preferences.getString(USER_NAME_KEY, null))
                 .email(preferences.getString(USER_EMAIL_KEY, null))
