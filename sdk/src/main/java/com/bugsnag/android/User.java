@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Information about the current user of your application.
  */
-class User implements JsonStream.Streamable {
+public class User implements JsonStream.Streamable {
     @Nullable private String id;
     @Nullable private String email;
     @Nullable private String name;
