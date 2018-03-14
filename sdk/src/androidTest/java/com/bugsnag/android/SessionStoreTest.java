@@ -39,7 +39,7 @@ public class SessionStoreTest {
     /**
      * Removes any sessions in the store created during testing
      *
-     * @throws Exception
+     * @throws Exception if the operation failed
      */
     @After
     public void tearDown() throws Exception {
