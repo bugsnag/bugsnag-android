@@ -107,8 +107,8 @@ public class StrictModeTest {
     private Exception generateStrictModeException() {
         try {
             violateStrictModePolicy();
-        } catch (Exception e) {
-            return e;
+        } catch (Exception exception) {
+            return exception;
         }
         return null;
     }
@@ -120,8 +120,8 @@ public class StrictModeTest {
         try {
             Context context = InstrumentationRegistry.getContext();
             new FileWriter(new File(context.getCacheDir(), "test")).write("test");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
