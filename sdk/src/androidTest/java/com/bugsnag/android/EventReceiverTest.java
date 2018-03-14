@@ -1,10 +1,10 @@
 package com.bugsnag.android;
 
+import static junit.framework.Assert.assertEquals;
+
 import android.support.test.filters.SmallTest;
 
 import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
 
 @SmallTest
 public class EventReceiverTest {

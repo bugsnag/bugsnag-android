@@ -1,5 +1,9 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,10 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest

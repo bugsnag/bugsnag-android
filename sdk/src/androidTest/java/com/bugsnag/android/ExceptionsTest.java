@@ -1,5 +1,9 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import android.support.annotation.NonNull;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -12,10 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest

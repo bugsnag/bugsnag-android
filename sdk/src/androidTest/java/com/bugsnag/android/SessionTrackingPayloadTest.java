@@ -1,5 +1,11 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateSession;
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
 import android.support.test.InstrumentationRegistry;
 
 import org.json.JSONArray;
@@ -11,12 +17,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
-
-import static com.bugsnag.android.BugsnagTestUtils.generateSession;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 public class SessionTrackingPayloadTest {
 

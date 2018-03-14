@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -9,9 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest

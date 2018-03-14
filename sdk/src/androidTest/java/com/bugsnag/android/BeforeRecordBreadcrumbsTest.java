@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -10,9 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest

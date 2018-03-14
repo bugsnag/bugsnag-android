@@ -1,10 +1,5 @@
 package com.bugsnag.android;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Date;
-
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionStore;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionTrackingApiClient;
@@ -14,6 +9,11 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Date;
 
 public class SessionTrackerTest {
 

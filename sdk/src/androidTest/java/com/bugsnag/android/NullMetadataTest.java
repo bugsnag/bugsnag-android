@@ -1,14 +1,14 @@
 package com.bugsnag.android;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
 import android.support.test.InstrumentationRegistry;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
