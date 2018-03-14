@@ -1,6 +1,6 @@
-Feature: Android support
+Feature: Reporting Stack overflow
 
-Scenario: Stack Overflow
+Scenario: Stack Overflow sends
     When I run "StackOverflowScenario" with the defaults
 #   Need to wait a while to trigger this in release mode
     And I wait for 30 seconds

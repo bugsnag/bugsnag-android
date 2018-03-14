@@ -1,6 +1,6 @@
-Feature: Android support
+Feature: Empty Stacktrace reported
 
-Scenario: Empty Stacktrace
+Scenario: Exceptions with empty stacktraces are sent
     When I run "EmptyStacktraceScenario" with the defaults
     Then I should receive a request
     And the request is a valid for the error reporting API

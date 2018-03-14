@@ -1,4 +1,4 @@
-Feature: Android support
+Feature: Reporting metadata
 
 Scenario: Sends a handled exception which includes custom metadata added in a notify callback
     When I run "MetaDataScenario" with the defaults

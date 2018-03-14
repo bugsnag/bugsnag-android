@@ -1,4 +1,4 @@
-Feature: Android support
+Feature: Reporting with other exception handlers installed
 
 Scenario: Other uncaught exception handler installed
     When I run "CrashHandlerScenario" with the defaults

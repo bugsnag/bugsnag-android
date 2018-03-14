@@ -1,4 +1,4 @@
-Feature: Android support
+Feature: Reporting Breadcrumbs
 
 Scenario: Test handled Android Exception
     When I run "BreadcrumbScenario" with the defaults

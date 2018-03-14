@@ -1,6 +1,6 @@
-Feature: Android support
+Feature: Reporting OOMs
 
-Scenario: Out of Memory
+Scenario: Out of Memory Error captured
     When I run "OomScenario" with the defaults
     Then I should receive a request
     And the request is a valid for the error reporting API
