@@ -30,7 +30,7 @@ android {
         release {
             keyAlias "password"
             keyPassword "password"
-            storeFile file("../fakekeys.jks")
+            storeFile file("../features/fixtures/fakekeys.jks")
             storePassword "password"
         }
     }
