@@ -33,7 +33,6 @@ public class Configuration extends Observable implements Observer {
     private String endpoint = "https://notify.bugsnag.com";
     private String sessionEndpoint = "https://sessions.bugsnag.com";
 
-    private String[] filters = new String[]{"password"};
     private String[] ignoreClasses;
     @Nullable
     private String[] notifyReleaseStages = null;
@@ -191,7 +190,7 @@ public class Configuration extends Observable implements Observer {
      * @return Filters
      */
     public String[] getFilters() {
-        return filters;
+        return metaData.getFilters();
     }
 
     /**
@@ -208,7 +207,6 @@ public class Configuration extends Observable implements Observer {
      * @param filters a list of keys to filter from metaData
      */
     public void setFilters(String[] filters) {
-        this.filters = filters;
         this.metaData.setFilters(filters);
     }
 
