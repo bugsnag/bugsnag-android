@@ -645,6 +645,7 @@ public class Client extends Observable implements Observer {
             throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");
         }
         this.sessionTrackingApiClient = apiClient;
+        sessionTracker.setApiClient(apiClient);
     }
 
     /**
