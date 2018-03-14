@@ -115,7 +115,7 @@ class ErrorStore extends FileStore<Error> {
         }
     }
 
-    private void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
+    void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
         try {
             Report report = new Report(config.getApiKey(), errorFile);
             errorReportApiClient.postReport(config.getEndpoint(), report,
