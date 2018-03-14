@@ -30,12 +30,12 @@ public class JsonStreamTest {
 
     @Test
     public void testSaneValues() throws JSONException, IOException {
-        Long nullLong = null;
-        Boolean nullBoolean = null;
-        String nullString = null;
-        Integer nullInteger = null;
-        Float nullFloat = null;
-        Double nullDouble = null;
+        final Long nullLong = null;
+        final Boolean nullBoolean = null;
+        final String nullString = null;
+        final Integer nullInteger = null;
+        final Float nullFloat = null;
+        final Double nullDouble = null;
 
         stream.beginObject();
         stream.name("nullLong").value(nullLong);

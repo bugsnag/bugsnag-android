@@ -13,6 +13,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -268,6 +269,7 @@ public class ErrorTest {
             severityReason.getJSONObject("attributes");
             fail();
         } catch (JSONException ignored) {
+            Assert.assertNotNull(ignored);
         }
     }
 }

@@ -87,9 +87,10 @@ public class ErrorStoreTest {
 
     @Test
     public void testComparator() throws Exception {
-        String first = "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json";
-        String second = "1505000000000_683c6b92-b325-4987-80ad-77086509ca1e.json";
-        String startup = "1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json";
+        final String first = "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json";
+        final String second = "1505000000000_683c6b92-b325-4987-80ad-77086509ca1e.json";
+        final String startup = "1504500000000_683c6b92-b325-"
+            + "4987-80ad-77086509ca1e_startupcrash.json";
 
         // handle defaults
         assertEquals(0, ERROR_REPORT_COMPARATOR.compare(null, null));
