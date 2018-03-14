@@ -22,6 +22,11 @@ public class NullMetadataTest {
     private Configuration config;
     private Throwable throwable;
 
+    /**
+     * Generates a bugsnag client with a NOP error api client
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");

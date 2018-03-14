@@ -28,6 +28,11 @@ public class SessionTrackingPayloadTest {
     private SessionStore sessionStore;
     private File storageDir;
 
+    /**
+     * Configures a session tracking payload and session store, ensuring that 0 files are present
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Context context = InstrumentationRegistry.getContext();
@@ -43,6 +48,11 @@ public class SessionTrackingPayloadTest {
         rootNode = streamableToJson(payload);
     }
 
+    /**
+     * Deletes any files in the session store created during the test
+     *
+     * @throws Exception if the operation fails
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.clearFilesInDir(storageDir);

@@ -26,6 +26,11 @@ public class ErrorTest {
     private Configuration config;
     private Error error;
 
+    /**
+     * Generates a new default error for use by tests
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");

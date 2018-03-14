@@ -20,6 +20,11 @@ public class BeforeRecordBreadcrumbsTest {
 
     private Client client;
 
+    /**
+     * Configures a client which does not automatically record breadcrumbs
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Configuration configuration = new Configuration("api-key");

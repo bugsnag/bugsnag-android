@@ -23,6 +23,11 @@ public class SessionTrackerTest {
     private User user;
     private Configuration configuration;
 
+    /**
+     * Configures a session tracker that automatically captures sessions
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         configuration = new Configuration("test");

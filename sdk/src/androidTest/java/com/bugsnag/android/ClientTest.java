@@ -30,6 +30,10 @@ public class ClientTest {
     private Context context;
     private Configuration config;
 
+    /**
+     * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
@@ -37,6 +41,10 @@ public class ClientTest {
         config = new Configuration("api-key");
     }
 
+    /**
+     * Clears sharedPreferences to remove any values persisted
+     * @throws Exception if IO to sharedPrefs failed
+     */
     @After
     public void tearDown() throws Exception {
         clearSharedPrefs();

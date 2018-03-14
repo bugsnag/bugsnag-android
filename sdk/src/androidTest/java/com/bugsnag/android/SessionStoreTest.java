@@ -22,6 +22,11 @@ public class SessionStoreTest {
 
     private File storageDir;
 
+    /**
+     * Generates a session store with 0 files
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
@@ -31,6 +36,11 @@ public class SessionStoreTest {
         FileUtils.clearFilesInDir(storageDir);
     }
 
+    /**
+     * Removes any sessions in the store created during testing
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.clearFilesInDir(storageDir);

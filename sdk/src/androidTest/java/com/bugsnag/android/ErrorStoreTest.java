@@ -32,6 +32,11 @@ public class ErrorStoreTest {
     private Configuration config;
     private File errorStorageDir;
 
+    /**
+     * Generates a client and ensures that its errorStore has 0 files persisted
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
@@ -42,6 +47,11 @@ public class ErrorStoreTest {
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
+    /**
+     * Removes any files from the errorStore generated during testing
+     *
+     * @throws Exception if removing files failed
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.clearFilesInDir(errorStorageDir);
