@@ -9,7 +9,7 @@ clean:
 	./gradlew clean
 
 test:
-	./gradlew :connectedCheck
+	./gradlew :sdk:connectedCheck
 
 bump:
 ifeq ($(VERSION),)
