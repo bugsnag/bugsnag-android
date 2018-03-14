@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.Semaphore;
 
 /**
  * Store and flush Error reports which couldn't be sent immediately due to
@@ -23,6 +24,7 @@ class ErrorStore extends FileStore<Error> {
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
     private volatile boolean flushOnLaunchCompleted = false;
+    private final Semaphore semaphore = new Semaphore(1);
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -58,16 +60,12 @@ class ErrorStore extends FileStore<Error> {
             // The request itself will run in a background thread and will continue after the 2
             // second period until the request completes, or the app crashes.
             flushOnLaunchCompleted = false;
+            Logger.info("Attempting to send launch crash reports");
 
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    Logger.info("Attempting to send launch crash reports");
-
-                    for (File crashReport : crashReports) {
-                        flushErrorReport(crashReport, errorReportApiClient);
-                    }
-                    Logger.info("Delivered all launch crash reports");
+                    flushReports(crashReports, errorReportApiClient);
                     flushOnLaunchCompleted = true;
                 }
             });
@@ -97,21 +95,28 @@ class ErrorStore extends FileStore<Error> {
         try {
             Async.run(new Runnable() {
                 @Override
-                public void run() { // Look up all saved error files
-                    Collection<File> storedFiles = findStoredFiles();
-
-                    if (!storedFiles.isEmpty()) {
-                        Logger.info(String.format(Locale.US,
-                            "Sending %d saved error(s) to Bugsnag", storedFiles.size()));
-
-                        for (File errorFile : storedFiles) {
-                            flushErrorReport(errorFile, errorReportApiClient);
-                        }
-                    }
+                public void run() {
+                    flushReports(findStoredFiles(), errorReportApiClient);
                 }
             });
         } catch (RejectedExecutionException exception) {
             Logger.warn("Failed to flush all on-disk errors, retaining unsent errors for later.");
+        }
+    }
+
+    private void flushReports(Collection<File> storedReports,
+                              ErrorReportApiClient apiClient) {
+        if (!storedReports.isEmpty() && semaphore.tryAcquire(1)) {
+            try {
+                Logger.info(String.format(Locale.US,
+                    "Sending %d saved error(s) to Bugsnag", storedReports.size()));
+
+                for (File errorFile : storedReports) {
+                    flushErrorReport(errorFile, apiClient);
+                }
+            } finally {
+                semaphore.release(1);
+            }
         }
     }
 
