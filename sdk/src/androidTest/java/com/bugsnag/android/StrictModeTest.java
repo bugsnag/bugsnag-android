@@ -6,6 +6,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 
@@ -20,7 +21,8 @@ import java.io.IOException;
 @SmallTest
 public class StrictModeTest {
 
-    private static final String STRICT_MODE_MSG = "android.os.StrictMode$StrictModeViolation: policy=262146 violation=";
+    private static final String STRICT_MODE_MSG = "android.os.StrictMode"
+        + "$StrictModeViolation: policy=262146 violation=";
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
 
     @Before
@@ -69,7 +71,8 @@ public class StrictModeTest {
 
     @Test
     public void testStrictModeBadDesc() {
-        String desc = strictModeHandler.getViolationDescription("Three blind mice, look how they run");
+        String msg = "Three blind mice, look how they run";
+        String desc = strictModeHandler.getViolationDescription(msg);
         assertNull(desc);
 
         String nonNumeric = strictModeHandler.getViolationDescription("violation=5abc");
@@ -115,7 +118,8 @@ public class StrictModeTest {
      */
     private void violateStrictModePolicy() {
         try {
-            new FileWriter(new File(InstrumentationRegistry.getContext().getCacheDir(), "test")).write("test");
+            Context context = InstrumentationRegistry.getContext();
+            new FileWriter(new File(context.getCacheDir(), "test")).write("test");
         } catch (IOException e) {
             e.printStackTrace();
         }

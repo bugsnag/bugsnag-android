@@ -64,7 +64,8 @@ public class ErrorStoreTest {
     @Test
     public void testIsLaunchCrashReport() throws Exception {
         String[] valid = {"1504255147933__30b7e350-dcd1-4032-969e-98d30be62bbc_startupcrash.json"};
-        String[] invalid = {"", ".json", "abcdeAO.json", "!@£)(%)(", "1504255147933.txt", "1504255147933.json"};
+        String[] invalid = {"", ".json", "abcdeAO.json", "!@£)(%)(",
+            "1504255147933.txt", "1504255147933.json"};
 
         for (String s : valid) {
             assertTrue(errorStore.isLaunchCrashReport(new File(s)));

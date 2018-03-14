@@ -47,7 +47,8 @@ public class DeviceDataTest {
 
         assertTrue(deviceDataJson.getDouble("screenDensity") > 0);
         assertTrue(deviceDataJson.getDouble("dpi") >= DisplayMetrics.DENSITY_LOW);
-        assertTrue(deviceDataJson.getString("screenResolution").matches("^\\d+x\\d+$"));
+        String screenResolution = deviceDataJson.getString("screenResolution");
+        assertTrue(screenResolution.matches("^\\d+x\\d+$"));
         assertTrue(deviceDataJson.getLong("totalMemory") > 0);
         assertNotNull(deviceDataJson.getBoolean("jailbroken"));
         assertNotNull(deviceDataJson.getString("locale"));

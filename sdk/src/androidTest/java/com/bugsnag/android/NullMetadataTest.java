@@ -28,7 +28,10 @@ public class NullMetadataTest {
         Bugsnag.init(InstrumentationRegistry.getContext(), config);
         Bugsnag.setErrorReportApiClient(new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
+            public void postReport(String urlString,
+                                   Report report,
+                                   Map<String, String> headers)
+                throws NetworkException, BadResponseException {
 
             }
         });
@@ -44,7 +47,8 @@ public class NullMetadataTest {
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, "RuntimeException", "Something broke", new StackTraceElement[]{}, null).build();
+        Error error = new Error.Builder(config, "RuntimeException",
+            "Something broke", new StackTraceElement[]{}, null).build();
         validateDefaultMetadata(error.getMetaData());
     }
 

@@ -6,6 +6,7 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 
 import org.json.JSONArray;
@@ -29,14 +30,15 @@ public class SessionTrackingPayloadTest {
 
     @Before
     public void setUp() throws Exception {
-        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
+        Context context = InstrumentationRegistry.getContext();
+        Client client = new Client(context, "api-key");
         sessionStore = client.sessionStore;
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
 
         session = generateSession();
-        appData = new AppData(InstrumentationRegistry.getContext(), new Configuration("a"), generateSessionTracker());
+        appData = new AppData(context, new Configuration("a"), generateSessionTracker());
         SessionTrackingPayload payload = new SessionTrackingPayload(session, appData);
         rootNode = streamableToJson(payload);
     }
@@ -54,7 +56,8 @@ public class SessionTrackingPayloadTest {
         JSONObject sessionNode = sessions.getJSONObject(0);
         assertNotNull(sessionNode);
         assertEquals("test", sessionNode.getString("id"));
-        assertEquals(DateUtils.toIso8601(session.getStartedAt()), sessionNode.getString("startedAt"));
+        String startedAt = sessionNode.getString("startedAt");
+        assertEquals(DateUtils.toIso8601(session.getStartedAt()), startedAt);
         assertNotNull(sessionNode.getJSONObject("user"));
 
         assertNotNull(rootNode.getJSONObject("notifier"));

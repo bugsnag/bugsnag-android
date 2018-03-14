@@ -24,7 +24,8 @@ public class ReportTest {
     @Before
     public void setUp() throws Exception {
         Configuration config = new Configuration("example-api-key");
-        Error error = new Error.Builder(config, new RuntimeException("Something broke"), null).build();
+        RuntimeException exception = new RuntimeException("Something broke");
+        Error error = new Error.Builder(config, exception, null).build();
         report = new Report("api-key", error);
     }
 

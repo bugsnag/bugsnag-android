@@ -44,7 +44,10 @@ public class ErrorReportApiClientTest {
         private Report report;
 
         @Override
-        public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
+        public void postReport(String urlString,
+                               Report report,
+                               Map<String, String> headers)
+            throws NetworkException, BadResponseException {
             this.report = report;
         }
     }
