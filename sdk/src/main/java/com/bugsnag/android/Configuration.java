@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * User-specified configuration storage object, contains information
@@ -32,7 +33,6 @@ public class Configuration extends Observable implements Observer {
     private String endpoint = "https://notify.bugsnag.com";
     private String sessionEndpoint = "https://sessions.bugsnag.com";
 
-    private String[] filters = new String[]{"password"};
     private String[] ignoreClasses;
     @Nullable
     private String[] notifyReleaseStages = null;
@@ -50,9 +50,9 @@ public class Configuration extends Observable implements Observer {
 
     @NonNull
     private MetaData metaData;
-    private final Collection<BeforeNotify> beforeNotifyTasks = new LinkedHashSet<>();
+    private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
-        = new LinkedHashSet<>();
+        = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
 
@@ -190,7 +190,7 @@ public class Configuration extends Observable implements Observer {
      * @return Filters
      */
     public String[] getFilters() {
-        return filters;
+        return metaData.getFilters();
     }
 
     /**
@@ -207,7 +207,6 @@ public class Configuration extends Observable implements Observer {
      * @param filters a list of keys to filter from metaData
      */
     public void setFilters(String[] filters) {
-        this.filters = filters;
         this.metaData.setFilters(filters);
     }
 
@@ -547,7 +546,9 @@ public class Configuration extends Observable implements Observer {
      * @param beforeNotify the new before notify task
      */
     protected void beforeNotify(BeforeNotify beforeNotify) {
-        this.beforeNotifyTasks.add(beforeNotify);
+        if (!beforeNotifyTasks.contains(beforeNotify)) {
+            beforeNotifyTasks.add(beforeNotify);
+        }
     }
 
     /**
@@ -556,7 +557,9 @@ public class Configuration extends Observable implements Observer {
      * @param beforeRecordBreadcrumb the new before breadcrumb task
      */
     protected void beforeRecordBreadcrumb(BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        this.beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
+        if (!beforeRecordBreadcrumbTasks.contains(beforeRecordBreadcrumb)) {
+            beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
+        }
     }
 
     /**

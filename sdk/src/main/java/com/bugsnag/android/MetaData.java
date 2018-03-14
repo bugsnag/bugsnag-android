@@ -25,7 +25,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
-    private String[] filters;
+    private String[] filters = {"password"};
+
     @NonNull
     final Map<String, Object> store;
 
@@ -116,6 +117,10 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         this.filters = filters;
 
         notifyBugsnagObservers(NotifyType.FILTERS);
+    }
+
+    String[] getFilters() {
+        return filters;
     }
 
     @NonNull

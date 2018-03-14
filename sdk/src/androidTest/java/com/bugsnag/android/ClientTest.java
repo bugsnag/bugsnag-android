@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,6 +16,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -201,6 +204,25 @@ public class ClientTest {
         assertEquals(false, newConfig.getEnableExceptionHandler());
         assertEquals(true, newConfig.getPersistUserBetweenSessions());
         assertEquals(true, newConfig.shouldAutoCaptureSessions());
+    }
+
+    @Test
+    public void testSessionTrackerApiClient() throws Exception {
+        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
+        assertTrue(client.sessionTracker.getApiClient() instanceof DefaultHttpClient);
+
+        SessionTrackingApiClient customClient = new SessionTrackingApiClient() {
+            @Override
+            public void postSessionTrackingPayload(String urlString,
+                                                   SessionTrackingPayload payload,
+                                                   Map<String, String> headers)
+                throws NetworkException, BadResponseException {
+
+            }
+        };
+        client.setSessionTrackingApiClient(customClient);
+        assertFalse(client.sessionTracker.getApiClient() instanceof DefaultHttpClient);
+        assertEquals(customClient, client.sessionTracker.getApiClient());
     }
 
 }

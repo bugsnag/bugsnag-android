@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -10,6 +11,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,6 +25,13 @@ import java.util.Map;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class MetaDataTest {
+
+    private Client client;
+
+    @Before
+    public void setUp() throws Exception {
+        client = BugsnagTestUtils.generateClient();
+    }
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
@@ -187,5 +196,37 @@ public class MetaDataTest {
         assertEquals("[FILTERED]", sensitiveMapJson.getString("password"));
         assertEquals("[FILTERED]", sensitiveMapJson.getString("confirm_password"));
         assertEquals("safe", sensitiveMapJson.getString("normal"));
+    }
+
+    @Test
+    public void testFilterConstructor() throws Exception {
+        MetaData metaData = client.getMetaData();
+        metaData.addToTab("foo", "password", "abc123");
+        JSONObject jsonObject = streamableToJson(metaData);
+
+        assertArrayEquals(new String[]{"password"}, metaData.getFilters());
+        assertEquals("[FILTERED]", jsonObject.getJSONObject("foo").get("password"));
+    }
+
+    @Test
+    public void testFilterSetter() throws Exception {
+        MetaData metaData = new MetaData();
+        client.setMetaData(metaData);
+        assertArrayEquals(new String[]{"password"}, metaData.getFilters());
+    }
+
+    @Test
+    public void testFilterOverride() throws Exception {
+        MetaData metaData = client.getMetaData();
+        client.setFilters("test", "another");
+        assertArrayEquals(new String[]{"test", "another"}, metaData.getFilters());
+    }
+
+    @Test
+    public void testFilterMetadataOverride() throws Exception {
+        MetaData data = new MetaData();
+        data.setFilters("CUSTOM");
+        client.setMetaData(data);
+        assertArrayEquals(new String[]{"CUSTOM"}, data.getFilters());
     }
 }
