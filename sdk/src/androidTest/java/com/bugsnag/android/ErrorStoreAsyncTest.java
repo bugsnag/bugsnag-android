@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
@@ -34,11 +35,14 @@ public class ErrorStoreAsyncTest {
     private Configuration config;
     private File errorStorageDir;
     private ErrorReportApiClient apiClient;
+
+    private CountDownLatch countDownLatch;
     private AtomicInteger requestCount;
 
     @Before
     public void setUp() throws Exception {
         requestCount = new AtomicInteger();
+        countDownLatch = new CountDownLatch(2); // should only ever be called once
 
         apiClient = new ErrorReportApiClient() {
             @Override
@@ -47,6 +51,7 @@ public class ErrorStoreAsyncTest {
                                    Map<String, String> headers)
                 throws NetworkException, BadResponseException {
                 requestCount.incrementAndGet();
+                countDownLatch.countDown();
                 try {
                     Thread.sleep(100); // simulate long network request
                 } catch (InterruptedException e) {
@@ -95,7 +100,7 @@ public class ErrorStoreAsyncTest {
         writeFakeError();
         errorStore.flushAsync(apiClient);
         errorStore.flushAsync(apiClient);
-        Thread.sleep(10);
+        countDownLatch.await(200, TimeUnit.MILLISECONDS);
         assertEquals(1, requestCount.get());
     }
 }
