@@ -48,7 +48,7 @@ public class ErrorStoreAsyncTest {
                 throws NetworkException, BadResponseException {
                 requestCount.incrementAndGet();
                 try {
-                    Thread.sleep(50); // simulate long network request
+                    Thread.sleep(100); // simulate long network request
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -95,7 +95,7 @@ public class ErrorStoreAsyncTest {
         writeFakeError();
         errorStore.flushAsync(apiClient);
         errorStore.flushAsync(apiClient);
-        Thread.sleep(1);
+        Thread.sleep(10);
         assertEquals(1, requestCount.get());
     }
 }
