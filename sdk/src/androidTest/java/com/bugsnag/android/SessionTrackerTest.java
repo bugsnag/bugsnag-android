@@ -29,7 +29,7 @@ public class SessionTrackerTest {
         sessionTracker = new SessionTracker(configuration, generateClient(), generateSessionStore(),
             generateSessionTrackingApiClient());
         configuration.setAutoCaptureSessions(true);
-        user = new User();
+        user = new User.Builder().build();
     }
 
     @Test

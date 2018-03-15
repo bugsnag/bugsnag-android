@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -416,7 +415,7 @@ public class Configuration extends Observable implements Observer {
      * if set then any user information set will be re-used until
      *
      * @param persistUserBetweenSessions whether or not Bugsnag should persist user information
-     * @see Client#clearUser() is called
+     * @see Client#setUser(User) is called with null
      */
     public void setPersistUserBetweenSessions(boolean persistUserBetweenSessions) {
         this.persistUserBetweenSessions = persistUserBetweenSessions;

@@ -41,9 +41,6 @@ public class Client extends Observable implements Observer {
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
-    private static final String USER_ID_KEY = "user.id";
-    private static final String USER_NAME_KEY = "user.name";
-    private static final String USER_EMAIL_KEY = "user.email";
 
     static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
     static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
@@ -67,9 +64,8 @@ public class Client extends Observable implements Observer {
     protected final AppData appData;
     @NonNull
     protected final DeviceData deviceData;
-    @NonNull
-    final Breadcrumbs breadcrumbs;
-    protected final User user = new User();
+    @NonNull final Breadcrumbs breadcrumbs;
+    protected User user = new User.Builder().build();
     @NonNull
     protected final ErrorStore errorStore;
 
@@ -79,6 +75,7 @@ public class Client extends Observable implements Observer {
     final SessionTracker sessionTracker;
     private ErrorReportApiClient errorReportApiClient;
     private SessionTrackingApiClient sessionTrackingApiClient;
+    private final SharedPreferences sharedPref;
 
     /**
      * Initialize a Bugsnag client
@@ -136,8 +133,7 @@ public class Client extends Observable implements Observer {
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appData = new AppData(appContext, config, sessionTracker);
         deviceData = new DeviceData(appContext, sharedPref);
@@ -150,11 +146,10 @@ public class Client extends Observable implements Observer {
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
-            user.setName(sharedPref.getString(USER_NAME_KEY, null));
-            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
-        } else {
-            user.setId(deviceData.getUserId());
+            user = new User.Repo(sharedPref).get();
+        }
+        if (user == null) {
+            user = new User.Builder().id(deviceData.getUserId()).build();
         }
 
         if (appContext instanceof Application) {
@@ -334,7 +329,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Manually starts tracking a new session.
-     *
+     * <p>
      * Automatic session tracking can be enabled via
      * {@link Configuration#setAutoCaptureSessions(boolean)}, which will automatically create a new
      * session everytime the app enters the foreground.
@@ -345,7 +340,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Starts tracking a new session only if no sessions have yet been tracked
-     *
+     * <p>
      * This is an integration point for custom libraries implementing automatic session capture
      * which differs from the default activity-based initialization.
      */
@@ -511,124 +506,76 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set details of the user currently using your application.
-     * You can search for this information in your Bugsnag dashboard.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setUser("12345", "james@example.com", "James Smith");
-     *
-     * @param id    a unique identifier of the current user (defaults to a unique id)
-     * @param email the email address of the current user
-     * @param name  the name of the current user
+     * @return the current user information associated with the Bugsnag {@link Client}
+     * @see #setUser(User)
      */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Set the user information that the Bugsnag {@link Client} supplies with every error.<p>
+     * Pass NULL to clear the current user data, i.e. reset it to defaults.
+     *
+     * @param user a {@link User} object made by {@link com.bugsnag.android.User.Builder} or NULL
+     */
+    public void setUser(@Nullable User user) {
+        setUser(user, true);
+    }
+
+    /**
+     * @param notify whether or not to notify NDK components
+     */
+    void setUser(@Nullable User user, boolean notify) {
+        if (user == null || config.getPersistUserBetweenSessions()) {
+            new User.Repo(sharedPref).set(user);
+        }
+
+        this.user = user != null ? user : new User.Builder().id(deviceData.getUserId()).build();
+
+        if (notify) {
+            notifyBugsnagObservers(NotifyType.USER);
+        }
+    }
+
+    /**
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
+     */
+    @Deprecated
     public void setUser(String id, String email, String name) {
-        setUserId(id);
-        setUserEmail(email);
-        setUserName(name);
+        setUser(user.toBuilder().id(id).email(email).name(name).build());
     }
 
     /**
-     * Removes the current user data and sets it back to defaults
+     * @deprecated Use {@link #setUser(User)} (User)} and pass null<p>
      */
+    @Deprecated
     public void clearUser() {
-        user.setId(deviceData.getUserId());
-        user.setEmail(null);
-        user.setName(null);
-
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit()
-            .remove(USER_ID_KEY)
-            .remove(USER_EMAIL_KEY)
-            .remove(USER_NAME_KEY)
-            .apply();
-        notifyBugsnagObservers(NotifyType.USER);
+        setUser(null, true);
     }
 
     /**
-     * Set a unique identifier for the user currently using your application.
-     * By default, this will be an automatically generated unique id
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param id a unique identifier of the current user
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
+    @Deprecated
     public void setUserId(String id) {
-        setUserId(id, true);
+        setUser(user.toBuilder().id(id).build(), true);
     }
 
     /**
-     * Sets the user ID with the option to not notify any NDK components of the change
-     *
-     * @param id     a unique identifier of the current user
-     * @param notify whether or not to notify NDK components
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
-    void setUserId(String id, boolean notify) {
-        user.setId(id);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_ID_KEY, id);
-        }
-
-        if (notify) {
-            notifyBugsnagObservers(NotifyType.USER);
-        }
-    }
-
-    /**
-     * Set the email address of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param email the email address of the current user
-     */
+    @Deprecated
     public void setUserEmail(String email) {
-        setUserEmail(email, true);
+        setUser(user.toBuilder().email(email).build(), true);
     }
 
     /**
-     * Sets the user email with the option to not notify any NDK components of the change
-     *
-     * @param email  the email address of the current user
-     * @param notify whether or not to notify NDK components
+     * @deprecated Use {@link #setUser(User)} and {@link com.bugsnag.android.User.Builder}<p>
      */
-    void setUserEmail(String email, boolean notify) {
-        user.setEmail(email);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_EMAIL_KEY, email);
-        }
-
-        if (notify) {
-            notifyBugsnagObservers(NotifyType.USER);
-        }
-    }
-
-    /**
-     * Set the name of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param name the name of the current user
-     */
+    @Deprecated
     public void setUserName(String name) {
-        setUserName(name, true);
-    }
-
-    /**
-     * Sets the user name with the option to not notify any NDK components of the change
-     *
-     * @param name   the name of the current user
-     * @param notify whether or not to notify NDK components
-     */
-    void setUserName(String name, boolean notify) {
-        user.setName(name);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_NAME_KEY, name);
-        }
-
-        if (notify) {
-            notifyBugsnagObservers(NotifyType.USER);
-        }
+        setUser(user.toBuilder().name(name).build(), true);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -1079,15 +1026,15 @@ public class Client extends Observable implements Observer {
     /**
      * Intended for internal use only
      *
-     * @param exception the exception
+     * @param exception  the exception
      * @param clientData the clientdata
-     * @param blocking whether to block when notifying
-     * @param callback a callback when notifying
+     * @param blocking   whether to block when notifying
+     * @param callback   a callback when notifying
      */
     public void internalClientNotify(@NonNull Throwable exception,
-                              Map<String, Object> clientData,
-                              boolean blocking,
-                              Callback callback) {
+                                     Map<String, Object> clientData,
+                                     boolean blocking,
+                                     Callback callback) {
         String severity = getKeyFromClientData(clientData, "severity", true);
         String severityReason =
             getKeyFromClientData(clientData, "severityReason", true);
@@ -1152,7 +1099,8 @@ public class Client extends Observable implements Observer {
      *
      * @see MetaData
      */
-    @NonNull public MetaData getMetaData() {
+    @NonNull
+    public MetaData getMetaData() {
         return config.getMetaData();
     }
 
@@ -1255,7 +1203,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Caches an error then attempts to notify.
-     *
+     * <p>
      * Should only ever be called from the {@link ExceptionHandler}.
      */
     void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData,
@@ -1300,19 +1248,6 @@ public class Client extends Observable implements Observer {
         return true;
     }
 
-
-    /**
-     * Stores the given key value pair into shared preferences
-     *
-     * @param key   The key to store
-     * @param value The value to store
-     */
-    private void storeInSharedPrefs(String key, String value) {
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit().putString(key, value).apply();
-    }
-
     /**
      * Finalize by removing the receiver
      *
@@ -1352,6 +1287,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Returns the configuration used to initialise the client
+     *
      * @return the config
      */
     @NonNull
