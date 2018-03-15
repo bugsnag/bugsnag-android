@@ -10,6 +10,8 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +67,7 @@ public class StrictModeTest {
                 strictModeHandler.getViolationDescription(invalidArg);
                 fail("Null/empty values not rejected");
             } catch (IllegalArgumentException ignored) {
+                Assert.assertNotNull(ignored);
             }
         }
     }
@@ -101,14 +104,13 @@ public class StrictModeTest {
     /**
      * Generates a StrictMode Exception (as it has private visibility in StrictMode)
      *
-     * @return the StrictModeException. This is nullable as the errors StrictMode detect
-     * depend on the API level.
+     * @return a nullable StrictModeException
      */
     private Exception generateStrictModeException() {
         try {
             violateStrictModePolicy();
-        } catch (Exception e) {
-            return e;
+        } catch (Exception exception) {
+            return exception;
         }
         return null;
     }
@@ -120,8 +122,8 @@ public class StrictModeTest {
         try {
             Context context = InstrumentationRegistry.getContext();
             new FileWriter(new File(context.getCacheDir(), "test")).write("test");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 

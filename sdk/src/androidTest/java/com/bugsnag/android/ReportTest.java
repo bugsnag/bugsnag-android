@@ -21,6 +21,11 @@ public class ReportTest {
 
     private Report report;
 
+    /**
+     * Generates a report
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Configuration config = new Configuration("example-api-key");

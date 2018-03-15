@@ -13,6 +13,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,11 @@ public class ErrorTest {
     private Configuration config;
     private Error error;
 
+    /**
+     * Generates a new default error for use by tests
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
@@ -263,6 +269,7 @@ public class ErrorTest {
             severityReason.getJSONObject("attributes");
             fail();
         } catch (JSONException ignored) {
+            Assert.assertNotNull(ignored);
         }
     }
 }

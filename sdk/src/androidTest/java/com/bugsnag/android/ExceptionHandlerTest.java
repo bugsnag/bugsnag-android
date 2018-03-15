@@ -19,6 +19,12 @@ public class ExceptionHandlerTest {
 
     private Context context;
 
+    /**
+     * Sets the default exception handler to null to avoid any Bugsnag handlers created
+     * in previous test
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
