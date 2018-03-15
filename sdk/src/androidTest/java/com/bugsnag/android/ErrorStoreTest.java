@@ -32,6 +32,11 @@ public class ErrorStoreTest {
     private Configuration config;
     private File errorStorageDir;
 
+    /**
+     * Generates a client and ensures that its errorStore has 0 files persisted
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
@@ -42,6 +47,11 @@ public class ErrorStoreTest {
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
+    /**
+     * Removes any files from the errorStore generated during testing
+     *
+     * @throws Exception if removing files failed
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.clearFilesInDir(errorStorageDir);
@@ -64,7 +74,8 @@ public class ErrorStoreTest {
     @Test
     public void testIsLaunchCrashReport() throws Exception {
         String[] valid = {"1504255147933__30b7e350-dcd1-4032-969e-98d30be62bbc_startupcrash.json"};
-        String[] invalid = {"", ".json", "abcdeAO.json", "!@£)(%)(", "1504255147933.txt", "1504255147933.json"};
+        String[] invalid = {"", ".json", "abcdeAO.json", "!@£)(%)(",
+            "1504255147933.txt", "1504255147933.json"};
 
         for (String s : valid) {
             assertTrue(errorStore.isLaunchCrashReport(new File(s)));
@@ -76,9 +87,10 @@ public class ErrorStoreTest {
 
     @Test
     public void testComparator() throws Exception {
-        String first = "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json";
-        String second = "1505000000000_683c6b92-b325-4987-80ad-77086509ca1e.json";
-        String startup = "1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json";
+        final String first = "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json";
+        final String second = "1505000000000_683c6b92-b325-4987-80ad-77086509ca1e.json";
+        final String startup = "1504500000000_683c6b92-b325-"
+            + "4987-80ad-77086509ca1e_startupcrash.json";
 
         // handle defaults
         assertEquals(0, ERROR_REPORT_COMPARATOR.compare(null, null));

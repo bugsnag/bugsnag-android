@@ -23,6 +23,11 @@ public class SessionTrackerTest {
     private User user;
     private Configuration configuration;
 
+    /**
+     * Configures a session tracker that automatically captures sessions
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         configuration = new Configuration("test");
@@ -119,8 +124,8 @@ public class SessionTrackerTest {
     @Test
     public void testInForegroundDuration() throws Exception {
         long now = System.currentTimeMillis();
-        sessionTracker = new SessionTracker(configuration, generateClient(), 0, generateSessionStore(),
-            generateSessionTrackingApiClient());
+        sessionTracker = new SessionTracker(configuration, generateClient(),
+            0, generateSessionStore(), generateSessionTrackingApiClient());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
         assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
@@ -140,8 +145,8 @@ public class SessionTrackerTest {
 
     @Test
     public void testZeroSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, generateClient(), 0, generateSessionStore(),
-            generateSessionTrackingApiClient());
+        sessionTracker = new SessionTracker(configuration, generateClient(),
+            0, generateSessionStore(), generateSessionTrackingApiClient());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -155,8 +160,8 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, generateClient(), 100, generateSessionStore(),
-            generateSessionTrackingApiClient());
+        sessionTracker = new SessionTracker(configuration, generateClient(),
+            100, generateSessionStore(), generateSessionTrackingApiClient());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);

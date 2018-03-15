@@ -22,13 +22,21 @@ public class NullMetadataTest {
     private Configuration config;
     private Throwable throwable;
 
+    /**
+     * Generates a bugsnag client with a NOP error api client
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
         Bugsnag.init(InstrumentationRegistry.getContext(), config);
         Bugsnag.setErrorReportApiClient(new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
+            public void postReport(String urlString,
+                                   Report report,
+                                   Map<String, String> headers)
+                throws NetworkException, BadResponseException {
 
             }
         });
@@ -44,7 +52,8 @@ public class NullMetadataTest {
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, "RuntimeException", "Something broke", new StackTraceElement[]{}, null).build();
+        Error error = new Error.Builder(config, "RuntimeException",
+            "Something broke", new StackTraceElement[]{}, null).build();
         validateDefaultMetadata(error.getMetaData());
     }
 

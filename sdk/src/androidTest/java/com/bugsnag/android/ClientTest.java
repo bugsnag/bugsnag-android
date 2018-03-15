@@ -30,6 +30,10 @@ public class ClientTest {
     private Context context;
     private Configuration config;
 
+    /**
+     * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
@@ -37,6 +41,10 @@ public class ClientTest {
         config = new Configuration("api-key");
     }
 
+    /**
+     * Clears sharedPreferences to remove any values persisted
+     * @throws Exception if IO to sharedPrefs failed
+     */
     @After
     public void tearDown() throws Exception {
         clearSharedPrefs();
@@ -162,7 +170,8 @@ public class ClientTest {
     @Test
     public void testEmptyManifestConfig() {
         Bundle data = new Bundle();
-        Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
+        Configuration protoConfig = new Configuration("api-key");
+        Configuration newConfig = Client.populateConfigFromManifest(protoConfig, data);
 
         assertEquals(config.getApiKey(), newConfig.getApiKey());
         assertEquals(config.getBuildUUID(), newConfig.getBuildUUID());
@@ -172,7 +181,8 @@ public class ClientTest {
         assertEquals(config.getSessionEndpoint(), newConfig.getSessionEndpoint());
         assertEquals(config.getSendThreads(), newConfig.getSendThreads());
         assertEquals(config.getEnableExceptionHandler(), newConfig.getEnableExceptionHandler());
-        assertEquals(config.getPersistUserBetweenSessions(), newConfig.getPersistUserBetweenSessions());
+        assertEquals(config.getPersistUserBetweenSessions(),
+            newConfig.getPersistUserBetweenSessions());
     }
 
     @Test
@@ -194,7 +204,8 @@ public class ClientTest {
         data.putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true);
         data.putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", true);
 
-        Configuration newConfig = Client.populateConfigFromManifest(new Configuration("api-key"), data);
+        Configuration protoConfig = new Configuration("api-key");
+        Configuration newConfig = Client.populateConfigFromManifest(protoConfig, data);
         assertEquals(buildUuid, newConfig.getBuildUUID());
         assertEquals(appVersion, newConfig.getAppVersion());
         assertEquals(releaseStage, newConfig.getReleaseStage());

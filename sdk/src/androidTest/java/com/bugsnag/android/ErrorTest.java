@@ -13,6 +13,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +27,16 @@ public class ErrorTest {
     private Configuration config;
     private Error error;
 
+    /**
+     * Generates a new default error for use by tests
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        error = new Error.Builder(config, new RuntimeException("Example message"), null).build();
+        RuntimeException exception = new RuntimeException("Example message");
+        error = new Error.Builder(config, exception, null).build();
     }
 
     @Test
@@ -37,11 +44,13 @@ public class ErrorTest {
         config.setIgnoreClasses(new String[]{"java.io.IOException"});
 
         // Shouldn't ignore classes not in ignoreClasses
-        Error error = new Error.Builder(config, new RuntimeException("Test"), null).build();
+        RuntimeException runtimeException = new RuntimeException("Test");
+        Error error = new Error.Builder(config, runtimeException, null).build();
         assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
-        error = new Error.Builder(config, new java.io.IOException("Test"), null).build();
+        IOException ioException = new IOException("Test");
+        error = new Error.Builder(config, ioException, null).build();
         assertTrue(error.shouldIgnoreClass());
     }
 
@@ -227,7 +236,8 @@ public class ErrorTest {
         assertNotNull(sessionNode);
         assertEquals(3, sessionNode.length());
         assertEquals(session.getId(), sessionNode.getString("id"));
-        assertEquals(DateUtils.toIso8601(session.getStartedAt()), sessionNode.getString("startedAt"));
+        String startedAt = sessionNode.getString("startedAt");
+        assertEquals(DateUtils.toIso8601(session.getStartedAt()), startedAt);
 
         JSONObject eventsNode = sessionNode.getJSONObject("events");
         assertNotNull(eventsNode);
@@ -259,6 +269,7 @@ public class ErrorTest {
             severityReason.getJSONObject("attributes");
             fail();
         } catch (JSONException ignored) {
+            Assert.assertNotNull(ignored);
         }
     }
 }

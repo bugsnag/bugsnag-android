@@ -6,8 +6,11 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +23,8 @@ import java.io.IOException;
 @SmallTest
 public class StrictModeTest {
 
-    private static final String STRICT_MODE_MSG = "android.os.StrictMode$StrictModeViolation: policy=262146 violation=";
+    private static final String STRICT_MODE_MSG = "android.os.StrictMode"
+        + "$StrictModeViolation: policy=262146 violation=";
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
 
     @Before
@@ -63,13 +67,15 @@ public class StrictModeTest {
                 strictModeHandler.getViolationDescription(invalidArg);
                 fail("Null/empty values not rejected");
             } catch (IllegalArgumentException ignored) {
+                Assert.assertNotNull(ignored);
             }
         }
     }
 
     @Test
     public void testStrictModeBadDesc() {
-        String desc = strictModeHandler.getViolationDescription("Three blind mice, look how they run");
+        String msg = "Three blind mice, look how they run";
+        String desc = strictModeHandler.getViolationDescription(msg);
         assertNull(desc);
 
         String nonNumeric = strictModeHandler.getViolationDescription("violation=5abc");
@@ -98,14 +104,13 @@ public class StrictModeTest {
     /**
      * Generates a StrictMode Exception (as it has private visibility in StrictMode)
      *
-     * @return the StrictModeException. This is nullable as the errors StrictMode detect
-     * depend on the API level.
+     * @return a nullable StrictModeException
      */
     private Exception generateStrictModeException() {
         try {
             violateStrictModePolicy();
-        } catch (Exception e) {
-            return e;
+        } catch (Exception exception) {
+            return exception;
         }
         return null;
     }
@@ -115,9 +120,10 @@ public class StrictModeTest {
      */
     private void violateStrictModePolicy() {
         try {
-            new FileWriter(new File(InstrumentationRegistry.getContext().getCacheDir(), "test")).write("test");
-        } catch (IOException e) {
-            e.printStackTrace();
+            Context context = InstrumentationRegistry.getContext();
+            new FileWriter(new File(context.getCacheDir(), "test")).write("test");
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 

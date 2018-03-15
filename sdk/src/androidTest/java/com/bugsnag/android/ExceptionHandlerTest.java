@@ -19,6 +19,12 @@ public class ExceptionHandlerTest {
 
     private Context context;
 
+    /**
+     * Sets the default exception handler to null to avoid any Bugsnag handlers created
+     * in previous test
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
@@ -42,8 +48,9 @@ public class ExceptionHandlerTest {
         Client clientThree = new Client(context, "client-two");
         clientThree.disableExceptionHandler();
 
-        assertTrue(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
-        ExceptionHandler bugsnagHandler = (ExceptionHandler) Thread.getDefaultUncaughtExceptionHandler();
+        Thread.UncaughtExceptionHandler handler = Thread.getDefaultUncaughtExceptionHandler();
+        assertTrue(handler instanceof ExceptionHandler);
+        ExceptionHandler bugsnagHandler = (ExceptionHandler) handler;
 
         assertEquals(2, bugsnagHandler.clientMap.size());
     }

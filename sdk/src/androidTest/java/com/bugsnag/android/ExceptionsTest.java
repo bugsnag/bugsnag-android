@@ -64,7 +64,8 @@ public class ExceptionsTest {
     public void testNamedException() throws JSONException, IOException {
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);
         StackTraceElement[] frames = new StackTraceElement[]{element};
-        Error error = new Error.Builder(config, "RuntimeException", "Example message", frames, null).build();
+        Error error = new Error.Builder(config, "RuntimeException",
+            "Example message", frames, null).build();
         Exceptions exceptions = new Exceptions(config, error.getException());
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);
@@ -90,31 +91,5 @@ public class ExceptionsTest {
         assertEquals("MyFile.java", stackframeJson.get("file"));
         assertEquals(408, stackframeJson.get("lineNumber"));
         assertEquals(18, stackframeJson.get("offset"));
-    }
-}
-
-class CustomException extends Exception implements JsonStream.Streamable {
-
-    CustomException(String message) {
-        super(message);
-    }
-
-    @Override
-    public void toStream(@NonNull JsonStream writer) throws IOException {
-        writer.beginObject();
-        writer.name("errorClass").value("CustomizedException");
-        writer.name("message").value(getLocalizedMessage());
-        writer.name("stacktrace");
-        writer.beginArray();
-
-        writer.beginObject();
-        writer.name("file").value("MyFile.java");
-        writer.name("lineNumber").value(408);
-        writer.name("offset").value(18);
-        writer.name("method").value("MyFile.run");
-        writer.endObject();
-
-        writer.endArray();
-        writer.endObject();
     }
 }

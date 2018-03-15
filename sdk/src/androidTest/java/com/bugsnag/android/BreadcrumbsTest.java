@@ -8,6 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,11 +33,16 @@ public class BreadcrumbsTest {
     public void testSerialization() throws JSONException, IOException {
         breadcrumbs.add(new Breadcrumb("Started app"));
         breadcrumbs.add(new Breadcrumb("Clicked a button"));
-        breadcrumbs.add(new Breadcrumb("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."));
+        breadcrumbs.add(new Breadcrumb("Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
+            + " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
+            + "minim veniam, quis nostrud exercitation ullamco laboris nisi"
+            + " ut aliquip ex ea commodo consequat."));
 
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(3, breadcrumbsJson.length());
-        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim", breadcrumbsJson.getJSONObject(2).getJSONObject("metaData").get("message"));
+        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do "
+                + "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
+            breadcrumbsJson.getJSONObject(2).getJSONObject("metaData").get("message"));
     }
 
     @Test
@@ -51,8 +57,12 @@ public class BreadcrumbsTest {
 
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(5, breadcrumbsJson.length());
-        assertEquals("2", breadcrumbsJson.getJSONObject(0).getJSONObject("metaData").get("message"));
-        assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
+
+        JSONObject firstJsonNode = breadcrumbsJson.getJSONObject(0);
+        JSONObject otherJsonNode = breadcrumbsJson.getJSONObject(4);
+
+        assertEquals("2", firstJsonNode.getJSONObject("metaData").get("message"));
+        assertEquals("6", otherJsonNode.getJSONObject("metaData").get("message"));
     }
 
     @Test
@@ -68,8 +78,12 @@ public class BreadcrumbsTest {
 
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(5, breadcrumbsJson.length());
-        assertEquals("3", breadcrumbsJson.getJSONObject(0).getJSONObject("metaData").get("message"));
-        assertEquals("7", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
+
+        JSONObject firstJsonNode = breadcrumbsJson.getJSONObject(0);
+        JSONObject otherJsonNode = breadcrumbsJson.getJSONObject(4);
+
+        assertEquals("3", firstJsonNode.getJSONObject("metaData").get("message"));
+        assertEquals("7", otherJsonNode.getJSONObject("metaData").get("message"));
     }
 
     @Test
@@ -108,8 +122,12 @@ public class BreadcrumbsTest {
 
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
         assertEquals(5, breadcrumbsJson.length());
-        assertEquals("2", breadcrumbsJson.getJSONObject(0).getJSONObject("metaData").get("message"));
-        assertEquals("6", breadcrumbsJson.getJSONObject(4).getJSONObject("metaData").get("message"));
+
+        JSONObject firstJsonNode = breadcrumbsJson.getJSONObject(0);
+        JSONObject otherJsonNode = breadcrumbsJson.getJSONObject(4);
+
+        assertEquals("2", firstJsonNode.getJSONObject("metaData").get("message"));
+        assertEquals("6", otherJsonNode.getJSONObject("metaData").get("message"));
     }
 
     @Test
@@ -148,9 +166,10 @@ public class BreadcrumbsTest {
         breadcrumbs.add(new Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata));
         JSONArray breadcrumbsJson = streamableToJsonArray(breadcrumbs);
 
-        assertEquals("Rotated Menu", breadcrumbsJson.getJSONObject(0).get("name"));
-        assertEquals("state", breadcrumbsJson.getJSONObject(0).get("type"));
-        assertEquals("left", breadcrumbsJson.getJSONObject(0).getJSONObject("metaData").get("direction"));
+        JSONObject node = breadcrumbsJson.getJSONObject(0);
+        assertEquals("Rotated Menu", node.get("name"));
+        assertEquals("state", node.get("type"));
+        assertEquals("left", node.getJSONObject("metaData").get("direction"));
         assertEquals(1, breadcrumbsJson.length());
     }
 }
