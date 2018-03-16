@@ -1,6 +1,6 @@
 Feature: Metadata is filtered
 
-Scenario: Automatic metadata filtering
+Scenario: Using the default metadata filter
     When I run "AutoFilterScenario" with the defaults
     Then I should receive a request
     And the request is a valid for the error reporting API
@@ -10,7 +10,7 @@ Scenario: Automatic metadata filtering
     And the event "metaData.custom.password" equals "[FILTERED]"
     And the event "metaData.user.password" equals "[FILTERED]"
 
-Scenario: Manual Filter Tracking
+Scenario: Adding a custom metadata filter
     When I run "ManualFilterScenario" with the defaults
     Then I should receive a request
     And the request is a valid for the error reporting API
