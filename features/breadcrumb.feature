@@ -1,6 +1,6 @@
 Feature: Reporting Breadcrumbs
 
-Scenario: Test handled Android Exception
+Scenario: Manually added breadcrumbs are sent in report
     When I run "BreadcrumbScenario" with the defaults
     Then I should receive a request
     And the request is a valid for the error reporting API
