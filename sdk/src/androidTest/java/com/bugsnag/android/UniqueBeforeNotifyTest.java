@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
+
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -7,8 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Ensures that BeforeNotify is only called once,

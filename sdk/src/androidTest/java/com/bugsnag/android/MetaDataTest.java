@@ -1,5 +1,10 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -15,12 +20,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -42,7 +43,8 @@ public class MetaDataTest {
         metaData.addToTab("example", "boolean", true);
         metaData.addToTab("example", "null", null);
         metaData.addToTab("example", "array", new String[]{"a", "b"});
-        metaData.addToTab("example", "collection", Arrays.asList("Hello", "World"));
+        List<String> strings = Arrays.asList("Hello", "World");
+        metaData.addToTab("example", "collection", strings);
 
         Map<String, String> map = new HashMap<>();
         map.put("key", "value");
@@ -86,7 +88,8 @@ public class MetaDataTest {
         JSONObject metaDataJson = streamableToJson(metaData);
         assertTrue(metaDataJson.has("example"));
 
-        JSONObject childMapJson = metaDataJson.getJSONObject("example").getJSONObject("map").getJSONObject("key");
+        JSONObject example = metaDataJson.getJSONObject("example");
+        JSONObject childMapJson = example.getJSONObject("map").getJSONObject("key");
         assertEquals("value", childMapJson.getString("key"));
     }
 
@@ -105,7 +108,8 @@ public class MetaDataTest {
         JSONObject metaDataJson = streamableToJson(metaData);
         assertTrue(metaDataJson.has("example"));
 
-        JSONArray childListJson = metaDataJson.getJSONObject("example").getJSONArray("list").getJSONArray(0);
+        JSONArray jsonArray = metaDataJson.getJSONObject("example").getJSONArray("list");
+        JSONArray childListJson = jsonArray.getJSONArray(0);
         assertEquals(2, childListJson.length());
         assertEquals("james", childListJson.get(0));
         assertEquals("test", childListJson.get(1));

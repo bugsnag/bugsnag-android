@@ -1,5 +1,12 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.SharedPreferences;
@@ -16,13 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -47,7 +47,8 @@ public class DeviceDataTest {
 
         assertTrue(deviceDataJson.getDouble("screenDensity") > 0);
         assertTrue(deviceDataJson.getDouble("dpi") >= DisplayMetrics.DENSITY_LOW);
-        assertTrue(deviceDataJson.getString("screenResolution").matches("^\\d+x\\d+$"));
+        String screenResolution = deviceDataJson.getString("screenResolution");
+        assertTrue(screenResolution.matches("^\\d+x\\d+$"));
         assertTrue(deviceDataJson.getLong("totalMemory") > 0);
         assertNotNull(deviceDataJson.getBoolean("jailbroken"));
         assertNotNull(deviceDataJson.getString("locale"));

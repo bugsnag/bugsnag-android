@@ -42,7 +42,8 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientBreadcrumbModification() throws Exception {
-        final Collection<BeforeRecordBreadcrumb> breadcrumbTasks = client.config.getBeforeRecordBreadcrumbTasks();
+        final Collection<BeforeRecordBreadcrumb> breadcrumbTasks =
+            client.config.getBeforeRecordBreadcrumbTasks();
 
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override

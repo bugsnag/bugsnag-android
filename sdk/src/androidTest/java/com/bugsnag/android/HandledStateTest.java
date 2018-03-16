@@ -1,11 +1,11 @@
 package com.bugsnag.android;
 
-import org.junit.Test;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+
+import org.junit.Test;
 
 public class HandledStateTest {
 
@@ -57,7 +57,8 @@ public class HandledStateTest {
 
     @Test
     public void testLog() throws Exception { // invoked via Unity
-        HandledState unhandled = HandledState.newInstance(HandledState.REASON_LOG, Severity.WARNING, null);
+        HandledState unhandled = HandledState.newInstance(
+            HandledState.REASON_LOG, Severity.WARNING, null);
         assertNotNull(unhandled);
         assertFalse(unhandled.isUnhandled());
         assertEquals(Severity.WARNING, unhandled.getCurrentSeverity());

@@ -1,5 +1,9 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -9,16 +13,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ExceptionHandlerTest {
 
     private Context context;
 
+    /**
+     * Sets the default exception handler to null to avoid any Bugsnag handlers created
+     * in previous test
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
@@ -42,8 +48,9 @@ public class ExceptionHandlerTest {
         Client clientThree = new Client(context, "client-two");
         clientThree.disableExceptionHandler();
 
-        assertTrue(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
-        ExceptionHandler bugsnagHandler = (ExceptionHandler) Thread.getDefaultUncaughtExceptionHandler();
+        Thread.UncaughtExceptionHandler handler = Thread.getDefaultUncaughtExceptionHandler();
+        assertTrue(handler instanceof ExceptionHandler);
+        ExceptionHandler bugsnagHandler = (ExceptionHandler) handler;
 
         assertEquals(2, bugsnagHandler.clientMap.size());
     }

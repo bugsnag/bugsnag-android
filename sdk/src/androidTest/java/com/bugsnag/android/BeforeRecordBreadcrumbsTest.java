@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -11,15 +14,17 @@ import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class BeforeRecordBreadcrumbsTest {
 
     private Client client;
 
+    /**
+     * Configures a client which does not automatically record breadcrumbs
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Configuration configuration = new Configuration("api-key");

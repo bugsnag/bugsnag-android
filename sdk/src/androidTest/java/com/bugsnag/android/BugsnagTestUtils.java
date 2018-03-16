@@ -26,11 +26,13 @@ final class BugsnagTestUtils {
         return writer.toString();
     }
 
-    static JSONObject streamableToJson(JsonStream.Streamable streamable) throws JSONException, IOException {
+    static JSONObject streamableToJson(JsonStream.Streamable streamable)
+        throws JSONException, IOException {
         return new JSONObject(streamableToString(streamable));
     }
 
-    static JSONArray streamableToJsonArray(JsonStream.Streamable streamable) throws JSONException, IOException {
+    static JSONArray streamableToJsonArray(JsonStream.Streamable streamable)
+        throws JSONException, IOException {
         return new JSONArray(streamableToString(streamable));
     }
 
@@ -67,7 +69,10 @@ final class BugsnagTestUtils {
     static SessionTrackingApiClient generateSessionTrackingApiClient() {
         return new SessionTrackingApiClient() {
             @Override
-            public void postSessionTrackingPayload(String urlString, SessionTrackingPayload payload, Map<String, String> headers) throws NetworkException, BadResponseException {
+            public void postSessionTrackingPayload(String urlString,
+                                                   SessionTrackingPayload payload,
+                                                   Map<String, String> headers)
+                throws NetworkException, BadResponseException {
 
             }
         };
@@ -76,7 +81,10 @@ final class BugsnagTestUtils {
     static ErrorReportApiClient generateErrorReportApiClient() { // no-op
         return new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString, Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
+            public void postReport(String urlString,
+                                   Report report,
+                                   Map<String, String> headers)
+                throws NetworkException, BadResponseException {
 
             }
         };

@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -12,19 +15,22 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
-import static org.junit.Assert.assertEquals;
-
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ReportTest {
 
     private Report report;
 
+    /**
+     * Generates a report
+     *
+     * @throws Exception if initialisation failed
+     */
     @Before
     public void setUp() throws Exception {
         Configuration config = new Configuration("example-api-key");
-        Error error = new Error.Builder(config, new RuntimeException("Something broke"), null).build();
+        RuntimeException exception = new RuntimeException("Something broke");
+        Error error = new Error.Builder(config, exception, null).build();
         report = new Report("api-key", error);
     }
 

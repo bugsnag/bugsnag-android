@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,9 +14,6 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.StringWriter;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -30,12 +30,12 @@ public class JsonStreamTest {
 
     @Test
     public void testSaneValues() throws JSONException, IOException {
-        Long nullLong = null;
-        Boolean nullBoolean = null;
-        String nullString = null;
-        Integer nullInteger = null;
-        Float nullFloat = null;
-        Double nullDouble = null;
+        final Long nullLong = null;
+        final Boolean nullBoolean = null;
+        final String nullString = null;
+        final Integer nullInteger = null;
+        final Float nullFloat = null;
+        final Double nullDouble = null;
 
         stream.beginObject();
         stream.name("nullLong").value(nullLong);
