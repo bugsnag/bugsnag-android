@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -70,8 +71,19 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
             String severityReason = strictModeThrowable
                 ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
-            client.cacheAndNotify(throwable, Severity.ERROR,
-                metaData, severityReason, violationDesc);
+
+            if (strictModeThrowable) { // writes to disk on main thread
+                StrictMode.ThreadPolicy originalThreadPolicy = StrictMode.getThreadPolicy();
+                StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
+
+                client.cacheAndNotify(throwable, Severity.ERROR,
+                    metaData, severityReason, violationDesc);
+
+                StrictMode.setThreadPolicy(originalThreadPolicy);
+            } else {
+                client.cacheAndNotify(throwable, Severity.ERROR,
+                    metaData, severityReason, violationDesc);
+            }
         }
 
         // Pass exception on to original exception handler

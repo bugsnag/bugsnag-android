@@ -1,1 +1,1 @@
-include ':example', ':testharness', ':sdk', ':examplelib'
+include ':example', ':sdk', ':examplelib', ':mazerunner'

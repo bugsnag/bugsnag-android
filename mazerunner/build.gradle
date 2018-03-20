@@ -1,0 +1,49 @@
+repositories {
+    jcenter()
+    google()
+}
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$project.KOTLIN_VERSION"
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
+        versionCode 1
+        versionName "1.0"
+    }
+    signingConfigs {
+        release {
+            keyAlias "password"
+            keyPassword "password"
+            storeFile file("../features/fixtures/fakekeys.jks")
+            storePassword "password"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true // obfuscation disabled to simplify maze
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    implementation project(':sdk')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$project.KOTLIN_VERSION"
+}
