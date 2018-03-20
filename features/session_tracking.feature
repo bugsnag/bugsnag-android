@@ -43,3 +43,9 @@ Scenario: Manual Session sends
     And the session "user.name" equals "Joe Bloggs"
     And the session "id" is not null
     And the session "startedAt" is not null
+
+Scenario: Set Auto Capture Sessions sends
+    When I run "SessionSetAutoCaptureScenario" with the defaults
+    And I wait for 1 seconds
+    Then I should receive a request
+    And the request is a valid for the session tracking API
