@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.flushAllSessions
 import com.bugsnag.android.mazerunner.SecondActivity
 
 /**
@@ -17,7 +16,6 @@ internal class SessionSetAutoCaptureScenario(config: Configuration,
         super.run()
         Bugsnag.setAutoCaptureSessions(true)
         context.startActivity(Intent(context, SecondActivity::class.java))
-        flushAllSessions()
     }
 
 }
