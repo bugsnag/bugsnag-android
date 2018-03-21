@@ -46,6 +46,6 @@ Scenario: Manual Session sends
 
 Scenario: Set Auto Capture Sessions sends
     When I run "SessionSetAutoCaptureScenario" with the defaults
-    And I wait for 1 seconds
+    And I wait for 60 seconds
     Then I should receive a request
     And the request is a valid for the session tracking API
