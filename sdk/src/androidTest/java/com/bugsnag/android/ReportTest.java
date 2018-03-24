@@ -55,12 +55,12 @@ public class ReportTest {
     public void testModifyReportDetails() throws Exception {
         String apiKey = "custom-api-key";
         String notifierName = "React Native";
-        String notifierURL = "https://bugsnag.com/reactnative";
+        String notifierUrl = "https://bugsnag.com/reactnative";
         String notifierVersion = "3.4.5";
 
         report.setApiKey(apiKey);
         report.setNotifierName(notifierName);
-        report.setNotifierURL(notifierURL);
+        report.setNotifierURL(notifierUrl);
         report.setNotifierVersion(notifierVersion);
 
         JSONObject reportJson = streamableToJson(report);
@@ -69,7 +69,7 @@ public class ReportTest {
         JSONObject notifier = reportJson.getJSONObject("notifier");
         assertEquals(notifierName, notifier.getString("name"));
         assertEquals(notifierVersion, notifier.getString("version"));
-        assertEquals(notifierURL, notifier.getString("url"));
+        assertEquals(notifierUrl, notifier.getString("url"));
     }
 
 }
