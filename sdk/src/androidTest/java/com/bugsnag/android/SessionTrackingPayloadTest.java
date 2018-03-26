@@ -4,7 +4,9 @@ import static com.bugsnag.android.BugsnagTestUtils.generateSession;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -17,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 public class SessionTrackingPayloadTest {
@@ -27,6 +30,7 @@ public class SessionTrackingPayloadTest {
 
     private SessionStore sessionStore;
     private File storageDir;
+    private SessionTrackingPayload payload;
 
     /**
      * Configures a session tracking payload and session store, ensuring that 0 files are present
@@ -41,11 +45,15 @@ public class SessionTrackingPayloadTest {
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
-
         session = generateSession();
-        appData = new AppData(context, new Configuration("a"), generateSessionTracker());
-        SessionTrackingPayload payload = new SessionTrackingPayload(session, appData);
+        payload = generatePayloadFromSession(context, generateSession());
         rootNode = streamableToJson(payload);
+    }
+
+    private SessionTrackingPayload generatePayloadFromSession(Context context,
+                                                  Session session) throws Exception {
+        appData = new AppData(context, new Configuration("a"), generateSessionTracker());
+        return new SessionTrackingPayload(session, appData);
     }
 
     /**
@@ -93,4 +101,17 @@ public class SessionTrackingPayloadTest {
         assertEquals(2, sessions.length());
     }
 
+    @Test
+    public void testDefaultOverride() throws Exception {
+        session = new Session("id", new Date(), null, false);
+        Context context = InstrumentationRegistry.getContext();
+        payload = generatePayloadFromSession(context, session);
+        assertFalse(session.isAutoCaptured());
+        session.setAutoCaptured(true);
+        assertTrue(session.isAutoCaptured());
+
+        JSONObject rootNode = streamableToJson(payload);
+        JSONObject sessionNode = rootNode.getJSONArray("sessions").getJSONObject(0);
+        assertFalse(sessionNode.has("user"));
+    }
 }
