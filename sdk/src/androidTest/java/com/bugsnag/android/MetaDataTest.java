@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.support.test.filters.SmallTest;
@@ -232,5 +233,14 @@ public class MetaDataTest {
         data.setFilters("CUSTOM");
         client.setMetaData(data);
         assertArrayEquals(new String[]{"CUSTOM"}, data.getFilters());
+    }
+
+    @Test
+    public void testClearTab() throws Exception {
+        MetaData metaData = new MetaData();
+        metaData.addToTab("example", "string", "value");
+        metaData.clearTab("example");
+        JSONObject json = streamableToJson(metaData);
+        assertFalse(json.has("example"));
     }
 }
