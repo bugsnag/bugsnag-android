@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -89,6 +90,10 @@ public class ConfigurationTest {
         // Shouldn't be inProject if class not in projectPackages
         config.setProjectPackages(new String[]{"com.bugsnag.android"});
         assertFalse(config.inProject("java.io.IOException"));
+
+        // Should be inProject if class is in projectPackages with null element
+        config.setProjectPackages(new String[]{null, "java.io.IOException"});
+        assertTrue(config.inProject("java.io.IOException"));
     }
 
     @Test
@@ -124,4 +129,39 @@ public class ConfigurationTest {
         assertNotNull(headers.get("Bugsnag-Payload-Version"));
     }
 
+    @Test
+    public void testOverrideContext() throws Exception {
+        config.setContext("LevelOne");
+        assertEquals("LevelOne", config.getContext());
+    }
+
+    @Test
+    public void testOverrideFilters() throws Exception {
+        config.setFilters(new String[]{"Foo"});
+        assertArrayEquals(new String[]{"Foo"}, config.getFilters());
+    }
+
+    @Test
+    public void testOverrideIgnoreClasses() throws Exception {
+        config.setIgnoreClasses(new String[]{"Bar"});
+        assertArrayEquals(new String[]{"Bar"}, config.getIgnoreClasses());
+    }
+
+    @Test
+    public void testOverrideNotifyReleaseStages() throws Exception {
+        config.setNotifyReleaseStages(new String[]{"Test"});
+        assertArrayEquals(new String[]{"Test"}, config.getNotifyReleaseStages());
+    }
+
+    @Test
+    public void testOverrideNotifierType() throws Exception {
+        config.setNotifierType("React Native");
+        assertEquals("React Native", config.getNotifierType());
+    }
+
+    @Test
+    public void testOverrideCodeBundleId() throws Exception {
+        config.setCodeBundleId("abc123");
+        assertEquals("abc123", config.getCodeBundleId());
+    }
 }
