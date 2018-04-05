@@ -1,8 +1,10 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -12,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -61,4 +64,19 @@ public class JsonStreamTest {
         assertEquals(123, json.getInt("int"));
         assertEquals(123L, json.getLong("long"));
     }
+
+    @Test
+    public void testEmptyFileValue() throws Throwable {
+        File cacheDir = InstrumentationRegistry.getContext().getCacheDir();
+        File file = new File(cacheDir, "whoops");
+        file.createNewFile();
+        stream.beginArray();
+        stream.value(file);
+        stream.value(file);
+        stream.endArray();
+
+        JSONObject json = new JSONObject(writer.toString());
+        assertNotNull(json);
+    }
+
 }
