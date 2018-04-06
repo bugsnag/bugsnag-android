@@ -8,6 +8,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -24,11 +26,15 @@ public class JsonStreamTest {
 
     private StringWriter writer;
     private JsonStream stream;
+    private File file;
 
     @Before
     public void setUp() throws Exception {
         writer = new StringWriter();
         stream = new JsonStream(writer);
+        File cacheDir = InstrumentationRegistry.getContext().getCacheDir();
+        file = new File(cacheDir, "whoops");
+        file.delete();
     }
 
     @Test
@@ -67,16 +73,56 @@ public class JsonStreamTest {
 
     @Test
     public void testEmptyFileValue() throws Throwable {
-        File cacheDir = InstrumentationRegistry.getContext().getCacheDir();
-        File file = new File(cacheDir, "whoops");
         file.createNewFile();
         stream.beginArray();
         stream.value(file);
         stream.value(file);
         stream.endArray();
+        assertEquals("[]", writer.toString());
+    }
 
-        JSONObject json = new JSONObject(writer.toString());
-        assertNotNull(json);
+    @Test
+    public void testNullFileValue() throws Throwable {
+        File file = null;
+        stream.beginArray();
+        stream.value(file);
+        stream.value(file);
+        stream.endArray();
+        assertEquals("[]", writer.toString());
+    }
+
+    @Test
+    public void testNonReadableFile() throws Throwable {
+        file.createNewFile();
+        file.setReadable(false);
+        stream.beginArray();
+        stream.value(file);
+        stream.value(file);
+        stream.endArray();
+        assertEquals("[]", writer.toString());
+    }
+
+    @Test
+    public void testDeletedFile() throws Throwable {
+        file.createNewFile();
+        file.delete();
+        stream.beginArray();
+        stream.value(file);
+        stream.value(file);
+        stream.endArray();
+        assertEquals("[]", writer.toString());
+    }
+
+    @Test
+    public void testMalformedFile() throws Throwable {
+        FileWriter writer = new FileWriter(file);
+        writer.write("{\"foo\": \"bar");
+        writer.flush();
+        stream.beginArray();
+        stream.value(file);
+        stream.value(file);
+        stream.endArray();
+        assertEquals("[]", this.writer.toString());
     }
 
 }
