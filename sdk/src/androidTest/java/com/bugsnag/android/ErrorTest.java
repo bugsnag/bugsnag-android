@@ -1,13 +1,17 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -262,6 +266,85 @@ public class ErrorTest {
 
         err = new Error.Builder(config, new RuntimeException(), null).build();
         assertEquals("", err.getExceptionMessage());
+    }
+
+    @Test
+    public void testNullSeverity() throws Exception {
+        error.setSeverity(null);
+        assertEquals(Severity.WARNING, error.getSeverity());
+    }
+
+    @Test
+    public void testSendThreadsDisabled() throws Exception {
+        config.setSendThreads(false);
+        JSONObject errorJson = streamableToJson(error);
+        assertFalse(errorJson.has("threads"));
+    }
+
+    @Test
+    public void testBugsnagExceptionName() throws Exception {
+        BugsnagException exception = new BugsnagException("Busgang", "exceptional",
+            new StackTraceElement[]{});
+        Error err = new Error.Builder(config, exception, null).build();
+        assertEquals("Busgang", err.getExceptionName());
+    }
+
+    @Test
+    public void testConfigContext() throws Exception {
+        String expected = "Junit test suite";
+        error.setContext(null);
+        config.setContext(expected);
+        assertEquals(expected, error.getContext());
+    }
+
+    @Test
+    public void testNullContext() throws Exception {
+        error.setContext(null);
+        error.setAppData(null);
+        assertNull(error.getContext());
+    }
+
+    @Test
+    public void testAppDataContext() throws Exception {
+        error.setContext(null);
+        Context context = InstrumentationRegistry.getContext();
+        SessionTracker sessionTracker = generateSessionTracker();
+        String expectedContext = "FooActivity";
+        sessionTracker.updateForegroundTracker(expectedContext,
+            true, System.currentTimeMillis());
+        error.setAppData(new AppData(context, config, sessionTracker));
+        assertEquals(expectedContext, error.getContext());
+    }
+
+
+    @Test
+    public void testSetUser() throws Exception {
+        String firstId = "123";
+        String firstEmail = "fake@example.com";
+        String firstName = "Bob Swaggins";
+        error.setUser(firstId, firstEmail, firstName);
+
+        assertEquals(firstId, error.getUser().getId());
+        assertEquals(firstEmail, error.getUser().getEmail());
+        assertEquals(firstName, error.getUser().getName());
+
+        String userId = "foo";
+        error.setUserId(userId);
+        assertEquals(userId, error.getUser().getId());
+        assertEquals(firstEmail, error.getUser().getEmail());
+        assertEquals(firstName, error.getUser().getName());
+
+        String userEmail = "another@example.com";
+        error.setUserEmail(userEmail);
+        assertEquals(userId, error.getUser().getId());
+        assertEquals(userEmail, error.getUser().getEmail());
+        assertEquals(firstName, error.getUser().getName());
+
+        String userName = "Isaac";
+        error.setUserName(userName);
+        assertEquals(userId, error.getUser().getId());
+        assertEquals(userEmail, error.getUser().getEmail());
+        assertEquals(userName, error.getUser().getName());
     }
 
     private void validateEmptyAttributes(JSONObject severityReason) {
