@@ -28,6 +28,11 @@ public class JsonStreamTest {
     private JsonStream stream;
     private File file;
 
+    /**
+     * Deletes a file in the cache directory if it already exists from previous test cases
+     *
+     * @throws Exception if setup failed
+     */
     @Before
     public void setUp() throws Exception {
         writer = new StringWriter();
