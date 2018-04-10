@@ -113,16 +113,4 @@ public class JsonStreamTest {
         assertEquals("[]", writer.toString());
     }
 
-    @Test
-    public void testMalformedFile() throws Throwable {
-        FileWriter writer = new FileWriter(file);
-        writer.write("{\"foo\": \"bar");
-        writer.flush();
-        stream.beginArray();
-        stream.value(file);
-        stream.value(file);
-        stream.endArray();
-        assertEquals("[]", this.writer.toString());
-    }
-
 }
