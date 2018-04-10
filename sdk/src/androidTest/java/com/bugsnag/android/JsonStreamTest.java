@@ -92,17 +92,6 @@ public class JsonStreamTest {
     }
 
     @Test
-    public void testNonReadableFile() throws Throwable {
-        file.createNewFile();
-        file.setReadable(false);
-        stream.beginArray();
-        stream.value(file);
-        stream.value(file);
-        stream.endArray();
-        assertEquals("[]", writer.toString());
-    }
-
-    @Test
     public void testDeletedFile() throws Throwable {
         file.createNewFile();
         file.delete();
