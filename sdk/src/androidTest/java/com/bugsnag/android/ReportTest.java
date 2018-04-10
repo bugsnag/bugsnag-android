@@ -50,4 +50,26 @@ public class ReportTest {
         JSONObject event = events.getJSONObject(0);
         assertEquals(groupingHash, event.getString("groupingHash"));
     }
+
+    @Test
+    public void testModifyReportDetails() throws Exception {
+        String apiKey = "custom-api-key";
+        String notifierName = "React Native";
+        String notifierUrl = "https://bugsnag.com/reactnative";
+        String notifierVersion = "3.4.5";
+
+        report.setApiKey(apiKey);
+        report.setNotifierName(notifierName);
+        report.setNotifierURL(notifierUrl);
+        report.setNotifierVersion(notifierVersion);
+
+        JSONObject reportJson = streamableToJson(report);
+        assertEquals(apiKey, reportJson.getString("apiKey"));
+
+        JSONObject notifier = reportJson.getJSONObject("notifier");
+        assertEquals(notifierName, notifier.getString("name"));
+        assertEquals(notifierVersion, notifier.getString("version"));
+        assertEquals(notifierUrl, notifier.getString("url"));
+    }
+
 }

@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.3.3 (2018-04-04)
+
+### Bug fixes
+
+* Prevent duplicate reports being delivered in low connectivity situations
+  [#270](https://github.com/bugsnag/bugsnag-android/pull/270)
+* Fix possible NPE when reading default metadata filters
+  [#263](https://github.com/bugsnag/bugsnag-android/pull/263)
+
 ## 4.3.2 (2018-03-09)
 
 ### Bug fixes
