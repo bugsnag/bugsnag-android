@@ -1,9 +1,10 @@
 GIT
   remote: git@github.com:bugsnag/maze-runner
-  revision: 65bdcb7a135ef0a5864d03c454f7a1654f850237
+  revision: 9f5b7f220441d047888ffdd91bd6b32be6367078
   specs:
     bugsnag-maze-runner (1.0.0)
       cucumber (~> 3.1.0)
+      cucumber-expressions (= 5.0.15)
       minitest (~> 5.0)
       rack (~> 2.0.0)
       test-unit (~> 3.2.0)
@@ -11,7 +12,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    backports (3.11.1)
+    backports (3.11.2)
     builder (3.2.3)
     coderay (1.1.2)
     cucumber (3.1.0)
@@ -27,7 +28,7 @@ GEM
       backports (>= 3.8.0)
       cucumber-tag_expressions (~> 1.1.0)
       gherkin (>= 5.0.0)
-    cucumber-expressions (5.0.13)
+    cucumber-expressions (5.0.15)
     cucumber-tag_expressions (1.1.1)
     cucumber-wire (0.0.1)
     diff-lcs (1.3)

@@ -39,3 +39,30 @@ internal fun writeErrorToStore(client: Client) {
     client.errorStore.write(error)
 }
 
+/**
+ * Sets a NOP implementation for the Session Tracking API, preventing delivery
+ */
+internal fun disableSessionDelivery(client: Client) {
+    client.setSessionTrackingApiClient({ _, _, _ ->
+        throw NetworkException("Session Delivery NOP", RuntimeException("NOP"))
+    })
+}
+
+/**
+ * Sets a NOP implementation for the Error Tracking API, preventing delivery
+ */
+internal fun disableReportDelivery(client: Client) {
+    client.setErrorReportApiClient({ _, _, _ ->
+        throw NetworkException("Error Delivery NOP", RuntimeException("NOP"))
+    })
+}
+
+/**
+ * Sets a NOP implementation for the Error Tracking API and the Session Tracking API,
+ * preventing delivery
+ */
+internal fun disableAllDelivery(client: Client) {
+    disableSessionDelivery(client)
+    disableReportDelivery(client)
+}
+
