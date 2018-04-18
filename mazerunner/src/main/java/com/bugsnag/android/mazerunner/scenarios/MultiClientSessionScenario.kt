@@ -28,15 +28,15 @@ internal class MultiClientSessionScenario(config: Configuration,
     override fun run() {
         configureClients()
 
-        if ("DeliverSessions" == eventMetaData) {
-            flushAllSessions(firstClient!!)
-            Thread.sleep(10) // enforce request order
-            flushAllSessions(secondClient!!)
-        } else {
+        if ("DeliverSessions" != eventMetaData) {
             disableAllDelivery(firstClient!!)
             disableAllDelivery(secondClient!!)
             firstClient!!.startSession()
             secondClient!!.startSession()
+        } else {
+            flushAllSessions(firstClient!!)
+            Thread.sleep(10) // enforce request order
+            flushAllSessions(secondClient!!)
         }
     }
 

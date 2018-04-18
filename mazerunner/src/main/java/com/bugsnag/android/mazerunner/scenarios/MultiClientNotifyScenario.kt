@@ -7,11 +7,10 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.disableAllDelivery
 
 /**
- * Configures two Bugsnag clients with different endpoints. Only the first error should be
- * reported.
+ * Configures two Bugsnag clients with different API keys, and sends a handled error from one.
  */
-internal class MultiClientEndpointScenario(config: Configuration,
-                                           context: Context) : Scenario(config, context) {
+internal class MultiClientNotifyScenario(config: Configuration,
+                                         context: Context) : Scenario(config, context) {
     var firstClient: Client? = null
     var secondClient: Client? = null
 
@@ -20,8 +19,8 @@ internal class MultiClientEndpointScenario(config: Configuration,
 
         Thread.sleep(10) // enforce request order
         val secondConfig = Configuration("abc123")
-        secondConfig.endpoint = "http://localhost:1234"
-        secondConfig.sessionEndpoint = "http://localhost:1234"
+        secondConfig.endpoint = config.endpoint
+        secondConfig.sessionEndpoint = config.sessionEndpoint
         secondClient = Client(context, secondConfig)
     }
 
@@ -31,7 +30,7 @@ internal class MultiClientEndpointScenario(config: Configuration,
         if ("DeliverReport" != eventMetaData) {
             disableAllDelivery(firstClient!!)
             disableAllDelivery(secondClient!!)
-            throw IllegalArgumentException("MultiClientApiKeyScenario")
+            secondClient!!.notify(RuntimeException("Whoops"))
         }
     }
 
