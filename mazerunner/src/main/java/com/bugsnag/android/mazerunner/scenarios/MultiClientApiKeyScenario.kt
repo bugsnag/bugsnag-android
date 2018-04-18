@@ -27,10 +27,10 @@ internal class MultiClientApiKeyScenario(config: Configuration,
 
     override fun run() {
         configureClients()
-        disableAllDelivery(firstClient!!)
-        disableAllDelivery(secondClient!!)
 
         if ("DeliverReport" != eventMetaData) {
+            disableAllDelivery(firstClient!!)
+            disableAllDelivery(secondClient!!)
             throw IllegalArgumentException("MultiClientApiKeyScenario")
         }
     }
