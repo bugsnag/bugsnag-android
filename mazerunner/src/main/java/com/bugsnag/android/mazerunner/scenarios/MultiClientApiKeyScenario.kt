@@ -11,13 +11,28 @@ import com.bugsnag.android.disableAllDelivery
  * and the correct API key should be used for both.
  */
 internal class MultiClientApiKeyScenario(config: Configuration,
-                                         context: Context) : MultiClientScenario(config, context) {
+                                         context: Context) : Scenario(config, context) {
+    var firstClient: Client? = null
+    var secondClient: Client? = null
+
+    fun configureClients() {
+        firstClient = Client(context, config)
+
+        Thread.sleep(10) // enforce request order
+        val secondConfig = Configuration("abc123")
+        secondConfig.endpoint = config.endpoint
+        secondConfig.sessionEndpoint = config.sessionEndpoint
+        secondClient = Client(context, secondConfig)
+    }
 
     override fun run() {
-        super.run()
+        configureClients()
         disableAllDelivery(firstClient!!)
         disableAllDelivery(secondClient!!)
-        throw IllegalArgumentException("MultiClientApiKeyScenario")
+
+        if ("DeliverReport" != eventMetaData) {
+            throw IllegalArgumentException("MultiClientApiKeyScenario")
+        }
     }
 
 }

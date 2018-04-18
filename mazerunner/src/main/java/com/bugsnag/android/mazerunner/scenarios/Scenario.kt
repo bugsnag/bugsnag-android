@@ -9,6 +9,8 @@ import com.bugsnag.android.NetworkException
 abstract internal class Scenario(protected val config: Configuration,
                                  protected val context: Context) {
 
+    var eventMetaData: String? = null
+
     open fun run() {
         Bugsnag.init(context, config)
         Bugsnag.setLoggingEnabled(true)
