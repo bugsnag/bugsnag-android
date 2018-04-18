@@ -1,9 +1,11 @@
-Feature: Initializing nultiple clients sends payloads with correct API key to each
+Feature: Multi-client support
 
-Scenario: Unhandled error reported by two clients with different API keys
+    Multiple Bugsnag clients can be configured, each with its own API key and
+    configuration options. A report which is captured by a given client should
+    use the correct API key and configuration options.
+
+    Scenario: An unhandled error captured while offline is detected by two clients with different API keys
     When I run "MultiClientApiKeyScenario" with the defaults
-    Then I should receive no requests
-
     When I force stop the "com.bugsnag.android.mazerunner" Android app
     And I set environment variable "EVENT_TYPE" to "MultiClientScenario"
     And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
