@@ -25,7 +25,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     private final int maxStoreCount;
     private final Comparator<File> comparator;
 
-    FileStore(@NonNull Configuration config, @NonNull Context appContext, String folderName,
+    FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
         this.config = config;
         this.maxStoreCount = maxStoreCount;
@@ -33,11 +33,9 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         String path;
         try {
-            File baseDir = new File(appContext.getCacheDir().getAbsolutePath(), folderName);
+            File baseDir = new File(appContext.getCacheDir().getAbsolutePath(), folder);
             path = baseDir.getAbsolutePath();
-
             storageDir = getStorageDir(path, config);
-            storageDir.mkdirs();
 
             if (!storageDir.exists()) {
                 Logger.warn("Could not prepare file storage directory");
@@ -122,10 +120,14 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         }
     }
 
-    File getStorageDir(String path, @NonNull Configuration config) {
+    // support multiple clients in the same app by using a unique directory path
+
+    private File getStorageDir(String path, @NonNull Configuration config) {
         String apiKey = "" + config.getApiKey().hashCode();
         String endpoint = "" + config.getEndpoint().hashCode();
-        return Paths.get(path, apiKey, endpoint).toFile();
+        File dir = Paths.get(path, apiKey, endpoint).toFile();
+        dir.mkdirs();
+        return dir;
     }
 
 }

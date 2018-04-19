@@ -88,6 +88,9 @@ class ErrorStore extends FileStore<Error> {
      * Flush any on-disk errors to Bugsnag
      */
     void flushAsync(final ErrorReportApiClient errorReportApiClient) {
+        if (storageDir == null) {
+            return;
+        }
         try {
             Async.run(new Runnable() {
                 @Override
