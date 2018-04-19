@@ -23,6 +23,8 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Paths;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -121,6 +123,21 @@ public class ErrorStoreTest {
         assertTrue(errorStore.isStartupCrash(5345));
         assertTrue(errorStore.isStartupCrash(9999));
         assertFalse(errorStore.isStartupCrash(10000));
+    }
+
+    @Test
+    public void testFindOldFiles() throws Throwable {
+        new File(errorStorageDir, "foo.json").createNewFile();
+
+        File dir = new File(errorStorageDir, "1059309/52903");
+        dir.mkdirs(); // api/endpoint dirs
+        new File(dir, "foo.json").createNewFile();
+
+        List<File> files = errorStore.findStoredFiles();
+        for (File file : files) {
+            assertTrue(file.getAbsolutePath().endsWith("foo.json"));
+        }
+        assertEquals(2, files.size());
     }
 
     /**
