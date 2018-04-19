@@ -33,8 +33,7 @@ public class SessionStoreTest {
     public void setUp() throws Exception {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         sessionStore = client.sessionStore;
-        assertNotNull(sessionStore.storeDirectory);
-        storageDir = new File(sessionStore.storeDirectory);
+        storageDir = sessionStore.storageDir;
         FileUtils.clearFilesInDir(storageDir);
     }
 
@@ -74,10 +73,8 @@ public class SessionStoreTest {
 
     @Test
     public void testFindOldFiles() throws Throwable {
-        new File(storageDir, "foo.json").createNewFile();
-
-        File dir = new File(storageDir, "1059309/52903");
-        dir.mkdirs(); // api/endpoint dirs
+        new File(sessionStore.oldDirectory, "foo.json").createNewFile();
+        File dir = sessionStore.storageDir;
         new File(dir, "foo.json").createNewFile();
 
         List<File> files = sessionStore.findStoredFiles();

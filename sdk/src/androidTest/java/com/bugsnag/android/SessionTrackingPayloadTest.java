@@ -38,8 +38,7 @@ public class SessionTrackingPayloadTest {
         Context context = InstrumentationRegistry.getContext();
         Client client = new Client(context, "api-key");
         sessionStore = client.sessionStore;
-        Assert.assertNotNull(sessionStore.storeDirectory);
-        storageDir = new File(sessionStore.storeDirectory);
+        storageDir = sessionStore.storageDir;
         FileUtils.clearFilesInDir(storageDir);
 
         session = generateSession();

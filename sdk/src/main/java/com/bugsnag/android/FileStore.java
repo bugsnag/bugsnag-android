@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,12 +17,15 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     @NonNull
     protected final Configuration config;
+
     @Nullable
-    final String storeDirectory;
+    final String oldDirectory;
+
+    File storageDir;
     private final int maxStoreCount;
     private final Comparator<File> comparator;
 
-    FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
+    FileStore(@NonNull Configuration config, @NonNull Context appContext, String folderName,
               int maxStoreCount, Comparator<File> comparator) {
         this.config = config;
         this.maxStoreCount = maxStoreCount;
@@ -29,11 +33,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         String path;
         try {
-            path = appContext.getCacheDir().getAbsolutePath() + folder;
+            File baseDir = new File(appContext.getCacheDir().getAbsolutePath(), folderName);
+            path = baseDir.getAbsolutePath();
 
-            File outFile = new File(path);
-            outFile.mkdirs();
-            if (!outFile.exists()) {
+            storageDir = getStorageDir(path, config);
+            storageDir.mkdirs();
+
+            if (!storageDir.exists()) {
                 Logger.warn("Could not prepare file storage directory");
                 path = null;
             }
@@ -41,19 +47,18 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             Logger.warn("Could not prepare file storage directory", exception);
             path = null;
         }
-        this.storeDirectory = path;
+        this.oldDirectory = path;
     }
 
     @Nullable
     String write(@NonNull T streamable) {
-        if (storeDirectory == null) {
+        if (storageDir == null) {
             return null;
         }
 
         // Limit number of saved errors to prevent disk space issues
-        File exceptionDir = new File(storeDirectory);
-        if (exceptionDir.isDirectory()) {
-            File[] files = exceptionDir.listFiles();
+        if (storageDir.isDirectory()) {
+            File[] files = storageDir.listFiles();
             if (files != null && files.length >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
                 Arrays.sort(files, comparator);
@@ -86,22 +91,41 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         return null;
     }
 
-    @NonNull abstract String getFilename(T streamable);
+    @NonNull
+    abstract String getFilename(T streamable);
 
     List<File> findStoredFiles() {
         List<File> files = new ArrayList<>();
 
-        if (storeDirectory != null) {
-            File dir = new File(storeDirectory);
-
-            if (dir.exists() && dir.isDirectory()) {
-                File[] values = dir.listFiles();
-
-                if (values != null) {
-                    files.addAll(Arrays.asList(values));
-                }
-            }
+        if (oldDirectory != null) {
+            File dir = new File(oldDirectory);
+            addStoredFiles(dir, files);
+        }
+        if (storageDir != null) {
+            addStoredFiles(storageDir, files);
         }
         return files;
     }
+
+    void addStoredFiles(File dir, List<File> files) {
+        if (!dir.exists() || !dir.isDirectory()) {
+            return;
+        }
+        File[] values = dir.listFiles();
+
+        if (values != null) {
+            for (File value : values) {
+                if (value.isFile()) {
+                    files.add(value);
+                }
+            }
+        }
+    }
+
+    File getStorageDir(String path, @NonNull Configuration config) {
+        String apiKey = "" + config.getApiKey().hashCode();
+        String endpoint = "" + config.getEndpoint().hashCode();
+        return Paths.get(path, apiKey, endpoint).toFile();
+    }
+
 }

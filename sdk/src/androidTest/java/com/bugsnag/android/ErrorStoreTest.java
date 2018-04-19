@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
@@ -44,8 +43,7 @@ public class ErrorStoreTest {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         config = client.config;
         errorStore = client.errorStore;
-        Assert.assertNotNull(errorStore.storeDirectory);
-        errorStorageDir = new File(errorStore.storeDirectory);
+        errorStorageDir = errorStore.storageDir;
         FileUtils.clearFilesInDir(errorStorageDir);
     }
 
@@ -127,10 +125,8 @@ public class ErrorStoreTest {
 
     @Test
     public void testFindOldFiles() throws Throwable {
-        new File(errorStorageDir, "foo.json").createNewFile();
-
-        File dir = new File(errorStorageDir, "1059309/52903");
-        dir.mkdirs(); // api/endpoint dirs
+        new File(errorStore.oldDirectory, "foo.json").createNewFile();
+        File dir = errorStore.storageDir;
         new File(dir, "foo.json").createNewFile();
 
         List<File> files = errorStore.findStoredFiles();
