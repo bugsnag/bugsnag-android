@@ -56,4 +56,4 @@ Scenario: Sessions while captured offline is detected by two clients with differ
 
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa" for request 0
     And the payload field "sessions.0.user.name" equals "Bob" for request 0
-    And the payload field "sessions" is an array with 1 element for request 10
+    And the payload field "sessions" is an array with 1 element for request 0

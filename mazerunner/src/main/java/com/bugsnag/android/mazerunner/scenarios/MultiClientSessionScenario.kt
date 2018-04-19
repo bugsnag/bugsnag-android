@@ -35,7 +35,7 @@ internal class MultiClientSessionScenario(config: Configuration,
             secondClient!!.startSession()
         } else {
             flushAllSessions(firstClient!!)
-            Thread.sleep(10) // enforce request order
+            Thread.sleep(50) // enforce request order
             flushAllSessions(secondClient!!)
         }
     }
