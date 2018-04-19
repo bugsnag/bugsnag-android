@@ -44,7 +44,7 @@ public class ErrorStoreTest {
         config = client.config;
         errorStore = client.errorStore;
         errorStorageDir = errorStore.storageDir;
-        FileUtils.clearFilesInDir(errorStorageDir);
+        FileUtils.clearFiles(errorStore);
     }
 
     /**
@@ -54,7 +54,7 @@ public class ErrorStoreTest {
      */
     @After
     public void tearDown() throws Exception {
-        FileUtils.clearFilesInDir(errorStorageDir);
+        FileUtils.clearFiles(errorStore);
     }
 
     @Test

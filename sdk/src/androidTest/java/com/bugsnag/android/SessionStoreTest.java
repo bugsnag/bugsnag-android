@@ -34,7 +34,7 @@ public class SessionStoreTest {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         sessionStore = client.sessionStore;
         storageDir = sessionStore.storageDir;
-        FileUtils.clearFilesInDir(storageDir);
+        FileUtils.clearFiles(sessionStore);
     }
 
     /**
@@ -44,7 +44,7 @@ public class SessionStoreTest {
      */
     @After
     public void tearDown() throws Exception {
-        FileUtils.clearFilesInDir(storageDir);
+        FileUtils.clearFiles(sessionStore);
     }
 
     @Test
