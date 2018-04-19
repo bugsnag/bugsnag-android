@@ -125,8 +125,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     private File getStorageDir(String path, @NonNull Configuration config) {
         String apiKey = "" + config.getApiKey().hashCode();
         String endpoint = "" + config.getEndpoint().hashCode();
-        File dir = Paths.get(path, apiKey, endpoint).toFile();
+
+        File apiDir = new File(path, apiKey);
+        apiDir.mkdirs();
+
+        File dir = new File(apiDir, endpoint);
         dir.mkdirs();
+
         return dir;
     }
 

@@ -162,7 +162,8 @@ class ErrorStore extends FileStore<Error> {
         boolean isStartupCrash = isStartupCrash(AppData.getDurationMs());
         String suffix = isStartupCrash ? STARTUP_CRASH : "";
         return String.format(Locale.US, "%s/%d_%s%s.json",
-            storageDir.getAbsolutePath(), System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
+            storageDir.getAbsolutePath(), System.currentTimeMillis(),
+            UUID.randomUUID().toString(), suffix);
     }
 
     boolean isStartupCrash(long durationMs) {
