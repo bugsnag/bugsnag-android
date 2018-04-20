@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.kt3k.coveralls'
@@ -149,3 +150,13 @@ bintray {
 }
 
 apply from: "../checkstyle.gradle"
+
+dexcount {
+    includeClasses = true
+    includeClassCount = true
+    includeFieldCount = true
+    includeTotalMethodCount = true
+    orderByMethodCount = true
+    verbose true
+    maxMethodCount = 64000
+}
