@@ -158,5 +158,4 @@ dexcount {
     includeTotalMethodCount = true
     orderByMethodCount = true
     verbose true
-    maxMethodCount = 64000
 }
