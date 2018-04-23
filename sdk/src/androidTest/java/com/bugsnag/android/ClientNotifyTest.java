@@ -30,13 +30,13 @@ public class ClientNotifyTest {
     }
 
     @Test
-    public void testNotifyBlocking() {
+    public void testNotifyBlockingDefaultSeverity() {
         client.notifyBlocking(new RuntimeException("Testing"));
         assertEquals(Severity.WARNING, apiClient.report.getError().getSeverity());
     }
 
     @Test
-    public void testNotifyBlocking2() {
+    public void testNotifyBlockingCallback() {
         client.notifyBlocking(new RuntimeException("Testing"), new Callback() {
             @Override
             public void beforeNotify(Report report) {
@@ -49,13 +49,13 @@ public class ClientNotifyTest {
     }
 
     @Test
-    public void testNotifyBlocking3() {
+    public void testNotifyBlockingCustomSeverity() {
         client.notifyBlocking(new RuntimeException("Testing"), Severity.INFO);
         assertEquals(Severity.INFO, apiClient.report.getError().getSeverity());
     }
 
     @Test
-    public void testNotifyBlocking4() {
+    public void testNotifyBlockingCustomStackTrace() {
         StackTraceElement[] stacktrace = {
             new StackTraceElement("MyClass", "MyMethod", "MyFile", 5)
         };
