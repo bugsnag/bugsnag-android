@@ -27,6 +27,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     private final Comparator<File> comparator;
 
     final Lock lock = new ReentrantLock();
+    final Collection<File> queuedFiles = new ConcurrentLinkedQueue<>();
 
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
@@ -61,20 +62,26 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         File exceptionDir = new File(storeDirectory);
         if (exceptionDir.isDirectory()) {
             File[] files = exceptionDir.listFiles();
+
             if (files != null && files.length >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
                 Arrays.sort(files, comparator);
-                Logger.warn(String.format("Discarding oldest error as stored "
-                    + "error limit reached (%s)", files[0].getPath()));
-                deleteStoredFiles(Collections.singleton(files[0]));
+                File oldestFile = files[0];
+
+                if (!queuedFiles.contains(oldestFile)) {
+                    Logger.warn(String.format("Discarding oldest error as stored "
+                        + "error limit reached (%s)", oldestFile.getPath()));
+                    deleteStoredFiles(Collections.singleton(oldestFile));
+                }
             }
         }
 
         String filename = getFilename(streamable);
 
         Writer out = null;
+        lock.lock();
+
         try {
-            lock.lock();
             out = new FileWriter(filename);
 
             JsonStream stream = new JsonStream(out);
@@ -118,9 +125,20 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         }
     }
 
+    void cancelQueuedFiles(Collection<File> files) {
+        lock.lock();
+        try {
+            queuedFiles.removeAll(files);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     void deleteStoredFiles(Collection<File> storedFiles) {
         lock.lock();
         try {
+            queuedFiles.removeAll(storedFiles);
+
             for (File storedFile : storedFiles) {
                 if (!storedFile.delete()) {
                     storedFile.deleteOnExit();

@@ -127,14 +127,15 @@ class ErrorStore extends FileStore<Error> {
             errorReportApiClient.postReport(config.getEndpoint(), report,
                 config.getErrorApiHeaders());
 
-            Logger.info("Deleting sent error file " + errorFile.getName());
             deleteStoredFiles(Collections.singleton(errorFile));
+            Logger.info("Deleting sent error file " + errorFile.getName());
         } catch (NetworkException exception) {
+            cancelQueuedFiles(Collections.singleton(errorFile));
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
-            Logger.warn("Problem sending unsent error from disk", exception);
             deleteStoredFiles(Collections.singleton(errorFile));
+            Logger.warn("Problem sending unsent error from disk", exception);
         }
     }
 
