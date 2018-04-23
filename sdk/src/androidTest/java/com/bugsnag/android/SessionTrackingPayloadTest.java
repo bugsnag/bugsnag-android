@@ -102,7 +102,7 @@ public class SessionTrackingPayloadTest {
     }
 
     @Test
-    public void testDefaultOverride() throws Exception {
+    public void testAutoCapturedOverride() throws Exception {
         session = new Session("id", new Date(), null, false);
         Context context = InstrumentationRegistry.getContext();
         payload = generatePayloadFromSession(context, session);
