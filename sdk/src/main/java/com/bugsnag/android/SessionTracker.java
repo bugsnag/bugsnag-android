@@ -171,23 +171,17 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         final String endpoint = configuration.getSessionEndpoint();
                         apiClient.postSessionTrackingPayload(endpoint, payload,
                             configuration.getSessionApiHeaders());
-                        deleteStoredFiles(storedFiles);
+                        sessionStore.deleteStoredFiles(storedFiles);
                     } catch (NetworkException exception) { // store for later sending
                         Logger.info("Failed to post stored session payload");
                     } catch (BadResponseException exception) { // drop bad data
                         Logger.warn("Invalid session tracking payload", exception);
-                        deleteStoredFiles(storedFiles);
+                        sessionStore.deleteStoredFiles(storedFiles);
                     }
                 }
             } finally {
                 flushingRequest.release(1);
             }
-        }
-    }
-
-    private void deleteStoredFiles(Collection<File> storedFiles) {
-        for (File storedFile : storedFiles) {
-            storedFile.delete();
         }
     }
 

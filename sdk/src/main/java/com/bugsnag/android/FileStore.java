@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -59,9 +61,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 Arrays.sort(files, comparator);
                 Logger.warn(String.format("Discarding oldest error as stored "
                     + "error limit reached (%s)", files[0].getPath()));
-                if (!files[0].delete()) {
-                    files[0].deleteOnExit();
-                }
+                deleteStoredFiles(Collections.singleton(files[0]));
             }
         }
 
@@ -104,4 +104,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         }
         return files;
     }
+
+    void deleteStoredFiles(Collection<File> storedFiles) {
+        for (File storedFile : storedFiles) {
+            if (!storedFile.delete()) {
+                storedFile.deleteOnExit();
+            }
+        }
+    }
+
 }
