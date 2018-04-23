@@ -13,6 +13,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 abstract class FileStore<T extends JsonStream.Streamable> {
 
@@ -22,6 +25,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     final String storeDirectory;
     private final int maxStoreCount;
     private final Comparator<File> comparator;
+
+    final Lock lock = new ReentrantLock();
 
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
@@ -69,6 +74,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         Writer out = null;
         try {
+            lock.lock();
             out = new FileWriter(filename);
 
             JsonStream stream = new JsonStream(out);
@@ -82,34 +88,46 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 filename), exception);
         } finally {
             IOUtils.closeQuietly(out);
+            lock.unlock();
         }
         return null;
     }
 
-    @NonNull abstract String getFilename(T streamable);
+    @NonNull
+    abstract String getFilename(T streamable);
 
     List<File> findStoredFiles() {
-        List<File> files = new ArrayList<>();
+        lock.lock();
+        try {
+            List<File> files = new ArrayList<>();
 
-        if (storeDirectory != null) {
-            File dir = new File(storeDirectory);
+            if (storeDirectory != null) {
+                File dir = new File(storeDirectory);
 
-            if (dir.exists() && dir.isDirectory()) {
-                File[] values = dir.listFiles();
+                if (dir.exists() && dir.isDirectory()) {
+                    File[] values = dir.listFiles();
 
-                if (values != null) {
-                    files.addAll(Arrays.asList(values));
+                    if (values != null) {
+                        files.addAll(Arrays.asList(values));
+                    }
                 }
             }
+            return files;
+        } finally {
+            lock.unlock();
         }
-        return files;
     }
 
     void deleteStoredFiles(Collection<File> storedFiles) {
-        for (File storedFile : storedFiles) {
-            if (!storedFile.delete()) {
-                storedFile.deleteOnExit();
+        lock.lock();
+        try {
+            for (File storedFile : storedFiles) {
+                if (!storedFile.delete()) {
+                    storedFile.deleteOnExit();
+                }
             }
+        } finally {
+            lock.unlock();
         }
     }
 
