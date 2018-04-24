@@ -1,10 +1,9 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.createDefaultHttpClient
+import com.bugsnag.android.createDefaultErrorClient
 
 /**
  * Sends an unhandled exception which is cached on disk to Bugsnag, then sent on a separate launch,
@@ -19,7 +18,7 @@ internal class CustomClientErrorFlushScenario(config: Configuration,
         if ("DeliverReports" == eventMetaData) {
             Bugsnag.setErrorReportApiClient { urlString, report, headers ->
                 headers["Custom-Client"] = "Hello World"
-                createDefaultHttpClient(context).postReport(urlString, report, headers)
+                createDefaultErrorClient(context).postReport(urlString, report, headers)
             }
         } else {
             disableAllDelivery()

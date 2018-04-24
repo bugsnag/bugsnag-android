@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import android.net.ConnectivityManager
 import com.bugsnag.android.Bugsnag.client
+import java.util.*
 
 /**
  * Accesses the session tracker and flushes all stored sessions
@@ -34,7 +35,12 @@ internal fun createSlowErrorApiClient(context: Context): ErrorReportApiClient {
     })
 }
 
-internal fun createDefaultHttpClient(context: Context): ErrorReportApiClient {
+internal fun createDefaultErrorClient(context: Context): ErrorReportApiClient {
+    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    return DefaultHttpClient(cm)
+}
+
+internal fun createDefaultSessionClient(context: Context): SessionTrackingApiClient {
     val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
     return DefaultHttpClient(cm)
 }
@@ -43,4 +49,3 @@ internal fun writeErrorToStore(client: Client) {
     val error = Error.Builder(Configuration("api-key"), RuntimeException(), null).build()
     client.errorStore.write(error)
 }
-
