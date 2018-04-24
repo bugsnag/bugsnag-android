@@ -138,7 +138,7 @@ public class ClientNotifyTest {
         }
 
         void awaitReport() throws InterruptedException {
-            latch.await(100, TimeUnit.MILLISECONDS);
+            latch.await(1000, TimeUnit.MILLISECONDS);
         }
     }
 
