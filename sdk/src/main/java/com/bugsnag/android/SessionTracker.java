@@ -94,6 +94,12 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 Async.run(new Runnable() {
                     @Override
                     public void run() {
+
+                        if (!client.clientInitialised) { // store
+                            sessionStore.write(session);
+                            return;
+                        }
+
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 

@@ -59,7 +59,7 @@ public class Client extends Observable implements Observer {
     static final String MF_AUTO_CAPTURE_SESSIONS =
         BUGSNAG_NAMESPACE + ".AUTO_CAPTURE_SESSIONS";
 
-    private volatile boolean clientInitialised = false;
+    volatile boolean clientInitialised = false;
 
     @NonNull
     protected final Configuration config;
@@ -217,13 +217,13 @@ public class Client extends Observable implements Observer {
             public void run() {
                 try {
                     Thread.sleep(10); // allow users to set custom API clients
-                    clientInitialised = true;
                     errorStore.flushOnLaunch(errorReportApiClient);
                 } catch (InterruptedException exception) {
                     Logger.warn("Failed to flush errors on launch", exception);
                 }
             }
         });
+        clientInitialised = true;
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
