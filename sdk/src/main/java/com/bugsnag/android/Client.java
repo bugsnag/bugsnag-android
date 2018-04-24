@@ -59,6 +59,7 @@ public class Client extends Observable implements Observer {
     static final String MF_AUTO_CAPTURE_SESSIONS =
         BUGSNAG_NAMESPACE + ".AUTO_CAPTURE_SESSIONS";
 
+    private volatile boolean clientInitialised = false;
 
     @NonNull
     protected final Configuration config;
@@ -206,12 +207,23 @@ public class Client extends Observable implements Observer {
 
         config.addObserver(this);
 
-        // Flush any on-disk errors
-        errorStore.flushOnLaunch(errorReportApiClient);
-
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
             AppData.guessReleaseStage(appContext));
         Logger.setEnabled(isNotProduction);
+
+        // Flush any on-disk errors
+        Async.run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10); // allow users to set custom API clients
+                    clientInitialised = true;
+                    errorStore.flushOnLaunch(errorReportApiClient);
+                } catch (InterruptedException exception) {
+                    Logger.warn("Failed to flush errors on launch", exception);
+                }
+            }
+        });
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -222,7 +234,7 @@ public class Client extends Observable implements Observer {
             NetworkInfo networkInfo = cm.getActiveNetworkInfo();
             boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
 
-            if (retryReports) {
+            if (retryReports && clientInitialised) {
                 errorStore.flushAsync(errorReportApiClient);
             }
         }
