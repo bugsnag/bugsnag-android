@@ -32,8 +32,10 @@ class MainActivity : Activity() {
 
     private fun executeTestCase() {
         val eventType = intent.getStringExtra("EVENT_TYPE")
+        val eventMetaData = intent.getStringExtra("EVENT_METADATA")
         Log.d("Bugsnag", "Received test case, executing " + eventType)
         val testCase = factory.testCaseForName(eventType, prepareConfig(), this)
+        testCase.eventMetaData = eventMetaData
         testCase.run()
     }
 
