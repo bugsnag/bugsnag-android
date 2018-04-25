@@ -29,7 +29,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     private final Comparator<File> comparator;
 
     final Lock lock = new ReentrantLock();
-    final Collection<File> queuedFiles = new HashSet<>();
+    final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
 
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
