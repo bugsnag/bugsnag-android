@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +22,8 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -157,6 +152,7 @@ public class ErrorStoreTest {
         assertEquals(0, errorStore.queuedFiles.size());
 
         List<File> storedFiles = errorStore.findStoredFiles();
+        assertEquals(1, storedFiles.size());
         errorStore.cancelQueuedFiles(null);
         assertEquals(1, errorStore.queuedFiles.size());
 
