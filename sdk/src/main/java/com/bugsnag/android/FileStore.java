@@ -12,8 +12,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -27,7 +29,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     private final Comparator<File> comparator;
 
     final Lock lock = new ReentrantLock();
-    final Collection<File> queuedFiles = new ConcurrentLinkedQueue<>();
+    final Collection<File> queuedFiles = new HashSet<>();
 
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
@@ -119,6 +121,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                     }
                 }
             }
+            queuedFiles.addAll(files);
             return files;
         } finally {
             lock.unlock();
@@ -128,7 +131,9 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     void cancelQueuedFiles(Collection<File> files) {
         lock.lock();
         try {
-            queuedFiles.removeAll(files);
+            if (files != null) {
+                queuedFiles.removeAll(files);
+            }
         } finally {
             lock.unlock();
         }

@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -23,6 +24,11 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -42,7 +48,7 @@ public class ErrorStoreTest {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         config = client.config;
         errorStore = client.errorStore;
-        Assert.assertNotNull(errorStore.storeDirectory);
+        assertNotNull(errorStore.storeDirectory);
         errorStorageDir = new File(errorStore.storeDirectory);
         FileUtils.clearFilesInDir(errorStorageDir);
     }
@@ -61,14 +67,19 @@ public class ErrorStoreTest {
     public void testWrite() throws Exception {
         File[] files = errorStorageDir.listFiles();
         int baseline = files.length; // record baseline number of files
-
-        Error error = new Error.Builder(config, new RuntimeException(), null).build();
-        errorStore.write(error);
+        Error error = writeErrorToStore();
 
         files = errorStorageDir.listFiles();
         assertEquals(baseline + 1, files.length);
         File file = files[0];
         checkFileMatchesErrorReport(file, error);
+    }
+
+    @NonNull
+    private Error writeErrorToStore() {
+        Error error = new Error.Builder(config, new RuntimeException(), null).build();
+        errorStore.write(error);
+        return error;
     }
 
     @Test
@@ -121,6 +132,60 @@ public class ErrorStoreTest {
         assertTrue(errorStore.isStartupCrash(5345));
         assertTrue(errorStore.isStartupCrash(9999));
         assertFalse(errorStore.isStartupCrash(10000));
+    }
+
+    @Test
+    public void testFindStoredFiles() {
+        assertEquals(0, errorStore.queuedFiles.size());
+        writeErrorToStore();
+        assertEquals(0, errorStore.queuedFiles.size());
+
+        List<File> storedFiles = errorStore.findStoredFiles();
+        assertEquals(1, storedFiles.size());
+        assertEquals(1, errorStore.queuedFiles.size());
+
+        writeErrorToStore();
+        storedFiles = errorStore.findStoredFiles();
+        assertEquals(2, storedFiles.size());
+        assertEquals(2, errorStore.queuedFiles.size());
+    }
+
+    @Test
+    public void testCancelQueuedFiles() {
+        assertEquals(0, errorStore.queuedFiles.size());
+        writeErrorToStore();
+        assertEquals(0, errorStore.queuedFiles.size());
+
+        List<File> storedFiles = errorStore.findStoredFiles();
+        errorStore.cancelQueuedFiles(null);
+        assertEquals(1, errorStore.queuedFiles.size());
+
+        errorStore.cancelQueuedFiles(Collections.<File>emptyList());
+        assertEquals(1, errorStore.queuedFiles.size());
+
+        errorStore.cancelQueuedFiles(storedFiles);
+        assertEquals(0, errorStore.queuedFiles.size());
+    }
+
+    @Test
+    public void testDeleteQueuedFiles() {
+        assertEquals(0, errorStore.findStoredFiles().size());
+
+        writeErrorToStore();
+        assertEquals(1, errorStore.findStoredFiles().size());
+
+        errorStore.deleteStoredFiles(errorStore.findStoredFiles());
+        assertEquals(0, errorStore.findStoredFiles().size());
+        assertEquals(0, errorStore.queuedFiles.size());
+        assertEquals(0, new File(errorStore.storeDirectory).listFiles().length);
+    }
+
+    @Test
+    public void testFileQueueDuplication() {
+        writeErrorToStore();
+        errorStore.findStoredFiles();
+        List<File> storedFiles = errorStore.findStoredFiles();
+        assertEquals(1, storedFiles.size());
     }
 
     /**
