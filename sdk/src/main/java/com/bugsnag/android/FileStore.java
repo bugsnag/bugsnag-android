@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,8 +18,11 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     @NonNull
     protected final Configuration config;
+
     @Nullable
-    final String storeDirectory;
+    final String oldDirectory;
+
+    File storageDir;
     private final int maxStoreCount;
     private final Comparator<File> comparator;
 
@@ -29,11 +34,11 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         String path;
         try {
-            path = appContext.getCacheDir().getAbsolutePath() + folder;
+            File baseDir = new File(appContext.getCacheDir().getAbsolutePath(), folder);
+            path = baseDir.getAbsolutePath();
+            storageDir = getStorageDir(path, config);
 
-            File outFile = new File(path);
-            outFile.mkdirs();
-            if (!outFile.exists()) {
+            if (!storageDir.exists()) {
                 Logger.warn("Could not prepare file storage directory");
                 path = null;
             }
@@ -41,26 +46,27 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             Logger.warn("Could not prepare file storage directory", exception);
             path = null;
         }
-        this.storeDirectory = path;
+        this.oldDirectory = path;
     }
 
     @Nullable
     String write(@NonNull T streamable) {
-        if (storeDirectory == null) {
+        if (storageDir == null) {
             return null;
         }
 
         // Limit number of saved errors to prevent disk space issues
-        File exceptionDir = new File(storeDirectory);
-        if (exceptionDir.isDirectory()) {
-            File[] files = exceptionDir.listFiles();
-            if (files != null && files.length >= maxStoreCount) {
+        if (storageDir.isDirectory()) {
+            List<File> storedFiles = findStoredFiles();
+
+            if (storedFiles.size() >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files, comparator);
+                Collections.sort(storedFiles, comparator);
+                File oldestFile = storedFiles.get(0);
                 Logger.warn(String.format("Discarding oldest error as stored "
-                    + "error limit reached (%s)", files[0].getPath()));
-                if (!files[0].delete()) {
-                    files[0].deleteOnExit();
+                    + "error limit reached (%s)", oldestFile.getPath()));
+                if (!oldestFile.delete()) {
+                    oldestFile.deleteOnExit();
                 }
             }
         }
@@ -86,22 +92,50 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         return null;
     }
 
-    @NonNull abstract String getFilename(T streamable);
+    @NonNull
+    abstract String getFilename(T streamable);
 
     List<File> findStoredFiles() {
         List<File> files = new ArrayList<>();
 
-        if (storeDirectory != null) {
-            File dir = new File(storeDirectory);
-
-            if (dir.exists() && dir.isDirectory()) {
-                File[] values = dir.listFiles();
-
-                if (values != null) {
-                    files.addAll(Arrays.asList(values));
-                }
-            }
+        if (oldDirectory != null) {
+            File dir = new File(oldDirectory);
+            addStoredFiles(dir, files);
+        }
+        if (storageDir != null) {
+            addStoredFiles(storageDir, files);
         }
         return files;
     }
+
+    void addStoredFiles(File dir, List<File> files) {
+        if (!dir.exists() || !dir.isDirectory()) {
+            return;
+        }
+        File[] values = dir.listFiles();
+
+        if (values != null) {
+            for (File value : values) {
+                if (value.isFile()) {
+                    files.add(value);
+                }
+            }
+        }
+    }
+
+    // support multiple clients in the same app by using a unique directory path
+
+    private File getStorageDir(String path, @NonNull Configuration config) {
+        String apiKey = "" + config.getApiKey().hashCode();
+        String endpoint = "" + config.getEndpoint().hashCode();
+
+        File apiDir = new File(path, apiKey);
+        apiDir.mkdirs();
+
+        File dir = new File(apiDir, endpoint);
+        dir.mkdirs();
+
+        return dir;
+    }
+
 }

@@ -2,6 +2,8 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.net.ConnectivityManager
+import java.io.File
+import java.io.FileWriter
 
 /**
  * Accesses the session tracker and flushes all stored sessions
@@ -31,6 +33,19 @@ internal fun createSlowErrorApiClient(context: Context): ErrorReportApiClient {
         Thread.sleep(500)
         defaultHttpClient.postReport(url, report, headers)
     })
+}
+
+/**
+ * Writes an error to the old directory format (i.e. bugsnag-errors)
+ */
+internal fun writeErrorToOldDir(client: Client) {
+    val configuration = Configuration("api-key")
+    val error = Error.Builder(configuration, RuntimeException(), null).build()
+    val filename = client.errorStore.getFilename(error)
+
+    val file = File(client.errorStore.oldDirectory, filename)
+    val writer = JsonStream(FileWriter(file))
+    error.toStream(writer)
 }
 
 internal fun writeErrorToStore(client: Client) {

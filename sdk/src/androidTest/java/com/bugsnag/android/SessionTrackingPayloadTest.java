@@ -26,7 +26,6 @@ public class SessionTrackingPayloadTest {
     private AppData appData;
 
     private SessionStore sessionStore;
-    private File storageDir;
 
     /**
      * Configures a session tracking payload and session store, ensuring that 0 files are present
@@ -38,9 +37,7 @@ public class SessionTrackingPayloadTest {
         Context context = InstrumentationRegistry.getContext();
         Client client = new Client(context, "api-key");
         sessionStore = client.sessionStore;
-        Assert.assertNotNull(sessionStore.storeDirectory);
-        storageDir = new File(sessionStore.storeDirectory);
-        FileUtils.clearFilesInDir(storageDir);
+        FileUtils.clearFiles(sessionStore);
 
         session = generateSession();
         appData = new AppData(context, new Configuration("a"), generateSessionTracker());
@@ -55,7 +52,7 @@ public class SessionTrackingPayloadTest {
      */
     @After
     public void tearDown() throws Exception {
-        FileUtils.clearFilesInDir(storageDir);
+        FileUtils.clearFiles(sessionStore);
     }
 
     @Test

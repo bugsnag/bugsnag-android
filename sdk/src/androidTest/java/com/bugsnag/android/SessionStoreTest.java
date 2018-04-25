@@ -15,12 +15,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class SessionStoreTest {
 
     private File storageDir;
+    private SessionStore sessionStore;
 
     /**
      * Generates a session store with 0 files
@@ -30,10 +32,9 @@ public class SessionStoreTest {
     @Before
     public void setUp() throws Exception {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        SessionStore sessionStore = client.sessionStore;
-        assertNotNull(sessionStore.storeDirectory);
-        storageDir = new File(sessionStore.storeDirectory);
-        FileUtils.clearFilesInDir(storageDir);
+        sessionStore = client.sessionStore;
+        storageDir = sessionStore.storageDir;
+        FileUtils.clearFiles(sessionStore);
     }
 
     /**
@@ -43,7 +44,7 @@ public class SessionStoreTest {
      */
     @After
     public void tearDown() throws Exception {
-        FileUtils.clearFilesInDir(storageDir);
+        FileUtils.clearFiles(sessionStore);
     }
 
     @Test
@@ -68,6 +69,19 @@ public class SessionStoreTest {
         // startup is handled correctly
         assertTrue(SESSION_COMPARATOR.compare(new File(first), new File(startup)) < 0);
         assertTrue(SESSION_COMPARATOR.compare(new File(second), new File(startup)) > 0);
+    }
+
+    @Test
+    public void testFindOldFiles() throws Throwable {
+        new File(sessionStore.oldDirectory, "foo.json").createNewFile();
+        File dir = sessionStore.storageDir;
+        new File(dir, "foo.json").createNewFile();
+
+        List<File> files = sessionStore.findStoredFiles();
+        for (File file : files) {
+            assertTrue(file.getAbsolutePath().endsWith("foo.json"));
+        }
+        assertEquals(2, files.size());
     }
 
 }

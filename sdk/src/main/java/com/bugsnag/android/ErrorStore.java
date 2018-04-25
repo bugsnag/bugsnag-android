@@ -46,7 +46,7 @@ class ErrorStore extends FileStore<Error> {
 
     ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
         super(config, appContext,
-            "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+            "bugsnag-errors", 128, ERROR_REPORT_COMPARATOR);
     }
 
     void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
@@ -88,10 +88,9 @@ class ErrorStore extends FileStore<Error> {
      * Flush any on-disk errors to Bugsnag
      */
     void flushAsync(final ErrorReportApiClient errorReportApiClient) {
-        if (storeDirectory == null) {
+        if (storageDir == null) {
             return;
         }
-
         try {
             Async.run(new Runnable() {
                 @Override
@@ -162,8 +161,9 @@ class ErrorStore extends FileStore<Error> {
     String getFilename(Error error) {
         boolean isStartupCrash = isStartupCrash(AppData.getDurationMs());
         String suffix = isStartupCrash ? STARTUP_CRASH : "";
-        return String.format(Locale.US, "%s%d_%s%s.json",
-            storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
+        return String.format(Locale.US, "%s/%d_%s%s.json",
+            storageDir.getAbsolutePath(), System.currentTimeMillis(),
+            UUID.randomUUID().toString(), suffix);
     }
 
     boolean isStartupCrash(long durationMs) {

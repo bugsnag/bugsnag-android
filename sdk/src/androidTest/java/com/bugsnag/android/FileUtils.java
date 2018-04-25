@@ -7,7 +7,13 @@ final class FileUtils {
     private FileUtils() {
     }
 
-    static void clearFilesInDir(File storageDir) {
+    static void clearFiles(FileStore fileStore) {
+        File storageDir = fileStore.storageDir;
+        clearFilesInDir(storageDir);
+        clearFilesInDir(new File(fileStore.oldDirectory));
+    }
+
+    private static void clearFilesInDir(File storageDir) {
         if (!storageDir.isDirectory()) {
             throw new IllegalArgumentException();
         }

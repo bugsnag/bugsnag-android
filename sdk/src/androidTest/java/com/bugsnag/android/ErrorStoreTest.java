@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -42,9 +43,8 @@ public class ErrorStoreTest {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
         config = client.config;
         errorStore = client.errorStore;
-        Assert.assertNotNull(errorStore.storeDirectory);
-        errorStorageDir = new File(errorStore.storeDirectory);
-        FileUtils.clearFilesInDir(errorStorageDir);
+        errorStorageDir = errorStore.storageDir;
+        FileUtils.clearFiles(errorStore);
     }
 
     /**
@@ -54,7 +54,7 @@ public class ErrorStoreTest {
      */
     @After
     public void tearDown() throws Exception {
-        FileUtils.clearFilesInDir(errorStorageDir);
+        FileUtils.clearFiles(errorStore);
     }
 
     @Test
@@ -121,6 +121,19 @@ public class ErrorStoreTest {
         assertTrue(errorStore.isStartupCrash(5345));
         assertTrue(errorStore.isStartupCrash(9999));
         assertFalse(errorStore.isStartupCrash(10000));
+    }
+
+    @Test
+    public void testFindOldFiles() throws Throwable {
+        new File(errorStore.oldDirectory, "foo.json").createNewFile();
+        File dir = errorStore.storageDir;
+        new File(dir, "foo.json").createNewFile();
+
+        List<File> files = errorStore.findStoredFiles();
+        for (File file : files) {
+            assertTrue(file.getAbsolutePath().endsWith("foo.json"));
+        }
+        assertEquals(2, files.size());
     }
 
     /**

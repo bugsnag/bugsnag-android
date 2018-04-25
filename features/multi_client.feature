@@ -4,6 +4,14 @@ Feature: Multi-client support
     configuration options. A report which is captured by a given client should
     use the correct API key and configuration options.
 
+Scenario: Multiple clients send errors stored in the old directory
+    When I run "MultiClientOldDirScenario" with the defaults
+    When I force stop the "com.bugsnag.android.mazerunner" Android app
+    And I set environment variable "EVENT_TYPE" to "MultiClientOldDirScenario"
+    And I set environment variable "EVENT_METADATA" to "DeliverReport"
+    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
+    Then I should receive 2 requests
+
 Scenario: A handled error captured while offline is only sent by the original client
     When I run "MultiClientNotifyScenario" with the defaults
     When I force stop the "com.bugsnag.android.mazerunner" Android app
@@ -56,4 +64,4 @@ Scenario: Sessions while captured offline is detected by two clients with differ
 
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa" for request 0
     And the payload field "sessions.0.user.name" equals "Bob" for request 0
-    And the payload field "sessions" is an array with 1 element for request 10
+    And the payload field "sessions" is an array with 1 element for request 0
