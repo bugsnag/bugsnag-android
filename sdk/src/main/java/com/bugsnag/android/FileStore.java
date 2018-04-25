@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -56,14 +57,16 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         // Limit number of saved errors to prevent disk space issues
         if (storageDir.isDirectory()) {
-            File[] files = storageDir.listFiles();
-            if (files != null && files.length >= maxStoreCount) {
+            List<File> storedFiles = findStoredFiles();
+
+            if (storedFiles.size() >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files, comparator);
+                Collections.sort(storedFiles, comparator);
+                File oldestFile = storedFiles.get(0);
                 Logger.warn(String.format("Discarding oldest error as stored "
-                    + "error limit reached (%s)", files[0].getPath()));
-                if (!files[0].delete()) {
-                    files[0].deleteOnExit();
+                    + "error limit reached (%s)", oldestFile.getPath()));
+                if (!oldestFile.delete()) {
+                    oldestFile.deleteOnExit();
                 }
             }
         }
