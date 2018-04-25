@@ -68,12 +68,15 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             if (files != null && files.length >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
                 Arrays.sort(files, comparator);
-                File oldestFile = files[0];
 
-                if (!queuedFiles.contains(oldestFile)) {
-                    Logger.warn(String.format("Discarding oldest error as stored "
-                        + "error limit reached (%s)", oldestFile.getPath()));
-                    deleteStoredFiles(Collections.singleton(oldestFile));
+                for (int k = 0; k < files.length && files.length >= maxStoreCount; k++) {
+                    File oldestFile = files[k];
+
+                    if (!queuedFiles.contains(oldestFile)) {
+                        Logger.warn(String.format("Discarding oldest error as stored "
+                            + "error limit reached (%s)", oldestFile.getPath()));
+                        deleteStoredFiles(Collections.singleton(oldestFile));
+                    }
                 }
             }
         }
