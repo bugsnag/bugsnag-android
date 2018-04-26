@@ -40,9 +40,8 @@ public class ErrorStoreTest {
      */
     @Before
     public void setUp() throws Exception {
-        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        config = client.config;
-        errorStore = client.errorStore;
+        config = new Configuration("api-key");
+        errorStore = new ErrorStore(config, InstrumentationRegistry.getContext());
         assertNotNull(errorStore.storeDirectory);
         errorStorageDir = new File(errorStore.storeDirectory);
         FileUtils.clearFilesInDir(errorStorageDir);

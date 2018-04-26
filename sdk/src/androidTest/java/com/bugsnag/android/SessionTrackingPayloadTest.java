@@ -36,8 +36,9 @@ public class SessionTrackingPayloadTest {
     @Before
     public void setUp() throws Exception {
         Context context = InstrumentationRegistry.getContext();
-        Client client = new Client(context, "api-key");
-        sessionStore = client.sessionStore;
+        Configuration config = new Configuration("api-key");
+        sessionStore = new SessionStore(config, context);
+
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
