@@ -15,6 +15,11 @@ public class BreadcrumbLifecycleCrashTest {
 
     private SessionTracker sessionTracker;
 
+    /**
+     * Creates a SessionTracker with a null client
+     *
+     * @throws Exception if the SessionTracker couldn't be created
+     */
     @Before
     public void setUp() throws Exception {
         Configuration configuration = new Configuration("api-key");
