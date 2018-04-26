@@ -169,6 +169,13 @@ public class ErrorStoreTest {
         writeErrorToStore();
         assertEquals(1, errorStore.findStoredFiles().size());
 
+        errorStore.deleteStoredFiles(null);
+        assertEquals(1, errorStore.queuedFiles.size());
+
+        errorStore.deleteStoredFiles(Collections.<File>emptyList());
+        assertEquals(1, errorStore.queuedFiles.size());
+
+
         errorStore.deleteStoredFiles(errorStore.findStoredFiles());
         assertEquals(0, errorStore.findStoredFiles().size());
         assertEquals(0, errorStore.queuedFiles.size());

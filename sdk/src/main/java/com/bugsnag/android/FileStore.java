@@ -145,11 +145,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     void deleteStoredFiles(Collection<File> storedFiles) {
         lock.lock();
         try {
-            queuedFiles.removeAll(storedFiles);
+            if (storedFiles != null) {
+                queuedFiles.removeAll(storedFiles);
 
-            for (File storedFile : storedFiles) {
-                if (!storedFile.delete()) {
-                    storedFile.deleteOnExit();
+                for (File storedFile : storedFiles) {
+                    if (!storedFile.delete()) {
+                        storedFile.deleteOnExit();
+                    }
                 }
             }
         } finally {
