@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.support.test.filters.SmallTest;
@@ -83,6 +84,8 @@ public class ClientNotifyTest {
         metaData.addToTab("animals", "dog", true);
 
         client.notify(new RuntimeException("Foo"), metaData);
+        assertNull(apiClient.report);
+
         apiClient.awaitReport();
         assertNotNull(apiClient.report);
         MetaData data = apiClient.report.getError().getMetaData();
@@ -92,6 +95,8 @@ public class ClientNotifyTest {
     @Test
     public void testNotifyAsyncSeverity() throws Exception {
         client.notify(new RuntimeException("Foo"), Severity.INFO);
+        assertNull(apiClient.report);
+
         apiClient.awaitReport();
         assertNotNull(apiClient.report);
         assertEquals(Severity.INFO, apiClient.report.getError().getSeverity());
@@ -103,6 +108,8 @@ public class ClientNotifyTest {
         metaData.addToTab("animals", "bird", "chicken");
 
         client.notify(new RuntimeException("Foo"), Severity.ERROR, metaData);
+        assertNull(apiClient.report);
+
         apiClient.awaitReport();
         assertNotNull(apiClient.report);
         MetaData data = apiClient.report.getError().getMetaData();
@@ -118,6 +125,8 @@ public class ClientNotifyTest {
                 report.getError().setContext("Manual");
             }
         });
+        assertNull(apiClient.report);
+
         apiClient.awaitReport();
         assertNotNull(apiClient.report);
         assertEquals("Manual", apiClient.report.getError().getContext());
@@ -133,6 +142,11 @@ public class ClientNotifyTest {
                                Report report,
                                Map<String, String> headers)
             throws NetworkException, BadResponseException {
+            try {
+                Thread.sleep(1); // simulate async request
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             this.report = report;
             latch.countDown();
         }
