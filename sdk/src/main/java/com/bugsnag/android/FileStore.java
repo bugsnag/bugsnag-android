@@ -120,7 +120,11 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                     File[] values = dir.listFiles();
 
                     if (values != null) {
-                        files.addAll(Arrays.asList(values));
+                        for (File value : values) {
+                            if (value.isFile() && !queuedFiles.contains(value)) {
+                                files.add(value);
+                            }
+                        }
                     }
                 }
             }

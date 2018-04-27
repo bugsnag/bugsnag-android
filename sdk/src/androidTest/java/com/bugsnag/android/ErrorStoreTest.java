@@ -139,9 +139,10 @@ public class ErrorStoreTest {
         assertEquals(1, errorStore.queuedFiles.size());
 
         writeErrorToStore();
+        writeErrorToStore();
         storedFiles = errorStore.findStoredFiles();
         assertEquals(2, storedFiles.size());
-        assertEquals(2, errorStore.queuedFiles.size());
+        assertEquals(3, errorStore.queuedFiles.size());
     }
 
     @Test
@@ -167,7 +168,8 @@ public class ErrorStoreTest {
         assertEquals(0, errorStore.findStoredFiles().size());
 
         writeErrorToStore();
-        assertEquals(1, errorStore.findStoredFiles().size());
+        List<File> storedFiles = errorStore.findStoredFiles();
+        assertEquals(1, storedFiles.size());
 
         errorStore.deleteStoredFiles(null);
         assertEquals(1, errorStore.queuedFiles.size());
@@ -176,7 +178,7 @@ public class ErrorStoreTest {
         assertEquals(1, errorStore.queuedFiles.size());
 
 
-        errorStore.deleteStoredFiles(errorStore.findStoredFiles());
+        errorStore.deleteStoredFiles(storedFiles);
         assertEquals(0, errorStore.findStoredFiles().size());
         assertEquals(0, errorStore.queuedFiles.size());
         assertEquals(0, new File(errorStore.storeDirectory).listFiles().length);
@@ -185,8 +187,14 @@ public class ErrorStoreTest {
     @Test
     public void testFileQueueDuplication() {
         writeErrorToStore();
-        errorStore.findStoredFiles();
+        List<File> ogFiles = errorStore.findStoredFiles();
+        assertEquals(1, ogFiles.size());
+
         List<File> storedFiles = errorStore.findStoredFiles();
+        assertEquals(0, storedFiles.size());
+
+        errorStore.cancelQueuedFiles(ogFiles);
+        storedFiles = errorStore.findStoredFiles();
         assertEquals(1, storedFiles.size());
     }
 
