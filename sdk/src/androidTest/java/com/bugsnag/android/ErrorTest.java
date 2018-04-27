@@ -6,6 +6,7 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -316,7 +317,6 @@ public class ErrorTest {
         assertEquals(expectedContext, error.getContext());
     }
 
-
     @Test
     public void testSetUser() throws Exception {
         String firstId = "123";
@@ -345,6 +345,59 @@ public class ErrorTest {
         assertEquals(userId, error.getUser().getId());
         assertEquals(userEmail, error.getUser().getEmail());
         assertEquals(userName, error.getUser().getName());
+    }
+
+    @Test
+    public void testBuilderMetaData() {
+        Configuration config = new Configuration("api-key");
+        Error.Builder builder = new Error.Builder(config, new RuntimeException("foo"), null);
+
+        assertNotNull(builder.metaData(new MetaData()).build());
+
+        MetaData metaData = new MetaData();
+        metaData.addToTab("foo", "bar", true);
+
+        Error error = builder.metaData(metaData).build();
+        assertEquals(1, error.getMetaData().getTab("foo").size());
+    }
+
+    @Test
+    public void testErrorMetaData() {
+        error.addToTab("rocks", "geode", "a shiny mineral");
+        assertNotNull(error.getMetaData().getTab("rocks"));
+
+        error.clearTab("rocks");
+        assertTrue(error.getMetaData().getTab("rocks").isEmpty());
+    }
+
+    @Test
+    public void testSetDeviceId() throws Throwable {
+        Context context = InstrumentationRegistry.getContext();
+        DeviceData deviceData = new DeviceData(context, BugsnagTestUtils.getSharedPrefs(context));
+        error.setDeviceData(deviceData);
+
+        JSONObject errorJson = streamableToJson(error);
+        JSONObject device = errorJson.getJSONObject("device");
+        assertEquals(deviceData.id, device.getString("id"));
+
+        error.setDeviceId(null);
+        errorJson = streamableToJson(error);
+        device = errorJson.getJSONObject("device");
+        assertFalse(device.has("id"));
+    }
+
+    @Test
+    public void testBuilderNullSession() throws Throwable {
+        Configuration config = new Configuration("api-key");
+        config.setAutoCaptureSessions(false);
+        RuntimeException exception = new RuntimeException("foo");
+
+        Session session = generateSession();
+        session.setAutoCaptured(true);
+        error = new Error.Builder(config, exception, session).build();
+
+        JSONObject errorJson = streamableToJson(error);
+        assertFalse(errorJson.has("session"));
     }
 
     private void validateEmptyAttributes(JSONObject severityReason) {
