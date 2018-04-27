@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -234,6 +235,30 @@ public class ClientTest {
         client.setSessionTrackingApiClient(customClient);
         assertFalse(client.sessionTracker.getApiClient() instanceof DefaultHttpClient);
         assertEquals(customClient, client.sessionTracker.getApiClient());
+    }
+
+    @Test
+    public void testMaxBreadcrumbs() {
+        Client client = generateClient();
+        assertEquals(0, client.breadcrumbs.store.size());
+
+        client.setMaxBreadcrumbs(1);
+
+        client.leaveBreadcrumb("test");
+        client.leaveBreadcrumb("another");
+        assertEquals(1, client.breadcrumbs.store.size());
+    }
+
+    @Test
+    public void testClearBreadcrumbs() {
+        Client client = generateClient();
+        assertEquals(0, client.breadcrumbs.store.size());
+
+        client.leaveBreadcrumb("test");
+        assertEquals(1, client.breadcrumbs.store.size());
+
+        client.clearBreadcrumbs();
+        assertEquals(0, client.breadcrumbs.store.size());
     }
 
 }
