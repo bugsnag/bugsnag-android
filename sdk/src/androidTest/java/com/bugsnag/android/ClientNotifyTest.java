@@ -144,8 +144,8 @@ public class ClientNotifyTest {
             throws NetworkException, BadResponseException {
             try {
                 Thread.sleep(1); // simulate async request
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
+                ignored.printStackTrace();
             }
             this.report = report;
             latch.countDown();
