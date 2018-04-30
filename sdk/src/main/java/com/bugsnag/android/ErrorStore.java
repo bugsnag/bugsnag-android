@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -126,18 +127,15 @@ class ErrorStore extends FileStore<Error> {
             errorReportApiClient.postReport(config.getEndpoint(), report,
                 config.getErrorApiHeaders());
 
+            deleteStoredFiles(Collections.singleton(errorFile));
             Logger.info("Deleting sent error file " + errorFile.getName());
-            if (!errorFile.delete()) {
-                errorFile.deleteOnExit();
-            }
         } catch (NetworkException exception) {
+            cancelQueuedFiles(Collections.singleton(errorFile));
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
+            deleteStoredFiles(Collections.singleton(errorFile));
             Logger.warn("Problem sending unsent error from disk", exception);
-            if (!errorFile.delete()) {
-                errorFile.deleteOnExit();
-            }
         }
     }
 
