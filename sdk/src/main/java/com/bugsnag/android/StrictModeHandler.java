@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -27,6 +28,7 @@ class StrictModeHandler {
 
     private static final String STRICT_MODE_CLZ_NAME = "android.os.StrictMode";
 
+    @SuppressLint("UseSparseArrays")
     private static final Map<Integer, String> POLICY_CODE_MAP = new HashMap<>();
 
     static {
