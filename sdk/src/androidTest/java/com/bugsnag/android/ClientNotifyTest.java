@@ -1,6 +1,9 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -10,6 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -20,6 +25,7 @@ public class ClientNotifyTest {
 
     /**
      * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
+     *
      * @throws Exception if initialisation failed
      */
     @Before
@@ -72,7 +78,63 @@ public class ClientNotifyTest {
         assertEquals("Message", error.getExceptionMessage());
     }
 
+    @Test
+    public void testNotifyAsyncMetadata() throws Exception {
+        MetaData metaData = new MetaData();
+        metaData.addToTab("animals", "dog", true);
+
+        client.notify(new RuntimeException("Foo"), metaData);
+        assertNull(apiClient.report);
+
+        apiClient.awaitReport();
+        assertNotNull(apiClient.report);
+        MetaData data = apiClient.report.getError().getMetaData();
+        assertTrue((Boolean) data.getTab("animals").get("dog"));
+    }
+
+    @Test
+    public void testNotifyAsyncSeverity() throws Exception {
+        client.notify(new RuntimeException("Foo"), Severity.INFO);
+        assertNull(apiClient.report);
+
+        apiClient.awaitReport();
+        assertNotNull(apiClient.report);
+        assertEquals(Severity.INFO, apiClient.report.getError().getSeverity());
+    }
+
+    @Test
+    public void testNotifyAsyncSeverityMetadata() throws Exception {
+        MetaData metaData = new MetaData();
+        metaData.addToTab("animals", "bird", "chicken");
+
+        client.notify(new RuntimeException("Foo"), Severity.ERROR, metaData);
+        assertNull(apiClient.report);
+
+        apiClient.awaitReport();
+        assertNotNull(apiClient.report);
+        MetaData data = apiClient.report.getError().getMetaData();
+        assertEquals("chicken", data.getTab("animals").get("bird"));
+        assertEquals(Severity.ERROR, apiClient.report.getError().getSeverity());
+    }
+
+    @Test
+    public void testNotifyAsyncCallback() throws Exception {
+        client.notify(new RuntimeException("Foo"), new Callback() {
+            @Override
+            public void beforeNotify(Report report) {
+                report.getError().setContext("Manual");
+            }
+        });
+        assertNull(apiClient.report);
+
+        apiClient.awaitReport();
+        assertNotNull(apiClient.report);
+        assertEquals("Manual", apiClient.report.getError().getContext());
+    }
+
     static class FakeClient implements ErrorReportApiClient {
+
+        CountDownLatch latch = new CountDownLatch(1);
         Report report;
 
         @Override
@@ -80,7 +142,17 @@ public class ClientNotifyTest {
                                Report report,
                                Map<String, String> headers)
             throws NetworkException, BadResponseException {
+            try {
+                Thread.sleep(1); // simulate async request
+            } catch (InterruptedException ignored) {
+                ignored.printStackTrace();
+            }
             this.report = report;
+            latch.countDown();
+        }
+
+        void awaitReport() throws InterruptedException {
+            latch.await(2000, TimeUnit.MILLISECONDS);
         }
     }
 
