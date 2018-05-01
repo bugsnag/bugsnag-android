@@ -2,6 +2,8 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;

@@ -164,7 +164,7 @@ dexcount {
 
 findbugs {
     sourceSets = []
-    ignoreFailures = true // don't break the build for now
+    ignoreFailures = false
 }
 
 task findbugs(type: FindBugs, dependsOn: assemble) {
@@ -177,6 +177,7 @@ task findbugs(type: FindBugs, dependsOn: assemble) {
     classpath = files()
 
     excludeFilter = file("../config/findbugs/filter.xml")
+    excludeBugsFilter = file("../config/findbugs/baseline.xml")
 
     reports {
         reports {
