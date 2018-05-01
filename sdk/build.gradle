@@ -3,6 +3,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'findbugs'
 
 repositories {
     jcenter()
@@ -159,4 +160,28 @@ dexcount {
     includeTotalMethodCount = true
     orderByMethodCount = true
     verbose true
+}
+
+findbugs {
+    sourceSets = []
+    ignoreFailures = true // don't break the build for now
+}
+
+task findbugs(type: FindBugs, dependsOn: assemble) {
+
+    effort "max"
+    reportLevel "low"
+    pluginClasspath = project.configurations.findbugsPlugins
+    classes = fileTree('build/intermediates/classes/')
+    source = fileTree('src/')
+    classpath = files()
+
+    excludeFilter = file("../config/findbugs/filter.xml")
+
+    reports {
+        reports {
+            xml.enabled = false
+            html.enabled = true
+        }
+    }
 }
