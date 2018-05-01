@@ -4,8 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +72,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         Writer out = null;
         try {
-            out = new FileWriter(filename);
+            FileOutputStream fos = new FileOutputStream(filename);
+            out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
 
             JsonStream stream = new JsonStream(out);
             stream.value(streamable);
