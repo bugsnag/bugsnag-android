@@ -1,5 +1,10 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -10,11 +15,6 @@ import org.junit.runner.RunWith;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -99,11 +99,13 @@ public class ClientNotifyAsyncTest {
 
         @Override
         public void postReport(String urlString,
-                               Report report, Map<String, String> headers) throws NetworkException, BadResponseException {
+                               Report report,
+                               Map<String, String> headers)
+            throws NetworkException, BadResponseException {
             try {
                 nullCheckLatch.await(20, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
             }
             super.postReport(urlString, report, headers);
         }
