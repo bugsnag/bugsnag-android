@@ -4,6 +4,7 @@ import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -260,5 +261,20 @@ public class ClientTest {
         client.clearBreadcrumbs();
         assertEquals(0, client.breadcrumbs.store.size());
     }
+  
+    @Test
+    public void testClientAddToTab() {
+        Client client = generateClient();
+        client.addToTab("drink", "cola", "cherry");
+        assertNotNull(client.getMetaData().getTab("drink"));
+    }
 
+    @Test
+    public void testClientClearTab() {
+        Client client = generateClient();
+        client.addToTab("drink", "cola", "cherry");
+
+        client.clearTab("drink");
+        assertTrue(client.getMetaData().getTab("drink").isEmpty());
+    }
 }
