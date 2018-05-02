@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -29,8 +30,9 @@ public class SessionStoreTest {
      */
     @Before
     public void setUp() throws Exception {
-        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        SessionStore sessionStore = client.sessionStore;
+        Configuration config = new Configuration("api-key");
+        Context context = InstrumentationRegistry.getContext();
+        SessionStore sessionStore = new SessionStore(config, context);
         assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
