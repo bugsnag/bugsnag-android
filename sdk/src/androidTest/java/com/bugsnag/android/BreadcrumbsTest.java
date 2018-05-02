@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BreadcrumbType.MANUAL;
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray;
 import static org.junit.Assert.assertEquals;
 
@@ -16,6 +18,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Queue;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -172,4 +175,21 @@ public class BreadcrumbsTest {
         assertEquals("left", node.getJSONObject("metaData").get("direction"));
         assertEquals(1, breadcrumbsJson.length());
     }
+
+    @Test
+    public void testClientMethods() {
+        Client client = generateClient();
+        client.leaveBreadcrumb("Hello World");
+        Queue<Breadcrumb> store = client.breadcrumbs.store;
+        int count = 0;
+
+        for (Breadcrumb breadcrumb : store) {
+            if (MANUAL == breadcrumb.getType() && "manual".equals(breadcrumb.getName())) {
+                count++;
+                assertEquals("Hello World", breadcrumb.getMetadata().get("message"));
+            }
+        }
+        assertEquals(1, count);
+    }
+
 }
