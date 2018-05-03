@@ -6,9 +6,8 @@ import java.util.Map;
  * Posts an array of sessions to the Bugsnag Session Tracking API. Custom implementations
  * of this client can be used in place of the default implementation, by calling
  * {@link Bugsnag#setSessionTrackingApiClient(SessionTrackingApiClient)}
- *
- * @see DefaultHttpClient
  */
+@Deprecated
 public interface SessionTrackingApiClient {
 
     /**

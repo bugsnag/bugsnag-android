@@ -299,6 +299,7 @@ public final class Bugsnag {
      *
      * @param errorReportApiClient the custom HTTP client implementation
      */
+    @Deprecated
     public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
         getClient().setErrorReportApiClient(errorReportApiClient);
     }
@@ -313,6 +314,7 @@ public final class Bugsnag {
      *
      * @param apiClient the custom HTTP client implementation
      */
+    @Deprecated
     public static void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
         getClient().setSessionTrackingApiClient(apiClient);
     }

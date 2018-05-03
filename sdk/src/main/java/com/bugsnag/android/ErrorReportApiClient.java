@@ -6,10 +6,9 @@ import java.util.Map;
  * Posts an error report to the Bugsnag API. Custom implementations of this client can be used in
  * place of the default implementation, by calling
  * {@link Bugsnag#setErrorReportApiClient(ErrorReportApiClient)}
- *
- * @see DefaultHttpClient
  */
 @SuppressWarnings("WeakerAccess")
+@Deprecated
 public interface ErrorReportApiClient {
 
     /**

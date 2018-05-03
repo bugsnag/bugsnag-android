@@ -627,6 +627,7 @@ public class Client extends Observable implements Observer {
     }
 
     @SuppressWarnings("ConstantConditions")
+    @Deprecated
     void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
         if (errorReportApiClient == null) {
             throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
@@ -635,6 +636,7 @@ public class Client extends Observable implements Observer {
     }
 
     @SuppressWarnings("ConstantConditions")
+    @Deprecated
     void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
         if (apiClient == null) {
             throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");

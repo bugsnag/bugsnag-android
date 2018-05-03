@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+@Deprecated
 class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClient {
 
     private final ConnectivityManager connectivityManager;
