@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-interface Delivery {
+public interface Delivery {
 
     void deliver(SessionTrackingPayload payload,
                  Configuration config) throws DeliveryFailureException;

@@ -52,12 +52,14 @@ final class BugsnagTestUtils {
     }
 
     static Configuration generateConfiguration() {
-        return new Configuration("test");
+        Configuration configuration = new Configuration("test");
+        configuration.setDelivery(generateDelivery());
+        return configuration;
     }
 
     static SessionTracker generateSessionTracker() {
         return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient(),
-            generateSessionStore(), generateSessionTrackingApiClient());
+            generateSessionStore());
     }
 
     @NonNull

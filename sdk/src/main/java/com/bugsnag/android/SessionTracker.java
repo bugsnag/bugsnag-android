@@ -30,7 +30,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private final long timeoutMs;
     private final Client client;
     private final SessionStore sessionStore;
-    private SessionTrackingApiClient apiClient;
 
     // This most recent time an Activity was stopped.
     private AtomicLong activityLastStoppedAtMs = new AtomicLong(0);
@@ -40,18 +39,16 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     private AtomicReference<Session> currentSession = new AtomicReference<>();
     private Semaphore flushingRequest = new Semaphore(1);
 
-    SessionTracker(Configuration configuration, Client client, SessionStore sessionStore,
-                   SessionTrackingApiClient apiClient) {
-        this(configuration, client, DEFAULT_TIMEOUT_MS, sessionStore, apiClient);
+    SessionTracker(Configuration configuration, Client client, SessionStore sessionStore) {
+        this(configuration, client, DEFAULT_TIMEOUT_MS, sessionStore);
     }
 
     SessionTracker(Configuration configuration, Client client, long timeoutMs,
-                   SessionStore sessionStore, SessionTrackingApiClient apiClient) {
+                   SessionStore sessionStore) {
         this.configuration = configuration;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
-        this.apiClient = apiClient;
     }
 
     /**
@@ -67,14 +64,6 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);
         currentSession.set(session);
         trackSessionIfNeeded(session);
-    }
-
-    void setApiClient(SessionTrackingApiClient apiClient) {
-        this.apiClient = apiClient;
-    }
-
-    SessionTrackingApiClient getApiClient() {
-        return apiClient;
     }
 
     /**
@@ -101,13 +90,19 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                             new SessionTrackingPayload(session, client.appData);
 
                         try {
-                            apiClient.postSessionTrackingPayload(endpoint, payload,
-                                configuration.getSessionApiHeaders());
-                        } catch (NetworkException exception) { // store for later sending
-                            Logger.info("Failed to post session payload");
-                            sessionStore.write(session);
-                        } catch (BadResponseException exception) { // drop bad data
-                            Logger.warn("Invalid session tracking payload", exception);
+                            configuration.getDelivery().deliver(payload, configuration);
+                        } catch (DeliveryFailureException exception) { // store for later sending
+                            switch (exception.reason) {
+                                case CONNECTIVITY:
+                                    Logger.info("Failed to post session payload");
+                                    sessionStore.write(session);
+                                    break;
+                                case REQUEST_FAILURE:
+                                    Logger.warn("Invalid session tracking payload", exception);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 });
@@ -168,16 +163,22 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
                     //FUTURE:SM Reduce duplication here and above
                     try {
-                        final String endpoint = configuration.getSessionEndpoint();
-                        apiClient.postSessionTrackingPayload(endpoint, payload,
-                            configuration.getSessionApiHeaders());
+                        configuration.getDelivery().deliver(payload, configuration);
                         sessionStore.deleteStoredFiles(storedFiles);
-                    } catch (NetworkException exception) { // store for later sending
-                        sessionStore.cancelQueuedFiles(storedFiles);
-                        Logger.info("Failed to post stored session payload");
-                    } catch (BadResponseException exception) { // drop bad data
-                        Logger.warn("Invalid session tracking payload", exception);
-                        sessionStore.deleteStoredFiles(storedFiles);
+                    } catch (DeliveryFailureException exception) {
+                        switch (exception.reason) {
+                            case CONNECTIVITY: // store for later sending
+                                sessionStore.cancelQueuedFiles(storedFiles);
+                                Logger.info("Failed to post stored session payload");
+                                break;
+                            case REQUEST_FAILURE:
+                                // drop bad data
+                                Logger.warn("Invalid session tracking payload", exception);
+                                sessionStore.deleteStoredFiles(storedFiles);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             } finally {

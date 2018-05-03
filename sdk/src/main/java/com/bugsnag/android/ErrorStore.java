@@ -50,11 +50,11 @@ class ErrorStore extends FileStore<Error> {
             "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
     }
 
-    void flushOnLaunch(final ErrorReportApiClient errorReportApiClient) {
+    void flushOnLaunch() {
         final List<File> crashReports = findLaunchCrashReports();
 
         if (crashReports.isEmpty() || config.getLaunchCrashThresholdMs() == 0) {
-            flushAsync(errorReportApiClient); // if disabled or no startup crash, flush async
+            flushAsync(); // if disabled or no startup crash, flush async
         } else {
 
             // Block the main thread for a 2 second interval as the app may crash very soon.
@@ -66,7 +66,7 @@ class ErrorStore extends FileStore<Error> {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    flushReports(crashReports, errorReportApiClient);
+                    flushReports(crashReports);
                     flushOnLaunchCompleted = true;
                 }
             });
@@ -88,7 +88,7 @@ class ErrorStore extends FileStore<Error> {
     /**
      * Flush any on-disk errors to Bugsnag
      */
-    void flushAsync(final ErrorReportApiClient errorReportApiClient) {
+    void flushAsync() {
         if (storeDirectory == null) {
             return;
         }
@@ -97,7 +97,7 @@ class ErrorStore extends FileStore<Error> {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    flushReports(findStoredFiles(), errorReportApiClient);
+                    flushReports(findStoredFiles());
                 }
             });
         } catch (RejectedExecutionException exception) {
@@ -105,15 +105,14 @@ class ErrorStore extends FileStore<Error> {
         }
     }
 
-    private void flushReports(Collection<File> storedReports,
-                              ErrorReportApiClient apiClient) {
+    private void flushReports(Collection<File> storedReports) {
         if (!storedReports.isEmpty() && semaphore.tryAcquire(1)) {
             try {
                 Logger.info(String.format(Locale.US,
                     "Sending %d saved error(s) to Bugsnag", storedReports.size()));
 
                 for (File errorFile : storedReports) {
-                    flushErrorReport(errorFile, apiClient);
+                    flushErrorReport(errorFile);
                 }
             } finally {
                 semaphore.release(1);
@@ -121,19 +120,28 @@ class ErrorStore extends FileStore<Error> {
         }
     }
 
-    private void flushErrorReport(File errorFile, ErrorReportApiClient errorReportApiClient) {
+    private void flushErrorReport(File errorFile) {
         try {
             Report report = new Report(config.getApiKey(), errorFile);
-            errorReportApiClient.postReport(config.getEndpoint(), report,
-                config.getErrorApiHeaders());
+            config.getDelivery().deliver(report, config);
 
             deleteStoredFiles(Collections.singleton(errorFile));
             Logger.info("Deleting sent error file " + errorFile.getName());
-        } catch (NetworkException exception) {
-            cancelQueuedFiles(Collections.singleton(errorFile));
-            Logger.warn("Could not send previously saved error(s)"
-                + " to Bugsnag, will try again later", exception);
-        } catch (Exception exception) {
+        } catch (DeliveryFailureException exception) {
+            switch (exception.reason) {
+                case CONNECTIVITY:
+                    cancelQueuedFiles(Collections.singleton(errorFile));
+                    Logger.warn("Could not send previously saved error(s)"
+                        + " to Bugsnag, will try again later", exception);
+                    break;
+                case REQUEST_FAILURE:
+                    deleteStoredFiles(Collections.singleton(errorFile));
+                    Logger.warn("Problem sending unsent error from disk", exception);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception exception) { // FIXME dupe
             deleteStoredFiles(Collections.singleton(errorFile));
             Logger.warn("Problem sending unsent error from disk", exception);
         }

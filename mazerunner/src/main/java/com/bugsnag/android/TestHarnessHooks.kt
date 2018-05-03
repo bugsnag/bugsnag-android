@@ -2,8 +2,6 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.bugsnag.android.Bugsnag.client
-import java.util.*
 
 /**
  * Accesses the session tracker and flushes all stored sessions
@@ -13,11 +11,13 @@ internal fun flushAllSessions() {
 }
 
 internal fun flushErrorStoreAsync(client: Client, apiClient: ErrorReportApiClient) {
-    client.errorStore.flushAsync(apiClient)
+    client.setErrorReportApiClient(apiClient)
+    client.errorStore.flushAsync()
 }
 
 internal fun flushErrorStoreOnLaunch(client: Client, apiClient: ErrorReportApiClient) {
-    client.errorStore.flushOnLaunch(apiClient)
+    client.setErrorReportApiClient(apiClient)
+    client.errorStore.flushOnLaunch()
 }
 
 /**

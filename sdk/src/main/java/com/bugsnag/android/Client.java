@@ -76,8 +76,6 @@ public class Client extends Observable implements Observer {
 
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
-    private ErrorReportApiClient errorReportApiClient;
-    private SessionTrackingApiClient sessionTrackingApiClient;
 
     /**
      * Initialize a Bugsnag client
@@ -126,15 +124,11 @@ public class Client extends Observable implements Observer {
 
         ConnectivityManager cm =
             (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        configuration.setDelivery(new DefaultDelivery(cm));
 
-        configuration.setDelivery(new DefaultDelivery());
-
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
-        errorReportApiClient = defaultHttpClient;
-        sessionTrackingApiClient = defaultHttpClient;
 
         sessionTracker =
-            new SessionTracker(configuration, this, sessionStore, sessionTrackingApiClient);
+            new SessionTracker(configuration, this, sessionStore);
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
@@ -166,8 +160,6 @@ public class Client extends Observable implements Observer {
             Logger.warn("Bugsnag is unable to setup automatic activity lifecycle "
                 + "breadcrumbs on API Levels below 14.");
         }
-
-        errorReportApiClient = new DefaultHttpClient(cm);
 
         // populate from manifest (in the case where the constructor was called directly by the
         // User or no UUID was supplied)
@@ -214,7 +206,7 @@ public class Client extends Observable implements Observer {
 
 
         // Flush any on-disk errors
-        errorStore.flushOnLaunch(errorReportApiClient);
+        errorStore.flushOnLaunch();
     }
 
     private class ConnectivityChangeReceiver extends BroadcastReceiver {
@@ -226,7 +218,7 @@ public class Client extends Observable implements Observer {
             boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
 
             if (retryReports) {
-                errorStore.flushAsync(errorReportApiClient);
+                errorStore.flushAsync();
             }
         }
     }
@@ -638,17 +630,16 @@ public class Client extends Observable implements Observer {
     void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
         if (errorReportApiClient == null) {
             throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
-        }
-        this.errorReportApiClient = errorReportApiClient;
+        }// FIXME
+//        this.errorReportApiClient = errorReportApiClient;
     }
 
     @SuppressWarnings("ConstantConditions")
     void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
         if (apiClient == null) {
             throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");
-        }
-        this.sessionTrackingApiClient = apiClient;
-        sessionTracker.setApiClient(apiClient);
+        }// FIXME
+//        this.sessionTrackingApiClient = apiClient;
     }
 
     /**
@@ -917,7 +908,7 @@ public class Client extends Observable implements Observer {
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
-                errorStore.flushAsync(errorReportApiClient);
+                errorStore.flushAsync();
                 break;
             default:
                 break;
@@ -1240,16 +1231,23 @@ public class Client extends Observable implements Observer {
 
     void deliver(@NonNull Report report, @NonNull Error error) {
         try {
-            errorReportApiClient.postReport(config.getEndpoint(), report,
-                config.getErrorApiHeaders());
+            config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
-        } catch (NetworkException exception) {
-            Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+        } catch (DeliveryFailureException exception) {
 
-            // Save error to disk for later sending
-            errorStore.write(error);
-        } catch (BadResponseException exception) {
-            Logger.info("Bad response when sending data to Bugsnag");
+            switch (exception.reason) {
+
+                case CONNECTIVITY:
+                    Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+                    // Save error to disk for later sending
+                    errorStore.write(error);
+                    break;
+                case REQUEST_FAILURE:
+                    Logger.info("Bad response when sending data to Bugsnag");
+                    break;
+                default:
+                    break;
+            }
         } catch (Exception exception) {
             Logger.warn("Problem sending error to Bugsnag", exception);
         }
