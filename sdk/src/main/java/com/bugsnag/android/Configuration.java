@@ -55,7 +55,7 @@ public class Configuration extends Observable implements Observer {
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
-    private volatile Delivery delivery;
+    private Delivery delivery;
 
     /**
      * Construct a new Bugsnag configuration object

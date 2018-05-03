@@ -4,7 +4,7 @@ public class DeliveryFailureException extends Exception {
 
     enum Reason {
         CONNECTIVITY,
-        BAD_REQUEST
+        REQUEST_FAILURE
     }
 
     final Reason reason;
