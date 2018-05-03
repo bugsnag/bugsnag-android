@@ -42,8 +42,7 @@ final class BugsnagTestUtils {
 
     static Client generateClient() {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        client.setErrorReportApiClient(generateErrorReportApiClient());
-        client.setSessionTrackingApiClient(generateSessionTrackingApiClient());
+        client.config.setDelivery(generateDelivery());
         return client;
     }
 

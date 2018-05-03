@@ -172,6 +172,14 @@ public class ConfigurationTest {
         assertNull(configuration.getDelivery());
         Delivery delivery = BugsnagTestUtils.generateDelivery();
         configuration.setDelivery(delivery);
-        assertEquals(delivery, configuration.getDelivery());
+
+        assertTrue(configuration.getDelivery() instanceof DeliveryCompat);
+        DeliveryCompat compat = (DeliveryCompat) configuration.getDelivery();
+        assertEquals(compat.delivery, delivery);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetNullDelivery() {
+        config.setDelivery(null);
     }
 }

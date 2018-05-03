@@ -500,7 +500,15 @@ public class Configuration extends Observable implements Observer {
     }
 
     public void setDelivery(Delivery delivery) {
-        this.delivery = delivery;
+        if (delivery == null) {
+            throw new IllegalArgumentException("Delivery cannot be null");
+        }
+
+        if (delivery instanceof DeliveryCompat) {
+            this.delivery = delivery;
+        } else {
+            this.delivery = new DeliveryCompat(delivery);
+        }
     }
 
     public Map<String, String> getErrorApiHeaders() {

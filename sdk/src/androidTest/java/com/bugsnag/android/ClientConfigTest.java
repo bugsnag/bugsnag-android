@@ -89,9 +89,4 @@ public class ClientConfigTest {
         assertFalse(config.getSendThreads());
     }
 
-    @Test
-    public void testClientSetsDelivery() {
-        assertTrue(client.getConfig().getDelivery() instanceof DefaultDelivery);
-    }
-
 }
