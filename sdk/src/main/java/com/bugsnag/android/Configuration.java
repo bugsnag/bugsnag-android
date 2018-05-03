@@ -55,6 +55,7 @@ public class Configuration extends Observable implements Observer {
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
+    private Delivery delivery;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -494,7 +495,15 @@ public class Configuration extends Observable implements Observer {
         return notifierType;
     }
 
-    Map<String, String> getErrorApiHeaders() {
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
+    }
+
+    public Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
@@ -502,7 +511,7 @@ public class Configuration extends Observable implements Observer {
         return map;
     }
 
-    Map<String, String> getSessionApiHeaders() {
+    public Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);
