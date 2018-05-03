@@ -1172,8 +1172,7 @@ public class Client extends Observable implements Observer {
      * @param breadcrumb the log message to leave (max 140 chars)
      */
     public void leaveBreadcrumb(@NonNull String breadcrumb) {
-        Map<String, String> metaData = Collections.emptyMap();
-        Breadcrumb crumb = new Breadcrumb(breadcrumb, BreadcrumbType.MANUAL, metaData);
+        Breadcrumb crumb = new Breadcrumb(breadcrumb);
 
         if (runBeforeBreadcrumbTasks(crumb)) {
             breadcrumbs.add(crumb);

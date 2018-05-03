@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.3.4 (2018-05-02)
+
+### Bug fixes
+
+* Avoid adding extra comma separator in JSON if File input is empty or null
+[#284](https://github.com/bugsnag/bugsnag-android/pull/284)
+
+* Thread safety fixes to JSON file serialisation
+[#295](https://github.com/bugsnag/bugsnag-android/pull/295)
+
+* Prevent potential automatic activity lifecycle breadcrumb crash
+[#300](https://github.com/bugsnag/bugsnag-android/pull/300)
+
+* Fix serialisation issue with leading to incorrect dashboard display of breadcrumbs
+[#306](https://github.com/bugsnag/bugsnag-android/pull/306)
+
 ## 4.3.3 (2018-04-04)
 
 ### Bug fixes
