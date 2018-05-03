@@ -126,6 +126,9 @@ public class Client extends Observable implements Observer {
 
         ConnectivityManager cm =
             (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        configuration.setDelivery(new DefaultDelivery());
+
         DefaultHttpClient defaultHttpClient = new DefaultHttpClient(cm);
         errorReportApiClient = defaultHttpClient;
         sessionTrackingApiClient = defaultHttpClient;

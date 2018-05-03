@@ -3,6 +3,9 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -84,6 +87,11 @@ public class ClientConfigTest {
     public void testSetSendThreads() throws Exception {
         client.setSendThreads(false);
         assertFalse(config.getSendThreads());
+    }
+
+    @Test
+    public void testClientSetsDelivery() {
+        assertTrue(client.getConfig().getDelivery() instanceof DefaultDelivery);
     }
 
 }
