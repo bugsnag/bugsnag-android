@@ -98,14 +98,12 @@ public class ClientConfigTest {
         config = BugsnagTestUtils.generateConfiguration();
         Delivery customDelivery = new Delivery() {
             @Override
-            public void deliver(SessionTrackingPayload payload, Configuration config) throws DeliveryFailureException {
-
-            }
+            public void deliver(SessionTrackingPayload payload,
+                                Configuration config) throws DeliveryFailureException {}
 
             @Override
-            public void deliver(Report report, Configuration config) throws DeliveryFailureException {
-
-            }
+            public void deliver(Report report,
+                                Configuration config) throws DeliveryFailureException {}
         };
         config.setDelivery(customDelivery);
         client = new Client(context, config);
