@@ -135,16 +135,19 @@ class ErrorStore extends FileStore<Error> {
                         + " to Bugsnag, will try again later", exception);
                     break;
                 case REQUEST_FAILURE:
-                    deleteStoredFiles(Collections.singleton(errorFile));
-                    Logger.warn("Problem sending unsent error from disk", exception);
+                    handleRequestFailure(errorFile, exception);
                     break;
                 default:
                     break;
             }
-        } catch (Exception exception) { // FIXME dupe
-            deleteStoredFiles(Collections.singleton(errorFile));
-            Logger.warn("Problem sending unsent error from disk", exception);
+        } catch (Exception exception) {
+            handleRequestFailure(errorFile, exception);
         }
+    }
+
+    private void handleRequestFailure(File errorFile, Exception exception) {
+        deleteStoredFiles(Collections.singleton(errorFile));
+        Logger.warn("Problem sending unsent error from disk", exception);
     }
 
     boolean isLaunchCrashReport(File file) {
