@@ -49,9 +49,9 @@ class DefaultDelivery implements Delivery {
         }
     }
 
-    private int deliver(String urlString,
-                        JsonStream.Streamable streamable,
-                        Map<String, String> headers) throws DeliveryFailureException {
+    int deliver(String urlString,
+                JsonStream.Streamable streamable,
+                Map<String, String> headers) throws DeliveryFailureException {
         checkHasNetworkConnection();
         HttpURLConnection conn = null;
 
