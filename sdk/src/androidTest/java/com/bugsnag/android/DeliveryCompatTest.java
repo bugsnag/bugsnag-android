@@ -12,7 +12,6 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 public class DeliveryCompatTest {
 
     private final Configuration config = BugsnagTestUtils.generateConfiguration();
@@ -45,7 +44,6 @@ public class DeliveryCompatTest {
             }
         };
         deliveryCompat = new DeliveryCompat(baseDelivery);
-
     }
 
     @Test
@@ -125,5 +123,4 @@ public class DeliveryCompatTest {
 
         assertNull(deliveryCompat.convertException(new RuntimeException()));
     }
-
 }

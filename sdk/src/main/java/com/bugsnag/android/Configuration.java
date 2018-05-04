@@ -453,7 +453,6 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Returns whether automatic breadcrumb capture or common application events is enabled.
-     *
      * @return true if automatic capture is enabled, otherwise false.
      */
     public boolean isAutomaticallyCollectingBreadcrumbs() {
@@ -474,7 +473,6 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
-     *
      * @param notifierType the notifier type
      */
     public void setNotifierType(String notifierType) {
@@ -483,7 +481,6 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Intended for internal use only - sets the code bundle id for React Native
-     *
      * @param codeBundleId the code bundle id
      */
     public void setCodeBundleId(String codeBundleId) {
@@ -523,7 +520,6 @@ public class Configuration extends Observable implements Observer {
         if (delivery == null) {
             throw new IllegalArgumentException("Delivery cannot be null");
         }
-
         if (delivery instanceof DeliveryCompat) {
             this.delivery = delivery;
         } else {

@@ -632,7 +632,6 @@ public class Client extends Observable implements Observer {
         if (errorReportApiClient == null) {
             throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
         }
-
         DeliveryCompat compat = (DeliveryCompat) config.getDelivery();
         compat.errorReportApiClient = errorReportApiClient;
     }
@@ -1239,9 +1238,7 @@ public class Client extends Observable implements Observer {
             config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
         } catch (DeliveryFailureException exception) {
-
             switch (exception.reason) {
-
                 case CONNECTIVITY:
                     Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
                     // Save error to disk for later sending

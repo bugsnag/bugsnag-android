@@ -38,7 +38,6 @@ class DefaultDelivery implements Delivery {
     @Override
     public void deliver(Report report,
                         Configuration config) throws DeliveryFailureException {
-
         String endpoint = config.getEndpoint();
         int status = deliver(endpoint, report, config.getErrorApiHeaders());
 
@@ -96,5 +95,4 @@ class DefaultDelivery implements Delivery {
             throw new DeliveryFailureException(CONNECTIVITY, "No network connection available");
         }
     }
-
 }

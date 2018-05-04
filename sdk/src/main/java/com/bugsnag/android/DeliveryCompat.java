@@ -52,5 +52,4 @@ class DeliveryCompat implements Delivery {
             return null;
         }
     }
-
 }
