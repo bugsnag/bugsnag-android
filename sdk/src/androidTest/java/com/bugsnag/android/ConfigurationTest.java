@@ -4,7 +4,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.support.test.filters.SmallTest;
@@ -164,22 +163,5 @@ public class ConfigurationTest {
     public void testOverrideCodeBundleId() throws Exception {
         config.setCodeBundleId("abc123");
         assertEquals("abc123", config.getCodeBundleId());
-    }
-
-    @Test
-    public void testSetDelivery() {
-        Configuration configuration = new Configuration("api-key");
-        assertNull(configuration.getDelivery());
-        Delivery delivery = BugsnagTestUtils.generateDelivery();
-        configuration.setDelivery(delivery);
-
-        assertTrue(configuration.getDelivery() instanceof DeliveryCompat);
-        DeliveryCompat compat = (DeliveryCompat) configuration.getDelivery();
-        assertEquals(compat.delivery, delivery);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetNullDelivery() {
-        config.setDelivery(null);
     }
 }
