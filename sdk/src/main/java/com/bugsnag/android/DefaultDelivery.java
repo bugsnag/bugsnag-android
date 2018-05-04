@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
+import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -9,9 +12,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-
-import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
-import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
 
 class DefaultDelivery implements Delivery {
 

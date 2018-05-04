@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.DeliveryFailureException.Reason.*;
+import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
+import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
 
 class DeliveryCompat implements Delivery {
 

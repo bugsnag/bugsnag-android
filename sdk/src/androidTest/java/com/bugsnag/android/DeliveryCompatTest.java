@@ -1,5 +1,10 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
+import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,9 +12,6 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
-import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
-import static junit.framework.Assert.*;
 
 public class DeliveryCompatTest {
 
@@ -19,6 +21,11 @@ public class DeliveryCompatTest {
     private AtomicInteger defaultCount;
     private AtomicInteger customCount;
 
+    /**
+     * Generates a Delivery instance that increments a counter on each request
+     *
+     * @throws Exception if setup failed
+     */
     @Before
     public void setUp() throws Exception {
         defaultCount = new AtomicInteger();
@@ -98,7 +105,8 @@ public class DeliveryCompatTest {
         assertEquals(errorClient, compat.errorReportApiClient);
         assertNull(compat.sessionTrackingApiClient);
 
-        SessionTrackingApiClient sessionClient = BugsnagTestUtils.generateSessionTrackingApiClient();
+        SessionTrackingApiClient sessionClient
+            = BugsnagTestUtils.generateSessionTrackingApiClient();
         client.setSessionTrackingApiClient(sessionClient);
 
         assertEquals(errorClient, compat.errorReportApiClient);
@@ -109,11 +117,11 @@ public class DeliveryCompatTest {
     public void testExceptionConversion() {
         BadResponseException requestFailExc = new BadResponseException("test", 400);
         DeliveryFailureException responseFail = deliveryCompat.convertException(requestFailExc);
-        assertEquals(REQUEST_FAILURE ,responseFail.reason);
+        assertEquals(REQUEST_FAILURE, responseFail.reason);
 
         NetworkException connectivityExc = new NetworkException("test", new RuntimeException(""));
-        DeliveryFailureException connectivityFail = deliveryCompat.convertException(connectivityExc);
-        assertEquals(CONNECTIVITY ,connectivityFail.reason);
+        DeliveryFailureException exc = deliveryCompat.convertException(connectivityExc);
+        assertEquals(CONNECTIVITY, exc.reason);
 
         assertNull(deliveryCompat.convertException(new RuntimeException()));
     }

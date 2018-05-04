@@ -32,7 +32,8 @@ public class SessionTrackerTest {
     public void setUp() throws Exception {
         configuration = new Configuration("test");
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
-        sessionTracker = new SessionTracker(configuration, generateClient(), generateSessionStore());
+        sessionTracker
+            = new SessionTracker(configuration, generateClient(), generateSessionStore());
         configuration.setAutoCaptureSessions(true);
         user = new User();
     }

@@ -453,6 +453,7 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Returns whether automatic breadcrumb capture or common application events is enabled.
+     *
      * @return true if automatic capture is enabled, otherwise false.
      */
     public boolean isAutomaticallyCollectingBreadcrumbs() {
@@ -473,6 +474,7 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
+     *
      * @param notifierType the notifier type
      */
     public void setNotifierType(String notifierType) {
@@ -481,6 +483,7 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Intended for internal use only - sets the code bundle id for React Native
+     *
      * @param codeBundleId the code bundle id
      */
     public void setCodeBundleId(String codeBundleId) {
@@ -495,10 +498,27 @@ public class Configuration extends Observable implements Observer {
         return notifierType;
     }
 
+    /**
+     * Retrieves the delivery used to make HTTP requests to Bugsnag.
+     *
+     * @return the current delivery
+     */
     public Delivery getDelivery() {
         return delivery;
     }
 
+    /**
+     * Sets the delivery used to make HTTP requests to Bugsnag. A default implementation is
+     * provided, but you may wish to use your own implementation if you have requirements such
+     * as pinning SSL certificates, for example.
+     * <p>
+     * Any custom implementation must be capable of sending
+     * <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reports</a>
+     * and <a href="https://docs.bugsnag.com/api/sessions/">Sessions</a> as
+     * documented at <a href="https://docs.bugsnag.com/api/">https://docs.bugsnag.com/api/</a>
+     *
+     * @param delivery the custom HTTP client implementation
+     */
     public void setDelivery(Delivery delivery) {
         if (delivery == null) {
             throw new IllegalArgumentException("Delivery cannot be null");
@@ -511,6 +531,11 @@ public class Configuration extends Observable implements Observer {
         }
     }
 
+    /**
+     * Supplies the headers which must be used in any request sent to the Error Reporting API.
+     *
+     * @return the HTTP headers
+     */
     public Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
@@ -519,6 +544,11 @@ public class Configuration extends Observable implements Observer {
         return map;
     }
 
+    /**
+     * Supplies the headers which must be used in any request sent to the Session Tracking API.
+     *
+     * @return the HTTP headers
+     */
     public Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
