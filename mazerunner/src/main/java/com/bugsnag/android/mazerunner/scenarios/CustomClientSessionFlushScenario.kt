@@ -14,14 +14,13 @@ internal class CustomClientSessionFlushScenario(config: Configuration,
                                                 context: Context) : Scenario(config, context) {
 
     override fun run() {
+        super.run()
+
         if ("DeliverSessions" == eventMetaData) {
             // simulate activity lifecycle callback occurring before api client can be set
             Bugsnag.startSession()
             config.delivery = createCustomHeaderDelivery(context)
-        }
-        super.run()
-
-        if ("DeliverSessions" != eventMetaData) {
+        } else {
             disableAllDelivery()
             Bugsnag.startSession()
         }
