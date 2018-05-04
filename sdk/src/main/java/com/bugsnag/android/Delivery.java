@@ -10,7 +10,7 @@ package com.bugsnag.android;
  * <p>
  * Any custom implementation must be capable of sending
  * <a href="https://docs.bugsnag.com/api/error-reporting/">
- * Error Reports</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions</> as
+ * Error Reports</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions</a> as
  * documented at <a href="https://docs.bugsnag.com/api/">https://docs.bugsnag.com/api/</a>
  *
  * @see DefaultDelivery
