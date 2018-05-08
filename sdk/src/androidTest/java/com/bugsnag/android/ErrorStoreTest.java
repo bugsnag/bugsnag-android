@@ -130,72 +130,26 @@ public class ErrorStoreTest {
 
     @Test
     public void testFindStoredFiles() {
-        assertEquals(0, errorStore.queuedFiles.size());
+        // ensure no exception thrown, size() not tested as implementation is non-deterministic
         writeErrorToStore();
-        assertEquals(0, errorStore.queuedFiles.size());
-
         List<File> storedFiles = errorStore.findStoredFiles();
-        assertEquals(1, storedFiles.size());
-        assertEquals(1, errorStore.queuedFiles.size());
-
-        writeErrorToStore();
-        writeErrorToStore();
-        storedFiles = errorStore.findStoredFiles();
-        assertEquals(2, storedFiles.size());
-        assertEquals(3, errorStore.queuedFiles.size());
+        assertNotNull(storedFiles);
     }
 
     @Test
     public void testCancelQueuedFiles() {
-        assertEquals(0, errorStore.queuedFiles.size());
         writeErrorToStore();
-        assertEquals(0, errorStore.queuedFiles.size());
-
-        List<File> storedFiles = errorStore.findStoredFiles();
-        assertEquals(1, storedFiles.size());
         errorStore.cancelQueuedFiles(null);
-        assertEquals(1, errorStore.queuedFiles.size());
-
         errorStore.cancelQueuedFiles(Collections.<File>emptyList());
-        assertEquals(1, errorStore.queuedFiles.size());
-
-        errorStore.cancelQueuedFiles(storedFiles);
-        assertEquals(0, errorStore.queuedFiles.size());
+        errorStore.cancelQueuedFiles(errorStore.findStoredFiles());
     }
 
     @Test
     public void testDeleteQueuedFiles() {
-        assertEquals(0, errorStore.findStoredFiles().size());
-
         writeErrorToStore();
-        List<File> storedFiles = errorStore.findStoredFiles();
-        assertEquals(1, storedFiles.size());
-
         errorStore.deleteStoredFiles(null);
-        assertEquals(1, errorStore.queuedFiles.size());
-
         errorStore.deleteStoredFiles(Collections.<File>emptyList());
-        assertEquals(1, errorStore.queuedFiles.size());
-
-
-        errorStore.deleteStoredFiles(storedFiles);
-        assertEquals(0, errorStore.findStoredFiles().size());
-        assertEquals(0, errorStore.queuedFiles.size());
-        assertEquals(0, new File(errorStore.storeDirectory).listFiles().length);
-    }
-
-    @Test
-    public void testFileQueueDuplication() {
-        writeErrorToStore();
-        List<File> ogFiles = errorStore.findStoredFiles();
-        assertEquals(1, ogFiles.size());
-
-        List<File> storedFiles = errorStore.findStoredFiles();
-        assertEquals(0, storedFiles.size());
-
-        errorStore.cancelQueuedFiles(ogFiles);
-        storedFiles = errorStore.findStoredFiles();
-        assertEquals(1, storedFiles.size());
+        errorStore.deleteStoredFiles(errorStore.findStoredFiles());
     }
 
     /**

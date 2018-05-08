@@ -103,7 +103,7 @@ public class ClientNotifyAsyncTest {
                                Map<String, String> headers)
             throws NetworkException, BadResponseException {
             try {
-                nullCheckLatch.await(100, TimeUnit.MILLISECONDS);
+                nullCheckLatch.await(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException exception) {
                 exception.printStackTrace();
             }
