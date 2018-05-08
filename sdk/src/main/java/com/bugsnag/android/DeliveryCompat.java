@@ -10,13 +10,8 @@ import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILUR
  */
 class DeliveryCompat implements Delivery {
 
-    final Delivery delivery;
     volatile ErrorReportApiClient errorReportApiClient;
     volatile SessionTrackingApiClient sessionTrackingApiClient;
-
-    DeliveryCompat(Delivery delivery) {
-        this.delivery = delivery;
-    }
 
     @Override
     public void deliver(SessionTrackingPayload payload,
@@ -29,8 +24,6 @@ class DeliveryCompat implements Delivery {
             } catch (NetworkException | BadResponseException exception) {
                 throw convertException(exception);
             }
-        } else {
-            delivery.deliver(payload, config);
         }
     }
 
@@ -43,8 +36,6 @@ class DeliveryCompat implements Delivery {
             } catch (NetworkException | BadResponseException exception) {
                 throw convertException(exception);
             }
-        } else {
-            delivery.deliver(report, config);
         }
     }
 

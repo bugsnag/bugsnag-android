@@ -89,7 +89,7 @@ public class ClientConfigTest {
 
     @Test
     public void testDefaultClientDelivery() {
-        assertTrue(client.config.getDelivery() instanceof DeliveryCompat);
+        assertFalse(client.config.getDelivery() instanceof DeliveryCompat);
     }
 
     @Test
@@ -107,11 +107,6 @@ public class ClientConfigTest {
         };
         config.setDelivery(customDelivery);
         client = new Client(context, config);
-
-        Delivery delivery = client.config.getDelivery();
-        assertTrue(client.config.getDelivery() instanceof DeliveryCompat);
-
-        DeliveryCompat compat = (DeliveryCompat) delivery;
-        assertEquals(customDelivery, compat.delivery);
+        assertEquals(customDelivery, client.config.getDelivery());
     }
 }

@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -523,11 +522,7 @@ public class Configuration extends Observable implements Observer {
         if (delivery == null) {
             throw new IllegalArgumentException("Delivery cannot be null");
         }
-        if (delivery instanceof DeliveryCompat) {
-            this.delivery = delivery;
-        } else {
-            this.delivery = new DeliveryCompat(delivery);
-        }
+        this.delivery = delivery;
     }
 
     /**
