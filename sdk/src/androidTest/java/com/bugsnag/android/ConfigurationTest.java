@@ -173,9 +173,8 @@ public class ConfigurationTest {
         Delivery delivery = BugsnagTestUtils.generateDelivery();
         configuration.setDelivery(delivery);
 
-        assertTrue(configuration.getDelivery() instanceof DeliveryCompat);
-        DeliveryCompat compat = (DeliveryCompat) configuration.getDelivery();
-        assertEquals(compat.delivery, delivery);
+        assertFalse(configuration.getDelivery() instanceof DeliveryCompat);
+        assertEquals(delivery, configuration.getDelivery());
     }
 
     @Test(expected = IllegalArgumentException.class)

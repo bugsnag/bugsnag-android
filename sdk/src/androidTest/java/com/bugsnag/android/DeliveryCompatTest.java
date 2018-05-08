@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
 import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -17,7 +18,6 @@ public class DeliveryCompatTest {
     private final Configuration config = BugsnagTestUtils.generateConfiguration();
     private DeliveryCompat deliveryCompat;
 
-    private AtomicInteger defaultCount;
     private AtomicInteger customCount;
 
     /**
@@ -27,30 +27,14 @@ public class DeliveryCompatTest {
      */
     @Before
     public void setUp() throws Exception {
-        defaultCount = new AtomicInteger();
         customCount = new AtomicInteger();
-
-        Delivery baseDelivery = new Delivery() {
-            @Override
-            public void deliver(SessionTrackingPayload payload,
-                                Configuration config) throws DeliveryFailureException {
-                defaultCount.incrementAndGet();
-            }
-
-            @Override
-            public void deliver(Report report,
-                                Configuration config) throws DeliveryFailureException {
-                defaultCount.incrementAndGet();
-            }
-        };
-        deliveryCompat = new DeliveryCompat(baseDelivery);
+        deliveryCompat = new DeliveryCompat();
     }
 
     @Test
     public void deliverReport() throws Exception {
         Report report = null;
         deliveryCompat.deliver(report, config);
-        assertEquals(1, defaultCount.get());
 
         deliveryCompat.errorReportApiClient = new ErrorReportApiClient() {
             @Override
@@ -63,7 +47,6 @@ public class DeliveryCompatTest {
         };
 
         deliveryCompat.deliver(report, config);
-        assertEquals(1, defaultCount.get());
         assertEquals(1, customCount.get());
     }
 
@@ -83,7 +66,6 @@ public class DeliveryCompatTest {
         };
 
         deliveryCompat.deliver(payload, config);
-        assertEquals(1, defaultCount.get());
         assertEquals(1, customCount.get());
     }
 
@@ -91,23 +73,22 @@ public class DeliveryCompatTest {
     public void testClientCompat() {
         Client client = BugsnagTestUtils.generateClient();
         Delivery delivery = client.config.getDelivery();
-        assertTrue(delivery instanceof DeliveryCompat);
-        DeliveryCompat compat = (DeliveryCompat) delivery;
+        assertFalse(delivery instanceof DeliveryCompat);
 
-        assertNull(compat.errorReportApiClient);
-        assertNull(compat.sessionTrackingApiClient);
+        ErrorReportApiClient errorReportApiClient = BugsnagTestUtils.generateErrorReportApiClient();
+        client.setErrorReportApiClient(errorReportApiClient);
 
-        ErrorReportApiClient errorClient = BugsnagTestUtils.generateErrorReportApiClient();
-        client.setErrorReportApiClient(errorClient);
+        assertTrue(client.config.getDelivery() instanceof DeliveryCompat);
 
-        assertEquals(errorClient, compat.errorReportApiClient);
+        DeliveryCompat compat = (DeliveryCompat) client.config.getDelivery();
+        assertEquals(errorReportApiClient, compat.errorReportApiClient);
         assertNull(compat.sessionTrackingApiClient);
 
         SessionTrackingApiClient sessionClient
             = BugsnagTestUtils.generateSessionTrackingApiClient();
         client.setSessionTrackingApiClient(sessionClient);
 
-        assertEquals(errorClient, compat.errorReportApiClient);
+        assertEquals(errorReportApiClient, compat.errorReportApiClient);
         assertEquals(sessionClient, compat.sessionTrackingApiClient);
     }
 
