@@ -92,7 +92,6 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             JsonStream stream = new JsonStream(out);
             stream.value(streamable);
             stream.close();
-
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (Exception exception) {
