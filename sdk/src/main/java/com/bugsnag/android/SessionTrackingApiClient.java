@@ -3,15 +3,24 @@ package com.bugsnag.android;
 import java.util.Map;
 
 /**
- * @see Delivery
+ * Posts an array of sessions to the Bugsnag Session Tracking API. Custom implementations
+ * of this client can be used in place of the default implementation, by calling
+ * {@link Bugsnag#setSessionTrackingApiClient(SessionTrackingApiClient)}
+ *
+ * @deprecated use {@link Delivery} to send sessions
  */
 @Deprecated
 public interface SessionTrackingApiClient {
 
     /**
-     * @see Delivery#deliver(SessionTrackingPayload, Configuration)
+     * Posts an array of sessions to the Bugsnag API.
+     *
+     * @param urlString the Bugsnag endpoint
+     * @param payload   The session tracking
+     * @param headers   the HTTP headers
+     * @throws NetworkException     if the client was unable to complete the request
+     * @throws BadResponseException when a non-202 response code is received from the server
      */
-    @Deprecated
     void postSessionTrackingPayload(String urlString,
                                     SessionTrackingPayload payload,
                                     Map<String, String> headers)
