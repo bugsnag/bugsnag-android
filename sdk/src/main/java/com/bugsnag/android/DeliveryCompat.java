@@ -3,15 +3,15 @@ package com.bugsnag.android;
 import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
 import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
 
+/**
+ * A compatibility implementation of {@link Delivery} which wraps {@link ErrorReportApiClient} and
+ * {@link SessionTrackingApiClient}. This class allows for backwards compatibility for users still
+ * utilising the old API, and should be removed in the next major version.
+ */
 class DeliveryCompat implements Delivery {
 
-    final Delivery delivery;
     volatile ErrorReportApiClient errorReportApiClient;
     volatile SessionTrackingApiClient sessionTrackingApiClient;
-
-    DeliveryCompat(Delivery delivery) {
-        this.delivery = delivery;
-    }
 
     @Override
     public void deliver(SessionTrackingPayload payload,
@@ -24,8 +24,6 @@ class DeliveryCompat implements Delivery {
             } catch (NetworkException | BadResponseException exception) {
                 throw convertException(exception);
             }
-        } else {
-            delivery.deliver(payload, config);
         }
     }
 
@@ -38,8 +36,6 @@ class DeliveryCompat implements Delivery {
             } catch (NetworkException | BadResponseException exception) {
                 throw convertException(exception);
             }
-        } else {
-            delivery.deliver(report, config);
         }
     }
 

@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -55,6 +54,7 @@ public class Configuration extends Observable implements Observer {
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
+
     private Delivery delivery;
 
     /**
@@ -500,6 +500,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the current delivery
      */
+    @NonNull
     public Delivery getDelivery() {
         return delivery;
     }
@@ -516,15 +517,12 @@ public class Configuration extends Observable implements Observer {
      *
      * @param delivery the custom HTTP client implementation
      */
-    public void setDelivery(Delivery delivery) {
+    public void setDelivery(@NonNull Delivery delivery) {
+        //noinspection ConstantConditions
         if (delivery == null) {
             throw new IllegalArgumentException("Delivery cannot be null");
         }
-        if (delivery instanceof DeliveryCompat) {
-            this.delivery = delivery;
-        } else {
-            this.delivery = new DeliveryCompat(delivery);
-        }
+        this.delivery = delivery;
     }
 
     /**

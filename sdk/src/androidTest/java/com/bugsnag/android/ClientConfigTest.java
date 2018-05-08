@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -86,4 +87,26 @@ public class ClientConfigTest {
         assertFalse(config.getSendThreads());
     }
 
+    @Test
+    public void testDefaultClientDelivery() {
+        assertFalse(client.config.getDelivery() instanceof DeliveryCompat);
+    }
+
+    @Test
+    public void testCustomDeliveryOverride() {
+        Context context = InstrumentationRegistry.getContext();
+        config = BugsnagTestUtils.generateConfiguration();
+        Delivery customDelivery = new Delivery() {
+            @Override
+            public void deliver(SessionTrackingPayload payload,
+                                Configuration config) throws DeliveryFailureException {}
+
+            @Override
+            public void deliver(Report report,
+                                Configuration config) throws DeliveryFailureException {}
+        };
+        config.setDelivery(customDelivery);
+        client = new Client(context, config);
+        assertEquals(customDelivery, client.config.getDelivery());
+    }
 }

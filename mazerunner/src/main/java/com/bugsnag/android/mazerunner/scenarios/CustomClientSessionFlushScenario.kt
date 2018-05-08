@@ -3,7 +3,8 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.createDefaultSessionClient
+import com.bugsnag.android.createCustomHeaderDelivery
+import com.bugsnag.android.createDefaultDelivery
 
 /**
  * Sends a session which is cached on disk to Bugsnag, then sent on a separate launch,
@@ -18,12 +19,7 @@ internal class CustomClientSessionFlushScenario(config: Configuration,
         if ("DeliverSessions" == eventMetaData) {
             // simulate activity lifecycle callback occurring before api client can be set
             Bugsnag.startSession()
-
-            Bugsnag.setSessionTrackingApiClient { urlString, report, headers ->
-                headers["Custom-Client"] = "Hello World"
-                val sessionClient = createDefaultSessionClient(context)
-                sessionClient.postSessionTrackingPayload(urlString, report, headers)
-            }
+            config.delivery = createCustomHeaderDelivery(context)
         } else {
             disableAllDelivery()
             Bugsnag.startSession()

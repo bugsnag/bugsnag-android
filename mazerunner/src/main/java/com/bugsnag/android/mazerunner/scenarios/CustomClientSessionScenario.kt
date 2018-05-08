@@ -3,7 +3,8 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.createDefaultSessionClient
+import com.bugsnag.android.createCustomHeaderDelivery
+import com.bugsnag.android.createDefaultDelivery
 
 /**
  * Sends a session using a custom API client which modifies the request.
@@ -12,14 +13,8 @@ internal class CustomClientSessionScenario(config: Configuration,
                                            context: Context) : Scenario(config, context) {
 
     override fun run() {
+        config.delivery = createCustomHeaderDelivery(context)
         super.run()
-
-        Bugsnag.setSessionTrackingApiClient { urlString, report, headers ->
-            headers["Custom-Client"] = "Hello World"
-            val sessionClient = createDefaultSessionClient(context)
-            sessionClient.postSessionTrackingPayload(urlString, report, headers)
-        }
-
         Bugsnag.startSession()
     }
 

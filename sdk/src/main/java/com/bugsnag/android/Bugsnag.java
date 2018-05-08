@@ -289,7 +289,17 @@ public final class Bugsnag {
     }
 
     /**
-     * @see Configuration#setDelivery(Delivery)
+     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
+     * requirements such as certificate pinning to be achieved.
+     * <p/>
+     * <p>
+     * The client implementation, and must be capable of sending Error Reports to the Bugsnag API,
+     * as documented here: <a href="https://docs.bugsnag.com/api/error-reporting/">
+     * https://docs.bugsnag.com/api/error-reporting/</a>
+     *
+     * @param errorReportApiClient the custom HTTP client implementation
+     *
+     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
      */
     @Deprecated
     public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
@@ -297,12 +307,22 @@ public final class Bugsnag {
     }
 
     /**
-     * @see Configuration#setDelivery(Delivery)
+     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
+     * requirements such as certificate pinning to be achieved.
+     * <p/>
+     * <p>
+     * The client implementation, and must be capable of sending Session Tracking Payloads to
+     * the Bugsnag API.
+     *
+     * @param apiClient the custom HTTP client implementation
+     *
+     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
      */
     @Deprecated
     public static void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
         getClient().setSessionTrackingApiClient(apiClient);
     }
+
 
     /**
      * Add a "before notify" callback, to execute code before every

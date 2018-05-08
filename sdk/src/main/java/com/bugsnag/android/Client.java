@@ -124,8 +124,11 @@ public class Client extends Observable implements Observer {
 
         ConnectivityManager cm =
             (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        configuration.setDelivery(new DeliveryCompat(new DefaultDelivery(cm)));
 
+        //noinspection ConstantConditions
+        if (configuration.getDelivery() == null) {
+            configuration.setDelivery(new DefaultDelivery(cm));
+        }
 
         sessionTracker =
             new SessionTracker(configuration, this, sessionStore);
@@ -626,13 +629,25 @@ public class Client extends Observable implements Observer {
         }
     }
 
+    DeliveryCompat getAndSetDeliveryCompat() {
+        Delivery current = config.getDelivery();
+
+        if (current instanceof DeliveryCompat) {
+            return (DeliveryCompat)current;
+        } else {
+            DeliveryCompat compat = new DeliveryCompat();
+            config.setDelivery(compat);
+            return compat;
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Deprecated
     void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
         if (errorReportApiClient == null) {
             throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
         }
-        DeliveryCompat compat = (DeliveryCompat) config.getDelivery();
+        DeliveryCompat compat = getAndSetDeliveryCompat();
         compat.errorReportApiClient = errorReportApiClient;
     }
 
@@ -642,7 +657,7 @@ public class Client extends Observable implements Observer {
         if (apiClient == null) {
             throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");
         }
-        DeliveryCompat compat = (DeliveryCompat) config.getDelivery();
+        DeliveryCompat compat = getAndSetDeliveryCompat();
         compat.sessionTrackingApiClient = apiClient;
     }
 
