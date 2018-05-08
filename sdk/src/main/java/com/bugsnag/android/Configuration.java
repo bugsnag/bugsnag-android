@@ -55,6 +55,7 @@ public class Configuration extends Observable implements Observer {
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
+
     private Delivery delivery;
 
     /**
@@ -500,6 +501,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the current delivery
      */
+    @NonNull
     public Delivery getDelivery() {
         return delivery;
     }
@@ -516,7 +518,8 @@ public class Configuration extends Observable implements Observer {
      *
      * @param delivery the custom HTTP client implementation
      */
-    public void setDelivery(Delivery delivery) {
+    public void setDelivery(@NonNull Delivery delivery) {
+        //noinspection ConstantConditions
         if (delivery == null) {
             throw new IllegalArgumentException("Delivery cannot be null");
         }
