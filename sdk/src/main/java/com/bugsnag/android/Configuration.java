@@ -136,7 +136,10 @@ public class Configuration extends Observable implements Observer {
      * endpoint.
      *
      * @param endpoint the custom endpoint to send report to
+     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
+     * instead.
      */
+    @Deprecated
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
@@ -175,7 +178,10 @@ public class Configuration extends Observable implements Observer {
      * endpoint.
      *
      * @param endpoint the custom endpoint to send session data to
+     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
+     * instead.
      */
+    @Deprecated
     public void setSessionEndpoint(String endpoint) {
         this.sessionEndpoint = endpoint;
     }
