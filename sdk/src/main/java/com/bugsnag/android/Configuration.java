@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +56,7 @@ public class Configuration extends Observable implements Observer {
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
+    volatile boolean invalidSessionsEndpoint;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -137,6 +139,24 @@ public class Configuration extends Observable implements Observer {
      */
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void setEndpoints(@NonNull String notify, @NonNull String sessions) {
+        boolean invalidNotify = TextUtils.isEmpty(notify);
+        invalidSessionsEndpoint = TextUtils.isEmpty(sessions);
+
+        if (invalidNotify) {
+            throw new IllegalArgumentException("Notify endpoint cannot be empty or null.");
+        }
+        if (invalidSessionsEndpoint) {
+            Logger.warn("The session tracking endpoint has not been set. " +
+                "Session tracking is disabled");
+            autoCaptureSessions = false;
+        }
+        this.endpoint = notify;
+        this.sessionEndpoint = sessions;
+        this.autoCaptureSessions = !invalidNotify && !invalidSessionsEndpoint;
     }
 
     /**
