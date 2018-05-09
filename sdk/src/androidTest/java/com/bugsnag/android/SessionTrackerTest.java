@@ -181,4 +181,11 @@ public class SessionTrackerTest {
         assertNotEquals(firstSession, sessionTracker.getCurrentSession());
     }
 
+    @Test
+    public void startSessionNoEndpoint() throws Exception {
+        assertNull(sessionTracker.getCurrentSession());
+        configuration.setEndpoints("http://localhost:1234", "");
+        sessionTracker.startNewSession(new Date(), user, false);
+        assertNull(sessionTracker.getCurrentSession());
+    }
 }
