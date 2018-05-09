@@ -14,6 +14,7 @@ internal class AutoContextScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
 
     override fun run() {
+        config.setAutoCaptureSessions(false)
         super.run()
         context.startActivity(Intent(context, SecondActivity::class.java))
 
