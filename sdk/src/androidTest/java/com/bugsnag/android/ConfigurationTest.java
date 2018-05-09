@@ -109,7 +109,9 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testDefaults() throws Exception {
+    public void testAutoCaptureSessions() throws Exception {
+        assertTrue(config.shouldAutoCaptureSessions());
+        config.setAutoCaptureSessions(false);
         assertFalse(config.shouldAutoCaptureSessions());
     }
 

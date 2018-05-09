@@ -42,7 +42,7 @@ public class Configuration extends Observable implements Observer {
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
-    private boolean autoCaptureSessions = false;
+    private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
 
     @NonNull
