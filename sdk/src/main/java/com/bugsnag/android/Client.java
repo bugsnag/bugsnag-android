@@ -312,21 +312,21 @@ public class Client extends Observable implements Observer {
         config.setAppVersion(data.getString(MF_APP_VERSION));
         config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
 
-        String endpoint = data.getString(MF_ENDPOINT);
-
-        if (endpoint != null) {
-            config.setEndpoint(endpoint);
-        }
-        String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);
-
-        if (sessionEndpoint != null) {
-            config.setSessionEndpoint(sessionEndpoint);
+        if (data.containsKey(MF_ENDPOINT)) {
+            String endpoint = data.getString(MF_ENDPOINT);
+            String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);
+            //noinspection ConstantConditions (pass in null/empty as this function will warn)
+            config.setEndpoints(endpoint, sessionEndpoint);
         }
 
         config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
         config.setPersistUserBetweenSessions(
             data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
-        config.setAutoCaptureSessions(data.getBoolean(MF_AUTO_CAPTURE_SESSIONS, false));
+
+        if (data.containsKey(MF_AUTO_CAPTURE_SESSIONS)) {
+            config.setAutoCaptureSessions(data.getBoolean(MF_AUTO_CAPTURE_SESSIONS));
+        }
+
         config.setEnableExceptionHandler(
             data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
         return config;
