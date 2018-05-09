@@ -144,8 +144,23 @@ public class Configuration extends Observable implements Observer {
         this.endpoint = endpoint;
     }
 
+    /**
+     * Set the endpoints to send data to. By default we'll send error reports to
+     * https://notify.bugsnag.com, and sessions to https://session.bugsnag.com, but you can
+     * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoint.
+     *
+     * Please note that it is recommended that you set both endpoints. If the notify endpoint is
+     * missing, an exception will be thrown. If the session endpoint is missing, a warning will be
+     * logged and sessions will not be sent automatically.
+     * 
+     * @param notify the notify endpoint
+     * @param sessions the sessions endpoint
+     *
+     * @throws IllegalArgumentException if the notify endpoint is empty or null
+     */
     @SuppressWarnings("ConstantConditions")
-    public void setEndpoints(@NonNull String notify, @NonNull String sessions) {
+    public void setEndpoints(@NonNull String notify, @NonNull String sessions)
+        throws IllegalArgumentException {
         boolean invalidNotify = TextUtils.isEmpty(notify);
         invalidSessionsEndpoint = TextUtils.isEmpty(sessions);
 
