@@ -67,17 +67,16 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
                 conn.addRequestProperty(entry.getKey(), entry.getValue());
             }
 
-            OutputStream out = null;
+            JsonStream stream = null;
 
             try {
-                out = conn.getOutputStream();
+                OutputStream out = conn.getOutputStream();
                 Charset charset = Charset.forName("UTF-8");
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, charset));
-                JsonStream stream = new JsonStream(writer);
+                stream = new JsonStream(writer);
                 streamable.toStream(stream);
-                stream.close();
             } finally {
-                IOUtils.closeQuietly(out);
+                IOUtils.closeQuietly(stream);
             }
 
 

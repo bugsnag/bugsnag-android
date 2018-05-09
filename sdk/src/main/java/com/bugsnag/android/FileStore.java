@@ -70,22 +70,20 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         String filename = getFilename(streamable);
 
-        Writer out = null;
+
+        JsonStream stream = null;
         try {
             FileOutputStream fos = new FileOutputStream(filename);
-            out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
-
-            JsonStream stream = new JsonStream(out);
+            Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            stream = new JsonStream(out);
             stream.value(streamable);
-            stream.close();
-
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
                 filename), exception);
         } finally {
-            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(stream);
         }
         return null;
     }
