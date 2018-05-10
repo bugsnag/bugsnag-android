@@ -235,4 +235,9 @@ public class ClientTest {
         assertTrue(client.getMetaData().getTab("drink").isEmpty());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testApiClientNullValidation() {
+        generateClient().setSessionTrackingApiClient(null);
+    }
+
 }
