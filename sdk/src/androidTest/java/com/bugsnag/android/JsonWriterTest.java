@@ -1,12 +1,12 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-import static org.junit.Assert.*;
 
 public class JsonWriterTest {
 
