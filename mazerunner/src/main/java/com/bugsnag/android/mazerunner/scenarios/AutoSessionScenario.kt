@@ -14,7 +14,6 @@ internal class AutoSessionScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
 
     override fun run() {
-        config.setAutoCaptureSessions(true)
         super.run()
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
         context.startActivity(Intent(context, SecondActivity::class.java))
