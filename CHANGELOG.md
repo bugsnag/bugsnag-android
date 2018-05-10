@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.4.0 (TBD)
+
+**Note**: this release alters the behaviour of the notifier to track session automatically. If you
+use Bugsnag On-Premise, it is now also recommended that you set your notify and session endpoints
+via `config.setEndpoints(String notify, String sessions)`.
+
+* Enable automatic session tracking by default [#314](https://github.com/bugsnag/bugsnag-android/pull/314)
+
 ## 4.3.4 (2018-05-02)
 
 ### Bug fixes
