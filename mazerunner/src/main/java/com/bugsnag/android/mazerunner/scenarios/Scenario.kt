@@ -1,9 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.Configuration
-import com.bugsnag.android.NetworkException
+import com.bugsnag.android.*
 
 abstract internal class Scenario(protected val config: Configuration,
                                  protected val context: Context) {
@@ -19,18 +17,34 @@ abstract internal class Scenario(protected val config: Configuration,
      * Sets a NOP implementation for the Session Tracking API, preventing delivery
      */
     protected fun disableSessionDelivery() {
-        Bugsnag.setSessionTrackingApiClient({ _, _, _ ->
-            throw NetworkException("Session Delivery NOP", RuntimeException("NOP"))
-        })
+        val baseDelivery = Bugsnag.getClient().config.delivery
+        Bugsnag.getClient().config.delivery = object: Delivery {
+            override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+                throw NetworkException("Session Delivery NOP", RuntimeException("NOP"))
+            }
+
+            override fun deliver(report: Report?, config: Configuration?) {
+                baseDelivery.deliver(report, config)
+            }
+        }
     }
 
     /**
      * Sets a NOP implementation for the Error Tracking API, preventing delivery
      */
     protected fun disableReportDelivery() {
-        Bugsnag.setErrorReportApiClient({ _, _, _ ->
-            throw NetworkException("Error Delivery NOP", RuntimeException("NOP"))
-        })
+        val baseDelivery = Bugsnag.getClient().config.delivery
+        Bugsnag.getClient().config.delivery = object: Delivery {
+            override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+                baseDelivery.deliver(payload, config)
+            }
+
+            override fun deliver(report: Report?, config: Configuration?) {
+                throw NetworkException("Session Delivery NOP", RuntimeException("NOP"))
+
+            }
+        }
+
     }
 
     /**
