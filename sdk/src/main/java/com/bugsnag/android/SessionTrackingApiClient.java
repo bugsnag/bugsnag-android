@@ -7,8 +7,9 @@ import java.util.Map;
  * of this client can be used in place of the default implementation, by calling
  * {@link Bugsnag#setSessionTrackingApiClient(SessionTrackingApiClient)}
  *
- * @see DefaultHttpClient
+ * @deprecated use {@link Delivery} to send sessions
  */
+@Deprecated
 public interface SessionTrackingApiClient {
 
     /**

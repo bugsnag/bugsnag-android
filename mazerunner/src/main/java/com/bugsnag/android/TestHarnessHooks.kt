@@ -2,8 +2,6 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.bugsnag.android.Bugsnag.client
-import java.util.*
 
 /**
  * Accesses the session tracker and flushes all stored sessions
@@ -12,38 +10,60 @@ internal fun flushAllSessions() {
     Bugsnag.getClient().sessionTracker.flushStoredSessions()
 }
 
-internal fun flushErrorStoreAsync(client: Client, apiClient: ErrorReportApiClient) {
-    client.errorStore.flushAsync(apiClient)
+internal fun flushErrorStoreAsync(client: Client) {
+    client.errorStore.flushAsync()
 }
 
-internal fun flushErrorStoreOnLaunch(client: Client, apiClient: ErrorReportApiClient) {
-    client.errorStore.flushOnLaunch(apiClient)
+internal fun flushErrorStoreOnLaunch(client: Client) {
+    client.errorStore.flushOnLaunch()
 }
 
 /**
- * Creates an error API client with a 500ms delay, emulating poor network connectivity
+ * Creates a delivery API client with a 500ms delay, emulating poor network connectivity
  */
-internal fun createSlowErrorApiClient(context: Context): ErrorReportApiClient {
+internal fun createSlowDelivery(context: Context): Delivery {
     val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-    val defaultHttpClient = DefaultHttpClient(cm)
+    val delivery = DefaultDelivery(cm)
 
-    return ErrorReportApiClient({ url: String?,
-                                  report: Report?,
-                                  headers: MutableMap<String, String>? ->
-        Thread.sleep(500)
-        defaultHttpClient.postReport(url, report, headers)
-    })
+    return object : Delivery {
+        override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+            Thread.sleep(500)
+            delivery.deliver(payload, config)
+        }
+
+        override fun deliver(report: Report?, config: Configuration?) {
+            Thread.sleep(500)
+            delivery.deliver(report, config)
+        }
+    }
 }
 
-internal fun createDefaultErrorClient(context: Context): ErrorReportApiClient {
+internal fun createDefaultDelivery(context: Context): DefaultDelivery {
     val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-    return DefaultHttpClient(cm)
+    return DefaultDelivery(cm)
 }
 
-internal fun createDefaultSessionClient(context: Context): SessionTrackingApiClient {
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-    return DefaultHttpClient(cm)
+internal fun createCustomHeaderDelivery(context: Context): Delivery {
+    return object : Delivery {
+        val delivery: DefaultDelivery = createDefaultDelivery(context)
+
+        override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+            deliver(config?.sessionEndpoint, payload, config?.sessionApiHeaders)
+        }
+
+        override fun deliver(report: Report?, config: Configuration?) {
+            deliver(config?.endpoint, report, config?.errorApiHeaders)
+        }
+
+        fun deliver(endpoint: String?,
+                    streamable: JsonStream.Streamable?,
+                    headers: MutableMap<String, String>?) {
+            headers!!["Custom-Client"] = "Hello World"
+            delivery.deliver(endpoint, streamable, headers)
+        }
+    }
 }
+
 
 internal fun writeErrorToStore(client: Client) {
     val error = Error.Builder(Configuration("api-key"), RuntimeException(), null).build()

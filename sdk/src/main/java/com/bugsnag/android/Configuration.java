@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -55,6 +54,8 @@ public class Configuration extends Observable implements Observer {
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
+
+    private Delivery delivery;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -494,7 +495,42 @@ public class Configuration extends Observable implements Observer {
         return notifierType;
     }
 
-    Map<String, String> getErrorApiHeaders() {
+    /**
+     * Retrieves the delivery used to make HTTP requests to Bugsnag.
+     *
+     * @return the current delivery
+     */
+    @NonNull
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    /**
+     * Sets the delivery used to make HTTP requests to Bugsnag. A default implementation is
+     * provided, but you may wish to use your own implementation if you have requirements such
+     * as pinning SSL certificates, for example.
+     * <p>
+     * Any custom implementation must be capable of sending
+     * <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reports</a>
+     * and <a href="https://docs.bugsnag.com/api/sessions/">Sessions</a> as
+     * documented at <a href="https://docs.bugsnag.com/api/">https://docs.bugsnag.com/api/</a>
+     *
+     * @param delivery the custom HTTP client implementation
+     */
+    public void setDelivery(@NonNull Delivery delivery) {
+        //noinspection ConstantConditions
+        if (delivery == null) {
+            throw new IllegalArgumentException("Delivery cannot be null");
+        }
+        this.delivery = delivery;
+    }
+
+    /**
+     * Supplies the headers which must be used in any request sent to the Error Reporting API.
+     *
+     * @return the HTTP headers
+     */
+    public Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
@@ -502,7 +538,12 @@ public class Configuration extends Observable implements Observer {
         return map;
     }
 
-    Map<String, String> getSessionApiHeaders() {
+    /**
+     * Supplies the headers which must be used in any request sent to the Session Tracking API.
+     *
+     * @return the HTTP headers
+     */
+    public Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);
