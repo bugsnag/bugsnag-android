@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BugCollection version="3.0.1" sequence="0" timestamp="1525191533091" analysisTimestamp="1525191533285" release="">
+  <BugInstance type="NM_CLASS_NAMING_CONVENTION" priority="2" rank="16" abbrev="Nm" category="BAD_PRACTICE">
+    <Class classname="android.support.test.espresso.R$string">
+      <SourceLine classname="android.support.test.espresso.R$string" start="10" end="10" sourcefile="R.java" sourcepath="android/support/test/espresso/R.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="NM_CLASS_NAMING_CONVENTION" priority="2" rank="16" abbrev="Nm" category="BAD_PRACTICE">
+    <Class classname="android.support.test.rule.R$string">
+      <SourceLine classname="android.support.test.rule.R$string" start="10" end="10" sourcefile="R.java" sourcepath="android/support/test/rule/R.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="NP_BOOLEAN_RETURN_NULL" priority="1" rank="12" abbrev="NP" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.AppData">
+      <SourceLine classname="com.bugsnag.android.AppData" start="18" end="128" sourcefile="AppData.java" sourcepath="com/bugsnag/android/AppData.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.AppData" name="isLowMemory" signature="(Landroid/content/Context;)Ljava/lang/Boolean;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.AppData" start="100" end="111" startBytecode="0" endBytecode="175" sourcefile="AppData.java" sourcepath="com/bugsnag/android/AppData.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.AppData" start="111" end="111" startBytecode="45" endBytecode="45" sourcefile="AppData.java" sourcepath="com/bugsnag/android/AppData.java"/>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.AppData">
+      <SourceLine classname="com.bugsnag.android.AppData" start="18" end="128" sourcefile="AppData.java" sourcepath="com/bugsnag/android/AppData.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.AppData" name="isLowMemory" signature="(Landroid/content/Context;)Ljava/lang/Boolean;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.AppData" start="100" end="111" startBytecode="0" endBytecode="175" sourcefile="AppData.java" sourcepath="com/bugsnag/android/AppData.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.AppData" start="108" end="108" startBytecode="38" endBytecode="38" sourcefile="AppData.java" sourcepath="com/bugsnag/android/AppData.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.AppDataTest">
+      <SourceLine classname="com.bugsnag.android.AppDataTest" start="24" end="75" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.AppDataTest" name="config" signature="Lcom/bugsnag/android/Configuration;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.AppDataTest" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.AppDataTest" name="testAppVersionOverride" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.AppDataTest" start="53" end="60" startBytecode="0" endBytecode="123" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.AppDataTest" start="54" end="54" startBytecode="8" endBytecode="8" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.AppDataTest">
+      <SourceLine classname="com.bugsnag.android.AppDataTest" start="24" end="75" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.AppDataTest" name="config" signature="Lcom/bugsnag/android/Configuration;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.AppDataTest" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.AppDataTest" name="testReleaseStageOverride" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.AppDataTest" start="64" end="71" startBytecode="0" endBytecode="123" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.AppDataTest" start="65" end="65" startBytecode="8" endBytecode="8" sourcefile="AppDataTest.java" sourcepath="com/bugsnag/android/AppDataTest.java"/>
+  </BugInstance>
+  <BugInstance type="URF_UNREAD_FIELD" priority="2" rank="18" abbrev="UrF" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeNotifyTest">
+      <SourceLine classname="com.bugsnag.android.BeforeNotifyTest" start="14" end="53" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.BeforeNotifyTest" name="beforeNotify" signature="Lcom/bugsnag/android/BeforeNotify;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.BeforeNotifyTest" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+    </Field>
+    <SourceLine classname="com.bugsnag.android.BeforeNotifyTest" start="16" end="16" startBytecode="13" endBytecode="13" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+  </BugInstance>
+  <BugInstance type="URF_UNREAD_FIELD" priority="2" rank="18" abbrev="UrF" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeNotifyTest">
+      <SourceLine classname="com.bugsnag.android.BeforeNotifyTest" start="14" end="53" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.BeforeNotifyTest" name="beforeNotifySkip" signature="Lcom/bugsnag/android/BeforeNotify;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.BeforeNotifyTest" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+    </Field>
+    <SourceLine classname="com.bugsnag.android.BeforeNotifyTest" start="23" end="23" startBytecode="25" endBytecode="25" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeNotifyTest$1">
+      <SourceLine classname="com.bugsnag.android.BeforeNotifyTest$1" start="16" end="19" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeNotifyTest$2">
+      <SourceLine classname="com.bugsnag.android.BeforeNotifyTest$2" start="23" end="26" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeNotifyTest$3">
+      <SourceLine classname="com.bugsnag.android.BeforeNotifyTest$3" start="41" end="45" sourcefile="BeforeNotifyTest.java" sourcepath="com/bugsnag/android/BeforeNotifyTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$1">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$1" start="44" end="47" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$2">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$2" start="56" end="59" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$3">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$3" start="68" end="71" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$4">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$4" start="74" end="77" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$5">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$5" start="87" end="91" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$6">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$6" start="94" end="98" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$7">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$7" start="112" end="116" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$8">
+      <SourceLine classname="com.bugsnag.android.BeforeRecordBreadcrumbsTest$8" start="129" end="136" sourcefile="BeforeRecordBreadcrumbsTest.java" sourcepath="com/bugsnag/android/BeforeRecordBreadcrumbsTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="RV_RETURN_VALUE_IGNORED" priority="3" rank="8" abbrev="RV" category="CORRECTNESS">
+    <Class classname="com.bugsnag.android.Breadcrumbs">
+      <SourceLine classname="com.bugsnag.android.Breadcrumbs" start="10" end="63" sourcefile="Breadcrumbs.java" sourcepath="com/bugsnag/android/Breadcrumbs.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Breadcrumbs" name="addToStore" signature="(Lcom/bugsnag/android/Breadcrumb;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Breadcrumbs" start="51" end="63" startBytecode="0" endBytecode="192" sourcefile="Breadcrumbs.java" sourcepath="com/bugsnag/android/Breadcrumbs.java"/>
+    </Method>
+    <Method classname="java.util.Queue" name="poll" signature="()Ljava/lang/Object;" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.util.Queue" sourcefile="Queue.java" sourcepath="java/util/Queue.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.Breadcrumbs" start="58" end="58" startBytecode="47" endBytecode="47" sourcefile="Breadcrumbs.java" sourcepath="com/bugsnag/android/Breadcrumbs.java"/>
+  </BugInstance>
+  <BugInstance type="RV_RETURN_VALUE_IGNORED" priority="3" rank="8" abbrev="RV" category="CORRECTNESS">
+    <Class classname="com.bugsnag.android.Breadcrumbs">
+      <SourceLine classname="com.bugsnag.android.Breadcrumbs" start="10" end="63" sourcefile="Breadcrumbs.java" sourcepath="com/bugsnag/android/Breadcrumbs.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Breadcrumbs" name="setSize" signature="(I)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Breadcrumbs" start="37" end="47" startBytecode="0" endBytecode="128" sourcefile="Breadcrumbs.java" sourcepath="com/bugsnag/android/Breadcrumbs.java"/>
+    </Method>
+    <Method classname="java.util.Queue" name="poll" signature="()Ljava/lang/Object;" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.util.Queue" sourcefile="Queue.java" sourcepath="java/util/Queue.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.Breadcrumbs" start="45" end="45" startBytecode="32" endBytecode="32" sourcefile="Breadcrumbs.java" sourcepath="com/bugsnag/android/Breadcrumbs.java"/>
+  </BugInstance>
+  <BugInstance type="NM_CLASS_NOT_EXCEPTION" priority="2" rank="16" abbrev="Nm" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.BugsnagException">
+      <SourceLine classname="com.bugsnag.android.BugsnagException" start="21" end="31" sourcefile="BugsnagException.java" sourcepath="com/bugsnag/android/BugsnagException.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.Client">
+      <SourceLine classname="com.bugsnag.android.Client" start="39" end="1368" sourcefile="Client.java" sourcepath="com/bugsnag/android/Client.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Client" name="&lt;init&gt;" signature="(Landroid/content/Context;Lcom/bugsnag/android/Configuration;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Client" start="122" end="215" startBytecode="0" endBytecode="954" sourcefile="Client.java" sourcepath="com/bugsnag/android/Client.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.Client" start="180" end="180" startBytecode="390" endBytecode="390" sourcefile="Client.java" sourcepath="com/bugsnag/android/Client.java"/>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.Client">
+      <SourceLine classname="com.bugsnag.android.Client" start="39" end="1368" sourcefile="Client.java" sourcepath="com/bugsnag/android/Client.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Client" name="createNewConfiguration" signature="(Landroid/content/Context;Ljava/lang/String;Z)Lcom/bugsnag/android/Configuration;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.Client" start="260" end="298" startBytecode="0" endBytecode="519" sourcefile="Client.java" sourcepath="com/bugsnag/android/Client.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.Client" start="273" end="273" startBytecode="58" endBytecode="58" sourcefile="Client.java" sourcepath="com/bugsnag/android/Client.java"/>
+    <SourceLine classname="com.bugsnag.android.Client" start="294" end="294" startBytecode="142" endBytecode="142" sourcefile="Client.java" sourcepath="com/bugsnag/android/Client.java" role="SOURCE_LINE_ANOTHER_INSTANCE"/>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ClientNotifyTest$1">
+      <SourceLine classname="com.bugsnag.android.ClientNotifyTest$1" start="46" end="50" sourcefile="ClientNotifyTest.java" sourcepath="com/bugsnag/android/ClientNotifyTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ClientNotifyTest$2">
+      <SourceLine classname="com.bugsnag.android.ClientNotifyTest$2" start="69" end="73" sourcefile="ClientNotifyTest.java" sourcepath="com/bugsnag/android/ClientNotifyTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ClientNotifyTest$3">
+      <SourceLine classname="com.bugsnag.android.ClientNotifyTest$3" start="122" end="126" sourcefile="ClientNotifyTest.java" sourcepath="com/bugsnag/android/ClientNotifyTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="RV_RETURN_VALUE_IGNORED" priority="2" rank="5" abbrev="RV" category="CORRECTNESS">
+    <Class classname="com.bugsnag.android.ClientNotifyTest$FakeClient">
+      <SourceLine classname="com.bugsnag.android.ClientNotifyTest$FakeClient" start="135" end="156" sourcefile="ClientNotifyTest.java" sourcepath="com/bugsnag/android/ClientNotifyTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.ClientNotifyTest$FakeClient" name="awaitReport" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ClientNotifyTest$FakeClient" start="155" end="156" startBytecode="0" endBytecode="60" sourcefile="ClientNotifyTest.java" sourcepath="com/bugsnag/android/ClientNotifyTest.java"/>
+    </Method>
+    <Method classname="java.util.concurrent.CountDownLatch" name="await" signature="(JLjava/util/concurrent/TimeUnit;)Z" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.util.concurrent.CountDownLatch" start="277" end="277" startBytecode="0" endBytecode="37" sourcefile="CountDownLatch.java" sourcepath="java/util/concurrent/CountDownLatch.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ClientNotifyTest$FakeClient" start="155" end="155" startBytecode="10" endBytecode="10" sourcefile="ClientNotifyTest.java" sourcepath="com/bugsnag/android/ClientNotifyTest.java"/>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ClientTest$1">
+      <SourceLine classname="com.bugsnag.android.ClientTest$1" start="109" end="116" sourcefile="ClientTest.java" sourcepath="com/bugsnag/android/ClientTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ClientTest$2">
+      <SourceLine classname="com.bugsnag.android.ClientTest$2" start="225" end="232" sourcefile="ClientTest.java" sourcepath="com/bugsnag/android/ClientTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.ConcurrentCallbackTest">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" start="19" end="59" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.ConcurrentCallbackTest" name="client" signature="Lcom/bugsnag/android/Client;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.ConcurrentCallbackTest" name="testClientBreadcrumbModification" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" start="45" end="59" startBytecode="0" endBytecode="158" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" start="45" end="45" startBytecode="4" endBytecode="4" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.ConcurrentCallbackTest">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" start="19" end="59" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.ConcurrentCallbackTest" name="client" signature="Lcom/bugsnag/android/Client;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.ConcurrentCallbackTest" name="testClientNotifyModification" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" start="30" end="41" startBytecode="0" endBytecode="141" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest" start="30" end="30" startBytecode="4" endBytecode="4" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ConcurrentCallbackTest$1">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest$1" start="31" end="36" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ConcurrentCallbackTest$2">
+      <SourceLine classname="com.bugsnag.android.ConcurrentCallbackTest$2" start="48" end="53" sourcefile="ConcurrentCallbackTest.java" sourcepath="com/bugsnag/android/ConcurrentCallbackTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="EI_EXPOSE_REP" priority="2" rank="18" abbrev="EI" category="MALICIOUS_CODE">
+    <Class classname="com.bugsnag.android.Configuration">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="33" end="605" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Configuration" name="getIgnoreClasses" signature="()[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="219" end="219" startBytecode="0" endBytecode="46" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Method>
+    <Field classname="com.bugsnag.android.Configuration" name="ignoreClasses" signature="[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Field>
+    <SourceLine classname="com.bugsnag.android.Configuration" start="219" end="219" startBytecode="4" endBytecode="4" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+  </BugInstance>
+  <BugInstance type="EI_EXPOSE_REP" priority="2" rank="18" abbrev="EI" category="MALICIOUS_CODE">
+    <Class classname="com.bugsnag.android.Configuration">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="33" end="605" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Configuration" name="getNotifyReleaseStages" signature="()[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="242" end="242" startBytecode="0" endBytecode="46" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Method>
+    <Field classname="com.bugsnag.android.Configuration" name="notifyReleaseStages" signature="[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Field>
+    <SourceLine classname="com.bugsnag.android.Configuration" start="242" end="242" startBytecode="4" endBytecode="4" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+  </BugInstance>
+  <BugInstance type="EI_EXPOSE_REP" priority="2" rank="18" abbrev="EI" category="MALICIOUS_CODE">
+    <Class classname="com.bugsnag.android.Configuration">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="33" end="605" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Configuration" name="getProjectPackages" signature="()[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="267" end="267" startBytecode="0" endBytecode="46" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Method>
+    <Field classname="com.bugsnag.android.Configuration" name="projectPackages" signature="[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Field>
+    <SourceLine classname="com.bugsnag.android.Configuration" start="267" end="267" startBytecode="4" endBytecode="4" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+  </BugInstance>
+  <BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18" abbrev="EI2" category="MALICIOUS_CODE">
+    <Class classname="com.bugsnag.android.Configuration">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="33" end="605" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Configuration" name="setIgnoreClasses" signature="([Ljava/lang/String;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="232" end="233" startBytecode="0" endBytecode="61" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Method>
+    <Field classname="com.bugsnag.android.Configuration" name="ignoreClasses" signature="[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Field>
+    <LocalVariable name="ignoreClasses" register="1" pc="2" role="LOCAL_VARIABLE_NAMED"/>
+    <SourceLine classname="com.bugsnag.android.Configuration" start="232" end="232" startBytecode="2" endBytecode="2" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+  </BugInstance>
+  <BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18" abbrev="EI2" category="MALICIOUS_CODE">
+    <Class classname="com.bugsnag.android.Configuration">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="33" end="605" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Configuration" name="setNotifyReleaseStages" signature="([Ljava/lang/String;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="257" end="259" startBytecode="0" endBytecode="72" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Method>
+    <Field classname="com.bugsnag.android.Configuration" name="notifyReleaseStages" signature="[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Field>
+    <LocalVariable name="notifyReleaseStages" register="1" pc="2" role="LOCAL_VARIABLE_NAMED"/>
+    <SourceLine classname="com.bugsnag.android.Configuration" start="257" end="257" startBytecode="2" endBytecode="2" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+  </BugInstance>
+  <BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18" abbrev="EI2" category="MALICIOUS_CODE">
+    <Class classname="com.bugsnag.android.Configuration">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="33" end="605" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.Configuration" name="setProjectPackages" signature="([Ljava/lang/String;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" start="283" end="284" startBytecode="0" endBytecode="61" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Method>
+    <Field classname="com.bugsnag.android.Configuration" name="projectPackages" signature="[Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Configuration" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+    </Field>
+    <LocalVariable name="projectPackages" register="1" pc="2" role="LOCAL_VARIABLE_NAMED"/>
+    <SourceLine classname="com.bugsnag.android.Configuration" start="283" end="283" startBytecode="2" endBytecode="2" sourcefile="Configuration.java" sourcepath="com/bugsnag/android/Configuration.java"/>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ConfigurationTest$1">
+      <SourceLine classname="com.bugsnag.android.ConfigurationTest$1" start="172" end="181" sourcefile="ConfigurationTest.java" sourcepath="com/bugsnag/android/ConfigurationTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="DM_DEFAULT_ENCODING" priority="1" rank="19" abbrev="Dm" category="I18N">
+    <Class classname="com.bugsnag.android.DefaultHttpClient">
+      <SourceLine classname="com.bugsnag.android.DefaultHttpClient" start="17" end="97" sourcefile="DefaultHttpClient.java" sourcepath="com/bugsnag/android/DefaultHttpClient.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DefaultHttpClient" name="makeRequest" signature="(Ljava/lang/String;Lcom/bugsnag/android/JsonStream$Streamable;Ljava/util/Map;)I" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.DefaultHttpClient" start="54" end="85" startBytecode="0" endBytecode="584" sourcefile="DefaultHttpClient.java" sourcepath="com/bugsnag/android/DefaultHttpClient.java"/>
+    </Method>
+    <Method classname="java.io.OutputStreamWriter" name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.io.OutputStreamWriter" start="109" end="115" startBytecode="0" endBytecode="108" sourcefile="OutputStreamWriter.java" sourcepath="java/io/OutputStreamWriter.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DefaultHttpClient" start="72" end="72" startBytecode="132" endBytecode="132" sourcefile="DefaultHttpClient.java" sourcepath="com/bugsnag/android/DefaultHttpClient.java"/>
+  </BugInstance>
+  <BugInstance type="NP_BOOLEAN_RETURN_NULL" priority="1" rank="12" abbrev="NP" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.DeviceData">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="56" end="373" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DeviceData" name="isCharging" signature="(Landroid/content/Context;)Ljava/lang/Boolean;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="307" end="316" startBytecode="0" endBytecode="199" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DeviceData" start="316" end="316" startBytecode="51" endBytecode="51" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.DeviceData">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="56" end="373" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DeviceData" name="getBatteryLevel" signature="(Landroid/content/Context;)Ljava/lang/Float;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="290" end="298" startBytecode="0" endBytecode="165" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DeviceData" start="295" end="295" startBytecode="38" endBytecode="38" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.DeviceData">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="56" end="373" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DeviceData" name="getFreeDisk" signature="()Ljava/lang/Long;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="236" end="248" startBytecode="0" endBytecode="208" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DeviceData" start="245" end="245" startBytecode="63" endBytecode="63" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.DeviceData">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="56" end="373" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DeviceData" name="getNetworkAccess" signature="(Landroid/content/Context;)Ljava/lang/String;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="345" end="365" startBytecode="0" endBytecode="246" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DeviceData" start="361" end="361" startBytecode="55" endBytecode="55" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.DeviceData">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="56" end="373" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DeviceData" name="isCharging" signature="(Landroid/content/Context;)Ljava/lang/Boolean;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.DeviceData" start="307" end="316" startBytecode="0" endBytecode="199" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DeviceData" start="313" end="313" startBytecode="44" endBytecode="44" sourcefile="DeviceData.java" sourcepath="com/bugsnag/android/DeviceData.java"/>
+  </BugInstance>
+  <BugInstance type="NP_BOOLEAN_RETURN_NULL" priority="1" rank="12" abbrev="NP" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.DeviceDataSummary">
+      <SourceLine classname="com.bugsnag.android.DeviceDataSummary" start="9" end="63" sourcefile="DeviceDataSummary.java" sourcepath="com/bugsnag/android/DeviceDataSummary.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DeviceDataSummary" name="isRooted" signature="()Ljava/lang/Boolean;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.DeviceDataSummary" start="50" end="63" startBytecode="0" endBytecode="205" sourcefile="DeviceDataSummary.java" sourcepath="com/bugsnag/android/DeviceDataSummary.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DeviceDataSummary" start="61" end="61" startBytecode="70" endBytecode="70" sourcefile="DeviceDataSummary.java" sourcepath="com/bugsnag/android/DeviceDataSummary.java"/>
+  </BugInstance>
+  <BugInstance type="REC_CATCH_EXCEPTION" priority="3" rank="20" abbrev="REC" category="STYLE">
+    <Class classname="com.bugsnag.android.DeviceDataSummary">
+      <SourceLine classname="com.bugsnag.android.DeviceDataSummary" start="9" end="63" sourcefile="DeviceDataSummary.java" sourcepath="com/bugsnag/android/DeviceDataSummary.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.DeviceDataSummary" name="isRooted" signature="()Ljava/lang/Boolean;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.DeviceDataSummary" start="50" end="63" startBytecode="0" endBytecode="205" sourcefile="DeviceDataSummary.java" sourcepath="com/bugsnag/android/DeviceDataSummary.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.DeviceDataSummary" start="60" end="60" startBytecode="68" endBytecode="68" sourcefile="DeviceDataSummary.java" sourcepath="com/bugsnag/android/DeviceDataSummary.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.Error">
+      <SourceLine classname="com.bugsnag.android.Error" start="27" end="327" sourcefile="Error.java" sourcepath="com/bugsnag/android/Error.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.Error" name="deviceData" signature="Lcom/bugsnag/android/DeviceData;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Error" sourcefile="Error.java" sourcepath="com/bugsnag/android/Error.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.Error" name="setDeviceId" signature="(Ljava/lang/String;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.Error" start="307" end="308" startBytecode="0" endBytecode="64" sourcefile="Error.java" sourcepath="com/bugsnag/android/Error.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.Error" start="307" end="307" startBytecode="5" endBytecode="5" sourcefile="Error.java" sourcepath="com/bugsnag/android/Error.java"/>
+  </BugInstance>
+  <BugInstance type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" priority="2" rank="13" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.ErrorStoreTest">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="29" end="162" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.ErrorStoreTest" name="testWrite" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="62" end="72" startBytecode="0" endBytecode="186" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Method>
+    <LocalVariable name="files" register="1" pc="8" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="63" end="63" startBytecode="9" endBytecode="9" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java" role="SOURCE_LINE_DEREF"/>
+    <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="62" end="62" startBytecode="4" endBytecode="4" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java" role="SOURCE_LINE_KNOWN_NULL"/>
+  </BugInstance>
+  <BugInstance type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" priority="2" rank="13" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.ErrorStoreTest">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="29" end="162" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.ErrorStoreTest" name="testWrite" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="62" end="72" startBytecode="0" endBytecode="186" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Method>
+    <LocalVariable name="files" register="1" pc="55" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="69" end="69" startBytecode="56" endBytecode="56" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java" role="SOURCE_LINE_DEREF"/>
+    <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="68" end="68" startBytecode="47" endBytecode="47" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java" role="SOURCE_LINE_KNOWN_NULL"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.ErrorStoreTest">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="29" end="162" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.ErrorStoreTest" name="config" signature="Lcom/bugsnag/android/Configuration;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.ErrorStoreTest" name="isStartupCrash" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="115" end="124" startBytecode="0" endBytecode="149" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="117" end="117" startBytecode="16" endBytecode="16" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.ErrorStoreTest">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="29" end="162" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.ErrorStoreTest" name="errorStorageDir" signature="Ljava/io/File;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.ErrorStoreTest" name="testWrite" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="62" end="72" startBytecode="0" endBytecode="186" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ErrorStoreTest" start="62" end="62" startBytecode="4" endBytecode="4" sourcefile="ErrorStoreTest.java" sourcepath="com/bugsnag/android/ErrorStoreTest.java"/>
+  </BugInstance>
+  <BugInstance type="DLS_DEAD_LOCAL_STORE" priority="1" rank="15" abbrev="DLS" category="STYLE">
+    <Class classname="com.bugsnag.android.ExceptionHandlerTest">
+      <SourceLine classname="com.bugsnag.android.ExceptionHandlerTest" start="18" end="56" sourcefile="ExceptionHandlerTest.java" sourcepath="com/bugsnag/android/ExceptionHandlerTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.ExceptionHandlerTest" name="testMultipleClients" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ExceptionHandlerTest" start="46" end="56" startBytecode="0" endBytecode="37" sourcefile="ExceptionHandlerTest.java" sourcepath="com/bugsnag/android/ExceptionHandlerTest.java"/>
+    </Method>
+    <LocalVariable name="clientOne" register="1" pc="14" role="LOCAL_VARIABLE_NAMED"/>
+    <SourceLine classname="com.bugsnag.android.ExceptionHandlerTest" start="46" end="46" startBytecode="13" endBytecode="13" sourcefile="ExceptionHandlerTest.java" sourcepath="com/bugsnag/android/ExceptionHandlerTest.java"/>
+    <Property name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.DEAD_OBJECT_STORE" value="true"/>
+    <Property name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.LOCAL_NAME" value="clientOne"/>
+    <Property name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.METHOD_RESULT" value="true"/>
+  </BugInstance>
+  <BugInstance type="DLS_DEAD_LOCAL_STORE" priority="1" rank="15" abbrev="DLS" category="STYLE">
+    <Class classname="com.bugsnag.android.ExceptionHandlerTest">
+      <SourceLine classname="com.bugsnag.android.ExceptionHandlerTest" start="18" end="56" sourcefile="ExceptionHandlerTest.java" sourcepath="com/bugsnag/android/ExceptionHandlerTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.ExceptionHandlerTest" name="testMultipleClients" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ExceptionHandlerTest" start="46" end="56" startBytecode="0" endBytecode="37" sourcefile="ExceptionHandlerTest.java" sourcepath="com/bugsnag/android/ExceptionHandlerTest.java"/>
+    </Method>
+    <LocalVariable name="clientTwo" register="2" pc="28" role="LOCAL_VARIABLE_NAMED"/>
+    <SourceLine classname="com.bugsnag.android.ExceptionHandlerTest" start="47" end="47" startBytecode="27" endBytecode="27" sourcefile="ExceptionHandlerTest.java" sourcepath="com/bugsnag/android/ExceptionHandlerTest.java"/>
+    <Property name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.DEAD_OBJECT_STORE" value="true"/>
+    <Property name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.LOCAL_NAME" value="clientTwo"/>
+    <Property name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.METHOD_RESULT" value="true"/>
+  </BugInstance>
+  <BugInstance type="DM_DEFAULT_ENCODING" priority="1" rank="19" abbrev="Dm" category="I18N">
+    <Class classname="com.bugsnag.android.FileStore">
+      <SourceLine classname="com.bugsnag.android.FileStore" start="25" end="105" sourcefile="FileStore.java" sourcepath="com/bugsnag/android/FileStore.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.FileStore" name="write" signature="(Lcom/bugsnag/android/JsonStream$Streamable;)Ljava/lang/String;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.FileStore" start="49" end="86" startBytecode="0" endBytecode="522" sourcefile="FileStore.java" sourcepath="com/bugsnag/android/FileStore.java"/>
+    </Method>
+    <Method classname="java.io.FileWriter" name="&lt;init&gt;" signature="(Ljava/lang/String;)V" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.io.FileWriter" start="63" end="64" startBytecode="0" endBytecode="40" sourcefile="FileWriter.java" sourcepath="java/io/FileWriter.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.FileStore" start="72" end="72" startBytecode="104" endBytecode="104" sourcefile="FileStore.java" sourcepath="com/bugsnag/android/FileStore.java"/>
+  </BugInstance>
+  <BugInstance type="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" priority="2" rank="16" abbrev="RV" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.FileStore">
+      <SourceLine classname="com.bugsnag.android.FileStore" start="25" end="105" sourcefile="FileStore.java" sourcepath="com/bugsnag/android/FileStore.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.FileStore" name="&lt;init&gt;" signature="(Lcom/bugsnag/android/Configuration;Landroid/content/Context;Ljava/lang/String;ILjava/util/Comparator;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.FileStore" start="25" end="45" startBytecode="0" endBytecode="395" sourcefile="FileStore.java" sourcepath="com/bugsnag/android/FileStore.java"/>
+    </Method>
+    <Method classname="java.io.File" name="mkdirs" signature="()Z" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.io.File" start="1340" end="1354" startBytecode="0" endBytecode="182" sourcefile="File.java" sourcepath="java/io/File.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.FileStore" start="35" end="35" startBytecode="60" endBytecode="60" sourcefile="FileStore.java" sourcepath="com/bugsnag/android/FileStore.java"/>
+  </BugInstance>
+  <BugInstance type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" priority="2" rank="13" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.FileUtils">
+      <SourceLine classname="com.bugsnag.android.FileUtils" start="7" end="19" sourcefile="FileUtils.java" sourcepath="com/bugsnag/android/FileUtils.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.FileUtils" name="clearFilesInDir" signature="(Ljava/io/File;)V" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.FileUtils" start="11" end="19" startBytecode="0" endBytecode="152" sourcefile="FileUtils.java" sourcepath="com/bugsnag/android/FileUtils.java"/>
+    </Method>
+    <LocalVariable name="?" register="1" pc="21" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.FileUtils" start="14" end="14" startBytecode="21" endBytecode="21" sourcefile="FileUtils.java" sourcepath="com/bugsnag/android/FileUtils.java" role="SOURCE_LINE_DEREF"/>
+    <SourceLine classname="com.bugsnag.android.FileUtils" start="14" end="14" startBytecode="16" endBytecode="16" sourcefile="FileUtils.java" sourcepath="com/bugsnag/android/FileUtils.java" role="SOURCE_LINE_KNOWN_NULL"/>
+  </BugInstance>
+  <BugInstance type="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" priority="2" rank="16" abbrev="RV" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.FileUtils">
+      <SourceLine classname="com.bugsnag.android.FileUtils" start="7" end="19" sourcefile="FileUtils.java" sourcepath="com/bugsnag/android/FileUtils.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.FileUtils" name="clearFilesInDir" signature="(Ljava/io/File;)V" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.FileUtils" start="11" end="19" startBytecode="0" endBytecode="152" sourcefile="FileUtils.java" sourcepath="com/bugsnag/android/FileUtils.java"/>
+    </Method>
+    <Method classname="java.io.File" name="delete" signature="()Z" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.io.File" start="1034" end="1041" startBytecode="0" endBytecode="91" sourcefile="File.java" sourcepath="java/io/File.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.FileUtils" start="16" end="16" startBytecode="45" endBytecode="45" sourcefile="FileUtils.java" sourcepath="com/bugsnag/android/FileUtils.java"/>
+  </BugInstance>
+  <BugInstance type="DB_DUPLICATE_SWITCH_CLAUSES" priority="3" rank="20" abbrev="DB" category="STYLE">
+    <Class classname="com.bugsnag.android.HandledState">
+      <SourceLine classname="com.bugsnag.android.HandledState" start="41" end="131" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.HandledState" name="newInstance" signature="(Ljava/lang/String;Lcom/bugsnag/android/Severity;Ljava/lang/String;)Lcom/bugsnag/android/HandledState;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.HandledState" start="48" end="74" startBytecode="0" endBytecode="560" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.HandledState" start="58" end="58" startBytecode="284" endBytecode="297" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+    <SourceLine classname="com.bugsnag.android.HandledState" start="68" end="68" startBytecode="350" endBytecode="363" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+  </BugInstance>
+  <BugInstance type="DB_DUPLICATE_SWITCH_CLAUSES" priority="3" rank="20" abbrev="DB" category="STYLE">
+    <Class classname="com.bugsnag.android.HandledState">
+      <SourceLine classname="com.bugsnag.android.HandledState" start="41" end="131" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.HandledState" name="newInstance" signature="(Ljava/lang/String;Lcom/bugsnag/android/Severity;Ljava/lang/String;)Lcom/bugsnag/android/HandledState;" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.HandledState" start="48" end="74" startBytecode="0" endBytecode="560" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.HandledState" start="64" end="64" startBytecode="326" endBytecode="337" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+    <SourceLine classname="com.bugsnag.android.HandledState" start="66" end="66" startBytecode="338" endBytecode="349" sourcefile="HandledState.java" sourcepath="com/bugsnag/android/HandledState.java"/>
+  </BugInstance>
+  <BugInstance type="DE_MIGHT_IGNORE" priority="3" rank="19" abbrev="DE" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.IOUtils">
+      <SourceLine classname="com.bugsnag.android.IOUtils" start="14" end="48" sourcefile="IOUtils.java" sourcepath="com/bugsnag/android/IOUtils.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.IOUtils" name="closeQuietly" signature="(Ljava/io/Closeable;)V" isStatic="true">
+      <SourceLine classname="com.bugsnag.android.IOUtils" start="20" end="26" startBytecode="0" endBytecode="94" sourcefile="IOUtils.java" sourcepath="com/bugsnag/android/IOUtils.java"/>
+    </Method>
+    <Class classname="java.lang.Exception" role="CLASS_EXCEPTION">
+      <SourceLine classname="java.lang.Exception" start="54" end="123" sourcefile="Exception.java" sourcepath="java/lang/Exception.java"/>
+    </Class>
+    <SourceLine classname="com.bugsnag.android.IOUtils" start="23" end="23" startBytecode="13" endBytecode="13" sourcefile="IOUtils.java" sourcepath="com/bugsnag/android/IOUtils.java"/>
+    <SourceLine classname="com.bugsnag.android.IOUtils" start="23" end="23" startBytecode="13" endBytecode="13" sourcefile="IOUtils.java" sourcepath="com/bugsnag/android/IOUtils.java"/>
+  </BugInstance>
+  <BugInstance type="DM_DEFAULT_ENCODING" priority="1" rank="19" abbrev="Dm" category="I18N">
+    <Class classname="com.bugsnag.android.JsonStream">
+      <SourceLine classname="com.bugsnag.android.JsonStream" start="11" end="65" sourcefile="JsonStream.java" sourcepath="com/bugsnag/android/JsonStream.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.JsonStream" name="value" signature="(Ljava/io/File;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStream" start="52" end="65" startBytecode="0" endBytecode="184" sourcefile="JsonStream.java" sourcepath="com/bugsnag/android/JsonStream.java"/>
+    </Method>
+    <Method classname="java.io.FileReader" name="&lt;init&gt;" signature="(Ljava/io/File;)V" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.io.FileReader" start="72" end="73" startBytecode="0" endBytecode="40" sourcefile="FileReader.java" sourcepath="java/io/FileReader.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.JsonStream" start="58" end="58" startBytecode="16" endBytecode="16" sourcefile="JsonStream.java" sourcepath="com/bugsnag/android/JsonStream.java"/>
+  </BugInstance>
+  <BugInstance type="NP_LOAD_OF_KNOWN_NULL_VALUE" priority="3" rank="19" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="137" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <LocalVariable name="nullBoolean" register="2" pc="43" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="42" end="42" startBytecode="46" endBytecode="46" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="NP_LOAD_OF_KNOWN_NULL_VALUE" priority="3" rank="19" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="137" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <LocalVariable name="nullDouble" register="6" pc="101" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="46" end="46" startBytecode="104" endBytecode="104" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="NP_LOAD_OF_KNOWN_NULL_VALUE" priority="3" rank="19" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="137" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <LocalVariable name="nullFloat" register="5" pc="86" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="45" end="45" startBytecode="89" endBytecode="89" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="NP_LOAD_OF_KNOWN_NULL_VALUE" priority="3" rank="19" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="137" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <LocalVariable name="nullInteger" register="4" pc="71" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="44" end="44" startBytecode="74" endBytecode="74" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="NP_LOAD_OF_KNOWN_NULL_VALUE" priority="3" rank="19" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="137" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <LocalVariable name="nullLong" register="1" pc="29" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="41" end="41" startBytecode="32" endBytecode="32" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="NP_LOAD_OF_KNOWN_NULL_VALUE" priority="3" rank="19" abbrev="NP" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="137" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <LocalVariable name="nullString" register="3" pc="57" role="LOCAL_VARIABLE_VALUE_OF"/>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="43" end="43" startBytecode="60" endBytecode="60" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.JsonStreamTest" name="stream" signature="Lcom/bugsnag/android/JsonStream;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="520" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="40" end="40" startBytecode="19" endBytecode="19" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.JsonStreamTest">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="20" end="63" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.JsonStreamTest" name="writer" signature="Ljava/io/StringWriter;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.JsonStreamTest" name="testSaneValues" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="33" end="63" startBytecode="0" endBytecode="520" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.JsonStreamTest" start="53" end="53" startBytecode="189" endBytecode="189" sourcefile="JsonStreamTest.java" sourcepath="com/bugsnag/android/JsonStreamTest.java"/>
+  </BugInstance>
+  <BugInstance type="WMI_WRONG_MAP_ITERATOR" priority="2" rank="18" abbrev="WMI" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.NativeInterface$1">
+      <SourceLine classname="com.bugsnag.android.NativeInterface$1" start="244" end="265" sourcefile="NativeInterface.java" sourcepath="com/bugsnag/android/NativeInterface.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.NativeInterface$1" name="beforeNotify" signature="(Lcom/bugsnag/android/Report;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.NativeInterface$1" start="247" end="265" startBytecode="0" endBytecode="375" sourcefile="NativeInterface.java" sourcepath="com/bugsnag/android/NativeInterface.java"/>
+    </Method>
+    <Field classname="com.bugsnag.android.NativeInterface$1" name="val$metaData" signature="Ljava/util/Map;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.NativeInterface$1" sourcefile="NativeInterface.java" sourcepath="com/bugsnag/android/NativeInterface.java"/>
+    </Field>
+    <SourceLine classname="com.bugsnag.android.NativeInterface$1" start="253" end="253" startBytecode="63" endBytecode="63" sourcefile="NativeInterface.java" sourcepath="com/bugsnag/android/NativeInterface.java"/>
+  </BugInstance>
+  <BugInstance type="WMI_WRONG_MAP_ITERATOR" priority="2" rank="18" abbrev="WMI" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.NativeInterface$1">
+      <SourceLine classname="com.bugsnag.android.NativeInterface$1" start="244" end="265" sourcefile="NativeInterface.java" sourcepath="com/bugsnag/android/NativeInterface.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.NativeInterface$1" name="beforeNotify" signature="(Lcom/bugsnag/android/Report;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.NativeInterface$1" start="247" end="265" startBytecode="0" endBytecode="375" sourcefile="NativeInterface.java" sourcepath="com/bugsnag/android/NativeInterface.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.NativeInterface$1" start="259" end="259" startBytecode="133" endBytecode="133" sourcefile="NativeInterface.java" sourcepath="com/bugsnag/android/NativeInterface.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.NullMetadataTest">
+      <SourceLine classname="com.bugsnag.android.NullMetadataTest" start="18" end="115" sourcefile="NullMetadataTest.java" sourcepath="com/bugsnag/android/NullMetadataTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.NullMetadataTest" name="config" signature="Lcom/bugsnag/android/Configuration;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.NullMetadataTest" sourcefile="NullMetadataTest.java" sourcepath="com/bugsnag/android/NullMetadataTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.NullMetadataTest" name="testConfigDefaultMetadata" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.NullMetadataTest" start="78" end="79" startBytecode="0" endBytecode="57" sourcefile="NullMetadataTest.java" sourcepath="com/bugsnag/android/NullMetadataTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.NullMetadataTest" start="78" end="78" startBytecode="5" endBytecode="5" sourcefile="NullMetadataTest.java" sourcepath="com/bugsnag/android/NullMetadataTest.java"/>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.NullMetadataTest$1">
+      <SourceLine classname="com.bugsnag.android.NullMetadataTest$1" start="34" end="41" sourcefile="NullMetadataTest.java" sourcepath="com/bugsnag/android/NullMetadataTest.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.ReportTest">
+      <SourceLine classname="com.bugsnag.android.ReportTest" start="20" end="73" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.ReportTest" name="report" signature="Lcom/bugsnag/android/Report;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ReportTest" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.ReportTest" name="testModifyReportDetails" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ReportTest" start="56" end="73" startBytecode="0" endBytecode="267" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ReportTest" start="61" end="61" startBytecode="18" endBytecode="18" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.ReportTest">
+      <SourceLine classname="com.bugsnag.android.ReportTest" start="20" end="73" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.ReportTest" name="report" signature="Lcom/bugsnag/android/Report;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ReportTest" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.ReportTest" name="testModifyingGroupingHash" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ReportTest" start="45" end="52" startBytecode="0" endBytecode="153" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ReportTest" start="46" end="46" startBytecode="7" endBytecode="7" sourcefile="ReportTest.java" sourcepath="com/bugsnag/android/ReportTest.java"/>
+  </BugInstance>
+  <BugInstance type="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" priority="2" rank="16" abbrev="RV" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.SessionTracker">
+      <SourceLine classname="com.bugsnag.android.SessionTracker" start="22" end="321" sourcefile="SessionTracker.java" sourcepath="com/bugsnag/android/SessionTracker.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.SessionTracker" name="deleteStoredFiles" signature="(Ljava/util/Collection;)V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTracker" start="189" end="192" startBytecode="0" endBytecode="143" sourcefile="SessionTracker.java" sourcepath="com/bugsnag/android/SessionTracker.java"/>
+    </Method>
+    <Method classname="java.io.File" name="delete" signature="()Z" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.io.File" start="1034" end="1041" startBytecode="0" endBytecode="91" sourcefile="File.java" sourcepath="java/io/File.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.SessionTracker" start="190" end="190" startBytecode="27" endBytecode="27" sourcefile="SessionTracker.java" sourcepath="com/bugsnag/android/SessionTracker.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.SessionTrackerTest">
+      <SourceLine classname="com.bugsnag.android.SessionTrackerTest" start="18" end="182" sourcefile="SessionTrackerTest.java" sourcepath="com/bugsnag/android/SessionTrackerTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.SessionTrackerTest" name="configuration" signature="Lcom/bugsnag/android/Configuration;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackerTest" sourcefile="SessionTrackerTest.java" sourcepath="com/bugsnag/android/SessionTrackerTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.SessionTrackerTest" name="startSessionDisabled" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackerTest" start="56" end="66" startBytecode="0" endBytecode="164" sourcefile="SessionTrackerTest.java" sourcepath="com/bugsnag/android/SessionTrackerTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.SessionTrackerTest" start="57" end="57" startBytecode="15" endBytecode="15" sourcefile="SessionTrackerTest.java" sourcepath="com/bugsnag/android/SessionTrackerTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.SessionTrackingPayloadTest">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="25" end="116" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.SessionTrackingPayloadTest" name="rootNode" signature="Lorg/json/JSONObject;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.SessionTrackingPayloadTest" name="testPayloadSerialisation" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="71" end="84" startBytecode="0" endBytecode="220" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="72" end="72" startBytecode="13" endBytecode="13" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.SessionTrackingPayloadTest">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="25" end="116" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.SessionTrackingPayloadTest" name="session" signature="Lcom/bugsnag/android/Session;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.SessionTrackingPayloadTest" name="testPayloadSerialisation" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="71" end="84" startBytecode="0" endBytecode="220" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="78" end="78" startBytecode="49" endBytecode="49" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.SessionTrackingPayloadTest">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="25" end="116" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.SessionTrackingPayloadTest" name="sessionStore" signature="Lcom/bugsnag/android/SessionStore;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.SessionTrackingPayloadTest" name="testMultipleSessionFiles" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="91" end="102" startBytecode="0" endBytecode="207" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.SessionTrackingPayloadTest" start="91" end="91" startBytecode="8" endBytecode="8" sourcefile="SessionTrackingPayloadTest.java" sourcepath="com/bugsnag/android/SessionTrackingPayloadTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.StacktraceTest">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" start="24" end="56" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.StacktraceTest" name="config" signature="Lcom/bugsnag/android/Configuration;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.StacktraceTest" name="testInProject" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" start="49" end="56" startBytecode="0" endBytecode="150" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.StacktraceTest" start="49" end="49" startBytecode="13" endBytecode="13" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.StacktraceTest">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" start="24" end="56" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.StacktraceTest" name="exception" signature="Ljava/lang/Throwable;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.StacktraceTest" name="testBasicException" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" start="37" end="45" startBytecode="0" endBytecode="178" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.StacktraceTest" start="37" end="37" startBytecode="12" endBytecode="12" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.StacktraceTest">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" start="24" end="56" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.StacktraceTest" name="exception" signature="Ljava/lang/Throwable;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.StacktraceTest" name="testInProject" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StacktraceTest" start="49" end="56" startBytecode="0" endBytecode="150" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.StacktraceTest" start="51" end="51" startBytecode="28" endBytecode="28" sourcefile="StacktraceTest.java" sourcepath="com/bugsnag/android/StacktraceTest.java"/>
+  </BugInstance>
+  <BugInstance type="DM_DEFAULT_ENCODING" priority="1" rank="19" abbrev="Dm" category="I18N">
+    <Class classname="com.bugsnag.android.StrictModeTest">
+      <SourceLine classname="com.bugsnag.android.StrictModeTest" start="24" end="128" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.StrictModeTest" name="violateStrictModePolicy" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StrictModeTest" start="123" end="128" startBytecode="0" endBytecode="140" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+    </Method>
+    <Method classname="java.io.FileWriter" name="&lt;init&gt;" signature="(Ljava/io/File;)V" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.io.FileWriter" start="90" end="91" startBytecode="0" endBytecode="40" sourcefile="FileWriter.java" sourcepath="java/io/FileWriter.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.StrictModeTest" start="124" end="124" startBytecode="21" endBytecode="21" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+  </BugInstance>
+  <BugInstance type="OBL_UNSATISFIED_OBLIGATION" priority="2" rank="20" abbrev="OBL" category="EXPERIMENTAL">
+    <Class classname="com.bugsnag.android.StrictModeTest">
+      <SourceLine classname="com.bugsnag.android.StrictModeTest" start="24" end="128" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.StrictModeTest" name="violateStrictModePolicy" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StrictModeTest" start="123" end="128" startBytecode="0" endBytecode="140" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+    </Method>
+    <Class classname="java.io.Writer" role="CLASS_REFTYPE">
+      <SourceLine classname="java.io.Writer" start="50" end="294" sourcefile="Writer.java" sourcepath="java/io/Writer.java"/>
+    </Class>
+    <Int value="1" role="INT_OBLIGATIONS_REMAINING"/>
+    <SourceLine classname="com.bugsnag.android.StrictModeTest" start="124" end="124" startBytecode="21" endBytecode="21" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java" role="SOURCE_LINE_OBLIGATION_CREATED"/>
+    <SourceLine classname="com.bugsnag.android.StrictModeTest" start="127" end="127" startBytecode="29" endBytecode="29" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java" role="SOURCE_LINE_PATH_CONTINUES"/>
+    <SourceLine classname="com.bugsnag.android.StrictModeTest" start="128" end="128" startBytecode="37" endBytecode="37" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java" role="SOURCE_LINE_PATH_CONTINUES"/>
+    <String value="{Writer x 1}" role="STRING_REMAINING_OBLIGATIONS"/>
+  </BugInstance>
+  <BugInstance type="OS_OPEN_STREAM" priority="2" rank="16" abbrev="OS" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.StrictModeTest">
+      <SourceLine classname="com.bugsnag.android.StrictModeTest" start="24" end="128" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.StrictModeTest" name="violateStrictModePolicy" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.StrictModeTest" start="123" end="128" startBytecode="0" endBytecode="17" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+    </Method>
+    <Type descriptor="Ljava/io/Writer;" role="TYPE_CLOSEIT">
+      <SourceLine classname="java.io.Writer" start="50" end="294" sourcefile="Writer.java" sourcepath="java/io/Writer.java"/>
+    </Type>
+    <SourceLine classname="com.bugsnag.android.StrictModeTest" start="124" end="124" startBytecode="4" endBytecode="4" sourcefile="StrictModeTest.java" sourcepath="com/bugsnag/android/StrictModeTest.java"/>
+  </BugInstance>
+  <BugInstance type="DM_BOXED_PRIMITIVE_FOR_COMPARE" priority="1" rank="16" abbrev="Bx" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ThreadState$1">
+      <SourceLine classname="com.bugsnag.android.ThreadState$1" start="47" end="49" sourcefile="ThreadState.java" sourcepath="com/bugsnag/android/ThreadState.java"/>
+    </Class>
+    <Method classname="com.bugsnag.android.ThreadState$1" name="compare" signature="(Ljava/lang/Thread;Ljava/lang/Thread;)I" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.ThreadState$1" start="49" end="49" startBytecode="0" endBytecode="79" sourcefile="ThreadState.java" sourcepath="com/bugsnag/android/ThreadState.java"/>
+    </Method>
+    <Method classname="java.lang.Long" name="compareTo" signature="(Ljava/lang/Long;)I" isStatic="false" role="METHOD_CALLED">
+      <SourceLine classname="java.lang.Long" start="1234" end="1234" startBytecode="0" endBytecode="35" sourcefile="Long.java" sourcepath="java/lang/Long.java"/>
+    </Method>
+    <Method classname="java.lang.Long" name="compare" signature="(JJ)I" isStatic="true" role="SHOULD_CALL">
+      <SourceLine classname="java.lang.Long" start="1252" end="1252" startBytecode="0" endBytecode="57" sourcefile="Long.java" sourcepath="java/lang/Long.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.ThreadState$1" start="49" end="49" startBytecode="14" endBytecode="14" sourcefile="ThreadState.java" sourcepath="com/bugsnag/android/ThreadState.java"/>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_ANON" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE">
+    <Class classname="com.bugsnag.android.ThreadState$1">
+      <SourceLine classname="com.bugsnag.android.ThreadState$1" start="47" end="49" sourcefile="ThreadState.java" sourcepath="com/bugsnag/android/ThreadState.java"/>
+    </Class>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.UniqueBeforeNotifyTest">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="19" end="88" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.UniqueBeforeNotifyTest" name="client" signature="Lcom/bugsnag/android/Client;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.UniqueBeforeNotifyTest" name="checkBeforeNotify" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="51" end="54" startBytecode="0" endBytecode="88" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="51" end="51" startBytecode="8" endBytecode="8" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.UniqueBeforeNotifyTest">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="19" end="88" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.UniqueBeforeNotifyTest" name="client" signature="Lcom/bugsnag/android/Client;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.UniqueBeforeNotifyTest" name="testCallbackOrder" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="68" end="84" startBytecode="0" endBytecode="98" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="68" end="68" startBytecode="12" endBytecode="12" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE">
+    <Class classname="com.bugsnag.android.UniqueBeforeNotifyTest">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="19" end="88" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Class>
+    <Field classname="com.bugsnag.android.UniqueBeforeNotifyTest" name="client" signature="Lcom/bugsnag/android/Client;" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Field>
+    <Method classname="com.bugsnag.android.UniqueBeforeNotifyTest" name="testDuplicateCallback" signature="()V" isStatic="false">
+      <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="58" end="64" startBytecode="0" endBytecode="135" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+    </Method>
+    <SourceLine classname="com.bugsnag.android.UniqueBeforeNotifyTest" start="58" end="58" startBytecode="8" endBytecode="8" sourcefile="UniqueBeforeNotifyTest.java" sourcepath="com/bugsnag/android/UniqueBeforeNotifyTest.java"/>
+  </BugInstance>
+  <BugInstance type="NM_CLASS_NAMING_CONVENTION" priority="2" rank="16" abbrev="Nm" category="BAD_PRACTICE">
+    <Class classname="com.bugsnag.android.test.R$string">
+      <SourceLine classname="com.bugsnag.android.test.R$string" start="11" end="11" sourcefile="R.java" sourcepath="com/bugsnag/android/test/R.java"/>
+    </Class>
+  </BugInstance>
+</BugCollection>
