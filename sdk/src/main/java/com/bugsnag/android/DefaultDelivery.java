@@ -6,11 +6,13 @@ import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILUR
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 class DefaultDelivery implements Delivery {
@@ -66,15 +68,16 @@ class DefaultDelivery implements Delivery {
                 conn.addRequestProperty(entry.getKey(), entry.getValue());
             }
 
-            OutputStream out = null;
+            JsonStream stream = null;
 
             try {
-                out = conn.getOutputStream();
-                JsonStream stream = new JsonStream(new OutputStreamWriter(out));
+                OutputStream out = conn.getOutputStream();
+                Charset charset = Charset.forName("UTF-8");
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, charset));
+                stream = new JsonStream(writer);
                 streamable.toStream(stream);
-                stream.close();
             } finally {
-                IOUtils.closeQuietly(out);
+                IOUtils.closeQuietly(stream);
             }
 
             // End the request, get the response code
