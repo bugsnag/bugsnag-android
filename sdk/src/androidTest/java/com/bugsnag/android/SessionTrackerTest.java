@@ -188,4 +188,19 @@ public class SessionTrackerTest {
         sessionTracker.startNewSession(new Date(), user, false);
         assertNull(sessionTracker.getCurrentSession());
     }
+
+    @Test
+    public void startSessionAutoCaptureEnabled() {
+        assertNull(sessionTracker.getCurrentSession());
+        sessionTracker.startNewSession(new Date(), user, false);
+        assertNotNull(sessionTracker.getCurrentSession());
+    }
+
+    @Test
+    public void startSessionAutoCaptureDisabled() {
+        configuration.setAutoCaptureSessions(false);
+        assertNull(sessionTracker.getCurrentSession());
+        sessionTracker.startNewSession(new Date(), user, false);
+        assertNotNull(sessionTracker.getCurrentSession());
+    }
 }
