@@ -91,18 +91,11 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
                         try {
                             configuration.getDelivery().deliver(payload, configuration);
-                        } catch (DeliveryFailureException exception) { // store for later sending
-                            switch (exception.reason) {
-                                case CONNECTIVITY:
-                                    Logger.info("Failed to post session payload");
-                                    sessionStore.write(session);
-                                    break;
-                                case REQUEST_FAILURE:
-                                    Logger.warn("Invalid session tracking payload", exception);
-                                    break;
-                                default:
-                                    break;
-                            }
+                        } catch (NetworkException exception) { // store for later sending
+                            Logger.info("Failed to post session payload");
+                            sessionStore.write(session);
+                        } catch (BadResponseException exception) {
+                            Logger.warn("Invalid session tracking payload", exception);
                         }
                     }
                 });
@@ -165,20 +158,13 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                     try {
                         configuration.getDelivery().deliver(payload, configuration);
                         sessionStore.deleteStoredFiles(storedFiles);
-                    } catch (DeliveryFailureException exception) {
-                        switch (exception.reason) {
-                            case CONNECTIVITY: // store for later sending
-                                sessionStore.cancelQueuedFiles(storedFiles);
-                                Logger.info("Failed to post stored session payload");
-                                break;
-                            case REQUEST_FAILURE:
-                                // drop bad data
-                                Logger.warn("Invalid session tracking payload", exception);
-                                sessionStore.deleteStoredFiles(storedFiles);
-                                break;
-                            default:
-                                break;
-                        }
+                    } catch (NetworkException exception) {
+                        sessionStore.cancelQueuedFiles(storedFiles);
+                        Logger.info("Failed to post stored session payload");
+                    } catch (BadResponseException exception) {
+                        // drop bad data
+                        Logger.warn("Invalid session tracking payload", exception);
+                        sessionStore.deleteStoredFiles(storedFiles);
                     }
                 }
             } finally {

@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
-import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -92,16 +90,4 @@ public class DeliveryCompatTest {
         assertEquals(sessionClient, compat.sessionTrackingApiClient);
     }
 
-    @Test
-    public void testExceptionConversion() {
-        BadResponseException requestFailExc = new BadResponseException("test", 400);
-        DeliveryFailureException responseFail = deliveryCompat.convertException(requestFailExc);
-        assertEquals(REQUEST_FAILURE, responseFail.reason);
-
-        NetworkException connectivityExc = new NetworkException("test", new RuntimeException(""));
-        DeliveryFailureException exc = deliveryCompat.convertException(connectivityExc);
-        assertEquals(CONNECTIVITY, exc.reason);
-
-        assertNull(deliveryCompat.convertException(new RuntimeException()));
-    }
 }

@@ -24,12 +24,10 @@ public interface Delivery {
      * and contain the HTTP headers from {@link Configuration#getSessionApiHeaders()}.
      * <p>
      * If the response status code is not 202, then the implementation must throw
-     * {@link DeliveryFailureException} with a reason of
-     * {@link DeliveryFailureException.Reason#REQUEST_FAILURE}.
+     * {@link BadResponseException}.
      * <p>
      * If the request could not be delivered due to connectivity issues, then the implementation
-     * must throw {@link DeliveryFailureException} with a reason of
-     * {@link DeliveryFailureException.Reason#CONNECTIVITY}, as this will cache the request for
+     * must throw {@link NetworkException}, as this will cache the request for
      * delivery at a future time.
      * <p>
      * See <a href="https://docs.bugsnag.com/api/sessions/">
@@ -37,10 +35,11 @@ public interface Delivery {
      *
      * @param payload The session tracking payload
      * @param config  The configuration by which this request will be sent
-     * @throws DeliveryFailureException when delivery does not receive a 202 status code.
+     * @throws BadResponseException when delivery does not receive a 202 status code.
+     * @throws NetworkException     when delivery is not successful due to connectivity issues.
      */
     void deliver(SessionTrackingPayload payload,
-                 Configuration config) throws DeliveryFailureException;
+                 Configuration config) throws BadResponseException, NetworkException;
 
     /**
      * Posts an Error Report to the Bugsnag Error Reporting API.
@@ -49,12 +48,10 @@ public interface Delivery {
      * and contain the HTTP headers from {@link Configuration#getSessionApiHeaders()}.
      * <p>
      * If the response status code is not 2xx, then the implementation must throw
-     * {@link DeliveryFailureException} with a reason of
-     * {@link DeliveryFailureException.Reason#REQUEST_FAILURE}.
+     * {@link BadResponseException}.
      * <p>
      * If the request could not be delivered due to connectivity issues, then the implementation
-     * must throw {@link DeliveryFailureException} with a reason of
-     * {@link DeliveryFailureException.Reason#CONNECTIVITY}, as this will cache the request for
+     * must throw {@link NetworkException}, as this will cache the request for
      * delivery at a future time.
      * <p>
      * See <a href="https://docs.bugsnag.com/api/error-reporting/">
@@ -62,8 +59,9 @@ public interface Delivery {
      *
      * @param report The error report
      * @param config The configuration by which this request will be sent
-     * @throws DeliveryFailureException when delivery does not receive a 2xx status code.
+     * @throws BadResponseException when delivery does not receive a 2xx status code.
+     * @throws NetworkException     when delivery is not successful due to connectivity issues.
      */
     void deliver(Report report,
-                 Configuration config) throws DeliveryFailureException;
+                 Configuration config) throws BadResponseException, NetworkException;
 }

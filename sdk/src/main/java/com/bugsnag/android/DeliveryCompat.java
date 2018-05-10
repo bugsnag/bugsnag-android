@@ -1,8 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
-import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
-
 /**
  * A compatibility implementation of {@link Delivery} which wraps {@link ErrorReportApiClient} and
  * {@link SessionTrackingApiClient}. This class allows for backwards compatibility for users still
@@ -15,37 +12,20 @@ class DeliveryCompat implements Delivery {
 
     @Override
     public void deliver(SessionTrackingPayload payload,
-                        Configuration config) throws DeliveryFailureException {
+                        Configuration config) throws BadResponseException, NetworkException {
         if (sessionTrackingApiClient != null) {
-
-            try {
-                sessionTrackingApiClient.postSessionTrackingPayload(config.getSessionEndpoint(),
-                    payload, config.getSessionApiHeaders());
-            } catch (NetworkException | BadResponseException exception) {
-                throw convertException(exception);
-            }
+            sessionTrackingApiClient.postSessionTrackingPayload(config.getSessionEndpoint(),
+                payload, config.getSessionApiHeaders());
         }
     }
 
     @Override
-    public void deliver(Report report, Configuration config) throws DeliveryFailureException {
+    public void deliver(Report report, Configuration config)
+        throws BadResponseException, NetworkException {
         if (errorReportApiClient != null) {
-            try {
-                errorReportApiClient.postReport(config.getEndpoint(),
-                    report, config.getErrorApiHeaders());
-            } catch (NetworkException | BadResponseException exception) {
-                throw convertException(exception);
-            }
+            errorReportApiClient.postReport(config.getEndpoint(),
+                report, config.getErrorApiHeaders());
         }
     }
 
-    DeliveryFailureException convertException(Exception exception) {
-        if (exception instanceof NetworkException) {
-            return new DeliveryFailureException(CONNECTIVITY, exception.getMessage(), exception);
-        } else if (exception instanceof BadResponseException) {
-            return new DeliveryFailureException(REQUEST_FAILURE, exception.getMessage(), exception);
-        } else {
-            return null;
-        }
-    }
 }

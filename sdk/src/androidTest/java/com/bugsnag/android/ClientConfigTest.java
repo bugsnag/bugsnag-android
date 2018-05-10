@@ -99,11 +99,14 @@ public class ClientConfigTest {
         Delivery customDelivery = new Delivery() {
             @Override
             public void deliver(SessionTrackingPayload payload,
-                                Configuration config) throws DeliveryFailureException {}
+                                Configuration config)
+                throws BadResponseException, NetworkException {}
 
             @Override
             public void deliver(Report report,
-                                Configuration config) throws DeliveryFailureException {}
+                                Configuration config)
+                throws BadResponseException, NetworkException {}
+
         };
         config.setDelivery(customDelivery);
         client = new Client(context, config);

@@ -1,8 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.DeliveryFailureException.Reason.CONNECTIVITY;
-import static com.bugsnag.android.DeliveryFailureException.Reason.REQUEST_FAILURE;
-
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -25,13 +22,12 @@ class DefaultDelivery implements Delivery {
 
     @Override
     public void deliver(SessionTrackingPayload payload,
-                        Configuration config) throws DeliveryFailureException {
+                        Configuration config) throws BadResponseException, NetworkException {
         String endpoint = config.getSessionEndpoint();
         int status = deliver(endpoint, payload, config.getSessionApiHeaders());
 
         if (status != 202) {
-            throw new DeliveryFailureException(REQUEST_FAILURE,
-                "Request failed with status " + status);
+            throw new BadResponseException("Request failed with status " + status, null);
         } else {
             Logger.info("Completed session tracking request");
         }
@@ -39,13 +35,12 @@ class DefaultDelivery implements Delivery {
 
     @Override
     public void deliver(Report report,
-                        Configuration config) throws DeliveryFailureException {
+                        Configuration config) throws BadResponseException, NetworkException {
         String endpoint = config.getEndpoint();
         int status = deliver(endpoint, report, config.getErrorApiHeaders());
 
         if (status / 100 != 2) {
-            throw new DeliveryFailureException(REQUEST_FAILURE,
-                "Request failed with status " + status);
+            throw new BadResponseException("Request failed with status " + status, null);
         } else {
             Logger.info("Completed error API request");
         }
@@ -53,7 +48,7 @@ class DefaultDelivery implements Delivery {
 
     int deliver(String urlString,
                 JsonStream.Streamable streamable,
-                Map<String, String> headers) throws DeliveryFailureException {
+                Map<String, String> headers) throws NetworkException {
         checkHasNetworkConnection();
         HttpURLConnection conn = null;
 
@@ -83,19 +78,18 @@ class DefaultDelivery implements Delivery {
             // End the request, get the response code
             return conn.getResponseCode();
         } catch (IOException exception) {
-            throw new DeliveryFailureException(CONNECTIVITY,
-                "IOException encountered in request", exception);
+            throw new NetworkException("IOException encountered in request", exception);
         } finally {
             IOUtils.close(conn);
         }
     }
 
-    private void checkHasNetworkConnection() throws DeliveryFailureException {
+    private void checkHasNetworkConnection() throws NetworkException {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         // conserve device battery by avoiding radio use
         if (!(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())) {
-            throw new DeliveryFailureException(CONNECTIVITY, "No network connection available");
+            throw new NetworkException("No network connection available", null);
         }
     }
 }

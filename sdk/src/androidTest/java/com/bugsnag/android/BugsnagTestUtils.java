@@ -95,11 +95,14 @@ final class BugsnagTestUtils {
         return new Delivery() {
             @Override
             public void deliver(SessionTrackingPayload payload,
-                                Configuration config) throws DeliveryFailureException {}
+                                Configuration config)
+                throws BadResponseException, NetworkException {}
 
             @Override
             public void deliver(Report report,
-                                Configuration config) throws DeliveryFailureException {}
+                                Configuration config)
+                throws BadResponseException, NetworkException {}
+
         };
     }
 }

@@ -1252,19 +1252,12 @@ public class Client extends Observable implements Observer {
         try {
             config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
-        } catch (DeliveryFailureException exception) {
-            switch (exception.reason) {
-                case CONNECTIVITY:
-                    Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
-                    // Save error to disk for later sending
-                    errorStore.write(error);
-                    break;
-                case REQUEST_FAILURE:
-                    Logger.info("Bad response when sending data to Bugsnag");
-                    break;
-                default:
-                    break;
-            }
+        } catch (NetworkException exception) {
+            Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+            // Save error to disk for later sending
+            errorStore.write(error);
+        } catch (BadResponseException exception) {
+            Logger.info("Bad response when sending data to Bugsnag");
         } catch (Exception exception) {
             Logger.warn("Problem sending error to Bugsnag", exception);
         }
