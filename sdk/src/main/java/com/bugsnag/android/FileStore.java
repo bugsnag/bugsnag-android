@@ -4,8 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,23 +86,21 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         String filename = getFilename(streamable);
 
-        Writer out = null;
+        JsonStream stream = null;
         lock.lock();
 
         try {
-            out = new FileWriter(filename);
-
-            JsonStream stream = new JsonStream(out);
+            FileOutputStream fos = new FileOutputStream(filename);
+            Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            stream = new JsonStream(out);
             stream.value(streamable);
-            stream.close();
-
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
                 filename), exception);
         } finally {
-            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(stream);
             lock.unlock();
         }
         return null;
