@@ -65,8 +65,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      */
     void startNewSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
         if (configuration.invalidSessionsEndpoint) {
-            Logger.warn("The session tracking endpoint has not been set. " +
-                "Session tracking is disabled");
+            Logger.warn("The session tracking endpoint has not been set. "
+                + "Session tracking is disabled");
             return;
         }
         Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);

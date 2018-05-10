@@ -137,7 +137,6 @@ public class Configuration extends Observable implements Observer {
      *
      * @param endpoint the custom endpoint to send report to
      * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     * instead.
      */
     @Deprecated
     public void setEndpoint(String endpoint) {
@@ -152,7 +151,7 @@ public class Configuration extends Observable implements Observer {
      * Please note that it is recommended that you set both endpoints. If the notify endpoint is
      * missing, an exception will be thrown. If the session endpoint is missing, a warning will be
      * logged and sessions will not be sent automatically.
-     * 
+     *
      * @param notify the notify endpoint
      * @param sessions the sessions endpoint
      *
@@ -168,8 +167,8 @@ public class Configuration extends Observable implements Observer {
             throw new IllegalArgumentException("Notify endpoint cannot be empty or null.");
         }
         if (invalidSessionsEndpoint) {
-            Logger.warn("The session tracking endpoint has not been set. " +
-                "Session tracking is disabled");
+            Logger.warn("The session tracking endpoint has not been set. "
+                + "Session tracking is disabled");
             autoCaptureSessions = false;
         }
         this.endpoint = notify;
@@ -194,7 +193,6 @@ public class Configuration extends Observable implements Observer {
      *
      * @param endpoint the custom endpoint to send session data to
      * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     * instead.
      */
     @Deprecated
     public void setSessionEndpoint(String endpoint) {
