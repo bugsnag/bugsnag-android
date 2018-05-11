@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.support.test.filters.SmallTest;
@@ -52,12 +53,15 @@ public class ConfigurationTest {
         //noinspection ConstantConditions
         config.setEndpoints("http://example.com", null);
         assertFalse(config.shouldAutoCaptureSessions());
+        assertNull(config.getSessionEndpoint());
 
         config.setEndpoints("http://example.com", "");
         assertFalse(config.shouldAutoCaptureSessions());
+        assertNull(config.getSessionEndpoint());
 
         config.setEndpoints("http://example.com", "http://sessions.example.com");
         assertTrue(config.shouldAutoCaptureSessions());
+        assertEquals("http://sessions.example.com", config.getSessionEndpoint());
     }
 
     @Test

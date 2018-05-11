@@ -31,8 +31,8 @@ public class Configuration extends Observable implements Observer {
     private String buildUuid;
     private String appVersion;
     private String context;
-    private String endpoint = "https://notify.bugsnag.com";
-    private String sessionEndpoint = "https://sessions.bugsnag.com";
+    private volatile String endpoint = "https://notify.bugsnag.com";
+    private volatile String sessionEndpoint = "https://sessions.bugsnag.com";
 
     private String[] ignoreClasses;
     @Nullable
@@ -56,7 +56,6 @@ public class Configuration extends Observable implements Observer {
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
     private String notifierType;
-    volatile boolean invalidSessionsEndpoint;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -160,20 +159,24 @@ public class Configuration extends Observable implements Observer {
     @SuppressWarnings("ConstantConditions")
     public void setEndpoints(@NonNull String notify, @NonNull String sessions)
         throws IllegalArgumentException {
-        boolean invalidNotify = TextUtils.isEmpty(notify);
-        invalidSessionsEndpoint = TextUtils.isEmpty(sessions);
 
-        if (invalidNotify) {
+        if (TextUtils.isEmpty(notify)) {
             throw new IllegalArgumentException("Notify endpoint cannot be empty or null.");
+        } else {
+            this.endpoint = notify;
         }
+
+        boolean invalidSessionsEndpoint = TextUtils.isEmpty(sessions);
+
         if (invalidSessionsEndpoint) {
             Logger.warn("The session tracking endpoint has not been set. "
                 + "Session tracking is disabled");
             autoCaptureSessions = false;
+            this.sessionEndpoint = null;
+        } else {
+            this.sessionEndpoint = sessions;
         }
-        this.endpoint = notify;
-        this.sessionEndpoint = sessions;
-        this.autoCaptureSessions = !invalidNotify && !invalidSessionsEndpoint;
+        this.autoCaptureSessions = !invalidSessionsEndpoint;
     }
 
     /**
