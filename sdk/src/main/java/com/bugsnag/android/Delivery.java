@@ -23,23 +23,21 @@ public interface Delivery {
      * This request must be delivered to the endpoint at {@link Configuration#getSessionEndpoint()},
      * and contain the HTTP headers from {@link Configuration#getSessionApiHeaders()}.
      * <p>
-     * If the response status code is not 202, then the implementation must throw
-     * {@link BadResponseException}.
-     * <p>
-     * If the request could not be delivered due to connectivity issues, then the implementation
-     * must throw {@link NetworkException}, as this will cache the request for
-     * delivery at a future time.
+     * If the request was not successful and you wish to try again later, throw
+     * {@link BadResponseException}. The notifier will cache the payload and initiate delivery
+     * at a future time. For example, if you are unable to obtain a network connection, it would
+     * make sense to attempt delivery later on, whereas if the status code was 400, it would not.
      * <p>
      * See <a href="https://docs.bugsnag.com/api/sessions/">
      * https://docs.bugsnag.com/api/sessions/</a>
      *
      * @param payload The session tracking payload
      * @param config  The configuration by which this request will be sent
-     * @throws BadResponseException when delivery does not receive a 202 status code.
-     * @throws NetworkException     when delivery is not successful due to connectivity issues.
+     * @throws DeliveryFailureException when delivery is not successful and
+     *                                  the report should be stored for future attempts.
      */
     void deliver(SessionTrackingPayload payload,
-                 Configuration config) throws BadResponseException, NetworkException;
+                 Configuration config) throws DeliveryFailureException;
 
     /**
      * Posts an Error Report to the Bugsnag Error Reporting API.
@@ -47,21 +45,19 @@ public interface Delivery {
      * This request must be delivered to the endpoint at {@link Configuration#getSessionEndpoint()},
      * and contain the HTTP headers from {@link Configuration#getSessionApiHeaders()}.
      * <p>
-     * If the response status code is not 2xx, then the implementation must throw
-     * {@link BadResponseException}.
-     * <p>
-     * If the request could not be delivered due to connectivity issues, then the implementation
-     * must throw {@link NetworkException}, as this will cache the request for
-     * delivery at a future time.
+     * If the request was not successful and you wish to try again later, throw
+     * {@link BadResponseException}. The notifier will cache the payload and initiate delivery
+     * at a future time. For example, if you are unable to obtain a network connection, it would
+     * make sense to attempt delivery later on, whereas if the status code was 400, it would not.
      * <p>
      * See <a href="https://docs.bugsnag.com/api/error-reporting/">
      * https://docs.bugsnag.com/api/error-reporting/</a>
      *
      * @param report The error report
      * @param config The configuration by which this request will be sent
-     * @throws BadResponseException when delivery does not receive a 2xx status code.
-     * @throws NetworkException     when delivery is not successful due to connectivity issues.
+     * @throws DeliveryFailureException when delivery is not successful and
+     *                                  the report should be stored for future attempts.
      */
     void deliver(Report report,
-                 Configuration config) throws BadResponseException, NetworkException;
+                 Configuration config) throws DeliveryFailureException;
 }
