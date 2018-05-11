@@ -22,12 +22,12 @@ class DefaultDelivery implements Delivery {
 
     @Override
     public void deliver(SessionTrackingPayload payload,
-                        Configuration config) throws BadResponseException, NetworkException {
+                        Configuration config) throws DeliveryFailureException {
         String endpoint = config.getSessionEndpoint();
         int status = deliver(endpoint, payload, config.getSessionApiHeaders());
 
         if (status != 202) {
-            throw new BadResponseException("Request failed with status " + status, null);
+            Logger.warn("Session API request failed with status " + status, null);
         } else {
             Logger.info("Completed session tracking request");
         }
@@ -35,12 +35,12 @@ class DefaultDelivery implements Delivery {
 
     @Override
     public void deliver(Report report,
-                        Configuration config) throws BadResponseException, NetworkException {
+                        Configuration config) throws DeliveryFailureException {
         String endpoint = config.getEndpoint();
         int status = deliver(endpoint, report, config.getErrorApiHeaders());
 
         if (status / 100 != 2) {
-            throw new BadResponseException("Request failed with status " + status, null);
+            Logger.warn("Error API request failed with status " + status, null);
         } else {
             Logger.info("Completed error API request");
         }
@@ -48,7 +48,7 @@ class DefaultDelivery implements Delivery {
 
     int deliver(String urlString,
                 JsonStream.Streamable streamable,
-                Map<String, String> headers) throws NetworkException {
+                Map<String, String> headers) throws DeliveryFailureException {
         checkHasNetworkConnection();
         HttpURLConnection conn = null;
 
@@ -78,18 +78,18 @@ class DefaultDelivery implements Delivery {
             // End the request, get the response code
             return conn.getResponseCode();
         } catch (IOException exception) {
-            throw new NetworkException("IOException encountered in request", exception);
+            throw new DeliveryFailureException("IOException encountered in request", exception);
         } finally {
             IOUtils.close(conn);
         }
     }
 
-    private void checkHasNetworkConnection() throws NetworkException {
+    private void checkHasNetworkConnection() throws DeliveryFailureException {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         // conserve device battery by avoiding radio use
         if (!(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())) {
-            throw new NetworkException("No network connection available", null);
+            throw new DeliveryFailureException("No network connection available", null);
         }
     }
 }
