@@ -92,7 +92,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         try {
                             configuration.getDelivery().deliver(payload, configuration);
                         } catch (DeliveryFailureException exception) { // store for later sending
-                            Logger.info("Storing session payload for future delivery");
+                            Logger.warn("Storing session payload for future delivery", exception);
                             sessionStore.write(session);
                         } catch (Exception exception) {
                             Logger.warn("Dropping invalid session tracking payload", exception);
@@ -160,7 +160,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         sessionStore.deleteStoredFiles(storedFiles);
                     } catch (DeliveryFailureException exception) {
                         sessionStore.cancelQueuedFiles(storedFiles);
-                        Logger.info("Leaving session payload for future delivery");
+                        Logger.warn("Leaving session payload for future delivery", exception);
                     } catch (Exception exception) {
                         // drop bad data
                         Logger.warn("Deleting invalid session tracking payload", exception);

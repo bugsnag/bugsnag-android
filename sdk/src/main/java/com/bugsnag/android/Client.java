@@ -1253,7 +1253,7 @@ public class Client extends Observable implements Observer {
             config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
         } catch (DeliveryFailureException exception) {
-            Logger.info("Could not send error(s) to Bugsnag, saving to disk to send later");
+            Logger.warn("Could not send error(s) to Bugsnag, saving to disk to send later", exception);
             errorStore.write(error);
         } catch (Exception exception) {
             Logger.warn("Problem sending error to Bugsnag", exception);
