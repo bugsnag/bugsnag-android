@@ -90,4 +90,13 @@ public class DeliveryCompatTest {
         assertEquals(sessionClient, compat.sessionTrackingApiClient);
     }
 
+    @Test(expected = DeliveryFailureException.class)
+    public void testExceptionConversion() throws Exception {
+        deliveryCompat.handleException(new NetworkException("", null));
+    }
+
+    @Test
+    public void testSwallowExceptionConversion() throws Exception { // no exception thrown
+        deliveryCompat.handleException(new BadResponseException("", null));
+    }
 }

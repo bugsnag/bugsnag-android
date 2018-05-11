@@ -12,19 +12,34 @@ class DeliveryCompat implements Delivery {
 
     @Override
     public void deliver(SessionTrackingPayload payload,
-                        Configuration config) throws BadResponseException, NetworkException {
+                        Configuration config) throws DeliveryFailureException {
         if (sessionTrackingApiClient != null) {
-            sessionTrackingApiClient.postSessionTrackingPayload(config.getSessionEndpoint(),
-                payload, config.getSessionApiHeaders());
+            try {
+                sessionTrackingApiClient.postSessionTrackingPayload(config.getSessionEndpoint(),
+                    payload, config.getSessionApiHeaders());
+            } catch (Throwable throwable) {
+                handleException(throwable);
+            }
         }
     }
 
     @Override
-    public void deliver(Report report, Configuration config)
-        throws BadResponseException, NetworkException {
+    public void deliver(Report report, Configuration config) throws DeliveryFailureException {
         if (errorReportApiClient != null) {
-            errorReportApiClient.postReport(config.getEndpoint(),
-                report, config.getErrorApiHeaders());
+            try {
+                errorReportApiClient.postReport(config.getEndpoint(),
+                    report, config.getErrorApiHeaders());
+            } catch (Throwable throwable) {
+                handleException(throwable);
+            }
+        }
+    }
+
+    void handleException(Throwable throwable) throws DeliveryFailureException {
+        if (throwable instanceof NetworkException) {
+            throw new DeliveryFailureException(throwable.getMessage(), throwable);
+        } else {
+            Logger.warn("Ignoring Exception, this API is deprecated", throwable);
         }
     }
 
