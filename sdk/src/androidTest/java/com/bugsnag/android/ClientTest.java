@@ -248,6 +248,11 @@ public class ClientTest {
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
         assertEquals(1, client.breadcrumbs.store.size());
+
+        Breadcrumb poll = client.breadcrumbs.store.poll();
+        assertEquals(BreadcrumbType.MANUAL, poll.getType());
+        assertEquals("manual", poll.getName());
+        assertEquals("another", poll.getMetadata().get("message"));
     }
 
     @Test
@@ -261,7 +266,7 @@ public class ClientTest {
         client.clearBreadcrumbs();
         assertEquals(0, client.breadcrumbs.store.size());
     }
-  
+
     @Test
     public void testClientAddToTab() {
         Client client = generateClient();
