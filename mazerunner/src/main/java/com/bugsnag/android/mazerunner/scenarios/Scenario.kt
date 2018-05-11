@@ -20,7 +20,7 @@ abstract internal class Scenario(protected val config: Configuration,
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
             override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
-                throw NetworkException("Session Delivery NOP", RuntimeException("NOP"))
+                throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
             }
 
             override fun deliver(report: Report?, config: Configuration?) {
@@ -40,8 +40,7 @@ abstract internal class Scenario(protected val config: Configuration,
             }
 
             override fun deliver(report: Report?, config: Configuration?) {
-                throw NetworkException("Session Delivery NOP", RuntimeException("NOP"))
-
+                throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
             }
         }
 
