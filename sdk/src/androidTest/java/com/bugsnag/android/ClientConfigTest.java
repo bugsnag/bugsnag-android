@@ -100,12 +100,12 @@ public class ClientConfigTest {
             @Override
             public void deliver(SessionTrackingPayload payload,
                                 Configuration config)
-                throws BadResponseException, NetworkException {}
+                throws DeliveryFailureException {}
 
             @Override
             public void deliver(Report report,
                                 Configuration config)
-                throws BadResponseException, NetworkException {}
+                throws DeliveryFailureException {}
 
         };
         config.setDelivery(customDelivery);

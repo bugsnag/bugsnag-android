@@ -91,11 +91,11 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
                         try {
                             configuration.getDelivery().deliver(payload, configuration);
-                        } catch (NetworkException exception) { // store for later sending
-                            Logger.info("Failed to post session payload");
+                        } catch (DeliveryFailureException exception) { // store for later sending
+                            Logger.info("Storing session payload for future delivery");
                             sessionStore.write(session);
-                        } catch (BadResponseException exception) {
-                            Logger.warn("Invalid session tracking payload", exception);
+                        } catch (Exception exception) {
+                            Logger.warn("Dropping invalid session tracking payload", exception);
                         }
                     }
                 });
@@ -158,12 +158,12 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                     try {
                         configuration.getDelivery().deliver(payload, configuration);
                         sessionStore.deleteStoredFiles(storedFiles);
-                    } catch (NetworkException exception) {
+                    } catch (DeliveryFailureException exception) {
                         sessionStore.cancelQueuedFiles(storedFiles);
-                        Logger.info("Failed to post stored session payload");
-                    } catch (BadResponseException exception) {
+                        Logger.info("Leaving session payload for future delivery");
+                    } catch (Exception exception) {
                         // drop bad data
-                        Logger.warn("Invalid session tracking payload", exception);
+                        Logger.warn("Deleting invalid session tracking payload", exception);
                         sessionStore.deleteStoredFiles(storedFiles);
                     }
                 }

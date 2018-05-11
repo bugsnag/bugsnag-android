@@ -127,18 +127,14 @@ class ErrorStore extends FileStore<Error> {
 
             deleteStoredFiles(Collections.singleton(errorFile));
             Logger.info("Deleting sent error file " + errorFile.getName());
-        } catch (NetworkException exception) {
+        } catch (DeliveryFailureException exception) {
             cancelQueuedFiles(Collections.singleton(errorFile));
             Logger.warn("Could not send previously saved error(s)"
                         + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
-            handleRequestFailure(errorFile, exception);
+            deleteStoredFiles(Collections.singleton(errorFile));
+            Logger.warn("Problem sending unsent error from disk", exception);
         }
-    }
-
-    private void handleRequestFailure(File errorFile, Exception exception) {
-        deleteStoredFiles(Collections.singleton(errorFile));
-        Logger.warn("Problem sending unsent error from disk", exception);
     }
 
     boolean isLaunchCrashReport(File file) {
