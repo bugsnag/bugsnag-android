@@ -2,13 +2,12 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.bugsnag.android.Bugsnag.client
 
 /**
  * Accesses the session tracker and flushes all stored sessions
  */
-internal fun flushAllSessions() {
-    Bugsnag.getClient().sessionTracker.flushStoredSessions()
+internal fun flushAllSessions(client: Client) {
+    Async.run(client.sessionTracker::flushStoredSessions)
 }
 
 internal fun flushErrorStoreAsync(client: Client, apiClient: ErrorReportApiClient) {
@@ -37,5 +36,32 @@ internal fun createSlowErrorApiClient(context: Context): ErrorReportApiClient {
 internal fun writeErrorToStore(client: Client) {
     val error = Error.Builder(Configuration("api-key"), RuntimeException(), null).build()
     client.errorStore.write(error)
+}
+
+/**
+ * Sets a NOP implementation for the Session Tracking API, preventing delivery
+ */
+internal fun disableSessionDelivery(client: Client) {
+    client.setSessionTrackingApiClient({ _, _, _ ->
+        throw NetworkException("Session Delivery NOP", RuntimeException("NOP"))
+    })
+}
+
+/**
+ * Sets a NOP implementation for the Error Tracking API, preventing delivery
+ */
+internal fun disableReportDelivery(client: Client) {
+    client.setErrorReportApiClient({ _, _, _ ->
+        throw NetworkException("Error Delivery NOP", RuntimeException("NOP"))
+    })
+}
+
+/**
+ * Sets a NOP implementation for the Error Tracking API and the Session Tracking API,
+ * preventing delivery
+ */
+internal fun disableAllDelivery(client: Client) {
+    disableSessionDelivery(client)
+    disableReportDelivery(client)
 }
 
