@@ -24,7 +24,7 @@ public interface Delivery {
      * and contain the HTTP headers from {@link Configuration#getSessionApiHeaders()}.
      * <p>
      * If the request was not successful and you wish to try again later, throw
-     * {@link BadResponseException}. The notifier will cache the payload and initiate delivery
+     * {@link DeliveryFailureException}. The notifier will cache the payload and initiate delivery
      * at a future time. For example, if you are unable to obtain a network connection, it would
      * make sense to attempt delivery later on, whereas if the status code was 400, it would not.
      * <p>
@@ -46,7 +46,7 @@ public interface Delivery {
      * and contain the HTTP headers from {@link Configuration#getSessionApiHeaders()}.
      * <p>
      * If the request was not successful and you wish to try again later, throw
-     * {@link BadResponseException}. The notifier will cache the payload and initiate delivery
+     * {@link DeliveryFailureException}. The notifier will cache the payload and initiate delivery
      * at a future time. For example, if you are unable to obtain a network connection, it would
      * make sense to attempt delivery later on, whereas if the status code was 400, it would not.
      * <p>
