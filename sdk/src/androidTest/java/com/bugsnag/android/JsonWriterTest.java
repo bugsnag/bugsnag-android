@@ -16,11 +16,11 @@
 
 package com.bugsnag.android;
 
-import android.support.test.filters.MediumTest;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import android.support.test.filters.MediumTest;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,9 +29,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @MediumTest
@@ -331,6 +328,7 @@ public final class JsonWriterTest {
         assertEquals("[null]", stringWriter.toString());
     }
 
+    @SuppressWarnings("AvoidEscapedUnicodeCharacters")
     @Test public void testStrings() throws IOException {
         StringWriter stringWriter = new StringWriter();
         JsonWriter jsonWriter = new JsonWriter(stringWriter);
