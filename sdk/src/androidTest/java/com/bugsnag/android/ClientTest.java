@@ -220,25 +220,6 @@ public class ClientTest {
     }
 
     @Test
-    public void testSessionTrackerApiClient() throws Exception {
-        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        assertTrue(client.sessionTracker.getApiClient() instanceof DefaultHttpClient);
-
-        SessionTrackingApiClient customClient = new SessionTrackingApiClient() {
-            @Override
-            public void postSessionTrackingPayload(String urlString,
-                                                   SessionTrackingPayload payload,
-                                                   Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        };
-        client.setSessionTrackingApiClient(customClient);
-        assertFalse(client.sessionTracker.getApiClient() instanceof DefaultHttpClient);
-        assertEquals(customClient, client.sessionTracker.getApiClient());
-    }
-
-    @Test
     public void testClientAddToTab() {
         Client client = generateClient();
         client.addToTab("drink", "cola", "cherry");
@@ -252,6 +233,11 @@ public class ClientTest {
 
         client.clearTab("drink");
         assertTrue(client.getMetaData().getTab("drink").isEmpty());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testApiClientNullValidation() {
+        generateClient().setSessionTrackingApiClient(null);
     }
 
 }

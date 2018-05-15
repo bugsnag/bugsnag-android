@@ -31,8 +31,9 @@ public class SessionTrackerTest {
     @Before
     public void setUp() throws Exception {
         configuration = new Configuration("test");
-        sessionTracker = new SessionTracker(configuration, generateClient(), generateSessionStore(),
-            generateSessionTrackingApiClient());
+        configuration.setDelivery(BugsnagTestUtils.generateDelivery());
+        sessionTracker
+            = new SessionTracker(configuration, generateClient(), generateSessionStore());
         configuration.setAutoCaptureSessions(true);
         user = new User();
     }
@@ -125,7 +126,7 @@ public class SessionTrackerTest {
     public void testInForegroundDuration() throws Exception {
         long now = System.currentTimeMillis();
         sessionTracker = new SessionTracker(configuration, generateClient(),
-            0, generateSessionStore(), generateSessionTrackingApiClient());
+            0, generateSessionStore());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
         assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
@@ -146,7 +147,7 @@ public class SessionTrackerTest {
     @Test
     public void testZeroSessionTimeout() throws Exception {
         sessionTracker = new SessionTracker(configuration, generateClient(),
-            0, generateSessionStore(), generateSessionTrackingApiClient());
+            0, generateSessionStore());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -161,7 +162,7 @@ public class SessionTrackerTest {
     @Test
     public void testSessionTimeout() throws Exception {
         sessionTracker = new SessionTracker(configuration, generateClient(),
-            100, generateSessionStore(), generateSessionTrackingApiClient());
+            100, generateSessionStore());
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);

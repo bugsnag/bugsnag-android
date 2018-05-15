@@ -11,13 +11,12 @@ internal class AsyncErrorLaunchScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
 
     override fun run() {
+        config.delivery = createSlowDelivery(context)
         super.run()
-        val apiClient = createSlowErrorApiClient(context)
-        Bugsnag.setErrorReportApiClient(apiClient)
 
         writeErrorToStore(Bugsnag.getClient())
-        flushErrorStoreOnLaunch(Bugsnag.getClient(), apiClient)
-        flushErrorStoreAsync(Bugsnag.getClient(), apiClient)
+        flushErrorStoreOnLaunch(Bugsnag.getClient())
+        flushErrorStoreAsync(Bugsnag.getClient())
         Thread.sleep(50)
     }
 

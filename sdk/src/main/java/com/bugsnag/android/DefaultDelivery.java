@@ -12,48 +12,44 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClient {
+class DefaultDelivery implements Delivery {
 
     private final ConnectivityManager connectivityManager;
 
-    DefaultHttpClient(ConnectivityManager connectivityManager) {
+    DefaultDelivery(ConnectivityManager connectivityManager) {
         this.connectivityManager = connectivityManager;
     }
 
     @Override
-    public void postReport(String urlString,
-                           Report report,
-                           Map<String, String> headers)
-        throws NetworkException, BadResponseException {
-
-        int status = makeRequest(urlString, report, headers);
-
-        if (status / 100 != 2) {
-            throw new BadResponseException(urlString, status);
-        } else {
-            Logger.info("Completed error API request");
-        }
-    }
-
-    @Override
-    public void postSessionTrackingPayload(String urlString,
-                                           SessionTrackingPayload payload,
-                                           Map<String, String> headers)
-        throws NetworkException, BadResponseException {
-
-        int status = makeRequest(urlString, payload, headers);
+    public void deliver(SessionTrackingPayload payload,
+                        Configuration config) throws DeliveryFailureException {
+        String endpoint = config.getSessionEndpoint();
+        int status = deliver(endpoint, payload, config.getSessionApiHeaders());
 
         if (status != 202) {
-            throw new BadResponseException(urlString, status);
+            Logger.warn("Session API request failed with status " + status, null);
         } else {
             Logger.info("Completed session tracking request");
         }
     }
 
-    private int makeRequest(String urlString,
-                            JsonStream.Streamable streamable,
-                            Map<String, String> headers) throws NetworkException {
-        checkHasNetworkConnection(urlString);
+    @Override
+    public void deliver(Report report,
+                        Configuration config) throws DeliveryFailureException {
+        String endpoint = config.getEndpoint();
+        int status = deliver(endpoint, report, config.getErrorApiHeaders());
+
+        if (status / 100 != 2) {
+            Logger.warn("Error API request failed with status " + status, null);
+        } else {
+            Logger.info("Completed error API request");
+        }
+    }
+
+    int deliver(String urlString,
+                JsonStream.Streamable streamable,
+                Map<String, String> headers) throws DeliveryFailureException {
+        checkHasNetworkConnection();
         HttpURLConnection conn = null;
 
         try {
@@ -79,24 +75,21 @@ class DefaultHttpClient implements ErrorReportApiClient, SessionTrackingApiClien
                 IOUtils.closeQuietly(stream);
             }
 
-
             // End the request, get the response code
             return conn.getResponseCode();
         } catch (IOException exception) {
-            throw new NetworkException(urlString, exception);
+            throw new DeliveryFailureException("IOException encountered in request", exception);
         } finally {
             IOUtils.close(conn);
         }
     }
 
-    private void checkHasNetworkConnection(String urlString) throws NetworkException {
+    private void checkHasNetworkConnection() throws DeliveryFailureException {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         // conserve device battery by avoiding radio use
         if (!(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())) {
-            RuntimeException rex = new RuntimeException("No network connection available");
-            throw new NetworkException(urlString, rex);
+            throw new DeliveryFailureException("No network connection available", null);
         }
     }
-
 }
