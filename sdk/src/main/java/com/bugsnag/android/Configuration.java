@@ -171,7 +171,6 @@ public class Configuration extends Observable implements Observer {
         if (invalidSessionsEndpoint) {
             Logger.warn("The session tracking endpoint has not been set. "
                 + "Session tracking is disabled");
-            autoCaptureSessions = false;
             this.sessionEndpoint = null;
         } else {
             this.sessionEndpoint = sessions;
