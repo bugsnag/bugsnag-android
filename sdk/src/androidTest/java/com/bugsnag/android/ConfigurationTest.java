@@ -60,8 +60,15 @@ public class ConfigurationTest {
         assertNull(config.getSessionEndpoint());
 
         config.setEndpoints("http://example.com", "http://sessions.example.com");
-        assertTrue(config.shouldAutoCaptureSessions());
+        assertFalse(config.shouldAutoCaptureSessions());
         assertEquals("http://sessions.example.com", config.getSessionEndpoint());
+    }
+
+    @Test
+    public void testAutoCaptureOverride() {
+        config.setAutoCaptureSessions(false);
+        config.setEndpoints("http://example.com", "http://example.com");
+        assertFalse(config.shouldAutoCaptureSessions());
     }
 
     @Test
