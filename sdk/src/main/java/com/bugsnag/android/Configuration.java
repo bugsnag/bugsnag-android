@@ -156,7 +156,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @throws IllegalArgumentException if the notify endpoint is empty or null
      */
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings("ConstantConditions") // ignore checkstyle nullability warnings
     public void setEndpoints(@NonNull String notify, @NonNull String sessions)
         throws IllegalArgumentException {
 
