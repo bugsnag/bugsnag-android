@@ -1,0 +1,3 @@
+echo "Running lint + checkstyle before push";
+./gradlew lint checkstyle
+
