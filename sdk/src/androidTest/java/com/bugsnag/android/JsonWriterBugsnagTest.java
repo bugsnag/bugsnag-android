@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
+
 import android.support.test.filters.MediumTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -9,8 +11,6 @@ import org.junit.runner.RunWith;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 @MediumTest
