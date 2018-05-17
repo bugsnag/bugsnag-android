@@ -22,11 +22,10 @@ public class BreadcrumbLifecycleCrashTest {
      */
     @Before
     public void setUp() throws Exception {
-        Configuration configuration = new Configuration("api-key");
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
         Context context = InstrumentationRegistry.getContext();
         SessionStore sessionStore = new SessionStore(configuration, context);
-        SessionTrackingApiClient apiClient = BugsnagTestUtils.generateSessionTrackingApiClient();
-        sessionTracker = new SessionTracker(configuration, null, sessionStore, apiClient);
+        sessionTracker = new SessionTracker(configuration, null, sessionStore);
     }
 
     @Test

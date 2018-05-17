@@ -7,9 +7,10 @@ import java.util.Map;
  * place of the default implementation, by calling
  * {@link Bugsnag#setErrorReportApiClient(ErrorReportApiClient)}
  *
- * @see DefaultHttpClient
+ * @deprecated use {@link Delivery} to send error reports
  */
 @SuppressWarnings("WeakerAccess")
+@Deprecated
 public interface ErrorReportApiClient {
 
     /**
