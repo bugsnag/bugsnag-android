@@ -97,6 +97,6 @@ public class DeliveryCompatTest {
 
     @Test
     public void testSwallowExceptionConversion() throws Exception { // no exception thrown
-        deliveryCompat.handleException(new BadResponseException("", null));
+        deliveryCompat.handleException(new BadResponseException("", 0));
     }
 }
