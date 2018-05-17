@@ -8,7 +8,8 @@ Deprecation notice:
 
 SessionTrackingApiClient and ErrorApiClient are now deprecated in favour of the Delivery interface.
 If you configure a custom HTTP client with Bugsnag, it is recommended that you migrate over to this new API.
-Further information is available [in the docs.](https://docs.bugsnag.com/platforms/android/sdk/configuration-options/).
+Further information is available [in the configuration option reference.](https://docs.bugsnag.com/platforms/android/sdk/configuration-options/#setdelivery)
+and [class documentation for `Delivery`](https://bugsnag.github.io/bugsnag-android/com/bugsnag/android/Delivery.html)
 
 * Expose Delivery API interface for configuring custom HTTP clients
 [#299](https://github.com/bugsnag/bugsnag-android/pull/299)
