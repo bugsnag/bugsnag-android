@@ -220,6 +220,35 @@ public class ClientTest {
     }
 
     @Test
+    public void testMaxBreadcrumbs() {
+        Client client = generateClient();
+        assertEquals(0, client.breadcrumbs.store.size());
+
+        client.setMaxBreadcrumbs(1);
+
+        client.leaveBreadcrumb("test");
+        client.leaveBreadcrumb("another");
+        assertEquals(1, client.breadcrumbs.store.size());
+
+        Breadcrumb poll = client.breadcrumbs.store.poll();
+        assertEquals(BreadcrumbType.MANUAL, poll.getType());
+        assertEquals("manual", poll.getName());
+        assertEquals("another", poll.getMetadata().get("message"));
+    }
+
+    @Test
+    public void testClearBreadcrumbs() {
+        Client client = generateClient();
+        assertEquals(0, client.breadcrumbs.store.size());
+
+        client.leaveBreadcrumb("test");
+        assertEquals(1, client.breadcrumbs.store.size());
+
+        client.clearBreadcrumbs();
+        assertEquals(0, client.breadcrumbs.store.size());
+    }
+
+    @Test
     public void testClientAddToTab() {
         Client client = generateClient();
         client.addToTab("drink", "cola", "cherry");
