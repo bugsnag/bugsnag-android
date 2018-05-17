@@ -42,8 +42,7 @@ final class BugsnagTestUtils {
 
     static Client generateClient() {
         Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        client.setErrorReportApiClient(generateErrorReportApiClient());
-        client.setSessionTrackingApiClient(generateSessionTrackingApiClient());
+        client.config.setDelivery(generateDelivery());
         return client;
     }
 
@@ -52,12 +51,14 @@ final class BugsnagTestUtils {
     }
 
     static Configuration generateConfiguration() {
-        return new Configuration("test");
+        Configuration configuration = new Configuration("test");
+        configuration.setDelivery(generateDelivery());
+        return configuration;
     }
 
     static SessionTracker generateSessionTracker() {
         return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient(),
-            generateSessionStore(), generateSessionTrackingApiClient());
+            generateSessionStore());
     }
 
     @NonNull
@@ -87,6 +88,21 @@ final class BugsnagTestUtils {
                 throws NetworkException, BadResponseException {
 
             }
+        };
+    }
+
+    public static Delivery generateDelivery() {
+        return new Delivery() {
+            @Override
+            public void deliver(SessionTrackingPayload payload,
+                                Configuration config)
+                throws DeliveryFailureException {}
+
+            @Override
+            public void deliver(Report report,
+                                Configuration config)
+                throws DeliveryFailureException {}
+
         };
     }
 }

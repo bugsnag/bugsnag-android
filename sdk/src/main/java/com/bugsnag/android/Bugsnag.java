@@ -299,7 +299,10 @@ public final class Bugsnag {
      * https://docs.bugsnag.com/api/error-reporting/</a>
      *
      * @param errorReportApiClient the custom HTTP client implementation
+     *
+     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
      */
+    @Deprecated
     public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
         getClient().setErrorReportApiClient(errorReportApiClient);
     }
@@ -313,10 +316,14 @@ public final class Bugsnag {
      * the Bugsnag API.
      *
      * @param apiClient the custom HTTP client implementation
+     *
+     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
      */
+    @Deprecated
     public static void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
         getClient().setSessionTrackingApiClient(apiClient);
     }
+
 
     /**
      * Add a "before notify" callback, to execute code before every

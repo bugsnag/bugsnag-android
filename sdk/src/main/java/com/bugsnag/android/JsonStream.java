@@ -3,9 +3,12 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Writer;
 
 public class JsonStream extends JsonWriter {
@@ -57,9 +60,10 @@ public class JsonStream extends JsonWriter {
         beforeValue(false); // add comma if in array
 
         // Copy the file contents onto the stream
-        FileReader input = null;
+        Reader input = null;
         try {
-            input = new FileReader(file);
+            FileInputStream fis = new FileInputStream(file);
+            input = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
             IOUtils.copy(input, out);
         } finally {
             IOUtils.closeQuietly(input);

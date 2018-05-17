@@ -11,13 +11,13 @@ internal class AsyncErrorConnectivityScenario(config: Configuration,
                                               context: Context) : Scenario(config, context) {
 
     override fun run() {
+        val delivery = createSlowDelivery(context)
+        config.delivery = delivery
         super.run()
-        val apiClient = createSlowErrorApiClient(context)
-        Bugsnag.setErrorReportApiClient(apiClient)
 
         writeErrorToStore(Bugsnag.getClient())
-        flushErrorStoreAsync(Bugsnag.getClient(), apiClient)
-        flushErrorStoreOnLaunch(Bugsnag.getClient(), apiClient)
+        flushErrorStoreAsync(Bugsnag.getClient())
+        flushErrorStoreOnLaunch(Bugsnag.getClient())
         Thread.sleep(50)
     }
 

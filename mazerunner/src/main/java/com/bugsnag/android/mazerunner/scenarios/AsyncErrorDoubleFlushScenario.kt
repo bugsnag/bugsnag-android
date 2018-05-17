@@ -11,13 +11,12 @@ internal class AsyncErrorDoubleFlushScenario(config: Configuration,
                                              context: Context) : Scenario(config, context) {
 
     override fun run() {
+        config.delivery = createSlowDelivery(context)
         super.run()
-        val apiClient = createSlowErrorApiClient(context)
-        Bugsnag.setErrorReportApiClient(apiClient)
 
         writeErrorToStore(Bugsnag.getClient())
-        flushErrorStoreAsync(Bugsnag.getClient(), apiClient)
-        flushErrorStoreAsync(Bugsnag.getClient(), apiClient)
+        flushErrorStoreAsync(Bugsnag.getClient())
+        flushErrorStoreAsync(Bugsnag.getClient())
         Thread.sleep(50)
     }
 

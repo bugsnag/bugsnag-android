@@ -220,22 +220,32 @@ public class ClientTest {
     }
 
     @Test
-    public void testSessionTrackerApiClient() throws Exception {
-        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        assertTrue(client.sessionTracker.getApiClient() instanceof DefaultHttpClient);
+    public void testMaxBreadcrumbs() {
+        Client client = generateClient();
+        assertEquals(0, client.breadcrumbs.store.size());
 
-        SessionTrackingApiClient customClient = new SessionTrackingApiClient() {
-            @Override
-            public void postSessionTrackingPayload(String urlString,
-                                                   SessionTrackingPayload payload,
-                                                   Map<String, String> headers)
-                throws NetworkException, BadResponseException {
+        client.setMaxBreadcrumbs(1);
 
-            }
-        };
-        client.setSessionTrackingApiClient(customClient);
-        assertFalse(client.sessionTracker.getApiClient() instanceof DefaultHttpClient);
-        assertEquals(customClient, client.sessionTracker.getApiClient());
+        client.leaveBreadcrumb("test");
+        client.leaveBreadcrumb("another");
+        assertEquals(1, client.breadcrumbs.store.size());
+
+        Breadcrumb poll = client.breadcrumbs.store.poll();
+        assertEquals(BreadcrumbType.MANUAL, poll.getType());
+        assertEquals("manual", poll.getName());
+        assertEquals("another", poll.getMetadata().get("message"));
+    }
+
+    @Test
+    public void testClearBreadcrumbs() {
+        Client client = generateClient();
+        assertEquals(0, client.breadcrumbs.store.size());
+
+        client.leaveBreadcrumb("test");
+        assertEquals(1, client.breadcrumbs.store.size());
+
+        client.clearBreadcrumbs();
+        assertEquals(0, client.breadcrumbs.store.size());
     }
 
     @Test
@@ -252,6 +262,11 @@ public class ClientTest {
 
         client.clearTab("drink");
         assertTrue(client.getMetaData().getTab("drink").isEmpty());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testApiClientNullValidation() {
+        generateClient().setSessionTrackingApiClient(null);
     }
 
 }

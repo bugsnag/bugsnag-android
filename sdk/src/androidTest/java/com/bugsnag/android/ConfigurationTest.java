@@ -211,4 +211,20 @@ public class ConfigurationTest {
         config.setCodeBundleId("abc123");
         assertEquals("abc123", config.getCodeBundleId());
     }
+
+    @Test
+    public void testSetDelivery() {
+        Configuration configuration = new Configuration("api-key");
+        assertNull(configuration.getDelivery());
+        Delivery delivery = BugsnagTestUtils.generateDelivery();
+        configuration.setDelivery(delivery);
+
+        assertFalse(configuration.getDelivery() instanceof DeliveryCompat);
+        assertEquals(delivery, configuration.getDelivery());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetNullDelivery() {
+        config.setDelivery(null);
+    }
 }

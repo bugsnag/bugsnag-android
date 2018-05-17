@@ -1,12 +1,30 @@
 # Changelog
 
-## 4.4.0 (TBD)
+## 4.X.X (TBD)
 
 **Note**: this release alters the behaviour of the notifier to track session automatically. If you
 use Bugsnag On-Premise, it is now also recommended that you set your notify and session endpoints
 via `config.setEndpoints(String notify, String sessions)`.
 
 * Enable automatic session tracking by default [#314](https://github.com/bugsnag/bugsnag-android/pull/314)
+
+## 4.4.0 (2018-05-17)
+
+### Features
+
+Deprecation notice:
+
+SessionTrackingApiClient and ErrorApiClient are now deprecated in favour of the Delivery interface.
+If you configure a custom HTTP client with Bugsnag, it is recommended that you migrate over to this new API.
+Further information is available [in the docs.](https://docs.bugsnag.com/platforms/android/sdk/configuration-options/).
+
+* Expose Delivery API interface for configuring custom HTTP clients
+[#299](https://github.com/bugsnag/bugsnag-android/pull/299)
+
+### Enhancements
+
+* Use buffered streams for IO (perf improvement)
+[#307](https://github.com/bugsnag/bugsnag-android/pull/307)
 
 ## 4.3.4 (2018-05-02)
 
