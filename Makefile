@@ -41,5 +41,8 @@ release: clean bump
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number release`)
 endif
-	make VERSION=$(VERSION) bump && git commit -am "v$(VERSION)" && git tag v$(VERSION) \
-	&& git push origin && git push --tags && ./gradlew clean assemble uploadArchives bintrayUpload
+	@git add -p README.md gradle.properties sdk/src/main/java/com/bugsnag/android/Notifier.java
+	@git commit -m "Release v$(VERSION)"
+	@git tag v$(VERSION)
+	@git push origin master v$(VERSION)
+	@./gradlew uploadArchives bintrayUpload
