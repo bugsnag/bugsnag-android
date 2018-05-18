@@ -12,6 +12,10 @@ test:
 	./gradlew :sdk:connectedCheck
 
 bump: badge
+ifneq ($(shell git diff --staged),)
+	@git diff --staged
+	@$(error You have uncommitted changes. Push or discard them to continue)
+endif
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number bump`)
 endif
@@ -21,6 +25,10 @@ endif
 	 sdk/src/main/java/com/bugsnag/android/Notifier.java
 
 badge: build
+ifneq ($(shell git diff),)
+	@git diff
+	@$(error You have unstaged changes. Commit or discard them to continue)
+endif
 	@echo "Counting ..."
 	@./gradlew countReleaseDexMethods > counter.txt
 	@awk 'BEGIN{ \
@@ -38,6 +46,9 @@ badge: build
 
 # Makes a release
 release: clean bump
+ifneq ($(shell git diff origin/master..master),)
+	@$(error You have unpushed commits on the master branch)
+endif
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number release`)
 endif
