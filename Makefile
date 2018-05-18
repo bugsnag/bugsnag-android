@@ -3,7 +3,7 @@ all: build
 .PHONY: build test clean
 
 build:
-	./gradlew build
+	./gradlew sdk:build
 
 clean:
 	./gradlew clean
