@@ -1,6 +1,6 @@
 all: build
 
-.PHONY: build test clean
+.PHONY: build test clean bump badge release
 
 build:
 	./gradlew sdk:build
@@ -11,7 +11,7 @@ clean:
 test:
 	./gradlew :sdk:connectedCheck
 
-bump:
+bump: badge
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number bump`)
 endif
@@ -37,7 +37,7 @@ badge: build
 
 
 # Makes a release
-release:
+release: clean bump
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number release`)
 endif
