@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.4.1 (TBD)
+
+### Bug fixes
+
+* Ensure that unhandled error reports are always sent immediately on launch for Android P and in situations with no connectivity.
+[#319](https://github.com/bugsnag/bugsnag-android/pull/319)
+
 ## 4.4.0 (2018-05-17)
 
 ### Features
