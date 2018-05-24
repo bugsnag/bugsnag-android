@@ -123,7 +123,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.intent.action.BOOT_COMPLETED", BreadcrumbType.LOG);
         actions.put("android.intent.action.CAMERA_BUTTON", BreadcrumbType.USER);
         actions.put("android.intent.action.CONFIGURATION_CHANGED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.DATA_SMS_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.intent.action.DATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.DEVICE_STORAGE_LOW", BreadcrumbType.LOG);
         actions.put("android.intent.action.DEVICE_STORAGE_OK", BreadcrumbType.LOG);
@@ -132,7 +131,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE", BreadcrumbType.LOG);
         actions.put("android.intent.action.GTALK_CONNECTED", BreadcrumbType.LOG);
         actions.put("android.intent.action.GTALK_DISCONNECTED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.HEADSET_PLUG", BreadcrumbType.USER);
         actions.put("android.intent.action.INPUT_METHOD_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.LOCALE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.intent.action.MANAGE_PACKAGE_STORAGE", BreadcrumbType.LOG);
@@ -167,8 +165,6 @@ public class EventReceiver extends BroadcastReceiver {
         // Ignore this, adds a message every minute
         //actions.put("android.intent.action.TIME_TICK", BreadcrumbType.LOG);
         actions.put("android.intent.action.UID_REMOVED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.UMS_CONNECTED", BreadcrumbType.LOG);
-        actions.put("android.intent.action.UMS_DISCONNECTED", BreadcrumbType.LOG);
         actions.put("android.intent.action.USER_PRESENT", BreadcrumbType.USER);
         actions.put("android.intent.action.WALLPAPER_CHANGED", BreadcrumbType.LOG);
         actions.put("android.media.AUDIO_BECOMING_NOISY", BreadcrumbType.LOG);
@@ -185,10 +181,6 @@ public class EventReceiver extends BroadcastReceiver {
         //actions.put("android.net.wifi.WIFI_STATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.net.wifi.supplicant.CONNECTION_CHANGE", BreadcrumbType.LOG);
         //actions.put("android.net.wifi.supplicant.STATE_CHANGE", BreadcrumbType.LOG);
-        actions.put("android.provider.Telephony.SIM_FULL", BreadcrumbType.LOG);
-        actions.put("android.provider.Telephony.SMS_RECEIVED", BreadcrumbType.LOG);
-        actions.put("android.provider.Telephony.SMS_REJECTED", BreadcrumbType.LOG);
-        actions.put("android.provider.Telephony.WAP_PUSH_RECEIVED", BreadcrumbType.LOG);
         actions.put("android.speech.tts.TTS_QUEUE_PROCESSING_COMPLETED", BreadcrumbType.LOG);
         actions.put("android.speech.tts.engine.TTS_DATA_INSTALLED", BreadcrumbType.LOG);
 
@@ -231,8 +223,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.net.wifi.p2p.PEERS_CHANGED", BreadcrumbType.LOG);
         actions.put("android.net.wifi.p2p.STATE_CHANGED", BreadcrumbType.LOG);
         actions.put("android.net.wifi.p2p.THIS_DEVICE_CHANGED", BreadcrumbType.LOG);
-        actions.put("android.provider.Telephony.SMS_CB_RECEIVED", BreadcrumbType.LOG);
-        actions.put("android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED", BreadcrumbType.LOG);
 
         // api 15
         actions.put("android.bluetooth.device.action.UUID", BreadcrumbType.LOG);
@@ -241,8 +231,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.hardware.input.action.QUERY_KEYBOARD_LAYOUTS", BreadcrumbType.LOG);
         //actions.put("android.net.nsd.STATE_CHANGED", BreadcrumbType.LOG);
         //actions.put("android.net.wifi.p2p.DISCOVERY_STATE_CHANGE", BreadcrumbType.LOG);
-        actions.put("android.provider.Telephony.SMS_SERVICE_CATEGORY_PROGRAM_DATA_RECEIVED",
-            BreadcrumbType.LOG);
 
         // api 17
         actions.put("android.intent.action.DREAMING_STARTED", BreadcrumbType.NAVIGATION);
