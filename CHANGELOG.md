@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Refine automatically collected breadcrumbs to a commonly useful set by default
+[#321](https://github.com/bugsnag/bugsnag-android/pull/321)
+
 ## 4.4.0 (2018-05-17)
 
 ### Features
