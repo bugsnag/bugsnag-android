@@ -51,38 +51,42 @@ class ErrorStore extends FileStore<Error> {
     }
 
     void flushOnLaunch() {
-        final List<File> crashReports = findLaunchCrashReports();
+        if (config.getLaunchCrashThresholdMs() != 0) {
+            List<File> storedFiles = findStoredFiles();
+            final List<File> crashReports = findLaunchCrashReports(storedFiles);
 
-        if (crashReports.isEmpty() || config.getLaunchCrashThresholdMs() == 0) {
-            flushAsync(); // if disabled or no startup crash, flush async
-        } else {
+            if (!crashReports.isEmpty()) {
 
-            // Block the main thread for a 2 second interval as the app may crash very soon.
-            // The request itself will run in a background thread and will continue after the 2
-            // second period until the request completes, or the app crashes.
-            flushOnLaunchCompleted = false;
-            Logger.info("Attempting to send launch crash reports");
+                // Block the main thread for a 2 second interval as the app may crash very soon.
+                // The request itself will run in a background thread and will continue after the 2
+                // second period until the request completes, or the app crashes.
+                flushOnLaunchCompleted = false;
+                Logger.info("Attempting to send launch crash reports");
 
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    flushReports(crashReports);
-                    flushOnLaunchCompleted = true;
+                Async.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        flushReports(crashReports);
+                        flushOnLaunchCompleted = true;
+                    }
+                });
+
+                long waitMs = 0;
+
+                while (!flushOnLaunchCompleted && waitMs < LAUNCH_CRASH_TIMEOUT_MS) {
+                    try {
+                        Thread.sleep(LAUNCH_CRASH_POLL_MS);
+                        waitMs += LAUNCH_CRASH_POLL_MS;
+                    } catch (InterruptedException exception) {
+                        Logger.warn("Interrupted while waiting for launch crash report request");
+                    }
                 }
-            });
-
-            long waitMs = 0;
-
-            while (!flushOnLaunchCompleted && waitMs < LAUNCH_CRASH_TIMEOUT_MS) {
-                try {
-                    Thread.sleep(LAUNCH_CRASH_POLL_MS);
-                    waitMs += LAUNCH_CRASH_POLL_MS;
-                } catch (InterruptedException exception) {
-                    Logger.warn("Interrupted while waiting for launch crash report request");
-                }
+                Logger.info("Continuing with Bugsnag initialisation");
             }
-            Logger.info("Continuing with Bugsnag initialisation");
+            cancelQueuedFiles(storedFiles); // cancel all previously found files
         }
+
+        flushAsync(); // flush any remaining errors async that weren't delivered
     }
 
     /**
@@ -130,7 +134,7 @@ class ErrorStore extends FileStore<Error> {
         } catch (DeliveryFailureException exception) {
             cancelQueuedFiles(Collections.singleton(errorFile));
             Logger.warn("Could not send previously saved error(s)"
-                        + " to Bugsnag, will try again later", exception);
+                + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
             deleteStoredFiles(Collections.singleton(errorFile));
             Logger.warn("Problem sending unsent error from disk", exception);
@@ -141,8 +145,7 @@ class ErrorStore extends FileStore<Error> {
         return file.getName().endsWith("_startupcrash.json");
     }
 
-    private List<File> findLaunchCrashReports() {
-        Collection<File> storedFiles = findStoredFiles();
+    private List<File> findLaunchCrashReports(Collection<File> storedFiles) {
         List<File> launchCrashes = new ArrayList<>();
 
         for (File file : storedFiles) {
