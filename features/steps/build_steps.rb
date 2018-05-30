@@ -8,3 +8,12 @@ When("I run {string} with the defaults") do |eventType|
     And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
   }
 end
+
+When("I relaunch the app") do
+  step('I force stop the "com.bugsnag.android.mazerunner" Android app')
+  step('I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity')
+end
+
+When("I configure the app to run in the {string} state") do |event_metadata|
+  step("I set environment variable \"EVENT_METADATA\" to \"#{event_metadata}\"")
+end

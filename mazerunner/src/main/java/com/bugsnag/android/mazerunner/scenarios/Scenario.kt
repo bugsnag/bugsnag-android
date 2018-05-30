@@ -50,9 +50,22 @@ abstract internal class Scenario(protected val config: Configuration,
      * Sets a NOP implementation for the Error Tracking API and the Session Tracking API,
      * preventing delivery
      */
+    @Deprecated("Disable via config instead, using the new delivery API")
     protected fun disableAllDelivery() {
         disableSessionDelivery()
         disableReportDelivery()
+    }
+
+    protected fun disableAllDelivery(config: Configuration) {
+        config.delivery = object: Delivery {
+            override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+                throw DeliveryFailureException("Error Delivery NOP", RuntimeException("NOP"))
+            }
+
+            override fun deliver(report: Report?, config: Configuration?) {
+                throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
+            }
+        }
     }
 
     /**
