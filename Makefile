@@ -23,6 +23,7 @@ endif
 	@sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$(VERSION)/" gradle.properties
 	@sed -i '' "s/NOTIFIER_VERSION = .*;/NOTIFIER_VERSION = \"$(VERSION)\";/"\
 	 sdk/src/main/java/com/bugsnag/android/Notifier.java
+	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
 
 badge: build
 ifneq ($(shell git diff),)
@@ -45,14 +46,14 @@ endif
 
 
 # Makes a release
-release: clean bump
+release:
 ifneq ($(shell git diff origin/master..master),)
 	@$(error You have unpushed commits on the master branch)
 endif
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number release`)
 endif
-	@git add -p README.md gradle.properties sdk/src/main/java/com/bugsnag/android/Notifier.java
+	@git add -p CHANGELOG.md README.md gradle.properties sdk/src/main/java/com/bugsnag/android/Notifier.java
 	@git commit -m "Release v$(VERSION)"
 	@git tag v$(VERSION)
 	@git push origin master v$(VERSION)
