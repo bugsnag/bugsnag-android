@@ -2,7 +2,7 @@
 
 ## 4.X.X (TBD)
 
-**Note**: this release alters the behaviour of the notifier to track session automatically. If you
+**Note**: this release alters the behaviour of the notifier to track sessions automatically. If you
 use Bugsnag On-Premise, it is now also recommended that you set your notify and session endpoints
 via `config.setEndpoints(String notify, String sessions)`.
 

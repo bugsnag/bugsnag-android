@@ -145,7 +145,7 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Set the endpoints to send data to. By default we'll send error reports to
-     * https://notify.bugsnag.com, and sessions to https://session.bugsnag.com, but you can
+     * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
      * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoint.
      *
      * Please note that it is recommended that you set both endpoints. If the notify endpoint is
@@ -189,7 +189,7 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Set the endpoint to send Session Tracking data to. By default we'll send reports to
-     * the standard https://session.bugsnag.com endpoint, but you can override
+     * the standard https://sessions.bugsnag.com endpoint, but you can override
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
