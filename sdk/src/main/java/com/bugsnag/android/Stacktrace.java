@@ -38,7 +38,7 @@ class Stacktrace implements JsonStream.Streamable {
 
                 writer.endObject();
             } catch (Exception lineEx) {
-                Logger.warn("Failed to serialise stacktrace", lineEx);
+                Logger.warn("Failed to serialize stacktrace", lineEx);
             }
         }
 
