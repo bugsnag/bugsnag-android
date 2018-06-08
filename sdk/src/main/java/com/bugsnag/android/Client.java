@@ -192,14 +192,19 @@ public class Client extends Observable implements Observer {
 
         // register a receiver for automatic breadcrumbs
 
-        Async.run(new Runnable() {
-            @Override
-            public void run() {
-                appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
-                appContext.registerReceiver(new ConnectivityChangeReceiver(),
-                    new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-            }
-        });
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
+                    appContext.registerReceiver(new ConnectivityChangeReceiver(),
+                        new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                }
+            });
+        } catch (RejectedExecutionException ex) {
+            Logger.warn("Failed to register for automatic breadcrumb broadcasts", ex);
+        }
+
 
         config.addObserver(this);
 
