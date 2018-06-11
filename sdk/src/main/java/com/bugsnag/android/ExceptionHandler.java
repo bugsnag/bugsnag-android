@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Map;
@@ -91,7 +92,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             originalHandler.uncaughtException(thread, throwable);
         } else {
             System.err.printf("Exception in thread \"%s\" ", thread.getName());
-            throwable.printStackTrace(System.err);
+            Logger.warn("Exception", throwable);
         }
     }
 }

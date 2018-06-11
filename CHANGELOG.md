@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.4.1 (TBD)
+
+### Bug fixes
+
+* Trim long stacktraces to max limit of 200 [#324](https://github.com/bugsnag/bugsnag-android/pull/324)
+
 ## 4.4.1 (2018-05-30)
 
 ### Bug fixes
