@@ -8,6 +8,20 @@ via `config.setEndpoints(String notify, String sessions)`.
 
 * Enable automatic session tracking by default [#314](https://github.com/bugsnag/bugsnag-android/pull/314)
 
+### Bug fixes
+
+* Trim long stacktraces to max limit of 200 [#324](https://github.com/bugsnag/bugsnag-android/pull/324)
+
+## 4.4.1 (2018-05-30)
+
+### Bug fixes
+
+* Refine automatically collected breadcrumbs to a commonly useful set by default
+[#321](https://github.com/bugsnag/bugsnag-android/pull/321)
+
+* Ensure that unhandled error reports are always sent immediately on launch for Android P and in situations with no connectivity.
+[#319](https://github.com/bugsnag/bugsnag-android/pull/319)
+
 ## 4.4.0 (2018-05-17)
 
 ### Features
@@ -16,7 +30,8 @@ Deprecation notice:
 
 SessionTrackingApiClient and ErrorApiClient are now deprecated in favour of the Delivery interface.
 If you configure a custom HTTP client with Bugsnag, it is recommended that you migrate over to this new API.
-Further information is available [in the docs.](https://docs.bugsnag.com/platforms/android/sdk/configuration-options/).
+Further information is available [in the configuration option reference.](https://docs.bugsnag.com/platforms/android/sdk/configuration-options/#setdelivery)
+and [class documentation for `Delivery`](https://bugsnag.github.io/bugsnag-android/com/bugsnag/android/Delivery.html)
 
 * Expose Delivery API interface for configuring custom HTTP clients
 [#299](https://github.com/bugsnag/bugsnag-android/pull/299)
