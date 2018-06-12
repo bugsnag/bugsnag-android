@@ -29,6 +29,50 @@ public class ConfigurationTest {
 
     @Test
     public void testEndpoints() {
+        String notify = "https://notify.myexample.com";
+        String sessions = "https://sessions.myexample.com";
+        config.setEndpoints(notify, sessions);
+
+        assertEquals(notify, config.getEndpoint());
+        assertEquals(sessions, config.getSessionEndpoint());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullNotifyEndpoint() {
+        //noinspection ConstantConditions
+        config.setEndpoints(null, "http://example.com");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEmptyNotifyEndpoint() {
+        config.setEndpoints("", "http://example.com");
+    }
+
+    @Test
+    public void testInvalidSessionEndpoint() {
+        //noinspection ConstantConditions
+        config.setEndpoints("http://example.com", null);
+        assertFalse(config.shouldAutoCaptureSessions());
+        assertNull(config.getSessionEndpoint());
+
+        config.setEndpoints("http://example.com", "");
+        assertFalse(config.shouldAutoCaptureSessions());
+        assertNull(config.getSessionEndpoint());
+
+        config.setEndpoints("http://example.com", "http://sessions.example.com");
+        assertFalse(config.shouldAutoCaptureSessions());
+        assertEquals("http://sessions.example.com", config.getSessionEndpoint());
+    }
+
+    @Test
+    public void testAutoCaptureOverride() {
+        config.setAutoCaptureSessions(false);
+        config.setEndpoints("http://example.com", "http://example.com");
+        assertFalse(config.shouldAutoCaptureSessions());
+    }
+
+    @Test
+    public void testEndpoint() {
         // Default endpoints
         assertEquals("https://notify.bugsnag.com", config.getEndpoint());
 
@@ -39,7 +83,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testSessionEndpoints() {
+    public void testSessionEndpoint() {
         // Default endpoints
         assertEquals("https://sessions.bugsnag.com", config.getSessionEndpoint());
 
@@ -110,7 +154,9 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testDefaults() throws Exception {
+    public void testAutoCaptureSessions() throws Exception {
+        assertTrue(config.shouldAutoCaptureSessions());
+        config.setAutoCaptureSessions(false);
         assertFalse(config.shouldAutoCaptureSessions());
     }
 

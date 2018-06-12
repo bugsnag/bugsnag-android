@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,8 +30,8 @@ public class Configuration extends Observable implements Observer {
     private String buildUuid;
     private String appVersion;
     private String context;
-    private String endpoint = "https://notify.bugsnag.com";
-    private String sessionEndpoint = "https://sessions.bugsnag.com";
+    private volatile String endpoint = "https://notify.bugsnag.com";
+    private volatile String sessionEndpoint = "https://sessions.bugsnag.com";
 
     private String[] ignoreClasses;
     @Nullable
@@ -41,7 +42,7 @@ public class Configuration extends Observable implements Observer {
     private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
-    private boolean autoCaptureSessions = false;
+    private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
 
     @NonNull
@@ -135,9 +136,46 @@ public class Configuration extends Observable implements Observer {
      * endpoint.
      *
      * @param endpoint the custom endpoint to send report to
+     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
      */
+    @Deprecated
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    /**
+     * Set the endpoints to send data to. By default we'll send error reports to
+     * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
+     * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoint.
+     *
+     * Please note that it is recommended that you set both endpoints. If the notify endpoint is
+     * missing, an exception will be thrown. If the session endpoint is missing, a warning will be
+     * logged and sessions will not be sent automatically.
+     *
+     * @param notify the notify endpoint
+     * @param sessions the sessions endpoint
+     *
+     * @throws IllegalArgumentException if the notify endpoint is empty or null
+     */
+    public void setEndpoints(@NonNull String notify, @NonNull String sessions)
+        throws IllegalArgumentException {
+
+        if (TextUtils.isEmpty(notify)) {
+            throw new IllegalArgumentException("Notify endpoint cannot be empty or null.");
+        } else {
+            this.endpoint = notify;
+        }
+
+        boolean invalidSessionsEndpoint = TextUtils.isEmpty(sessions);
+
+        if (invalidSessionsEndpoint) {
+            Logger.warn("The session tracking endpoint has not been set. "
+                + "Session tracking is disabled");
+            this.sessionEndpoint = null;
+            this.autoCaptureSessions = false;
+        } else {
+            this.sessionEndpoint = sessions;
+        }
     }
 
     /**
@@ -151,12 +189,14 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Set the endpoint to send Session Tracking data to. By default we'll send reports to
-     * the standard https://session.bugsnag.com endpoint, but you can override
+     * the standard https://sessions.bugsnag.com endpoint, but you can override
      * this if you are using Bugsnag Enterprise to point to your own Bugsnag
      * endpoint.
      *
      * @param endpoint the custom endpoint to send session data to
+     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
      */
+    @Deprecated
     public void setSessionEndpoint(String endpoint) {
         this.sessionEndpoint = endpoint;
     }

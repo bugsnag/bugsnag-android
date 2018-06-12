@@ -182,4 +182,26 @@ public class SessionTrackerTest {
         assertNotEquals(firstSession, sessionTracker.getCurrentSession());
     }
 
+    @Test
+    public void startSessionNoEndpoint() throws Exception {
+        assertNull(sessionTracker.getCurrentSession());
+        configuration.setEndpoints("http://localhost:1234", "");
+        sessionTracker.startNewSession(new Date(), user, false);
+        assertNull(sessionTracker.getCurrentSession());
+    }
+
+    @Test
+    public void startSessionAutoCaptureEnabled() {
+        assertNull(sessionTracker.getCurrentSession());
+        sessionTracker.startNewSession(new Date(), user, false);
+        assertNotNull(sessionTracker.getCurrentSession());
+    }
+
+    @Test
+    public void startSessionAutoCaptureDisabled() {
+        configuration.setAutoCaptureSessions(false);
+        assertNull(sessionTracker.getCurrentSession());
+        sessionTracker.startNewSession(new Date(), user, false);
+        assertNotNull(sessionTracker.getCurrentSession());
+    }
 }
