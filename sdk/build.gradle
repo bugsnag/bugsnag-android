@@ -5,8 +5,8 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.kt3k.coveralls'
 
 repositories {
-    jcenter()
     google()
+    jcenter()
 }
 
 android {

@@ -7,6 +7,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,11 @@ public class ErrorReportApiClientTest {
     public void setUp() throws Exception {
         apiClient = new FakeApiClient();
         Bugsnag.init(InstrumentationRegistry.getContext(), "123");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test(expected = IllegalArgumentException.class)

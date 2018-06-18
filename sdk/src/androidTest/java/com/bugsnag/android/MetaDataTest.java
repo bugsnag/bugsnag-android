@@ -12,6 +12,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,11 @@ public class MetaDataTest {
     @Before
     public void setUp() throws Exception {
         client = BugsnagTestUtils.generateClient();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test

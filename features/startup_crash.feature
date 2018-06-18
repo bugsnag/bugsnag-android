@@ -8,7 +8,7 @@ Scenario: 1 startup crash and 1 regular crash persisted
     And I configure the app to run in the "CrashOfflineAtStartup" state
     And I relaunch the app
 
-    And I configure the app to run in the "No crash" state
-    And I relaunch the app
-    And I wait for 5 seconds
+    When I force stop the "com.bugsnag.android.mazerunner" Android app
+    And I set environment variable "EVENT_TYPE" to "Wait"
+    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
     Then I should receive 2 requests

@@ -29,12 +29,19 @@ class Async {
             return new Thread(runnable, "Bugsnag Thread #" + count.getAndIncrement());
         }
     };
-    private static final Executor EXECUTOR = new ThreadPoolExecutor(
+    private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(
         CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
         POOL_WORK_QUEUE, THREAD_FACTORY);
 
     static void run(@NonNull Runnable task) throws RejectedExecutionException {
         EXECUTOR.execute(task);
+    }
+
+    static void cancelTasks() throws InterruptedException {
+        Logger.info("Cancelling tasks");
+        EXECUTOR.shutdown();
+        EXECUTOR.awaitTermination(2000, TimeUnit.MILLISECONDS);
+        Logger.info("Finishing cancelling tasks");
     }
 
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.5.0 (2018-06-18)
+
+**IMPORTANT NOTE**: this release alters the behaviour of the notifier to track sessions automatically. 
+A session will be automatically captured on each app launch and sent to [https://sessions.bugsnag.com](https://sessions.bugsnag.com). If you
+use Bugsnag On-Premise, it is now also recommended that you set your notify and session endpoints
+via `config.setEndpoints(String notify, String sessions)`.
+
+* Enable automatic session tracking by default [#314](https://github.com/bugsnag/bugsnag-android/pull/314)
+
+### Bug fixes
+
+* Trim long stacktraces to max limit of 200 [#324](https://github.com/bugsnag/bugsnag-android/pull/324)
+
 ## 4.4.1 (2018-05-30)
 
 ### Bug fixes
@@ -28,7 +41,6 @@ and [class documentation for `Delivery`](https://bugsnag.github.io/bugsnag-andro
 
 * Use buffered streams for IO (perf improvement)
 [#307](https://github.com/bugsnag/bugsnag-android/pull/307)
-
 
 ## 4.3.4 (2018-05-02)
 
