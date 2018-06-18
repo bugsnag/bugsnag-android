@@ -106,7 +106,7 @@ public class NativeInterface {
 
     @Nullable
     public static String getAppVersion() {
-        return getClient().appData.getAppVersion();
+        return getClient().appData.getVersionName();
     }
 
     public static String getReleaseStage() {

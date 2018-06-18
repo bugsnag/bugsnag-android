@@ -22,6 +22,8 @@ class AppData extends AppDataSummary {
 
     @NonNull
     private final Context appContext;
+    @NonNull
+    private final Configuration config;
     private final SessionTracker sessionTracker;
 
     @NonNull
@@ -32,6 +34,7 @@ class AppData extends AppDataSummary {
             SessionTracker sessionTracker) {
         super(appContext, config);
         this.appContext = appContext;
+        this.config = config;
         this.sessionTracker = sessionTracker;
         appName = getAppName(appContext);
         packageName = getPackageName(appContext);

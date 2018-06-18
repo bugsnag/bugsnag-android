@@ -20,19 +20,16 @@ class AppDataSummary implements JsonStream.Streamable {
     static final String RELEASE_STAGE_DEVELOPMENT = "development";
     static final String RELEASE_STAGE_PRODUCTION = "production";
 
-    @NonNull
-    protected final Configuration config;
+    @Nullable
+    protected Integer versionCode;
 
     @Nullable
-    protected final Integer versionCode;
-
-    @Nullable
-    protected final String versionName;
+    protected String versionName;
 
     @NonNull
-    private final String guessedReleaseStage;
+    private String releaseStage;
 
-    @Nullable
+    @NonNull
     private String notifierType = "android";
 
     @Nullable
@@ -40,15 +37,24 @@ class AppDataSummary implements JsonStream.Streamable {
 
     AppDataSummary(@NonNull Context appContext, @NonNull Configuration config) {
         versionCode = getVersionCode(appContext);
-        versionName = getVersionName(appContext);
-        guessedReleaseStage = guessReleaseStage(appContext);
-        this.config = config;
 
         codeBundleId = config.getCodeBundleId();
         String configType = config.getNotifierType();
 
         if (configType != null) {
             notifierType = configType;
+        }
+
+        if (config.getReleaseStage() != null) {
+            releaseStage = config.getReleaseStage();
+        } else {
+            releaseStage = guessReleaseStage(appContext);
+        }
+
+        if (config.getAppVersion() != null) {
+            versionName = config.getAppVersion();
+        } else {
+            versionName = getVersionName(appContext);
         }
     }
 
@@ -62,28 +68,55 @@ class AppDataSummary implements JsonStream.Streamable {
     void serialiseMinimalAppData(@NonNull JsonStream writer) throws IOException {
         writer
             .name("type").value(notifierType)
-            .name("releaseStage").value(getReleaseStage())
-            .name("version").value(getAppVersion())
+            .name("releaseStage").value(releaseStage)
+            .name("version").value(versionName)
             .name("versionCode").value(versionCode)
             .name("codeBundleId").value(codeBundleId);
     }
 
-    @NonNull
-    String getReleaseStage() {
-        if (config.getReleaseStage() != null) {
-            return config.getReleaseStage();
-        } else {
-            return guessedReleaseStage;
-        }
+    @Nullable
+    public Integer getVersionCode() {
+        return versionCode;
+    }
+
+    public void setVersionCode(@Nullable Integer versionCode) {
+        this.versionCode = versionCode;
     }
 
     @Nullable
-    String getAppVersion() {
-        if (config.getAppVersion() != null) {
-            return config.getAppVersion();
-        } else {
-            return versionName;
-        }
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(@Nullable String versionName) {
+        this.versionName = versionName;
+    }
+
+    @NonNull
+    public String getReleaseStage() {
+        return releaseStage;
+    }
+
+    public void setReleaseStage(@NonNull String releaseStage) {
+        this.releaseStage = releaseStage;
+    }
+
+    @NonNull
+    public String getNotifierType() {
+        return notifierType;
+    }
+
+    public void setNotifierType(@NonNull String notifierType) {
+        this.notifierType = notifierType;
+    }
+
+    @Nullable
+    public String getCodeBundleId() {
+        return codeBundleId;
+    }
+
+    public void setCodeBundleId(@Nullable String codeBundleId) {
+        this.codeBundleId = codeBundleId;
     }
 
     /**
