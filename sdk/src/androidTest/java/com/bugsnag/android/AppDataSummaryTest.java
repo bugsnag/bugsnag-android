@@ -74,8 +74,6 @@ public class AppDataSummaryTest {
     @Test
     public void testJsonSerialisation() throws IOException, JSONException {
         JSONObject appDataJson = streamableToJson(appData);
-
-        assertTrue(appDataJson.length() == 4);
         assertEquals(1, appDataJson.getInt("versionCode"));
         assertEquals("1.0", appDataJson.get("version"));
         assertEquals("development", appDataJson.get("releaseStage"));

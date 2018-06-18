@@ -22,22 +22,31 @@ class AppData extends AppDataSummary {
 
     @NonNull
     private final Context appContext;
-    @NonNull
-    private final Configuration config;
     private final SessionTracker sessionTracker;
 
     @NonNull
-    protected final String packageName;
+    private String packageName;
+
+    @Nullable
+    private String buildUUID;
+
+    private long durationMs;
+    private long foregroundMs;
+    private boolean inForeground;
 
     AppData(@NonNull Context appContext,
             @NonNull Configuration config,
             SessionTracker sessionTracker) {
         super(appContext, config);
         this.appContext = appContext;
-        this.config = config;
         this.sessionTracker = sessionTracker;
         appName = getAppName(appContext);
+
         packageName = getPackageName(appContext);
+        buildUUID = config.getBuildUUID();
+        durationMs = getDurationMs();
+        foregroundMs = sessionTracker.getDurationInForegroundMs(System.currentTimeMillis());
+        inForeground = sessionTracker.isInForeground();
     }
 
     @Override
@@ -46,11 +55,10 @@ class AppData extends AppDataSummary {
         serialiseMinimalAppData(writer);
 
         writer.name("id").value(packageName);
-        writer.name("buildUUID").value(config.getBuildUUID());
-        writer.name("duration").value(getDurationMs());
-        long foregroundMs = sessionTracker.getDurationInForegroundMs(System.currentTimeMillis());
+        writer.name("buildUUID").value(buildUUID);
+        writer.name("duration").value(durationMs);
         writer.name("durationInForeground").value(foregroundMs);
-        writer.name("inForeground").value(sessionTracker.isInForeground());
+        writer.name("inForeground").value(inForeground);
 
         // TODO migrate legacy fields
         writer.name("name").value(appName);
@@ -78,6 +86,49 @@ class AppData extends AppDataSummary {
             Logger.warn("Could not get app name");
         }
         return null;
+    }
+
+
+    @NonNull
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(@NonNull String packageName) {
+        this.packageName = packageName;
+    }
+
+    @Nullable
+    public String getBuildUUID() {
+        return buildUUID;
+    }
+
+    public void setBuildUUID(@Nullable String buildUUID) {
+        this.buildUUID = buildUUID;
+    }
+
+    public long getDuration() {
+        return durationMs;
+    }
+
+    public void setDuration(long durationMs) {
+        this.durationMs = durationMs;
+    }
+
+    public long getDurationInForeground() {
+        return foregroundMs;
+    }
+
+    public void setDurationInForeground(long foregroundMs) {
+        this.foregroundMs = foregroundMs;
+    }
+
+    public boolean isInForeground() {
+        return inForeground;
+    }
+
+    public void setInForeground(boolean inForeground) {
+        this.inForeground = inForeground;
     }
 
     @Nullable

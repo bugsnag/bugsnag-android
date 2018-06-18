@@ -82,7 +82,7 @@ public class NativeInterface {
 
     @NonNull
     public static String getPackageName() {
-        return getClient().appData.packageName;
+        return getClient().appData.getPackageName();
     }
 
     @Nullable
