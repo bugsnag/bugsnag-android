@@ -28,7 +28,7 @@ class AppData extends AppDataSummary {
     private String packageName;
 
     @Nullable
-    private String buildUUID;
+    private String buildUuid;
 
     private long durationMs;
     private long foregroundMs;
@@ -42,8 +42,8 @@ class AppData extends AppDataSummary {
         this.sessionTracker = sessionTracker;
         appName = getAppName(appContext);
 
-        packageName = getPackageName(appContext);
-        buildUUID = config.getBuildUUID();
+        packageName = calculatePackageName(appContext);
+        buildUuid = config.getBuildUUID();
         durationMs = getDurationMs();
         foregroundMs = sessionTracker.getDurationInForegroundMs(System.currentTimeMillis());
         inForeground = sessionTracker.isInForeground();
@@ -55,7 +55,7 @@ class AppData extends AppDataSummary {
         serialiseMinimalAppData(writer);
 
         writer.name("id").value(packageName);
-        writer.name("buildUUID").value(buildUUID);
+        writer.name("buildUUID").value(buildUuid);
         writer.name("duration").value(durationMs);
         writer.name("durationInForeground").value(foregroundMs);
         writer.name("inForeground").value(inForeground);
@@ -99,12 +99,12 @@ class AppData extends AppDataSummary {
     }
 
     @Nullable
-    public String getBuildUUID() {
-        return buildUUID;
+    public String getBuildUuid() {
+        return buildUuid;
     }
 
-    public void setBuildUUID(@Nullable String buildUUID) {
-        this.buildUUID = buildUUID;
+    public void setBuildUuid(@Nullable String buildUuid) {
+        this.buildUuid = buildUuid;
     }
 
     public long getDuration() {
@@ -178,7 +178,7 @@ class AppData extends AppDataSummary {
      * The package name of the running Android app, eg: com.example.myapp
      */
     @NonNull
-    private static String getPackageName(@NonNull Context appContext) {
+    private static String calculatePackageName(@NonNull Context appContext) {
         return appContext.getPackageName();
     }
 }

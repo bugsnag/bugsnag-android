@@ -36,7 +36,7 @@ class AppDataSummary implements JsonStream.Streamable {
     private String codeBundleId;
 
     AppDataSummary(@NonNull Context appContext, @NonNull Configuration config) {
-        versionCode = getVersionCode(appContext);
+        versionCode = calculateVersionCode(appContext);
 
         codeBundleId = config.getCodeBundleId();
         String configType = config.getNotifierType();
@@ -54,7 +54,7 @@ class AppDataSummary implements JsonStream.Streamable {
         if (config.getAppVersion() != null) {
             versionName = config.getAppVersion();
         } else {
-            versionName = getVersionName(appContext);
+            versionName = calculateVersionName(appContext);
         }
     }
 
@@ -124,7 +124,7 @@ class AppDataSummary implements JsonStream.Streamable {
      * in AndroidManifest.xml
      */
     @Nullable
-    private static Integer getVersionCode(@NonNull Context appContext) {
+    private static Integer calculateVersionCode(@NonNull Context appContext) {
         try {
             String packageName = appContext.getPackageName();
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionCode;
@@ -139,7 +139,7 @@ class AppDataSummary implements JsonStream.Streamable {
      * in AndroidManifest.xml
      */
     @Nullable
-    private static String getVersionName(@NonNull Context appContext) {
+    private static String calculateVersionName(@NonNull Context appContext) {
         try {
             String packageName = appContext.getPackageName();
             return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;

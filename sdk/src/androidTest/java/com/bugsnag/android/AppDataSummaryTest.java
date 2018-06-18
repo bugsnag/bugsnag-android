@@ -1,5 +1,9 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -13,17 +17,17 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class AppDataSummaryTest {
 
     private AppDataSummary appData;
 
+    /**
+     * Configures a new AppDataSummary for testing accessors + serialisation
+     *
+     * @throws Exception if setup failed
+     */
     @Before
     public void setUp() throws Exception {
         Configuration config = new Configuration("some-api-key");

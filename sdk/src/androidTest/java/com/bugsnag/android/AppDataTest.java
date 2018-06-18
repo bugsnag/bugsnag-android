@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -31,6 +30,11 @@ public class AppDataTest {
     private Context context;
     private SessionTracker sessionTracker;
 
+    /**
+     * Configures a new AppData for testing accessors + serialisation
+     *
+     * @throws Exception if setup failed
+     */
     @Before
     public void setUp() throws Exception {
         config = new Configuration("some-api-key");
@@ -48,11 +52,11 @@ public class AppDataTest {
     }
 
     @Test
-    public void testBuildUUID() {
-        assertNull(appData.getBuildUUID());
+    public void testBuildUuid() {
+        assertNull(appData.getBuildUuid());
         String expected = "fad4902f";
-        appData.setBuildUUID(expected);
-        assertEquals(expected, appData.getBuildUUID());
+        appData.setBuildUuid(expected);
+        assertEquals(expected, appData.getBuildUuid());
     }
 
     @Test
@@ -80,7 +84,7 @@ public class AppDataTest {
 
     @Test
     public void testJsonSerialisation() throws JSONException, IOException {
-        appData.setBuildUUID("fa54de");
+        appData.setBuildUuid("fa54de");
         JSONObject appDataJson = streamableToJson(appData);
 
         assertEquals(1, appDataJson.getInt("versionCode"));
