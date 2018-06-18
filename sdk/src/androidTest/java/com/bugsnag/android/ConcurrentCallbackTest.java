@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,11 @@ public class ConcurrentCallbackTest {
     @Before
     public void setUp() throws Exception {
         client = BugsnagTestUtils.generateClient();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test

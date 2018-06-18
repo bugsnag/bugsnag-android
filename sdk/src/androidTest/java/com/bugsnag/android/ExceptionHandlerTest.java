@@ -9,6 +9,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,11 @@ public class ExceptionHandlerTest {
         context = InstrumentationRegistry.getContext();
         // Start in a clean state, since we've created clients before in tests
         Thread.setDefaultUncaughtExceptionHandler(null);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test

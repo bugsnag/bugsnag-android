@@ -8,6 +8,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,11 @@ public class BeforeRecordBreadcrumbsTest {
         configuration.setAutomaticallyCollectBreadcrumbs(false);
         client = new Client(InstrumentationRegistry.getContext(), configuration);
         assertEquals(0, client.breadcrumbs.store.size());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test

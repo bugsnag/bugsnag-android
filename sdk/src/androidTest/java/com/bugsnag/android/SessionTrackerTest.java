@@ -10,6 +10,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,6 +37,11 @@ public class SessionTrackerTest {
             = new SessionTracker(configuration, generateClient(), generateSessionStore());
         configuration.setAutoCaptureSessions(true);
         user = new User();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test
