@@ -92,11 +92,11 @@ public class NativeInterface {
 
     @Nullable
     public static String getVersionName() {
-        return getClient().appData.versionName;
+        return getClient().appData.getVersionName();
     }
 
     public static int getVersionCode() {
-        return getClient().appData.versionCode;
+        return getClient().appData.getVersionCode();
     }
 
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
