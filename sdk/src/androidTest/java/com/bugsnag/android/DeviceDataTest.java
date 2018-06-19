@@ -84,8 +84,8 @@ public class DeviceDataTest {
         assertNotNull(deviceDataJson.getString("id"));
         assertTrue(deviceDataJson.getLong("freeMemory") > 0);
         assertTrue(deviceDataJson.getLong("totalMemory") > 0);
-        assertTrue(deviceDataJson.getLong("freeDisk") > 0);
-        assertEquals("portrait", deviceDataJson.getString("orientation"));
+        assertTrue(deviceDataJson.has("freeDisk"));
+        assertNotNull(deviceDataJson.getString("orientation"));
     }
 
 }
