@@ -270,4 +270,12 @@ public class ClientTest {
         generateClient().setSessionTrackingApiClient(null);
     }
 
+
+    @Test
+    public void testClientUser() {
+        Client client = generateClient();
+        assertNotNull(client.getUser());
+        assertNotNull(client.getUser().getId());
+    }
+
 }

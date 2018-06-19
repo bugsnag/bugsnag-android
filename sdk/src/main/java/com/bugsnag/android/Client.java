@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -62,13 +63,19 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final Configuration config;
     private final Context appContext;
+
     @NonNull
     protected final AppData appData;
+
     @NonNull
     protected final DeviceData deviceData;
+
     @NonNull
     final Breadcrumbs breadcrumbs;
-    protected final User user = new User();
+
+    @NonNull
+    private final User user = new User();
+
     @NonNull
     protected final ErrorStore errorStore;
 
@@ -533,6 +540,18 @@ public class Client extends Observable implements Observer {
         setUserEmail(email);
         setUserName(name);
     }
+
+    /**
+     * Retrieves details of the user currently using your application.
+     * You can search for this information in your Bugsnag dashboard.
+     *
+     * @return the current user
+     */
+    @NonNull
+    public User getUser() {
+        return user;
+    }
+
 
     /**
      * Removes the current user data and sets it back to defaults

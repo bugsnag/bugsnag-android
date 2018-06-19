@@ -15,7 +15,7 @@ import java.io.IOException;
  * App information in this class is cached during construction for faster
  * subsequent lookups and to reduce GC overhead.
  */
-class AppDataSummary implements JsonStream.Streamable {
+public class AppDataSummary implements JsonStream.Streamable {
 
     static final String RELEASE_STAGE_DEVELOPMENT = "development";
     static final String RELEASE_STAGE_PRODUCTION = "production";
