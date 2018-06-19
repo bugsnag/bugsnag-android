@@ -66,7 +66,6 @@ public class DeviceDataTest {
 
     @Test
     public void testFreeDisk() {
-        assertTrue(deviceData.getFreeDisk() > 0);
         Long expected = 15000000L;
         deviceData.setFreeDisk(expected);
         assertEquals(expected, deviceData.getFreeDisk());

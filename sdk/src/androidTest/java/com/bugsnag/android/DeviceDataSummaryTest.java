@@ -61,13 +61,6 @@ public class DeviceDataSummaryTest {
     }
 
     @Test
-    public void testJailbroken() {
-        assertFalse(deviceData.isJailbroken());
-        deviceData.setJailbroken(true);
-        assertTrue(deviceData.isJailbroken());
-    }
-
-    @Test
     public void testJsonSerialisation() throws IOException, JSONException {
         JSONObject deviceDataJson = streamableToJson(deviceData);
 
@@ -75,7 +68,7 @@ public class DeviceDataSummaryTest {
         assertNotNull(deviceDataJson.getString("osVersion"));
         assertNotNull(deviceDataJson.getString("manufacturer"));
         assertNotNull(deviceDataJson.getString("model"));
-        assertFalse(deviceDataJson.getBoolean("jailbroken"));
+        assertTrue(deviceDataJson.has("jailbroken"));
     }
 
 }
