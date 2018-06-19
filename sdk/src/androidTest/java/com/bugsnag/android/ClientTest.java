@@ -4,6 +4,7 @@ import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -282,7 +283,6 @@ public class ClientTest {
     public void testBreadcrumbGetter() {
         Client client = generateClient();
         Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-        assertFalse(breadcrumbs.isEmpty());
 
         int breadcrumbCount = breadcrumbs.size();
         client.leaveBreadcrumb("Foo");
@@ -299,4 +299,39 @@ public class ClientTest {
         assertTrue(breadcrumbs.isEmpty());
         assertEquals(breadcrumbCount, client.breadcrumbs.store.size());
     }
+
+    @Test
+    public void testAppData() {
+        Client client = generateClient();
+        AppData appData = client.getAppData();
+        assertNotNull(appData);
+        assertNotEquals(client.appData, appData);
+        assertNotEquals(client.getAppData(), appData);
+    }
+
+    @Test
+    public void testAppDataSummary() {
+        Client client = generateClient();
+        AppDataSummary appData = client.getAppDataSummary();
+        assertNotNull(appData);
+        assertNotEquals(client.getAppDataSummary(), appData);
+    }
+
+    @Test
+    public void testDeviceData() {
+        Client client = generateClient();
+        DeviceData deviceData = client.getDeviceData();
+        assertNotNull(deviceData);
+        assertNotEquals(client.deviceData, deviceData);
+        assertNotEquals(client.getDeviceData(), deviceData);
+    }
+
+    @Test
+    public void testDeviceDataSummary() {
+        Client client = generateClient();
+        DeviceDataSummary deviceData = client.getDeviceDataSummary();
+        assertNotNull(deviceData);
+        assertNotEquals(client.getDeviceDataSummary(), deviceData);
+    }
+
 }
