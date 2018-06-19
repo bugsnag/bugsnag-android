@@ -53,21 +53,22 @@ public class AppData extends AppDataSummary {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         serialiseMinimalAppData(writer);
-
         writer.name("id").value(packageName);
         writer.name("buildUUID").value(buildUuid);
         writer.name("duration").value(durationMs);
         writer.name("durationInForeground").value(foregroundMs);
         writer.name("inForeground").value(inForeground);
-
-        // TODO migrate legacy fields
-        writer.name("name").value(appName);
-        writer.name("packageName").value(packageName);
-        writer.name("versionName").value(getVersionName());
-        writer.name("activeScreen").value(getActiveScreenClass());
-        writer.name("memoryUsage").value(getMemoryUsage());
-        writer.name("lowMemory").value(isLowMemory(appContext));
         writer.endObject();
+    }
+
+    // TODO migrate metadata fields to separate class
+    void addAppMetaData(MetaData metaData) {
+        metaData.addToTab("app", "name", appName);
+        metaData.addToTab("app", "packageName", packageName);
+        metaData.addToTab("app", "versionName", getVersionName());
+        metaData.addToTab("app", "activeScreen", getActiveScreenClass());
+        metaData.addToTab("app", "memoryUsage", getMemoryUsage());
+        metaData.addToTab("app", "lowMemory", isLowMemory(appContext));
     }
 
     /**
