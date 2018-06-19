@@ -68,7 +68,10 @@ public class Client extends Observable implements Observer {
     protected final DeviceData deviceData;
     @NonNull
     final Breadcrumbs breadcrumbs;
+
+    @NonNull
     protected final User user = new User();
+
     @NonNull
     protected final ErrorStore errorStore;
 

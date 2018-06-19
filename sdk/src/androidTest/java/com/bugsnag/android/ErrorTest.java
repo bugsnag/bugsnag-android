@@ -216,6 +216,7 @@ public class ErrorTest {
     public void testSetGroupingHash() throws JSONException, IOException {
         String groupingHash = "herpderp";
         error.setGroupingHash(groupingHash);
+        assertEquals(groupingHash, error.getGroupingHash());
 
         JSONObject errorJson = streamableToJson(error);
         assertEquals(groupingHash, errorJson.get("groupingHash"));
@@ -313,7 +314,9 @@ public class ErrorTest {
         String expectedContext = "FooActivity";
         sessionTracker.updateForegroundTracker(expectedContext,
             true, System.currentTimeMillis());
-        error.setAppData(new AppData(context, config, sessionTracker));
+        AppData appData = new AppData(context, config, sessionTracker);
+        error.setAppData(appData);
+        assertEquals(appData, error.getAppData());
         assertEquals(expectedContext, error.getContext());
     }
 
@@ -375,6 +378,7 @@ public class ErrorTest {
         Context context = InstrumentationRegistry.getContext();
         DeviceData deviceData = new DeviceData(context, BugsnagTestUtils.getSharedPrefs(context));
         error.setDeviceData(deviceData);
+        assertEquals(deviceData, error.getDeviceData());
 
         JSONObject errorJson = streamableToJson(error);
         JSONObject device = errorJson.getJSONObject("device");
