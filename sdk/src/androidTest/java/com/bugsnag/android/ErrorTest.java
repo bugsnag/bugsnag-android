@@ -378,7 +378,7 @@ public class ErrorTest {
 
         JSONObject errorJson = streamableToJson(error);
         JSONObject device = errorJson.getJSONObject("device");
-        assertEquals(deviceData.id, device.getString("id"));
+        assertEquals(deviceData.getId(), device.getString("id"));
 
         error.setDeviceId(null);
         errorJson = streamableToJson(error);

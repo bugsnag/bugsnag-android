@@ -34,6 +34,18 @@ class DeviceData extends DeviceDataSummary {
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
+
+    @Nullable
+    private String id;
+    private long freeMemory;
+    private long totalMemory;
+    private Long freeDisk;
+
+    @Nullable
+    private String orientation;
+
+
+
     @Nullable
     final Float screenDensity;
 
@@ -47,9 +59,6 @@ class DeviceData extends DeviceDataSummary {
     @NonNull
     final String locale;
 
-    @Nullable
-    protected String id;
-
     @NonNull
     final String[] cpuAbi;
 
@@ -61,6 +70,10 @@ class DeviceData extends DeviceDataSummary {
         locale = getLocale();
         id = retrieveUniqueInstallId(sharedPref);
         cpuAbi = getCpuAbi();
+        freeMemory = calculateFreeMemory();
+        totalMemory = calculateTotalMemory();
+        freeDisk = calculateFreeDisk();
+        orientation = calculateOrientation(appContext);
     }
 
     @Override
@@ -70,10 +83,10 @@ class DeviceData extends DeviceDataSummary {
 
         writer
             .name("id").value(id)
-            .name("freeMemory").value(getFreeMemory())
-            .name("totalMemory").value(getTotalMemory())
-            .name("freeDisk").value(getFreeDisk())
-            .name("orientation").value(getOrientation(appContext));
+            .name("freeMemory").value(freeMemory)
+            .name("totalMemory").value(totalMemory)
+            .name("freeDisk").value(freeDisk)
+            .name("orientation").value(orientation);
 
 
         // TODO migrate metadata values
@@ -101,14 +114,50 @@ class DeviceData extends DeviceDataSummary {
         writer.endObject();
     }
 
-    @NonNull
-    String getUserId() {
+
+    @Nullable
+    public String getId() {
         return id;
     }
 
-    void setId(@Nullable String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
+
+    public long getFreeMemory() {
+        return freeMemory;
+    }
+
+    public void setFreeMemory(long freeMemory) {
+        this.freeMemory = freeMemory;
+    }
+
+    public long getTotalMemory() {
+        return totalMemory;
+    }
+
+    public void setTotalMemory(long totalMemory) {
+        this.totalMemory = totalMemory;
+    }
+
+    public Long getFreeDisk() {
+        return freeDisk;
+    }
+
+    public void setFreeDisk(Long freeDisk) {
+        this.freeDisk = freeDisk;
+    }
+
+    @Nullable
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(@Nullable String orientation) {
+        this.orientation = orientation;
+    }
+
+
 
     /**
      * Guesses whether the current device is an emulator or not, erring on the side of caution
@@ -164,8 +213,7 @@ class DeviceData extends DeviceDataSummary {
     /**
      * Get the total memory available on the current Android device, in bytes
      */
-    @NonNull
-    static Long getTotalMemory() {
+    static long calculateTotalMemory() {
         if (Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
             return Runtime.getRuntime().maxMemory();
         } else {
@@ -231,7 +279,7 @@ class DeviceData extends DeviceDataSummary {
      * Get the free disk space on the smallest disk
      */
     @Nullable
-    private static Long getFreeDisk() {
+    private static Long calculateFreeDisk() {
         try {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
             long externalBytesAvailable =
@@ -251,8 +299,7 @@ class DeviceData extends DeviceDataSummary {
     /**
      * Get the amount of memory remaining that the VM can allocate
      */
-    @NonNull
-    private static Long getFreeMemory() {
+    private static long calculateFreeMemory() {
         Runtime runtime = Runtime.getRuntime();
         if (runtime.maxMemory() != Long.MAX_VALUE) {
             return runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
@@ -265,7 +312,7 @@ class DeviceData extends DeviceDataSummary {
      * Get the device orientation, eg. "landscape"
      */
     @Nullable
-    private static String getOrientation(@NonNull Context appContext) {
+    private static String calculateOrientation(@NonNull Context appContext) {
         String orientation;
         switch (appContext.getResources().getConfiguration().orientation) {
             case android.content.res.Configuration.ORIENTATION_LANDSCAPE:

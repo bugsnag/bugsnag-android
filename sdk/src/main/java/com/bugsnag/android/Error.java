@@ -304,7 +304,7 @@ public class Error implements JsonStream.Streamable {
      * @param id the device id
      */
     public void setDeviceId(@Nullable String id) {
-        deviceData.id = id;
+        deviceData.setId(id);
     }
 
     void setAppData(AppData appData) {

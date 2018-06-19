@@ -115,7 +115,7 @@ public class NativeInterface {
 
     @Nullable
     public static String getDeviceId() {
-        return getClient().deviceData.id;
+        return getClient().deviceData.getId();
     }
 
     @NonNull
@@ -124,7 +124,7 @@ public class NativeInterface {
     }
 
     public static double getDeviceTotalMemory() {
-        return DeviceData.getTotalMemory();
+        return DeviceData.calculateTotalMemory();
     }
 
     @Nullable

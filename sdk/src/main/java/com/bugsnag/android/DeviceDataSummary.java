@@ -8,7 +8,18 @@ import java.io.IOException;
 
 class DeviceDataSummary implements JsonStream.Streamable {
 
-    private final Boolean rooted = isRooted();
+    private boolean rooted = isRooted();
+    private String manufacturer;
+    private String model;
+    private String osName;
+    private String osVersion;
+
+    DeviceDataSummary() {
+        manufacturer = android.os.Build.MANUFACTURER;
+        model = android.os.Build.MODEL;
+        osName = "android";
+        osVersion = android.os.Build.VERSION.RELEASE;
+    }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -19,11 +30,51 @@ class DeviceDataSummary implements JsonStream.Streamable {
 
     void serialiseMinimalDeviceData(@NonNull JsonStream writer) throws IOException {
         writer
-            .name("manufacturer").value(android.os.Build.MANUFACTURER)
-            .name("model").value(android.os.Build.MODEL)
+            .name("manufacturer").value(manufacturer)
+            .name("model").value(model)
             .name("jailbroken").value(rooted)
-            .name("osName").value("android")
-            .name("osVersion").value(android.os.Build.VERSION.RELEASE);
+            .name("osName").value(osName)
+            .name("osVersion").value(osVersion);
+    }
+
+    public boolean isJailBroken() {
+        return rooted;
+    }
+
+    public void setJailbroken(boolean jailbroken) {
+        this.rooted = jailbroken;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getOsName() {
+        return osName;
+    }
+
+    public void setOsName(String osName) {
+        this.osName = osName;
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion;
     }
 
     private static final String[] ROOT_INDICATORS = new String[]{
@@ -45,8 +96,7 @@ class DeviceDataSummary implements JsonStream.Streamable {
     /**
      * Check if the current Android device is rooted
      */
-    @Nullable
-    static Boolean isRooted() {
+    static boolean isRooted() {
         if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys")) {
             return true;
         }
@@ -58,7 +108,6 @@ class DeviceDataSummary implements JsonStream.Streamable {
                 }
             }
         } catch (Exception ignore) {
-            return null;
         }
         return false;
     }

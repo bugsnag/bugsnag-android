@@ -149,11 +149,11 @@ public class Client extends Observable implements Observer {
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
+            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getId()));
             user.setName(sharedPref.getString(USER_NAME_KEY, null));
             user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
         } else {
-            user.setId(deviceData.getUserId());
+            user.setId(deviceData.getId());
         }
 
         if (appContext instanceof Application) {
@@ -538,7 +538,7 @@ public class Client extends Observable implements Observer {
      * Removes the current user data and sets it back to defaults
      */
     public void clearUser() {
-        user.setId(deviceData.getUserId());
+        user.setId(deviceData.getId());
         user.setEmail(null);
         user.setName(null);
 
