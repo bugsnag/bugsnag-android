@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collection;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -270,7 +271,6 @@ public class ClientTest {
         generateClient().setSessionTrackingApiClient(null);
     }
 
-
     @Test
     public void testClientUser() {
         Client client = generateClient();
@@ -278,4 +278,25 @@ public class ClientTest {
         assertNotNull(client.getUser().getId());
     }
 
+    @Test
+    public void testBreadcrumbGetter() {
+        Client client = generateClient();
+        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        assertFalse(breadcrumbs.isEmpty());
+
+        int breadcrumbCount = breadcrumbs.size();
+        client.leaveBreadcrumb("Foo");
+        assertEquals(breadcrumbCount, breadcrumbs.size()); // should not pick up new breadcrumbs
+    }
+
+    @Test
+    public void testBreadcrumbStoreNotModified() {
+        Client client = generateClient();
+        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        int breadcrumbCount = client.breadcrumbs.store.size();
+
+        breadcrumbs.clear(); // only the copy should be cleared
+        assertTrue(breadcrumbs.isEmpty());
+        assertEquals(breadcrumbCount, client.breadcrumbs.store.size());
+    }
 }

@@ -552,6 +552,11 @@ public class Client extends Observable implements Observer {
         return user;
     }
 
+    @NonNull
+    @InternalApi
+    public Collection<Breadcrumb> getBreadcrumbs() {
+        return new ArrayList<>(breadcrumbs.store);
+    }
 
     /**
      * Removes the current user data and sets it back to defaults
