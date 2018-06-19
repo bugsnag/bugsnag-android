@@ -87,31 +87,25 @@ public class DeviceData extends DeviceDataSummary {
             .name("totalMemory").value(totalMemory)
             .name("freeDisk").value(freeDisk)
             .name("orientation").value(orientation);
-
-
-        // TODO migrate metadata values
-
-        writer
-            .name("batteryLevel").value(getBatteryLevel(appContext))
-            .name("charging").value(isCharging(appContext))
-            .name("locationStatus").value(getLocationStatus(appContext))
-            .name("networkAccess").value(getNetworkAccess(appContext))
-            .name("time").value(getTime())
-            .name("brand").value(Build.BRAND)
-            .name("apiLevel").value(Build.VERSION.SDK_INT)
-            .name("osBuild").value(Build.DISPLAY)
-            .name("locale").value(locale)
-            .name("screenDensity").value(screenDensity)
-            .name("dpi").value(dpi)
-            .name("emulator").value(isEmulator())
-            .name("screenResolution").value(screenResolution);
-
-        writer.name("cpuAbi").beginArray();
-        for (String s : cpuAbi) {
-            writer.value(s);
-        }
-        writer.endArray();
         writer.endObject();
+    }
+
+    // TODO migrate metadata values to separate class
+    void addDeviceMetaData(MetaData metaData) {
+        metaData.addToTab("device", "batteryLevel", getBatteryLevel(appContext));
+        metaData.addToTab("device", "charging", isCharging(appContext));
+        metaData.addToTab("device", "locationStatus", getLocationStatus(appContext));
+        metaData.addToTab("device", "networkAccess", getNetworkAccess(appContext));
+        metaData.addToTab("device", "time", getTime());
+        metaData.addToTab("device", "brand", Build.BRAND);
+        metaData.addToTab("device", "apiLevel", Build.VERSION.SDK_INT);
+        metaData.addToTab("device", "osBuild", Build.DISPLAY);
+        metaData.addToTab("device", "locale", locale);
+        metaData.addToTab("device", "screenDensity", screenDensity);
+        metaData.addToTab("device", "dpi", dpi);
+        metaData.addToTab("device", "emulator", isEmulator());
+        metaData.addToTab("device", "screenResolution", screenResolution);
+        metaData.addToTab("device", "cpuAbi", cpuAbi);
     }
 
     /**
