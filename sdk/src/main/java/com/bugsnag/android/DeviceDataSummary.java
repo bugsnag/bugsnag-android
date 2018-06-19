@@ -159,6 +159,7 @@ public class DeviceDataSummary implements JsonStream.Streamable {
                 }
             }
         } catch (Exception ignore) {
+            return false;
         }
         return false;
     }

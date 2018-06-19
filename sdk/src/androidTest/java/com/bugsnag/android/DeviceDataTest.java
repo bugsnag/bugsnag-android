@@ -1,5 +1,11 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -13,12 +19,6 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Arrays;
-
-import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -77,7 +77,8 @@ public class DeviceDataTest {
         JSONObject deviceDataJson = streamableToJson(deviceData);
 
         // serialises inherited fields correctly
-        for (String key : Arrays.asList("osName", "osVersion", "manufacturer", "model", "jailbroken")) {
+        for (String key : Arrays.asList("osName",
+            "osVersion", "manufacturer", "model", "jailbroken")) {
             assertTrue(deviceDataJson.has(key));
         }
 
