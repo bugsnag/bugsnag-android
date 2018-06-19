@@ -62,9 +62,9 @@ public class DeviceDataSummaryTest {
 
     @Test
     public void testJailbroken() {
-        assertFalse(deviceData.isJailBroken());
+        assertFalse(deviceData.isJailbroken());
         deviceData.setJailbroken(true);
-        assertTrue(deviceData.isJailBroken());
+        assertTrue(deviceData.isJailbroken());
     }
 
     @Test

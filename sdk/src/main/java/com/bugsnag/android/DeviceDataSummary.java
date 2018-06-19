@@ -1,17 +1,24 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 
-class DeviceDataSummary implements JsonStream.Streamable {
+public class DeviceDataSummary implements JsonStream.Streamable {
 
     private boolean rooted = isRooted();
+
+    @NonNull
     private String manufacturer;
+
+    @NonNull
     private String model;
+
+    @NonNull
     private String osName;
+
+    @NonNull
     private String osVersion;
 
     DeviceDataSummary() {
@@ -37,43 +44,87 @@ class DeviceDataSummary implements JsonStream.Streamable {
             .name("osVersion").value(osVersion);
     }
 
-    public boolean isJailBroken() {
+    /**
+     * @return true if the device is rooted, otherwise false
+     */
+    public boolean isJailbroken() {
         return rooted;
     }
 
+    /**
+     * Overrides whether the device is rooted or not
+     *
+     * @param jailbroken true if the device is rooted
+     */
     public void setJailbroken(boolean jailbroken) {
         this.rooted = jailbroken;
     }
 
+    /**
+     * @return the device manufacturer, determined via {@link android.os.Build#MANUFACTURER}
+     */
+    @NonNull
     public String getManufacturer() {
         return manufacturer;
     }
 
-    public void setManufacturer(String manufacturer) {
+    /**
+     * Overrides the device manufacturer
+     *
+     * @param manufacturer the new manufacturer
+     */
+    public void setManufacturer(@NonNull String manufacturer) {
         this.manufacturer = manufacturer;
     }
 
+    /**
+     * @return the device model, determined via {@link android.os.Build#MODEL}
+     */
+    @NonNull
     public String getModel() {
         return model;
     }
 
-    public void setModel(String model) {
+    /**
+     * Overrides the device model
+     *
+     * @param model the new device model
+     */
+    public void setModel(@NonNull String model) {
         this.model = model;
     }
 
+    /**
+     * @return the osName, 'Android' by default
+     */
+    @NonNull
     public String getOsName() {
         return osName;
     }
 
-    public void setOsName(String osName) {
+    /**
+     * Overrides the default osName
+     *
+     * @param osName the new osName
+     */
+    public void setOsName(@NonNull String osName) {
         this.osName = osName;
     }
 
+    /**
+     * @return the device operating system, determined via {@link android.os.Build.VERSION#RELEASE}
+     */
+    @NonNull
     public String getOsVersion() {
         return osVersion;
     }
 
-    public void setOsVersion(String osVersion) {
+    /**
+     * Overrides the device operating system version
+     *
+     * @param osVersion the new os version
+     */
+    public void setOsVersion(@NonNull String osVersion) {
         this.osVersion = osVersion;
     }
 
