@@ -8,24 +8,25 @@ import java.io.IOException;
  * Information about this library, including name and version.
  */
 public class Notifier implements JsonStream.Streamable {
-    static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
-    static final String NOTIFIER_VERSION = "4.5.0";
-    static final String NOTIFIER_URL = "https://bugsnag.com";
-    private String name;
-    private String version;
-    private String url;
+
+    private static final String NOTIFIER_NAME = "Android Bugsnag Notifier";
+    private static final String NOTIFIER_VERSION = "4.5.0";
+    private static final String NOTIFIER_URL = "https://bugsnag.com";
+
+    @NonNull
+    private String name = NOTIFIER_NAME;
+
+    @NonNull
+    private String version = NOTIFIER_VERSION;
+
+    @NonNull
+    private String url = NOTIFIER_URL;
 
     private static final Notifier instance = new Notifier();
 
     @NonNull
     public static Notifier getInstance() {
         return instance;
-    }
-
-    Notifier() {
-        this.name = NOTIFIER_NAME;
-        this.version = NOTIFIER_VERSION;
-        this.url = NOTIFIER_URL;
     }
 
     @Override
@@ -37,16 +38,38 @@ public class Notifier implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    @InternalApi
     public void setVersion(@NonNull String version) {
         this.version = version;
     }
 
+    @InternalApi
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setURL(@NonNull String url) {
         this.url = url;
     }
 
+    @InternalApi
     public void setName(@NonNull String name) {
         this.name = name;
+    }
+
+    @NonNull
+    @InternalApi
+    public String getName() {
+        return name;
+    }
+
+    @NonNull
+    @InternalApi
+    public String getVersion() {
+        return version;
+    }
+
+    @NonNull
+    @InternalApi
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public String getURL() {
+        return url;
     }
 }
