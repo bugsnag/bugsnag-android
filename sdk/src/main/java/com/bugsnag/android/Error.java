@@ -17,29 +17,52 @@ import java.io.IOException;
  */
 public class Error implements JsonStream.Streamable {
 
+    @SuppressWarnings("NullableProblems") // set after construction
+    @NonNull
+    private AppData appData;
+
+    @SuppressWarnings("NullableProblems") // set after construction
+    @NonNull
+    private DeviceData deviceData;
+
+    @SuppressWarnings("NullableProblems") // set after construction
+    @NonNull
+    private User user;
+
+    @Nullable
+    private Severity severity;
+
+    @NonNull
+    private MetaData metaData = new MetaData();
+
+    @Nullable
+    private String groupingHash;
+
+    @Nullable
+    private String context;
+
     @NonNull
     final Configuration config;
-    private AppData appData;
-    private DeviceData deviceData;
+    private final String[] projectPackages;
+    private final Exceptions exceptions;
     private Breadcrumbs breadcrumbs;
-    private User user;
     private final Throwable exception;
-    private Severity severity = Severity.WARNING;
-    @NonNull private MetaData metaData = new MetaData();
-    private String groupingHash;
-    private String context;
     private final HandledState handledState;
     private final Session session;
     private final ThreadState threadState;
 
     Error(@NonNull Configuration config, @NonNull Throwable exception,
-          HandledState handledState, Severity severity, Session session, ThreadState threadState) {
+          HandledState handledState, @NonNull Severity severity,
+          Session session, ThreadState threadState) {
         this.threadState = threadState;
         this.config = config;
         this.exception = exception;
         this.handledState = handledState;
         this.severity = severity;
         this.session = session;
+
+        projectPackages = config.getProjectPackages();
+        exceptions = new Exceptions(config, exception);
     }
 
     @Override
@@ -56,16 +79,16 @@ public class Error implements JsonStream.Streamable {
         writer.name("severityReason").value(handledState);
         writer.name("unhandled").value(handledState.isUnhandled());
 
-        if (config.getProjectPackages() != null) {
+        if (projectPackages != null) {
             writer.name("projectPackages").beginArray();
-            for (String projectPackage : config.getProjectPackages()) {
+            for (String projectPackage : projectPackages) {
                 writer.value(projectPackage);
             }
             writer.endArray();
         }
 
         // Write exception info
-        writer.name("exceptions").value(new Exceptions(config, exception));
+        writer.name("exceptions").value(exceptions);
 
         // Write user info
         writer.name("user").value(user);
@@ -103,7 +126,7 @@ public class Error implements JsonStream.Streamable {
      *
      * @param context what was happening at the time of a crash
      */
-    public void setContext(String context) {
+    public void setContext(@Nullable String context) {
         this.context = context;
     }
 
@@ -131,8 +154,18 @@ public class Error implements JsonStream.Streamable {
      *
      * @param groupingHash a string to use when grouping errors
      */
-    public void setGroupingHash(String groupingHash) {
+    public void setGroupingHash(@Nullable String groupingHash) {
         this.groupingHash = groupingHash;
+    }
+
+    /**
+     * Get the grouping hash associated with this Error.
+     *
+     * @return the grouping hash, if set
+     */
+    @Nullable
+    public String getGroupingHash() {
+        return groupingHash;
     }
 
     /**
@@ -172,13 +205,14 @@ public class Error implements JsonStream.Streamable {
         this.user = new User(id, email, name);
     }
 
-    void setUser(User user) {
+    void setUser(@NonNull User user) {
         this.user = user;
     }
 
     /**
      * @return user information associated with this Error
      */
+    @NonNull
     public User getUser() {
         return user;
     }
@@ -286,7 +320,8 @@ public class Error implements JsonStream.Streamable {
     /**
      * Get the message from the exception contained in this Error report.
      */
-    @NonNull public String getExceptionMessage() {
+    @NonNull
+    public String getExceptionMessage() {
         String localizedMessage = exception.getLocalizedMessage();
         return localizedMessage != null ? localizedMessage : "";
     }
@@ -304,14 +339,34 @@ public class Error implements JsonStream.Streamable {
      * @param id the device id
      */
     public void setDeviceId(@Nullable String id) {
-        deviceData.id = id;
+        deviceData.setId(id);
     }
 
-    void setAppData(AppData appData) {
+    /**
+     * Retrieves the {@link AppData} associated with this error
+     *
+     * @return the app metadata
+     */
+    @NonNull
+    public AppData getAppData() {
+        return appData;
+    }
+    /**
+     * Retrieves the {@link DeviceData} associated with this error
+     *
+     * @return the device metadata
+     */
+
+    @NonNull
+    public DeviceData getDeviceData() {
+        return deviceData;
+    }
+
+    void setAppData(@NonNull AppData appData) {
         this.appData = appData;
     }
 
-    void setDeviceData(DeviceData deviceData) {
+    void setDeviceData(@NonNull DeviceData deviceData) {
         this.deviceData = deviceData;
     }
 
@@ -354,7 +409,7 @@ public class Error implements JsonStream.Streamable {
         }
 
         Builder(@NonNull Configuration config, @NonNull String name,
-               @NonNull String message, @NonNull StackTraceElement[] frames, Session session) {
+                @NonNull String message, @NonNull StackTraceElement[] frames, Session session) {
             this(config, new BugsnagException(name, message, frames), session);
         }
 

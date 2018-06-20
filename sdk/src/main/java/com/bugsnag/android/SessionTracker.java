@@ -249,7 +249,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         if (session == null) {
             long nowMs = System.currentTimeMillis();
             activityFirstStartedAtMs.set(nowMs);
-            startNewSession(new Date(nowMs), client.user, true);
+            startNewSession(new Date(nowMs), client.getUser(), true);
             foregroundActivities.add(getActivityName(activity));
         }
     }
@@ -277,7 +277,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 && configuration.shouldAutoCaptureSessions()) {
 
                 activityFirstStartedAtMs.set(nowMs);
-                startNewSession(new Date(nowMs), client.user, true);
+                startNewSession(new Date(nowMs), client.getUser(), true);
             }
             foregroundActivities.add(activityName);
         } else {
