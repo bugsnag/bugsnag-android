@@ -24,7 +24,7 @@ public class AppDataSummary implements JsonStream.Streamable {
     private String releaseStage;
 
     @NonNull
-    private String notifierType = "android";
+    private String notifierType;
 
     @Nullable
     private String codeBundleId;

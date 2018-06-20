@@ -220,7 +220,7 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         boolean isNotProduction = !AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(
-            AppDataCollector.guessReleaseStage(appContext));
+            appDataCollector.guessReleaseStage());
         Logger.setEnabled(isNotProduction);
 
 
@@ -572,6 +572,11 @@ public class Client extends Observable implements Observer {
     @InternalApi
     public AppDataSummary getAppDataSummary() {
         return appDataCollector.generateAppDataSummary();
+    }
+
+    @InternalApi
+    public void populateAppMetaData(@NonNull MetaData metaData) {
+        appDataCollector.addAppMetaData(metaData);
     }
 
     @NonNull
