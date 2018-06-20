@@ -13,11 +13,17 @@ import java.io.IOException;
  * using your API key.
  */
 public class Report implements JsonStream.Streamable {
+
     @Nullable
     private final File errorFile;
+
     @Nullable
-    private Error error;
-    private Notifier notifier;
+    private final Error error;
+
+    @NonNull
+    private final Notifier notifier;
+
+    @NonNull
     private String apiKey;
 
     Report(@NonNull String apiKey, @Nullable File errorFile) {
@@ -51,11 +57,10 @@ public class Report implements JsonStream.Streamable {
         // Write in-memory event
         if (error != null) {
             writer.value(error);
-        }
-
-        // Write on-disk event
-        if (errorFile != null) {
+        } else if (errorFile != null) { // Write on-disk event
             writer.value(errorFile);
+        } else {
+            Logger.warn("Expected error or errorFile, found empty payload instead");
         }
 
         // End events array
@@ -70,20 +75,45 @@ public class Report implements JsonStream.Streamable {
         return error;
     }
 
+    /**
+     * Alters the API key used for this error report.
+     *
+     * @param apiKey the new API key
+     */
     public void setApiKey(@NonNull String apiKey) {
         this.apiKey = apiKey;
     }
 
+    /**
+     * @return the API key sent as part of this report.
+     */
+    @NonNull
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    @InternalApi
+    @Deprecated
     public void setNotifierVersion(@NonNull String version) {
         notifier.setVersion(version);
     }
 
+    @InternalApi
+    @Deprecated
     public void setNotifierName(@NonNull String name) {
         notifier.setName(name);
     }
 
+    @InternalApi
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    @Deprecated
     public void setNotifierURL(@NonNull String url) {
         notifier.setURL(url);
+    }
+
+    @InternalApi
+    @NonNull
+    public Notifier getNotifier() {
+        return notifier;
     }
 }
