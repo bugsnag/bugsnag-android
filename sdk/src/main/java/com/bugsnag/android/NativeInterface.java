@@ -120,29 +120,29 @@ public class NativeInterface {
 
     @NonNull
     public static String getDeviceLocale() {
-        return getClient().deviceData.locale;
+        return getClient().deviceDataCollector.locale;
     }
 
     public static double getDeviceTotalMemory() {
-        return DeviceData.calculateTotalMemory();
+        return DeviceDataCollector.calculateTotalMemory();
     }
 
     @Nullable
     public static Boolean getDeviceRooted() {
-        return DeviceDataSummary.isRooted();
+        return getClient().deviceData.isJailbroken();
     }
 
     public static float getDeviceScreenDensity() {
-        return getClient().deviceData.screenDensity;
+        return getClient().deviceDataCollector.screenDensity;
     }
 
     public static int getDeviceDpi() {
-        return getClient().deviceData.dpi;
+        return getClient().deviceDataCollector.dpi;
     }
 
     @Nullable
     public static String getDeviceScreenResolution() {
-        return getClient().deviceData.screenResolution;
+        return getClient().deviceDataCollector.screenResolution;
     }
 
     public static String getDeviceManufacturer() {
@@ -171,7 +171,7 @@ public class NativeInterface {
 
     @NonNull
     public static String[] getDeviceCpuAbi() {
-        return getClient().deviceData.cpuAbi;
+        return getClient().deviceDataCollector.cpuAbi;
     }
 
 

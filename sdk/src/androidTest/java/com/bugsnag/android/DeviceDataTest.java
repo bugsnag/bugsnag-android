@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
@@ -13,6 +14,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +30,13 @@ public class DeviceDataTest {
 
     @Before
     public void setUp() throws Exception {
-        SharedPreferences sharedPref = getSharedPrefs(InstrumentationRegistry.getContext());
-        deviceData = new DeviceData(InstrumentationRegistry.getContext(), sharedPref);
+        DeviceDataCollector deviceDataCollector = new DeviceDataCollector(generateClient());
+        deviceData = deviceDataCollector.generateDeviceData();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test
