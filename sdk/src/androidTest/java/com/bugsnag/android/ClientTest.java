@@ -4,6 +4,7 @@ import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -19,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collection;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -268,6 +270,68 @@ public class ClientTest {
     @Test(expected = IllegalArgumentException.class)
     public void testApiClientNullValidation() {
         generateClient().setSessionTrackingApiClient(null);
+    }
+
+    @Test
+    public void testClientUser() {
+        Client client = generateClient();
+        assertNotNull(client.getUser());
+        assertNotNull(client.getUser().getId());
+    }
+
+    @Test
+    public void testBreadcrumbGetter() {
+        Client client = generateClient();
+        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+
+        int breadcrumbCount = breadcrumbs.size();
+        client.leaveBreadcrumb("Foo");
+        assertEquals(breadcrumbCount, breadcrumbs.size()); // should not pick up new breadcrumbs
+    }
+
+    @Test
+    public void testBreadcrumbStoreNotModified() {
+        Client client = generateClient();
+        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        int breadcrumbCount = client.breadcrumbs.store.size();
+
+        breadcrumbs.clear(); // only the copy should be cleared
+        assertTrue(breadcrumbs.isEmpty());
+        assertEquals(breadcrumbCount, client.breadcrumbs.store.size());
+    }
+
+    @Test
+    public void testAppData() {
+        Client client = generateClient();
+        AppData appData = client.getAppData();
+        assertNotNull(appData);
+        assertNotEquals(client.appData, appData);
+        assertNotEquals(client.getAppData(), appData);
+    }
+
+    @Test
+    public void testAppDataSummary() {
+        Client client = generateClient();
+        AppDataSummary appData = client.getAppDataSummary();
+        assertNotNull(appData);
+        assertNotEquals(client.getAppDataSummary(), appData);
+    }
+
+    @Test
+    public void testDeviceData() {
+        Client client = generateClient();
+        DeviceData deviceData = client.getDeviceData();
+        assertNotNull(deviceData);
+        assertNotEquals(client.deviceData, deviceData);
+        assertNotEquals(client.getDeviceData(), deviceData);
+    }
+
+    @Test
+    public void testDeviceDataSummary() {
+        Client client = generateClient();
+        DeviceDataSummary deviceData = client.getDeviceDataSummary();
+        assertNotNull(deviceData);
+        assertNotEquals(client.getDeviceDataSummary(), deviceData);
     }
 
 }

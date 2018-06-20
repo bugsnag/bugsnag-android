@@ -69,15 +69,15 @@ public class NativeInterface {
     }
 
     public static String getUserId() {
-        return getClient().user.getId();
+        return getClient().getUser().getId();
     }
 
     public static String getUserEmail() {
-        return getClient().user.getEmail();
+        return getClient().getUser().getEmail();
     }
 
     public static String getUserName() {
-        return getClient().user.getName();
+        return getClient().getUser().getName();
     }
 
     @NonNull

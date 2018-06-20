@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Information about the running Android app, including app name, version and release stage.
  */
-class AppData extends AppDataSummary {
+public class AppData extends AppDataSummary {
 
     private static final long startTimeMs = SystemClock.elapsedRealtime();
 

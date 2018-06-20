@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-class DeviceDataSummary implements JsonStream.Streamable {
+public class DeviceDataSummary implements JsonStream.Streamable {
 
     private final Boolean rooted = isRooted();
 

@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -62,15 +63,18 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final Configuration config;
     private final Context appContext;
+
     @NonNull
     protected final AppData appData;
+
     @NonNull
     protected final DeviceData deviceData;
+
     @NonNull
     final Breadcrumbs breadcrumbs;
 
     @NonNull
-    protected final User user = new User();
+    private final User user = new User();
 
     @NonNull
     protected final ErrorStore errorStore;
@@ -79,6 +83,7 @@ public class Client extends Observable implements Observer {
 
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
+    private SharedPreferences sharedPref;
 
     /**
      * Initialize a Bugsnag client
@@ -138,8 +143,7 @@ public class Client extends Observable implements Observer {
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appData = new AppData(appContext, config, sessionTracker);
         deviceData = new DeviceData(appContext, sharedPref);
@@ -535,6 +539,47 @@ public class Client extends Observable implements Observer {
         setUserId(id);
         setUserEmail(email);
         setUserName(name);
+    }
+
+    /**
+     * Retrieves details of the user currently using your application.
+     * You can search for this information in your Bugsnag dashboard.
+     *
+     * @return the current user
+     */
+    @NonNull
+    public User getUser() {
+        return user;
+    }
+
+    @NonNull
+    @InternalApi
+    public Collection<Breadcrumb> getBreadcrumbs() {
+        return new ArrayList<>(breadcrumbs.store);
+    }
+
+    @NonNull
+    @InternalApi
+    public AppData getAppData() {
+        return new AppData(appContext, config, sessionTracker);
+    }
+
+    @NonNull
+    @InternalApi
+    public AppDataSummary getAppDataSummary() {
+        return new AppDataSummary(appContext, config);
+    }
+
+    @NonNull
+    @InternalApi
+    public DeviceData getDeviceData() {
+        return new DeviceData(appContext, sharedPref);
+    }
+
+    @NonNull
+    @InternalApi
+    public DeviceDataSummary getDeviceDataSummary() {
+        return new DeviceDataSummary();
     }
 
     /**

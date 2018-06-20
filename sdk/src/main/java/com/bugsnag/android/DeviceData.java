@@ -30,7 +30,7 @@ import java.util.UUID;
  * App information in this class is cached during construction for faster
  * subsequent lookups and to reduce GC overhead.
  */
-class DeviceData extends DeviceDataSummary {
+public class DeviceData extends DeviceDataSummary {
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
