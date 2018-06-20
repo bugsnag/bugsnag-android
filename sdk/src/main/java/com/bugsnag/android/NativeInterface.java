@@ -82,7 +82,7 @@ public class NativeInterface {
 
     @NonNull
     public static String getPackageName() {
-        return getClient().appData.packageName;
+        return getClient().appData.getPackageName();
     }
 
     @Nullable
@@ -92,11 +92,11 @@ public class NativeInterface {
 
     @Nullable
     public static String getVersionName() {
-        return getClient().appData.versionName;
+        return getClient().appData.getVersionName();
     }
 
     public static int getVersionCode() {
-        return getClient().appData.versionCode;
+        return getClient().appData.getVersionCode();
     }
 
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
@@ -106,7 +106,7 @@ public class NativeInterface {
 
     @Nullable
     public static String getAppVersion() {
-        return getClient().appData.getAppVersion();
+        return getClient().appData.getVersionName();
     }
 
     public static String getReleaseStage() {

@@ -933,6 +933,8 @@ public class Client extends Observable implements Observer {
         error.setAppData(appData);
         error.setDeviceData(deviceData);
 
+        // add additional info that belongs in metadata
+        appData.addAppMetaData(error.getMetaData());
         deviceData.addDeviceMetaData(error.getMetaData());
 
         // Attach breadcrumbs to the error
