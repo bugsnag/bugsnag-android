@@ -34,6 +34,18 @@ public class DeviceData extends DeviceDataSummary {
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
+    private long freeMemory;
+    private long totalMemory;
+
+    @Nullable
+    private Long freeDisk;
+
+    @Nullable
+    private String id;
+
+    @Nullable
+    private String orientation;
+
     @Nullable
     final Float screenDensity;
 
@@ -47,9 +59,6 @@ public class DeviceData extends DeviceDataSummary {
     @NonNull
     final String locale;
 
-    @Nullable
-    protected String id;
-
     @NonNull
     final String[] cpuAbi;
 
@@ -61,6 +70,10 @@ public class DeviceData extends DeviceDataSummary {
         locale = getLocale();
         id = retrieveUniqueInstallId(sharedPref);
         cpuAbi = getCpuAbi();
+        freeMemory = calculateFreeMemory();
+        totalMemory = calculateTotalMemory();
+        freeDisk = calculateFreeDisk();
+        orientation = calculateOrientation(appContext);
     }
 
     @Override
@@ -70,45 +83,114 @@ public class DeviceData extends DeviceDataSummary {
 
         writer
             .name("id").value(id)
-            .name("freeMemory").value(getFreeMemory())
-            .name("totalMemory").value(getTotalMemory())
-            .name("freeDisk").value(getFreeDisk())
-            .name("orientation").value(getOrientation(appContext));
-
-
-        // TODO migrate metadata values
-
-        writer
-            .name("batteryLevel").value(getBatteryLevel(appContext))
-            .name("charging").value(isCharging(appContext))
-            .name("locationStatus").value(getLocationStatus(appContext))
-            .name("networkAccess").value(getNetworkAccess(appContext))
-            .name("time").value(getTime())
-            .name("brand").value(Build.BRAND)
-            .name("apiLevel").value(Build.VERSION.SDK_INT)
-            .name("osBuild").value(Build.DISPLAY)
-            .name("locale").value(locale)
-            .name("screenDensity").value(screenDensity)
-            .name("dpi").value(dpi)
-            .name("emulator").value(isEmulator())
-            .name("screenResolution").value(screenResolution);
-
-        writer.name("cpuAbi").beginArray();
-        for (String s : cpuAbi) {
-            writer.value(s);
-        }
-        writer.endArray();
+            .name("freeMemory").value(freeMemory)
+            .name("totalMemory").value(totalMemory)
+            .name("freeDisk").value(freeDisk)
+            .name("orientation").value(orientation);
         writer.endObject();
     }
 
-    @NonNull
-    String getUserId() {
+    // TODO migrate metadata values to separate class
+    void addDeviceMetaData(MetaData metaData) {
+        metaData.addToTab("device", "batteryLevel", getBatteryLevel(appContext));
+        metaData.addToTab("device", "charging", isCharging(appContext));
+        metaData.addToTab("device", "locationStatus", getLocationStatus(appContext));
+        metaData.addToTab("device", "networkAccess", getNetworkAccess(appContext));
+        metaData.addToTab("device", "time", getTime());
+        metaData.addToTab("device", "brand", Build.BRAND);
+        metaData.addToTab("device", "apiLevel", Build.VERSION.SDK_INT);
+        metaData.addToTab("device", "osBuild", Build.DISPLAY);
+        metaData.addToTab("device", "locale", locale);
+        metaData.addToTab("device", "screenDensity", screenDensity);
+        metaData.addToTab("device", "dpi", dpi);
+        metaData.addToTab("device", "emulator", isEmulator());
+        metaData.addToTab("device", "screenResolution", screenResolution);
+        metaData.addToTab("device", "cpuAbi", cpuAbi);
+    }
+
+    /**
+     * @return the device's unique ID for the current app installation
+     */
+    @Nullable
+    public String getId() {
         return id;
     }
 
-    void setId(@Nullable String id) {
+    /**
+     * Overrides the device's unique ID. This can be set to null for privacy reasons, if desired.
+     *
+     * @param id the new device id
+     */
+    public void setId(@Nullable String id) {
         this.id = id;
     }
+
+    /**
+     * @return the amount of free memory in bytes that the VM can allocate
+     */
+    public long getFreeMemory() {
+        return freeMemory;
+    }
+
+    /**
+     * Overrides the default value for the device's free memory.
+     *
+     * @param freeMemory the new free memory value, in bytes
+     */
+    public void setFreeMemory(long freeMemory) {
+        this.freeMemory = freeMemory;
+    }
+
+    /**
+     * @return the total amount of memory in bytes that the VM can allocate
+     */
+    public long getTotalMemory() {
+        return totalMemory;
+    }
+
+    /**
+     * Overrides the default value for the device's total memory.
+     *
+     * @param totalMemory the new total memory value, in bytes
+     */
+    public void setTotalMemory(long totalMemory) {
+        this.totalMemory = totalMemory;
+    }
+
+    /**
+     * @return the amount of disk space available on the smallest disk on the device, if known
+     */
+    @Nullable
+    public Long getFreeDisk() {
+        return freeDisk;
+    }
+
+    /**
+     * Overrides the default value for the device's free disk space, in bytes.
+     *
+     * @param freeDisk the new free disk space, in bytes
+     */
+    public void setFreeDisk(long freeDisk) {
+        this.freeDisk = freeDisk;
+    }
+
+    /**
+     * @return the device's orientation, if known
+     */
+    @Nullable
+    public String getOrientation() {
+        return orientation;
+    }
+
+    /**
+     * Overrides the device's default orientation
+     *
+     * @param orientation the new orientation
+     */
+    public void setOrientation(@Nullable String orientation) {
+        this.orientation = orientation;
+    }
+
 
     /**
      * Guesses whether the current device is an emulator or not, erring on the side of caution
@@ -164,8 +246,7 @@ public class DeviceData extends DeviceDataSummary {
     /**
      * Get the total memory available on the current Android device, in bytes
      */
-    @NonNull
-    static Long getTotalMemory() {
+    static long calculateTotalMemory() {
         if (Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
             return Runtime.getRuntime().maxMemory();
         } else {
@@ -231,7 +312,7 @@ public class DeviceData extends DeviceDataSummary {
      * Get the free disk space on the smallest disk
      */
     @Nullable
-    private static Long getFreeDisk() {
+    private static Long calculateFreeDisk() {
         try {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
             long externalBytesAvailable =
@@ -251,8 +332,7 @@ public class DeviceData extends DeviceDataSummary {
     /**
      * Get the amount of memory remaining that the VM can allocate
      */
-    @NonNull
-    private static Long getFreeMemory() {
+    private static long calculateFreeMemory() {
         Runtime runtime = Runtime.getRuntime();
         if (runtime.maxMemory() != Long.MAX_VALUE) {
             return runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
@@ -265,7 +345,7 @@ public class DeviceData extends DeviceDataSummary {
      * Get the device orientation, eg. "landscape"
      */
     @Nullable
-    private static String getOrientation(@NonNull Context appContext) {
+    private static String calculateOrientation(@NonNull Context appContext) {
         String orientation;
         switch (appContext.getResources().getConfiguration().orientation) {
             case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
