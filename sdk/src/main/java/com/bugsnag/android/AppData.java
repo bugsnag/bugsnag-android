@@ -10,6 +10,7 @@ import java.io.IOException;
  */
 public class AppData extends AppDataSummary {
 
+    @SuppressWarnings("NullableProblems") // initialised after construction
     @NonNull
     private String packageName;
 

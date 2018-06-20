@@ -20,9 +20,11 @@ public class AppDataSummary implements JsonStream.Streamable {
     @Nullable
     private String versionName;
 
+    @SuppressWarnings("NullableProblems") // initialised after construction
     @NonNull
     private String releaseStage;
 
+    @SuppressWarnings("NullableProblems") // initialised after construction
     @NonNull
     private String notifierType;
 

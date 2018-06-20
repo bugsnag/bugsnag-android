@@ -71,8 +71,7 @@ class AppDataCollector {
         return data;
     }
 
-    // TODO migrate metadata fields to separate class
-    void addAppMetaData(MetaData metaData) {
+    void populateAppMetaData(MetaData metaData) {
         metaData.addToTab("app", "name", appName);
         metaData.addToTab("app", "packageName", packageName);
         metaData.addToTab("app", "versionName", calculateVersionName());

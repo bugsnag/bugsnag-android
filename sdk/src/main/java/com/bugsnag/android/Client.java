@@ -576,7 +576,7 @@ public class Client extends Observable implements Observer {
 
     @InternalApi
     public void populateAppMetaData(@NonNull MetaData metaData) {
-        appDataCollector.addAppMetaData(metaData);
+        appDataCollector.populateAppMetaData(metaData);
     }
 
     @NonNull
@@ -933,17 +933,20 @@ public class Client extends Observable implements Observer {
             return;
         }
 
+        // generate new object each time, as this can be mutated by end-users
+        AppData errorAppData = appDataCollector.generateAppData();
+
         // Don't notify unless releaseStage is in notifyReleaseStages
-        if (!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
+        if (!config.shouldNotifyForReleaseStage(errorAppData.getReleaseStage())) {
             return;
         }
 
         // Capture the state of the app and device and attach diagnostics to the error
-        error.setAppData(appData);
+        error.setAppData(errorAppData);
         error.setDeviceData(deviceData);
 
         // add additional info that belongs in metadata
-        appDataCollector.addAppMetaData(error.getMetaData());
+        appDataCollector.populateAppMetaData(error.getMetaData());
         deviceData.addDeviceMetaData(error.getMetaData());
 
         // Attach breadcrumbs to the error
