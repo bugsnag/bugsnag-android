@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import java.io.IOException;
 
@@ -134,7 +135,7 @@ public class Error implements JsonStream.Streamable {
      */
     @Nullable
     public String getContext() {
-        if (context != null) {
+        if (!TextUtils.isEmpty(context)) {
             return context;
         } else if (config.getContext() != null) {
             return config.getContext();
