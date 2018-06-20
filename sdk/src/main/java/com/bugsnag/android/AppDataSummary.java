@@ -1,8 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -16,9 +13,6 @@ import java.io.IOException;
  * subsequent lookups and to reduce GC overhead.
  */
 public class AppDataSummary implements JsonStream.Streamable {
-
-    static final String RELEASE_STAGE_DEVELOPMENT = "development";
-    static final String RELEASE_STAGE_PRODUCTION = "production";
 
     @Nullable
     private Integer versionCode;
@@ -34,29 +28,6 @@ public class AppDataSummary implements JsonStream.Streamable {
 
     @Nullable
     private String codeBundleId;
-
-    AppDataSummary(@NonNull Context appContext, @NonNull Configuration config) {
-        versionCode = calculateVersionCode(appContext);
-
-        codeBundleId = config.getCodeBundleId();
-        String configType = config.getNotifierType();
-
-        if (configType != null) {
-            notifierType = configType;
-        }
-
-        if (config.getReleaseStage() != null) {
-            releaseStage = config.getReleaseStage();
-        } else {
-            releaseStage = guessReleaseStage(appContext);
-        }
-
-        if (config.getAppVersion() != null) {
-            versionName = config.getAppVersion();
-        } else {
-            versionName = calculateVersionName(appContext);
-        }
-    }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
@@ -152,54 +123,4 @@ public class AppDataSummary implements JsonStream.Streamable {
     public void setCodeBundleId(@Nullable String codeBundleId) {
         this.codeBundleId = codeBundleId;
     }
-
-    /**
-     * The version code of the running Android app, from android:versionCode
-     * in AndroidManifest.xml
-     */
-    @Nullable
-    private static Integer calculateVersionCode(@NonNull Context appContext) {
-        try {
-            String packageName = appContext.getPackageName();
-            return appContext.getPackageManager().getPackageInfo(packageName, 0).versionCode;
-        } catch (PackageManager.NameNotFoundException exception) {
-            Logger.warn("Could not get versionCode");
-        }
-        return null;
-    }
-
-    /**
-     * The version code of the running Android app, from android:versionName
-     * in AndroidManifest.xml
-     */
-    @Nullable
-    private static String calculateVersionName(@NonNull Context appContext) {
-        try {
-            String packageName = appContext.getPackageName();
-            return appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
-        } catch (PackageManager.NameNotFoundException exception) {
-            Logger.warn("Could not get versionName");
-        }
-        return null;
-    }
-
-    /**
-     * Guess the release stage of the running Android app by checking the
-     * android:debuggable flag from AndroidManifest.xml
-     */
-    @NonNull
-    static String guessReleaseStage(@NonNull Context appContext) {
-        try {
-            String packageName = appContext.getPackageName();
-            PackageManager packageManager = appContext.getPackageManager();
-            int appFlags = packageManager.getApplicationInfo(packageName, 0).flags;
-            if ((appFlags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-                return RELEASE_STAGE_DEVELOPMENT;
-            }
-        } catch (PackageManager.NameNotFoundException exception) {
-            Logger.warn("Could not get releaseStage");
-        }
-        return RELEASE_STAGE_PRODUCTION;
-    }
-
 }

@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Information and associated diagnostics relating to a handled or unhandled
@@ -139,11 +140,15 @@ public class Error implements JsonStream.Streamable {
             return context;
         } else if (config.getContext() != null) {
             return config.getContext();
-        } else if (appData != null) {
-            return appData.getActiveScreenClass();
-        } else {
-            return null;
+        } else if (metaData != null) {
+            Map<String, Object> app = metaData.getTab("app");
+            Object activeScreen = app.get("activeScreen");
+
+            if (activeScreen instanceof String) {
+                return (String) activeScreen;
+            }
         }
+        return null;
     }
 
     /**
