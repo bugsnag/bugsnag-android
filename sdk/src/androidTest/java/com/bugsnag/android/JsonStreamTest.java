@@ -11,6 +11,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,11 @@ public class JsonStreamTest {
         File cacheDir = InstrumentationRegistry.getContext().getCacheDir();
         file = new File(cacheDir, "whoops");
         file.delete();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test

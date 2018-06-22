@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,11 @@ public class BreadcrumbLifecycleCrashTest {
         Context context = InstrumentationRegistry.getContext();
         SessionStore sessionStore = new SessionStore(configuration, context);
         sessionTracker = new SessionTracker(configuration, null, sessionStore);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test

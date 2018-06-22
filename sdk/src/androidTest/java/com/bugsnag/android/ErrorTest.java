@@ -18,6 +18,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +43,11 @@ public class ErrorTest {
         config = new Configuration("api-key");
         RuntimeException exception = new RuntimeException("Example message");
         error = new Error.Builder(config, exception, null).build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test
