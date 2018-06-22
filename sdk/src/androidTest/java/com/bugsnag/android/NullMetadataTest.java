@@ -5,6 +5,7 @@ import static junit.framework.Assert.assertNotNull;
 
 import android.support.test.InstrumentationRegistry;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,6 +43,11 @@ public class NullMetadataTest {
         });
 
         throwable = new RuntimeException("Test");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test

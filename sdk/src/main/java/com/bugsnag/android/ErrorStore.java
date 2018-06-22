@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,13 +64,18 @@ class ErrorStore extends FileStore<Error> {
                 flushOnLaunchCompleted = false;
                 Logger.info("Attempting to send launch crash reports");
 
-                Async.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        flushReports(crashReports);
-                        flushOnLaunchCompleted = true;
-                    }
-                });
+                try {
+                    Async.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            flushReports(crashReports);
+                            flushOnLaunchCompleted = true;
+                        }
+                    });
+                } catch (RejectedExecutionException ex) {
+                    Logger.warn("Failed to flush launch crash reports", ex);
+                    flushOnLaunchCompleted = true;
+                }
 
                 long waitMs = 0;
 
