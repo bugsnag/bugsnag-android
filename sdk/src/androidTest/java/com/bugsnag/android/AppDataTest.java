@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
@@ -15,6 +16,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +29,7 @@ public class AppDataTest {
 
     private Configuration config;
     private AppData appData;
-    private Context context;
-    private SessionTracker sessionTracker;
+    private AppDataCollector appDataCollector;
 
     /**
      * Configures a new AppData for testing accessors + serialisation
@@ -38,9 +39,14 @@ public class AppDataTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("some-api-key");
-        context = InstrumentationRegistry.getContext();
-        sessionTracker = generateSessionTracker();
-        appData = new AppData(context, config, sessionTracker);
+        Client client = new Client(InstrumentationRegistry.getContext(), config);
+        appDataCollector = new AppDataCollector(client);
+        appData = appDataCollector.generateAppData();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test
@@ -102,7 +108,7 @@ public class AppDataTest {
     public void testAppVersionOverride() throws JSONException, IOException {
         String appVersion = "1.2.3";
         config.setAppVersion(appVersion);
-        appData = new AppData(context, config, sessionTracker);
+        appData = appDataCollector.generateAppData();
 
         JSONObject appDataJson = streamableToJson(appData);
         assertEquals(appVersion, appDataJson.get("version"));
@@ -112,7 +118,7 @@ public class AppDataTest {
     public void testReleaseStageOverride() throws JSONException, IOException {
         String releaseStage = "test-stage";
         config.setReleaseStage(releaseStage);
-        appData = new AppData(context, config, sessionTracker);
+        appData = appDataCollector.generateAppData();
 
         JSONObject appDataJson = streamableToJson(appData);
         assertEquals(releaseStage, appDataJson.get("releaseStage"));
