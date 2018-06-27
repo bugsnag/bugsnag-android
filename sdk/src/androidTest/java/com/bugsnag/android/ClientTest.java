@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -316,6 +317,22 @@ public class ClientTest {
         AppDataSummary appData = client.getAppDataSummary();
         assertNotNull(appData);
         assertNotEquals(client.getAppDataSummary(), appData);
+    }
+
+    @Test
+    public void testAppDataMetaData() {
+        Client client = generateClient();
+        MetaData metaData = new MetaData();
+        Map<String, Object> app = metaData.getTab("app");
+        assertEquals(0, app.size());
+
+        client.populateAppMetaData(metaData);
+        assertEquals(5, app.size());
+        assertEquals("Bugsnag Android Tests", app.get("name"));
+        assertEquals("com.bugsnag.android.test", app.get("packageName"));
+        assertEquals("1.0", app.get("versionName"));
+        assertNotNull(app.get("memoryUsage"));
+        assertNotNull(app.get("lowMemory"));
     }
 
     @Test

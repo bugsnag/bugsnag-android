@@ -314,17 +314,10 @@ public class ErrorTest {
     }
 
     @Test
-    public void testAppDataContext() throws Exception {
+    public void testActiveScreen() throws Exception {
         error.setContext(null);
-        Context context = InstrumentationRegistry.getContext();
-        SessionTracker sessionTracker = generateSessionTracker();
-        String expectedContext = "FooActivity";
-        sessionTracker.updateForegroundTracker(expectedContext,
-            true, System.currentTimeMillis());
-        AppData appData = new AppData(context, config, sessionTracker);
-        error.setAppData(appData);
-        assertEquals(appData, error.getAppData());
-        assertEquals(expectedContext, error.getContext());
+        error.getMetaData().addToTab("app", "activeScreen", "FooActivity");
+        assertEquals("FooActivity", error.getContext());
     }
 
     @Test

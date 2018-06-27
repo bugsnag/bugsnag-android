@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
@@ -53,7 +54,7 @@ public class SessionTrackingPayloadTest {
 
     private SessionTrackingPayload generatePayloadFromSession(Context context,
                                                   Session session) throws Exception {
-        appData = new AppData(context, new Configuration("a"), generateSessionTracker());
+        appData = new AppDataCollector(generateClient()).generateAppData();
         return new SessionTrackingPayload(session, appData);
     }
 

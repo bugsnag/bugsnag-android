@@ -87,7 +87,7 @@ public class NativeInterface {
 
     @Nullable
     public static String getAppName() {
-        return getClient().appData.appName;
+        return getClient().appDataCollector.appName;
     }
 
     @Nullable

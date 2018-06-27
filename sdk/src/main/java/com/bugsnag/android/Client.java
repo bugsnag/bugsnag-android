@@ -86,6 +86,7 @@ public class Client extends Observable implements Observer {
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
+    AppDataCollector appDataCollector;
 
     /**
      * Initialize a Bugsnag client
@@ -147,8 +148,10 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
+        appDataCollector = new AppDataCollector(this);
+
+        appData = appDataCollector.generateAppData();
         deviceDataCollector = new DeviceDataCollector(this);
-        appData = new AppData(appContext, config, sessionTracker);
         deviceData = deviceDataCollector.generateDeviceData();
 
         // Set up breadcrumbs
@@ -218,8 +221,8 @@ public class Client extends Observable implements Observer {
 
         config.addObserver(this);
 
-        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
-            AppData.guessReleaseStage(appContext));
+        boolean isNotProduction = !AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(
+            appDataCollector.guessReleaseStage());
         Logger.setEnabled(isNotProduction);
 
 
@@ -496,7 +499,7 @@ public class Client extends Observable implements Observer {
      */
     public void setReleaseStage(String releaseStage) {
         config.setReleaseStage(releaseStage);
-        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
+        Logger.setEnabled(!AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
 
     /**
@@ -564,13 +567,18 @@ public class Client extends Observable implements Observer {
     @NonNull
     @InternalApi
     public AppData getAppData() {
-        return new AppData(appContext, config, sessionTracker);
+        return appDataCollector.generateAppData();
     }
 
     @NonNull
     @InternalApi
     public AppDataSummary getAppDataSummary() {
-        return new AppDataSummary(appContext, config);
+        return appDataCollector.generateAppDataSummary();
+    }
+
+    @InternalApi
+    public void populateAppMetaData(@NonNull MetaData metaData) {
+        appDataCollector.populateAppMetaData(metaData);
     }
 
     @NonNull
@@ -932,8 +940,11 @@ public class Client extends Observable implements Observer {
             return;
         }
 
+        // generate new object each time, as this can be mutated by end-users
+        AppData errorAppData = appDataCollector.generateAppData();
+
         // Don't notify unless releaseStage is in notifyReleaseStages
-        if (!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
+        if (!config.shouldNotifyForReleaseStage(errorAppData.getReleaseStage())) {
             return;
         }
 
@@ -942,10 +953,10 @@ public class Client extends Observable implements Observer {
         error.setDeviceData(errorDeviceData);
         deviceDataCollector.populateDeviceMetaData(error.getMetaData());
 
-        error.setAppData(appData);
+        error.setAppData(errorAppData);
 
         // add additional info that belongs in metadata
-        appData.addAppMetaData(error.getMetaData());
+        appDataCollector.populateAppMetaData(error.getMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);
@@ -1443,7 +1454,7 @@ public class Client extends Observable implements Observer {
      * @return the ms since the java epoch
      */
     public long getLaunchTimeMs() {
-        return AppData.getDurationMs();
+        return AppDataCollector.getDurationMs();
     }
 
 }
