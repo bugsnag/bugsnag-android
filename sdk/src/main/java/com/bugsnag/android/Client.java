@@ -70,6 +70,8 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final DeviceData deviceData;
 
+    DeviceDataCollector deviceDataCollector;
+
     @NonNull
     final Breadcrumbs breadcrumbs;
 
@@ -83,7 +85,7 @@ public class Client extends Observable implements Observer {
 
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
-    private SharedPreferences sharedPref;
+    SharedPreferences sharedPrefs;
     AppDataCollector appDataCollector;
 
     /**
@@ -144,13 +146,13 @@ public class Client extends Observable implements Observer {
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
-        sharedPref = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-
+        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appDataCollector = new AppDataCollector(this);
 
         appData = appDataCollector.generateAppData();
-        deviceData = new DeviceData(appContext, sharedPref);
+        deviceDataCollector = new DeviceDataCollector(this);
+        deviceData = deviceDataCollector.generateDeviceData();
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs();
@@ -160,9 +162,9 @@ public class Client extends Observable implements Observer {
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getId()));
-            user.setName(sharedPref.getString(USER_NAME_KEY, null));
-            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
+            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceData.getId()));
+            user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
+            user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
         } else {
             user.setId(deviceData.getId());
         }
@@ -582,13 +584,18 @@ public class Client extends Observable implements Observer {
     @NonNull
     @InternalApi
     public DeviceData getDeviceData() {
-        return new DeviceData(appContext, sharedPref);
+        return deviceDataCollector.generateDeviceData();
     }
 
     @NonNull
     @InternalApi
     public DeviceDataSummary getDeviceDataSummary() {
-        return new DeviceDataSummary();
+        return deviceDataCollector.generateDeviceDataSummary();
+    }
+
+    @InternalApi
+    public void populateDeviceMetaData(@NonNull MetaData metaData) {
+        deviceDataCollector.populateDeviceMetaData(metaData);
     }
 
     /**
@@ -942,12 +949,14 @@ public class Client extends Observable implements Observer {
         }
 
         // Capture the state of the app and device and attach diagnostics to the error
+        DeviceData errorDeviceData = deviceDataCollector.generateDeviceData();
+        error.setDeviceData(errorDeviceData);
+        deviceDataCollector.populateDeviceMetaData(error.getMetaData());
+
         error.setAppData(errorAppData);
-        error.setDeviceData(deviceData);
 
         // add additional info that belongs in metadata
         appDataCollector.populateAppMetaData(error.getMetaData());
-        deviceData.addDeviceMetaData(error.getMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);

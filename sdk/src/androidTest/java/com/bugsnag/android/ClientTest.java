@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -351,4 +352,29 @@ public class ClientTest {
         assertNotEquals(client.getDeviceDataSummary(), deviceData);
     }
 
+    @Test
+    public void testPopulateDeviceMetadata() {
+        Client client = generateClient();
+        MetaData metaData = new MetaData();
+        Map<String, Object> app = metaData.getTab("device");
+        assertEquals(0, app.size());
+
+        client.populateDeviceMetaData(metaData);
+        assertEquals(14, app.size());
+
+        assertNotNull(app.get("batteryLevel"));
+        assertNotNull(app.get("charging"));
+        assertNotNull(app.get("locationStatus"));
+        assertNotNull(app.get("networkAccess"));
+        assertNotNull(app.get("time"));
+        assertNotNull(app.get("brand"));
+        assertNotNull(app.get("apiLevel"));
+        assertNotNull(app.get("osBuild"));
+        assertNotNull(app.get("locale"));
+        assertNotNull(app.get("screenDensity"));
+        assertNotNull(app.get("dpi"));
+        assertNotNull(app.get("emulator"));
+        assertNotNull(app.get("screenResolution"));
+        assertNotNull(app.get("cpuAbi"));
+    }
 }
