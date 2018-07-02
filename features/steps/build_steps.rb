@@ -1,5 +1,5 @@
 When("I run {string} with the defaults") do |eventType|
-  wait_time = RUNNING_CI ? '8' : '1'
+  wait_time = RUNNING_CI ? '10' : '1'
   steps %Q{
     When I start Android emulator "newnexus"
     And I install the "com.bugsnag.android.mazerunner" Android app from "mazerunner/build/outputs/apk/release/mazerunner-release.apk"
