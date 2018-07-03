@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
  */
@@ -80,23 +82,24 @@ public class NativeInterface {
         return getClient().getUser().getName();
     }
 
-    @NonNull
+    @Nullable
     public static String getPackageName() {
-        return getClient().appData.getPackageName();
+        return getStringFromMap("packageName", getClient().appData.getAppData());
     }
 
     @Nullable
     public static String getAppName() {
-        return getClient().appDataCollector.appName;
+        return getClient().appData.appName;
     }
 
     @Nullable
     public static String getVersionName() {
-        return getClient().appData.getVersionName();
+        return getStringFromMap("version", getClient().appData.getAppData());
     }
 
     public static int getVersionCode() {
-        return getClient().appData.getVersionCode();
+        Object versionCode = getClient().appData.getAppData().get("versionCode");
+        return versionCode instanceof Integer ? (Integer) versionCode : -1;
     }
 
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
@@ -106,11 +109,11 @@ public class NativeInterface {
 
     @Nullable
     public static String getAppVersion() {
-        return getClient().appData.getVersionName();
+        return getStringFromMap("version", getClient().appData.getAppData());
     }
 
     public static String getReleaseStage() {
-        return getClient().appData.getReleaseStage();
+        return getStringFromMap("releaseStage", getClient().appData.getAppData());
     }
 
     @Nullable

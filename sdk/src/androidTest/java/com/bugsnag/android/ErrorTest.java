@@ -78,11 +78,17 @@ public class ErrorTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
+        Client client = generateClient();
+        error.setAppData(client.getAppData().getAppData());
+
         JSONObject errorJson = streamableToJson(error);
         assertEquals("warning", errorJson.get("severity"));
         assertNotNull(errorJson.get("severity"));
+        assertNotNull(errorJson.get("severityReason"));
         assertNotNull(errorJson.get("metaData"));
         assertNotNull(errorJson.get("threads"));
+        assertNotNull(errorJson.get("exceptions"));
+        assertNotNull(errorJson.get("app"));
     }
 
     @Test

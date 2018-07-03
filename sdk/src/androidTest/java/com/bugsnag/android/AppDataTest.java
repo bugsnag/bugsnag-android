@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.generateClient;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
+import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,7 +8,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -22,14 +20,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class AppDataTest {
 
     private Configuration config;
-    private AppData appData;
-    private AppDataCollector appDataCollector;
+    private Map<String, Object> appData;
+    private Client client;
 
     /**
      * Configures a new AppData for testing accessors + serialisation
@@ -39,9 +38,8 @@ public class AppDataTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("some-api-key");
-        Client client = new Client(InstrumentationRegistry.getContext(), config);
-        appDataCollector = new AppDataCollector(client);
-        appData = appDataCollector.generateAppData();
+        client = new Client(InstrumentationRegistry.getContext(), config);
+        appData = new AppData(client).getAppData();
     }
 
     @After
@@ -51,47 +49,33 @@ public class AppDataTest {
 
     @Test
     public void testPackageName() {
-        assertEquals("com.bugsnag.android.test", appData.getPackageName());
-        String expected = "com.example.foo";
-        appData.setPackageName(expected);
-        assertEquals(expected, appData.getPackageName());
+        assertEquals("com.bugsnag.android.test", appData.get("packageName"));
     }
 
     @Test
     public void testBuildUuid() {
-        assertNull(appData.getBuildUuid());
-        String expected = "fad4902f";
-        appData.setBuildUuid(expected);
-        assertEquals(expected, appData.getBuildUuid());
+        assertNull(appData.get("buildUUID"));
     }
 
     @Test
     public void testDuration() {
-        assertTrue(appData.getDuration() > 0);
-        long expected = 1500;
-        appData.setDuration(expected);
-        assertEquals(expected, appData.getDuration());
+        assertTrue(((Long) appData.get("duration")) > 0);
     }
 
     @Test
     public void testDurationInForeground() {
-        assertEquals(0, appData.getDurationInForeground());
-        long expected = 1500;
-        appData.setDurationInForeground(expected);
-        assertEquals(expected, appData.getDurationInForeground());
+        assertEquals(0L, appData.get("durationInForeground"));
     }
 
     @Test
     public void testInForeground() {
-        assertFalse(appData.isInForeground());
-        appData.setInForeground(true);
-        assertTrue(appData.isInForeground());
+        assertFalse((Boolean) appData.get("inForeground"));
     }
 
     @Test
-    public void testJsonSerialisation() throws JSONException, IOException {
-        appData.setBuildUuid("fa54de");
-        JSONObject appDataJson = streamableToJson(appData);
+    public void testJsonSerialisation() throws JSONException {
+        appData.put("buildUUID", "fa54de");
+        JSONObject appDataJson = mapToJson(appData);
 
         assertEquals(1, appDataJson.getInt("versionCode"));
         assertEquals("1.0", appDataJson.get("version"));
@@ -105,22 +89,20 @@ public class AppDataTest {
     }
 
     @Test
-    public void testAppVersionOverride() throws JSONException, IOException {
+    public void testAppVersionOverride() throws JSONException {
         String appVersion = "1.2.3";
         config.setAppVersion(appVersion);
-        appData = appDataCollector.generateAppData();
 
-        JSONObject appDataJson = streamableToJson(appData);
+        JSONObject appDataJson = mapToJson(client.appData.getAppData());
         assertEquals(appVersion, appDataJson.get("version"));
     }
 
     @Test
-    public void testReleaseStageOverride() throws JSONException, IOException {
+    public void testReleaseStageOverride() throws JSONException {
         String releaseStage = "test-stage";
         config.setReleaseStage(releaseStage);
-        appData = appDataCollector.generateAppData();
 
-        JSONObject appDataJson = streamableToJson(appData);
+        JSONObject appDataJson = mapToJson(client.appData.getAppData());
         assertEquals(releaseStage, appDataJson.get("releaseStage"));
     }
 

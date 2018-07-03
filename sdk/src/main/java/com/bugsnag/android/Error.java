@@ -20,7 +20,7 @@ public class Error implements JsonStream.Streamable {
 
     @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
-    private AppData appData;
+    private Map<String, Object> appData;
 
     @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
@@ -348,12 +348,12 @@ public class Error implements JsonStream.Streamable {
     }
 
     /**
-     * Retrieves the {@link AppData} associated with this error
+     * Retrieves the map of data associated with this error
      *
      * @return the app metadata
      */
     @NonNull
-    public AppData getAppData() {
+    Map<String, Object> getAppData() {
         return appData;
     }
     /**
@@ -367,7 +367,7 @@ public class Error implements JsonStream.Streamable {
         return deviceData;
     }
 
-    void setAppData(@NonNull AppData appData) {
+    void setAppData(@NonNull Map<String, Object> appData) {
         this.appData = appData;
     }
 

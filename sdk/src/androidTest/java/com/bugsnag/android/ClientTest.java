@@ -307,26 +307,23 @@ public class ClientTest {
         Client client = generateClient();
         AppData appData = client.getAppData();
         assertNotNull(appData);
-        assertNotEquals(client.appData, appData);
-        assertNotEquals(client.getAppData(), appData);
+        assertEquals(client.getAppData(), appData);
     }
 
     @Test
     public void testAppDataSummary() {
         Client client = generateClient();
-        AppDataSummary appData = client.getAppDataSummary();
-        assertNotNull(appData);
-        assertNotEquals(client.getAppDataSummary(), appData);
+        AppData appData = client.getAppData();
+
+        Map<String, Object> appDataSummary = appData.getAppDataSummary();
+        assertNotNull(appDataSummary);
+        assertNotEquals(appData.getAppDataSummary(), appData);
     }
 
     @Test
     public void testAppDataMetaData() {
         Client client = generateClient();
-        MetaData metaData = new MetaData();
-        Map<String, Object> app = metaData.getTab("app");
-        assertEquals(0, app.size());
-
-        client.populateAppMetaData(metaData);
+        Map<String, Object> app = client.getAppData().getAppDataMetaData();
         assertEquals(5, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
         assertEquals("com.bugsnag.android.test", app.get("packageName"));

@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
+import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -16,12 +17,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class AppDataSummaryTest {
 
-    private AppDataSummary appData;
+    private Map<String, Object> appData;
 
     /**
      * Configures a new AppDataSummary for testing accessors + serialisation
@@ -30,8 +32,8 @@ public class AppDataSummaryTest {
      */
     @Before
     public void setUp() throws Exception {
-        AppDataCollector appDataCollector = new AppDataCollector(generateClient());
-        appData = appDataCollector.generateAppDataSummary();
+        AppData appData = new AppData(generateClient());
+        this.appData = appData.getAppDataSummary();
     }
 
     @After
@@ -41,47 +43,32 @@ public class AppDataSummaryTest {
 
     @Test
     public void testVersionCode() {
-        assertEquals(Integer.valueOf(1), appData.getVersionCode());
-        int expected = 15;
-        appData.setVersionCode(expected);
-        assertEquals(Integer.valueOf(expected), appData.getVersionCode());
+        assertEquals(1, appData.get("versionCode"));
     }
 
     @Test
     public void testVersionName() {
-        assertEquals("1.0", appData.getVersionName());
-        String expected = "1.2.3";
-        appData.setVersionName(expected);
-        assertEquals(expected, appData.getVersionName());
+        assertEquals("1.0", appData.get("version"));
     }
 
     @Test
     public void testReleaseStage() {
-        assertEquals("development", appData.getReleaseStage());
-        String expected = "beta";
-        appData.setReleaseStage(expected);
-        assertEquals(expected, appData.getReleaseStage());
+        assertEquals("development", appData.get("releaseStage"));
     }
 
     @Test
     public void testNotifierType() {
-        assertEquals("android", appData.getNotifierType());
-        String expected = "custom";
-        appData.setNotifierType(expected);
-        assertEquals(expected, appData.getNotifierType());
+        assertEquals("android", appData.get("type"));
     }
 
     @Test
     public void testCodeBundleId() {
-        assertNull(appData.getCodeBundleId());
-        String expected = "123";
-        appData.setCodeBundleId(expected);
-        assertEquals(expected, appData.getCodeBundleId());
+        assertNull(appData.get("codeBundleId"));
     }
 
     @Test
-    public void testJsonSerialisation() throws IOException, JSONException {
-        JSONObject appDataJson = streamableToJson(appData);
+    public void testJsonSerialisation() throws JSONException {
+        JSONObject appDataJson = mapToJson(appData);
         assertEquals(1, appDataJson.getInt("versionCode"));
         assertEquals("1.0", appDataJson.get("version"));
         assertEquals("development", appDataJson.get("releaseStage"));

@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -54,8 +53,8 @@ public class SessionTrackingPayloadTest {
 
     private SessionTrackingPayload generatePayloadFromSession(Context context,
                                                   Session session) throws Exception {
-        appData = new AppDataCollector(generateClient()).generateAppData();
-        return new SessionTrackingPayload(session, appData);
+        appData = generateClient().getAppData();
+        return new SessionTrackingPayload(session, appData.getAppDataSummary());
     }
 
     /**
@@ -94,7 +93,7 @@ public class SessionTrackingPayloadTest {
         sessionStore.write(generateSession());
         List<File> storedFiles = sessionStore.findStoredFiles();
 
-        SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
+        SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData.getAppDataSummary());
         rootNode = streamableToJson(payload);
 
         assertNotNull(rootNode);

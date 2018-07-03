@@ -19,6 +19,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
@@ -92,7 +94,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         flushStoredSessions();
 
                         SessionTrackingPayload payload =
-                            new SessionTrackingPayload(session, client.appData);
+                            new SessionTrackingPayload(session, client.appData.getAppDataSummary());
 
                         try {
                             configuration.getDelivery().deliver(payload, configuration);
@@ -123,7 +125,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     }
 
     private String getReleaseStage() {
-        return client.appData.getReleaseStage();
+        return getStringFromMap("releaseStage", client.appData.getAppDataSummary());
     }
 
     @Nullable
@@ -157,7 +159,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
                 if (!storedFiles.isEmpty()) {
                     SessionTrackingPayload payload =
-                        new SessionTrackingPayload(storedFiles, client.appData);
+                        new SessionTrackingPayload(storedFiles, client.appData.getAppDataSummary());
 
                     //FUTURE:SM Reduce duplication here and above
                     try {

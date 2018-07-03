@@ -25,6 +25,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.RejectedExecutionException;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
  * Typically you'd instead use the static access provided in the Bugsnag class.
@@ -65,9 +67,6 @@ public class Client extends Observable implements Observer {
     final Context appContext;
 
     @NonNull
-    protected final AppData appData;
-
-    @NonNull
     protected final DeviceData deviceData;
 
     DeviceDataCollector deviceDataCollector;
@@ -86,7 +85,7 @@ public class Client extends Observable implements Observer {
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
-    AppDataCollector appDataCollector;
+    AppData appData;
 
     /**
      * Initialize a Bugsnag client
@@ -148,9 +147,7 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appDataCollector = new AppDataCollector(this);
-
-        appData = appDataCollector.generateAppData();
+        appData = new AppData(this);
         deviceDataCollector = new DeviceDataCollector(this);
         deviceData = deviceDataCollector.generateDeviceData();
 
@@ -221,8 +218,8 @@ public class Client extends Observable implements Observer {
 
         config.addObserver(this);
 
-        boolean isNotProduction = !AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(
-            appDataCollector.guessReleaseStage());
+        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
+            appData.guessReleaseStage());
         Logger.setEnabled(isNotProduction);
 
 
@@ -499,7 +496,7 @@ public class Client extends Observable implements Observer {
      */
     public void setReleaseStage(String releaseStage) {
         config.setReleaseStage(releaseStage);
-        Logger.setEnabled(!AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
+        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
 
     /**
@@ -567,18 +564,7 @@ public class Client extends Observable implements Observer {
     @NonNull
     @InternalApi
     public AppData getAppData() {
-        return appDataCollector.generateAppData();
-    }
-
-    @NonNull
-    @InternalApi
-    public AppDataSummary getAppDataSummary() {
-        return appDataCollector.generateAppDataSummary();
-    }
-
-    @InternalApi
-    public void populateAppMetaData(@NonNull MetaData metaData) {
-        appDataCollector.populateAppMetaData(metaData);
+        return appData;
     }
 
     @NonNull
@@ -941,10 +927,12 @@ public class Client extends Observable implements Observer {
         }
 
         // generate new object each time, as this can be mutated by end-users
-        AppData errorAppData = appDataCollector.generateAppData();
+        Map<String, Object> errorAppData = appData.getAppData();
 
         // Don't notify unless releaseStage is in notifyReleaseStages
-        if (!config.shouldNotifyForReleaseStage(errorAppData.getReleaseStage())) {
+        String releaseStage = getStringFromMap("releaseStage", errorAppData);
+
+        if (!config.shouldNotifyForReleaseStage(releaseStage)) {
             return;
         }
 
@@ -953,10 +941,9 @@ public class Client extends Observable implements Observer {
         error.setDeviceData(errorDeviceData);
         deviceDataCollector.populateDeviceMetaData(error.getMetaData());
 
-        error.setAppData(errorAppData);
-
         // add additional info that belongs in metadata
-        appDataCollector.populateAppMetaData(error.getMetaData());
+        error.setAppData(errorAppData);
+        error.getMetaData().store.put("app", error.getMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);
@@ -1454,7 +1441,7 @@ public class Client extends Observable implements Observer {
      * @return the ms since the java epoch
      */
     public long getLaunchTimeMs() {
-        return AppDataCollector.getDurationMs();
+        return AppData.getDurationMs();
     }
 
 }

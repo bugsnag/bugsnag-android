@@ -7,23 +7,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class SessionTrackingPayload implements JsonStream.Streamable {
 
     private final Notifier notifier;
     private final Session session;
     private final DeviceDataSummary deviceDataSummary = new DeviceDataSummary();
-    private final AppData appData;
+    private final Map<String, Object> appData;
     private final List<File> files;
 
-    SessionTrackingPayload(List<File> files, AppData appData) {
+    SessionTrackingPayload(List<File> files, Map<String, Object> appData) {
         this.appData = appData;
         this.notifier = Notifier.getInstance();
         this.session = null;
         this.files = files;
     }
 
-    SessionTrackingPayload(Session session, AppData appDataSummary) {
+    SessionTrackingPayload(Session session, Map<String, Object> appDataSummary) {
         this.appData = appDataSummary;
         this.notifier = Notifier.getInstance();
         this.session = session;
@@ -36,7 +37,6 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
         writer.name("notifier").value(notifier);
         writer.name("app").value(appData);
         writer.name("device").value(deviceDataSummary);
-
         writer.name("sessions").beginArray();
 
         if (session == null) {
