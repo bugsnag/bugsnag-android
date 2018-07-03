@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,8 +9,6 @@ import android.support.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
-
-import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
@@ -130,6 +130,9 @@ public class NativeInterface {
         return DeviceData.calculateTotalMemory();
     }
 
+    /**
+     * Returns whether a device is rooted or not to the NDK
+     */
     public static Boolean getDeviceRooted() {
         Map<String, Object> map = getClient().deviceData.getDeviceDataSummary();
         Object jailbroken = map.get("jailbroken");

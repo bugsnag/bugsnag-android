@@ -96,7 +96,8 @@ public class SessionTrackingPayloadTest {
         sessionStore.write(generateSession());
         List<File> storedFiles = sessionStore.findStoredFiles();
 
-        SessionTrackingPayload payload = new SessionTrackingPayload(null, storedFiles, appData, deviceData);
+        SessionTrackingPayload payload = new SessionTrackingPayload(null,
+            storedFiles, appData, deviceData);
         rootNode = streamableToJson(payload);
 
         assertNotNull(rootNode);

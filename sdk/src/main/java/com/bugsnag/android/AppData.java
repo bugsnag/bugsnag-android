@@ -11,9 +11,6 @@ import android.support.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.bugsnag.android.MapUtils.*;
 
 /**
  * Collects various data on the application state

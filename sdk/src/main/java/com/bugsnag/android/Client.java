@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -24,8 +26,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.RejectedExecutionException;
-
-import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -156,13 +156,15 @@ public class Client extends Observable implements Observer {
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
 
+        String deviceId = getStringFromMap("id", deviceData.getDeviceData());
+
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPrefs.getString(USER_ID_KEY, getStringFromMap("id", deviceData.getDeviceData())));
+            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceId));
             user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
             user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
         } else {
-            user.setId(getStringFromMap("id", deviceData.getDeviceData()));
+            user.setId(deviceId);
         }
 
         if (appContext instanceof Application) {
