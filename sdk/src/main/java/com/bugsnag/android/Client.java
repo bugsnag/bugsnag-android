@@ -69,7 +69,8 @@ public class Client extends Observable implements Observer {
     @NonNull
     protected final DeviceData deviceData;
 
-    DeviceDataCollector deviceDataCollector;
+    @NonNull
+    protected final AppData appData;
 
     @NonNull
     final Breadcrumbs breadcrumbs;
@@ -85,7 +86,6 @@ public class Client extends Observable implements Observer {
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
-    AppData appData;
 
     /**
      * Initialize a Bugsnag client
@@ -148,8 +148,7 @@ public class Client extends Observable implements Observer {
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appData = new AppData(this);
-        deviceDataCollector = new DeviceDataCollector(this);
-        deviceData = deviceDataCollector.generateDeviceData();
+        deviceData = new DeviceData(this);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs();
@@ -159,11 +158,11 @@ public class Client extends Observable implements Observer {
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceData.getId()));
+            user.setId(sharedPrefs.getString(USER_ID_KEY, getStringFromMap("id", deviceData.getDeviceData())));
             user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
             user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
         } else {
-            user.setId(deviceData.getId());
+            user.setId(getStringFromMap("id", deviceData.getDeviceData()));
         }
 
         if (appContext instanceof Application) {
@@ -570,25 +569,14 @@ public class Client extends Observable implements Observer {
     @NonNull
     @InternalApi
     public DeviceData getDeviceData() {
-        return deviceDataCollector.generateDeviceData();
-    }
-
-    @NonNull
-    @InternalApi
-    public DeviceDataSummary getDeviceDataSummary() {
-        return deviceDataCollector.generateDeviceDataSummary();
-    }
-
-    @InternalApi
-    public void populateDeviceMetaData(@NonNull MetaData metaData) {
-        deviceDataCollector.populateDeviceMetaData(metaData);
+        return deviceData;
     }
 
     /**
      * Removes the current user data and sets it back to defaults
      */
     public void clearUser() {
-        user.setId(deviceData.getId());
+        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
         user.setEmail(null);
         user.setName(null);
 
@@ -937,13 +925,14 @@ public class Client extends Observable implements Observer {
         }
 
         // Capture the state of the app and device and attach diagnostics to the error
-        DeviceData errorDeviceData = deviceDataCollector.generateDeviceData();
+        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         error.setDeviceData(errorDeviceData);
-        deviceDataCollector.populateDeviceMetaData(error.getMetaData());
+        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
+
 
         // add additional info that belongs in metadata
         error.setAppData(errorAppData);
-        error.getMetaData().store.put("app", error.getMetaData());
+        error.getMetaData().store.put("app", appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);

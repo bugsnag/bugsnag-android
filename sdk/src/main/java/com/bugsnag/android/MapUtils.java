@@ -12,10 +12,4 @@ final class MapUtils {
         return packageName instanceof String ? (String) packageName : null;
     }
 
-    static void putSafely(String key, @Nullable Object nullableObj, Map<String, Object> map) {
-        if (nullableObj != null) {
-            map.put(key, nullableObj);
-        }
-    }
-
 }

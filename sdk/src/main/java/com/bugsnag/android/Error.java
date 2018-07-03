@@ -24,7 +24,7 @@ public class Error implements JsonStream.Streamable {
 
     @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
-    private DeviceData deviceData;
+    private Map<String, Object> deviceData;
 
     @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
@@ -344,7 +344,7 @@ public class Error implements JsonStream.Streamable {
      * @param id the device id
      */
     public void setDeviceId(@Nullable String id) {
-        deviceData.setId(id);
+        deviceData.put("id", id);
     }
 
     /**
@@ -363,7 +363,7 @@ public class Error implements JsonStream.Streamable {
      */
 
     @NonNull
-    public DeviceData getDeviceData() {
+    public Map<String, Object> getDeviceData() {
         return deviceData;
     }
 
@@ -371,7 +371,7 @@ public class Error implements JsonStream.Streamable {
         this.appData = appData;
     }
 
-    void setDeviceData(@NonNull DeviceData deviceData) {
+    void setDeviceData(@NonNull Map<String, Object> deviceData) {
         this.deviceData = deviceData;
     }
 

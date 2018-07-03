@@ -94,7 +94,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         flushStoredSessions();
 
                         SessionTrackingPayload payload =
-                            new SessionTrackingPayload(session, client.appData.getAppDataSummary());
+                            new SessionTrackingPayload(session, null, client.appData, client.deviceData);
 
                         try {
                             configuration.getDelivery().deliver(payload, configuration);
@@ -159,7 +159,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
                 if (!storedFiles.isEmpty()) {
                     SessionTrackingPayload payload =
-                        new SessionTrackingPayload(storedFiles, client.appData.getAppDataSummary());
+                        new SessionTrackingPayload(null, storedFiles, client.appData, client.deviceData);
 
                     //FUTURE:SM Reduce duplication here and above
                     try {

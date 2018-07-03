@@ -303,28 +303,17 @@ public class ClientTest {
     }
 
     @Test
-    public void testAppData() {
+    public void testAppDataCollection() {
         Client client = generateClient();
         AppData appData = client.getAppData();
-        assertNotNull(appData);
         assertEquals(client.getAppData(), appData);
-    }
-
-    @Test
-    public void testAppDataSummary() {
-        Client client = generateClient();
-        AppData appData = client.getAppData();
-
-        Map<String, Object> appDataSummary = appData.getAppDataSummary();
-        assertNotNull(appDataSummary);
-        assertNotEquals(appData.getAppDataSummary(), appData);
     }
 
     @Test
     public void testAppDataMetaData() {
         Client client = generateClient();
         Map<String, Object> app = client.getAppData().getAppDataMetaData();
-        assertEquals(5, app.size());
+        assertEquals(6, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
         assertEquals("com.bugsnag.android.test", app.get("packageName"));
         assertEquals("1.0", app.get("versionName"));
@@ -333,45 +322,31 @@ public class ClientTest {
     }
 
     @Test
-    public void testDeviceData() {
+    public void testDeviceDataCollection() {
         Client client = generateClient();
         DeviceData deviceData = client.getDeviceData();
-        assertNotNull(deviceData);
-        assertNotEquals(client.deviceData, deviceData);
-        assertNotEquals(client.getDeviceData(), deviceData);
-    }
-
-    @Test
-    public void testDeviceDataSummary() {
-        Client client = generateClient();
-        DeviceDataSummary deviceData = client.getDeviceDataSummary();
-        assertNotNull(deviceData);
-        assertNotEquals(client.getDeviceDataSummary(), deviceData);
+        assertEquals(client.getDeviceData(), deviceData);
     }
 
     @Test
     public void testPopulateDeviceMetadata() {
         Client client = generateClient();
-        MetaData metaData = new MetaData();
-        Map<String, Object> app = metaData.getTab("device");
-        assertEquals(0, app.size());
+        Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
 
-        client.populateDeviceMetaData(metaData);
-        assertEquals(14, app.size());
-
-        assertNotNull(app.get("batteryLevel"));
-        assertNotNull(app.get("charging"));
-        assertNotNull(app.get("locationStatus"));
-        assertNotNull(app.get("networkAccess"));
-        assertNotNull(app.get("time"));
-        assertNotNull(app.get("brand"));
-        assertNotNull(app.get("apiLevel"));
-        assertNotNull(app.get("osBuild"));
-        assertNotNull(app.get("locale"));
-        assertNotNull(app.get("screenDensity"));
-        assertNotNull(app.get("dpi"));
-        assertNotNull(app.get("emulator"));
-        assertNotNull(app.get("screenResolution"));
-        assertNotNull(app.get("cpuAbi"));
+        assertEquals(14, metaData.size());
+        assertNotNull(metaData.get("batteryLevel"));
+        assertNotNull(metaData.get("charging"));
+        assertNotNull(metaData.get("locationStatus"));
+        assertNotNull(metaData.get("networkAccess"));
+        assertNotNull(metaData.get("time"));
+        assertNotNull(metaData.get("brand"));
+        assertNotNull(metaData.get("apiLevel"));
+        assertNotNull(metaData.get("osBuild"));
+        assertNotNull(metaData.get("locale"));
+        assertNotNull(metaData.get("screenDensity"));
+        assertNotNull(metaData.get("dpi"));
+        assertNotNull(metaData.get("emulator"));
+        assertNotNull(metaData.get("screenResolution"));
+        assertNotNull(metaData.get("cpuAbi"));
     }
 }

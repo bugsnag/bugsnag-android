@@ -1,14 +1,12 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
-import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import android.content.SharedPreferences;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -21,17 +19,18 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class DeviceDataTest {
 
-    private DeviceData deviceData;
+    private Map<String, Object> deviceData;
 
     @Before
     public void setUp() throws Exception {
-        DeviceDataCollector deviceDataCollector = new DeviceDataCollector(generateClient());
-        deviceData = deviceDataCollector.generateDeviceData();
+        DeviceData deviceData = new DeviceData(generateClient());
+        this.deviceData = deviceData.getDeviceData();
     }
 
     @After
@@ -41,46 +40,27 @@ public class DeviceDataTest {
 
     @Test
     public void testId() {
-        assertNotNull(deviceData.getId());
-        String expected = "abc123";
-        deviceData.setId(expected);
-        assertEquals(expected, deviceData.getId());
+        assertNotNull(deviceData.get("id"));
     }
 
     @Test
     public void testOrientation() {
-        assertNotNull(deviceData.getOrientation());
-        String expected = "landscape";
-        deviceData.setOrientation(expected);
-        assertEquals(expected, deviceData.getOrientation());
+        assertNotNull(deviceData.get("orientation"));
     }
 
     @Test
     public void testFreeMemory() {
-        assertTrue(deviceData.getFreeMemory() > 0);
-        long expected = 15000000L;
-        deviceData.setFreeMemory(expected);
-        assertEquals(expected, deviceData.getFreeMemory());
+        assertTrue((Long) deviceData.get("freeMemory") > 0);
     }
 
     @Test
     public void testTotalMemory() {
-        assertTrue(deviceData.getTotalMemory() > 0);
-        long expected = 15000000L;
-        deviceData.setTotalMemory(expected);
-        assertEquals(expected, deviceData.getTotalMemory());
-    }
-
-    @Test
-    public void testFreeDisk() {
-        Long expected = 15000000L;
-        deviceData.setFreeDisk(expected);
-        assertEquals(expected, deviceData.getFreeDisk());
+        assertTrue((Long) deviceData.get("totalMemory") > 0);
     }
 
     @Test
     public void testJsonSerialisation() throws IOException, JSONException {
-        JSONObject deviceDataJson = streamableToJson(deviceData);
+        JSONObject deviceDataJson = mapToJson(deviceData);
 
         // serialises inherited fields correctly
         for (String key : Arrays.asList("osName",

@@ -118,34 +118,35 @@ public class NativeInterface {
 
     @Nullable
     public static String getDeviceId() {
-        return getClient().deviceData.getId();
+        return getStringFromMap("id", getClient().deviceData.getDeviceData());
     }
 
     @NonNull
     public static String getDeviceLocale() {
-        return getClient().deviceDataCollector.locale;
+        return getClient().deviceData.locale;
     }
 
     public static double getDeviceTotalMemory() {
-        return DeviceDataCollector.calculateTotalMemory();
+        return DeviceData.calculateTotalMemory();
     }
 
-    @Nullable
     public static Boolean getDeviceRooted() {
-        return getClient().deviceData.isJailbroken();
+        Map<String, Object> map = getClient().deviceData.getDeviceDataSummary();
+        Object jailbroken = map.get("jailbroken");
+        return jailbroken instanceof Boolean ? (Boolean) jailbroken : false;
     }
 
     public static float getDeviceScreenDensity() {
-        return getClient().deviceDataCollector.screenDensity;
+        return getClient().deviceData.screenDensity;
     }
 
     public static int getDeviceDpi() {
-        return getClient().deviceDataCollector.dpi;
+        return getClient().deviceData.dpi;
     }
 
     @Nullable
     public static String getDeviceScreenResolution() {
-        return getClient().deviceDataCollector.screenResolution;
+        return getClient().deviceData.screenResolution;
     }
 
     public static String getDeviceManufacturer() {
@@ -174,7 +175,7 @@ public class NativeInterface {
 
     @NonNull
     public static String[] getDeviceCpuAbi() {
-        return getClient().deviceDataCollector.cpuAbi;
+        return getClient().deviceData.cpuAbi;
     }
 
 

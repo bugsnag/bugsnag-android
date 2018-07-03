@@ -61,35 +61,35 @@ class AppData {
     }
 
     Map<String, Object> getAppDataSummary() {
-        Map<String, Object> map = new ConcurrentHashMap<>();
+        Map<String, Object> map = new HashMap<>();
         Configuration config = client.config;
-        putSafely("type", calculateNotifierType(config), map);
-        putSafely("releaseStage", guessReleaseStage(), map);
-        putSafely("version", calculateVersionName(), map);
-        putSafely("versionCode", calculateVersionCode(), map);
-        putSafely("codeBundleId", config.getCodeBundleId(), map);
+        map.put("type", calculateNotifierType(config));
+        map.put("releaseStage", guessReleaseStage());
+        map.put("version", calculateVersionName());
+        map.put("versionCode", calculateVersionCode());
+        map.put("codeBundleId", config.getCodeBundleId());
         return map;
     }
 
     Map<String, Object> getAppData() {
         Map<String, Object> map = getAppDataSummary();
-        putSafely("id", packageName, map);
-        putSafely("buildUUID", client.config.getBuildUUID(), map);
-        putSafely("duration", getDurationMs(), map);
-        putSafely("durationInForeground", calculateDurationInForeground(), map);
-        putSafely("inForeground", client.sessionTracker.isInForeground(), map);
-        putSafely("packageName", packageName, map);
+        map.put("id", packageName);
+        map.put("buildUUID", client.config.getBuildUUID());
+        map.put("duration", getDurationMs());
+        map.put("durationInForeground", calculateDurationInForeground());
+        map.put("inForeground", client.sessionTracker.isInForeground());
+        map.put("packageName", packageName);
         return map;
     }
 
     Map<String, Object> getAppDataMetaData() {
-        Map<String, Object> map = new ConcurrentHashMap<>();
-        putSafely("name", appName, map);
-        putSafely("packageName", packageName, map);
-        putSafely("versionName", calculateVersionName(), map);
-        putSafely("activeScreen", getActiveScreenClass(), map);
-        putSafely("memoryUsage", getMemoryUsage(), map);
-        putSafely("lowMemory", isLowMemory(), map);
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", appName);
+        map.put("packageName", packageName);
+        map.put("versionName", calculateVersionName());
+        map.put("activeScreen", getActiveScreenClass());
+        map.put("memoryUsage", getMemoryUsage());
+        map.put("lowMemory", isLowMemory());
         return map;
     }
 

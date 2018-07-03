@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,8 +11,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -26,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -381,14 +379,13 @@ public class ErrorTest {
 
     @Test
     public void testSetDeviceId() throws Throwable {
-        DeviceDataCollector deviceDataCollector = new DeviceDataCollector(generateClient());
-        DeviceData deviceData = deviceDataCollector.generateDeviceData();
+        Map<String, Object> deviceData = new DeviceData(generateClient()).getDeviceData();
         error.setDeviceData(deviceData);
         assertEquals(deviceData, error.getDeviceData());
 
         JSONObject errorJson = streamableToJson(error);
         JSONObject device = errorJson.getJSONObject("device");
-        assertEquals(deviceData.getId(), device.getString("id"));
+        assertEquals(deviceData.get("id"), device.getString("id"));
 
         error.setDeviceId(null);
         errorJson = streamableToJson(error);
