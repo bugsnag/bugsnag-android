@@ -18,6 +18,7 @@ import android.util.DisplayMetrics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,11 @@ public class DeviceDataTest {
     public void setUp() throws Exception {
         SharedPreferences sharedPref = getSharedPrefs(InstrumentationRegistry.getContext());
         deviceData = new DeviceData(InstrumentationRegistry.getContext(), sharedPref);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test
