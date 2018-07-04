@@ -4,6 +4,8 @@
 
 * Disable BuildConfig generation [#343](https://github.com/bugsnag/bugsnag-android/pull/343)
 
+* Add consumer proguard rules for automatic ProGuard configuration without the Bugsnag gradle plugin [#345](https://github.com/bugsnag/bugsnag-android/pull/345)
+
 ## 4.5.0 (2018-06-18)
 
 This release alters the behaviour of the notifier to track sessions automatically. 
