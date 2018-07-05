@@ -10,8 +10,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Map;
 
 public class JsonStream extends JsonWriter {
+
+    private final ObjectJsonStreamer objectJsonStreamer;
+
     public interface Streamable {
         void toStream(@NonNull JsonStream stream) throws IOException;
     }
@@ -27,6 +33,7 @@ public class JsonStream extends JsonWriter {
         super(out);
         setSerializeNulls(false);
         this.out = out;
+        objectJsonStreamer = new ObjectJsonStreamer();
     }
 
     // Allow chaining name().value()
@@ -46,6 +53,14 @@ public class JsonStream extends JsonWriter {
             return;
         }
         streamable.toStream(this);
+    }
+
+    /**
+     * Serialises an arbitrary object as JSON, handling primitive types as well as
+     * Collections, Maps, and arrays.
+     */
+    public void value(@NonNull Object object) throws IOException {
+        objectJsonStreamer.objectToStream(object, this);
     }
 
     /**

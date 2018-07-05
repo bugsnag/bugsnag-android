@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -80,23 +82,24 @@ public class NativeInterface {
         return getClient().getUser().getName();
     }
 
-    @NonNull
+    @Nullable
     public static String getPackageName() {
-        return getClient().appData.getPackageName();
+        return getStringFromMap("packageName", getClient().appData.getAppData());
     }
 
     @Nullable
     public static String getAppName() {
-        return getClient().appDataCollector.appName;
+        return getClient().appData.appName;
     }
 
     @Nullable
     public static String getVersionName() {
-        return getClient().appData.getVersionName();
+        return getStringFromMap("version", getClient().appData.getAppData());
     }
 
     public static int getVersionCode() {
-        return getClient().appData.getVersionCode();
+        Object versionCode = getClient().appData.getAppData().get("versionCode");
+        return versionCode instanceof Integer ? (Integer) versionCode : -1;
     }
 
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
@@ -106,43 +109,47 @@ public class NativeInterface {
 
     @Nullable
     public static String getAppVersion() {
-        return getClient().appData.getVersionName();
+        return getStringFromMap("version", getClient().appData.getAppData());
     }
 
     public static String getReleaseStage() {
-        return getClient().appData.getReleaseStage();
+        return getStringFromMap("releaseStage", getClient().appData.getAppData());
     }
 
     @Nullable
     public static String getDeviceId() {
-        return getClient().deviceData.getId();
+        return getStringFromMap("id", getClient().deviceData.getDeviceData());
     }
 
     @NonNull
     public static String getDeviceLocale() {
-        return getClient().deviceDataCollector.locale;
+        return getClient().deviceData.locale;
     }
 
     public static double getDeviceTotalMemory() {
-        return DeviceDataCollector.calculateTotalMemory();
+        return DeviceData.calculateTotalMemory();
     }
 
-    @Nullable
+    /**
+     * Returns whether a device is rooted or not to the NDK
+     */
     public static Boolean getDeviceRooted() {
-        return getClient().deviceData.isJailbroken();
+        Map<String, Object> map = getClient().deviceData.getDeviceDataSummary();
+        Object jailbroken = map.get("jailbroken");
+        return jailbroken instanceof Boolean ? (Boolean) jailbroken : false;
     }
 
     public static float getDeviceScreenDensity() {
-        return getClient().deviceDataCollector.screenDensity;
+        return getClient().deviceData.screenDensity;
     }
 
     public static int getDeviceDpi() {
-        return getClient().deviceDataCollector.dpi;
+        return getClient().deviceData.dpi;
     }
 
     @Nullable
     public static String getDeviceScreenResolution() {
-        return getClient().deviceDataCollector.screenResolution;
+        return getClient().deviceData.screenResolution;
     }
 
     public static String getDeviceManufacturer() {
@@ -171,7 +178,7 @@ public class NativeInterface {
 
     @NonNull
     public static String[] getDeviceCpuAbi() {
-        return getClient().deviceDataCollector.cpuAbi;
+        return getClient().deviceData.cpuAbi;
     }
 
 

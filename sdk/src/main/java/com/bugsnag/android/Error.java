@@ -20,11 +20,11 @@ public class Error implements JsonStream.Streamable {
 
     @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
-    private AppData appData;
+    private Map<String, Object> appData;
 
     @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
-    private DeviceData deviceData;
+    private Map<String, Object> deviceData;
 
     @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
@@ -344,16 +344,16 @@ public class Error implements JsonStream.Streamable {
      * @param id the device id
      */
     public void setDeviceId(@Nullable String id) {
-        deviceData.setId(id);
+        deviceData.put("id", id);
     }
 
     /**
-     * Retrieves the {@link AppData} associated with this error
+     * Retrieves the map of data associated with this error
      *
      * @return the app metadata
      */
     @NonNull
-    public AppData getAppData() {
+    Map<String, Object> getAppData() {
         return appData;
     }
     /**
@@ -363,15 +363,15 @@ public class Error implements JsonStream.Streamable {
      */
 
     @NonNull
-    public DeviceData getDeviceData() {
+    public Map<String, Object> getDeviceData() {
         return deviceData;
     }
 
-    void setAppData(@NonNull AppData appData) {
+    void setAppData(@NonNull Map<String, Object> appData) {
         this.appData = appData;
     }
 
-    void setDeviceData(@NonNull DeviceData deviceData) {
+    void setDeviceData(@NonNull Map<String, Object> deviceData) {
         this.deviceData = deviceData;
     }
 

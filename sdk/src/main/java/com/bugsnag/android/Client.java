@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -65,12 +67,10 @@ public class Client extends Observable implements Observer {
     final Context appContext;
 
     @NonNull
-    protected final AppData appData;
-
-    @NonNull
     protected final DeviceData deviceData;
 
-    DeviceDataCollector deviceDataCollector;
+    @NonNull
+    protected final AppData appData;
 
     @NonNull
     final Breadcrumbs breadcrumbs;
@@ -86,7 +86,6 @@ public class Client extends Observable implements Observer {
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
-    AppDataCollector appDataCollector;
 
     /**
      * Initialize a Bugsnag client
@@ -148,11 +147,8 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appDataCollector = new AppDataCollector(this);
-
-        appData = appDataCollector.generateAppData();
-        deviceDataCollector = new DeviceDataCollector(this);
-        deviceData = deviceDataCollector.generateDeviceData();
+        appData = new AppData(this);
+        deviceData = new DeviceData(this);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs();
@@ -160,13 +156,15 @@ public class Client extends Observable implements Observer {
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
 
+        String deviceId = getStringFromMap("id", deviceData.getDeviceData());
+
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceData.getId()));
+            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceId));
             user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
             user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
         } else {
-            user.setId(deviceData.getId());
+            user.setId(deviceId);
         }
 
         if (appContext instanceof Application) {
@@ -221,8 +219,8 @@ public class Client extends Observable implements Observer {
 
         config.addObserver(this);
 
-        boolean isNotProduction = !AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(
-            appDataCollector.guessReleaseStage());
+        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
+            appData.guessReleaseStage());
         Logger.setEnabled(isNotProduction);
 
 
@@ -499,7 +497,7 @@ public class Client extends Observable implements Observer {
      */
     public void setReleaseStage(String releaseStage) {
         config.setReleaseStage(releaseStage);
-        Logger.setEnabled(!AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
+        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
 
     /**
@@ -567,42 +565,20 @@ public class Client extends Observable implements Observer {
     @NonNull
     @InternalApi
     public AppData getAppData() {
-        return appDataCollector.generateAppData();
-    }
-
-    @NonNull
-    @InternalApi
-    public AppDataSummary getAppDataSummary() {
-        return appDataCollector.generateAppDataSummary();
-    }
-
-    @InternalApi
-    public void populateAppMetaData(@NonNull MetaData metaData) {
-        appDataCollector.populateAppMetaData(metaData);
+        return appData;
     }
 
     @NonNull
     @InternalApi
     public DeviceData getDeviceData() {
-        return deviceDataCollector.generateDeviceData();
-    }
-
-    @NonNull
-    @InternalApi
-    public DeviceDataSummary getDeviceDataSummary() {
-        return deviceDataCollector.generateDeviceDataSummary();
-    }
-
-    @InternalApi
-    public void populateDeviceMetaData(@NonNull MetaData metaData) {
-        deviceDataCollector.populateDeviceMetaData(metaData);
+        return deviceData;
     }
 
     /**
      * Removes the current user data and sets it back to defaults
      */
     public void clearUser() {
-        user.setId(deviceData.getId());
+        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
         user.setEmail(null);
         user.setName(null);
 
@@ -941,22 +917,24 @@ public class Client extends Observable implements Observer {
         }
 
         // generate new object each time, as this can be mutated by end-users
-        AppData errorAppData = appDataCollector.generateAppData();
+        Map<String, Object> errorAppData = appData.getAppData();
 
         // Don't notify unless releaseStage is in notifyReleaseStages
-        if (!config.shouldNotifyForReleaseStage(errorAppData.getReleaseStage())) {
+        String releaseStage = getStringFromMap("releaseStage", errorAppData);
+
+        if (!config.shouldNotifyForReleaseStage(releaseStage)) {
             return;
         }
 
         // Capture the state of the app and device and attach diagnostics to the error
-        DeviceData errorDeviceData = deviceDataCollector.generateDeviceData();
+        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         error.setDeviceData(errorDeviceData);
-        deviceDataCollector.populateDeviceMetaData(error.getMetaData());
+        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
 
-        error.setAppData(errorAppData);
 
         // add additional info that belongs in metadata
-        appDataCollector.populateAppMetaData(error.getMetaData());
+        error.setAppData(errorAppData);
+        error.getMetaData().store.put("app", appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);
@@ -1454,7 +1432,7 @@ public class Client extends Observable implements Observer {
      * @return the ms since the java epoch
      */
     public long getLaunchTimeMs() {
-        return AppDataCollector.getDurationMs();
+        return AppData.getDurationMs();
     }
 
 }

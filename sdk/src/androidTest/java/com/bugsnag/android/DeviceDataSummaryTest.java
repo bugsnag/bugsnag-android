@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
+import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -18,17 +19,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class DeviceDataSummaryTest {
 
-    private DeviceDataSummary deviceData;
+    private Map<String, Object> deviceData;
 
     @Before
     public void setUp() throws Exception {
-        DeviceDataCollector deviceDataCollector = new DeviceDataCollector(generateClient());
-        deviceData = deviceDataCollector.generateDeviceDataSummary();
+        DeviceData deviceData = new DeviceData(generateClient());
+        this.deviceData = deviceData.getDeviceDataSummary();
     }
 
     @After
@@ -38,39 +40,27 @@ public class DeviceDataSummaryTest {
 
     @Test
     public void testManufacturer() {
-        assertNotNull(deviceData.getManufacturer());
-        String expected = "Apple";
-        deviceData.setManufacturer(expected); // give it 10 years
-        assertEquals(expected, deviceData.getManufacturer());
+        assertNotNull(deviceData.get("manufacturer"));
     }
 
     @Test
     public void testModel() {
-        assertNotNull(deviceData.getModel());
-        String expected = "Samsung S3";
-        deviceData.setModel(expected);
-        assertEquals(expected, deviceData.getModel());
+        assertNotNull(deviceData.get("model"));
     }
 
     @Test
     public void testOsName() {
-        assertNotNull(deviceData.getOsName());
-        String expected = "ChromeOS";
-        deviceData.setOsName(expected);
-        assertEquals(expected, deviceData.getOsName());
+        assertNotNull(deviceData.get("osName"));
     }
 
     @Test
     public void testOsVersion() {
-        assertNotNull(deviceData.getOsVersion());
-        String expected = "Cyanogen 5";
-        deviceData.setOsVersion(expected);
-        assertEquals(expected, deviceData.getOsVersion());
+        assertNotNull(deviceData.get("osVersion"));
     }
 
     @Test
-    public void testJsonSerialisation() throws IOException, JSONException {
-        JSONObject deviceDataJson = streamableToJson(deviceData);
+    public void testJsonSerialisation() throws JSONException {
+        JSONObject deviceDataJson = mapToJson(deviceData);
 
         assertEquals("android", deviceDataJson.getString("osName"));
         assertNotNull(deviceDataJson.getString("osVersion"));

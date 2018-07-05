@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -165,7 +164,7 @@ class ErrorStore extends FileStore<Error> {
     @NonNull
     @Override
     String getFilename(Error error) {
-        boolean isStartupCrash = isStartupCrash(AppDataCollector.getDurationMs());
+        boolean isStartupCrash = isStartupCrash(AppData.getDurationMs());
         String suffix = isStartupCrash ? STARTUP_CRASH : "";
         return String.format(Locale.US, "%s%d_%s%s.json",
             storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
