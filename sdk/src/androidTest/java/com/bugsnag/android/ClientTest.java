@@ -318,6 +318,7 @@ public class ClientTest {
         assertEquals("com.bugsnag.android.test", app.get("packageName"));
         assertEquals("1.0", app.get("versionName"));
         assertNotNull(app.get("memoryUsage"));
+        assertTrue(app.containsKey("activeScreen"));
         assertNotNull(app.get("lowMemory"));
     }
 
