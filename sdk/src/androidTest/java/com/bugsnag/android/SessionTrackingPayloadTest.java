@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -31,6 +31,7 @@ public class SessionTrackingPayloadTest {
     private SessionStore sessionStore;
     private File storageDir;
     private SessionTrackingPayload payload;
+    private DeviceData deviceData;
 
     /**
      * Configures a session tracking payload and session store, ensuring that 0 files are present
@@ -53,8 +54,10 @@ public class SessionTrackingPayloadTest {
 
     private SessionTrackingPayload generatePayloadFromSession(Context context,
                                                   Session session) throws Exception {
-        appData = new AppData(context, new Configuration("a"), generateSessionTracker());
-        return new SessionTrackingPayload(session, appData);
+        Client client = generateClient();
+        appData = client.getAppData();
+        deviceData = client.deviceData;
+        return new SessionTrackingPayload(session, null, appData, deviceData);
     }
 
     /**
@@ -93,7 +96,8 @@ public class SessionTrackingPayloadTest {
         sessionStore.write(generateSession());
         List<File> storedFiles = sessionStore.findStoredFiles();
 
-        SessionTrackingPayload payload = new SessionTrackingPayload(storedFiles, appData);
+        SessionTrackingPayload payload = new SessionTrackingPayload(null,
+            storedFiles, appData, deviceData);
         rootNode = streamableToJson(payload);
 
         assertNotNull(rootNode);

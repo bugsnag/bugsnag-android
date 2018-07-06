@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
@@ -92,7 +94,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                         flushStoredSessions();
 
                         SessionTrackingPayload payload =
-                            new SessionTrackingPayload(session, client.appData);
+                            new SessionTrackingPayload(session, null,
+                                client.appData, client.deviceData);
 
                         try {
                             configuration.getDelivery().deliver(payload, configuration);
@@ -123,7 +126,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
     }
 
     private String getReleaseStage() {
-        return client.appData.getReleaseStage();
+        return getStringFromMap("releaseStage", client.appData.getAppDataSummary());
     }
 
     @Nullable
@@ -157,7 +160,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
 
                 if (!storedFiles.isEmpty()) {
                     SessionTrackingPayload payload =
-                        new SessionTrackingPayload(storedFiles, client.appData);
+                        new SessionTrackingPayload(null, storedFiles,
+                            client.appData, client.deviceData);
 
                     //FUTURE:SM Reduce duplication here and above
                     try {
@@ -249,7 +253,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
         if (session == null) {
             long nowMs = System.currentTimeMillis();
             activityFirstStartedAtMs.set(nowMs);
-            startNewSession(new Date(nowMs), client.user, true);
+            startNewSession(new Date(nowMs), client.getUser(), true);
             foregroundActivities.add(getActivityName(activity));
         }
     }
@@ -277,7 +281,7 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 && configuration.shouldAutoCaptureSessions()) {
 
                 activityFirstStartedAtMs.set(nowMs);
-                startNewSession(new Date(nowMs), client.user, true);
+                startNewSession(new Date(nowMs), client.getUser(), true);
             }
             foregroundActivities.add(activityName);
         } else {

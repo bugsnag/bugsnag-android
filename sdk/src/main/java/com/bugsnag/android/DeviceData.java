@@ -18,96 +18,132 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
-/**
- * Information about the current Android device which doesn't change over time,
- * including screen and locale information.
- * <p/>
- * App information in this class is cached during construction for faster
- * subsequent lookups and to reduce GC overhead.
- */
-class DeviceData extends DeviceDataSummary {
+class DeviceData {
+
+    private static final String[] ROOT_INDICATORS = new String[]{
+        // Common binaries
+        "/system/xbin/su",
+        "/system/bin/su",
+        // < Android 5.0
+        "/system/app/Superuser.apk",
+        "/system/app/SuperSU.apk",
+        // >= Android 5.0
+        "/system/app/Superuser",
+        "/system/app/SuperSU",
+        // Fallback
+        "/system/xbin/daemonsu",
+        // Systemless root
+        "/su/bin"
+    };
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
-    @Nullable
-    final Float screenDensity;
+    private final Client client;
+    private final boolean emulator;
+    private final Context appContext;
+    private final Resources resources;
+    private final DisplayMetrics displayMetrics;
+    private final String id;
 
     @Nullable
-    final Integer dpi;
+    Float screenDensity;
 
     @Nullable
-    final String screenResolution;
-    private Context appContext;
+    Integer dpi;
+
+    @Nullable
+    String screenResolution;
 
     @NonNull
-    final String locale;
-
-    @Nullable
-    protected String id;
+    String locale;
 
     @NonNull
-    final String[] cpuAbi;
+    String[] cpuAbi;
 
-    DeviceData(@NonNull Context appContext, @NonNull SharedPreferences sharedPref) {
-        screenDensity = getScreenDensity(appContext);
-        dpi = getScreenDensityDpi(appContext);
-        screenResolution = getScreenResolution(appContext);
-        this.appContext = appContext;
-        locale = getLocale();
-        id = retrieveUniqueInstallId(sharedPref);
-        cpuAbi = getCpuAbi();
-    }
+    DeviceData(Client client) {
+        this.client = client;
+        this.appContext = client.appContext;
+        resources = appContext.getResources();
 
-    @Override
-    public void toStream(@NonNull JsonStream writer) throws IOException {
-        writer.beginObject();
-        serialiseMinimalDeviceData(writer);
-
-        writer
-            .name("id").value(id)
-            .name("freeMemory").value(getFreeMemory())
-            .name("totalMemory").value(getTotalMemory())
-            .name("freeDisk").value(getFreeDisk())
-            .name("orientation").value(getOrientation(appContext));
-
-
-        // TODO migrate metadata values
-
-        writer
-            .name("batteryLevel").value(getBatteryLevel(appContext))
-            .name("charging").value(isCharging(appContext))
-            .name("locationStatus").value(getLocationStatus(appContext))
-            .name("networkAccess").value(getNetworkAccess(appContext))
-            .name("time").value(getTime())
-            .name("brand").value(Build.BRAND)
-            .name("apiLevel").value(Build.VERSION.SDK_INT)
-            .name("osBuild").value(Build.DISPLAY)
-            .name("locale").value(locale)
-            .name("screenDensity").value(screenDensity)
-            .name("dpi").value(dpi)
-            .name("emulator").value(isEmulator())
-            .name("screenResolution").value(screenResolution);
-
-        writer.name("cpuAbi").beginArray();
-        for (String s : cpuAbi) {
-            writer.value(s);
+        if (resources != null) {
+            displayMetrics = resources.getDisplayMetrics();
+        } else {
+            displayMetrics = null;
         }
-        writer.endArray();
-        writer.endObject();
+
+        screenDensity = getScreenDensity();
+        dpi = getScreenDensityDpi();
+        screenResolution = getScreenResolution();
+        locale = getLocale();
+        cpuAbi = getCpuAbi();
+        emulator = isEmulator();
+        id = retrieveUniqueInstallId();
     }
 
-    @NonNull
-    String getUserId() {
-        return id;
+    Map<String, Object> getDeviceDataSummary() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("manufacturer", Build.MANUFACTURER);
+        map.put("model", Build.MODEL);
+        map.put("jailbroken", isRooted());
+        map.put("osName", "android");
+        map.put("osVersion", Build.VERSION.RELEASE);
+        return map;
     }
 
-    void setId(@Nullable String id) {
-        this.id = id;
+    Map<String, Object> getDeviceData() {
+        Map<String, Object> map = getDeviceDataSummary();
+        map.put("id", id);
+        map.put("freeMemory", calculateFreeMemory());
+        map.put("totalMemory", calculateTotalMemory());
+        map.put("freeDisk", calculateFreeDisk());
+        map.put("orientation", calculateOrientation());
+        return map;
+    }
+
+    Map<String, Object> getDeviceMetaData() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("batteryLevel", getBatteryLevel());
+        map.put("charging", isCharging());
+        map.put("locationStatus", getLocationStatus());
+        map.put("networkAccess", getNetworkAccess());
+        map.put("time", getTime());
+        map.put("brand", Build.BRAND);
+        map.put("apiLevel", Build.VERSION.SDK_INT);
+        map.put("osBuild", Build.DISPLAY);
+        map.put("locale", locale);
+        map.put("screenDensity", screenDensity);
+        map.put("dpi", dpi);
+        map.put("emulator", emulator);
+        map.put("screenResolution", screenResolution);
+        map.put("cpuAbi", cpuAbi);
+        return map;
+    }
+
+    /**
+     * Check if the current Android device is rooted
+     */
+    private boolean isRooted() {
+        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys")) {
+            return true;
+        }
+
+        try {
+            for (String candidate : ROOT_INDICATORS) {
+                if (new File(candidate).exists()) {
+                    return true;
+                }
+            }
+        } catch (Exception ignore) {
+            return false;
+        }
+        return false;
     }
 
     /**
@@ -126,50 +162,49 @@ class DeviceData extends DeviceDataSummary {
      * The screen density scaling factor of the current Android device
      */
     @Nullable
-    private static Float getScreenDensity(@NonNull Context appContext) {
-        Resources resources = appContext.getResources();
-        if (resources == null) {
+    private Float getScreenDensity() {
+        if (displayMetrics != null) {
+            return displayMetrics.density;
+        } else {
             return null;
         }
-        return resources.getDisplayMetrics().density;
     }
 
     /**
      * The screen density of the current Android device in dpi, eg. 320
      */
     @Nullable
-    private static Integer getScreenDensityDpi(@NonNull Context appContext) {
-        Resources resources = appContext.getResources();
-        if (resources == null) {
+    private Integer getScreenDensityDpi() {
+        if (displayMetrics != null) {
+            return displayMetrics.densityDpi;
+        } else {
             return null;
         }
-        return resources.getDisplayMetrics().densityDpi;
     }
 
     /**
      * The screen resolution of the current Android device in px, eg. 1920x1080
      */
     @Nullable
-    private static String getScreenResolution(@NonNull Context appContext) {
-        Resources resources = appContext.getResources();
-        if (resources == null) {
+    private String getScreenResolution() {
+        if (displayMetrics != null) {
+            int max = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
+            int min = Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels);
+            return String.format(Locale.US, "%dx%d", max, min);
+        } else {
             return null;
         }
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        int max = Math.max(metrics.widthPixels, metrics.heightPixels);
-        int min = Math.min(metrics.widthPixels, metrics.heightPixels);
-        return String.format(Locale.US, "%dx%d", max, min);
     }
 
     /**
      * Get the total memory available on the current Android device, in bytes
      */
-    @NonNull
-    static Long getTotalMemory() {
-        if (Runtime.getRuntime().maxMemory() != Long.MAX_VALUE) {
-            return Runtime.getRuntime().maxMemory();
+    static long calculateTotalMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        if (runtime.maxMemory() != Long.MAX_VALUE) {
+            return runtime.maxMemory();
         } else {
-            return Runtime.getRuntime().totalMemory();
+            return runtime.totalMemory();
         }
     }
 
@@ -177,7 +212,7 @@ class DeviceData extends DeviceDataSummary {
      * Get the locale of the current Android device, eg en_US
      */
     @NonNull
-    private static String getLocale() {
+    private String getLocale() {
         return Locale.getDefault().toString();
     }
 
@@ -185,7 +220,8 @@ class DeviceData extends DeviceDataSummary {
      * Get the unique id for the current app installation, creating a unique UUID if needed
      */
     @Nullable
-    private String retrieveUniqueInstallId(@NonNull SharedPreferences sharedPref) {
+    private String retrieveUniqueInstallId() {
+        SharedPreferences sharedPref = client.sharedPrefs;
         String installId = sharedPref.getString(INSTALL_ID_KEY, null);
 
         if (installId == null) {
@@ -199,7 +235,7 @@ class DeviceData extends DeviceDataSummary {
      * Gets information about the CPU / API
      */
     @NonNull
-    private static String[] getCpuAbi() {
+    private String[] getCpuAbi() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return SupportedAbiWrapper.getSupportedAbis();
         }
@@ -207,31 +243,10 @@ class DeviceData extends DeviceDataSummary {
     }
 
     /**
-     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
-     */
-    private static class SupportedAbiWrapper {
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-        public static String[] getSupportedAbis() {
-            return Build.SUPPORTED_ABIS;
-        }
-    }
-
-    /**
-     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
-     */
-    private static class Abi2Wrapper {
-        @NonNull
-        public static String[] getAbi1andAbi2() {
-            return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
-        }
-    }
-
-
-    /**
      * Get the free disk space on the smallest disk
      */
     @Nullable
-    private static Long getFreeDisk() {
+    private Long calculateFreeDisk() {
         try {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
             long externalBytesAvailable =
@@ -251,8 +266,7 @@ class DeviceData extends DeviceDataSummary {
     /**
      * Get the amount of memory remaining that the VM can allocate
      */
-    @NonNull
-    private static Long getFreeMemory() {
+    private long calculateFreeMemory() {
         Runtime runtime = Runtime.getRuntime();
         if (runtime.maxMemory() != Long.MAX_VALUE) {
             return runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
@@ -265,18 +279,20 @@ class DeviceData extends DeviceDataSummary {
      * Get the device orientation, eg. "landscape"
      */
     @Nullable
-    private static String getOrientation(@NonNull Context appContext) {
-        String orientation;
-        switch (appContext.getResources().getConfiguration().orientation) {
-            case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
-                orientation = "landscape";
-                break;
-            case android.content.res.Configuration.ORIENTATION_PORTRAIT:
-                orientation = "portrait";
-                break;
-            default:
-                orientation = null;
-                break;
+    private String calculateOrientation() {
+        String orientation = null;
+
+        if (resources != null) {
+            switch (resources.getConfiguration().orientation) {
+                case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
+                    orientation = "landscape";
+                    break;
+                case android.content.res.Configuration.ORIENTATION_PORTRAIT:
+                    orientation = "portrait";
+                    break;
+                default:
+                    break;
+            }
         }
         return orientation;
     }
@@ -285,7 +301,7 @@ class DeviceData extends DeviceDataSummary {
      * Get the current battery charge level, eg 0.3
      */
     @Nullable
-    private static Float getBatteryLevel(@NonNull Context appContext) {
+    private Float getBatteryLevel() {
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
@@ -302,7 +318,7 @@ class DeviceData extends DeviceDataSummary {
      * Is the device currently charging/full battery?
      */
     @Nullable
-    private static Boolean isCharging(@NonNull Context appContext) {
+    private Boolean isCharging() {
         try {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
@@ -320,7 +336,7 @@ class DeviceData extends DeviceDataSummary {
      * Get the current status of location services
      */
     @Nullable
-    private static String getLocationStatus(@NonNull Context appContext) {
+    private String getLocationStatus() {
         try {
             ContentResolver cr = appContext.getContentResolver();
             String providersAllowed =
@@ -340,7 +356,7 @@ class DeviceData extends DeviceDataSummary {
      * Get the current status of network access, eg "cellular"
      */
     @Nullable
-    private static String getNetworkAccess(@NonNull Context appContext) {
+    private String getNetworkAccess() {
         try {
             ConnectivityManager cm =
                 (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -373,4 +389,23 @@ class DeviceData extends DeviceDataSummary {
         return DateUtils.toIso8601(new Date());
     }
 
+    /**
+     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
+     */
+    static class SupportedAbiWrapper {
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+        static String[] getSupportedAbis() {
+            return Build.SUPPORTED_ABIS;
+        }
+    }
+
+    /**
+     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
+     */
+    static class Abi2Wrapper {
+        @NonNull
+        static String[] getAbi1andAbi2() {
+            return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
+        }
+    }
 }
