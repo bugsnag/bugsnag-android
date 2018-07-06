@@ -16,6 +16,7 @@ android {
     defaultConfig {
         minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     buildTypes {
