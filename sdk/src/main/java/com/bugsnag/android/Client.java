@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -16,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -61,14 +64,20 @@ public class Client extends Observable implements Observer {
 
     @NonNull
     protected final Configuration config;
-    private final Context appContext;
-    @NonNull
-    protected final AppData appData;
+    final Context appContext;
+
     @NonNull
     protected final DeviceData deviceData;
+
+    @NonNull
+    protected final AppData appData;
+
     @NonNull
     final Breadcrumbs breadcrumbs;
-    protected final User user = new User();
+
+    @NonNull
+    private final User user = new User();
+
     @NonNull
     protected final ErrorStore errorStore;
 
@@ -76,6 +85,7 @@ public class Client extends Observable implements Observer {
 
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
+    SharedPreferences sharedPrefs;
 
     /**
      * Initialize a Bugsnag client
@@ -135,11 +145,10 @@ public class Client extends Observable implements Observer {
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(appContext, config, sessionTracker);
-        deviceData = new DeviceData(appContext, sharedPref);
+        appData = new AppData(this);
+        deviceData = new DeviceData(this);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs();
@@ -147,13 +156,15 @@ public class Client extends Observable implements Observer {
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
 
+        String deviceId = getStringFromMap("id", deviceData.getDeviceData());
+
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPref.getString(USER_ID_KEY, deviceData.getUserId()));
-            user.setName(sharedPref.getString(USER_NAME_KEY, null));
-            user.setEmail(sharedPref.getString(USER_EMAIL_KEY, null));
+            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceId));
+            user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
+            user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
         } else {
-            user.setId(deviceData.getUserId());
+            user.setId(deviceId);
         }
 
         if (appContext instanceof Application) {
@@ -209,7 +220,7 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
-            AppData.guessReleaseStage(appContext));
+            appData.guessReleaseStage());
         Logger.setEnabled(isNotProduction);
 
 
@@ -535,10 +546,39 @@ public class Client extends Observable implements Observer {
     }
 
     /**
+     * Retrieves details of the user currently using your application.
+     * You can search for this information in your Bugsnag dashboard.
+     *
+     * @return the current user
+     */
+    @NonNull
+    public User getUser() {
+        return user;
+    }
+
+    @NonNull
+    @InternalApi
+    public Collection<Breadcrumb> getBreadcrumbs() {
+        return new ArrayList<>(breadcrumbs.store);
+    }
+
+    @NonNull
+    @InternalApi
+    public AppData getAppData() {
+        return appData;
+    }
+
+    @NonNull
+    @InternalApi
+    public DeviceData getDeviceData() {
+        return deviceData;
+    }
+
+    /**
      * Removes the current user data and sets it back to defaults
      */
     public void clearUser() {
-        user.setId(deviceData.getUserId());
+        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
         user.setEmail(null);
         user.setName(null);
 
@@ -876,14 +916,25 @@ public class Client extends Observable implements Observer {
             return;
         }
 
+        // generate new object each time, as this can be mutated by end-users
+        Map<String, Object> errorAppData = appData.getAppData();
+
         // Don't notify unless releaseStage is in notifyReleaseStages
-        if (!config.shouldNotifyForReleaseStage(appData.getReleaseStage())) {
+        String releaseStage = getStringFromMap("releaseStage", errorAppData);
+
+        if (!config.shouldNotifyForReleaseStage(releaseStage)) {
             return;
         }
 
         // Capture the state of the app and device and attach diagnostics to the error
-        error.setAppData(appData);
-        error.setDeviceData(deviceData);
+        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
+        error.setDeviceData(errorDeviceData);
+        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
+
+
+        // add additional info that belongs in metadata
+        error.setAppData(errorAppData);
+        error.getMetaData().store.put("app", appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);

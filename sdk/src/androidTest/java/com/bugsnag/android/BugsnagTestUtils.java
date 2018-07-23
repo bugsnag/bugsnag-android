@@ -26,6 +26,10 @@ final class BugsnagTestUtils {
         return writer.toString();
     }
 
+    static JSONObject mapToJson(Map<String, Object> map) {
+        return new JSONObject(map);
+    }
+
     static JSONObject streamableToJson(JsonStream.Streamable streamable)
         throws JSONException, IOException {
         return new JSONObject(streamableToString(streamable));

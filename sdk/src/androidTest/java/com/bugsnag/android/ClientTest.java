@@ -2,13 +2,16 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -19,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collection;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -270,4 +274,80 @@ public class ClientTest {
         generateClient().setSessionTrackingApiClient(null);
     }
 
+    @Test
+    public void testClientUser() {
+        Client client = generateClient();
+        assertNotNull(client.getUser());
+        assertNotNull(client.getUser().getId());
+    }
+
+    @Test
+    public void testBreadcrumbGetter() {
+        Client client = generateClient();
+        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+
+        int breadcrumbCount = breadcrumbs.size();
+        client.leaveBreadcrumb("Foo");
+        assertEquals(breadcrumbCount, breadcrumbs.size()); // should not pick up new breadcrumbs
+    }
+
+    @Test
+    public void testBreadcrumbStoreNotModified() {
+        Client client = generateClient();
+        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        int breadcrumbCount = client.breadcrumbs.store.size();
+
+        breadcrumbs.clear(); // only the copy should be cleared
+        assertTrue(breadcrumbs.isEmpty());
+        assertEquals(breadcrumbCount, client.breadcrumbs.store.size());
+    }
+
+    @Test
+    public void testAppDataCollection() {
+        Client client = generateClient();
+        AppData appData = client.getAppData();
+        assertEquals(client.getAppData(), appData);
+    }
+
+    @Test
+    public void testAppDataMetaData() {
+        Client client = generateClient();
+        Map<String, Object> app = client.getAppData().getAppDataMetaData();
+        assertEquals(6, app.size());
+        assertEquals("Bugsnag Android Tests", app.get("name"));
+        assertEquals("com.bugsnag.android.test", app.get("packageName"));
+        assertEquals("1.0", app.get("versionName"));
+        assertNotNull(app.get("memoryUsage"));
+        assertTrue(app.containsKey("activeScreen"));
+        assertNotNull(app.get("lowMemory"));
+    }
+
+    @Test
+    public void testDeviceDataCollection() {
+        Client client = generateClient();
+        DeviceData deviceData = client.getDeviceData();
+        assertEquals(client.getDeviceData(), deviceData);
+    }
+
+    @Test
+    public void testPopulateDeviceMetadata() {
+        Client client = generateClient();
+        Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
+
+        assertEquals(14, metaData.size());
+        assertNotNull(metaData.get("batteryLevel"));
+        assertNotNull(metaData.get("charging"));
+        assertNotNull(metaData.get("locationStatus"));
+        assertNotNull(metaData.get("networkAccess"));
+        assertNotNull(metaData.get("time"));
+        assertNotNull(metaData.get("brand"));
+        assertNotNull(metaData.get("apiLevel"));
+        assertNotNull(metaData.get("osBuild"));
+        assertNotNull(metaData.get("locale"));
+        assertNotNull(metaData.get("screenDensity"));
+        assertNotNull(metaData.get("dpi"));
+        assertNotNull(metaData.get("emulator"));
+        assertNotNull(metaData.get("screenResolution"));
+        assertNotNull(metaData.get("cpuAbi"));
+    }
 }

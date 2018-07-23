@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,19 +11,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -42,6 +42,11 @@ public class ErrorTest {
         config = new Configuration("api-key");
         RuntimeException exception = new RuntimeException("Example message");
         error = new Error.Builder(config, exception, null).build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test
@@ -71,11 +76,17 @@ public class ErrorTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
+        Client client = generateClient();
+        error.setAppData(client.getAppData().getAppData());
+
         JSONObject errorJson = streamableToJson(error);
         assertEquals("warning", errorJson.get("severity"));
         assertNotNull(errorJson.get("severity"));
+        assertNotNull(errorJson.get("severityReason"));
         assertNotNull(errorJson.get("metaData"));
         assertNotNull(errorJson.get("threads"));
+        assertNotNull(errorJson.get("exceptions"));
+        assertNotNull(errorJson.get("app"));
     }
 
     @Test
@@ -216,6 +227,7 @@ public class ErrorTest {
     public void testSetGroupingHash() throws JSONException, IOException {
         String groupingHash = "herpderp";
         error.setGroupingHash(groupingHash);
+        assertEquals(groupingHash, error.getGroupingHash());
 
         JSONObject errorJson = streamableToJson(error);
         assertEquals(groupingHash, errorJson.get("groupingHash"));
@@ -306,15 +318,10 @@ public class ErrorTest {
     }
 
     @Test
-    public void testAppDataContext() throws Exception {
+    public void testActiveScreen() throws Exception {
         error.setContext(null);
-        Context context = InstrumentationRegistry.getContext();
-        SessionTracker sessionTracker = generateSessionTracker();
-        String expectedContext = "FooActivity";
-        sessionTracker.updateForegroundTracker(expectedContext,
-            true, System.currentTimeMillis());
-        error.setAppData(new AppData(context, config, sessionTracker));
-        assertEquals(expectedContext, error.getContext());
+        error.getMetaData().addToTab("app", "activeScreen", "FooActivity");
+        assertEquals("FooActivity", error.getContext());
     }
 
     @Test
@@ -372,13 +379,13 @@ public class ErrorTest {
 
     @Test
     public void testSetDeviceId() throws Throwable {
-        Context context = InstrumentationRegistry.getContext();
-        DeviceData deviceData = new DeviceData(context, BugsnagTestUtils.getSharedPrefs(context));
+        Map<String, Object> deviceData = new DeviceData(generateClient()).getDeviceData();
         error.setDeviceData(deviceData);
+        assertEquals(deviceData, error.getDeviceData());
 
         JSONObject errorJson = streamableToJson(error);
         JSONObject device = errorJson.getJSONObject("device");
-        assertEquals(deviceData.id, device.getString("id"));
+        assertEquals(deviceData.get("id"), device.getString("id"));
 
         error.setDeviceId(null);
         errorJson = streamableToJson(error);

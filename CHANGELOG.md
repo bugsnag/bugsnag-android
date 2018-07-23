@@ -1,8 +1,14 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+* Disable BuildConfig generation [#343](https://github.com/bugsnag/bugsnag-android/pull/343)
+
+* Add consumer proguard rules for automatic ProGuard configuration without the Bugsnag gradle plugin [#345](https://github.com/bugsnag/bugsnag-android/pull/345)
+
 ## 4.5.0 (2018-06-18)
 
-**IMPORTANT NOTE**: this release alters the behaviour of the notifier to track sessions automatically. 
+This release alters the behaviour of the notifier to track sessions automatically. 
 A session will be automatically captured on each app launch and sent to [https://sessions.bugsnag.com](https://sessions.bugsnag.com). If you
 use Bugsnag On-Premise, it is now also recommended that you set your notify and session endpoints
 via `config.setEndpoints(String notify, String sessions)`.
