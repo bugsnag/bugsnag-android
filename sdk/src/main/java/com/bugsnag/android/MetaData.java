@@ -166,8 +166,10 @@ public class MetaData extends Observable implements JsonStream.Streamable {
                         && baseValue instanceof Map
                         && overridesValue instanceof Map) {
                         // Both original and overrides are Maps, go deeper
-                        @SuppressWarnings("unchecked") Map<String, Object> first = (Map<String, Object>) baseValue;
-                        @SuppressWarnings("unchecked") Map<String, Object> second = (Map<String, Object>) overridesValue;
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> first = (Map<String, Object>) baseValue;
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> second = (Map<String, Object>) overridesValue;
                         result.put(key, mergeMaps(first, second));
                     } else {
                         result.put(key, overridesValue);
