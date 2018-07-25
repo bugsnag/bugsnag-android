@@ -35,6 +35,7 @@ public class DeliveryCompatTest {
         Async.cancelTasks();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void deliverReport() throws Exception {
         Report report = null;
@@ -54,6 +55,7 @@ public class DeliveryCompatTest {
         assertEquals(1, customCount.get());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void deliverSession() throws Exception {
         SessionTrackingPayload payload = null;
@@ -73,6 +75,7 @@ public class DeliveryCompatTest {
         assertEquals(1, customCount.get());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testClientCompat() {
         Client client = BugsnagTestUtils.generateClient();
@@ -96,11 +99,13 @@ public class DeliveryCompatTest {
         assertEquals(sessionClient, compat.sessionTrackingApiClient);
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = DeliveryFailureException.class)
     public void testExceptionConversion() throws Exception {
         deliveryCompat.handleException(new NetworkException("", null));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSwallowExceptionConversion() throws Exception { // no exception thrown
         deliveryCompat.handleException(new BadResponseException("", 0));

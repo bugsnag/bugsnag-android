@@ -30,7 +30,10 @@ class ObjectJsonStreamer {
             // Map objects
             writer.beginObject();
             for (Object o : ((Map) obj).entrySet()) {
-                Map.Entry entry = (Map.Entry) o;
+
+                @SuppressWarnings("unchecked")
+                Map.Entry<Object, Object> entry = (Map.Entry<Object, Object>) o;
+
                 Object keyObj = entry.getKey();
                 if (keyObj instanceof String) {
                     String key = (String) keyObj;

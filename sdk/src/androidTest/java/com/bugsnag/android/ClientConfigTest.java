@@ -63,6 +63,7 @@ public class ClientConfigTest {
         assertEquals("JunitTest", config.getContext());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetEndpoint() throws Exception {
         client.setEndpoint("http://example.com/bugsnag");

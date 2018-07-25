@@ -6,6 +6,8 @@ import java.io.IOException;
 
 class CustomException extends Exception implements JsonStream.Streamable {
 
+    private static final long serialVersionUID = 1962801050513549513L;
+
     CustomException(String message) {
         super(message);
     }

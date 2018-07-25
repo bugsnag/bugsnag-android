@@ -90,6 +90,7 @@ public class ClientTest {
         client.notify(new RuntimeException("Testing"));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testConfig() {
         config.setEndpoint("new-endpoint");
@@ -107,9 +108,8 @@ public class ClientTest {
         setUserPrefs();
 
         config.setPersistUserBetweenSessions(true);
+        config.setDelivery(BugsnagTestUtils.generateDelivery());
         Client client = new Client(context, config);
-        client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
-        client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
 
         final User user = new User();
 
@@ -269,6 +269,7 @@ public class ClientTest {
         assertTrue(client.getMetaData().getTab("drink").isEmpty());
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void testApiClientNullValidation() {
         generateClient().setSessionTrackingApiClient(null);

@@ -70,6 +70,7 @@ final class BugsnagTestUtils {
         return new SessionStore(generateConfiguration(), InstrumentationRegistry.getContext());
     }
 
+    @SuppressWarnings("deprecation")
     @NonNull
     static SessionTrackingApiClient generateSessionTrackingApiClient() {
         return new SessionTrackingApiClient() {
@@ -83,6 +84,7 @@ final class BugsnagTestUtils {
         };
     }
 
+    @SuppressWarnings("deprecation")
     static ErrorReportApiClient generateErrorReportApiClient() { // no-op
         return new ErrorReportApiClient() {
             @Override
