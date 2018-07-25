@@ -3,6 +3,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'kotlin-android'
 
 repositories {
     google()
@@ -42,6 +43,9 @@ coveralls {
 }
 dependencies {
     api "com.android.support:support-annotations:$supportLibVersion"
+
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 
@@ -166,3 +170,4 @@ dexcount {
     orderByMethodCount = true
     verbose true
 }
+
