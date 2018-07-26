@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 class StrictModeHandler {
@@ -57,7 +58,7 @@ class StrictModeHandler {
         Throwable cause = getRootCause(throwable);
         Class<? extends Throwable> causeClass = cause.getClass();
         String simpleName = causeClass.getName();
-        return simpleName.toLowerCase().startsWith(STRICT_MODE_CLZ_NAME);
+        return simpleName.toLowerCase(Locale.US).startsWith(STRICT_MODE_CLZ_NAME);
     }
 
     @Nullable
