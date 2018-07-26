@@ -45,7 +45,7 @@ public class NativeInterface {
         // Should only happen if the NDK library is present
         try {
             String className = "com.bugsnag.android.ndk.BugsnagObserver";
-            Class clz = Class.forName(className);
+            Class<?> clz = Class.forName(className);
             Observer observer = (Observer) clz.newInstance();
             client.addObserver(observer);
         } catch (ClassNotFoundException exception) {
@@ -256,11 +256,10 @@ public class NativeInterface {
                 error.config.defaultExceptionType = "c";
 
                 for (String tab : metaData.keySet()) {
-
                     Object value = metaData.get(tab);
 
                     if (value instanceof Map) {
-                        Map map = (Map) value;
+                        @SuppressWarnings("unchecked") Map<Object, Object> map = (Map) value;
 
                         for (Object key : map.keySet()) {
                             error.getMetaData().addToTab(tab, key.toString(), map.get(key));

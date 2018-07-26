@@ -425,6 +425,7 @@ public final class Bugsnag {
      * @param metaData  additional information to send with the exception
      * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
+    @Deprecated
     public static void notify(@NonNull final Throwable exception,
                               @NonNull final MetaData metaData) {
         getClient().notify(exception, new Callback() {

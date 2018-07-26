@@ -246,6 +246,7 @@ class DeviceData {
      * Get the free disk space on the smallest disk
      */
     @Nullable
+    @SuppressWarnings("deprecation") // ignore blockSizeLong suggestions for now (requires API 18)
     private Long calculateFreeDisk() {
         try {
             StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
@@ -336,6 +337,7 @@ class DeviceData {
      * Get the current status of location services
      */
     @Nullable
+    @SuppressWarnings("deprecation") // LOCATION_PROVIDERS_ALLOWED is deprecated
     private String getLocationStatus() {
         try {
             ContentResolver cr = appContext.getContentResolver();
@@ -404,6 +406,7 @@ class DeviceData {
      */
     static class Abi2Wrapper {
         @NonNull
+        @SuppressWarnings("deprecation") // new API already used elsewhere
         static String[] getAbi1andAbi2() {
             return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
         }

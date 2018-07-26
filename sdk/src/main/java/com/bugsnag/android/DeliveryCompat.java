@@ -7,7 +7,10 @@ package com.bugsnag.android;
  */
 class DeliveryCompat implements Delivery {
 
+    // ignore deprecation of legacy clients
+    @SuppressWarnings("deprecation")
     volatile ErrorReportApiClient errorReportApiClient;
+    @SuppressWarnings("deprecation")
     volatile SessionTrackingApiClient sessionTrackingApiClient;
 
     @Override
@@ -35,6 +38,7 @@ class DeliveryCompat implements Delivery {
         }
     }
 
+    @SuppressWarnings("deprecation") // ignore networkexception deprecation
     void handleException(Throwable throwable) throws DeliveryFailureException {
         if (throwable instanceof NetworkException) {
             throw new DeliveryFailureException(throwable.getMessage(), throwable);

@@ -822,6 +822,7 @@ public class Client extends Observable implements Observer {
      * @param metaData  additional information to send with the exception
      * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
+    @Deprecated
     public void notify(@NonNull Throwable exception,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())
@@ -1051,6 +1052,7 @@ public class Client extends Observable implements Observer {
      * @param metaData  additional information to send with the exception
      * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
+    @Deprecated
     public void notifyBlocking(@NonNull Throwable exception,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession())

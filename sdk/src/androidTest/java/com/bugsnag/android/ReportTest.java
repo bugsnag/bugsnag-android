@@ -51,6 +51,7 @@ public class ReportTest {
         assertEquals(groupingHash, event.getString("groupingHash"));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testModifyReportDetails() throws Exception {
         String apiKey = "custom-api-key";

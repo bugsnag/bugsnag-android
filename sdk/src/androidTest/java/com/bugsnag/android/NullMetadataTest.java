@@ -31,17 +31,7 @@ public class NullMetadataTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        Bugsnag.init(InstrumentationRegistry.getContext(), config);
-        Bugsnag.setErrorReportApiClient(new ErrorReportApiClient() {
-            @Override
-            public void postReport(String urlString,
-                                   Report report,
-                                   Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        });
-
+        BugsnagTestUtils.generateClient();
         throwable = new RuntimeException("Test");
     }
 

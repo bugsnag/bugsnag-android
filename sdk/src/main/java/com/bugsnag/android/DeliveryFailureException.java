@@ -7,6 +7,8 @@ package com.bugsnag.android;
  * @see Delivery
  */
 public class DeliveryFailureException extends Exception {
+    private static final long serialVersionUID = 1501477209400426470L;
+
     public DeliveryFailureException(String message) {
         super(message);
     }
