@@ -3,16 +3,6 @@ repositories {
     jcenter()
 }
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$project.KOTLIN_VERSION"
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
