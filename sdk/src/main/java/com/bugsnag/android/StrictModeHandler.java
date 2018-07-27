@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 class StrictModeHandler {
@@ -26,7 +27,7 @@ class StrictModeHandler {
     private static final int DETECT_VM_CLEARTEXT_NETWORK = 0x40 << 8;
 
 
-    private static final String STRICT_MODE_CLZ_NAME = "android.os.StrictMode";
+    private static final String STRICT_MODE_CLZ_NAME = "android.os.strictmode";
 
     @SuppressLint("UseSparseArrays")
     private static final Map<Integer, String> POLICY_CODE_MAP = new HashMap<>();
@@ -57,7 +58,7 @@ class StrictModeHandler {
         Throwable cause = getRootCause(throwable);
         Class<? extends Throwable> causeClass = cause.getClass();
         String simpleName = causeClass.getName();
-        return simpleName.startsWith(STRICT_MODE_CLZ_NAME);
+        return simpleName.toLowerCase(Locale.US).startsWith(STRICT_MODE_CLZ_NAME);
     }
 
     @Nullable
