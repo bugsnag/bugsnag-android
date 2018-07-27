@@ -5,8 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.text.TextUtils;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

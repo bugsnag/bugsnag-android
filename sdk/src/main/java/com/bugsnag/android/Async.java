@@ -2,10 +2,7 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;

@@ -1,8 +1,6 @@
 package com.bugsnag.android;
 
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 /**
  * A callback to be run before an individual report is sent to Bugsnag.
  * <p>

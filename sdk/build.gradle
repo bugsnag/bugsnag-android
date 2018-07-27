@@ -27,9 +27,9 @@ android {
     }
 
     lintOptions {
-        abortOnError !project.hasProperty("infer")
-        warningsAsErrors !project.hasProperty("infer")
-        checkAllWarnings !project.hasProperty("infer")
+        abortOnError true
+        warningsAsErrors true
+        checkAllWarnings true
     }
 
     // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
@@ -65,7 +65,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
-    compile "com.facebook.infer.annotation:infer-annotation:0.10.0.2"
+    compile "com.facebook.infer.annotation:infer-annotation:0.11.2"
 }
 
 // Disable doclint:

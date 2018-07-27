@@ -27,8 +27,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.RejectedExecutionException;
 
-import javax.annotation.concurrent.ThreadSafe;
-
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
  * Typically you'd instead use the static access provided in the Bugsnag class.
