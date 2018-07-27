@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 import java.util.Map;
 
 /**
@@ -11,6 +13,7 @@ import java.util.Map;
  */
 @SuppressWarnings("WeakerAccess")
 @Deprecated
+@ThreadSafe
 public interface ErrorReportApiClient {
 
     /**

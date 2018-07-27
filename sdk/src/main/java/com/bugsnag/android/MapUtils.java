@@ -2,8 +2,11 @@ package com.bugsnag.android;
 
 import android.support.annotation.Nullable;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 import java.util.Map;
 
+@ThreadSafe
 final class MapUtils {
 
     @Nullable

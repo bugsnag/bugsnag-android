@@ -1,10 +1,13 @@
 package com.bugsnag.android;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 /**
  * A compatibility implementation of {@link Delivery} which wraps {@link ErrorReportApiClient} and
  * {@link SessionTrackingApiClient}. This class allows for backwards compatibility for users still
  * utilising the old API, and should be removed in the next major version.
  */
+@ThreadSafe
 class DeliveryCompat implements Delivery {
 
     // ignore deprecation of legacy clients

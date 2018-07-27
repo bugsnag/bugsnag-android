@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Collects various data on the application state
  */

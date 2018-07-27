@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
@@ -11,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+@ThreadSafe
 class IOUtils {
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
     private static final int EOF = -1;

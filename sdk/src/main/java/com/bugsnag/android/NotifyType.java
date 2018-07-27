@@ -2,9 +2,12 @@ package com.bugsnag.android;
 
 import android.support.annotation.Nullable;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 /**
  * Used to inform the NDK library which type of data needs to be updated
  */
+@ThreadSafe
 public enum NotifyType {
     ALL(1),
     USER(2),

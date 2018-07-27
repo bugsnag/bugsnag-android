@@ -14,6 +14,9 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
+@NotThreadSafe
 public class JsonStream extends JsonWriter {
 
     private final ObjectJsonStreamer objectJsonStreamer;

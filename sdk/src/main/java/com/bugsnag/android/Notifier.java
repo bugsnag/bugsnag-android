@@ -2,6 +2,8 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 import java.io.IOException;
 
 /**

@@ -34,3 +34,4 @@ proguard/
 
 # Javadoc
 docs/
+infer-out/

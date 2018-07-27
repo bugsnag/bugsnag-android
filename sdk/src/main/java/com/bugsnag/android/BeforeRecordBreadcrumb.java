@@ -2,6 +2,8 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 /**
  * Add a "before breadcrumb" callback, to execute code before every
  * breadcrumb captured by Bugsnag.
@@ -17,6 +19,7 @@ import android.support.annotation.NonNull;
  * }
  * })
  */
+@ThreadSafe
 public interface BeforeRecordBreadcrumb {
 
     /**

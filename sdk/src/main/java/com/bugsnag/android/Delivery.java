@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 /**
  * Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.
  * <p>
