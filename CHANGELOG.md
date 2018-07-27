@@ -2,6 +2,8 @@
 
 ## 4.X.X (TBD)
 
+* Android P compatibility fixes - ensure available information on StrictMode violations is collected [#350](https://github.com/bugsnag/bugsnag-android/pull/350)
+
 * Disable BuildConfig generation [#343](https://github.com/bugsnag/bugsnag-android/pull/343)
 
 * Add consumer proguard rules for automatic ProGuard configuration without the Bugsnag gradle plugin [#345](https://github.com/bugsnag/bugsnag-android/pull/345)
