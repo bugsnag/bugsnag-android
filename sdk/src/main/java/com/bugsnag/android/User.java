@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Information about the current user of your application.
  */
-public class User implements JsonStream.Streamable {
+class User implements JsonStream.Streamable {
 
     @Nullable
     private String id;
