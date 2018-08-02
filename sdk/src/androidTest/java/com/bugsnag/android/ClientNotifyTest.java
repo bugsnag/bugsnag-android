@@ -26,6 +26,7 @@ public class ClientNotifyTest {
      *
      * @throws Exception if initialisation failed
      */
+    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         client = BugsnagTestUtils.generateClient();
@@ -81,6 +82,7 @@ public class ClientNotifyTest {
         assertEquals("Message", error.getExceptionMessage());
     }
 
+    @SuppressWarnings("deprecation")
     static class FakeClient implements ErrorReportApiClient {
 
         CountDownLatch latch = new CountDownLatch(1);

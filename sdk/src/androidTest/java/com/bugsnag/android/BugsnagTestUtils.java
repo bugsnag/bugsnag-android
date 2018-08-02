@@ -26,6 +26,10 @@ final class BugsnagTestUtils {
         return writer.toString();
     }
 
+    static JSONObject mapToJson(Map<String, Object> map) {
+        return new JSONObject(map);
+    }
+
     static JSONObject streamableToJson(JsonStream.Streamable streamable)
         throws JSONException, IOException {
         return new JSONObject(streamableToString(streamable));
@@ -66,6 +70,7 @@ final class BugsnagTestUtils {
         return new SessionStore(generateConfiguration(), InstrumentationRegistry.getContext());
     }
 
+    @SuppressWarnings("deprecation")
     @NonNull
     static SessionTrackingApiClient generateSessionTrackingApiClient() {
         return new SessionTrackingApiClient() {
@@ -79,6 +84,7 @@ final class BugsnagTestUtils {
         };
     }
 
+    @SuppressWarnings("deprecation")
     static ErrorReportApiClient generateErrorReportApiClient() { // no-op
         return new ErrorReportApiClient() {
             @Override

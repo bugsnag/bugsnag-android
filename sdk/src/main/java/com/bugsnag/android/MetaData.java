@@ -4,10 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,19 +20,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
 public class MetaData extends Observable implements JsonStream.Streamable {
-    private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
-    private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
-
-    private String[] filters = {"password"};
 
     @NonNull
     final Map<String, Object> store;
+    final ObjectJsonStreamer jsonStreamer;
 
     /**
      * Create an empty MetaData object.
      */
     public MetaData() {
-        store = new ConcurrentHashMap<>();
+        this(new ConcurrentHashMap<String, Object>());
     }
 
     /**
@@ -42,11 +37,12 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      */
     public MetaData(@NonNull Map<String, Object> map) {
         store = new ConcurrentHashMap<>(map);
+        jsonStreamer = new ObjectJsonStreamer();
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
-        objectToStream(store, writer);
+        jsonStreamer.objectToStream(store, writer);
     }
 
     /**
@@ -103,6 +99,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     @NonNull
     Map<String, Object> getTab(String tabName) {
+        @SuppressWarnings("unchecked")
         Map<String, Object> tab = (Map<String, Object>) store.get(tabName);
 
         if (tab == null) {
@@ -114,13 +111,13 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     }
 
     void setFilters(String... filters) {
-        this.filters = filters;
+        jsonStreamer.filters = filters;
 
         notifyBugsnagObservers(NotifyType.FILTERS);
     }
 
     String[] getFilters() {
-        return filters;
+        return jsonStreamer.filters;
     }
 
     @NonNull
@@ -131,18 +128,20 @@ public class MetaData extends Observable implements JsonStream.Streamable {
             if (metaData != null) {
                 stores.add(metaData.store);
 
-                if (metaData.filters != null) {
-                    filters.addAll(Arrays.asList(metaData.filters));
+                if (metaData.jsonStreamer.filters != null) {
+                    filters.addAll(Arrays.asList(metaData.jsonStreamer.filters));
                 }
             }
         }
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
         MetaData newMeta = new MetaData(mergeMaps(stores.toArray(new Map[0])));
-        newMeta.filters = filters.toArray(new String[filters.size()]);
+        newMeta.setFilters(filters.toArray(new String[filters.size()]));
 
         return newMeta;
     }
 
+    @SafeVarargs
     @NonNull
     private static Map<String, Object> mergeMaps(@NonNull Map<String, Object>... maps) {
         Map<String, Object> result = new ConcurrentHashMap<>();
@@ -165,8 +164,11 @@ public class MetaData extends Observable implements JsonStream.Streamable {
                         && baseValue instanceof Map
                         && overridesValue instanceof Map) {
                         // Both original and overrides are Maps, go deeper
-                        result.put(key, mergeMaps((Map<String, Object>) baseValue,
-                            (Map<String, Object>) overridesValue));
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> first = (Map<String, Object>) baseValue;
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> second = (Map<String, Object>) overridesValue;
+                        result.put(key, mergeMaps(first, second));
                     } else {
                         result.put(key, overridesValue);
                     }
@@ -178,69 +180,6 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         }
 
         return result;
-    }
-
-    // Write complex/nested values to a JsonStreamer
-    private void objectToStream(@Nullable Object obj,
-                                @NonNull JsonStream writer) throws IOException {
-        if (obj == null) {
-            writer.nullValue();
-        } else if (obj instanceof String) {
-            writer.value((String) obj);
-        } else if (obj instanceof Number) {
-            writer.value((Number) obj);
-        } else if (obj instanceof Boolean) {
-            writer.value((Boolean) obj);
-        } else if (obj instanceof Map) {
-            // Map objects
-            writer.beginObject();
-            for (Object o : ((Map) obj).entrySet()) {
-                Map.Entry entry = (Map.Entry) o;
-                Object keyObj = entry.getKey();
-                if (keyObj instanceof String) {
-                    String key = (String) keyObj;
-                    writer.name(key);
-                    if (shouldFilter(key)) {
-                        writer.value(FILTERED_PLACEHOLDER);
-                    } else {
-                        objectToStream(entry.getValue(), writer);
-                    }
-                }
-            }
-            writer.endObject();
-        } else if (obj instanceof Collection) {
-            // Collection objects (Lists, Sets etc)
-            writer.beginArray();
-            for (Object entry : (Collection) obj) {
-                objectToStream(entry, writer);
-            }
-            writer.endArray();
-        } else if (obj.getClass().isArray()) {
-            // Primitive array objects
-            writer.beginArray();
-            int length = Array.getLength(obj);
-            for (int i = 0; i < length; i += 1) {
-                objectToStream(Array.get(obj, i), writer);
-            }
-            writer.endArray();
-        } else {
-            writer.value(OBJECT_PLACEHOLDER);
-        }
-    }
-
-    // Should this key be filtered
-    private boolean shouldFilter(@Nullable String key) {
-        if (filters == null || key == null) {
-            return false;
-        }
-
-        for (String filter : filters) {
-            if (key.contains(filter)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void notifyBugsnagObservers(@NonNull NotifyType type) {

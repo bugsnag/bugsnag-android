@@ -2,7 +2,8 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
+
+import com.facebook.infer.annotation.ThreadSafe;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.concurrent.Semaphore;
  * Store and flush Error reports which couldn't be sent immediately due to
  * lack of network connectivity.
  */
+@ThreadSafe
 class ErrorStore extends FileStore<Error> {
 
     private static final String STARTUP_CRASH = "_startupcrash";

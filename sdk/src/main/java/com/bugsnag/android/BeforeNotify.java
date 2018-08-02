@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 /**
  * A callback to be run before every report to Bugsnag.
  * <p>
@@ -7,6 +9,7 @@ package com.bugsnag.android;
  * before it is sent to your dashboard. You can also return
  * <code>false</code> from any callback to halt execution.
  */
+@ThreadSafe
 public interface BeforeNotify {
     /**
      * Runs the "before notify" callback. If the callback returns

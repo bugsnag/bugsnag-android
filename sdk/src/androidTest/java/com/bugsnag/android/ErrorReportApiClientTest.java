@@ -31,11 +31,13 @@ public class ErrorReportApiClientTest {
         Async.cancelTasks();
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void testApiClientNullValidation() {
         Bugsnag.setErrorReportApiClient(null);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testPostReportCalled() {
         Bugsnag.setErrorReportApiClient(apiClient);
@@ -46,6 +48,7 @@ public class ErrorReportApiClientTest {
         assertNotNull(apiClient.report);
     }
 
+    @SuppressWarnings("deprecation")
     private static class FakeApiClient implements ErrorReportApiClient {
         private Report report;
 

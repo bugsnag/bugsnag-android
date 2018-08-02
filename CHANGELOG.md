@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.6.0 (2018-08-02)
+
+* Android P compatibility fixes - ensure available information on StrictMode violations is collected [#350](https://github.com/bugsnag/bugsnag-android/pull/350)
+
+* Disable BuildConfig generation [#343](https://github.com/bugsnag/bugsnag-android/pull/343)
+
+* Add consumer proguard rules for automatic ProGuard configuration without the Bugsnag gradle plugin [#345](https://github.com/bugsnag/bugsnag-android/pull/345)
+
+* Internal refactor of app/device data serialisation
+
 ## 4.5.0 (2018-06-18)
 
 This release alters the behaviour of the notifier to track sessions automatically. 

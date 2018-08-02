@@ -61,6 +61,11 @@ public final class Breadcrumb implements JsonStream.Streamable {
         return metadata;
     }
 
+    @NonNull
+    public String getTimestamp() {
+        return timestamp;
+    }
+
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();

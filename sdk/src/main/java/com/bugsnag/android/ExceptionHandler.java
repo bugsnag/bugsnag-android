@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Map;

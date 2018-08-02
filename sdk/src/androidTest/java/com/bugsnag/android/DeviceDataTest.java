@@ -1,20 +1,14 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
+import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.SharedPreferences;
-import android.provider.Settings;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.DisplayMetrics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,17 +18,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class DeviceDataTest {
 
-    private DeviceData deviceData;
+    private Map<String, Object> deviceData;
 
     @Before
     public void setUp() throws Exception {
-        SharedPreferences sharedPref = getSharedPrefs(InstrumentationRegistry.getContext());
-        deviceData = new DeviceData(InstrumentationRegistry.getContext(), sharedPref);
+        DeviceData deviceData = new DeviceData(generateClient());
+        this.deviceData = deviceData.getDeviceData();
     }
 
     @After
@@ -43,39 +39,40 @@ public class DeviceDataTest {
     }
 
     @Test
-    public void testSaneValues() throws JSONException, IOException {
-        JSONObject deviceDataJson = streamableToJson(deviceData);
+    public void testId() {
+        assertNotNull(deviceData.get("id"));
+    }
 
-        assertEquals("android", deviceDataJson.getString("osName"));
-        assertTrue(deviceDataJson.getString("manufacturer").length() > 1);
-        assertTrue(deviceDataJson.getString("brand").length() > 1);
-        assertTrue(deviceDataJson.getString("model").length() > 1);
+    @Test
+    public void testOrientation() {
+        assertNotNull(deviceData.get("orientation"));
+    }
 
-        assertTrue(deviceDataJson.getDouble("screenDensity") > 0);
-        assertTrue(deviceDataJson.getDouble("dpi") >= DisplayMetrics.DENSITY_LOW);
-        String screenResolution = deviceDataJson.getString("screenResolution");
-        assertTrue(screenResolution.matches("^\\d+x\\d+$"));
-        assertTrue(deviceDataJson.getLong("totalMemory") > 0);
-        assertNotNull(deviceDataJson.getBoolean("jailbroken"));
-        assertNotNull(deviceDataJson.getString("locale"));
-        assertNotNull(deviceDataJson.getString("cpuAbi"));
+    @Test
+    public void testFreeMemory() {
+        assertTrue((Long) deviceData.get("freeMemory") > 0);
+    }
 
-        // Emulators returned null for android id before android 2.2
+    @Test
+    public void testTotalMemory() {
+        assertTrue((Long) deviceData.get("totalMemory") > 0);
+    }
+
+    @Test
+    public void testJsonSerialisation() throws IOException, JSONException {
+        JSONObject deviceDataJson = mapToJson(deviceData);
+
+        // serialises inherited fields correctly
+        for (String key : Arrays.asList("osName",
+            "osVersion", "manufacturer", "model", "jailbroken")) {
+            assertTrue(deviceDataJson.has(key));
+        }
+
         assertNotNull(deviceDataJson.getString("id"));
-
-        // historically Android ID was used, this should no longer be the case
-        ContentResolver cr = InstrumentationRegistry.getContext().getContentResolver();
-        @SuppressLint("HardwareIds")
-        String androidId = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
-        assertNotSame(androidId, deviceDataJson.getString("id"));
-
         assertTrue(deviceDataJson.getLong("freeMemory") > 0);
-        assertNotNull(deviceDataJson.get("orientation"));
-        assertTrue(deviceDataJson.getDouble("batteryLevel") > 0);
-        assertTrue(deviceDataJson.getBoolean("charging"));
-        assertEquals("allowed", deviceDataJson.getString("locationStatus"));
-        assertNotNull(deviceDataJson.get("networkAccess"));
-        assertNotNull(deviceDataJson.get("time"));
+        assertTrue(deviceDataJson.getLong("totalMemory") > 0);
+        assertTrue(deviceDataJson.has("freeDisk"));
+        assertNotNull(deviceDataJson.getString("orientation"));
     }
 
 }

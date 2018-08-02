@@ -2,6 +2,9 @@ package com.bugsnag.android;
 
 import android.util.Log;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
+@ThreadSafe
 final class Logger {
 
     private static final String LOG_TAG = "Bugsnag";

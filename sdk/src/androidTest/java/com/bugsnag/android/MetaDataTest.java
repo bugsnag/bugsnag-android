@@ -167,6 +167,8 @@ public class MetaDataTest {
 
         MetaData merged = MetaData.merge(base, overrides);
         Map<String, Object> tab = merged.getTab("example");
+
+        @SuppressWarnings("unchecked")
         Map<String, String> mergedMap = (Map<String, String>) tab.get("map");
         assertEquals("fromOverrides", mergedMap.get("key"));
     }

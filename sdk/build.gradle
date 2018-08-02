@@ -3,6 +3,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'kotlin-android'
 
 repositories {
     google()
@@ -16,6 +17,7 @@ android {
     defaultConfig {
         minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     buildTypes {
@@ -29,6 +31,17 @@ android {
         warningsAsErrors true
         checkAllWarnings true
     }
+
+    // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
+    libraryVariants.all {
+        it.generateBuildConfig.enabled = false
+    }
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:all" << "-Werror"
+    }
 }
 
 coveralls {
@@ -36,6 +49,9 @@ coveralls {
 }
 dependencies {
     api "com.android.support:support-annotations:$supportLibVersion"
+
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 
@@ -49,6 +65,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
+    compile "com.facebook.infer.annotation:infer-annotation:0.11.2"
 }
 
 // Disable doclint:
@@ -160,3 +177,4 @@ dexcount {
     orderByMethodCount = true
     verbose true
 }
+

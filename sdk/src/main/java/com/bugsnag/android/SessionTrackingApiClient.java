@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.facebook.infer.annotation.ThreadSafe;
+
 import java.util.Map;
 
 /**
@@ -10,6 +12,7 @@ import java.util.Map;
  * @deprecated use {@link Delivery} to send sessions
  */
 @Deprecated
+@ThreadSafe
 public interface SessionTrackingApiClient {
 
     /**

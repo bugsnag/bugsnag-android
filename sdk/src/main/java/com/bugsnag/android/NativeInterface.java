@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.MapUtils.getStringFromMap;
+
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,7 +45,7 @@ public class NativeInterface {
         // Should only happen if the NDK library is present
         try {
             String className = "com.bugsnag.android.ndk.BugsnagObserver";
-            Class clz = Class.forName(className);
+            Class<?> clz = Class.forName(className);
             Observer observer = (Observer) clz.newInstance();
             client.addObserver(observer);
         } catch (ClassNotFoundException exception) {
@@ -69,20 +71,20 @@ public class NativeInterface {
     }
 
     public static String getUserId() {
-        return getClient().user.getId();
+        return getClient().getUser().getId();
     }
 
     public static String getUserEmail() {
-        return getClient().user.getEmail();
+        return getClient().getUser().getEmail();
     }
 
     public static String getUserName() {
-        return getClient().user.getName();
+        return getClient().getUser().getName();
     }
 
-    @NonNull
+    @Nullable
     public static String getPackageName() {
-        return getClient().appData.packageName;
+        return getStringFromMap("packageName", getClient().appData.getAppData());
     }
 
     @Nullable
@@ -92,11 +94,12 @@ public class NativeInterface {
 
     @Nullable
     public static String getVersionName() {
-        return getClient().appData.versionName;
+        return getStringFromMap("version", getClient().appData.getAppData());
     }
 
     public static int getVersionCode() {
-        return getClient().appData.versionCode;
+        Object versionCode = getClient().appData.getAppData().get("versionCode");
+        return versionCode instanceof Integer ? (Integer) versionCode : -1;
     }
 
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
@@ -106,16 +109,16 @@ public class NativeInterface {
 
     @Nullable
     public static String getAppVersion() {
-        return getClient().appData.getAppVersion();
+        return getStringFromMap("version", getClient().appData.getAppData());
     }
 
     public static String getReleaseStage() {
-        return getClient().appData.getReleaseStage();
+        return getStringFromMap("releaseStage", getClient().appData.getAppData());
     }
 
     @Nullable
     public static String getDeviceId() {
-        return getClient().deviceData.id;
+        return getStringFromMap("id", getClient().deviceData.getDeviceData());
     }
 
     @NonNull
@@ -124,12 +127,16 @@ public class NativeInterface {
     }
 
     public static double getDeviceTotalMemory() {
-        return DeviceData.getTotalMemory();
+        return DeviceData.calculateTotalMemory();
     }
 
-    @Nullable
+    /**
+     * Returns whether a device is rooted or not to the NDK
+     */
     public static Boolean getDeviceRooted() {
-        return DeviceDataSummary.isRooted();
+        Map<String, Object> map = getClient().deviceData.getDeviceDataSummary();
+        Object jailbroken = map.get("jailbroken");
+        return jailbroken instanceof Boolean ? (Boolean) jailbroken : false;
     }
 
     public static float getDeviceScreenDensity() {
@@ -249,11 +256,10 @@ public class NativeInterface {
                 error.config.defaultExceptionType = "c";
 
                 for (String tab : metaData.keySet()) {
-
                     Object value = metaData.get(tab);
 
                     if (value instanceof Map) {
-                        Map map = (Map) value;
+                        @SuppressWarnings("unchecked") Map<Object, Object> map = (Map) value;
 
                         for (Object key : map.keySet()) {
                             error.getMetaData().addToTab(tab, key.toString(), map.get(key));

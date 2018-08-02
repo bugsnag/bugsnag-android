@@ -7,6 +7,7 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 
@@ -97,7 +98,14 @@ public class StrictModeTest {
 
         if (exception != null) {
             String desc = strictModeHandler.getViolationDescription(exception.getMessage());
-            assertEquals("DiskRead", desc);
+
+            if (Build.VERSION.SDK_INT >= 28) {
+                // the violation description format changed to be more generic in P,
+                // no longer possible to get a full description
+                assertNull(desc);
+            } else {
+                assertEquals("DiskRead", desc);
+            }
         }
     }
 

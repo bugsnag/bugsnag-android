@@ -4,39 +4,34 @@ import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class SessionTrackingPayload implements JsonStream.Streamable {
 
     private final Notifier notifier;
     private final Session session;
-    private final DeviceDataSummary deviceDataSummary = new DeviceDataSummary();
-    private final AppData appData;
+    private final Map<String, Object> deviceDataSummary;
+    private final Map<String, Object> appDataSummary;
     private final List<File> files;
 
-    SessionTrackingPayload(List<File> files, AppData appData) {
-        this.appData = appData;
-        this.notifier = Notifier.getInstance();
-        this.session = null;
-        this.files = files;
-    }
-
-    SessionTrackingPayload(Session session, AppData appDataSummary) {
-        this.appData = appDataSummary;
+    SessionTrackingPayload(Session session,
+                           List<File> files,
+                           AppData appData,
+                           DeviceData deviceData) {
+        this.appDataSummary = appData.getAppDataSummary();
+        this.deviceDataSummary = deviceData.getDeviceDataSummary();
         this.notifier = Notifier.getInstance();
         this.session = session;
-        this.files = null;
+        this.files = files;
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("notifier").value(notifier);
-        writer.name("app").value(appData);
+        writer.name("app").value(appDataSummary);
         writer.name("device").value(deviceDataSummary);
-
         writer.name("sessions").beginArray();
 
         if (session == null) {

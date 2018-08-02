@@ -77,6 +77,7 @@ public class ConfigurationTest {
         assertFalse(config.shouldAutoCaptureSessions());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testEndpoint() {
         // Default endpoints
@@ -88,6 +89,7 @@ public class ConfigurationTest {
         assertEquals(endpoint, config.getEndpoint());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSessionEndpoint() {
         // Default endpoints
