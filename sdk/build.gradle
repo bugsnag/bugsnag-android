@@ -65,6 +65,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
+    compile "com.facebook.infer.annotation:infer-annotation:0.11.2"
 }
 
 // Disable doclint:
