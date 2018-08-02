@@ -15,33 +15,25 @@ import java.util.Set;
 class ThreadState implements JsonStream.Streamable {
     private static final String THREAD_TYPE = "android";
 
-    final Configuration config;
+    private final Configuration config;
     private final Thread[] threads;
     private final Map<Thread, StackTraceElement[]> stackTraces;
+    private final long currentThreadId;
 
     ThreadState(Configuration config) {
         this.config = config;
         stackTraces = Thread.getAllStackTraces();
-        threads = sanitiseThreads(Thread.currentThread().getId(), stackTraces);
+        currentThreadId = Thread.currentThread().getId();
+        threads = sanitiseThreads(stackTraces);
     }
 
     /**
      * Returns an array of threads excluding the current thread, sorted by thread id
      *
-     * @param currentThreadId the current thread id
-     * @param liveThreads     all live threads
+     * @param liveThreads all live threads
      */
-    private Thread[] sanitiseThreads(long currentThreadId,
-                                     Map<Thread, StackTraceElement[]> liveThreads) {
+    private Thread[] sanitiseThreads(Map<Thread, StackTraceElement[]> liveThreads) {
         Set<Thread> threadSet = liveThreads.keySet();
-
-        // remove current thread
-        for (Iterator<Thread> iterator = threadSet.iterator(); iterator.hasNext(); ) {
-            Thread thread = iterator.next();
-            if (thread.getId() == currentThreadId) {
-                iterator.remove();
-            }
-        }
 
         Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
         Arrays.sort(threads, new Comparator<Thread>() {
@@ -63,6 +55,10 @@ class ThreadState implements JsonStream.Streamable {
 
             StackTraceElement[] stacktrace = stackTraces.get(thread);
             writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
+
+            if (currentThreadId == thread.getId()) {
+                writer.name("errorReportingThread").value(true);
+            }
             writer.endObject();
         }
         writer.endArray();
