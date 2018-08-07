@@ -51,4 +51,32 @@ class ThreadStateTest {
         }
         assertEquals(1, currentThreadCount)
     }
+
+    /**
+     * Verifies that a thread different from the current thread is serialised as an object,
+     * and that only this value contains the errorReportingThread boolean flag
+     */
+    @Test
+    fun testDifferentThread() {
+        val otherThread = Thread.getAllStackTraces()
+            .filter { it.key != Thread.currentThread() }
+            .map { it.key }
+            .first()
+
+        val json = streamableToJsonArray(ThreadState(Configuration("api-key"), otherThread))
+        var currentThreadCount = 0
+
+        for (k in 0 until json.length()) {
+            val thread = json[k] as JSONObject
+            val threadId = thread.getLong("id")
+
+            if (threadId == otherThread.id) {
+                assertTrue(thread.getBoolean("errorReportingThread"))
+                currentThreadCount++
+            } else {
+                assertFalse(thread.has("errorReportingThread"))
+            }
+        }
+        assertEquals(1, currentThreadCount)
+    }
 }
