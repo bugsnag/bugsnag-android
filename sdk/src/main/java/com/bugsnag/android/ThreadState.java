@@ -28,7 +28,7 @@ class ThreadState implements JsonStream.Streamable {
     }
 
     /**
-     * Returns an array of threads excluding the current thread, sorted by thread id
+     * Returns an array of threads including the current thread, sorted by thread id
      *
      * @param liveThreads all live threads
      */
