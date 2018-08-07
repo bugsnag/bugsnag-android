@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     ext.kotlin_version = '1.2.30'
@@ -14,9 +15,12 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-repositories {
-    google()
-    jcenter()
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+    }
 }
 ext {
     supportLibVersion = "27.1.1"
