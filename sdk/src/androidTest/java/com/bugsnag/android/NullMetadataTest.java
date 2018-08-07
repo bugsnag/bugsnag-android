@@ -42,20 +42,21 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, throwable, null).build();
+        Error error = new Error.Builder(config, throwable, null, Thread.currentThread()).build();
         validateDefaultMetadata(error.getMetaData());
     }
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
         Error error = new Error.Builder(config, "RuntimeException",
-            "Something broke", new StackTraceElement[]{}, null).build();
+            "Something broke", new StackTraceElement[]{},
+            null, Thread.currentThread()).build();
         validateDefaultMetadata(error.getMetaData());
     }
 
     @Test
     public void testErrorSetMetadataRef() throws Exception {
-        Error error = new Error.Builder(config, throwable, null).build();
+        Error error = new Error.Builder(config, throwable, null, Thread.currentThread()).build();
         MetaData metaData = new MetaData();
         metaData.addToTab(TAB_KEY, "test", "data");
         error.setMetaData(metaData);
@@ -64,7 +65,7 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorSetNullMetadata() throws Exception {
-        Error error = new Error.Builder(config, throwable, null).build();
+        Error error = new Error.Builder(config, throwable, null, Thread.currentThread()).build();
         error.setMetaData(null);
         validateDefaultMetadata(error.getMetaData());
     }
@@ -97,7 +98,8 @@ public class NullMetadataTest {
                 return false;
             }
         });
-        Error error = new Error.Builder(config, new Throwable(), null).build();
+        Error error = new Error.Builder(config, new Throwable(),
+            null, Thread.currentThread()).build();
         Client client = Bugsnag.getClient();
         client.notify(error, DeliveryStyle.SAME_THREAD, null);
     }

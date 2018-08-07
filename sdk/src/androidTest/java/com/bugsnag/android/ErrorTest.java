@@ -41,7 +41,7 @@ public class ErrorTest {
     public void setUp() throws Exception {
         config = new Configuration("api-key");
         RuntimeException exception = new RuntimeException("Example message");
-        error = new Error.Builder(config, exception, null).build();
+        error = new Error.Builder(config, exception, null, Thread.currentThread()).build();
     }
 
     @After
@@ -55,12 +55,14 @@ public class ErrorTest {
 
         // Shouldn't ignore classes not in ignoreClasses
         RuntimeException runtimeException = new RuntimeException("Test");
-        Error error = new Error.Builder(config, runtimeException, null).build();
+        Error error = new Error.Builder(config,
+            runtimeException, null, Thread.currentThread()).build();
         assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
         IOException ioException = new IOException("Test");
-        error = new Error.Builder(config, ioException, null).build();
+        error = new Error.Builder(config,
+            ioException, null, Thread.currentThread()).build();
         assertTrue(error.shouldIgnoreClass());
     }
 
@@ -91,7 +93,8 @@ public class ErrorTest {
 
     @Test
     public void testHandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), null)
+        Error err = new Error.Builder(config,
+            new RuntimeException(), null, Thread.currentThread())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
 
@@ -108,7 +111,8 @@ public class ErrorTest {
 
     @Test
     public void testUnhandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), null)
+        Error err = new Error.Builder(config,
+            new RuntimeException(), null, Thread.currentThread())
             .severityReasonType(HandledState.REASON_UNHANDLED_EXCEPTION)
             .severity(Severity.ERROR)
             .build();
@@ -126,7 +130,8 @@ public class ErrorTest {
 
     @Test
     public void testPromiseRejectionSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), null)
+        Error err = new Error.Builder(config,
+            new RuntimeException(), null, Thread.currentThread())
             .severityReasonType(HandledState.REASON_PROMISE_REJECTION)
             .severity(Severity.ERROR)
             .build();
@@ -144,7 +149,8 @@ public class ErrorTest {
 
     @Test
     public void testLogSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), null)
+        Error err = new Error.Builder(config,
+            new RuntimeException(), null, Thread.currentThread())
             .severityReasonType(HandledState.REASON_LOG)
             .severity(Severity.WARNING)
             .attributeValue("warning")
@@ -179,7 +185,8 @@ public class ErrorTest {
 
     @Test
     public void testStrictModeSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), null)
+        Error err = new Error.Builder(config,
+            new RuntimeException(), null, Thread.currentThread())
             .severityReasonType(HandledState.REASON_STRICT_MODE)
             .attributeValue("Test")
             .build();
@@ -244,7 +251,8 @@ public class ErrorTest {
     @Test
     public void testSessionIncluded() throws Exception {
         Session session = generateSession();
-        Error err = new Error.Builder(config, new RuntimeException(), session).build();
+        Error err = new Error.Builder(config,
+            new RuntimeException(), session, Thread.currentThread()).build();
 
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
@@ -264,7 +272,8 @@ public class ErrorTest {
 
     @Test(expected = JSONException.class)
     public void testSessionExcluded() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), null).build();
+        Error err = new Error.Builder(config,
+            new RuntimeException(), null, Thread.currentThread()).build();
 
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
@@ -274,10 +283,12 @@ public class ErrorTest {
     @Test
     public void checkExceptionMessageNullity() throws Exception {
         String msg = "Foo";
-        Error err = new Error.Builder(config, new RuntimeException(msg), null).build();
+        Error err = new Error.Builder(config,
+            new RuntimeException(msg), null, Thread.currentThread()).build();
         assertEquals(msg, err.getExceptionMessage());
 
-        err = new Error.Builder(config, new RuntimeException(), null).build();
+        err = new Error.Builder(config,
+            new RuntimeException(), null, Thread.currentThread()).build();
         assertEquals("", err.getExceptionMessage());
     }
 
@@ -298,7 +309,8 @@ public class ErrorTest {
     public void testBugsnagExceptionName() throws Exception {
         BugsnagException exception = new BugsnagException("Busgang", "exceptional",
             new StackTraceElement[]{});
-        Error err = new Error.Builder(config, exception, null).build();
+        Error err = new Error.Builder(config,
+            exception, null, Thread.currentThread()).build();
         assertEquals("Busgang", err.getExceptionName());
     }
 
@@ -357,7 +369,8 @@ public class ErrorTest {
     @Test
     public void testBuilderMetaData() {
         Configuration config = new Configuration("api-key");
-        Error.Builder builder = new Error.Builder(config, new RuntimeException("foo"), null);
+        Error.Builder builder = new Error.Builder(config,
+            new RuntimeException("foo"), null, Thread.currentThread());
 
         assertNotNull(builder.metaData(new MetaData()).build());
 
@@ -401,7 +414,7 @@ public class ErrorTest {
 
         Session session = generateSession();
         session.setAutoCaptured(true);
-        error = new Error.Builder(config, exception, session).build();
+        error = new Error.Builder(config, exception, session, Thread.currentThread()).build();
 
         JSONObject errorJson = streamableToJson(error);
         assertFalse(errorJson.has("session"));

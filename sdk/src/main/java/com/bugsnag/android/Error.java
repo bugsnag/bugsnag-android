@@ -399,8 +399,11 @@ public class Error implements JsonStream.Streamable {
         @HandledState.SeverityReason
         private String severityReasonType;
 
-        Builder(@NonNull Configuration config, @NonNull Throwable exception, Session session) {
-            this.threadState = new ThreadState(config);
+        Builder(@NonNull Configuration config,
+                @NonNull Throwable exception,
+                Session session,
+                Thread thread) {
+            this.threadState = new ThreadState(config, thread);
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
@@ -414,8 +417,9 @@ public class Error implements JsonStream.Streamable {
         }
 
         Builder(@NonNull Configuration config, @NonNull String name,
-                @NonNull String message, @NonNull StackTraceElement[] frames, Session session) {
-            this(config, new BugsnagException(name, message, frames), session);
+                @NonNull String message, @NonNull StackTraceElement[] frames,
+                Session session, Thread thread) {
+            this(config, new BugsnagException(name, message, frames), session, thread);
         }
 
         Builder severityReasonType(@HandledState.SeverityReason String severityReasonType) {

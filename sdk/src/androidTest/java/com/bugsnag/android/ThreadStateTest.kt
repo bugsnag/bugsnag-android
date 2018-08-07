@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 @SmallTest
 class ThreadStateTest {
 
-    private val threadState = ThreadState(Configuration("api-key"))
+    private val threadState = ThreadState(Configuration("api-key"), Thread.currentThread())
     private val json = streamableToJsonArray(threadState)
 
     /**
