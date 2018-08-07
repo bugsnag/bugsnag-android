@@ -20,10 +20,10 @@ class ThreadState implements JsonStream.Streamable {
     private final Map<Thread, StackTraceElement[]> stackTraces;
     private final long currentThreadId;
 
-    ThreadState(Configuration config, Thread thread) {
+    ThreadState(Configuration config, Thread currentThread) {
         this.config = config;
         stackTraces = Thread.getAllStackTraces();
-        currentThreadId = thread.getId();
+        currentThreadId = currentThread.getId();
         threads = sanitiseThreads(stackTraces);
     }
 
