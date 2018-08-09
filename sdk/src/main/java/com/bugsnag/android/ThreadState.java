@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,7 +20,10 @@ class ThreadState implements JsonStream.Streamable {
     private final Map<Thread, StackTraceElement[]> stackTraces;
     private final long currentThreadId;
 
-    ThreadState(Configuration config, Thread currentThread, Map<Thread, StackTraceElement[]> allStackTraces) {
+    public ThreadState(@NonNull Configuration config,
+                       @NonNull Thread currentThread,
+                       @NonNull Map<Thread, StackTraceElement[]> allStackTraces,
+                       @Nullable Throwable exc) {
         this.config = config;
         stackTraces = allStackTraces;
 
@@ -27,6 +31,9 @@ class ThreadState implements JsonStream.Streamable {
         // https://issuetracker.google.com/issues/64122757
         if (!stackTraces.containsKey(currentThread)) {
             stackTraces.put(currentThread, currentThread.getStackTrace());
+        }
+        if (exc != null) { // unhandled errors use the exception trace
+            stackTraces.put(currentThread, exc.getStackTrace());
         }
 
         currentThreadId = currentThread.getId();
