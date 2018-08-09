@@ -403,7 +403,7 @@ public class Error implements JsonStream.Streamable {
                 @NonNull Throwable exception,
                 Session session,
                 Thread thread) {
-            this.threadState = new ThreadState(config, thread);
+            this.threadState = new ThreadState(config, thread, Thread.getAllStackTraces());
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default

@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,9 +19,16 @@ class ThreadState implements JsonStream.Streamable {
     private final Map<Thread, StackTraceElement[]> stackTraces;
     private final long currentThreadId;
 
-    ThreadState(Configuration config, Thread currentThread) {
+    ThreadState(Configuration config, Thread currentThread, Map<Thread, StackTraceElement[]> allStackTraces) {
         this.config = config;
-        stackTraces = Thread.getAllStackTraces();
+        stackTraces = allStackTraces;
+
+        // API 24/25 don't record the currentThread, add it in manually
+        // https://issuetracker.google.com/issues/64122757
+        if (!stackTraces.containsKey(currentThread)) {
+            stackTraces.put(currentThread, currentThread.getStackTrace());
+        }
+
         currentThreadId = currentThread.getId();
         threads = sanitiseThreads(stackTraces);
     }

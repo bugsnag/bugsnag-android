@@ -8,11 +8,13 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
+
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class ThreadStateTest {
 
-    private val threadState = ThreadState(Configuration("api-key"), Thread.currentThread())
+    private val configuration = Configuration("api-key")
+    private val threadState = ThreadState(configuration, Thread.currentThread(), Thread.getAllStackTraces())
     private val json = streamableToJsonArray(threadState)
 
     /**
@@ -63,7 +65,8 @@ class ThreadStateTest {
             .map { it.key }
             .first()
 
-        val json = streamableToJsonArray(ThreadState(Configuration("api-key"), otherThread))
+        val state = ThreadState(configuration, otherThread, Thread.getAllStackTraces())
+        val json = streamableToJsonArray(state)
         var currentThreadCount = 0
 
         for (k in 0 until json.length()) {
@@ -75,6 +78,34 @@ class ThreadStateTest {
                 currentThreadCount++
             } else {
                 assertFalse(thread.has("errorReportingThread"))
+            }
+        }
+        assertEquals(1, currentThreadCount)
+    }
+
+    /**
+     * Verifies that if the current thread is missing from the available traces as reported by
+     * [Thread.getAllStackTraces], its stacktrace will still be serialised
+     */
+    @Test
+    fun testMissingCurrentThread() {
+        val currentThread = Thread.currentThread()
+        val missingTraces = Thread.getAllStackTraces()
+        missingTraces.remove(currentThread)
+
+        val state = ThreadState(configuration, currentThread, missingTraces)
+        val json = streamableToJsonArray(state)
+
+        var currentThreadCount = 0
+
+        for (k in 0 until json.length()) {
+            val thread = json[k] as JSONObject
+            val threadId = thread.getLong("id")
+
+            if (threadId == currentThread.id) {
+                currentThreadCount++
+                val jsonArray = thread.getJSONArray("stacktrace")
+                assertTrue(jsonArray.length() > 0)
             }
         }
         assertEquals(1, currentThreadCount)
