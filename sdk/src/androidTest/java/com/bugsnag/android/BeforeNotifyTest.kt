@@ -24,7 +24,7 @@ class BeforeNotifyTest {
         }
 
         val error = Error.Builder(config, RuntimeException("Test"), null,
-            Thread.currentThread()).build()
+            Thread.currentThread(), false).build()
         beforeNotify.run(error)
         assertEquals(context, error.context)
     }

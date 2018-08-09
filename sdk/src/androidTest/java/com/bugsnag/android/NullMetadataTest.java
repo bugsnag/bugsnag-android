@@ -42,7 +42,8 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, throwable, null, Thread.currentThread()).build();
+        Error error = new Error.Builder(config, throwable, null,
+            Thread.currentThread(), false).build();
         validateDefaultMetadata(error.getMetaData());
     }
 
@@ -56,7 +57,8 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorSetMetadataRef() throws Exception {
-        Error error = new Error.Builder(config, throwable, null, Thread.currentThread()).build();
+        Error error = new Error.Builder(config, throwable, null,
+            Thread.currentThread(), false).build();
         MetaData metaData = new MetaData();
         metaData.addToTab(TAB_KEY, "test", "data");
         error.setMetaData(metaData);
@@ -65,7 +67,8 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorSetNullMetadata() throws Exception {
-        Error error = new Error.Builder(config, throwable, null, Thread.currentThread()).build();
+        Error error = new Error.Builder(config, throwable, null,
+            Thread.currentThread(), false).build();
         error.setMetaData(null);
         validateDefaultMetadata(error.getMetaData());
     }
@@ -99,7 +102,7 @@ public class NullMetadataTest {
             }
         });
         Error error = new Error.Builder(config, new Throwable(),
-            null, Thread.currentThread()).build();
+            null, Thread.currentThread(), false).build();
         Client client = Bugsnag.getClient();
         client.notify(error, DeliveryStyle.SAME_THREAD, null);
     }

@@ -67,6 +67,6 @@ internal fun createCustomHeaderDelivery(context: Context): Delivery {
 
 internal fun writeErrorToStore(client: Client) {
     val error = Error.Builder(Configuration("api-key"), RuntimeException(), null,
-        Thread.currentThread()).build()
+        Thread.currentThread(), false).build()
     client.errorStore.write(error)
 }

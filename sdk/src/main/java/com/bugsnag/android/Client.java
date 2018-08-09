@@ -762,7 +762,7 @@ public class Client extends Observable implements Observer {
      */
     public void notify(@NonNull Throwable exception) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, !BLOCKING);
@@ -777,7 +777,7 @@ public class Client extends Observable implements Observer {
      */
     public void notify(@NonNull Throwable exception, Callback callback) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -812,7 +812,7 @@ public class Client extends Observable implements Observer {
      */
     public void notify(@NonNull Throwable exception, Severity severity) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .severity(severity)
             .build();
         notify(error, !BLOCKING);
@@ -829,7 +829,7 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull Throwable exception,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .metaData(metaData)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -849,7 +849,7 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull Throwable exception, Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .metaData(metaData)
             .severity(severity)
             .build();
@@ -1011,7 +1011,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, BLOCKING);
@@ -1026,7 +1026,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -1063,7 +1063,7 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull Throwable exception,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .metaData(metaData)
             .build();
@@ -1083,7 +1083,7 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull Throwable exception, Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
-            Thread.currentThread())
+            Thread.currentThread(), false)
             .metaData(metaData)
             .severity(severity)
             .build();
@@ -1154,7 +1154,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception, Severity severity) {
         Error error = new Error.Builder(config, exception,
-            sessionTracker.getCurrentSession(), Thread.currentThread())
+            sessionTracker.getCurrentSession(), Thread.currentThread(), false)
             .severity(severity)
             .build();
         notify(error, BLOCKING);
@@ -1183,7 +1183,7 @@ public class Client extends Observable implements Observer {
 
         @SuppressWarnings("WrongConstant")
         Error error = new Error.Builder(config, exception,
-            sessionTracker.getCurrentSession(), Thread.currentThread())
+            sessionTracker.getCurrentSession(), Thread.currentThread(), false)
             .severity(Severity.fromString(severity))
             .severityReasonType(severityReason)
             .attributeValue(logLevel)
@@ -1342,7 +1342,7 @@ public class Client extends Observable implements Observer {
                         @HandledState.SeverityReason String severityReason,
                         @Nullable String attributeValue, Thread thread) {
         Error error = new Error.Builder(config, exception,
-            sessionTracker.getCurrentSession(), thread)
+            sessionTracker.getCurrentSession(), thread, true)
             .severity(severity)
             .metaData(metaData)
             .severityReasonType(severityReason)

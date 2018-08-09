@@ -31,7 +31,8 @@ public class ReportTest {
     public void setUp() throws Exception {
         Configuration config = new Configuration("example-api-key");
         RuntimeException exception = new RuntimeException("Something broke");
-        Error error = new Error.Builder(config, exception, null, Thread.currentThread()).build();
+        Error error = new Error.Builder(config, exception, null,
+            Thread.currentThread(), false).build();
         report = new Report("api-key", error);
     }
 
