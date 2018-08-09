@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.support.test.filters.SmallTest
 import android.support.test.runner.AndroidJUnit4
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Test
@@ -37,21 +38,7 @@ class ThreadStateTest {
      */
     @Test
     fun testCurrentThread() {
-        val currentThreadId = Thread.currentThread().id
-        var currentThreadCount = 0
-
-        for (k in 0 until json.length()) {
-            val thread = json[k] as JSONObject
-            val threadId = thread.getLong("id")
-
-            if (threadId == currentThreadId) {
-                assertTrue(thread.getBoolean("errorReportingThread"))
-                currentThreadCount++
-            } else {
-                assertFalse(thread.has("errorReportingThread"))
-            }
-        }
-        assertEquals(1, currentThreadCount)
+        verifyCurrentThreadStructure(json, Thread.currentThread().id)
     }
 
     /**
@@ -67,20 +54,7 @@ class ThreadStateTest {
 
         val state = ThreadState(configuration, otherThread, Thread.getAllStackTraces())
         val json = streamableToJsonArray(state)
-        var currentThreadCount = 0
-
-        for (k in 0 until json.length()) {
-            val thread = json[k] as JSONObject
-            val threadId = thread.getLong("id")
-
-            if (threadId == otherThread.id) {
-                assertTrue(thread.getBoolean("errorReportingThread"))
-                currentThreadCount++
-            } else {
-                assertFalse(thread.has("errorReportingThread"))
-            }
-        }
-        assertEquals(1, currentThreadCount)
+        verifyCurrentThreadStructure(json, otherThread.id)
     }
 
     /**
@@ -96,18 +70,29 @@ class ThreadStateTest {
         val state = ThreadState(configuration, currentThread, missingTraces)
         val json = streamableToJsonArray(state)
 
+        verifyCurrentThreadStructure(json, currentThread.id) {
+            assertTrue(it.getJSONArray("stacktrace").length() > 0)
+        }
+    }
+
+    private fun verifyCurrentThreadStructure(json: JSONArray,
+                                             currentThreadId: Long,
+                                             action: ((thread: JSONObject) -> Unit)? = null) {
         var currentThreadCount = 0
 
         for (k in 0 until json.length()) {
             val thread = json[k] as JSONObject
             val threadId = thread.getLong("id")
 
-            if (threadId == currentThread.id) {
+            if (threadId == currentThreadId) {
+                assertTrue(thread.getBoolean("errorReportingThread"))
                 currentThreadCount++
-                val jsonArray = thread.getJSONArray("stacktrace")
-                assertTrue(jsonArray.length() > 0)
+                action?.invoke(thread)
+            } else {
+                assertFalse(thread.has("errorReportingThread"))
             }
         }
-        assertEquals(1, currentThreadCount)
+        assertEquals("Expected one error reporting thread",1, currentThreadCount)
     }
+
 }
