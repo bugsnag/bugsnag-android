@@ -221,6 +221,7 @@ public class ClientTest {
         assertEquals(true, protoConfig.shouldAutoCaptureSessions());
     }
 
+    @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
         Client client = generateClient();

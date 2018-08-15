@@ -9,13 +9,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 class Breadcrumbs implements JsonStream.Streamable {
 
-    private static final int DEFAULT_MAX_SIZE = 32;
     private static final int MAX_PAYLOAD_SIZE = 4096;
     final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
-    private int maxSize = DEFAULT_MAX_SIZE;
+
+    private final Configuration configuration;
+
+    Breadcrumbs(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
+        pruneBreadcrumbs();
         writer.beginArray();
 
         for (Breadcrumb breadcrumb : store) {
@@ -33,19 +38,6 @@ class Breadcrumbs implements JsonStream.Streamable {
         store.clear();
     }
 
-    void setSize(int size) {
-        if (size < 0) {
-            Logger.warn("Ignoring invalid breadcrumb capacity. Must be >= 0.");
-            return;
-        }
-
-        this.maxSize = size;
-        // Remove oldest breadcrumbs until reaching the required size
-        while (store.size() > size) {
-            store.poll();
-        }
-    }
-
     private void addToStore(@NonNull Breadcrumb breadcrumb) {
         try {
             if (breadcrumb.payloadSize() > MAX_PAYLOAD_SIZE) {
@@ -53,12 +45,18 @@ class Breadcrumbs implements JsonStream.Streamable {
                 return;
             }
             store.add(breadcrumb);
-            if (store.size() > maxSize) {
-                // Remove oldest breadcrumb
-                store.poll();
-            }
+            pruneBreadcrumbs();
         } catch (IOException ex) {
             Logger.warn("Dropping breadcrumb because it could not be serialized", ex);
+        }
+    }
+
+    private void pruneBreadcrumbs() {
+        int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
+
+        // Remove oldest breadcrumb
+        while (store.size() > maxBreadcrumbs) {
+            store.poll();
         }
     }
 }

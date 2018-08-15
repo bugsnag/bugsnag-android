@@ -601,9 +601,11 @@ public final class Bugsnag {
      * messages.
      *
      * @param numBreadcrumbs number of breadcrumb log messages to send
+     * @deprecated use {@link Configuration#setMaxBreadcrumbs(int)} instead
      */
+    @Deprecated
     public static void setMaxBreadcrumbs(int numBreadcrumbs) {
-        getClient().setMaxBreadcrumbs(numBreadcrumbs);
+        getClient().config.setMaxBreadcrumbs(numBreadcrumbs);
     }
 
     /**
