@@ -79,6 +79,9 @@ class DefaultDelivery implements Delivery {
             return conn.getResponseCode();
         } catch (IOException exception) {
             throw new DeliveryFailureException("IOException encountered in request", exception);
+        } catch (Exception exception) {
+            Logger.warn("Unexpected error delivering payload", exception);
+            return 400;
         } finally {
             IOUtils.close(conn);
         }
