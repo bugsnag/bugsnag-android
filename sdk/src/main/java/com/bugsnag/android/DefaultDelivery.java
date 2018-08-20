@@ -14,6 +14,7 @@ import java.util.Map;
 
 class DefaultDelivery implements Delivery {
 
+    private static final int HTTP_BAD_REQUEST = 400;
     private final ConnectivityManager connectivityManager;
 
     DefaultDelivery(ConnectivityManager connectivityManager) {
@@ -79,6 +80,9 @@ class DefaultDelivery implements Delivery {
             return conn.getResponseCode();
         } catch (IOException exception) {
             throw new DeliveryFailureException("IOException encountered in request", exception);
+        } catch (Exception exception) {
+            Logger.warn("Unexpected error delivering payload", exception);
+            return HTTP_BAD_REQUEST;
         } finally {
             IOUtils.close(conn);
         }
