@@ -2,13 +2,18 @@ apply plugin: 'com.android.library'
 
 buildscript {
     repositories {
-        mavenLocal()
         google()
         jcenter()
+        mavenLocal()
     }
     dependencies {
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.1.0'
     }
+}
+
+repositories {
+    google()
+    jcenter()
 }
 
 android {
