@@ -135,7 +135,7 @@ public class Client extends Observable implements Observer {
         deviceData = new DeviceData(this);
 
         // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs();
+        breadcrumbs = new Breadcrumbs(configuration);
 
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
@@ -1177,9 +1177,11 @@ public class Client extends Observable implements Observer {
      * messages.
      *
      * @param numBreadcrumbs number of breadcrumb log messages to send
+     * @deprecated use {@link Configuration#setMaxBreadcrumbs(int)} instead
      */
+    @Deprecated
     public void setMaxBreadcrumbs(int numBreadcrumbs) {
-        breadcrumbs.setSize(numBreadcrumbs);
+        config.setMaxBreadcrumbs(numBreadcrumbs);
     }
 
     /**
