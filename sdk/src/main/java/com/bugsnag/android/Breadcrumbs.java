@@ -54,7 +54,7 @@ class Breadcrumbs implements JsonStream.Streamable {
     private void pruneBreadcrumbs() {
         int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
 
-        // Remove oldest breadcrumb
+        // Remove oldest breadcrumbs until new max size reached
         while (store.size() > maxBreadcrumbs) {
             store.poll();
         }
