@@ -2,16 +2,13 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -178,18 +175,18 @@ public class ClientTest {
     public void testEmptyManifestConfig() {
         Bundle data = new Bundle();
         Configuration protoConfig = new Configuration("api-key");
-        Configuration newConfig = Client.populateConfigFromManifest(protoConfig, data);
+        ConfigFactory.populateConfigFromManifest(protoConfig, data);
 
-        assertEquals(config.getApiKey(), newConfig.getApiKey());
-        assertEquals(config.getBuildUUID(), newConfig.getBuildUUID());
-        assertEquals(config.getAppVersion(), newConfig.getAppVersion());
-        assertEquals(config.getReleaseStage(), newConfig.getReleaseStage());
-        assertEquals(config.getEndpoint(), newConfig.getEndpoint());
-        assertEquals(config.getSessionEndpoint(), newConfig.getSessionEndpoint());
-        assertEquals(config.getSendThreads(), newConfig.getSendThreads());
-        assertEquals(config.getEnableExceptionHandler(), newConfig.getEnableExceptionHandler());
+        assertEquals(config.getApiKey(), protoConfig.getApiKey());
+        assertEquals(config.getBuildUUID(), protoConfig.getBuildUUID());
+        assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
+        assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
+        assertEquals(config.getEndpoint(), protoConfig.getEndpoint());
+        assertEquals(config.getSessionEndpoint(), protoConfig.getSessionEndpoint());
+        assertEquals(config.getSendThreads(), protoConfig.getSendThreads());
+        assertEquals(config.getEnableExceptionHandler(), protoConfig.getEnableExceptionHandler());
         assertEquals(config.getPersistUserBetweenSessions(),
-            newConfig.getPersistUserBetweenSessions());
+            protoConfig.getPersistUserBetweenSessions());
     }
 
     @Test
@@ -212,18 +209,19 @@ public class ClientTest {
         data.putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", true);
 
         Configuration protoConfig = new Configuration("api-key");
-        Configuration newConfig = Client.populateConfigFromManifest(protoConfig, data);
-        assertEquals(buildUuid, newConfig.getBuildUUID());
-        assertEquals(appVersion, newConfig.getAppVersion());
-        assertEquals(releaseStage, newConfig.getReleaseStage());
-        assertEquals(endpoint, newConfig.getEndpoint());
-        assertEquals(sessionEndpoint, newConfig.getSessionEndpoint());
-        assertEquals(false, newConfig.getSendThreads());
-        assertEquals(false, newConfig.getEnableExceptionHandler());
-        assertEquals(true, newConfig.getPersistUserBetweenSessions());
-        assertEquals(true, newConfig.shouldAutoCaptureSessions());
+        ConfigFactory.populateConfigFromManifest(protoConfig, data);
+        assertEquals(buildUuid, protoConfig.getBuildUUID());
+        assertEquals(appVersion, protoConfig.getAppVersion());
+        assertEquals(releaseStage, protoConfig.getReleaseStage());
+        assertEquals(endpoint, protoConfig.getEndpoint());
+        assertEquals(sessionEndpoint, protoConfig.getSessionEndpoint());
+        assertEquals(false, protoConfig.getSendThreads());
+        assertEquals(false, protoConfig.getEnableExceptionHandler());
+        assertEquals(true, protoConfig.getPersistUserBetweenSessions());
+        assertEquals(true, protoConfig.shouldAutoCaptureSessions());
     }
 
+    @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
         Client client = generateClient();
