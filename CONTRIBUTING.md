@@ -143,7 +143,7 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] Ensure the example app sends a handled error
   - [ ] If a response is not received from the server, is the report queued for later?
   - [ ] If no network connection is available, is the report queued for later?
-  - [ ] On a throttled network, is the request timeout reasonable, and the main thread not blocked by any visible UI freeze? (Change the emulator network by selecting Settings > Cellular, and changing Network to GSM, and signal strength to poor)
+  - [ ] On a throttled network, is the request timeout reasonable, and the main thread not blocked by any visible UI freeze? (Throttling can be achieved by setting both endpoints to "https://httpstat.us/200?sleep=5000")
   - [ ] Are queued reports sent asynchronously?
 - [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/bugsnag-website/tree/master/app/views/dashboard/projects/install) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 
