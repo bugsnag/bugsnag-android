@@ -365,6 +365,11 @@ class DeviceData {
         try {
             ConnectivityManager cm =
                 (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            if (cm == null) {
+                return null;
+            }
+
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 if (activeNetwork.getType() == 1) {
