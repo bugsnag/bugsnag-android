@@ -5,6 +5,7 @@
 ### Bug fixes
 
 * Catch Exception within DefaultDelivery class [#361](https://github.com/bugsnag/bugsnag-android/pull/361)
+* Add Null check when accessing system service [#367](https://github.com/bugsnag/bugsnag-android/pull/367)
 
 ## 4.6.0 (2018-08-02)
 

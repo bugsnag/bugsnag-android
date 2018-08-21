@@ -233,6 +233,10 @@ public class Client extends Observable implements Observer {
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null) {
+                return;
+            }
+
             NetworkInfo networkInfo = cm.getActiveNetworkInfo();
             boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
 

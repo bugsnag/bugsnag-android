@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,9 +16,9 @@ import java.util.Map;
 class DefaultDelivery implements Delivery {
 
     private static final int HTTP_REQUEST_FAILED = 0;
-    private final ConnectivityManager connectivityManager;
+    @Nullable private final ConnectivityManager connectivityManager;
 
-    DefaultDelivery(ConnectivityManager connectivityManager) {
+    DefaultDelivery(@Nullable ConnectivityManager connectivityManager) {
         this.connectivityManager = connectivityManager;
     }
 
@@ -89,6 +90,10 @@ class DefaultDelivery implements Delivery {
     }
 
     private void checkHasNetworkConnection() throws DeliveryFailureException {
+        if (connectivityManager == null) {
+            return; // unlikely case, allow delivery attempt without checking connection first
+        }
+
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         // conserve device battery by avoiding radio use
