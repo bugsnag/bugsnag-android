@@ -1,8 +1,12 @@
 # Changelog
 
-## 4.6.1 (TBD)
+## 4.X.X (TBD)
+
+### Bug fixes
 
 * Set maxBreadcrumbs via Configuration rather than Client [#359](https://github.com/bugsnag/bugsnag-android/pull/359)
+* Catch Exception within DefaultDelivery class [#361](https://github.com/bugsnag/bugsnag-android/pull/361)
+* Add Null check when accessing system service [#367](https://github.com/bugsnag/bugsnag-android/pull/367)
 
 ## 4.6.0 (2018-08-02)
 
