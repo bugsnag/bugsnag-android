@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Bug fixes
+
+* Catch Exception within DefaultDelivery class [#361](https://github.com/bugsnag/bugsnag-android/pull/361)
+
 ## 4.6.0 (2018-08-02)
 
 * Android P compatibility fixes - ensure available information on StrictMode violations is collected [#350](https://github.com/bugsnag/bugsnag-android/pull/350)

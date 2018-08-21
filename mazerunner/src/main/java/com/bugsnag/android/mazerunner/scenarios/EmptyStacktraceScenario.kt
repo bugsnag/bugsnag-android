@@ -15,6 +15,6 @@ internal class EmptyStacktraceScenario(config: Configuration,
         Bugsnag.notify(EmptyException("EmptyStacktraceScenario"))
     }
 
-    class EmptyException(message: String?) : Throwable(message, null, true, false)
+    class EmptyException(message: String?) : Throwable(message, null)
 
 }
