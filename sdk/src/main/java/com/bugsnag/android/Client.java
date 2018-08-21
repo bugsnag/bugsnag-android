@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import android.app.Activity;
@@ -13,10 +14,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,24 +42,9 @@ public class Client extends Observable implements Observer {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
-    private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
     private static final String USER_ID_KEY = "user.id";
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
-
-    static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
-    static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
-    static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
-    static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
-    static final String MF_SESSIONS_ENDPOINT = BUGSNAG_NAMESPACE + ".SESSIONS_ENDPOINT";
-    static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
-    static final String MF_SEND_THREADS = BUGSNAG_NAMESPACE + ".SEND_THREADS";
-    static final String MF_ENABLE_EXCEPTION_HANDLER =
-        BUGSNAG_NAMESPACE + ".ENABLE_EXCEPTION_HANDLER";
-    static final String MF_PERSIST_USER_BETWEEN_SESSIONS =
-        BUGSNAG_NAMESPACE + ".PERSIST_USER_BETWEEN_SESSIONS";
-    static final String MF_AUTO_CAPTURE_SESSIONS =
-        BUGSNAG_NAMESPACE + ".AUTO_CAPTURE_SESSIONS";
 
     @NonNull
     protected final Configuration config;
@@ -117,7 +101,7 @@ public class Client extends Observable implements Observer {
                   @Nullable String apiKey,
                   boolean enableExceptionHandler) {
         this(androidContext,
-            createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
+            ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
     }
 
     /**
@@ -151,7 +135,7 @@ public class Client extends Observable implements Observer {
         deviceData = new DeviceData(this);
 
         // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs();
+        breadcrumbs = new Breadcrumbs(configuration);
 
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
@@ -260,94 +244,6 @@ public class Client extends Observable implements Observer {
                 notifyBugsnagObservers(type);
             }
         }
-    }
-
-    /**
-     * Creates a new configuration object based on the provided parameters
-     * will read the API key and other configuration values from the manifest if it is not provided
-     *
-     * @param androidContext         The context of the application
-     * @param apiKey                 The API key to use
-     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
-     * @return The created config
-     */
-    @NonNull
-    private static Configuration createNewConfiguration(@NonNull Context androidContext,
-                                                        String apiKey,
-                                                        boolean enableExceptionHandler) {
-        Context appContext = androidContext.getApplicationContext();
-
-        // Attempt to load API key and other config from AndroidManifest.xml, if not passed in
-        boolean loadFromManifest = TextUtils.isEmpty(apiKey);
-
-        if (loadFromManifest) {
-            try {
-                PackageManager packageManager = appContext.getPackageManager();
-                String packageName = appContext.getPackageName();
-                ApplicationInfo ai =
-                    packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                Bundle data = ai.metaData;
-                apiKey = data.getString(MF_API_KEY);
-            } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read api key from manifest.");
-            }
-        }
-
-        if (apiKey == null) {
-            throw new NullPointerException("You must provide a Bugsnag API key");
-        }
-
-        // Build a configuration object
-        Configuration newConfig = new Configuration(apiKey);
-        newConfig.setEnableExceptionHandler(enableExceptionHandler);
-
-        if (loadFromManifest) {
-            try {
-                PackageManager packageManager = appContext.getPackageManager();
-                String packageName = appContext.getPackageName();
-                ApplicationInfo ai =
-                    packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                Bundle data = ai.metaData;
-                populateConfigFromManifest(newConfig, data);
-            } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read config from manifest.");
-            }
-        }
-        return newConfig;
-    }
-
-    /**
-     * Populates the config with meta-data values supplied from the manifest as a Bundle.
-     *
-     * @param config the config to mutate
-     * @param data   the manifest bundle
-     * @return the updated config
-     */
-    @NonNull
-    static Configuration populateConfigFromManifest(@NonNull Configuration config,
-                                                    @NonNull Bundle data) {
-        config.setBuildUUID(data.getString(MF_BUILD_UUID));
-        config.setAppVersion(data.getString(MF_APP_VERSION));
-        config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
-
-        if (data.containsKey(MF_ENDPOINT)) {
-            String endpoint = data.getString(MF_ENDPOINT);
-            String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);
-            //noinspection ConstantConditions (pass in null/empty as this function will warn)
-            config.setEndpoints(endpoint, sessionEndpoint);
-        }
-
-        config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
-        config.setPersistUserBetweenSessions(
-            data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
-
-        if (data.containsKey(MF_AUTO_CAPTURE_SESSIONS)) {
-            config.setAutoCaptureSessions(data.getBoolean(MF_AUTO_CAPTURE_SESSIONS));
-        }
-
-        config.setEnableExceptionHandler(
-            data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
-        return config;
     }
 
     /**
@@ -1285,9 +1181,11 @@ public class Client extends Observable implements Observer {
      * messages.
      *
      * @param numBreadcrumbs number of breadcrumb log messages to send
+     * @deprecated use {@link Configuration#setMaxBreadcrumbs(int)} instead
      */
+    @Deprecated
     public void setMaxBreadcrumbs(int numBreadcrumbs) {
-        breadcrumbs.setSize(numBreadcrumbs);
+        config.setMaxBreadcrumbs(numBreadcrumbs);
     }
 
     /**

@@ -24,6 +24,7 @@ public class Configuration extends Observable implements Observer {
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
     private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
+    private static final int DEFAULT_MAX_SIZE = 32;
 
     @NonNull
     private final String apiKey;
@@ -57,6 +58,7 @@ public class Configuration extends Observable implements Observer {
     private String notifierType;
 
     private Delivery delivery;
+    private int maxBreadcrumbs = DEFAULT_MAX_SIZE;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -533,6 +535,32 @@ public class Configuration extends Observable implements Observer {
 
     String getNotifierType() {
         return notifierType;
+    }
+
+    /**
+     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
+     * By default, we'll keep and send the 32 most recent breadcrumb log
+     * messages.
+     *
+     * @param numBreadcrumbs max number of breadcrumb log messages to send
+     */
+    public void setMaxBreadcrumbs(int numBreadcrumbs) {
+        if (numBreadcrumbs < 0) {
+            Logger.warn("Ignoring invalid breadcrumb capacity. Must be >= 0.");
+            return;
+        }
+        this.maxBreadcrumbs = numBreadcrumbs;
+    }
+
+    /**
+     * Retrieves the maximum number of breadcrumbs to keep and sent to Bugsnag.
+     * By default, we'll keep and send the 32 most recent breadcrumb log
+     * messages.
+     * 
+     * @return the maximum number of breadcrumb log messages to send
+     */
+    public int getMaxBreadcrumbs() {
+        return maxBreadcrumbs;
     }
 
     /**

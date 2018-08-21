@@ -34,5 +34,5 @@ android {
 
 dependencies {
     implementation project(':sdk')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$project.KOTLIN_VERSION"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
