@@ -1,1 +1,3 @@
-include ':example', ':sdk', ':examplelib', ':mazerunner'
+include ':sdk'
+include ':sdkAppExample'
+project(':sdkAppExample').projectDir = new File('examples/sdk-app-example')
