@@ -1,0 +1,59 @@
+repositories {
+    google()
+    jcenter()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+apply plugin: 'com.android.application'
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    ext.kotlin_version = '1.2.30'
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+    }
+    signingConfigs {
+        release {
+            keyAlias "password"
+            keyPassword "password"
+            storeFile file("../fakekeys.jks")
+            storePassword "password"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true // obfuscation disabled to simplify maze
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    implementation(name:'bugsnag-android', ext:'aar')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.21"
+    implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
+}
