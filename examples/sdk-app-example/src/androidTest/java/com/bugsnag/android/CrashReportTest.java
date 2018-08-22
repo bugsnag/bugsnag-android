@@ -54,11 +54,11 @@ public class CrashReportTest {
         assertNotNull(report);
         JSONObject json = getJson(report);
 
-        assertEquals(3, json.length());
+        assertEquals(4, json.length());
 
         JSONObject event = json.getJSONArray("events").getJSONObject(0);
         assertNotNull(event);
-        assertEquals("com.bugsnag.android.example.ExampleActivity", event.getString("context"));
+        assertEquals("ExampleActivity", event.getString("context"));
 
         JSONArray exceptions = event.getJSONArray("exceptions");
         assertEquals(1, exceptions.length());

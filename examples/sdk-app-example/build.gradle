@@ -2,10 +2,11 @@ buildscript {
     repositories {
         google()
         jcenter()
-        mavenLocal()
     }
     dependencies {
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:$bugsnagPluginVersion"
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.30"
     }
 }
 
@@ -19,11 +20,12 @@ repositories {
 
 android {
 
-    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
 
     defaultConfig {
-        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
-        targetSdkVersion Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
+        minSdkVersion 14
+        targetSdkVersion 27
 
         manifestPlaceholders = [
             bugsnagApiKey                    : "your-api-key",
@@ -85,18 +87,18 @@ android {
 }
 
 dependencies {
-    implementation project(":sdk")
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:support-v4:$supportLibVersion"
-    kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "com.bugsnag:bugsnag-android:4.6.1"
+    implementation "com.android.support:appcompat-v7:27.0.0"
+    implementation "com.android.support:support-v4:27.0.0"
+    kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.30"
 
-    androidTestImplementation "com.android.support.test:runner:$supportTestVersion", {
+    androidTestImplementation "com.android.support.test:runner:0.5", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation "com.android.support.test:rules:$supportTestVersion", {
+    androidTestImplementation "com.android.support.test:rules:0.5", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion", {
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:2.2.2", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 }
@@ -109,7 +111,7 @@ checkstyle {
     toolVersion = "6.16"
 }
 task("checkstyle", type: Checkstyle) {
-    configFile rootProject.file("config/checkstyle/checkstyle.xml")
+    configFile rootProject.file("../../config/checkstyle/checkstyle.xml")
     source "src/javaExample/java"
     include "**/*.java"
     classpath = files()

@@ -98,7 +98,7 @@ Building the Example App
 You can build and install the example app to as follows:
 
 ```shell
-./gradlew clean example:installJavaExampleDebug
+cd examples/sdk-app-example && ../../gradlew clean installJavaExampleDebug
 ```
 
 This builds the latest version of the library and installs an app onto your

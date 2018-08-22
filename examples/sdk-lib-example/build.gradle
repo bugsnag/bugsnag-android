@@ -2,25 +2,22 @@ apply plugin: 'com.android.library'
 
 buildscript {
     repositories {
+        mavenLocal()
         google()
         jcenter()
-        mavenLocal()
     }
     dependencies {
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:$bugsnagPluginVersion"
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.1.0'
     }
-}
-
-repositories {
-    google()
-    jcenter()
 }
 
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
 
     defaultConfig {
-        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+        minSdkVersion 14
     }
 
     buildTypes {
@@ -32,4 +29,4 @@ android {
 }
 
 apply plugin: 'com.bugsnag.android.gradle'
-apply from: "../checkstyle.gradle"
+apply from: "../../checkstyle.gradle"
