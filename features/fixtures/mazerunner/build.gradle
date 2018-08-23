@@ -50,6 +50,11 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
 }
 
 dependencies {
