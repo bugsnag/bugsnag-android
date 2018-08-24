@@ -1,10 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.Configuration
-import com.bugsnag.android.createCustomHeaderDelivery
-import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.*
 
 /**
  * Sends a session which is cached on disk to Bugsnag, then sent on a separate launch,
@@ -20,6 +17,7 @@ internal class CustomClientSessionFlushScenario(config: Configuration,
             // simulate activity lifecycle callback occurring before api client can be set
             Bugsnag.startSession()
             config.delivery = createCustomHeaderDelivery(context)
+            flushAllSessions()
         } else {
             disableAllDelivery()
             Bugsnag.startSession()
