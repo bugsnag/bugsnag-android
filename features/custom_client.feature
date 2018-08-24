@@ -6,9 +6,8 @@ Scenario: Set a custom session client and flush a stored session
     And I set environment variable "EVENT_TYPE" to "CustomClientSessionFlushScenario"
     And I set environment variable "EVENT_METADATA" to "DeliverSessions"
     And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
-    Then I should receive 2 requests
-    And the "Custom-Client" header equals "Hello World" for request 0
-    And the "Custom-Client" header equals "Hello World" for request 1
+    Then I should receive 1 request
+    And the "Custom-Client" header equals "Hello World"
 
 Scenario: Set a custom error API client and notify an error
     When I run "CustomClientErrorScenario" with the defaults

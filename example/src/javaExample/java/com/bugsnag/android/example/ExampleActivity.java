@@ -167,7 +167,7 @@ public class ExampleActivity extends AppCompatActivity {
 
     /**
      * Reads the android bugsnag docs
-     * 
+     *
      * @param view the XML layout view
      */
     public void readDocs(View view) {

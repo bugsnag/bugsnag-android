@@ -17,7 +17,7 @@ internal class AutoSessionScenario(config: Configuration,
         super.run()
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
         context.startActivity(Intent(context, SecondActivity::class.java))
-        flushAllSessions()
+        flushAllSessions(Bugsnag.getClient())
     }
 
 }

@@ -13,7 +13,7 @@ internal class CustomClientSessionScenario(config: Configuration,
         config.delivery = createCustomHeaderDelivery(context)
         super.run()
         Bugsnag.startSession()
-        flushAllSessions()
+        flushAllSessions(Bugsnag.getClient())
     }
 
 }
