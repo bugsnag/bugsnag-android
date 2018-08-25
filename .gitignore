@@ -36,3 +36,11 @@ proguard/
 # Javadoc
 docs/
 infer-out/
+
+# Native build files
+.externalNativeBuild
+CMakeFiles
+CMakeCache.txt
+Testing
+bugsnag_test
+*.crash
