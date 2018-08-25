@@ -46,4 +46,7 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
         writer.endObject();
     }
 
+    Session getSession() {
+        return session;
+    }
 }

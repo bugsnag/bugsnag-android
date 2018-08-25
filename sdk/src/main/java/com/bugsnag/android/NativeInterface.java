@@ -14,6 +14,97 @@ import java.util.Observer;
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
  */
 public class NativeInterface {
+    public enum MessageType {
+        /**
+         * Add a breadcrumb. The Message object should be the breadcrumb
+         */
+        ADD_BREADCRUMB,
+        /**
+         * Add a new metadata value. The Message object should be an array containing [tab, key, value]
+         */
+        ADD_METADATA,
+        /**
+         * Clear all breadcrumbs
+         */
+        CLEAR_BREADCRUMBS,
+        /**
+         * Clear all metadata on a tab. The Message object should be the tab name
+         */
+        CLEAR_METADATA_TAB,
+        /**
+         * Set up Bugsnag. The message object should be a Configuration.
+         */
+        INSTALL,
+        /**
+         * Send a report for a handled Java exception
+         */
+        NOTIFY_HANDLED,
+        /**
+         * Remove a metadata value. The Message object should be a string array containing [tab, key]
+         */
+        REMOVE_METADATA,
+        /**
+         * A new session was started. The Message object should be a string array containing [id, startDate]
+         */
+        START_SESSION,
+        /**
+         * Set a new app version. The Message object should be the new app version
+         */
+        UPDATE_APP_VERSION,
+        /**
+         * Set a new build UUID. The Message object should be the new build UUID string
+         */
+        UPDATE_BUILD_UUID,
+        /**
+         * Set a new context. The message object should be the new context
+         */
+        UPDATE_CONTEXT,
+        /**
+         * Set a new value for `app.inForeground`. The message object should be a Boolean
+         */
+        UPDATE_IN_FOREGROUND,
+        /**
+         * Set a new value for `app.lowMemory`. The message object should be a Boolean
+         */
+        UPDATE_LOW_MEMORY,
+        /**
+         * Set a new value for all custom metadata. The message object should be MetaData.
+         */
+        UPDATE_METADATA,
+        /**
+         * Set a new value for `device.orientation`. The message object should be the orientation
+         */
+        UPDATE_ORIENTATION,
+        /**
+         * Set a new value for `app.releaseStage`. The message object should be the new release stage
+         */
+        UPDATE_RELEASE_STAGE,
+        /**
+         * Set a new value for user email. The message object is a string array containing [id, email, name]
+         */
+        UPDATE_USER_EMAIL,
+        /**
+         * Set a new value for user name. The message object is a string array containing [id, email, name]
+         */
+        UPDATE_USER_NAME,
+        /**
+         * Set a new value for user id. The message object is a string array containing [id, email, name]
+         */
+        UPDATE_USER_ID,
+    }
+
+    /**
+     * Wrapper for messages sent to native observers
+     */
+    public static class Message {
+        public MessageType type;
+        public Object value;
+
+        public Message(MessageType type, Object value) {
+            this.type = type;
+            this.value = value;
+        }
+    }
 
     /**
      * Static reference used if not using Bugsnag.init()
@@ -31,6 +122,7 @@ public class NativeInterface {
     }
 
     public static void setClient(@NonNull Client client) {
+        if (NativeInterface.client == client) return;
         NativeInterface.client = client;
         configureClientObservers(client);
     }
@@ -40,11 +132,8 @@ public class NativeInterface {
      * @param client the client
      */
     public static void configureClientObservers(@NonNull Client client) {
-
-        // Ensure that the bugsnag observer is registered
-        // Should only happen if the NDK library is present
         try {
-            String className = "com.bugsnag.android.ndk.BugsnagObserver";
+            String className = "com.bugsnag.android.ndk.NativeBridge";
             Class<?> clz = Class.forName(className);
             Observer observer = (Observer) clz.newInstance();
             client.addObserver(observer);
@@ -57,130 +146,46 @@ public class NativeInterface {
             Logger.warn("Could not access NDK observer", exception);
         }
 
-        // Should make NDK components configure
-        client.notifyBugsnagObservers(NotifyType.ALL);
+        // Configure NDK components
+        client.sendNativeSetupNotification();
     }
 
     public static String getContext() {
         return getClient().getContext();
     }
 
-    @Nullable
-    public static String getErrorStorePath() {
-        return getClient().errorStore.storeDirectory;
+    public static String getNativeReportPath() {
+        return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
     }
 
-    public static String getUserId() {
-        return getClient().getUser().getId();
+    public static Map<String,String> getUserData() {
+        HashMap<String, String> userData = new HashMap<>();
+        User user = getClient().getUser();
+        userData.put("id", user.getId());
+        userData.put("name", user.getName());
+        userData.put("email", user.getEmail());
+
+        return userData;
     }
 
-    public static String getUserEmail() {
-        return getClient().getUser().getEmail();
-    }
-
-    public static String getUserName() {
-        return getClient().getUser().getName();
-    }
-
-    @Nullable
-    public static String getPackageName() {
-        return getStringFromMap("packageName", getClient().appData.getAppData());
-    }
-
-    @Nullable
-    public static String getAppName() {
-        return getClient().appData.appName;
-    }
-
-    @Nullable
-    public static String getVersionName() {
-        return getStringFromMap("version", getClient().appData.getAppData());
-    }
-
-    public static int getVersionCode() {
-        Object versionCode = getClient().appData.getAppData().get("versionCode");
-        return versionCode instanceof Integer ? (Integer) versionCode : -1;
-    }
-
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public static String getBuildUUID() {
-        return getClient().config.getBuildUUID();
-    }
-
-    @Nullable
-    public static String getAppVersion() {
-        return getStringFromMap("version", getClient().appData.getAppData());
-    }
-
-    public static String getReleaseStage() {
-        return getStringFromMap("releaseStage", getClient().appData.getAppData());
-    }
-
-    @Nullable
-    public static String getDeviceId() {
-        return getStringFromMap("id", getClient().deviceData.getDeviceData());
+    public static Map<String,Object> getAppData() {
+        HashMap<String,Object> data = new HashMap<>();
+        AppData source = getClient().getAppData();
+        data.putAll(source.getAppData());
+        data.putAll(source.getAppDataMetaData());
+        data.putAll(source.getAppDataSummary());
+        return data;
     }
 
     @NonNull
-    public static String getDeviceLocale() {
-        return getClient().deviceData.locale;
+    public static Map<String,Object> getDeviceData() {
+        HashMap<String,Object> deviceData = new HashMap<>();
+        DeviceData source = getClient().getDeviceData();
+        deviceData.putAll(source.getDeviceMetaData());
+        deviceData.putAll(source.getDeviceDataSummary());
+        deviceData.putAll(source.getDeviceData()); // wat
+        return deviceData;
     }
-
-    public static double getDeviceTotalMemory() {
-        return DeviceData.calculateTotalMemory();
-    }
-
-    /**
-     * Returns whether a device is rooted or not to the NDK
-     */
-    public static Boolean getDeviceRooted() {
-        Map<String, Object> map = getClient().deviceData.getDeviceDataSummary();
-        Object jailbroken = map.get("jailbroken");
-        return jailbroken instanceof Boolean ? (Boolean) jailbroken : false;
-    }
-
-    public static float getDeviceScreenDensity() {
-        return getClient().deviceData.screenDensity;
-    }
-
-    public static int getDeviceDpi() {
-        return getClient().deviceData.dpi;
-    }
-
-    @Nullable
-    public static String getDeviceScreenResolution() {
-        return getClient().deviceData.screenResolution;
-    }
-
-    public static String getDeviceManufacturer() {
-        return android.os.Build.MANUFACTURER;
-    }
-
-    public static String getDeviceBrand() {
-        return android.os.Build.BRAND;
-    }
-
-    public static String getDeviceModel() {
-        return android.os.Build.MODEL;
-    }
-
-    public static String getDeviceOsVersion() {
-        return android.os.Build.VERSION.RELEASE;
-    }
-
-    public static String getDeviceOsBuild() {
-        return android.os.Build.DISPLAY;
-    }
-
-    public static int getDeviceApiLevel() {
-        return android.os.Build.VERSION.SDK_INT;
-    }
-
-    @NonNull
-    public static String[] getDeviceCpuAbi() {
-        return getClient().deviceData.cpuAbi;
-    }
-
 
     @NonNull
     public static Map<String, Object> getMetaData() {
@@ -189,19 +194,6 @@ public class NativeInterface {
 
     public static Object[] getBreadcrumbs() {
         return getClient().breadcrumbs.store.toArray();
-    }
-
-    public static String[] getFilters() {
-        return getClient().config.getFilters();
-    }
-
-    /**
-     * Retrieves the release stages
-     * @return the release stages
-     */
-    @Nullable
-    public static String[] getReleaseStages() {
-        return getClient().config.getNotifyReleaseStages();
     }
 
     /**
@@ -215,22 +207,20 @@ public class NativeInterface {
                                final String email,
                                final String name) {
 
-        getClient().setUserId(id, false);
-        getClient().setUserEmail(email, false);
-        getClient().setUserName(name, false);
+        getClient().setUserId(id);
+        getClient().setUserEmail(email);
+        getClient().setUserName(name);
     }
 
     public static void leaveBreadcrumb(@NonNull final String name,
                                        @NonNull final BreadcrumbType type) {
-
-        getClient().leaveBreadcrumb(name, type, new HashMap<String, String>(), false);
+        getClient().leaveBreadcrumb(name, type, new HashMap<String, String>());
     }
 
     public static void addToTab(final String tab,
                                 final String key,
                                 final Object value) {
-
-        getClient().config.getMetaData().addToTab(tab, key, value, false);
+        getClient().addToTab(tab, key, value);
     }
 
     /**

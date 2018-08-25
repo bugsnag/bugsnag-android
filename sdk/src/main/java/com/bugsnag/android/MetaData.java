@@ -58,32 +58,15 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      * @param value   the contents of the diagnostic information
      */
     public void addToTab(String tabName, String key, Object value) {
-        addToTab(tabName, key, value, true);
-    }
-
-    /**
-     * Add diagnostic information to a tab of this MetaData.
-     * <p>
-     * For example:
-     * <p>
-     * metaData.addToTab("account", "name", "Acme Co.");
-     * metaData.addToTab("account", "payingCustomer", true);
-     *
-     * @param tabName the dashboard tab to add diagnostic data to
-     * @param key     the name of the diagnostic information
-     * @param value   the contents of the diagnostic information
-     * @param notify  whether or not to notify any NDK observers about this change
-     */
-    void addToTab(String tabName, String key, @Nullable Object value, boolean notify) {
         Map<String, Object> tab = getTab(tabName);
-
+        setChanged();
         if (value != null) {
             tab.put(key, value);
+            notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.ADD_METADATA, Arrays.asList(tabName, key, value)));
         } else {
             tab.remove(key);
+            notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.REMOVE_METADATA, Arrays.asList(tabName, key)));
         }
-
-        notifyBugsnagObservers(NotifyType.META);
     }
 
     /**
@@ -93,8 +76,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      */
     public void clearTab(String tabName) {
         store.remove(tabName);
-
-        notifyBugsnagObservers(NotifyType.META);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.CLEAR_METADATA_TAB, tabName));
     }
 
     @NonNull
@@ -112,8 +95,6 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
     void setFilters(String... filters) {
         jsonStreamer.filters = filters;
-
-        notifyBugsnagObservers(NotifyType.FILTERS);
     }
 
     String[] getFilters() {
@@ -180,10 +161,5 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         }
 
         return result;
-    }
-
-    private void notifyBugsnagObservers(@NonNull NotifyType type) {
-        setChanged();
-        super.notifyObservers(type.getValue());
     }
 }

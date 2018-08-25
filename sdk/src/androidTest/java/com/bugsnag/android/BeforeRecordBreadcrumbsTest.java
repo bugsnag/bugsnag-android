@@ -107,8 +107,7 @@ public class BeforeRecordBreadcrumbsTest {
 
         client.leaveBreadcrumb("Foo");
         client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, String>());
-        client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, String>(), false);
-        assertEquals(6, count[0]);
+        assertEquals(4, count[0]);
     }
 
     @Test

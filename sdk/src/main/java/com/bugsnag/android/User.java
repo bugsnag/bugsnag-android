@@ -4,11 +4,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.Observable;
 
 /**
  * Information about the current user of your application.
  */
-class User implements JsonStream.Streamable {
+class User extends Observable implements JsonStream.Streamable {
 
     @Nullable
     private String id;
@@ -58,6 +59,8 @@ class User implements JsonStream.Streamable {
      */
     public void setId(@Nullable String id) {
         this.id = id;
+        setChanged();
+        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_USER_ID, id));
     }
 
     /**
@@ -75,6 +78,8 @@ class User implements JsonStream.Streamable {
      */
     public void setEmail(@Nullable String email) {
         this.email = email;
+        setChanged();
+        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_USER_EMAIL, email));
     }
 
     /**
@@ -92,5 +97,7 @@ class User implements JsonStream.Streamable {
      */
     public void setName(@Nullable String name) {
         this.name = name;
+        setChanged();
+        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_USER_NAME, name));
     }
 }

@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -21,7 +22,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-class SessionTracker implements Application.ActivityLifecycleCallbacks {
+class SessionTracker extends Observable implements Application.ActivityLifecycleCallbacks {
 
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
@@ -62,15 +63,16 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
      * @param date the session start date
      * @param user the session user (if any)
      */
-    void startNewSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
+    @Nullable Session startNewSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
         if (configuration.getSessionEndpoint() == null) {
             Logger.warn("The session tracking endpoint has not been set. "
                 + "Session tracking is disabled");
-            return;
+            return null;
         }
         Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);
         currentSession.set(session);
         trackSessionIfNeeded(session);
+        return session;
     }
 
     /**
@@ -111,6 +113,8 @@ class SessionTracker implements Application.ActivityLifecycleCallbacks {
                 // This is on the current thread but there isn't much else we can do
                 sessionStore.write(session);
             }
+            setChanged();
+            notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.START_SESSION, session));
         }
     }
 
