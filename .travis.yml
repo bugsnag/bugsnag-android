@@ -28,6 +28,7 @@ env:
     - ANDROID_TARGET=android-16 ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-27 ANDROID_ABI=armeabi-v7a
   global:
     - ADB_INSTALL_TIMEOUT=5 # increase from default of 2 mins
 
@@ -37,6 +38,10 @@ before_install:
   - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
   # see https://github.com/travis-ci/travis-ci/issues/8874
   - yes | sdkmanager "platforms;android-27"
+  - echo y | sdkmanager "cmake;3.6.4111459"
+  - echo y | sdkmanager "ndk-bundle"
+  - echo y | sdkmanager "lldb;3.1"
+
 
 before_script:
   # Create and start emulator
