@@ -19,28 +19,22 @@ repositories {
 }
 
 android {
-
+    signingConfigs {
+        config {
+            keyAlias 'password'
+            keyPassword 'password'
+            storeFile file('../../features/fixtures/fakekeys.jks')
+            storePassword 'password'
+        }
+    }
     compileSdkVersion 27
     buildToolsVersion "27.0.0"
-
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-
-        manifestPlaceholders = [
-            bugsnagApiKey                    : "your-api-key",
-            bugsnagBuildUUID                 : "abc123",
-            bugsnagAppVersion                : "1.0.0",
-            bugsnagEndpoint                  : "https://notify.bugsnag.com",
-            bugsnagSessionsEndpoint          : "https://sessions.bugsnag.com",
-            bugsnagReleaseStage              : "debug",
-            bugsnagSendThreads               : true,
-            bugsnagEnableExceptionHandler    : true,
-            bugsnagPersistUserBetweenSessions: false
-        ]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
     }
-
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -48,6 +42,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
+            signingConfig signingConfigs.config
         }
     }
     splits {
@@ -55,43 +50,47 @@ android {
             enable true
         }
     }
-
     flavorDimensions "regular"
-
     splits {
         density {
-          enable true
-          reset()
-          include "mdpi", "hdpi"//, "xhdpi", "xxhdpi", "xxxhdpi"
+            enable true
+            reset()
+            include "mdpi", "hdpi"//, "xhdpi", "xxhdpi", "xxxhdpi"
         }
         abi {
-          enable true
-          reset()
-          include 'armeabi-v7a', 'x86'
-          universalApk true
+            enable true
+            reset()
+            include 'armeabi-v7a', 'x86'
+            universalApk true
         }
     }
-
     productFlavors {
         javaExample {
             applicationIdSuffix ".java"
+            signingConfig signingConfigs.config
         }
         kotlinExample {
             applicationIdSuffix ".kotlin"
+            signingConfig signingConfigs.config
         }
     }
     lintOptions {
         disable 'OnClick'
         abortOnError true
     }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:4.6.1"
-    implementation "com.android.support:appcompat-v7:27.0.0"
-    implementation "com.android.support:support-v4:27.0.0"
+    implementation project(':sdk')
+    implementation project(':ndk')
+    implementation 'com.android.support:appcompat-v7:27.0.0'
+    implementation 'com.android.support:support-v4:27.0.0'
     kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.30"
-
     androidTestImplementation "com.android.support.test:runner:0.5", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
