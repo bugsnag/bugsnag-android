@@ -115,10 +115,6 @@ const char *bsg_severity_string(bsg_severity_t type) {
 }
 
 char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
-  JSON_Value *root_value = json_value_init_object();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  JSON_Value *events_val = json_value_init_array();
-  JSON_Array *events = json_value_get_array(events_val);
   JSON_Value *event_val = json_value_init_object();
   JSON_Object *event = json_value_get_object(event_val);
   JSON_Value *crumbs_val = json_value_init_array();
@@ -129,22 +125,12 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
   JSON_Object *exception = json_value_get_object(ex_val);
   JSON_Value *stack_val = json_value_init_array();
   JSON_Array *stacktrace = json_value_get_array(stack_val);
-  json_object_set_value(root_object, "events", events_val);
   json_object_set_value(event, "exceptions", exceptions_val);
   json_object_set_value(event, "breadcrumbs", crumbs_val);
   json_object_set_value(exception, "stacktrace", stack_val);
-  json_array_append_value(events, event_val);
   json_array_append_value(exceptions, ex_val);
   char *serialized_string = NULL;
   {
-
-    json_object_dotset_string(root_object, "notifier.name",
-                              "Bugsnag Android NDK");
-    json_object_dotset_string(root_object, "notifier.url",
-                              "https://github.com/bugsnag/bugsnag-android");
-    json_object_dotset_string(root_object, "notifier.version",
-                              BUGSNAG_NOTIFIER_VERSION);
-
     json_object_set_string(event, "severity",
                            bsg_severity_string(report->severity));
     // TODO: severityReason/unhandled attributes are currently over-optimized for signal
@@ -313,8 +299,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
       }
     }
 
-    serialized_string = json_serialize_to_string(root_value);
-    json_value_free(root_value);
+    serialized_string = json_serialize_to_string(event_val);
+    json_value_free(event_val);
   }
   return serialized_string;
 }

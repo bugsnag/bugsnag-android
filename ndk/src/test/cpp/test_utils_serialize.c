@@ -87,33 +87,16 @@ JSON_Value *bsg_generate_json(void) {
   free(report);
   return root_value;
 }
-// helper function
-JSON_Object *get_event(JSON_Object *obj) {
-  JSON_Array *events = json_object_get_array(obj, "events");
-  if (events == NULL) return NULL;
-  return json_array_get_object(events, 0);
-}
-
-TEST test_report_notifier_to_json(void) {
-  JSON_Value *root_value = bsg_generate_json();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  ASSERT(strcmp("Bugsnag Android NDK", json_object_dotget_string(root_object, "notifier.name")) == 0);
-  ASSERT(strcmp("https://github.com/bugsnag/bugsnag-android", json_object_dotget_string(root_object, "notifier.url")) == 0);
-  json_value_free(root_value);
-  PASS();
-}
 
 TEST test_report_app_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  JSON_Object *event = get_event(root_object);
-  ASSERT(event != NULL);
+  JSON_Object *event = json_value_get_object(root_value);
   ASSERT(strcmp("2.0.52", json_object_dotget_string(event, "app.version")) == 0);
   ASSERT(strcmp( "PhotoSnap Plus", json_object_dotget_string(event, "app.name")) == 0);
   ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "app.packageName")) == 0);
   ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "app.id")) == 0);
   ASSERT(strcmp( "リリース", json_object_dotget_string(event, "app.releaseStage")) == 0);
-  ASSERT(strcmp( "57", json_object_dotget_string(event, "app.versionCode")) == 0);
+  ASSERT_EQ(57, json_object_dotget_number(event, "app.versionCode"));
   ASSERT(strcmp( "2.0", json_object_dotget_string(event, "app.versionName")) == 0);
   ASSERT(strcmp( "1234-9876-adfe", json_object_dotget_string(event, "app.buildUUID")) == 0);
   json_value_free(root_value);
@@ -122,8 +105,7 @@ TEST test_report_app_info_to_json(void) {
 
 TEST test_report_device_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  JSON_Object *event = get_event(root_object);
+  JSON_Object *event = json_value_get_object(root_value);
   ASSERT(event != NULL);
   ASSERT(strcmp( "HI-TEC™", json_object_dotget_string(event, "device.manufacturer")) == 0);
   ASSERT(strcmp( "Rasseur", json_object_dotget_string(event, "device.model")) == 0);
@@ -134,8 +116,7 @@ TEST test_report_device_info_to_json(void) {
 
 TEST test_report_user_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  JSON_Object *event = get_event(root_object);
+  JSON_Object *event = json_value_get_object(root_value);
   ASSERT(event != NULL);
   ASSERT(strcmp( "fex", json_object_dotget_string(event, "user.id")) == 0);
   ASSERT(strcmp( "fenton@io.example.com", json_object_dotget_string(event, "user.email")) == 0);
@@ -146,8 +127,7 @@ TEST test_report_user_info_to_json(void) {
 
 TEST test_report_custom_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  JSON_Object *event = get_event(root_object);
+  JSON_Object *event = json_value_get_object(root_value);
   ASSERT(event != NULL);
   ASSERT(strcmp( "percy", json_object_dotget_string(event, "metaData.metrics.subject")) == 0);
   ASSERT(strcmp( "rain", json_object_dotget_string(event, "metaData.app.weather")) == 0);
@@ -159,8 +139,7 @@ TEST test_report_custom_info_to_json(void) {
 
 TEST test_report_exception_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  JSON_Object *event = get_event(root_object);
+  JSON_Object *event = json_value_get_object(root_value);
   ASSERT(event != NULL);
   JSON_Array *exceptions = json_object_get_array(event, "exceptions");
   ASSERT(exceptions != NULL);
@@ -168,20 +147,21 @@ TEST test_report_exception_to_json(void) {
   ASSERT(exception != NULL);
   ASSERT(strcmp("SIGBUS", json_object_get_string(exception, "errorClass")) == 0);
   ASSERT(strcmp("POSIX is serious about oncoming traffic", json_object_get_string(exception, "message")) == 0);
-  ASSERT(strcmp("ndk", json_object_get_string(exception, "type")) == 0);
+  ASSERT(strcmp("c", json_object_get_string(exception, "type")) == 0);
   JSON_Array *stacktrace = json_object_get_array(exception, "stacktrace");
   ASSERT(stacktrace != NULL);
   ASSERT_EQ(2, json_array_get_count(stacktrace));
   ASSERT(strcmp("makinBacon", json_object_get_string(json_array_get_object(stacktrace, 0), "method")) == 0);
-  ASSERT(strcmp("0x6eeeb", json_object_get_string(json_array_get_object(stacktrace, 0), "frameAddress")) == 0);
+  ASSERT_EQ(454379, json_object_get_number(json_array_get_object(stacktrace, 0), "frameAddress"));
+  ASSERT(strcmp("0x5393e", json_object_get_string(json_array_get_object(stacktrace, 1), "method")) == 0);
+  ASSERT_EQ(342334, json_object_get_number(json_array_get_object(stacktrace, 1), "frameAddress"));
   json_value_free(root_value);
   PASS();
 }
 
 TEST test_report_breadcrumbs_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
-  JSON_Object *root_object = json_value_get_object(root_value);
-  JSON_Object *event = get_event(root_object);
+  JSON_Object *event = json_value_get_object(root_value);
   ASSERT(event != NULL);
   JSON_Array *breadcrumbs = json_object_get_array(event, "breadcrumbs");
   ASSERT(breadcrumbs != NULL);
@@ -203,7 +183,6 @@ TEST test_report_breadcrumbs_to_json(void) {
 SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
-  RUN_TEST(test_report_notifier_to_json);
   RUN_TEST(test_report_app_info_to_json);
   RUN_TEST(test_report_device_info_to_json);
   RUN_TEST(test_report_user_info_to_json);
