@@ -58,32 +58,32 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     }
 
     @Nullable
-    String write(@NonNull T streamable) {
+    void enqueueContentForDelivery(String content) {
+        if (storeDirectory == null) {
+            return;
+        }
+        String filename = getFilename(content);
+        discardOldestFileIfNeeded();
+        lock.lock();
+        try {
+            FileOutputStream fos = new FileOutputStream(filename);
+            Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            out.write(content);
+            out.close();
+        } catch (Exception exception) {
+            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
+                filename), exception);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Nullable
+    String write(@NonNull JsonStream.Streamable streamable) {
         if (storeDirectory == null) {
             return null;
         }
-
-        // Limit number of saved errors to prevent disk space issues
-        File exceptionDir = new File(storeDirectory);
-        if (exceptionDir.isDirectory()) {
-            File[] files = exceptionDir.listFiles();
-
-            if (files != null && files.length >= maxStoreCount) {
-                // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files, comparator);
-
-                for (int k = 0; k < files.length && files.length >= maxStoreCount; k++) {
-                    File oldestFile = files[k];
-
-                    if (!queuedFiles.contains(oldestFile)) {
-                        Logger.warn(String.format("Discarding oldest error as stored "
-                            + "error limit reached (%s)", oldestFile.getPath()));
-                        deleteStoredFiles(Collections.singleton(oldestFile));
-                    }
-                }
-            }
-        }
-
+        discardOldestFileIfNeeded();
         String filename = getFilename(streamable);
 
         JsonStream stream = null;
@@ -106,8 +106,31 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         return null;
     }
 
+    void discardOldestFileIfNeeded() {
+        // Limit number of saved errors to prevent disk space issues
+        File exceptionDir = new File(storeDirectory);
+        if (exceptionDir.isDirectory()) {
+            File[] files = exceptionDir.listFiles();
+
+            if (files != null && files.length >= maxStoreCount) {
+                // Sort files then delete the first one (oldest timestamp)
+                Arrays.sort(files, comparator);
+
+                for (int k = 0; k < files.length && files.length >= maxStoreCount; k++) {
+                    File oldestFile = files[k];
+
+                    if (!queuedFiles.contains(oldestFile)) {
+                        Logger.warn(String.format("Discarding oldest error as stored "
+                            + "error limit reached (%s)", oldestFile.getPath()));
+                        deleteStoredFiles(Collections.singleton(oldestFile));
+                    }
+                }
+            }
+        }
+    }
+
     @NonNull
-    abstract String getFilename(T streamable);
+    abstract String getFilename(Object object);
 
     List<File> findStoredFiles() {
         lock.lock();

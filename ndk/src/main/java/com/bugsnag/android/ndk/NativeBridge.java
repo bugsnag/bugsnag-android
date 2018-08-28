@@ -7,6 +7,7 @@ import com.bugsnag.android.MetaData;
 import com.bugsnag.android.NativeInterface;
 import com.bugsnag.android.Breadcrumb;
 
+import java.io.File;
 import java.util.List;
 import java.util.Observer;
 import java.util.Observable;
@@ -21,6 +22,7 @@ public class NativeBridge implements Observer {
     }
 
     public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel);
+    public static native void deliverReportAtPath(String filePath);
     public static native void addBreadcrumb(String name, String type, Object metadata);
     public static native void addMetadataString(String tab, String key, String value);
     public static native void addMetadataDouble(String tab, String key, double value);
@@ -57,6 +59,17 @@ public class NativeBridge implements Observer {
         switch (message.type) {
             case INSTALL:
                 if (arg instanceof Configuration) {
+                    try {
+                        File outFile = new File(NativeInterface.getNativeReportPath());
+                        outFile.mkdirs();
+                        for (final File file : outFile.listFiles()) {
+                            deliverReportAtPath(file.getAbsolutePath());
+                        }
+                    } catch (Exception ex) {
+                        // TODO: handle failure to create native crash report directory
+                        return;
+                    }
+
                     String reportPath = NativeInterface.getNativeReportPath() + UUID.randomUUID().toString() + ".crash";
                     install(reportPath, true, Build.VERSION.SDK_INT);
                 }

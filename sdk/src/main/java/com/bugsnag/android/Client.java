@@ -1244,6 +1244,10 @@ public class Client extends Observable implements Observer {
         sharedPref.edit().putString(key, value).apply();
     }
 
+    ErrorStore getErrorStore() {
+        return errorStore;
+    }
+
     /**
      * Finalize by removing the receiver
      *

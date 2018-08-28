@@ -9,6 +9,7 @@
 #include "handlers/signal_handler.h"
 #include "metadata.h"
 #include "report.h"
+#include "utils/serializer.h"
 
 #ifdef __cplusplus
 extern "C" {

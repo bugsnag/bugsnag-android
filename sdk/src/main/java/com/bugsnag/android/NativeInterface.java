@@ -223,6 +223,13 @@ public class NativeInterface {
         getClient().addToTab(tab, key, value);
     }
 
+    public static void deliverReport(String releaseStage, String payload) {
+        if (releaseStage == null || releaseStage.length() == 0 || getClient().getConfig().shouldNotifyForReleaseStage(releaseStage)) {
+            getClient().getErrorStore().enqueueContentForDelivery(payload);
+            getClient().getErrorStore().flushAsync();
+        }
+    }
+
     /**
      * Notifies using the Android SDK
      *
