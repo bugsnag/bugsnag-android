@@ -21,6 +21,8 @@ ifeq ($(VERSION),)
 endif
 	@echo Bumping the version number to $(VERSION)
 	@sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$(VERSION)/" gradle.properties
+	@sed -i '' "s/BUGSNAG_NOTIFIER_VERSION .*/BUGSNAG_NOTIFIER_VERSION \"$(VERSION)\"/"\
+	 ndk/src/main/jni/bugsnag_ndk.h
 	@sed -i '' "s/NOTIFIER_VERSION = .*;/NOTIFIER_VERSION = \"$(VERSION)\";/"\
 	 sdk/src/main/java/com/bugsnag/android/Notifier.java
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md

@@ -142,6 +142,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
                               "Bugsnag Android NDK");
     json_object_dotset_string(root_object, "notifier.url",
                               "https://github.com/bugsnag/bugsnag-android");
+    json_object_dotset_string(root_object, "notifier.version",
+                              BUGSNAG_NOTIFIER_VERSION);
 
     json_object_set_string(event, "severity",
                            bsg_severity_string(report->severity));
