@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+archivesBaseName = "bugsnag-android-ndk"
 
 repositories {
     jcenter()

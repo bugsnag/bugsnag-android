@@ -5,21 +5,25 @@ import com.bugsnag.android.Configuration;
 import org.jetbrains.annotations.NotNull;
 
 
-public class CXXReadWriteOnlyPageScenario extends Scenario {
+public class CXXNullPointerScenario extends Scenario {
 
     static {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crashWithSIGBUS();
+    public native void crash();
 
-    public CXXReadWriteOnlyPageScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXNullPointerScenario(@NotNull Configuration config, @NotNull Context context) {
         super(config, context);
     }
 
     @Override
     public void run() {
         super.run();
-        crashWithSIGBUS();
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
+        crash();
     }
 }

@@ -59,6 +59,7 @@ android {
 
 dependencies {
     implementation(name:'bugsnag-android', ext:'aar')
+    implementation(name:'bugsnag-android-ndk', ext:'aar')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.21"
     implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
 }
