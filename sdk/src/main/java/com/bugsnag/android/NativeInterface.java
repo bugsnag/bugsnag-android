@@ -237,13 +237,11 @@ public class NativeInterface {
      * @param message the error message
      * @param severity the error severity
      * @param stacktrace a stacktrace
-     * @param metaData any metadata
      */
     public static void notify(@NonNull final String name,
                               @NonNull final String message,
                               final Severity severity,
-                              @NonNull final StackTraceElement[] stacktrace,
-                              @NonNull final Map<String, Object> metaData) {
+                              @NonNull final StackTraceElement[] stacktrace) {
 
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
@@ -251,20 +249,6 @@ public class NativeInterface {
                 Error error = report.getError();
                 error.setSeverity(severity);
                 error.config.defaultExceptionType = "c";
-
-                for (String tab : metaData.keySet()) {
-                    Object value = metaData.get(tab);
-
-                    if (value instanceof Map) {
-                        @SuppressWarnings("unchecked") Map<Object, Object> map = (Map) value;
-
-                        for (Object key : map.keySet()) {
-                            error.getMetaData().addToTab(tab, key.toString(), map.get(key));
-                        }
-                    } else {
-                        error.getMetaData().addToTab("custom", tab, value);
-                    }
-                }
             }
         });
     }

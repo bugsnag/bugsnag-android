@@ -3,6 +3,7 @@
   <string name="unhandled_exceptions">FR</string>
   <string name="trigger_fatal_crash">FR</string>
   <string name="trigger_native_crash">FR</string>
+  <string name="trigger_native_notify">FR</string>
 
   <string name="handled_exceptions">FR</string>
   <string name="trigger_nonfatal_crash">FR</string>

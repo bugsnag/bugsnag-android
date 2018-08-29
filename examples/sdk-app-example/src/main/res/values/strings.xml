@@ -7,6 +7,7 @@
   <string name="handled_exceptions">Handled Exceptions</string>
   <string name="trigger_nonfatal_crash">Trigger a non-fatal crash</string>
   <string name="custom_severity">Alter Error Severity</string>
+  <string name="trigger_native_notify">Trigger C/C++ Report</string>
 
   <string name="enhancing_error_reports">Enhancing Error Reports</string>
   <string name="crash_user_details">Add User Details</string>

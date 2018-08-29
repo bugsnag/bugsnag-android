@@ -24,9 +24,17 @@ void bsg_insert_fileinfo(ssize_t frame_count,
                          bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX]) {
   static Dl_info info;
   for (int i = 0; i < frame_count; ++i) {
-    if (dladdr((void *)stacktrace[i].frame_address, &info) != 0 &&
-        info.dli_fname != NULL) {
-      bsg_strcpy(stacktrace[i].filename, (char *)info.dli_fname);
+    if (dladdr((void *)stacktrace[i].frame_address, &info) != 0) {
+      stacktrace[i].load_address = (uintptr_t)info.dli_fbase;
+      stacktrace[i].symbol_address = (uintptr_t)info.dli_saddr;
+      stacktrace[i].line_number = stacktrace[i].frame_address - stacktrace[i].load_address;
+      if (info.dli_fname != NULL) {
+        bsg_strcpy(stacktrace[i].filename, (char *)info.dli_fname);
+      }
+      if (info.dli_sname != NULL) {
+        bsg_strcpy(stacktrace[i].method, (char *)info.dli_sname);
+      }
+      //uintptr_t line_number = (uintptr_t)frame - (uintptr_t)info.dli_fbase;
     }
   }
 }

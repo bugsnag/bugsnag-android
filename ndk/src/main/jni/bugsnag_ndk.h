@@ -33,6 +33,8 @@ typedef struct {
     bugsnag_report next_report;
 } bsg_environment;
 
+bsg_unwinder bsg_configured_unwind_style();
+
 #ifdef __cplusplus
 }
 #endif

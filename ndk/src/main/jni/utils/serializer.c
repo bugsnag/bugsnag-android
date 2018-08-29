@@ -257,6 +257,9 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
       JSON_Value *frame_val = json_value_init_object();
       JSON_Object *frame = json_value_get_object(frame_val);
       json_object_set_number(frame, "frameAddress", stackframe.frame_address);
+      json_object_set_number(frame, "symbolAddress", stackframe.symbol_address);
+      json_object_set_number(frame, "loadAddress", stackframe.load_address);
+      json_object_set_number(frame, "lineNumber", stackframe.line_number);
       if (strlen(stackframe.filename) > 0) {
         json_object_set_string(frame, "file", stackframe.filename);
       }

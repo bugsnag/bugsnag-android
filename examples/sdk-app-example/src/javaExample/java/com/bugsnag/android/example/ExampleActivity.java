@@ -31,6 +31,7 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     public native void crashWithSIGBUS();
+    public native void notifyFromCXX();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,13 @@ public class ExampleActivity extends AppCompatActivity {
 
         // Mark the following packages as part of your app
         Bugsnag.setProjectPackages("com.bugsnag.android.example", "com.bugsnag.android.other");
+    }
+
+    /**
+     * Delivers an error notification from native (C/C++) code
+     */
+    public void notifyNativeHandled(View view) {
+        notifyFromCXX();
     }
 
     /**

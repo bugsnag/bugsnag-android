@@ -44,6 +44,10 @@ extern "C" {
 
 typedef struct {
   uintptr_t frame_address;
+  uintptr_t symbol_address;
+  uintptr_t load_address;
+  uintptr_t line_number;
+
   char filename[256];
   char method[256];
 } bsg_stackframe;

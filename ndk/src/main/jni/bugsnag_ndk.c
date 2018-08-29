@@ -33,6 +33,13 @@ void bsg_release_env_write_lock(void) {
   pthread_mutex_unlock(&bsg_global_env_write_mutex);
 }
 
+bsg_unwinder bsg_configured_unwind_style() {
+  if (bsg_global_env != NULL)
+    return bsg_global_env->unwind_style;
+
+  return BSG_CUSTOM_UNWIND;
+}
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
     jint _api_level) {
