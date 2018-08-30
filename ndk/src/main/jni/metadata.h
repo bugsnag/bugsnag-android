@@ -5,30 +5,14 @@
 #include "report.h"
 
 /**
- * Load cache of class/method references from the JNI environment.
- * Required for other population tasks.
+ * Load all app, device, user, and custom metadata from NativeInterface into a report
  */
-void bsg_populate_jni_cache(JNIEnv *env);
+void bsg_populate_report(JNIEnv *env, bugsnag_report *report);
 /**
- * Load app metadata from NativeInterface into a report
+ * Load custom metadata from NativeInterface into a report, optionally from an object.
+ * If metadata is not provided, load from NativeInterface
  */
-void bsg_populate_app_data(JNIEnv *env, bugsnag_report *report);
-/**
- * Load device metadata from NativeInterface into a report
- */
-void bsg_populate_device_data(JNIEnv *env, bugsnag_report *report);
-/**
- * Load user metadata from NativeInterface into a report
- */
-void bsg_populate_user_data(JNIEnv *env, bugsnag_report *report);
-/**
- * Load context from NativeInterface into a report
- */
-void bsg_populate_context(JNIEnv *env, bugsnag_report *report);
-/**
- * Load custom metadata from NativeInterface into a report
- */
-void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report);
+void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report, jobject metadata);
 
 /**
  * Parse as java.util.Map<String, String> to populate crumb metadata

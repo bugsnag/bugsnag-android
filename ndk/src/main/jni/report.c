@@ -1,6 +1,5 @@
 #include "report.h"
 #include "utils/string.h"
-#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -35,7 +34,7 @@ int bugsnag_report_add_metadata_value(bugsnag_report *report, char *section,
 void bugsnag_report_add_metadata_double(bugsnag_report *report, char *section,
                                         char *name, double value) {
   int index = bugsnag_report_add_metadata_value(report, section, name);
-  if (index > 0) {
+  if (index >= 0) {
     report->metadata.values[index].type = BSG_NUMBER_VALUE;
     report->metadata.values[index].double_value = value;
   }
@@ -44,7 +43,7 @@ void bugsnag_report_add_metadata_double(bugsnag_report *report, char *section,
 void bugsnag_report_add_metadata_string(bugsnag_report *report, char *section,
                                         char *name, char *value) {
   int index = bugsnag_report_add_metadata_value(report, section, name);
-  if (index > 0) {
+  if (index >= 0) {
     report->metadata.values[index].type = BSG_CHAR_VALUE;
     bsg_strncpy_safe(report->metadata.values[index].char_value, value,
                      sizeof(report->metadata.values[index].char_value));
@@ -54,7 +53,7 @@ void bugsnag_report_add_metadata_string(bugsnag_report *report, char *section,
 void bugsnag_report_add_metadata_bool(bugsnag_report *report, char *section,
                                       char *name, bool value) {
   int index = bugsnag_report_add_metadata_value(report, section, name);
-  if (index > 0) {
+  if (index >= 0) {
     report->metadata.values[index].type = BSG_BOOL_VALUE;
     report->metadata.values[index].bool_value = value;
   }

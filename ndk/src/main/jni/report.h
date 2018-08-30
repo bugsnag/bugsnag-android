@@ -77,7 +77,7 @@ typedef struct {
   char brand[64];
   int cpu_abi_count;
   bsg_cpu_abi cpu_abi[8];
-  long dpi;
+  int dpi;
   bool emulator;
   long free_memory;
   long free_disk;
@@ -230,7 +230,7 @@ typedef struct {
    * The number of frames used in the stacktrace. Must be less than
    * BUGSNAG_FRAMES_MAX.
    */
-  int frame_count;
+  ssize_t frame_count;
   /**
    * An ordered list of stack frames from the oldest to the most recent
    */

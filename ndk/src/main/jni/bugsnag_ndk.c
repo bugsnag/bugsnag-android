@@ -44,7 +44,6 @@ bsg_unwinder bsg_configured_unwind_style() {
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
     jint _api_level) {
-  bsg_populate_jni_cache(env);
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bugsnag_env->unwind_style = bsg_get_unwind_type((int)_api_level);
   bugsnag_env->report_header.big_endian =
@@ -58,11 +57,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   // populate metadata from Java layer
-  bsg_populate_app_data(env, &bugsnag_env->next_report);
-  bsg_populate_device_data(env, &bugsnag_env->next_report);
-  bsg_populate_user_data(env, &bugsnag_env->next_report);
-  bsg_populate_context(env, &bugsnag_env->next_report);
-  bsg_populate_metadata(env, &bugsnag_env->next_report);
+    bsg_populate_report(env, &bugsnag_env->next_report);
 
   // If set, save os build info to report info header
   if (strlen(bugsnag_env->next_report.device.os_build) > 0) {
@@ -375,7 +370,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   if (bsg_global_env == NULL)
     return;
   bsg_request_env_write_lock();
-  bsg_populate_metadata(env, &bsg_global_env->next_report);
+  bsg_populate_metadata(env, &bsg_global_env->next_report, metadata);
   bsg_release_env_write_lock();
 }
 
