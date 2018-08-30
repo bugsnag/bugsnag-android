@@ -79,8 +79,6 @@ typedef struct {
   bsg_cpu_abi cpu_abi[8];
   int dpi;
   bool emulator;
-  long free_memory;
-  long free_disk;
   char orientation[32];
   time_t time;
   char id[64];

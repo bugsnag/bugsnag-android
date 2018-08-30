@@ -181,12 +181,6 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     json_object_dotset_string(event, "device.orientation",
                               report->device.orientation);
     json_object_dotset_number(event, "device.dpi", report->device.dpi);
-    json_object_dotset_number(event, "device.freeMemory",
-                              report->device.free_memory);
-    // TODO: if freeDisk == 0, verify by rereading it at serialization time
-    // it might really be 0, but it may also have not been read.
-    json_object_dotset_number(event, "device.freeDisk",
-                              report->device.free_disk);
     json_object_dotset_number(event, "device.screenDensity",
                               report->device.screen_density);
     json_object_dotset_string(event, "device.screenResolution",
