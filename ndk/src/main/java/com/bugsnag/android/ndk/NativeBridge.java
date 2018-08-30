@@ -23,7 +23,7 @@ public class NativeBridge implements Observer {
 
     public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel);
     public static native void deliverReportAtPath(String filePath);
-    public static native void addBreadcrumb(String name, String type, Object metadata);
+    public static native void addBreadcrumb(String name, String type, String timestamp, Object metadata);
     public static native void addMetadataString(String tab, String key, String value);
     public static native void addMetadataDouble(String tab, String key, double value);
     public static native void addMetadataBoolean(String tab, String key, boolean value);
@@ -77,7 +77,7 @@ public class NativeBridge implements Observer {
             case ADD_BREADCRUMB:
                 if (arg instanceof Breadcrumb) {
                     Breadcrumb crumb = (Breadcrumb) arg;
-                    addBreadcrumb(crumb.getName(), crumb.getType().toString(), crumb.getMetadata());
+                    addBreadcrumb(crumb.getName(), crumb.getType().toString(), crumb.getTimestamp(), crumb.getMetadata());
                 }
                 break;
             case ADD_METADATA:

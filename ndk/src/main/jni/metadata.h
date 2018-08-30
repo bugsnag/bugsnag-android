@@ -26,12 +26,13 @@ void bsg_populate_user_data(JNIEnv *env, bugsnag_report *report);
  */
 void bsg_populate_context(JNIEnv *env, bugsnag_report *report);
 /**
- * Load breadcrumbs from NativeInterface into a report
- */
-void bsg_populate_breadcrumbs(JNIEnv *env, bugsnag_report *report);
-/**
  * Load custom metadata from NativeInterface into a report
  */
 void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report);
 
+/**
+ * Parse as java.util.Map<String, String> to populate crumb metadata
+ */
+void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
+                                 jobject metadata);
 #endif

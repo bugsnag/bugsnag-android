@@ -282,6 +282,7 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
         json_array_append_value(crumbs, crumb_val);
         bugsnag_breadcrumb breadcrumb = report->breadcrumbs[current_index];
         json_object_set_string(crumb, "name", breadcrumb.name);
+        json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
         json_object_set_string(crumb, "type",
                                bsg_crumb_type_string(breadcrumb.type));
 

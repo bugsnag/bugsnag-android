@@ -10,6 +10,7 @@
 #include "metadata.h"
 #include "report.h"
 #include "utils/serializer.h"
+#include "utils/string.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,13 +62,13 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bsg_populate_device_data(env, &bugsnag_env->next_report);
   bsg_populate_user_data(env, &bugsnag_env->next_report);
   bsg_populate_context(env, &bugsnag_env->next_report);
-  bsg_populate_breadcrumbs(env, &bugsnag_env->next_report);
   bsg_populate_metadata(env, &bugsnag_env->next_report);
 
   // If set, save os build info to report info header
   if (strlen(bugsnag_env->next_report.device.os_build) > 0) {
-    strcpy(&bugsnag_env->report_header.os_build,
-           bugsnag_env->next_report.device.os_build);
+      bsg_strncpy_safe(bugsnag_env->report_header.os_build,
+                       bugsnag_env->next_report.device.os_build,
+      sizeof(bugsnag_env->report_header.os_build));
   }
 
   (*env)->ReleaseStringUTFChars(env, _report_path, report_path);
@@ -79,7 +80,8 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
     JNIEnv *env, jobject _this, jstring _report_path) {
   const char *report_path = (*env)->GetStringUTFChars(env, _report_path, 0);
-  bugsnag_report *report = bsg_deserialize_report_from_file((char *)report_path);
+  bugsnag_report *report =
+      bsg_deserialize_report_from_file((char *)report_path);
 
   if (report != NULL) {
     char *payload = bsg_serialize_report_to_json_string(report);
@@ -117,11 +119,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
     JNIEnv *env, jstring session_id_, jlong start_date_) {
   if (bsg_global_env == NULL)
     return;
-  const char *session_id = (*env)->GetStringUTFChars(env, session_id_, 0);
+  char *session_id = (char *)(*env)->GetStringUTFChars(env, session_id_, 0);
   bsg_request_env_write_lock();
-  strcpy(bsg_global_env->next_report.session_id, session_id);
-  bsg_global_env->next_report.session_start = (long)start_date_;
-  bsg_global_env->next_report.handled_events = 0;
+  bugsnag_report_start_session(&bsg_global_env->next_report, session_id,
+                               (long)start_date_);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, session_id_, session_id);
 }
@@ -138,17 +139,42 @@ Java_com_bugsnag_android_ndk_NativeBridge_clearBreadcrumbs(JNIEnv *env,
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
     JNIEnv *env, jobject _this, jstring name_, jstring crumb_type,
-    jobject metadata) {
+    jstring timestamp_, jobject metadata) {
   if (bsg_global_env == NULL)
     return;
   const char *name = (*env)->GetStringUTFChars(env, name_, 0);
   const char *type = (*env)->GetStringUTFChars(env, crumb_type, 0);
+  const char *timestamp = (*env)->GetStringUTFChars(env, timestamp_, 0);
+  bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
+  strncpy(crumb->name, name, sizeof(crumb->name));
+  strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
+  if (strcmp(type, "user") == 0) {
+    crumb->type = BSG_CRUMB_USER;
+  } else if (strcmp(type, "error") == 0) {
+    crumb->type = BSG_CRUMB_ERROR;
+  } else if (strcmp(type, "log") == 0) {
+    crumb->type = BSG_CRUMB_LOG;
+  } else if (strcmp(type, "navigation") == 0) {
+    crumb->type = BSG_CRUMB_NAVIGATION;
+  } else if (strcmp(type, "request") == 0) {
+    crumb->type = BSG_CRUMB_REQUEST;
+  } else if (strcmp(type, "state") == 0) {
+    crumb->type = BSG_CRUMB_STATE;
+  } else if (strcmp(type, "process") == 0) {
+    crumb->type = BSG_CRUMB_PROCESS;
+  } else {
+    crumb->type = BSG_CRUMB_MANUAL;
+  }
 
+  bsg_populate_crumb_metadata(env, crumb, metadata);
   bsg_request_env_write_lock();
+  bugsnag_report_add_breadcrumb(&bsg_global_env->next_report, crumb);
   bsg_release_env_write_lock();
 
+  free(crumb);
   (*env)->ReleaseStringUTFChars(env, name_, name);
   (*env)->ReleaseStringUTFChars(env, crumb_type, type);
+  (*env)->ReleaseStringUTFChars(env, timestamp_, timestamp);
 }
 
 JNIEXPORT void JNICALL
@@ -157,12 +183,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
                                                            jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  if (value == NULL) {
-
-  } else {
-  }
+  bugsnag_report_set_app_version(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -173,8 +196,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateBuildUUID(JNIEnv *env,
                                                           jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
+  bugsnag_report_set_build_uuid(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -183,8 +207,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateContext(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
+  bugsnag_report_set_context(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -206,6 +231,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
   if (bsg_global_env == NULL)
     return;
   bsg_request_env_write_lock();
+  bsg_global_env->next_report.app.low_memory = (bool)new_value;
   bsg_release_env_write_lock();
 }
 
@@ -215,8 +241,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
                                                             jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
+  bugsnag_report_set_orientation(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -226,8 +253,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateReleaseStage(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
+  bugsnag_report_set_release_stage(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -236,9 +264,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  strncpy(bsg_global_env->next_report.user.id, value, sizeof(char) * 64);
+  bugsnag_report_set_user_id(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -247,9 +275,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserName(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  strncpy(bsg_global_env->next_report.user.name, value, sizeof(char) * 64);
+  bugsnag_report_set_user_name(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -260,9 +288,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateUserEmail(JNIEnv *env,
                                                           jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  const char *value = (*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  strncpy(bsg_global_env->next_report.user.email, value, sizeof(char) * 64);
+  bugsnag_report_set_user_email(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -272,12 +300,12 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataString(
     JNIEnv *env, jobject _this, jstring tab_, jstring key_, jstring value_) {
   if (bsg_global_env == NULL)
     return;
-  const char *tab = (*env)->GetStringUTFChars(env, tab_, 0);
-  const char *key = (*env)->GetStringUTFChars(env, key_, 0);
-  const char *value = (*env)->GetStringUTFChars(env, value_, 0);
+  char *tab = (char *)(*env)->GetStringUTFChars(env, tab_, 0);
+  char *key = (char *)(*env)->GetStringUTFChars(env, key_, 0);
+  char *value = (char *)(*env)->GetStringUTFChars(env, value_, 0);
   bsg_request_env_write_lock();
-  bugsnag_report_add_metadata_string(&bsg_global_env->next_report, (char *)tab, (char *)key,
-                                     (char *)value);
+  bugsnag_report_add_metadata_string(&bsg_global_env->next_report, tab,
+                                     key, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, tab_, tab);
   (*env)->ReleaseStringUTFChars(env, key_, key);
@@ -289,10 +317,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataDouble(
     JNIEnv *env, jobject _this, jstring tab_, jstring key_, jdouble value_) {
   if (bsg_global_env == NULL)
     return;
-  const char *tab = (*env)->GetStringUTFChars(env, tab_, 0);
-  const char *key = (*env)->GetStringUTFChars(env, key_, 0);
+  char *tab = (char *)(*env)->GetStringUTFChars(env, tab_, 0);
+  char *key = (char *)(*env)->GetStringUTFChars(env, key_, 0);
   bsg_request_env_write_lock();
-  bugsnag_report_add_metadata_double(&bsg_global_env->next_report, (char *)tab, (char *)key,
+  bugsnag_report_add_metadata_double(&bsg_global_env->next_report, tab, key,
                                      (double)value_);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, tab_, tab);
@@ -304,10 +332,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataBoolean(
     JNIEnv *env, jobject _this, jstring tab_, jstring key_, jboolean value_) {
   if (bsg_global_env == NULL)
     return;
-  const char *tab = (*env)->GetStringUTFChars(env, tab_, 0);
-  const char *key = (*env)->GetStringUTFChars(env, key_, 0);
+  char *tab = (char *)(*env)->GetStringUTFChars(env, tab_, 0);
+  char *key = (char *)(*env)->GetStringUTFChars(env, key_, 0);
   bsg_request_env_write_lock();
-  bugsnag_report_add_metadata_bool(&bsg_global_env->next_report, (char *)tab, (char *)key,
+  bugsnag_report_add_metadata_bool(&bsg_global_env->next_report, tab, key,
                                    (bool)value_);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, tab_, tab);
@@ -320,19 +348,22 @@ Java_com_bugsnag_android_ndk_NativeBridge_clearMetadataTab(JNIEnv *env,
                                                            jstring tab_) {
   if (bsg_global_env == NULL)
     return;
+  char *tab = (char *)(*env)->GetStringUTFChars(env, tab_, 0);
   bsg_request_env_write_lock();
+  bugsnag_report_remove_metadata_tab(&bsg_global_env->next_report, tab);
   bsg_release_env_write_lock();
+  (*env)->ReleaseStringUTFChars(env, tab_, tab);
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_removeMetadata(
     JNIEnv *env, jobject _this, jstring tab_, jstring key_) {
   if (bsg_global_env == NULL)
     return;
-  const char *tab = (*env)->GetStringUTFChars(env, tab_, 0);
-  const char *key = (*env)->GetStringUTFChars(env, key_, 0);
+  char *tab = (char *)(*env)->GetStringUTFChars(env, tab_, 0);
+  char *key = (char *)(*env)->GetStringUTFChars(env, key_, 0);
 
   bsg_request_env_write_lock();
-  bugsnag_report_remove_metadata(&bsg_global_env->next_report, (char *)tab, (char *)key);
+  bugsnag_report_remove_metadata(&bsg_global_env->next_report, tab, key);
   bsg_release_env_write_lock();
 
   (*env)->ReleaseStringUTFChars(env, tab_, tab);

@@ -244,7 +244,7 @@ typedef struct {
 
 typedef struct {
   char name[33];
-  time_t timestamp;
+  char timestamp[37];
   bsg_breadcrumb_t type;
 
   /**
@@ -288,6 +288,17 @@ void bugsnag_report_add_metadata_bool(bugsnag_report *report, char *section, cha
 void bugsnag_report_add_breadcrumb(bugsnag_report *report, bugsnag_breadcrumb *crumb);
 void bugsnag_report_clear_breadcrumbs(bugsnag_report *report);
 void bugsnag_report_remove_metadata(bugsnag_report *report, char *section, char *name);
+void bugsnag_report_remove_metadata_tab(bugsnag_report *report, char *section);
+void bugsnag_report_set_context(bugsnag_report *report, char *value);
+void bugsnag_report_set_orientation(bugsnag_report *report, char *value);
+void bugsnag_report_set_app_version(bugsnag_report *report, char *value);
+void bugsnag_report_set_build_uuid(bugsnag_report *report, char *value);
+void bugsnag_report_set_release_stage(bugsnag_report *report, char *value);
+void bugsnag_report_set_user_email(bugsnag_report *report, char *value);
+void bugsnag_report_set_user_id(bugsnag_report *report, char *value);
+void bugsnag_report_set_user_name(bugsnag_report *report, char *value);
+void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
+                                  long started_at);
 #ifdef __cplusplus
 }
 #endif
