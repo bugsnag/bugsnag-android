@@ -13,16 +13,24 @@ android {
     defaultConfig {
         // Note minSdkVersion must be >=21 for 64 bit architectures
         minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'armeabi', 'x86', 'x86_64'
         }
         consumerProguardFiles 'proguard-rules.pro'
     }
 
-
     externalNativeBuild {
         cmake {
             path 'CMakeLists.txt'
+        }
+    }
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+            outputs.upToDateWhen {false}
+            showStandardStreams = true
+            info.events = ['passed', 'skipped', 'failed', 'standardOut', 'standardError']
         }
     }
 }
@@ -31,6 +39,15 @@ dependencies {
     implementation project(':sdk')
     api "com.android.support:support-annotations:$supportLibVersion"
     testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "com.android.support.test:runner:$supportTestVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestImplementation "com.android.support.test:rules:$supportTestVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }
 
 apply from: "../checkstyle.gradle"

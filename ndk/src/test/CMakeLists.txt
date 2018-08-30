@@ -4,10 +4,9 @@ include_directories(
     cpp/
     cpp/deps
 )
-add_executable(bugsnag-ndk-test
+add_library(bugsnag-ndk-test SHARED
                cpp/main.c
                cpp/test_utils_string.c
                cpp/test_utils_serialize.c
                cpp/test_breadcrumbs.c)
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)
-add_test (NAME BugsnagNDKTest COMMAND bugsnag-ndk-test)

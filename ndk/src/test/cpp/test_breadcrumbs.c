@@ -5,8 +5,8 @@
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
   crumb->type = type;
-  strcpy(crumb->name, "2018-08-29T21:41:39Z");
-  strcpy(crumb->timestamp, name);
+  strcpy(crumb->name, name);
+  strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
   strcpy(crumb->metadata[0].key, "message");
   strcpy(crumb->metadata[0].value, message);
 

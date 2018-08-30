@@ -2,7 +2,7 @@
 #include <utils/serializer.h>
 #include <stdlib.h>
 
-#define SERIALIZE_TEST_FILE "foo.crash"
+#define SERIALIZE_TEST_FILE "/sdcard/foo.crash"
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type);
 
