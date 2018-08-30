@@ -112,7 +112,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
     JNIEnv *env, jstring session_id_, jlong start_date_) {
-  if (bsg_global_env == NULL)
+  if (bsg_global_env == NULL || session_id_ == NULL)
     return;
   char *session_id = (char *)(*env)->GetStringUTFChars(env, session_id_, 0);
   bsg_request_env_write_lock();
@@ -178,7 +178,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
                                                            jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_app_version(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
@@ -191,7 +191,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateBuildUUID(JNIEnv *env,
                                                           jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_build_uuid(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
@@ -202,7 +202,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateContext(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_context(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
@@ -236,7 +236,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
                                                             jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_orientation(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
@@ -248,7 +248,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateReleaseStage(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_release_stage(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
@@ -259,7 +259,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_user_id(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
@@ -270,7 +270,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserName(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_user_name(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
@@ -283,7 +283,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateUserEmail(JNIEnv *env,
                                                           jstring new_value) {
   if (bsg_global_env == NULL)
     return;
-  char *value = (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+  char *value = new_value == NULL ? NULL : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_report_set_user_email(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();

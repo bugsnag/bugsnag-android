@@ -44,6 +44,8 @@ void bsg_strncpy_safe(char *dst, char *src, int dst_size) {
   if (dst_size == 0)
     return;
   dst[0] = '\0';
-  strncat(dst, src, dst_size - 1);
+    if (src != NULL) {
+        strncat(dst, src, dst_size - 1);
+    }
 }
 

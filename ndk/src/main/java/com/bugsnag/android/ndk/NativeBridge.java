@@ -125,14 +125,14 @@ public class NativeBridge implements Observer {
                 break;
             case UPDATE_APP_VERSION:
                 if (arg instanceof String) {
-                    updateAppVersion((String)arg);
+                    updateAppVersion(arg == null ? "" : (String)arg);
                 }
                 break;
             case UPDATE_BUILD_UUID:
-                updateBuildUUID((String)arg);
+                updateBuildUUID(arg == null ? "" : (String)arg);
                 break;
             case UPDATE_CONTEXT:
-                updateContext((String)arg);
+                updateContext(arg == null ? "" : (String)arg);
                 break;
             case UPDATE_IN_FOREGROUND:
                 if (arg instanceof Boolean) {
@@ -151,7 +151,7 @@ public class NativeBridge implements Observer {
                 break;
             case UPDATE_ORIENTATION:
                 if (arg instanceof String) {
-                    updateOrientation((String)arg);
+                    updateOrientation(arg == null ? "" : (String)arg);
                 }
                 break;
             case UPDATE_RELEASE_STAGE:
@@ -160,13 +160,13 @@ public class NativeBridge implements Observer {
                 }
                 break;
             case UPDATE_USER_ID:
-                updateUserId((String)arg);
+                updateUserId(arg == null ? "" : (String)arg);
                 break;
             case UPDATE_USER_NAME:
-                updateUserName((String)arg);
+                updateUserName(arg == null ? "" : (String)arg);
                 break;
             case UPDATE_USER_EMAIL:
-                updateUserEmail((String)arg);
+                updateUserEmail(arg == null ? "" : (String)arg);
                 break;
         }
     }
