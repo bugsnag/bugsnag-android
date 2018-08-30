@@ -29,8 +29,6 @@ struct bsg_unwind_config {
   void *cork_release_my_map_info_list;
   void *cork_get_backtrace_symbols;
   void *cork_free_backtrace_symbols;
-  backtrace_frame_t frames[BUGSNAG_FRAMES_MAX];
-  backtrace_symbol_t symbols[BUGSNAG_FRAMES_MAX];
 };
 
 static struct bsg_unwind_config *bsg_global_unwind_cfg;
@@ -65,6 +63,8 @@ bool bsg_configure_libcorkscrew(void) {
 ssize_t
 bsg_unwind_stack_libcorkscrew(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
                               siginfo_t *info, void *user_context) {
+    backtrace_frame_t frames[BUGSNAG_FRAMES_MAX];
+    backtrace_symbol_t symbols[BUGSNAG_FRAMES_MAX];
   map_info_t *(*acquire_my_map_info_list)(void) =
       bsg_global_unwind_cfg->cork_acquire_my_map_info_list;
   ssize_t (*unwind_backtrace_signal_arch)(
@@ -80,16 +80,15 @@ bsg_unwind_stack_libcorkscrew(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
 
   map_info_t *const info_list = acquire_my_map_info_list();
   ssize_t size = unwind_backtrace_signal_arch(info, user_context, info_list,
-                                              bsg_global_unwind_cfg->frames, 0,
+                                              frames, 0,
                                               (size_t)BUGSNAG_FRAMES_MAX);
   release_my_map_info_list(info_list);
 
-  get_backtrace_symbols(bsg_global_unwind_cfg->frames, (size_t)size,
-                        bsg_global_unwind_cfg->symbols);
+  get_backtrace_symbols(frames, (size_t)size, symbols);
   int frame_count = 0;
   for (int i = 0; i < size; i++) {
-    backtrace_frame_t backtrace_frame = bsg_global_unwind_cfg->frames[i];
-    backtrace_symbol_t backtrace_symbol = bsg_global_unwind_cfg->symbols[i];
+    backtrace_frame_t backtrace_frame = frames[i];
+    backtrace_symbol_t backtrace_symbol = symbols[i];
 
     if ((void *)backtrace_frame.absolute_pc == NULL) {
       continue; // nobody's home
@@ -105,8 +104,7 @@ bsg_unwind_stack_libcorkscrew(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
     stacktrace[frame_count].frame_address = backtrace_frame.absolute_pc;
     frame_count++;
   }
-  // TODO: do this conditionally when its safe
-  // free_backtrace_symbols(symbols, (size_t)size);
+  free_backtrace_symbols(symbols, (size_t)size);
 
   return frame_count;
 }
