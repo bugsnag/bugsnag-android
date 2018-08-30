@@ -91,6 +91,8 @@ public class NativeBridge implements Observer {
                         } else if (values.get(2) instanceof Number) {
                             addMetadataDouble((String) values.get(0), (String) values.get(1), ((Number) values.get(2)).doubleValue());
                         }
+                    } else if (values.size() == 2) {
+                        removeMetadata((String)values.get(0), (String)values.get(1));
                     }
                 }
                 break;
