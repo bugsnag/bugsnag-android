@@ -63,3 +63,53 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.21"
     implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
 }
+
+// Install CMake dependencies without an additional network request for the plugin
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
+
+class BugsnagTestNdkSetupTask extends DefaultTask {
+
+    BugsnagTestNdkSetupTask() {
+        super()
+        this.description = "Copies shared object files from the bugsnag-android AAR to the required build directory"
+    }
+
+    @TaskAction
+    void setupNdkProject() {
+        def configs = project.configurations.findAll {
+            it.toString().contains('CompileClasspath')
+        }.each { config ->
+            def artifactFile = config.resolvedConfiguration.getFiles().find {
+                it.toString().contains("bugsnag-android-ndk")
+            }
+            if (artifactFile) {
+                File buildDir = project.buildDir
+                File dst = new File(buildDir, "/intermediates/bugsnag-libs")
+
+                project.copy {
+                    from project.zipTree(artifactFile)
+                    into(project.file(dst))
+                }
+            }
+        }
+    }
+
+}
+
+project.afterEvaluate {
+    def cleanTasks = project.tasks.findAll {
+        it.name.startsWith("externalNative") && it.name.contains("Clean")
+    }
+    def buildTasks = project.tasks.findAll {
+        it.name.startsWith("externalNative") && !it.name.contains("Clean")
+    }
+
+    def ndkSetupTask = project.tasks.create("bugsnagInstallAllJniLibsTask", BugsnagTestNdkSetupTask)
+
+    buildTasks.forEach {
+        ndkSetupTask.mustRunAfter(cleanTasks)
+        it.dependsOn ndkSetupTask
+        it.doFirst { ndkSetupTask }
+    }
+}
