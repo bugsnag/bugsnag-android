@@ -133,9 +133,9 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
   {
     json_object_set_string(event, "severity",
                            bsg_severity_string(report->severity));
-    // TODO: severityReason/unhandled attributes are currently over-optimized for signal
-    // handling. in the future we may want to handle C++ exceptions, etc as
-    // well.
+    // FUTURE(dm): severityReason/unhandled attributes are currently
+    // over-optimized for signal handling. in the future we may want to handle
+    // C++ exceptions, etc as well.
     json_object_dotset_boolean(event, "unhandled", true);
     json_object_dotset_string(event, "severityReason.type", "signal");
     json_object_dotset_string(event, "severityReason.attributes.signalType",
@@ -259,7 +259,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
       }
       if (strlen(stackframe.method) == 0) {
         char *frame_address = malloc(sizeof(char) * 32);
-        sprintf(frame_address, "0x%lx", (unsigned long)stackframe.frame_address);
+        sprintf(frame_address, "0x%lx",
+                (unsigned long)stackframe.frame_address);
         json_object_set_string(frame, "method", frame_address);
         free(frame_address);
       } else {
