@@ -170,12 +170,12 @@ TEST test_report_breadcrumbs_to_json(void) {
   JSON_Object *crumb2 = json_array_get_object(breadcrumbs, 1);
   ASSERT(strcmp("decrease torque", json_object_get_string(crumb1, "name")) == 0);
   ASSERT(strcmp("state", json_object_get_string(crumb1, "type")) == 0);
-  ASSERT_EQ(1, json_object_get_count(json_object_get_object(crumb1, "metadata")));
-  ASSERT(strcmp("Moving laterally 26º", json_object_get_string(json_object_get_object(crumb1, "metadata"), "message")) == 0);
+  ASSERT_EQ(1, json_object_get_count(json_object_get_object(crumb1, "metaData")));
+  ASSERT(strcmp("Moving laterally 26º", json_object_get_string(json_object_get_object(crumb1, "metaData"), "message")) == 0);
   ASSERT(strcmp("enable blasters", json_object_get_string(crumb2, "name")) == 0);
   ASSERT(strcmp("user", json_object_get_string(crumb2, "type")) == 0);
-  ASSERT_EQ(1, json_object_get_count(json_object_get_object(crumb2, "metadata")));
-  ASSERT(strcmp("this is a drill.", json_object_get_string(json_object_get_object(crumb2, "metadata"), "message")) == 0);
+  ASSERT_EQ(1, json_object_get_count(json_object_get_object(crumb2, "metaData")));
+  ASSERT(strcmp("this is a drill.", json_object_get_string(json_object_get_object(crumb2, "metaData"), "message")) == 0);
   json_value_free(root_value);
   PASS();
 }

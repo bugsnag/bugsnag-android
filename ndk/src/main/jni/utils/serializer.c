@@ -288,7 +288,7 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
 
         JSON_Value *meta_val = json_value_init_object();
         JSON_Object *meta = json_value_get_object(meta_val);
-        json_object_set_value(crumb, "metadata", meta_val);
+        json_object_set_value(crumb, "metaData", meta_val);
         int metadata_index = 0;
         while (strlen(breadcrumb.metadata[metadata_index].key) > 0) {
           json_object_set_string(meta, breadcrumb.metadata[metadata_index].key,
