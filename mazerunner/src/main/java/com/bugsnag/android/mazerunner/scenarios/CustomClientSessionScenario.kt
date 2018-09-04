@@ -1,7 +1,10 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.*
+import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
+import com.bugsnag.android.createCustomHeaderDelivery
+import com.bugsnag.android.flushAllSessions
 
 /**
  * Sends a session using a custom API client which modifies the request.
