@@ -146,6 +146,7 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] On a throttled network, is the request timeout reasonable, and the main thread not blocked by any visible UI freeze? (Throttling can be achieved by setting both endpoints to "https://httpstat.us/200?sleep=5000")
   - [ ] Are queued reports sent asynchronously?
 - [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/bugsnag-website/tree/master/app/views/dashboard/projects/install) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
+- [ ] Do the installation instructions work for a manual integration?
 
 ### Making the release
 
