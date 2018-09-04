@@ -2,12 +2,18 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.os.Handler
+import android.os.HandlerThread
 
 /**
  * Accesses the session tracker and flushes all stored sessions
  */
-internal fun flushAllSessions() {
-    Bugsnag.getClient().sessionTracker.flushStoredSessions()
+internal fun flushAllSessions(client: Client) {
+    val thread = HandlerThread("HandlerThread")
+    thread.start()
+    Handler(thread.looper).post {
+        client.sessionTracker.flushStoredSessions()
+    }
 }
 
 internal fun flushErrorStoreAsync(client: Client) {
