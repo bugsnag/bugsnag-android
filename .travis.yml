@@ -1,4 +1,6 @@
 language: android
+cache: bundler
+rvm: 2.3.7
 
 android:
   components:
@@ -14,20 +16,23 @@ android:
     - sys-img-armeabi-v7a-android-19
     - sys-img-armeabi-v7a-android-21
 
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.android/build-cache
+matrix:
+  include:
+    - env:
+      - ANDROID_TARGET=android-16
+      - ANDROID_ABI=armeabi-v7a
+    - env:
+      - ANDROID_TARGET=android-19
+      - ANDROID_ABI=armeabi-v7a
+    - env:
+      - ANDROID_TARGET=android-21
+      - ANDROID_ABI=armeabi-v7a
+    - env:
+      - ANDROID_TARGET=android-21
+      - ANDROID_ABI=armeabi-v7a
+      script: bundle exec maze-runner -c
 
 env:
-  matrix:
-    - ANDROID_TARGET=android-16 ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
   global:
     - ADB_INSTALL_TIMEOUT=5 # increase from default of 2 mins
 
@@ -37,6 +42,8 @@ before_install:
   - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
   # see https://github.com/travis-ci/travis-ci/issues/8874
   - yes | sdkmanager "platforms;android-27"
+  - gem install bundler
+  - bundle install
 
 before_script:
   # Create and start emulator
@@ -53,6 +60,15 @@ script: ./gradlew lint checkstyle createDebugCoverageReport coveralls
 sudo: false
 
 before_deploy: ./gradlew javadoc
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
 
 deploy:
   provider: pages
