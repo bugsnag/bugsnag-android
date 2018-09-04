@@ -15,7 +15,7 @@ internal class ManualSessionScenario(config: Configuration,
         super.run()
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
         Bugsnag.startSession()
-        flushAllSessions()
+        flushAllSessions(Bugsnag.getClient())
     }
 
 }

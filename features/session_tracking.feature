@@ -20,7 +20,7 @@ Scenario: Test cached Session sends
 
     When I force stop the "com.bugsnag.android.mazerunner" Android app
     And I set environment variable "EVENT_TYPE" to "Wait"
-    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
+    And I relaunch the app
     Then I should receive a request
 
     And the request is a valid for the session tracking API
