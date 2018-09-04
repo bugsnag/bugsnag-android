@@ -25,8 +25,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.concurrent.NotThreadSafe;
-
 /**
  * Writes a JSON (<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)
  * encoded value to a stream, one token at a time. The stream includes both
@@ -126,7 +124,6 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @since 1.6
  */
 @SuppressWarnings({"checkstyle:AvoidEscapedUnicodeCharacters", "checkstyle:IllegalTokenText"})
-@NotThreadSafe
 public class JsonWriter implements Closeable {
 
     /**

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;

@@ -11,9 +11,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 
-import javax.annotation.concurrent.NotThreadSafe;
-
-@NotThreadSafe
 public class JsonStream extends JsonWriter {
 
     private final ObjectJsonStreamer objectJsonStreamer;
