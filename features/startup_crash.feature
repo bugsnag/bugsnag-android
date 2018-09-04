@@ -10,5 +10,5 @@ Scenario: 1 startup crash and 1 regular crash persisted
 
     When I force stop the "com.bugsnag.android.mazerunner" Android app
     And I set environment variable "EVENT_TYPE" to "Wait"
-    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
+    And I relaunch the app
     Then I should receive 2 requests

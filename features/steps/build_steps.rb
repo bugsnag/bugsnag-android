@@ -1,5 +1,6 @@
+wait_time = RUNNING_CI ? '30' : '1'
+
 When("I run {string} with the defaults") do |eventType|
-  wait_time = RUNNING_CI ? '30' : '1'
   steps %Q{
     When I start Android emulator "newnexus"
     And I install the "com.bugsnag.android.mazerunner" Android app from "mazerunner/build/outputs/apk/release/mazerunner-release.apk"
@@ -12,8 +13,11 @@ When("I run {string} with the defaults") do |eventType|
 end
 
 When("I relaunch the app") do
-  step('I force stop the "com.bugsnag.android.mazerunner" Android app')
-  step('I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity')
+  steps %Q{
+    When I force stop the "com.bugsnag.android.mazerunner" Android app
+    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
+    And I wait for #{wait_time} seconds
+  }
 end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
