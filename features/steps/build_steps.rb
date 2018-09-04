@@ -1,4 +1,4 @@
-wait_time = RUNNING_CI ? '30' : '1'
+wait_time = RUNNING_CI ? '15' : '1'
 
 When("I run {string} with the defaults") do |eventType|
   steps %Q{
