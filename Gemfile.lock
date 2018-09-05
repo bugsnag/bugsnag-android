@@ -1,6 +1,6 @@
 GIT
-  remote: git@github.com:bugsnag/maze-runner
-  revision: 177f27da9966aed2cb87687fa8384d6141d2fa05
+  remote: https://github.com/bugsnag/maze-runner
+  revision: 24f53756011b1247a166b70fe65ddf1c40b4fc89
   specs:
     bugsnag-maze-runner (1.0.0)
       cucumber (~> 3.1.0)
@@ -13,7 +13,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    backports (3.11.3)
+    backports (3.11.4)
     builder (3.2.3)
     coderay (1.1.2)
     cucumber (3.1.0)
@@ -55,4 +55,4 @@ DEPENDENCIES
   pry
 
 BUNDLED WITH
-   1.16.1
+   1.16.2
