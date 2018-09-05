@@ -40,6 +40,19 @@ Here’s a bit about our process designing and building the Bugsnag libraries:
 * Our open source libraries span many languages and frameworks so we strive to ensure they are idiomatic on the given platform, but also consistent in terminology between platforms. That way the core concepts are familiar whether you adopt Bugsnag for one platform or many.
 * Finally, one of our goals is to ensure our libraries work reliably, even in crashy, multi-threaded environments. Oftentimes, this requires an intensive engineering design and code review process that adheres to our style and linting guidelines.
 
+### Updating dependencies
+
+Most dependencies are controlled by the module-level gradle files, however
+running the NDK C/C++ components also depends on
+[`greatest`](https://github.com/silentbicycle/greatest) and [`parson`](https://github.com/kgabis/parson), managed by [clib](https://github.com/clibs/clib).
+Both libraries are vendored into the repository and clib is not required unless
+updating the dependencies.
+
+To update a clib dependency, reinstall it. For example, using parson:
+
+    clib install kgabis/parson -o src/test/cpp/deps --save
+
+
 Installing the Android SDK
 --------------------------
 
