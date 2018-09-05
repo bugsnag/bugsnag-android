@@ -193,6 +193,27 @@ public class ObserverInterfaceTest {
     }
 
     @Test
+    public void testClientSetUserId() {
+        client.setUserId("personX");
+        String value = (String)findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_ID, String.class); // resets to device ID
+        assertEquals("personX", value);
+    }
+
+    @Test
+    public void testClientSetUserEmail() {
+        client.setUserEmail("bip@example.com");
+        String value = (String)findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_EMAIL, String.class); // resets to device ID
+        assertEquals("bip@example.com", value);
+    }
+
+    @Test
+    public void testClientSetUserName() {
+        client.setUserName("Loblaw");
+        String value = (String)findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_NAME, String.class); // resets to device ID
+        assertEquals("Loblaw", value);
+    }
+
+    @Test
     public void testClientClearUserSendsMessage() {
         client.clearUser();
         findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_ID, String.class); // resets to device ID
