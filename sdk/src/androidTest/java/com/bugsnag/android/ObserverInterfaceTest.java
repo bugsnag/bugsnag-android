@@ -26,7 +26,6 @@ public class ObserverInterfaceTest {
     private Configuration config;
     private Client client;
     private BugsnagTestObserver observer;
-    private CountDownLatch lock = new CountDownLatch(1);
 
     /**
      * Configures a new AppData for testing accessors + serialisation
@@ -36,15 +35,7 @@ public class ObserverInterfaceTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("some-api-key");
-        config.setDelivery(new Delivery() {
-            @Override
-            public void deliver(SessionTrackingPayload payload, Configuration config) throws DeliveryFailureException {
-            }
-
-            @Override
-            public void deliver(Report report, Configuration config) throws DeliveryFailureException {
-            }
-        });
+        config.setDelivery(BugsnagTestUtils.generateDelivery());
         client = new Client(InstrumentationRegistry.getContext(), config);
         client.disableExceptionHandler();
         observer = new BugsnagTestObserver();
