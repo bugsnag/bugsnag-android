@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
@@ -170,11 +171,13 @@ class ErrorStore extends FileStore<Error> {
         String suffix = "";
         if (object instanceof Error) {
             Error error = (Error) object;
-
-            Object duration = error.getAppData().get("duration");
-            if (duration instanceof Number
-                && isStartupCrash(((Number) error.getAppData().get("duration")).longValue())) {
-                suffix = STARTUP_CRASH;
+            Map<String, Object> appData = error.getAppData();
+            if (appData instanceof Map) {
+                Object duration = appData.get("duration");
+                if (duration instanceof Number
+                    && isStartupCrash(((Number) appData.get("duration")).longValue())) {
+                    suffix = STARTUP_CRASH;
+                }
             }
         } else {
             suffix = "not-jvm";
