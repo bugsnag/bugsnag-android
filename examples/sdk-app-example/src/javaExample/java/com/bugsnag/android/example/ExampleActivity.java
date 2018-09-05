@@ -30,7 +30,8 @@ public class ExampleActivity extends AppCompatActivity {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crashWithSIGBUS();
+    public native void doCrash();
+
     public native void notifyFromCXX();
 
     @Override
@@ -50,7 +51,7 @@ public class ExampleActivity extends AppCompatActivity {
         findViewById(R.id.btn_native_crash).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                crashWithSIGBUS();
+                doCrash();
             }
         });
     }

@@ -92,7 +92,7 @@ int crash_stack_overflow() {
     return 4;
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_example_ExampleActivity_crashWithSIGBUS(JNIEnv *env, jobject instance) {
+JNIEXPORT void JNICALL Java_com_bugsnag_android_example_ExampleActivity_doCrash(JNIEnv *env, jobject instance) {
     crash_write_read_only();
 }
 

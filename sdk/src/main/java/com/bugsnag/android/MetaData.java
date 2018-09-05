@@ -62,10 +62,14 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         setChanged();
         if (value != null) {
             tab.put(key, value);
-            notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.ADD_METADATA, Arrays.asList(tabName, key, value)));
+            notifyObservers(new NativeInterface.Message(
+                        NativeInterface.MessageType.ADD_METADATA,
+                        Arrays.asList(tabName, key, value)));
         } else {
             tab.remove(key);
-            notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.REMOVE_METADATA, Arrays.asList(tabName, key)));
+            notifyObservers(new NativeInterface.Message(
+                        NativeInterface.MessageType.REMOVE_METADATA,
+                        Arrays.asList(tabName, key)));
         }
     }
 
@@ -77,7 +81,8 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     public void clearTab(String tabName) {
         store.remove(tabName);
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.CLEAR_METADATA_TAB, tabName));
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.CLEAR_METADATA_TAB, tabName));
     }
 
     @NonNull

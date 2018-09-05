@@ -20,7 +20,8 @@ public class NativeInterface {
          */
         ADD_BREADCRUMB,
         /**
-         * Add a new metadata value. The Message object should be an array containing [tab, key, value]
+         * Add a new metadata value. The Message object should be an array
+         * containing [tab, key, value]
          */
         ADD_METADATA,
         /**
@@ -28,7 +29,8 @@ public class NativeInterface {
          */
         CLEAR_BREADCRUMBS,
         /**
-         * Clear all metadata on a tab. The Message object should be the tab name
+         * Clear all metadata on a tab. The Message object should be the tab
+         * name
          */
         CLEAR_METADATA_TAB,
         /**
@@ -40,19 +42,24 @@ public class NativeInterface {
          */
         NOTIFY_HANDLED,
         /**
-         * Remove a metadata value. The Message object should be a string array containing [tab, key]
+         * Remove a metadata value. The Message object should be a string array
+         * containing [tab, key]
          */
         REMOVE_METADATA,
         /**
-         * A new session was started. The Message object should be a string array containing [id, startDate]
+         * A new session was started. The Message object should be a string
+         * array
+         * containing [id, startDate]
          */
         START_SESSION,
         /**
-         * Set a new app version. The Message object should be the new app version
+         * Set a new app version. The Message object should be the new app
+         * version
          */
         UPDATE_APP_VERSION,
         /**
-         * Set a new build UUID. The Message object should be the new build UUID string
+         * Set a new build UUID. The Message object should be the new build
+         * UUID string
          */
         UPDATE_BUILD_UUID,
         /**
@@ -60,35 +67,43 @@ public class NativeInterface {
          */
         UPDATE_CONTEXT,
         /**
-         * Set a new value for `app.inForeground`. The message object should be a Boolean
+         * Set a new value for `app.inForeground`. The message object should be
+         * a Boolean
          */
         UPDATE_IN_FOREGROUND,
         /**
-         * Set a new value for `app.lowMemory`. The message object should be a Boolean
+         * Set a new value for `app.lowMemory`. The message object should be a
+         * Boolean
          */
         UPDATE_LOW_MEMORY,
         /**
-         * Set a new value for all custom metadata. The message object should be MetaData.
+         * Set a new value for all custom metadata. The message object should be
+         * MetaData.
          */
         UPDATE_METADATA,
         /**
-         * Set a new value for `device.orientation`. The message object should be the orientation
+         * Set a new value for `device.orientation`. The message object should
+         * be the orientation
          */
         UPDATE_ORIENTATION,
         /**
-         * Set a new value for `app.releaseStage`. The message object should be the new release stage
+         * Set a new value for `app.releaseStage`. The message object should be
+         * the new release stage
          */
         UPDATE_RELEASE_STAGE,
         /**
-         * Set a new value for user email. The message object is a string array containing [id, email, name]
+         * Set a new value for user email. The message object is a string array
+         * containing [id, email, name]
          */
         UPDATE_USER_EMAIL,
         /**
-         * Set a new value for user name. The message object is a string array containing [id, email, name]
+         * Set a new value for user name. The message object is a string array
+         * containing [id, email, name]
          */
         UPDATE_USER_NAME,
         /**
-         * Set a new value for user id. The message object is a string array containing [id, email, name]
+         * Set a new value for user id. The message object is a string array
+         * containing [id, email, name]
          */
         UPDATE_USER_ID,
     }
@@ -121,8 +136,13 @@ public class NativeInterface {
         }
     }
 
+    /**
+     * Caches a client instance for responding to future events
+     */
     public static void setClient(@NonNull Client client) {
-        if (NativeInterface.client == client) return;
+        if (NativeInterface.client == client) {
+            return;
+        }
         NativeInterface.client = client;
         configureClientObservers(client);
     }
@@ -158,6 +178,10 @@ public class NativeInterface {
         return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
     }
 
+    /**
+     * Retrieve user data from the static Client instance as a Map
+     */
+    @NonNull
     public static Map<String,String> getUserData() {
         HashMap<String, String> userData = new HashMap<>();
         User user = getClient().getUser();
@@ -168,21 +192,26 @@ public class NativeInterface {
         return userData;
     }
 
+    /**
+     * Retrieve app data from the static Client instance as a Map
+     */
+    @NonNull
     public static Map<String,Object> getAppData() {
         HashMap<String,Object> data = new HashMap<>();
         AppData source = getClient().getAppData();
         data.putAll(source.getAppData());
         data.putAll(source.getAppDataMetaData());
-        data.putAll(source.getAppDataSummary());
         return data;
     }
 
+    /**
+     * Retrieve device data from the static Client instance as a Map
+     */
     @NonNull
     public static Map<String,Object> getDeviceData() {
         HashMap<String,Object> deviceData = new HashMap<>();
         DeviceData source = getClient().getDeviceData();
         deviceData.putAll(source.getDeviceMetaData());
-        deviceData.putAll(source.getDeviceDataSummary());
         deviceData.putAll(source.getDeviceData()); // wat
         return deviceData;
     }
@@ -190,10 +219,6 @@ public class NativeInterface {
     @NonNull
     public static Map<String, Object> getMetaData() {
         return getClient().getMetaData().store;
-    }
-
-    public static Object[] getBreadcrumbs() {
-        return getClient().breadcrumbs.store.toArray();
     }
 
     /**
@@ -212,19 +237,34 @@ public class NativeInterface {
         getClient().setUserName(name);
     }
 
+    /**
+     * Leave a "breadcrumb" log message
+     */
     public static void leaveBreadcrumb(@NonNull final String name,
                                        @NonNull final BreadcrumbType type) {
         getClient().leaveBreadcrumb(name, type, new HashMap<String, String>());
     }
 
+    /**
+     * Add metadata to subsequent exception reports
+     */
     public static void addToTab(final String tab,
                                 final String key,
                                 final Object value) {
         getClient().addToTab(tab, key, value);
     }
 
+    /**
+     * Deliver a report, serialized as an event JSON payload.
+     *
+     * @param releaseStage The release stage in which the event was captured. Used to determin
+     *                     whether the report should be discarded, based on configured release
+     *                     stages
+     */
     public static void deliverReport(String releaseStage, String payload) {
-        if (releaseStage == null || releaseStage.length() == 0 || getClient().getConfig().shouldNotifyForReleaseStage(releaseStage)) {
+        if (releaseStage == null
+            || releaseStage.length() == 0
+            || getClient().getConfig().shouldNotifyForReleaseStage(releaseStage)) {
             getClient().getErrorStore().enqueueContentForDelivery(payload);
             getClient().getErrorStore().flushAsync();
         }

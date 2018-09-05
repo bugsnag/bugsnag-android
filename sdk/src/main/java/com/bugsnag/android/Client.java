@@ -239,7 +239,7 @@ public class Client extends Observable implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (arg instanceof Message) {
             setChanged();
             super.notifyObservers(arg);
@@ -826,7 +826,8 @@ public class Client extends Observable implements Observer {
             sessionTracker.incrementHandledError();
             if (sessionTracker.getCurrentSession() != null) {
                 setChanged();
-                notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
+                notifyObservers(new NativeInterface.Message(
+                            NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
             }
         }
 
@@ -1125,6 +1126,10 @@ public class Client extends Observable implements Observer {
         }
     }
 
+    /**
+     * Leave a "breadcrumb" log message, representing an action which occurred
+     * in your app, to aid with debugging.
+     */
     public void leaveBreadcrumb(@NonNull String name,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, String> metadata) {

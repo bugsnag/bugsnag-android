@@ -63,7 +63,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      * @param date the session start date
      * @param user the session user (if any)
      */
-    @Nullable Session startNewSession(@NonNull Date date, @Nullable User user, boolean autoCaptured) {
+    @Nullable Session startNewSession(@NonNull Date date, @Nullable User user,
+                                      boolean autoCaptured) {
         if (configuration.getSessionEndpoint() == null) {
             Logger.warn("The session tracking endpoint has not been set. "
                 + "Session tracking is disabled");
@@ -114,7 +115,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 sessionStore.write(session);
             }
             setChanged();
-            notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.START_SESSION, session));
+            notifyObservers(new NativeInterface.Message(
+                        NativeInterface.MessageType.START_SESSION, session));
         }
     }
 

@@ -38,7 +38,8 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
     void clear() {
         store.clear();
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null));
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.CLEAR_BREADCRUMBS, null));
     }
 
     private void addToStore(@NonNull Breadcrumb breadcrumb) {
@@ -50,7 +51,8 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
             store.add(breadcrumb);
             pruneBreadcrumbs();
             setChanged();
-            notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb));
+            notifyObservers(new NativeInterface.Message(
+                        NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb));
         } catch (IOException ex) {
             Logger.warn("Dropping breadcrumb because it could not be serialized", ex);
         }

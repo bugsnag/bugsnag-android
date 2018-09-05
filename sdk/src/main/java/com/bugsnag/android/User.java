@@ -60,7 +60,8 @@ class User extends Observable implements JsonStream.Streamable {
     public void setId(@Nullable String id) {
         this.id = id;
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_USER_ID, id));
+        notifyObservers(new NativeInterface.Message(
+                            NativeInterface.MessageType.UPDATE_USER_ID, id));
     }
 
     /**
@@ -79,7 +80,8 @@ class User extends Observable implements JsonStream.Streamable {
     public void setEmail(@Nullable String email) {
         this.email = email;
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_USER_EMAIL, email));
+        notifyObservers(new NativeInterface.Message(
+                            NativeInterface.MessageType.UPDATE_USER_EMAIL, email));
     }
 
     /**
@@ -98,6 +100,7 @@ class User extends Observable implements JsonStream.Streamable {
     public void setName(@Nullable String name) {
         this.name = name;
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_USER_NAME, name));
+        notifyObservers(new NativeInterface.Message(
+                            NativeInterface.MessageType.UPDATE_USER_NAME, name));
     }
 }

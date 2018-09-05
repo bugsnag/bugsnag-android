@@ -71,7 +71,10 @@ public class Configuration extends Observable implements Observer {
         this.metaData.addObserver(this);
     }
 
-    public void update(Observable o, Object arg) {
+    /**
+     * Respond to an update notification from observed objects, like MetaData
+     */
+    public void update(Observable observable, Object arg) {
         if (arg instanceof NativeInterface.Message) {
             setChanged();
             notifyObservers(arg);
@@ -106,7 +109,8 @@ public class Configuration extends Observable implements Observer {
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_APP_VERSION, appVersion));
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_APP_VERSION, appVersion));
     }
 
     /**
@@ -128,7 +132,8 @@ public class Configuration extends Observable implements Observer {
     public void setContext(String context) {
         this.context = context;
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_CONTEXT, context));
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_CONTEXT, context));
     }
 
     /**
@@ -234,7 +239,8 @@ public class Configuration extends Observable implements Observer {
     public void setBuildUUID(String buildUuid) {
         this.buildUuid = buildUuid;
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
     }
 
     /**
@@ -355,7 +361,8 @@ public class Configuration extends Observable implements Observer {
     public void setReleaseStage(String releaseStage) {
         this.releaseStage = releaseStage;
         setChanged();
-        notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_RELEASE_STAGE, releaseStage));
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_RELEASE_STAGE, releaseStage));
     }
 
     /**
@@ -440,7 +447,8 @@ public class Configuration extends Observable implements Observer {
             this.metaData = metaData;
         }
         this.setChanged();
-        this.notifyObservers(new NativeInterface.Message(NativeInterface.MessageType.UPDATE_METADATA, metaData));
+        this.notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_METADATA, metaData));
         this.metaData.addObserver(this);
     }
 
