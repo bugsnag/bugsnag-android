@@ -1,4 +1,5 @@
 # Configure app environment
+RUNNING_CI = ENV['TRAVIS'] == 'true'
 
 AVD_SPECS = [
   ["ARMv7a_API_14", "armeabi-v7a", "system-images;android-14;default;armeabi-v7a"],
