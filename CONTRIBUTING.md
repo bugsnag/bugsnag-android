@@ -111,7 +111,11 @@ Building the Example App
 You can build and install the example app to as follows:
 
 ```shell
-cd examples/sdk-app-example && ../../gradlew clean installJavaExampleDebug
+# First build the NDK:
+./gradlew ndk:assembleRelease
+
+# Then install the example app:
+./gradlew installJavaExampleDebug
 ```
 
 This builds the latest version of the library and installs an app onto your
