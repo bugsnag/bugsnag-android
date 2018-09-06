@@ -12,7 +12,7 @@ public class CXXStackoverflowScenario extends Scenario {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash();
+    public native void crash(int counter, String longText);
 
     public CXXStackoverflowScenario(@NotNull Configuration config, @NotNull Context context) {
         super(config, context);
@@ -25,6 +25,6 @@ public class CXXStackoverflowScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        crash();
+        crash(1209, "some moderately long text, longer than 7 characters at least.");
     }
 }

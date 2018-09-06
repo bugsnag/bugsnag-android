@@ -8,6 +8,9 @@ import com.bugsnag.android.Configuration;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
     static {
         System.loadLibrary("entrypoint");
@@ -22,7 +25,18 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
     @Override
     public void run() {
         super.run();
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
         Bugsnag.leaveBreadcrumb("Reverse thrusters");
-        activate();
+        Timer timer = new Timer(false);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                activate();
+            }
+        };
+        timer.schedule(timerTask, 100);
     }
 }

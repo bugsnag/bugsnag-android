@@ -12,7 +12,7 @@ public class CXXUseAfterFreeScenario extends Scenario {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash();
+    public native void crash(int counter);
 
     public CXXUseAfterFreeScenario(@NotNull Configuration config, @NotNull Context context) {
         super(config, context);
@@ -25,6 +25,6 @@ public class CXXUseAfterFreeScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        crash();
+        crash(23);
     }
 }

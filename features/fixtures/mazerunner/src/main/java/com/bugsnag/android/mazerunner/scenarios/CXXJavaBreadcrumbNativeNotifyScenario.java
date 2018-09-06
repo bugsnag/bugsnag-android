@@ -22,7 +22,12 @@ public class CXXJavaBreadcrumbNativeNotifyScenario extends Scenario {
     @Override
     public void run() {
         super.run();
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
         Bugsnag.leaveBreadcrumb("Initiate lift");
+        Bugsnag.leaveBreadcrumb("Disable lift");
         activate();
     }
 }

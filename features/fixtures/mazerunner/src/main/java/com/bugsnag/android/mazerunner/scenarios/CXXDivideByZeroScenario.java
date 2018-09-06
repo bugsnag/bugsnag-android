@@ -7,14 +7,14 @@ import com.bugsnag.android.Configuration;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CXXJavaUserInfoNativeCrashScenario extends Scenario {
+public class CXXDivideByZeroScenario extends Scenario {
     static {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash();
+    public native void crash(int counter);
 
-    public CXXJavaUserInfoNativeCrashScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXDivideByZeroScenario(@NotNull Configuration config, @NotNull Context context) {
         super(config, context);
     }
 
@@ -25,7 +25,6 @@ public class CXXJavaUserInfoNativeCrashScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        Bugsnag.setUser("9816734", "j@example.com", "J");
-        crash();
+        crash(0);
     }
 }

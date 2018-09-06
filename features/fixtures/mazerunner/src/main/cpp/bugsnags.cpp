@@ -6,48 +6,53 @@ extern "C" {
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXCustomMetadataNativeNotifyScenario_activate(JNIEnv *env,
                                                                          jobject instance) {
-  bugsnag_notify_env(env, "Oh no", "The mill is down", BSG_SEVERITY_INFO);
+  bugsnag_notify_env(env, (char *)"Twitter Overdose",
+                     (char *)"Turn off the internet and go outside", BSG_SEVERITY_INFO);
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNotifyScenario_activate(JNIEnv *env,
                                                                          jobject instance) {
-  bugsnag_notify_env(env, "Oh no", "The mill is down", BSG_SEVERITY_INFO);
+  bugsnag_notify_env(env, (char *)"Vitamin C deficiency",
+                     (char *)"9 out of 10 adults do not get their 5-a-day", BSG_SEVERITY_ERR);
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXBreadcrumbScenario_activate(JNIEnv *env,
                                                                              jobject instance) {
-  bugsnag_leave_breadcrumb_env(env, "Cold beans detected", BSG_CRUMB_LOG);
-  bugsnag_notify_env(env, "Oh no", "The mill is down", BSG_SEVERITY_INFO);
+  bugsnag_leave_breadcrumb_env(env, (char *)"Cold beans detected", BSG_CRUMB_LOG);
+  bugsnag_notify_env(env, (char *)"Bean temperature loss",
+                     (char *)"100% more microwave required", BSG_SEVERITY_INFO);
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXUserInfoScenario_activate(JNIEnv *env,
                                                                            jobject instance) {
-  bugsnag_set_user_env(env, "324523", NULL, "Jack Mill");
-  bugsnag_notify_env(env, "Oh no", "The mill is down", BSG_SEVERITY_INFO);
+  bugsnag_set_user_env(env, (char *)"324523", NULL, (char *)"Jack Mill");
+  bugsnag_notify_env(env, (char *)"Connection lost",
+                     (char *)"No antenna detected", BSG_SEVERITY_INFO);
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeNotifyScenario_activate(
     JNIEnv *env,
     jobject instance) {
-  bugsnag_notify_env(env, "Oh no", "The mill is down", BSG_SEVERITY_ERR);
+  bugsnag_notify_env(env, (char *)"Failed instantiation",
+                     (char *)"Could not allocate", BSG_SEVERITY_ERR);
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbJavaNotifyScenario_activate(
     JNIEnv *env,
     jobject instance) {
-  bugsnag_leave_breadcrumb_env(env, "Cold beans detected", BSG_CRUMB_LOG);
+  bugsnag_leave_breadcrumb_env(env, (char *)"Rerun field analysis", BSG_CRUMB_PROCESS);
 }
 
 JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbNativeCrashScenario_activate(
     JNIEnv *env,
     jobject instance) {
-  bugsnag_leave_breadcrumb_env(env, "Cold beans detected", BSG_CRUMB_LOG);
+  bugsnag_leave_breadcrumb_env(env, (char *)"Substandard nacho error", BSG_CRUMB_REQUEST);
   int x = 47;
   if (x > 0)
     __builtin_trap();
@@ -58,7 +63,7 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbJavaCrashScenario_activate(
     JNIEnv *env,
     jobject instance) {
-  bugsnag_leave_breadcrumb_env(env, "Cold beans detected", BSG_CRUMB_LOG);
+  bugsnag_leave_breadcrumb_env(env, (char *)"Lack of cheese detected", BSG_CRUMB_LOG);
 }
 
 JNIEXPORT int JNICALL
@@ -72,7 +77,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeCrashScenar
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaUserInfoNativeCrashScenario_activate(
+Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaUserInfoNativeCrashScenario_crash(
     JNIEnv *env,
     jobject instance) {
   int x = 47;
@@ -95,7 +100,7 @@ JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeBreadcrumbScenario_activate(
     JNIEnv *env,
     jobject instance) {
-  bugsnag_leave_breadcrumb_env(env, "Cold beans detected", BSG_CRUMB_LOG);
+  bugsnag_leave_breadcrumb_env(env, (char *)"Warm beer detected", BSG_CRUMB_LOG);
   int x = 47;
   if (x > 0)
     __builtin_trap();
