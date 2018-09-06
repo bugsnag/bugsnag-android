@@ -1,3 +1,7 @@
+When("I wait a bit") do
+  wait_time = RUNNING_CI ? '30' : '9'
+  step("I wait for #{wait_time} seconds")
+end
 When("I run {string} with the defaults") do |event_type|
   step("I run #{event_type} against newnexus")
 end
@@ -20,7 +24,7 @@ When(/^I run "([^"]+)" against "([^"]+)"$/) do |event_type, emulator|
 end
 
 When("I relaunch the app") do
-  wait_time = RUNNING_CI ? '20' : '9'
+  wait_time = RUNNING_CI ? '30' : '9'
   steps %Q{
     When I force stop the "com.bugsnag.android.mazerunner" Android app
     And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
@@ -30,4 +34,28 @@ end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
   step("I set environment variable \"EVENT_METADATA\" to \"#{event_metadata}\"")
+end
+
+When("I press the home button") do
+  steps %Q{
+    And I run the script "features/scripts/show-home-screen.sh" synchronously
+  }
+end
+
+When("I bring the app to the foreground") do
+  step 'I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity'
+end
+
+When("I rotate the device to {string}") do |orientation|
+  steps %Q{
+    When I set environment variable "DEVICE_ORIENTATION" to "#{orientation}"
+    And I run the script "features/scripts/rotate-device.sh" synchronously
+  }
+end
+Then("the exception reflects a signal was raised") do
+  value = read_key_path(find_request(0)[:body], "events.0.exceptions.0")
+  error_class = value["errorClass"]
+  assert_block("The errorClass was not from a signal: #{error_class}") do
+    ["SIGFPE","SIGILL","SIGSEGV","SIGABRT","SIGTRAP","SIGBUS"].include? error_class
+  end
 end

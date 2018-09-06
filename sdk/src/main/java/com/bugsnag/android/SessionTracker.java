@@ -290,9 +290,17 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 startNewSession(new Date(nowMs), client.getUser(), true);
             }
             foregroundActivities.add(activityName);
+            setChanged();
+            notifyObservers(new NativeInterface.Message(
+                        NativeInterface.MessageType.UPDATE_IN_FOREGROUND, true));
         } else {
             foregroundActivities.remove(activityName);
             activityLastStoppedAtMs.set(nowMs);
+            if (foregroundActivities.isEmpty()) {
+                setChanged();
+                notifyObservers(new NativeInterface.Message(
+                            NativeInterface.MessageType.UPDATE_IN_FOREGROUND, false));
+            }
         }
     }
 

@@ -18,6 +18,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.view.OrientationEventListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +74,8 @@ public class Client extends Observable implements Observer {
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
+
+    private final OrientationEventListener orientationListener;
 
     /**
      * Initialize a Bugsnag client
@@ -210,6 +214,17 @@ public class Client extends Observable implements Observer {
         breadcrumbs.addObserver(this);
         sessionTracker.addObserver(this);
         user.addObserver(this);
+
+        final Client client = this;
+        orientationListener = new OrientationEventListener(appContext) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                client.setChanged();
+                client.notifyObservers(new Message(
+                    NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
+            }
+        };
+        orientationListener.enable();
 
         // Flush any on-disk errors
         errorStore.flushOnLaunch();

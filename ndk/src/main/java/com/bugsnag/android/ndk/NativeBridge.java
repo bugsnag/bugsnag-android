@@ -176,7 +176,7 @@ public class NativeBridge implements Observer {
                 break;
             case UPDATE_IN_FOREGROUND:
                 if (arg instanceof Boolean) {
-                    updateInForeground((Boolean)arg);
+                    updateInForeground((boolean)arg);
                 }
                 break;
             case UPDATE_LOW_MEMORY:
@@ -190,7 +190,16 @@ public class NativeBridge implements Observer {
                 }
                 break;
             case UPDATE_ORIENTATION:
-                updateOrientation(arg == null ? "" : (String)arg);
+                if (arg instanceof Integer) {
+                    int value = (int)arg;
+                    if (value == 0 || value == 180) {
+                        updateOrientation("portrait");
+                    } else if (value == 270 || value == 90) {
+                        updateOrientation("landscape");
+                    } else {
+                        updateOrientation("unknown");
+                    }
+                }
                 break;
             case UPDATE_RELEASE_STAGE:
                 if (arg instanceof String) {
