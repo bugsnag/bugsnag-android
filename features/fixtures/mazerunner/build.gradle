@@ -62,6 +62,7 @@ dependencies {
     implementation(name:'bugsnag-android-ndk', ext:'aar')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.21"
     implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
+    api "com.android.support:support-annotations:27.0.0"
 }
 
 // Install CMake dependencies without an additional network request for the plugin

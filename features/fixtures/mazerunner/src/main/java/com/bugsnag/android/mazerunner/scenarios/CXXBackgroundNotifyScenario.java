@@ -6,7 +6,7 @@ import android.os.Handler;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,7 +21,7 @@ public class CXXBackgroundNotifyScenario extends Scenario {
     private boolean didActivate = false;
     private Handler handler = new Handler();
 
-    public CXXBackgroundNotifyScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXBackgroundNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }

@@ -1,5 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.app.Activity
 import android.content.Context
 import com.bugsnag.android.Configuration
 
@@ -8,11 +9,21 @@ import com.bugsnag.android.Configuration
  */
 internal class ReportCacheScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+        if (context is Activity) {
+            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            if (eventMetaData != "online") {
+                disableAllDelivery(config)
+            }
+        }
+    }
 
     override fun run() {
         super.run()
-        disableAllDelivery()
-        throw RuntimeException("ReportCacheScenario")
+        if (eventMetaData != "online") {
+            throw RuntimeException("ReportCacheScenario")
+        }
     }
 
 }

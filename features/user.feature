@@ -1,7 +1,7 @@
 Feature: Reporting User Information
 
 Scenario: Override user details in callback
-    When I run "UserCallbackScenario" with the defaults
+    When I run "UserCallbackScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "message" equals "UserCallbackScenario"
@@ -10,7 +10,7 @@ Scenario: Override user details in callback
     And the event "user.name" equals "Zebedee"
 
 Scenario: User fields set as null
-    When I run "UserDisabledScenario" with the defaults
+    When I run "UserDisabledScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
@@ -21,7 +21,7 @@ Scenario: User fields set as null
 
 
 Scenario: Only User email field set
-    When I run "UserEmailScenario" with the defaults
+    When I run "UserEmailScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "message" equals "UserEmailScenario"
@@ -30,7 +30,7 @@ Scenario: Only User email field set
     And the event "user.name" is null
 
 Scenario: All user fields set
-    When I run "UserEnabledScenario" with the defaults
+    When I run "UserEnabledScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
@@ -40,7 +40,7 @@ Scenario: All user fields set
     And the event "user.name" equals "Joe Bloggs"
 
 Scenario: Only User ID field set
-    When I run "UserIdScenario" with the defaults
+    When I run "UserIdScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "message" equals "UserIdScenario"

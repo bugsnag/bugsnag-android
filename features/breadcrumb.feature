@@ -1,7 +1,7 @@
 Feature: Reporting Breadcrumbs
 
 Scenario: Manually added breadcrumbs are sent in report
-    When I run "BreadcrumbScenario" with the defaults
+    When I run "BreadcrumbScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "message" equals "BreadcrumbScenario"

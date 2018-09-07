@@ -6,7 +6,7 @@ import android.content.Context;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,8 +18,9 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
 
     public native void activate();
 
-    public CXXJavaBreadcrumbNativeBreadcrumbScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXJavaBreadcrumbNativeBreadcrumbScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

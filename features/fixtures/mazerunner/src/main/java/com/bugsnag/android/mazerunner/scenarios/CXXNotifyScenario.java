@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class CXXNotifyScenario extends Scenario {
     static {
@@ -13,8 +13,9 @@ public class CXXNotifyScenario extends Scenario {
 
     public native void activate();
 
-    public CXXNotifyScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

@@ -10,6 +10,9 @@ import java.io.File
  */
 internal class StrictModeDiscScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+    }
 
     override fun run() {
         super.run()

@@ -1,7 +1,7 @@
 Feature: Reporting handled Exceptions
 
 Scenario: Test handled Kotlin Exception
-    When I run "HandledExceptionScenario" with the defaults
+    When I run "HandledExceptionScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
@@ -11,7 +11,7 @@ Scenario: Test handled Kotlin Exception
     And the exception "message" equals "HandledExceptionScenario"
 
 Scenario: Test handled Java Exception
-    When I run "HandledExceptionJavaScenario" with the defaults
+    When I run "HandledExceptionJavaScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
@@ -21,7 +21,7 @@ Scenario: Test handled Java Exception
     And the exception "message" equals "HandledExceptionJavaScenario"
 
 Scenario: Test handled Exception with Session
-    When I run "HandledExceptionSessionScenario" with the defaults
+    When I run "HandledExceptionSessionScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "errorClass" equals "java.lang.RuntimeException"

@@ -1,7 +1,7 @@
 Feature: Reporting Error Context
 
 Scenario: Context automatically set as most recent Activity name
-    When I run "AutoContextScenario" with the defaults
+    When I run "AutoContextScenario"
     And I wait for 3 seconds
     Then I should receive a request
     And the request is a valid for the error reporting API
@@ -10,7 +10,7 @@ Scenario: Context automatically set as most recent Activity name
     And the event "context" equals "SecondActivity"
 
 Scenario: Context manually set
-    When I run "ManualContextScenario" with the defaults
+    When I run "ManualContextScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"

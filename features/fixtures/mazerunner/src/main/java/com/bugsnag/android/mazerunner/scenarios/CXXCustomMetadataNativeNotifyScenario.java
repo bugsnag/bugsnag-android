@@ -5,7 +5,7 @@ import android.content.Context;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Bugsnag;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 import java.lang.reflect.Array;
 
@@ -16,8 +16,9 @@ public class CXXCustomMetadataNativeNotifyScenario extends Scenario {
 
     public native void activate();
 
-    public CXXCustomMetadataNativeNotifyScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXCustomMetadataNativeNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

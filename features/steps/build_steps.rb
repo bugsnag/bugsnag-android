@@ -2,9 +2,6 @@ When("I wait a bit") do
   wait_time = RUNNING_CI ? '30' : '9'
   step("I wait for #{wait_time} seconds")
 end
-When("I run {string} with the defaults") do |event_type|
-  step("I run #{event_type} against newnexus")
-end
 
 When(/^I run "([^"]+)"$/) do |event_type|
   step("I run \"#{event_type}\" against \"#{ENV['ANDROID_EMULATOR']}\"")

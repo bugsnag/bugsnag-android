@@ -10,8 +10,11 @@ import com.bugsnag.android.*
 internal class AsyncErrorDoubleFlushScenario(config: Configuration,
                                              context: Context) : Scenario(config, context) {
 
-    override fun run() {
+    init {
         config.delivery = createSlowDelivery(context)
+        config.setAutoCaptureSessions(false)
+    }
+    override fun run() {
         super.run()
 
         writeErrorToStore(Bugsnag.getClient())

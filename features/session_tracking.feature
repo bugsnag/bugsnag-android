@@ -1,7 +1,7 @@
 Feature: Session Tracking
 
 Scenario: Automatic Session Tracking sends
-    When I run "AutoSessionScenario" with the defaults
+    When I run "AutoSessionScenario"
     And I wait for 1 seconds
     Then I should receive a request
     And the request is a valid for the session tracking API
@@ -15,13 +15,14 @@ Scenario: Automatic Session Tracking sends
     And the session "startedAt" is not null
 
 Scenario: Test cached Session sends
-    When I run "SessionCacheScenario" with the defaults
+    When I configure the app to run in the "offline" state
+    And I run "SessionCacheScenario"
     Then I should receive no requests
 
-    When I force stop the "com.bugsnag.android.mazerunner" Android app
-    And I set environment variable "EVENT_TYPE" to "Wait"
-    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
-    Then I should receive a request
+    When I configure the app to run in the "online" state
+    And I relaunch the app
+    And I wait for 40 seconds
+    Then I should receive 2 requests
 
     And the request is a valid for the session tracking API
     And the payload field "sessions" is an array with 1 element
@@ -32,7 +33,7 @@ Scenario: Test cached Session sends
     And the session "startedAt" is not null
 
 Scenario: Manual Session sends
-    When I run "ManualSessionScenario" with the defaults
+    When I run "ManualSessionScenario"
     Then I should receive a request
     And the request is a valid for the session tracking API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
@@ -45,7 +46,7 @@ Scenario: Manual Session sends
     And the session "startedAt" is not null
 
 Scenario: Set Auto Capture Sessions sends
-    When I run "SessionSetAutoCaptureScenario" with the defaults
+    When I run "SessionSetAutoCaptureScenario"
     And I wait for 60 seconds
     Then I should receive a request
     And the request is a valid for the session tracking API

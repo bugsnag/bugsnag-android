@@ -6,7 +6,7 @@ import android.os.Handler;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class CXXDelayedNotifyScenario extends Scenario {
     static {
@@ -18,7 +18,7 @@ public class CXXDelayedNotifyScenario extends Scenario {
     private boolean didActivate = false;
     private Handler handler = new Handler();
 
-    public CXXDelayedNotifyScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXDelayedNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }

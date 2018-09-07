@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -21,7 +21,7 @@ public class CXXBackgroundCrashScenario extends Scenario {
     private boolean didActivate = false;
     private Handler handler = new Handler();
 
-    public CXXBackgroundCrashScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXBackgroundCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }

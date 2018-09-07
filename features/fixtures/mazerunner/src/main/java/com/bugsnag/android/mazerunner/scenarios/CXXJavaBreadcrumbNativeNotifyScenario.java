@@ -5,7 +5,7 @@ import android.content.Context;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 
 public class CXXJavaBreadcrumbNativeNotifyScenario extends Scenario {
@@ -15,8 +15,9 @@ public class CXXJavaBreadcrumbNativeNotifyScenario extends Scenario {
 
     public native void activate();
 
-    public CXXJavaBreadcrumbNativeNotifyScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXJavaBreadcrumbNativeNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

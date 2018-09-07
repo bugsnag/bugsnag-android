@@ -1,9 +1,9 @@
 Feature: Reports are ignored
 
 Scenario: Exception classname ignored
-    When I run "IgnoredExceptionScenario" with the defaults
+    When I run "IgnoredExceptionScenario"
     Then I should receive no requests
 
 Scenario: Disabled Exception Handler
-    When I run "DisableAutoNotifyScenario" with the defaults
+    When I run "DisableAutoNotifyScenario"
     Then I should receive no requests

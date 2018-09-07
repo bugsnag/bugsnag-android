@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 
 public class CXXUserInfoScenario extends Scenario {
@@ -14,8 +14,9 @@ public class CXXUserInfoScenario extends Scenario {
 
     public native void activate();
 
-    public CXXUserInfoScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXUserInfoScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

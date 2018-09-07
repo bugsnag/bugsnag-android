@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class CXXStackoverflowScenario extends Scenario {
 
@@ -14,8 +14,9 @@ public class CXXStackoverflowScenario extends Scenario {
 
     public native void crash(int counter, String longText);
 
-    public CXXStackoverflowScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXStackoverflowScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

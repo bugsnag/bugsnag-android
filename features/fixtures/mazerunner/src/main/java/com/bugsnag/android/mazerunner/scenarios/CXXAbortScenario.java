@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class CXXAbortScenario extends Scenario {
 
@@ -14,8 +14,9 @@ public class CXXAbortScenario extends Scenario {
 
     public native void crash();
 
-    public CXXAbortScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXAbortScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

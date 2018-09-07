@@ -2,7 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios;
 
 import android.content.Context;
 import com.bugsnag.android.Configuration;
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 
 public class CXXNullPointerScenario extends Scenario {
@@ -13,8 +13,9 @@ public class CXXNullPointerScenario extends Scenario {
 
     public native void crash();
 
-    public CXXNullPointerScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXNullPointerScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

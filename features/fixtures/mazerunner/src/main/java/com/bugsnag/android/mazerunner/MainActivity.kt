@@ -4,7 +4,9 @@ import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
 
@@ -13,30 +15,30 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
+        val config = prepareConfig()
+        val testCase = loadScenario(config)
 
-    override fun onResume() {
-        super.onResume()
-        enqueueTestCase()
-    }
+        Bugsnag.init(this, config)
+        Bugsnag.setLoggingEnabled(true)
 
-    /**
-     * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
-     * unhandled Exceptions
-     */
-    private fun enqueueTestCase() {
+        /**
+         * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
+         * unhandled Exceptions
+         */
         window.decorView.postDelayed({
-            executeTestCase()
-        }, 100)
+            testCase.run()
+        }, 1)
     }
 
-    private fun executeTestCase() {
+    private fun loadScenario(configuration: Configuration): Scenario {
         val eventType = intent.getStringExtra("EVENT_TYPE")
         val eventMetaData = intent.getStringExtra("EVENT_METADATA")
         Log.d("Bugsnag", "Received test case, executing " + eventType)
-        val testCase = factory.testCaseForName(eventType, prepareConfig(), this)
+
+        val testCase = factory.testCaseForName(eventType, configuration, this)
         testCase.eventMetaData = eventMetaData
-        testCase.run()
+
+        return testCase
     }
 
     private fun prepareConfig(): Configuration {

@@ -1,7 +1,7 @@
 Feature: Reporting Strict Mode Exceptions
 
 Scenario: StrictMode DiscWrite violation
-    When I run "StrictModeDiscScenario" with the defaults
+    When I run "StrictModeDiscScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "errorClass" equals "android.os.StrictMode$StrictModeViolation"
@@ -10,7 +10,7 @@ Scenario: StrictMode DiscWrite violation
 
 
 Scenario: StrictMode Network on Main Thread violation
-    When I run "StrictModeNetworkScenario" with the defaults
+    When I run "StrictModeNetworkScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the exception "errorClass" equals "android.os.StrictMode$StrictModeViolation"

@@ -12,9 +12,11 @@ import com.bugsnag.android.mazerunner.SecondActivity
  */
 internal class AutoContextScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+    }
 
     override fun run() {
-        config.setAutoCaptureSessions(false)
         super.run()
         context.startActivity(Intent(context, SecondActivity::class.java))
 

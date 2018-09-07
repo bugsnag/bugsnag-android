@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class CXXNativeBreadcrumbNativeCrashScenario extends Scenario {
     static {
@@ -14,8 +14,9 @@ public class CXXNativeBreadcrumbNativeCrashScenario extends Scenario {
 
     public native void activate();
 
-    public CXXNativeBreadcrumbNativeCrashScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXNativeBreadcrumbNativeCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

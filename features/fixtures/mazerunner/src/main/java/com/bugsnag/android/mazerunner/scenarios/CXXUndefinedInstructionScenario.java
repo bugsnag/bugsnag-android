@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class CXXUndefinedInstructionScenario extends Scenario {
 
@@ -15,8 +15,9 @@ public class CXXUndefinedInstructionScenario extends Scenario {
 
     public native void crash();
 
-    public CXXUndefinedInstructionScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXUndefinedInstructionScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

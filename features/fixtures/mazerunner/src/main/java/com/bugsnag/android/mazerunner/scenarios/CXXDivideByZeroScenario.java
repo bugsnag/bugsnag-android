@@ -5,7 +5,7 @@ import android.content.Context;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class CXXDivideByZeroScenario extends Scenario {
     static {
@@ -14,8 +14,9 @@ public class CXXDivideByZeroScenario extends Scenario {
 
     public native void crash(int counter);
 
-    public CXXDivideByZeroScenario(@NotNull Configuration config, @NotNull Context context) {
+    public CXXDivideByZeroScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override
