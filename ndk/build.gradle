@@ -120,8 +120,9 @@ publishing {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
                         def name = it.name == 'sdk' ? 'bugsnag-android' : it.name
+                        def version = it.name == 'sdk' ? project.VERSION_NAME : it.version
                         dependencyNode.appendNode('artifactId', name)
-                        dependencyNode.appendNode('version', it.version)
+                        dependencyNode.appendNode('version', version)
                         dependencyNode.appendNode('scope', 'compile')
                     }
                 }
