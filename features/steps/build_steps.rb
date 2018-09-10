@@ -8,6 +8,8 @@ When(/^I run "([^"]+)"$/) do |event_type|
 end
 
 When(/^I run "([^"]+)" against "([^"]+)"$/) do |event_type, emulator|
+  assert(emulator && emulator.length > 0, "ANDROID_EMULATOR variable is not set")
+  assert(ENV['ANDROID_HOME'] && ENV['ANDROID_HOME'].length > 0, "ANDROID_HOME variable is not set")
   wait_time = RUNNING_CI ? '10' : '5'
   steps %Q{
     When I start Android emulator "#{emulator}"
