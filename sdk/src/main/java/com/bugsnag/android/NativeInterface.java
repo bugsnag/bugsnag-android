@@ -113,8 +113,8 @@ public class NativeInterface {
      * Wrapper for messages sent to native observers
      */
     public static class Message {
-        public MessageType type;
-        public Object value;
+        public final MessageType type;
+        public final Object value;
 
         public Message(MessageType type, Object value) {
             this.type = type;
@@ -187,6 +187,7 @@ public class NativeInterface {
      * Retrieve user data from the static Client instance as a Map
      */
     @NonNull
+    @SuppressWarnings("unused")
     public static Map<String,String> getUserData() {
         HashMap<String, String> userData = new HashMap<>();
         User user = getClient().getUser();
@@ -201,6 +202,7 @@ public class NativeInterface {
      * Retrieve app data from the static Client instance as a Map
      */
     @NonNull
+    @SuppressWarnings("unused")
     public static Map<String,Object> getAppData() {
         HashMap<String,Object> data = new HashMap<>();
         AppData source = getClient().getAppData();
@@ -213,6 +215,7 @@ public class NativeInterface {
      * Retrieve device data from the static Client instance as a Map
      */
     @NonNull
+    @SuppressWarnings("unused")
     public static Map<String,Object> getDeviceData() {
         HashMap<String,Object> deviceData = new HashMap<>();
         DeviceData source = getClient().getDeviceData();
@@ -233,13 +236,14 @@ public class NativeInterface {
      * @param email email
      * @param name name
      */
+    @SuppressWarnings("unused")
     public static void setUser(final String id,
                                final String email,
                                final String name) {
-
-        getClient().setUserId(id);
-        getClient().setUserEmail(email);
-        getClient().setUserName(name);
+        Client client = getClient();
+        client.setUserId(id);
+        client.setUserEmail(email);
+        client.setUserName(name);
     }
 
     /**
@@ -266,12 +270,14 @@ public class NativeInterface {
      *                     whether the report should be discarded, based on configured release
      *                     stages
      */
+    @SuppressWarnings("unused")
     public static void deliverReport(String releaseStage, String payload) {
+        Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
-            || getClient().getConfig().shouldNotifyForReleaseStage(releaseStage)) {
-            getClient().getErrorStore().enqueueContentForDelivery(payload);
-            getClient().getErrorStore().flushAsync();
+            || client.getConfig().shouldNotifyForReleaseStage(releaseStage)) {
+            client.getErrorStore().enqueueContentForDelivery(payload);
+            client.getErrorStore().flushAsync();
         }
     }
 
@@ -292,8 +298,12 @@ public class NativeInterface {
             @Override
             public void beforeNotify(@NonNull Report report) {
                 Error error = report.getError();
-                error.setSeverity(severity);
-                error.config.defaultExceptionType = "c";
+                if (error != null) {
+                    if (severity != null) {
+                        error.setSeverity(severity);
+                    }
+                    error.config.defaultExceptionType = "c";
+                }
             }
         });
     }

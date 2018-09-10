@@ -219,7 +219,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateContext(
   bsg_request_env_write_lock();
   bugsnag_report_set_context(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
+  if (new_value != NULL) {
+    (*env)->ReleaseStringUTFChars(env, new_value, value);
+  }
 }
 
 JNIEXPORT void JNICALL
@@ -235,7 +237,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
   bsg_strncpy_safe(bsg_global_env->next_report.app.active_screen, activity,
                    sizeof(bsg_global_env->next_report.app.active_screen));
   bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, activity_, activity);
+  if (activity_ != NULL) {
+    (*env)->ReleaseStringUTFChars(env, activity_, activity);
+  }
 }
 
 JNIEXPORT void JNICALL
@@ -261,7 +265,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
   bsg_request_env_write_lock();
   bugsnag_report_set_orientation(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
+  if (new_value != NULL) {
+    (*env)->ReleaseStringUTFChars(env, new_value, value);
+  }
 }
 
 JNIEXPORT void JNICALL
@@ -275,7 +281,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateReleaseStage(
   bsg_request_env_write_lock();
   bugsnag_report_set_release_stage(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
+  if (new_value != NULL) {
+    (*env)->ReleaseStringUTFChars(env, new_value, value);
+  }
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
@@ -288,7 +296,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
   bsg_request_env_write_lock();
   bugsnag_report_set_user_id(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
+  if (new_value != NULL) {
+    (*env)->ReleaseStringUTFChars(env, new_value, value);
+  }
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserName(
@@ -301,7 +311,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserName(
   bsg_request_env_write_lock();
   bugsnag_report_set_user_name(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
+  if (new_value != NULL) {
+    (*env)->ReleaseStringUTFChars(env, new_value, value);
+  }
 }
 
 JNIEXPORT void JNICALL
@@ -316,7 +328,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateUserEmail(JNIEnv *env,
   bsg_request_env_write_lock();
   bugsnag_report_set_user_email(&bsg_global_env->next_report, value);
   bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
+  if (new_value != NULL) {
+    (*env)->ReleaseStringUTFChars(env, new_value, value);
+  }
 }
 
 JNIEXPORT void JNICALL
