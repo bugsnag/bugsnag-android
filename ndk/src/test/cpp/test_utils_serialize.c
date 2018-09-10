@@ -8,6 +8,7 @@ bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_b
 
 bugsnag_report *bsg_generate_report(void) {
   bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
+  strcpy(report->context, "SomeActivity");
   strcpy(report->exception.name, "SIGBUS");
   strcpy(report->exception.message, "POSIX is serious about oncoming traffic");
   report->exception.stacktrace[0].frame_address = 454379;
@@ -103,6 +104,14 @@ TEST test_report_app_info_to_json(void) {
   PASS();
 }
 
+TEST test_report_context_to_json(void) {
+  JSON_Value *root_value = bsg_generate_json();
+  JSON_Object *event = json_value_get_object(root_value);
+  ASSERT(event != NULL);
+  ASSERT(strcmp( "SomeActivity", json_object_get_string(event, "context")) == 0);
+  PASS();
+}
+
 TEST test_report_device_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
   JSON_Object *event = json_value_get_object(root_value);
@@ -183,6 +192,7 @@ TEST test_report_breadcrumbs_to_json(void) {
 SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
+  RUN_TEST(test_report_context_to_json);
   RUN_TEST(test_report_app_info_to_json);
   RUN_TEST(test_report_device_info_to_json);
   RUN_TEST(test_report_user_info_to_json);

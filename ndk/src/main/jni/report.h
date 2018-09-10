@@ -59,6 +59,7 @@ typedef struct {
   char release_stage[64];
   char version[32];
   char version_name[32];
+  char active_screen[64];
   int version_code;
   char build_uuid[64];
   time_t duration;

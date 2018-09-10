@@ -5,12 +5,14 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait a bit
         Then the request is a valid for the error reporting API
         And the event "app.inForeground" is true
+        And the event "context" equals "MainActivity"
 
     Scenario: Capture foreground state while in the background
         When I run "CXXBackgroundNotifyScenario"
         And I wait a bit
         Then the request is a valid for the error reporting API
         And the event "app.inForeground" is false
+        And the event "context" string is empty
 
     Scenario: Capture foreground state while in a foreground crash
         When I run "CXXTrapScenario"
@@ -27,3 +29,4 @@ Feature: Synchronizing app/device metadata in the native layer
         And I relaunch the app
         Then the request is a valid for the error reporting API
         And the event "app.inForeground" is false
+        And the event "context" string is empty

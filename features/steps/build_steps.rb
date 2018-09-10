@@ -58,3 +58,9 @@ Then("the exception reflects a signal was raised") do
     ["SIGFPE","SIGILL","SIGSEGV","SIGABRT","SIGTRAP","SIGBUS"].include? error_class
   end
 end
+Then("the event {string} string is empty") do |keypath|
+  value = read_key_path(find_request(0)[:body], keypath)
+  assert_block("The #{keypath} is not empty: '#{value}'") do
+    value.nil? or value.length == 0
+  end
+end

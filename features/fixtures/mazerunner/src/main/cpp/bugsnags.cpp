@@ -11,6 +11,22 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXCustomMetadataNativeNotifyScena
 }
 
 JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXAutoContextScenario_activate(JNIEnv *env,
+                                                                         jobject instance) {
+  bugsnag_notify_env(env, (char *)"Hello hello",
+                     (char *)"This is a new world", BSG_SEVERITY_INFO);
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXUpdateContextCrashScenario_crash(JNIEnv *env,
+                                                                         jobject instance,
+                                                                         jint value) {
+  if (value > 0)
+    __builtin_trap();
+  return 12067 / value;
+}
+
+JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNotifyScenario_activate(JNIEnv *env,
                                                                          jobject instance) {
   bugsnag_notify_env(env, (char *)"Vitamin C deficiency",

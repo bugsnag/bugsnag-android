@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -291,18 +292,14 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 startNewSession(new Date(nowMs), client.getUser(), true);
             }
             foregroundActivities.add(activityName);
-            setChanged();
-            notifyObservers(new NativeInterface.Message(
-                        NativeInterface.MessageType.UPDATE_IN_FOREGROUND, true));
         } else {
             foregroundActivities.remove(activityName);
             activityLastStoppedAtMs.set(nowMs);
-            if (foregroundActivities.isEmpty()) {
-                setChanged();
-                notifyObservers(new NativeInterface.Message(
-                            NativeInterface.MessageType.UPDATE_IN_FOREGROUND, false));
-            }
         }
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+            NativeInterface.MessageType.UPDATE_IN_FOREGROUND,
+            Arrays.asList(!foregroundActivities.isEmpty(), getContextActivity())));
     }
 
     boolean isInForeground() {

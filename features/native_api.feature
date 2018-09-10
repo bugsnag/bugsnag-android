@@ -32,9 +32,31 @@ Feature: Native API
         Then I should receive a request
         And the request is a valid for the error reporting API
         And the event "severity" equals "error"
+        And the event "context" equals "MainActivity"
         And the exception "errorClass" equals "Vitamin C deficiency"
         And the exception "message" equals "9 out of 10 adults do not get their 5-a-day"
         And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+
+    Scenario: Changing intents followed by notifying in C
+        When I run "CXXAutoContextScenario"
+        And I wait a bit
+        Then I should receive a request
+        And the request is a valid for the error reporting API
+        And the event "severity" equals "info"
+        And the event "context" equals "SecondActivity"
+        And the exception "errorClass" equals "Hello hello"
+        And the exception "message" equals "This is a new world"
+
+    Scenario: Update context in Java followed by crashing in C
+        When I run "CXXUpdateContextCrashScenario"
+        And I wait a bit
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request is a valid for the error reporting API
+        And the event "severity" equals "error"
+        And the event "context" equals "Everest"
+        And the exception "errorClass" equals "SIGILL"
 
     Scenario: Leaving a breadcrumb followed by notifying in C
         When I run "CXXBreadcrumbScenario"

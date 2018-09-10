@@ -221,9 +221,15 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
     JNIEnv *env, jobject _this, jboolean new_value, jstring activity_) {
   if (bsg_global_env == NULL)
     return;
+  char *activity = activity_ == NULL
+                       ? NULL
+                       : (char *)(*env)->GetStringUTFChars(env, activity_, 0);
   bsg_request_env_write_lock();
   bsg_global_env->next_report.app.in_foreground = (bool)new_value;
+  bsg_strncpy_safe(bsg_global_env->next_report.app.active_screen, activity,
+                   sizeof(bsg_global_env->next_report.app.active_screen));
   bsg_release_env_write_lock();
+  (*env)->ReleaseStringUTFChars(env, activity_, activity);
 }
 
 JNIEXPORT void JNICALL
