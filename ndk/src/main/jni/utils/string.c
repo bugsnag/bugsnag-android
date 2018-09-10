@@ -19,15 +19,7 @@ void bsg_strncpy(char *dst, char *src, size_t len) {
     }
 }
 
-void bsg_strset(char *str, size_t len) {
-    int i = 0;
-    while (i <= len) {
-        str[i] = '\0';
-        i++;
-    }
-}
-
-size_t bsg_strlen(char *str) __asyncsafe {
+size_t bsg_strlen(char *str) {
   size_t i = 0;
   while (true) {
     char current = str[i];
