@@ -132,14 +132,9 @@ void bugsnag_report_add_breadcrumb(bugsnag_report *report,
     crumb_index = report->crumb_count;
     report->crumb_count++;
   } else {
-    report->crumb_first_index++;
-    if (report->crumb_first_index >= BUGSNAG_CRUMBS_MAX) {
-      report->crumb_first_index = 0;
-    }
-    crumb_index = report->crumb_first_index - 1;
-    if (crumb_index < 0) {
-      crumb_index = BUGSNAG_CRUMBS_MAX - 1;
-    }
+    crumb_index = report->crumb_first_index;
+    report->crumb_first_index =
+        (report->crumb_first_index + 1) % BUGSNAG_CRUMBS_MAX;
   }
   memcpy(&report->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
 }
