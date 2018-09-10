@@ -162,6 +162,11 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] If no network connection is available, is the report queued for later?
   - [ ] On a throttled network, is the request timeout reasonable, and the main thread not blocked by any visible UI freeze? (Throttling can be achieved by setting both endpoints to "https://httpstat.us/200?sleep=5000")
   - [ ] Are queued reports sent asynchronously?
+- Native functionality checks:
+  - [ ] Rotate the device before notifying. Is the orientation at the time
+    persisted in the report on the dashboard?
+  - [ ] Rotate the device before causing a native crash. Is the orientation at
+    the time of the crash persisted in the report on the dashboard?
 - [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/bugsnag-website/tree/master/app/views/dashboard/projects/install) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 - [ ] Do the installation instructions work for a manual integration?
 

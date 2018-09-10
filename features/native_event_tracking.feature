@@ -27,35 +27,3 @@ Feature: Synchronizing app/device metadata in the native layer
         And I relaunch the app
         Then the request is a valid for the error reporting API
         And the event "app.inForeground" is false
-
-    Scenario Outline: Capture rotation and notify in C
-        When I rotate the device to "<mode>"
-        And I run "CXXNotifyScenario"
-        And I wait a bit
-        And I wait for 10 seconds
-        Then the request is a valid for the error reporting API
-        And the event "device.orientation" equals "<orientation>"
-
-        Examples:
-        | mode            | orientation |
-        | landscape-left  | landscape   |
-        | landscape-right | landscape   |
-        | upside-down     | portrait    |
-        | portrait        | portrait    |
-
-    Scenario Outline: Capture rotation and crash in C
-        When I rotate the device to "<mode>"
-        And I run "CXXTrapScenario"
-        And I wait a bit
-        And I configure the app to run in the "non-crashy" state
-        And I relaunch the app
-        Then the request is a valid for the error reporting API
-        And the event "device.orientation" equals "<orientation>"
-
-        Examples:
-        | mode            | orientation |
-        | landscape-left  | landscape   |
-        | landscape-right | landscape   |
-        | upside-down     | portrait    |
-        | portrait        | portrait    |
-
