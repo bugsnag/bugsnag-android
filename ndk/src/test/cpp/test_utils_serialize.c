@@ -92,12 +92,12 @@ TEST test_report_app_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
   JSON_Object *event = json_value_get_object(root_value);
   ASSERT(strcmp("2.0.52", json_object_dotget_string(event, "app.version")) == 0);
-  ASSERT(strcmp( "PhotoSnap Plus", json_object_dotget_string(event, "app.name")) == 0);
-  ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "app.packageName")) == 0);
+  ASSERT(strcmp( "PhotoSnap Plus", json_object_dotget_string(event, "metaData.app.name")) == 0);
+  ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "metaData.app.packageName")) == 0);
   ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "app.id")) == 0);
   ASSERT(strcmp( "リリース", json_object_dotget_string(event, "app.releaseStage")) == 0);
   ASSERT_EQ(57, json_object_dotget_number(event, "app.versionCode"));
-  ASSERT(strcmp( "2.0", json_object_dotget_string(event, "app.versionName")) == 0);
+  ASSERT(strcmp( "2.0", json_object_dotget_string(event, "metaData.app.versionName")) == 0);
   ASSERT(strcmp( "1234-9876-adfe", json_object_dotget_string(event, "app.buildUUID")) == 0);
   json_value_free(root_value);
   PASS();
@@ -109,7 +109,7 @@ TEST test_report_device_info_to_json(void) {
   ASSERT(event != NULL);
   ASSERT(strcmp( "HI-TEC™", json_object_dotget_string(event, "device.manufacturer")) == 0);
   ASSERT(strcmp( "Rasseur", json_object_dotget_string(event, "device.model")) == 0);
-  ASSERT(strcmp( "en_AU#Melbun", json_object_dotget_string(event, "device.locale")) == 0);
+  ASSERT(strcmp( "en_AU#Melbun", json_object_dotget_string(event, "metaData.device.locale")) == 0);
   json_value_free(root_value);
   PASS();
 }

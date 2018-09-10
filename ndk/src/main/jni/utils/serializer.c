@@ -142,50 +142,54 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
                               report->exception.name);
 
     json_object_dotset_string(event, "app.version", report->app.version);
-    json_object_dotset_string(event, "app.name", report->app.name);
     json_object_dotset_string(event, "app.id", report->app.id);
-    json_object_dotset_string(event, "app.packageName",
-                              report->app.package_name);
+
     json_object_dotset_string(event, "app.releaseStage",
                               report->app.release_stage);
     json_object_dotset_string(event, "app.version", report->app.version);
     json_object_dotset_number(event, "app.versionCode",
                               report->app.version_code);
-    json_object_dotset_string(event, "app.versionName",
-                              report->app.version_name);
     json_object_dotset_string(event, "app.buildUUID", report->app.build_uuid);
     json_object_dotset_number(event, "app.duration", report->app.duration);
     json_object_dotset_boolean(event, "app.inForeground",
                                report->app.in_foreground);
-    json_object_dotset_boolean(event, "app.lowMemory", report->app.low_memory);
-    json_object_dotset_number(event, "app.memoryUsage",
+    json_object_dotset_string(event, "metaData.app.packageName",
+                              report->app.package_name);
+    json_object_dotset_string(event, "metaData.app.versionName",
+                              report->app.version_name);
+    json_object_dotset_string(event, "metaData.app.name", report->app.name);
+    json_object_dotset_boolean(event, "metaData.app.lowMemory",
+                               report->app.low_memory);
+    json_object_dotset_number(event, "metaData.app.memoryUsage",
                               report->app.memory_usage);
 
     json_object_dotset_string(event, "device.osName", "Android");
-    json_object_dotset_number(event, "device.apiLevel",
-                              report->device.api_level);
-    json_object_dotset_number(event, "device.batteryLevel",
-                              report->device.battery_level);
-    json_object_dotset_string(event, "device.brand", report->device.brand);
-    json_object_dotset_string(event, "device.locale", report->device.locale);
-    json_object_dotset_string(event, "device.locationStatus",
-                              report->device.location_status);
-    json_object_dotset_string(event, "device.manufacturer",
-                              report->device.manufacturer);
-    json_object_dotset_string(event, "device.model", report->device.model);
-    json_object_dotset_string(event, "device.networkAccess",
-                              report->device.network_access);
     json_object_dotset_string(event, "device.osBuild", report->device.os_build);
     json_object_dotset_string(event, "device.osVersion",
                               report->device.os_version);
-    json_object_dotset_string(event, "device.orientation",
+    json_object_dotset_string(event, "device.manufacturer",
+                              report->device.manufacturer);
+    json_object_dotset_string(event, "device.model", report->device.model);
+    json_object_dotset_number(event, "metaData.device.apiLevel",
+                              report->device.api_level);
+    json_object_dotset_number(event, "metaData.device.batteryLevel",
+                              report->device.battery_level);
+    json_object_dotset_string(event, "metaData.device.brand",
+                              report->device.brand);
+    json_object_dotset_string(event, "metaData.device.locale",
+                              report->device.locale);
+    json_object_dotset_string(event, "metaData.device.locationStatus",
+                              report->device.location_status);
+    json_object_dotset_string(event, "metaData.device.networkAccess",
+                              report->device.network_access);
+    json_object_dotset_string(event, "metaData.device.orientation",
                               report->device.orientation);
-    json_object_dotset_number(event, "device.dpi", report->device.dpi);
-    json_object_dotset_number(event, "device.screenDensity",
+    json_object_dotset_number(event, "metaData.device.dpi", report->device.dpi);
+    json_object_dotset_number(event, "metaData.device.screenDensity",
                               report->device.screen_density);
-    json_object_dotset_string(event, "device.screenResolution",
+    json_object_dotset_string(event, "metaData.device.screenResolution",
                               report->device.screen_resolution);
-    json_object_dotset_number(event, "device.totalMemory",
+    json_object_dotset_number(event, "metaData.device.totalMemory",
                               report->device.total_memory);
 
     char report_time[sizeof "2018-10-08T12:07:09Z"];
