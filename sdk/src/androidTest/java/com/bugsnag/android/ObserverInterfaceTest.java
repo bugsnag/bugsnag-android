@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
@@ -148,7 +149,11 @@ public class ObserverInterfaceTest {
     @Test
     public void testStartSessionSendsMessage() throws InterruptedException {
         client.startSession();
-        findMessageInQueue(NativeInterface.MessageType.START_SESSION, Session.class);
+        List<Object> sessionInfo = (List<Object>)findMessageInQueue(
+                NativeInterface.MessageType.START_SESSION, List.class);
+        assertEquals(2, sessionInfo.size());
+        assertTrue(sessionInfo.get(0) instanceof String);
+        assertTrue(sessionInfo.get(1) instanceof Long);
     }
 
     @Test

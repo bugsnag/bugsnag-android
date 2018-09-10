@@ -1,17 +1,19 @@
 package com.bugsnag.android.ndk;
 
 import com.bugsnag.android.Breadcrumb;
-import com.bugsnag.android.Configuration;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.NativeInterface;
 
 import android.os.Build;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.File;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Observes changes in the Bugsnag environment, propagating them to the native layer
@@ -24,6 +26,7 @@ public class NativeBridge implements Observer {
     private static final int METADATA_SECTION = 0;
     private static final int METADATA_KEY = 1;
     private static final int METADATA_VALUE = 2;
+    private static final String LOG_TAG = "BugsnagNDK:NativeBridge";
 
     public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel);
 
@@ -46,7 +49,7 @@ public class NativeBridge implements Observer {
 
     public static native void removeMetadata(String tab, String key);
 
-    public static native void startedSession(String sessionID, String key);
+    public static native void startedSession(String sessionID, long key);
 
     public static native void updateAppVersion(String appVersion);
 
@@ -54,7 +57,7 @@ public class NativeBridge implements Observer {
 
     public static native void updateContext(String context);
 
-    public static native void updateInForeground(boolean inForeground);
+    public static native void updateInForeground(boolean inForeground, String activityName);
 
     public static native void updateLowMemory(boolean lowMemory);
 
@@ -70,152 +73,329 @@ public class NativeBridge implements Observer {
 
     public static native void updateUserName(String newValue);
 
+    private AtomicBoolean installed = new AtomicBoolean(false);
+    private boolean loggingEnabled = true;
+
+    public NativeBridge() {
+        loggingEnabled = NativeInterface.getLoggingEnabled();
+    }
 
     @Override
     public void update(Observable observable, Object rawMessage) {
-        NativeInterface.Message message;
-        Object arg = null;
-        if (rawMessage instanceof NativeInterface.Message) {
-            message = (NativeInterface.Message)rawMessage;
-            arg = message.value;
-        } else {
+        NativeInterface.Message message = parseMessage(rawMessage);
+        if (message == null) {
             return;
         }
+        Object arg = message.value;
 
         switch (message.type) {
             case INSTALL:
-                if (arg instanceof Configuration) {
-                    try {
-                        File outFile = new File(NativeInterface.getNativeReportPath());
-                        outFile.mkdirs();
-                        for (final File file : outFile.listFiles()) {
-                            deliverReportAtPath(file.getAbsolutePath());
-                        }
-                    } catch (Exception ex) {
-                        // TODO: handle failure to create native crash report directory
-                        return;
-                    }
-
-                    String reportPath = NativeInterface.getNativeReportPath()
-                                        + UUID.randomUUID().toString() + ".crash";
-                    install(reportPath, true, Build.VERSION.SDK_INT);
-                }
+                handleInstallMessage(arg);
                 break;
             case ADD_BREADCRUMB:
-                if (arg instanceof Breadcrumb) {
-                    Breadcrumb crumb = (Breadcrumb) arg;
-                    addBreadcrumb(crumb.getName(), crumb.getType().toString(),
-                                  crumb.getTimestamp(), crumb.getMetadata());
-                }
+                handleAddBreadcrumb(arg);
                 break;
             case ADD_METADATA:
-                if (arg instanceof List) {
-                    @SuppressWarnings("unchecked")
-                    List<Object> values = (List<Object>) arg;
-                    if (values.size() == 3 && values.get(METADATA_SECTION) instanceof String
-                            && values.get(METADATA_KEY) instanceof String) {
-                        if (values.get(METADATA_VALUE) instanceof String) {
-                            addMetadataString((String) values.get(METADATA_SECTION),
-                                    (String) values.get(METADATA_KEY),
-                                    (String) values.get(METADATA_VALUE));
-                        } else if (values.get(METADATA_VALUE) instanceof Boolean) {
-                            addMetadataBoolean((String) values.get(METADATA_SECTION),
-                                    (String) values.get(METADATA_KEY),
-                                    (Boolean) values.get(METADATA_VALUE));
-                        } else if (values.get(METADATA_VALUE) instanceof Number) {
-                            addMetadataDouble((String) values.get(METADATA_SECTION),
-                                    (String) values.get(METADATA_KEY),
-                                    ((Number) values.get(METADATA_VALUE)).doubleValue());
-                        }
-                    } else if (values.size() == 2) {
-                        removeMetadata((String)values.get(METADATA_SECTION),
-                                       (String)values.get(METADATA_KEY));
-                    }
-                }
+                handleAddMetadata(arg);
                 break;
             case CLEAR_BREADCRUMBS:
                 clearBreadcrumbs();
                 break;
             case CLEAR_METADATA_TAB:
-                if (arg instanceof String) {
-                    clearMetadataTab((String)arg);
-                }
+                handleClearMetadataTab(arg);
                 break;
             case NOTIFY_HANDLED:
                 addHandledEvent();
                 break;
             case REMOVE_METADATA:
-                if (arg instanceof List) {
-                    @SuppressWarnings("unchecked")
-                    List<String> metadata = (List<String>)arg;
-                    if (metadata.size() == 2) {
-                        removeMetadata(metadata.get(METADATA_SECTION),
-                                       metadata.get(METADATA_KEY));
-                    }
-                }
+                handleRemoveMetadata(arg);
                 break;
             case START_SESSION:
-                if (arg instanceof List) {
-                    @SuppressWarnings("unchecked")
-                    List<String> metadata = (List<String>)arg;
-                    if (metadata.size() == 2) {
-                        startedSession(metadata.get(0), metadata.get(1));
-                    }
-                }
+                handleStartSession(arg);
                 break;
             case UPDATE_APP_VERSION:
-                if (arg instanceof String) {
-                    updateAppVersion((String)arg);
-                }
+                handleAppVersionChange(arg);
                 break;
             case UPDATE_BUILD_UUID:
-                updateBuildUUID(arg == null ? "" : (String)arg);
+                handleBuildUUIDChange(arg);
                 break;
             case UPDATE_CONTEXT:
-                updateContext(arg == null ? "" : (String)arg);
+                handleContextChange(arg);
                 break;
             case UPDATE_IN_FOREGROUND:
-                if (arg instanceof Boolean) {
-                    updateInForeground((boolean)arg);
-                }
+                handleForegroundActivityChange(arg);
                 break;
             case UPDATE_LOW_MEMORY:
-                if (arg instanceof Boolean) {
-                    updateLowMemory((Boolean)arg);
-                }
+                handleLowMemoryChange(arg);
                 break;
             case UPDATE_METADATA:
-                if (arg instanceof MetaData) {
-                    updateMetadata(arg);
-                }
+                handleUpdateMetadata(arg);
                 break;
             case UPDATE_ORIENTATION:
-                if (arg instanceof Integer) {
-                    int value = (int)arg;
-                    if (value == 0 || value == 180) {
-                        updateOrientation("portrait");
-                    } else if (value == 270 || value == 90) {
-                        updateOrientation("landscape");
-                    } else {
-                        updateOrientation("unknown");
-                    }
-                }
+                handleOrientationChange(arg);
                 break;
             case UPDATE_RELEASE_STAGE:
-                if (arg instanceof String) {
-                    updateReleaseStage((String)arg);
-                }
+                handleReleaseStageChange(arg);
                 break;
             case UPDATE_USER_ID:
-                updateUserId(arg == null ? "" : (String)arg);
+                handleUserIdChange(arg);
                 break;
             case UPDATE_USER_NAME:
-                updateUserName(arg == null ? "" : (String)arg);
+                handleUserNameChange(arg);
                 break;
             case UPDATE_USER_EMAIL:
-                updateUserEmail(arg == null ? "" : (String)arg);
+                handleUserEmailChange(arg);
                 break;
             default:
+        }
+    }
+
+    @Nullable
+    private NativeInterface.Message parseMessage(Object rawMessage) {
+        if (rawMessage instanceof NativeInterface.Message) {
+            NativeInterface.Message message = (NativeInterface.Message)rawMessage;
+            if (message.type != NativeInterface.MessageType.INSTALL && !installed.get()) {
+                warn("Received message before INSTALL: " + message.type);
+                return null;
+            }
+            return message;
+        } else {
+            if (rawMessage == null) {
+                warn("Received observable update with null Message");
+            } else {
+                warn("Received observable update object which is not instance of Message: "
+                    + rawMessage.getClass());
+            }
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private void handleInstallMessage(Object arg) {
+        installed.set(configureNativeComponents());
+    }
+
+    private boolean configureNativeComponents() {
+        String nativePath = NativeInterface.getNativeReportPath();
+        try {
+            File outFile = new File(nativePath);
+            if (!outFile.exists() && !outFile.mkdirs()) {
+                return false;
+            }
+            if (outFile.exists()) {
+                File[] fileList = outFile.listFiles();
+                if (fileList != null) {
+                    for (final File file : fileList) {
+                        deliverReportAtPath(file.getAbsolutePath());
+                    }
+                }
+            } else {
+                return false;
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+
+        String reportPath = nativePath + UUID.randomUUID().toString() + ".crash";
+        install(reportPath, true, Build.VERSION.SDK_INT);
+
+        return true;
+    }
+
+    private void handleAddBreadcrumb(Object arg) {
+        if (arg instanceof Breadcrumb) {
+            Breadcrumb crumb = (Breadcrumb) arg;
+            addBreadcrumb(crumb.getName(), crumb.getType().toString(),
+                crumb.getTimestamp(), crumb.getMetadata());
+        } else {
+            warn("Attempted to add non-breadcrumb: " + arg);
+        }
+    }
+
+    private void handleAddMetadata(Object arg) {
+        if (arg instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Object> values = (List<Object>) arg;
+            if (values.size() == 3 && values.get(METADATA_SECTION) instanceof String
+                && values.get(METADATA_KEY) instanceof String) {
+                if (values.get(METADATA_VALUE) instanceof String) {
+                    addMetadataString((String) values.get(METADATA_SECTION),
+                        (String) values.get(METADATA_KEY),
+                        (String) values.get(METADATA_VALUE));
+                    return;
+                } else if (values.get(METADATA_VALUE) instanceof Boolean) {
+                    addMetadataBoolean((String) values.get(METADATA_SECTION),
+                        (String) values.get(METADATA_KEY),
+                        (Boolean) values.get(METADATA_VALUE));
+                    return;
+                } else if (values.get(METADATA_VALUE) instanceof Number) {
+                    addMetadataDouble((String) values.get(METADATA_SECTION),
+                        (String) values.get(METADATA_KEY),
+                        ((Number) values.get(METADATA_VALUE)).doubleValue());
+                    return;
+                }
+            } else if (values.size() == 2) {
+                removeMetadata((String)values.get(METADATA_SECTION),
+                    (String)values.get(METADATA_KEY));
+                return;
+            }
+        }
+
+        warn("ADD_METADATA object is invalid: " + arg);
+    }
+
+    private void handleClearMetadataTab(Object arg) {
+        if (arg instanceof String) {
+            clearMetadataTab((String)arg);
+        } else {
+            warn("CLEAR_METADATA_TAB object is invalid: " + arg);
+        }
+    }
+
+    private void handleAppVersionChange(Object arg) {
+        if (arg instanceof String) {
+            updateAppVersion((String)arg);
+        } else {
+            warn("UPDATE_APP_VERSION object is invalid: " + arg);
+        }
+    }
+
+    private void handleRemoveMetadata(Object arg) {
+        if (arg instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<String> metadata = (List<String>)arg;
+            if (metadata.size() == 2) {
+                removeMetadata(metadata.get(METADATA_SECTION),
+                    metadata.get(METADATA_KEY));
+                return;
+            }
+        }
+
+        warn("REMOVE_METADATA object is invalid: " + arg);
+    }
+
+    private void handleStartSession(Object arg) {
+        if (arg instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Object> metadata = (List<Object>)arg;
+            if (metadata.size() == 2) {
+                Object id = metadata.get(0);
+                Object startTime = metadata.get(1);
+                if (id instanceof String && startTime instanceof Long) {
+                    startedSession((String)id, (Long)startTime);
+                    return;
+                }
+            }
+        }
+
+        warn("START_SESSION object is invalid: " + arg);
+    }
+
+    private void handleReleaseStageChange(Object arg) {
+        if (arg instanceof String) {
+            updateReleaseStage((String)arg);
+        } else {
+            warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
+        }
+    }
+
+    private void handleOrientationChange(Object arg) {
+        if (arg instanceof Integer) {
+            int value = (int)arg;
+            if (value == 0 || value == 180) {
+                updateOrientation("portrait");
+            } else if (value == 270 || value == 90) {
+                updateOrientation("landscape");
+            } else {
+                updateOrientation("unknown");
+            }
+        } else {
+            warn("UPDATE_ORIENTATION object is invalid: " + arg);
+        }
+    }
+
+    private void handleForegroundActivityChange(Object arg) {
+        if (arg instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Object> metadata = (List<Object>)arg;
+            if (metadata.size() == 2) {
+                updateInForeground((boolean) metadata.get(0), (String) metadata.get(1));
+                return;
+            }
+        }
+
+        warn("UPDATE_IN_FOREGROUND object is invalid: " + arg);
+    }
+
+    private void handleUserIdChange(Object arg) {
+        if (arg == null) {
+            updateUserId("");
+        } else if (arg instanceof String) {
+            updateUserId((String)arg);
+        } else {
+            warn("UPDATE_USER_ID object is invalid: " + arg);
+        }
+    }
+
+    private void handleUserNameChange(Object arg) {
+        if (arg == null) {
+            updateUserName("");
+        } else if (arg instanceof String) {
+            updateUserName((String)arg);
+        } else {
+            warn("UPDATE_USER_NAME object is invalid: " + arg);
+        }
+    }
+
+    private void handleUserEmailChange(Object arg) {
+        if (arg == null) {
+            updateUserEmail("");
+        } else if (arg instanceof String) {
+            updateUserEmail((String)arg);
+        } else {
+            warn("UPDATE_USER_EMAIL object is invalid: " + arg);
+        }
+    }
+
+    private void handleBuildUUIDChange(Object arg) {
+        if (arg == null) {
+            updateBuildUUID("");
+        } else if (arg instanceof String) {
+            updateBuildUUID((String)arg);
+        } else {
+            warn("UPDATE_BUILD_UUID object is invalid: " + arg);
+        }
+    }
+
+    private void handleContextChange(Object arg) {
+        if (arg == null) {
+            updateContext("");
+        } else if (arg instanceof String) {
+            updateContext((String)arg);
+        } else {
+            warn("UPDATE_CONTEXT object is invalid: " + arg);
+        }
+    }
+
+    private void handleLowMemoryChange(Object arg) {
+        if (arg instanceof Boolean) {
+            updateLowMemory((Boolean)arg);
+        } else {
+            warn("UPDATE_LOW_MEMORY object is invalid: " + arg);
+        }
+    }
+
+    private void handleUpdateMetadata(Object arg) {
+        if (arg instanceof MetaData) {
+            updateMetadata(arg);
+        } else {
+            warn("UPDATE_METADATA object is invalid: " + arg);
+        }
+    }
+
+    private void warn(String message) {
+        if (loggingEnabled) {
+            Log.w(LOG_TAG, message);
         }
     }
 }

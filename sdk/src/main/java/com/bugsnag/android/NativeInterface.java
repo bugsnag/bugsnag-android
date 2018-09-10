@@ -67,8 +67,9 @@ public class NativeInterface {
          */
         UPDATE_CONTEXT,
         /**
-         * Set a new value for `app.inForeground`. The message object should be
-         * a Boolean
+         * Set a new value for `app.inForeground`. The message object should be a
+         * List containing the values [inForeground (Boolean),
+         * foregroundActivityName (String)]
          */
         UPDATE_IN_FOREGROUND,
         /**
@@ -172,6 +173,10 @@ public class NativeInterface {
 
     public static String getContext() {
         return getClient().getContext();
+    }
+
+    public static boolean getLoggingEnabled() {
+        return Logger.getEnabled();
     }
 
     public static String getNativeReportPath() {

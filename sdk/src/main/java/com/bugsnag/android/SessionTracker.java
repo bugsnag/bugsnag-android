@@ -116,7 +116,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             }
             setChanged();
             notifyObservers(new NativeInterface.Message(
-                        NativeInterface.MessageType.START_SESSION, session));
+                        NativeInterface.MessageType.START_SESSION,
+                        Arrays.asList(session.getId(), session.getStartedAt().getTime())));
         }
     }
 

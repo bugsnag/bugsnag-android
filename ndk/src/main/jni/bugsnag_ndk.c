@@ -74,6 +74,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
     JNIEnv *env, jobject _this, jstring _report_path) {
+    static pthread_mutex_t bsg_native_delivery_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&bsg_native_delivery_mutex);
   const char *report_path = (*env)->GetStringUTFChars(env, _report_path, 0);
   bugsnag_report *report =
       bsg_deserialize_report_from_file((char *)report_path);
@@ -93,11 +95,16 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       (*env)->DeleteLocalRef(env, jpayload);
       (*env)->DeleteLocalRef(env, jstage);
       free(payload);
+    } else {
+        BUGSNAG_LOG("Failed to serialize report as JSON: %s", report_path);
     }
     free(report);
+  } else {
+      BUGSNAG_LOG("Failed to read report at file: %s", report_path);
   }
   remove(report_path);
   (*env)->ReleaseStringUTFChars(env, _report_path, report_path);
+    pthread_mutex_unlock(&bsg_native_delivery_mutex);
 }
 
 JNIEXPORT void JNICALL
@@ -111,7 +118,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
-    JNIEnv *env, jstring session_id_, jlong start_date_) {
+    JNIEnv *env, jobject _this, jstring session_id_, jlong start_date_) {
   if (bsg_global_env == NULL || session_id_ == NULL)
     return;
   char *session_id = (char *)(*env)->GetStringUTFChars(env, session_id_, 0);
@@ -211,7 +218,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateContext(
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
-    JNIEnv *env, jobject _this, jboolean new_value) {
+    JNIEnv *env, jobject _this, jboolean new_value, jstring activity_) {
   if (bsg_global_env == NULL)
     return;
   bsg_request_env_write_lock();
