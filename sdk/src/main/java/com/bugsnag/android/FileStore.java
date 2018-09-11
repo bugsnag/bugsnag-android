@@ -57,7 +57,6 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         this.storeDirectory = path;
     }
 
-    @Nullable
     void enqueueContentForDelivery(String content) {
         if (storeDirectory == null) {
             return;

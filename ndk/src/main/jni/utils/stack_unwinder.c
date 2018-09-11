@@ -34,7 +34,6 @@ void bsg_insert_fileinfo(ssize_t frame_count,
       if (info.dli_sname != NULL) {
         bsg_strcpy(stacktrace[i].method, (char *)info.dli_sname);
       }
-      //uintptr_t line_number = (uintptr_t)frame - (uintptr_t)info.dli_fbase;
     }
   }
 }
