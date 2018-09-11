@@ -10,10 +10,12 @@ import java.io.IOException;
 class Exceptions implements JsonStream.Streamable {
     private final Configuration config;
     private final Throwable exception;
+    private String exceptionType;
 
     Exceptions(Configuration config, Throwable exception) {
         this.config = config;
         this.exception = exception;
+        exceptionType = Configuration.DEFAULT_EXCEPTION_TYPE;
     }
 
     @Override
@@ -37,6 +39,10 @@ class Exceptions implements JsonStream.Streamable {
         writer.endArray();
     }
 
+    void setExceptionType(@NonNull String type) {
+        exceptionType = type;
+    }
+
     /**
      * Get the class name from the exception contained in this Error report.
      */
@@ -55,7 +61,7 @@ class Exceptions implements JsonStream.Streamable {
         writer.beginObject();
         writer.name("errorClass").value(name);
         writer.name("message").value(message);
-        writer.name("type").value(config.defaultExceptionType);
+        writer.name("type").value(exceptionType);
 
         Stacktrace stacktrace = new Stacktrace(config, frames);
         writer.name("stacktrace").value(stacktrace);

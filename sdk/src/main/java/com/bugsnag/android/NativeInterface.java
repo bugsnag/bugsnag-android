@@ -299,7 +299,7 @@ public class NativeInterface {
                     if (severity != null) {
                         error.setSeverity(severity);
                     }
-                    error.config.defaultExceptionType = "c";
+                    error.getExceptions().setExceptionType("c");
                 }
             }
         });

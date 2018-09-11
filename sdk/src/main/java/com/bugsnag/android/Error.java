@@ -385,6 +385,10 @@ public class Error implements JsonStream.Streamable {
         return handledState;
     }
 
+    Exceptions getExceptions() {
+        return exceptions;
+    }
+
     static class Builder {
         private final Configuration config;
         private final Throwable exception;

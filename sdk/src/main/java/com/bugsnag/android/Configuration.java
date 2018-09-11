@@ -25,6 +25,7 @@ public class Configuration extends Observable implements Observer {
     private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
     private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
     private static final int DEFAULT_MAX_SIZE = 32;
+    static final String DEFAULT_EXCEPTION_TYPE = "android";
 
     @NonNull
     private final String apiKey;
@@ -45,9 +46,6 @@ public class Configuration extends Observable implements Observer {
     private long launchCrashThresholdMs = 5 * 1000;
     private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
-
-    @NonNull
-    String defaultExceptionType = "android";
 
     @NonNull
     private MetaData metaData;
@@ -573,7 +571,7 @@ public class Configuration extends Observable implements Observer {
      * Retrieves the maximum number of breadcrumbs to keep and sent to Bugsnag.
      * By default, we'll keep and send the 32 most recent breadcrumb log
      * messages.
-     * 
+     *
      * @return the maximum number of breadcrumb log messages to send
      */
     public int getMaxBreadcrumbs() {
