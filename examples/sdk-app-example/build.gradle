@@ -35,6 +35,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
         ndk {
+            // NOTE: remove armeabi if testing on NDK r17+
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'armeabi', 'x86', 'x86_64'
         }
     }
