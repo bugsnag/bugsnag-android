@@ -8,6 +8,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,11 @@ public class ObserverInterfaceTest {
         client.disableExceptionHandler();
         observer = new BugsnagTestObserver();
         client.addObserver(observer);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Async.cancelTasks();
     }
 
     @Test
@@ -138,7 +144,7 @@ public class ObserverInterfaceTest {
 
 
     @Test
-    public void testNotifySendsMessage() throws InterruptedException {
+    public void testNotifySendsMessage() {
         client.startSession();
         client.notify(new Exception("ruh roh"));
         Object errorClass = findMessageInQueue(
@@ -231,7 +237,9 @@ public class ObserverInterfaceTest {
     @Test
     public void testClientClearUserSendsMessage() {
         client.clearUser(); // resets to device ID
-        findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_ID, String.class);
+        String value = (String)findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_ID,
+                                                  String.class);
+        assertEquals(client.getDeviceData().getDeviceData().get("id"), value);
         findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_EMAIL, null);
         findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_NAME, null);
     }
@@ -280,7 +288,7 @@ public class ObserverInterfaceTest {
         assertEquals(0, crumb.getMetadata().size());
     }
 
-    Object findMessageInQueue(NativeInterface.MessageType type, Class<?> argClass) {
+    private Object findMessageInQueue(NativeInterface.MessageType type, Class<?> argClass) {
         for (Object item : observer.observed) {
             if (item instanceof  NativeInterface.Message) {
                 if (argClass == null) {
@@ -297,7 +305,6 @@ public class ObserverInterfaceTest {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     static class BugsnagTestObserver implements Observer {
         private final ArrayList<Object> observed;
 
@@ -305,6 +312,7 @@ public class ObserverInterfaceTest {
             observed = new ArrayList<>(4);
         }
 
+        @Override
         public void update(Observable observable, Object arg) {
             observed.add(arg);
         }
