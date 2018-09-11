@@ -93,18 +93,15 @@ public class NativeInterface {
          */
         UPDATE_RELEASE_STAGE,
         /**
-         * Set a new value for user email. The message object is a string array
-         * containing [id, email, name]
+         * Set a new value for user email. The message object is a string
          */
         UPDATE_USER_EMAIL,
         /**
-         * Set a new value for user name. The message object is a string array
-         * containing [id, email, name]
+         * Set a new value for user name. The message object is a string
          */
         UPDATE_USER_NAME,
         /**
-         * Set a new value for user id. The message object is a string array
-         * containing [id, email, name]
+         * Set a new value for user id. The message object is a string
          */
         UPDATE_USER_ID,
     }
