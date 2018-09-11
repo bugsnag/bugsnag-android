@@ -97,6 +97,25 @@ You can run the test suite on a device/emulator as follows from within the sdk d
 ./gradlew connectedCheck
 ```
 
+To run the end-to-end tests, first set up the environment by running
+[Bundler](https://bundler.io):
+
+```shell
+bundle install
+```
+
+The tests require two environment variables to be set:
+
+* `ANDROID_HOME`, set the the location of the Android SDK
+* `ANDROID_EMULATOR`, set to the name of an installed emulator
+
+Then run the tests using:
+
+```shell
+bundle exec maze-runner
+```
+
+
 Running Lint
 ------------
 You can run lint on the project using the following command:
