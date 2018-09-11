@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-    implementation project(':sdk')
+    api project(':sdk')
     api "com.android.support:support-annotations:$supportLibVersion"
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "com.android.support.test:runner:$supportTestVersion", {
