@@ -90,13 +90,14 @@ bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
 }
 
 void bsg_copy_map_value_string(JNIEnv *env, bsg_jni_cache *jni_cache,
-                               jobject map, const char *_key, char *dest) {
+                               jobject map, const char *_key, char *dest,
+                               int len) {
   jstring key = (*env)->NewStringUTF(env, _key);
   jobject _value =
       (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
   if (_value != NULL) {
-    const char *value = (*env)->GetStringUTFChars(env, (jstring)_value, 0);
-    strcpy(dest, value);
+    char *value = (char *)(*env)->GetStringUTFChars(env, (jstring)_value, 0);
+    bsg_strncpy_safe(dest, value, len);
     (*env)->ReleaseStringUTFChars(env, _value, value);
   }
   (*env)->DeleteLocalRef(env, key);
@@ -203,17 +204,23 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   jobject data = (*env)->CallStaticObjectMethod(
       env, jni_cache->native_interface, jni_cache->get_app_data);
   bsg_copy_map_value_string(env, jni_cache, data, "version",
-                            report->app.version);
+                            report->app.version, sizeof(report->app.version));
   bsg_copy_map_value_string(env, jni_cache, data, "versionName",
-                            report->app.version_name);
+                            report->app.version_name,
+                            sizeof(report->app.version_name));
   bsg_copy_map_value_string(env, jni_cache, data, "packageName",
-                            report->app.package_name);
+                            report->app.package_name,
+                            sizeof(report->app.package_name));
   bsg_copy_map_value_string(env, jni_cache, data, "releaseStage",
-                            report->app.release_stage);
-  bsg_copy_map_value_string(env, jni_cache, data, "name", report->app.name);
-  bsg_copy_map_value_string(env, jni_cache, data, "id", report->app.id);
+                            report->app.release_stage,
+                            sizeof(report->app.release_stage));
+  bsg_copy_map_value_string(env, jni_cache, data, "name", report->app.name,
+                            sizeof(report->app.name));
+  bsg_copy_map_value_string(env, jni_cache, data, "id", report->app.id,
+                            sizeof(report->app.id));
   bsg_copy_map_value_string(env, jni_cache, data, "buildUUID",
-                            report->app.build_uuid);
+                            report->app.build_uuid,
+                            sizeof(report->app.build_uuid));
   report->app.version_code =
       bsg_get_map_value_int(env, jni_cache, data, "versionCode");
   report->app.in_foreground =
@@ -227,26 +234,35 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   jobject data = (*env)->CallStaticObjectMethod(
       env, jni_cache->native_interface, jni_cache->get_device_data);
   bsg_copy_map_value_string(env, jni_cache, data, "manufacturer",
-                            report->device.manufacturer);
-  bsg_copy_map_value_string(env, jni_cache, data, "model",
-                            report->device.model);
-  bsg_copy_map_value_string(env, jni_cache, data, "brand",
-                            report->device.brand);
+                            report->device.manufacturer,
+                            sizeof(report->device.manufacturer));
+  bsg_copy_map_value_string(env, jni_cache, data, "model", report->device.model,
+                            sizeof(report->device.model));
+  bsg_copy_map_value_string(env, jni_cache, data, "brand", report->device.brand,
+                            sizeof(report->device.brand));
   bsg_copy_map_value_string(env, jni_cache, data, "orientation",
-                            report->device.orientation);
-  bsg_copy_map_value_string(env, jni_cache, data, "id", report->device.id);
+                            report->device.orientation,
+                            sizeof(report->device.orientation));
+  bsg_copy_map_value_string(env, jni_cache, data, "id", report->device.id,
+                            sizeof(report->device.id));
   bsg_copy_map_value_string(env, jni_cache, data, "locale",
-                            report->device.locale);
+                            report->device.locale,
+                            sizeof(report->device.locale));
   bsg_copy_map_value_string(env, jni_cache, data, "locationStatus",
-                            report->device.location_status);
+                            report->device.location_status,
+                            sizeof(report->device.location_status));
   bsg_copy_map_value_string(env, jni_cache, data, "networkAccess",
-                            report->device.network_access);
+                            report->device.network_access,
+                            sizeof(report->device.network_access));
   bsg_copy_map_value_string(env, jni_cache, data, "osBuild",
-                            report->device.os_build);
+                            report->device.os_build,
+                            sizeof(report->device.os_build));
   bsg_copy_map_value_string(env, jni_cache, data, "osVersion",
-                            report->device.os_version);
+                            report->device.os_version,
+                            sizeof(report->device.os_version));
   bsg_copy_map_value_string(env, jni_cache, data, "screenResolution",
-                            report->device.screen_resolution);
+                            report->device.screen_resolution,
+                            sizeof(report->device.screen_resolution));
   report->device.jailbroken =
       bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
   report->device.api_level =
@@ -265,9 +281,12 @@ void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             bugsnag_report *report) {
   jobject data = (*env)->CallStaticObjectMethod(
       env, jni_cache->native_interface, jni_cache->get_user_data);
-  bsg_copy_map_value_string(env, jni_cache, data, "id", report->user.id);
-  bsg_copy_map_value_string(env, jni_cache, data, "name", report->user.name);
-  bsg_copy_map_value_string(env, jni_cache, data, "email", report->user.email);
+  bsg_copy_map_value_string(env, jni_cache, data, "id", report->user.id,
+                            sizeof(report->user.id));
+  bsg_copy_map_value_string(env, jni_cache, data, "name", report->user.name,
+                            sizeof(report->user.name));
+  bsg_copy_map_value_string(env, jni_cache, data, "email", report->user.email,
+                            sizeof(report->user.email));
   (*env)->DeleteLocalRef(env, data);
 }
 void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,

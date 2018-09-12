@@ -21,7 +21,7 @@ Feature: Native API
         And the request is a valid for the error reporting API
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
-        And the event "user.name" equals "J"
+        And the event "user.name" equals "Strulyegha  Ghaumon  Rabelban  Snefkal  Angengtai  Samperris  D"
         And the event "user.id" equals "9816734"
         And the event "user.email" equals "j@example.com"
         And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
@@ -138,6 +138,16 @@ Feature: Native API
         And the event has a "process" breadcrumb named "Rerun field analysis"
         And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
 
+    Scenario: Set extraordinarily long app information
+        When I run "CXXExtraordinaryLongStringScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request is a valid for the error reporting API
+        And the exception "errorClass" equals "SIGILL"
+        And the event "app.version" equals "22.312.749.78.300.810.24.167.32"
+        And the event "context" equals "ObservableSessionInitializerStringParserStringSessionProxyGloba"
+
     Scenario: Add custom metadata followed by notifying in C
         When I run "CXXCustomMetadataNativeNotifyScenario"
         And I wait a bit
@@ -159,6 +169,7 @@ Feature: Native API
         And the request is a valid for the error reporting API
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
+        And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They wer"
         And the event "metaData.fruit.apple" equals "gala"
         And the event "metaData.fruit.ripe" is true
         And the event "metaData.fruit.counters" equals 47
