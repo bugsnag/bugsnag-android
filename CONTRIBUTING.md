@@ -53,8 +53,7 @@ To update a clib dependency, reinstall it. For example, using parson:
     clib install kgabis/parson -o src/test/cpp/deps --save
 
 
-Installing the Android SDK
---------------------------
+## Installing the Android SDK
 
 Running `./gradlew` can automatically install both the Gradle build system
 and the Android SDK.
@@ -74,8 +73,7 @@ installed to `~/.android-sdk`.
 > building.
 
 
-Building the Library
----------------------
+## Building the Library
 
 You can build new `.aar` files as follows:
 
@@ -86,16 +84,19 @@ You can build new `.aar` files as follows:
 Files are generated into`build/outputs/aar`.
 
 
-Running Tests
--------------
+## Running Tests
 
 Running the test suite requires a connected android device or emulator.
+
+### Unit tests
 
 You can run the test suite on a device/emulator as follows from within the sdk directory:
 
 ```shell
 ./gradlew connectedCheck
 ```
+
+### End-to-end tests
 
 To run the end-to-end tests, first set up the environment by running
 [Bundler](https://bundler.io):
@@ -115,17 +116,15 @@ Then run the tests using:
 bundle exec maze-runner
 ```
 
+### Running Lint
 
-Running Lint
-------------
 You can run lint on the project using the following command:
 
 ```shell
-./gradlew lint
+./gradlew lint checkstyle
 ```
 
-Building the Example App
-------------------------
+## Building the Example App
 
 You can build and install the example app to as follows:
 
@@ -141,8 +140,7 @@ This builds the latest version of the library and installs an app onto your
 device/emulator.
 
 
-Releasing a New Version
------------------------
+# Releasing a New Version
 
 If you are a project maintainer, you can build and release a new version of
 `bugsnag-android` as follows:
