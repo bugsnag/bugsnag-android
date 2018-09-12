@@ -1,5 +1,5 @@
+wait_time = RUNNING_CI ? '20' : '9'
 When("I wait a bit") do
-  wait_time = RUNNING_CI ? '30' : '9'
   step("I wait for #{wait_time} seconds")
 end
 
@@ -10,10 +10,9 @@ end
 When(/^I run "([^"]+)" against "([^"]+)"$/) do |event_type, emulator|
   assert(emulator && emulator.length > 0, "ANDROID_EMULATOR variable is not set")
   assert(ENV['ANDROID_HOME'] && ENV['ANDROID_HOME'].length > 0, "ANDROID_HOME variable is not set")
-  wait_time = RUNNING_CI ? '10' : '5'
+  step("I start Android emulator \"#{emulator}\"") unless RUNNING_CI # emulator is prebooted on CI
   steps %Q{
-    When I start Android emulator "#{emulator}"
-    And I install the "com.bugsnag.android.mazerunner" Android app from "features/fixtures/mazerunner/build/outputs/apk/release/mazerunner-release.apk"
+    When I install the "com.bugsnag.android.mazerunner" Android app from "features/fixtures/mazerunner/build/outputs/apk/release/mazerunner-release.apk"
     And I clear the "com.bugsnag.android.mazerunner" Android app data
     And I set environment variable "BUGSNAG_API_KEY" to "a35a2a72bd230ac0aa0f52715bbdc6aa"
     And I set environment variable "EVENT_TYPE" to "#{event_type}"
@@ -23,7 +22,6 @@ When(/^I run "([^"]+)" against "([^"]+)"$/) do |event_type, emulator|
 end
 
 When("I relaunch the app") do
-  wait_time = RUNNING_CI ? '30' : '9'
   steps %Q{
     When I force stop the "com.bugsnag.android.mazerunner" Android app
     And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
