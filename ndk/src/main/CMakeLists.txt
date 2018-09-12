@@ -40,3 +40,8 @@ target_link_libraries( # Specifies the target library.
                      # Links the log library to the target library.
                      ${log-lib})
 
+set_target_properties(bugsnag-ndk
+                      PROPERTIES
+                      COMPILE_OPTIONS
+                      -Werror -Wall -pedantic)
+
