@@ -57,12 +57,26 @@ typedef struct {
   char id[64];
   char package_name[64];
   char release_stage[64];
+  char type[32];
   char version[32];
   char version_name[32];
   char active_screen[64];
   int version_code;
   char build_uuid[64];
   time_t duration;
+  time_t duration_in_foreground;
+  /**
+   * The elapsed time in milliseconds between when the system clock starts and
+   * when bugsnag-ndk install() is called
+   */
+  time_t duration_ms_offset;
+  /**
+   * The elapsed time in the foreground in milliseconds between when the app
+   * first enters the foreground and when bugsnag-ndk install() is called, if
+   * the app is in the foreground when install() occurs and the app never enters
+   * the background. This value is zero in all other cases.
+   */
+  time_t duration_in_foreground_ms_offset;
   bool in_foreground;
   bool low_memory;
   size_t memory_usage;
@@ -118,7 +132,6 @@ typedef struct {
    */
   char os_build[64];
 } bsg_report_header;
-
 
 typedef enum {
   /** An unhandled exception */
@@ -280,13 +293,17 @@ typedef struct {
   int handled_events;
 } bugsnag_report;
 
-
-void bugsnag_report_add_metadata_double(bugsnag_report *report, char *section, char *name, double value);
-void bugsnag_report_add_metadata_string(bugsnag_report *report, char *section, char *name, char *value);
-void bugsnag_report_add_metadata_bool(bugsnag_report *report, char *section, char *name, bool value);
-void bugsnag_report_add_breadcrumb(bugsnag_report *report, bugsnag_breadcrumb *crumb);
+void bugsnag_report_add_metadata_double(bugsnag_report *report, char *section,
+                                        char *name, double value);
+void bugsnag_report_add_metadata_string(bugsnag_report *report, char *section,
+                                        char *name, char *value);
+void bugsnag_report_add_metadata_bool(bugsnag_report *report, char *section,
+                                      char *name, bool value);
+void bugsnag_report_add_breadcrumb(bugsnag_report *report,
+                                   bugsnag_breadcrumb *crumb);
 void bugsnag_report_clear_breadcrumbs(bugsnag_report *report);
-void bugsnag_report_remove_metadata(bugsnag_report *report, char *section, char *name);
+void bugsnag_report_remove_metadata(bugsnag_report *report, char *section,
+                                    char *name);
 void bugsnag_report_remove_metadata_tab(bugsnag_report *report, char *section);
 void bugsnag_report_set_context(bugsnag_report *report, char *value);
 void bugsnag_report_set_orientation(bugsnag_report *report, char *value);

@@ -58,6 +58,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
 
   // populate metadata from Java layer
   bsg_populate_report(env, &bugsnag_env->next_report);
+  time(&bugsnag_env->start_time);
+  if (bugsnag_env->next_report.app.in_foreground) {
+    bugsnag_env->foreground_start_time = bugsnag_env->start_time;
+  }
 
   // If set, save os build info to report info header
   if (strlen(bugsnag_env->next_report.device.os_build) > 0) {
@@ -236,6 +240,12 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
   bsg_global_env->next_report.app.in_foreground = (bool)new_value;
   bsg_strncpy_safe(bsg_global_env->next_report.app.active_screen, activity,
                    sizeof(bsg_global_env->next_report.app.active_screen));
+  if ((bool)new_value) {
+    time(&bsg_global_env->foreground_start_time);
+  } else {
+    bsg_global_env->foreground_start_time = 0;
+    bsg_global_env->next_report.app.duration_in_foreground_ms_offset = 0;
+  }
   bsg_release_env_write_lock();
   if (activity_ != NULL) {
     (*env)->ReleaseStringUTFChars(env, activity_, activity);

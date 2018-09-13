@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #include "../utils/serializer.h"
+#include "../utils/crash_info.h"
 #include "../utils/string.h"
 #define BSG_HANDLED_SIGNAL_COUNT 6
 
@@ -116,11 +117,10 @@ bool bsg_configure_signal_stack() {
 
 void bsg_handle_signal(int signum, siginfo_t *info,
                        void *user_context) __asyncsafe {
-  static time_t now;
   if (bsg_global_env == NULL)
     return;
 
-  bsg_global_env->next_report.device.time = time(&now);
+  bsg_populate_report_as(bsg_global_env);
   bsg_global_env->next_report.exception.frame_count = bsg_unwind_stack(
       bsg_global_env->unwind_style,
       bsg_global_env->next_report.exception.stacktrace, info, user_context);

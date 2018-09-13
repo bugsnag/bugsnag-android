@@ -218,9 +218,15 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             sizeof(report->app.name));
   bsg_copy_map_value_string(env, jni_cache, data, "id", report->app.id,
                             sizeof(report->app.id));
+  bsg_copy_map_value_string(env, jni_cache, data, "type", report->app.type,
+                            sizeof(report->app.type));
   bsg_copy_map_value_string(env, jni_cache, data, "buildUUID",
                             report->app.build_uuid,
                             sizeof(report->app.build_uuid));
+  report->app.duration_ms_offset =
+      bsg_get_map_value_long(env, jni_cache, data, "duration");
+  report->app.duration_in_foreground_ms_offset =
+      bsg_get_map_value_long(env, jni_cache, data, "durationInForeground");
   report->app.version_code =
       bsg_get_map_value_int(env, jni_cache, data, "versionCode");
   report->app.in_foreground =
@@ -263,6 +269,8 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   bsg_copy_map_value_string(env, jni_cache, data, "screenResolution",
                             report->device.screen_resolution,
                             sizeof(report->device.screen_resolution));
+  report->device.emulator =
+      bsg_get_map_value_bool(env, jni_cache, data, "emulator");
   report->device.jailbroken =
       bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
   report->device.api_level =

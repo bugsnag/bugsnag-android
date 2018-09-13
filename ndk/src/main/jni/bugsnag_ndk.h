@@ -31,6 +31,14 @@ typedef struct {
      * Cache of static metadata and report info. Exception/time information is populated at crash time.
      */
     bugsnag_report next_report;
+    /**
+     * Time when installed
+     */
+    time_t start_time;
+    /**
+     * Time when last re-entering foreground
+     */
+    time_t foreground_start_time;
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();

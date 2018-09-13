@@ -63,6 +63,12 @@ Then("the event {string} string is empty") do |keypath|
   end
 end
 
+Then("the event {string} is greater than {int}") do |keypath, int|
+  value = read_key_path(find_request(0)[:body], "events.0.#{keypath}")
+  assert_false(value.nil?, "The event #{keypath} is nil")
+  assert_true(value > int)
+end
+
 Then("the exception {string} equals one of:") do |keypath, possible_values|
   value = read_key_path(find_request(0)[:body], "events.0.exceptions.0.#{keypath}")
   assert_includes(possible_values.raw.flatten, value)
