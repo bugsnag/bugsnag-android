@@ -2,8 +2,10 @@
 #include "stack_unwinder_libcorkscrew.h"
 #include "stack_unwinder_libunwind.h"
 #include "string.h"
+#include <asm/siginfo.h>
 #include <dlfcn.h>
 #include <report.h>
+#include <ucontext.h>
 
 #define BSG_LIBUNWIND_LEVEL 21
 #define BSG_LIBCORKSCREW_MIN_LEVEL 16
@@ -27,7 +29,8 @@ void bsg_insert_fileinfo(ssize_t frame_count,
     if (dladdr((void *)stacktrace[i].frame_address, &info) != 0) {
       stacktrace[i].load_address = (uintptr_t)info.dli_fbase;
       stacktrace[i].symbol_address = (uintptr_t)info.dli_saddr;
-      stacktrace[i].line_number = stacktrace[i].frame_address - stacktrace[i].load_address;
+      stacktrace[i].line_number =
+          stacktrace[i].frame_address - stacktrace[i].load_address;
       if (info.dli_fname != NULL) {
         bsg_strcpy(stacktrace[i].filename, (char *)info.dli_fname);
       }
@@ -47,8 +50,19 @@ ssize_t bsg_unwind_stack(bsg_unwinder unwind_style,
   } else if (unwind_style == BSG_LIBCORKSCREW) {
     frame_count = bsg_unwind_stack_libcorkscrew(stacktrace, info, user_context);
   } else {
-    stacktrace[0].frame_address = (uintptr_t)info->si_addr;
     frame_count = 1;
+    if (user_context != NULL) {
+      ucontext_t *ctx = (ucontext_t *)user_context;
+#if defined(__i386__)
+      stacktrace[0].frame_address = ctx->uc_mcontext.gregs[REG_EIP];
+#elif defined(__x86_64__)
+      stacktrace[0].frame_address = ctx->uc_mcontext.gregs[REG_RIP];
+#elif defined(__aarch64__) || defined(__arm__)
+      stacktrace[0].frame_address = ctx->uc_mcontext.fault_address;
+#else
+      stacktrace[0].frame_address = (uintptr_t)info->si_addr;
+#endif
+    }
   }
   bsg_insert_fileinfo(frame_count,
                       stacktrace); // none of this is safe ¯\_(ツ)_/¯
