@@ -3,6 +3,7 @@
 #include <report.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "../utils/string.h"
 
@@ -25,6 +26,7 @@ typedef struct map_info_t map_info_t;
 
 struct bsg_unwind_config {
   void *cork_unwind_backtrace_signal_arch;
+  void *cork_unwind_backtrace_thread;
   void *cork_acquire_my_map_info_list;
   void *cork_release_my_map_info_list;
   void *cork_get_backtrace_symbols;
@@ -35,6 +37,7 @@ static struct bsg_unwind_config *bsg_global_unwind_cfg;
 
 bool bsg_libcorkscrew_configured() {
   return bsg_global_unwind_cfg->cork_unwind_backtrace_signal_arch != NULL &&
+         bsg_global_unwind_cfg->cork_unwind_backtrace_thread != NULL &&
          bsg_global_unwind_cfg->cork_acquire_my_map_info_list != NULL &&
          bsg_global_unwind_cfg->cork_release_my_map_info_list != NULL &&
          bsg_global_unwind_cfg->cork_get_backtrace_symbols != NULL &&
@@ -55,6 +58,8 @@ bool bsg_configure_libcorkscrew(void) {
         dlsym(libcorkscrew, "get_backtrace_symbols");
     bsg_global_unwind_cfg->cork_free_backtrace_symbols =
         dlsym(libcorkscrew, "free_backtrace_symbols");
+    bsg_global_unwind_cfg->cork_unwind_backtrace_thread =
+        dlsym(libcorkscrew, "unwind_backtrace_thread");
   }
 
   return bsg_libcorkscrew_configured();
@@ -63,13 +68,16 @@ bool bsg_configure_libcorkscrew(void) {
 ssize_t
 bsg_unwind_stack_libcorkscrew(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
                               siginfo_t *info, void *user_context) {
-    backtrace_frame_t frames[BUGSNAG_FRAMES_MAX];
-    backtrace_symbol_t symbols[BUGSNAG_FRAMES_MAX];
+  backtrace_frame_t frames[BUGSNAG_FRAMES_MAX];
+  backtrace_symbol_t symbols[BUGSNAG_FRAMES_MAX];
   map_info_t *(*acquire_my_map_info_list)(void) =
       bsg_global_unwind_cfg->cork_acquire_my_map_info_list;
   ssize_t (*unwind_backtrace_signal_arch)(
       siginfo_t *, void *, const map_info_t *, backtrace_frame_t *, size_t,
       size_t) = bsg_global_unwind_cfg->cork_unwind_backtrace_signal_arch;
+  ssize_t (*unwind_backtrace_thread)(pid_t, backtrace_frame_t *, size_t,
+                                     size_t) =
+      bsg_global_unwind_cfg->cork_unwind_backtrace_thread;
   void (*release_my_map_info_list)(map_info_t *) =
       bsg_global_unwind_cfg->cork_release_my_map_info_list;
   void (*get_backtrace_symbols)(const backtrace_frame_t *, size_t,
@@ -78,11 +86,16 @@ bsg_unwind_stack_libcorkscrew(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
   void (*free_backtrace_symbols)(backtrace_symbol_t *, size_t) =
       bsg_global_unwind_cfg->cork_free_backtrace_symbols;
 
-  map_info_t *const info_list = acquire_my_map_info_list();
-  ssize_t size = unwind_backtrace_signal_arch(info, user_context, info_list,
-                                              frames, 0,
-                                              (size_t)BUGSNAG_FRAMES_MAX);
-  release_my_map_info_list(info_list);
+  ssize_t size;
+  if (user_context != NULL) {
+    map_info_t *const info_list = acquire_my_map_info_list();
+    size = unwind_backtrace_signal_arch(info, user_context, info_list, frames,
+                                        0, (size_t)BUGSNAG_FRAMES_MAX);
+    release_my_map_info_list(info_list);
+  } else {
+    size = unwind_backtrace_thread(getpid(), frames, 0,
+                                   (size_t)BUGSNAG_FRAMES_MAX);
+  }
 
   get_backtrace_symbols(frames, (size_t)size, symbols);
   int frame_count = 0;
