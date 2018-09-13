@@ -62,3 +62,9 @@ Then("the event {string} string is empty") do |keypath|
     value.nil? or value.length == 0
   end
 end
+
+Then("the exception {string} equals one of:") do |keypath, possible_values|
+  value = read_key_path(find_request(0)[:body], "events.0.exceptions.0.#{keypath}")
+  assert_includes(possible_values.raw.flatten, value)
+end
+

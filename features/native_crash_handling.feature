@@ -74,7 +74,9 @@ Feature: Native crash reporting
         And I relaunch the app
         Then I should receive a request
         And the request is a valid for the error reporting API
-        And the exception "errorClass" equals "SIGABRT"
+        And the exception "errorClass" equals one of:
+            | SIGABRT |
+            | SIGSEGV |
         And the exception "type" equals "c"
         And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
         And the event "severity" equals "error"
