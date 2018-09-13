@@ -14,6 +14,7 @@ import com.bugsnag.android.mazerunner.SecondActivity;
 public class CXXUpdateContextCrashScenario extends Scenario {
 
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 
@@ -41,7 +42,7 @@ public class CXXUpdateContextCrashScenario extends Scenario {
                 public void run() {
                     crash(405);
                 }
-            }, 4000);
+            }, 1000);
         }
     }
 }

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 public class CXXStackoverflowScenario extends Scenario {
 
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 

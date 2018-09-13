@@ -13,6 +13,7 @@ import java.util.TimerTask;
 
 public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 

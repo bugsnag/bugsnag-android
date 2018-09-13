@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 
 public class CXXJavaUserInfoNativeCrashScenario extends Scenario {
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 

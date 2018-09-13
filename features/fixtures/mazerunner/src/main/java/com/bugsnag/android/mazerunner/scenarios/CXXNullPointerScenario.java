@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 public class CXXNullPointerScenario extends Scenario {
 
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 

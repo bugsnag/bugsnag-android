@@ -13,6 +13,7 @@ import java.lang.Runnable;
 
 public class CXXBackgroundCrashScenario extends Scenario {
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 

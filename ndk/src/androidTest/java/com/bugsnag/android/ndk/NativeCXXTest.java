@@ -7,6 +7,7 @@ import org.junit.Test;
 public class NativeCXXTest {
 
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("bugsnag-ndk-test");
     }
 

@@ -10,6 +10,7 @@ import java.lang.reflect.Array;
 
 public class CXXNativeBreadcrumbJavaCrashScenario extends Scenario {
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 

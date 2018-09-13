@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 
 public class CXXNativeBreadcrumbJavaNotifyScenario extends Scenario {
     static {
+        System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 

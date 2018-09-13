@@ -47,6 +47,7 @@ Feature: Native crash reporting
 
     Scenario: Reference undefined instruction
         When I run "CXXUndefinedInstructionScenario"
+        And I wait a bit
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
