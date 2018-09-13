@@ -251,6 +251,22 @@ public class Client extends Observable implements Observer {
     void sendNativeSetupNotification() {
         setChanged();
         super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, config));
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    enqueuePendingNativeReports();
+                }
+            });
+        } catch (RejectedExecutionException ex) {
+            Logger.warn("Failed to enqueue native reports, will retry next launch: ", ex);
+        }
+    }
+
+    private void enqueuePendingNativeReports() {
+        setChanged();
+        notifyObservers(new Message(
+            NativeInterface.MessageType.DELIVER_PENDING, null));
     }
 
     @Override

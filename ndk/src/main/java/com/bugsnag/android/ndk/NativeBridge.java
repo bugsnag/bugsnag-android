@@ -14,6 +14,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Observes changes in the Bugsnag environment, propagating them to the native layer
@@ -27,6 +29,7 @@ public class NativeBridge implements Observer {
     private static final int METADATA_KEY = 1;
     private static final int METADATA_VALUE = 2;
     private static final String LOG_TAG = "BugsnagNDK:NativeBridge";
+    private static final Lock lock = new ReentrantLock();
 
     public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel);
 
@@ -75,9 +78,21 @@ public class NativeBridge implements Observer {
 
     private AtomicBoolean installed = new AtomicBoolean(false);
     private boolean loggingEnabled = true;
+    private final String reportDirectory;
 
+    /**
+     * Creates a new native bridge for interacting with native components.
+     * Configures logging and ensures that the reporting directory exists
+     * immediately.
+     */
     public NativeBridge() {
         loggingEnabled = NativeInterface.getLoggingEnabled();
+        reportDirectory = NativeInterface.getNativeReportPath();
+        File outFile = new File(reportDirectory);
+        if (!outFile.exists() && !outFile.mkdirs()) {
+            warn("The native reporting directory cannot be created. Disabling NDK integration");
+            installed.set(false);
+        }
     }
 
     @Override
@@ -91,6 +106,9 @@ public class NativeBridge implements Observer {
         switch (message.type) {
             case INSTALL:
                 handleInstallMessage(arg);
+                break;
+            case DELIVER_PENDING:
+                deliverPendingReports();
                 break;
             case ADD_BREADCRUMB:
                 handleAddBreadcrumb(arg);
@@ -170,36 +188,36 @@ public class NativeBridge implements Observer {
         }
     }
 
-    @SuppressWarnings("unused")
-    private void handleInstallMessage(Object arg) {
-        installed.set(configureNativeComponents());
-    }
-
-    private boolean configureNativeComponents() {
-        String nativePath = NativeInterface.getNativeReportPath();
+    private void deliverPendingReports() {
+        lock.lock();
         try {
-            File outFile = new File(nativePath);
-            if (!outFile.exists() && !outFile.mkdirs()) {
-                return false;
-            }
-            if (outFile.exists()) {
-                File[] fileList = outFile.listFiles();
+            File outDir = new File(reportDirectory);
+            if (outDir.exists()) {
+                File[] fileList = outDir.listFiles();
                 if (fileList != null) {
                     for (final File file : fileList) {
                         deliverReportAtPath(file.getAbsolutePath());
                     }
                 }
             } else {
-                return false;
+                warn("Report directory does not exist, cannot read pending reports");
             }
         } catch (Exception ex) {
-            return false;
+            warn("Failed to parse/write pending reports: " + ex);
+        } finally {
+            lock.unlock();
         }
+    }
 
-        String reportPath = nativePath + UUID.randomUUID().toString() + ".crash";
+    @SuppressWarnings("unused")
+    private void handleInstallMessage(Object arg) {
+        if (installed.get()) {
+            warn("Received duplicate setup message with arg: " + arg);
+            return;
+        }
+        String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
         install(reportPath, true, Build.VERSION.SDK_INT);
-
-        return true;
+        installed.set(true);
     }
 
     private void handleAddBreadcrumb(Object arg) {

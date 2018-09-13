@@ -34,6 +34,10 @@ public class NativeInterface {
          */
         CLEAR_METADATA_TAB,
         /**
+         * Deliver all pending reports
+         */
+        DELIVER_PENDING,
+        /**
          * Set up Bugsnag. The message object should be a Configuration.
          */
         INSTALL,
