@@ -318,15 +318,10 @@ public class NativeBridge implements Observer {
     }
 
     private void handleOrientationChange(Object arg) {
-        if (arg instanceof Integer) {
-            int value = (int)arg;
-            if (value == 0 || value == 180) {
-                updateOrientation("portrait");
-            } else if (value == 270 || value == 90) {
-                updateOrientation("landscape");
-            } else {
-                updateOrientation("unknown");
-            }
+        if (arg instanceof String) {
+            updateOrientation((String) arg);
+        } else if (arg == null) {
+            updateOrientation("unknown");
         } else {
             warn("UPDATE_ORIENTATION object is invalid: " + arg);
         }

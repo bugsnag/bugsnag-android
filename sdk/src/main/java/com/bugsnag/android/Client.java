@@ -221,7 +221,7 @@ public class Client extends Observable implements Observer {
             public void onOrientationChanged(int orientation) {
                 client.setChanged();
                 client.notifyObservers(new Message(
-                    NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
+                    NativeInterface.MessageType.UPDATE_ORIENTATION, deviceData.getOrientation()));
             }
         };
         orientationListener.enable();
