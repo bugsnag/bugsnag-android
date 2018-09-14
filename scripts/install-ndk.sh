@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 
-# Hide interactive output
-export TERM=dumb
-
 if [ -z "$NDK_VERSION" ]; then
     echo "No NDK version set. Using default (r16b)."
     export NDK_VERSION=r16b
 fi
 
-curl -L https://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O
+curl --silent -L https://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O
 
-unzip android-ndk-$NDK_VERSION-linux-x86_64.zip > /dev/null
+unzip -qq android-ndk-$NDK_VERSION-linux-x86_64.zip > /dev/null
 
 mv android-ndk-$NDK_VERSION $ANDROID_HOME/ndk-bundle
 rm android-ndk-$NDK_VERSION-linux-x86_64.zip
