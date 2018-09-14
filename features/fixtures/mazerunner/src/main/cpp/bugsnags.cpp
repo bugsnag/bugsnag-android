@@ -27,6 +27,15 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXUpdateContextCrashScenario_cras
 }
 
 JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSessionInfoCrashScenario_crash(JNIEnv *env,
+                                                                         jobject instance,
+                                                                         jint value) {
+  if (value > 0)
+    __builtin_trap();
+  return 48206 / value;
+}
+
+JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXExtraordinaryLongStringScenario_crash(JNIEnv *env,
                                                                          jobject instance,
                                                                          jint value) {

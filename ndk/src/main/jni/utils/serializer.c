@@ -148,7 +148,6 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
 
     json_object_dotset_string(event, "app.releaseStage",
                               report->app.release_stage);
-    json_object_dotset_string(event, "app.version", report->app.version);
     json_object_dotset_number(event, "app.versionCode",
                               report->app.version_code);
     if (strlen(report->app.build_uuid) > 0) {
@@ -169,18 +168,25 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     json_object_dotset_boolean(event, "metaData.app.lowMemory",
                                report->app.low_memory);
 
-    json_object_dotset_string(event, "device.osName", "Android");
-    json_object_dotset_string(event, "device.osBuild", report->device.os_build);
+    json_object_dotset_string(event, "device.osName", "android");
     json_object_dotset_string(event, "device.id", report->device.id);
     json_object_dotset_string(event, "device.osVersion",
                               report->device.os_version);
     json_object_dotset_string(event, "device.manufacturer",
                               report->device.manufacturer);
     json_object_dotset_string(event, "device.model", report->device.model);
+    json_object_dotset_string(event, "device.orientation",
+                              report->device.orientation);
+    json_object_dotset_string(event, "metaData.device.osBuild",
+                              report->device.os_build);
+    json_object_dotset_number(event, "device.totalMemory",
+                              report->device.total_memory);
     json_object_dotset_number(event, "metaData.device.apiLevel",
                               report->device.api_level);
     json_object_dotset_string(event, "metaData.device.brand",
                               report->device.brand);
+    json_object_dotset_boolean(event, "metaData.device.emulator",
+                               report->device.emulator);
     json_object_dotset_boolean(event, "metaData.device.jailbroken",
                                report->device.jailbroken);
     json_object_dotset_string(event, "metaData.device.locale",
@@ -189,25 +195,21 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
                               report->device.location_status);
     json_object_dotset_string(event, "metaData.device.networkAccess",
                               report->device.network_access);
-    json_object_dotset_string(event, "metaData.device.orientation",
-                              report->device.orientation);
     json_object_dotset_number(event, "metaData.device.dpi", report->device.dpi);
     json_object_dotset_number(event, "metaData.device.screenDensity",
                               report->device.screen_density);
     json_object_dotset_string(event, "metaData.device.screenResolution",
                               report->device.screen_resolution);
-    json_object_dotset_number(event, "metaData.device.totalMemory",
-                              report->device.total_memory);
 
     char report_time[sizeof "2018-10-08T12:07:09Z"];
     if (report->device.time > 0) {
       strftime(report_time, sizeof report_time, "%FT%TZ",
                gmtime(&report->device.time));
-      json_object_dotset_string(event, "device.time", report_time);
+      json_object_dotset_string(event, "metaData.device.time", report_time);
     }
     JSON_Value *abi_val = json_value_init_array();
     JSON_Array *cpu_abis = json_value_get_array(abi_val);
-    json_object_dotset_value(event, "device.cpuAbi", abi_val);
+    json_object_dotset_value(event, "metaData.device.cpuAbi", abi_val);
     for (int i = 0; i < report->device.cpu_abi_count; i++) {
       json_array_append_string(cpu_abis, report->device.cpu_abi[i].value);
     }

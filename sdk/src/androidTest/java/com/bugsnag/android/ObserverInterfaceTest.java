@@ -291,16 +291,20 @@ public class ObserverInterfaceTest {
     private Object findMessageInQueue(NativeInterface.MessageType type, Class<?> argClass) {
         for (Object item : observer.observed) {
             if (item instanceof  NativeInterface.Message) {
+                NativeInterface.Message message = (NativeInterface.Message)item;
+                if (message.type != type) {
+                    continue;
+                }
                 if (argClass == null) {
                     if (((NativeInterface.Message)item).value == null) {
                         return null;
                     }
-                } else if (argClass.isInstance(((NativeInterface.Message)item).value)) {
-                    return ((NativeInterface.Message)item).value;
+                } else if (argClass.isInstance(message.value)) {
+                    return message.value;
                 }
             }
         }
-        assertFalse("Failed to find message matching " + type, false);
+        assertTrue("Failed to find message matching " + type, false);
 
         return null;
     }

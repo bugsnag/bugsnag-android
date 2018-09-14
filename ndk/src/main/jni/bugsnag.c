@@ -4,6 +4,9 @@
 #include "report.h"
 #include "utils/stack_unwinder.h"
 #include <jni.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 static JNIEnv *bsg_global_jni_env = NULL;
 
@@ -80,9 +83,18 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
     bsg_stackframe frame = stacktrace[i];
     jstring class = (*env)->NewStringUTF(env, "");
     jstring filename = (*env)->NewStringUTF(env, frame.filename);
-    jstring method = (*env)->NewStringUTF(env, frame.method);
-    jobject jframe = (*env)->NewObject(env, trace_class, trace_constructor,
-                                       class, method, filename, 0);
+    jstring method;
+    if (strlen(frame.method) == 0) {
+      char *frame_address = malloc(sizeof(char) * 32);
+      sprintf(frame_address, "0x%lx", (unsigned long)frame.frame_address);
+      method = (*env)->NewStringUTF(env, frame_address);
+      free(frame_address);
+    } else {
+      method = (*env)->NewStringUTF(env, frame.method);
+    }
+    jobject jframe =
+        (*env)->NewObject(env, trace_class, trace_constructor, class, method,
+                          filename, frame.line_number);
 
     (*env)->SetObjectArrayElement(env, trace, i, jframe);
     (*env)->DeleteLocalRef(env, filename);
