@@ -1,4 +1,4 @@
-wait_time = RUNNING_CI ? '20' : '9'
+wait_time = ENV['MAZE_WAIT_TIME'] || (RUNNING_CI ? '20' : '5')
 When("I wait a bit") do
   step("I wait for #{wait_time} seconds")
 end
