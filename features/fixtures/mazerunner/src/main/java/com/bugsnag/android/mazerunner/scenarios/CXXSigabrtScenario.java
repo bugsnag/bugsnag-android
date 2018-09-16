@@ -1,22 +1,21 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-
 import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
 import android.support.annotation.NonNull;
 
-public class CXXUndefinedInstructionScenario extends Scenario {
+public class CXXSigabrtScenario extends Scenario {
 
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash();
+    public native int crash(int value);
 
-    public CXXUndefinedInstructionScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXSigabrtScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }
@@ -28,6 +27,6 @@ public class CXXUndefinedInstructionScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        crash();
+        crash(2726);
     }
 }

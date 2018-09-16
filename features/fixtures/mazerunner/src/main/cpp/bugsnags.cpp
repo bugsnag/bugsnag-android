@@ -57,15 +57,8 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXDelayedNotifyScenario_activate(
   bugsnag_notify_env(env, (char *)"Ferret Escape!", (char *)"oh no", BSG_SEVERITY_ERR);
 }
 
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXBackgroundNotifyScenario_activate(JNIEnv *env,
-                                                                         jobject instance) {
-  bugsnag_notify_env(env, (char *)"Vitamin K deficiency",
-                     (char *)"Missing vegetable invocation", BSG_SEVERITY_ERR);
-}
-
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXBackgroundCrashScenario_activate(JNIEnv *env,
+Java_com_bugsnag_android_mazerunner_scenarios_CXXDelayedCrashScenario_activate(JNIEnv *env,
                                                                          jobject instance,
                                                                          jint value) {
   if (value > 0)

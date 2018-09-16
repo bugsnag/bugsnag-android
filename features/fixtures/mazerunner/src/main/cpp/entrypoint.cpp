@@ -1,11 +1,12 @@
 #include <jni.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <time.h>
 
 extern "C" {
 
-static char * __attribute__((used)) somefakefunc(void) {}
+static char * __attribute__((used)) somefakefunc(void) {};
 
 typedef struct {
   int field1;
@@ -35,15 +36,33 @@ int crash_null_pointer(bool route) {
   return j;
 }
 
-int crash_released_obj(int counter) {
-    char *text = (char *)malloc(30);
-    reporter_t *report = (reporter_t *) malloc(sizeof(reporter_t));
-    report->field1 = 6;
-    free(report);
-    if (counter > 0)
-      strncpy(text, report->field2, sizeof(text));
+int crash_write_read_only_mem(int counter) {
+  if (counter > 2) {
+    int *pointer = (int *)&somefakefunc;
+    *pointer = counter;
+  }
+  return counter / 14;
+}
 
-    return report->field1;
+char *crash_improper_cast(int counter) {
+  reporter_t *report = (reporter_t *)counter;
+
+  return report->field2;
+}
+
+int crash_double_free(int counter) {
+  for (int i = 0; i < 30; i++) {
+    reporter_t *reporter = (reporter_t *)malloc(sizeof(reporter_t));
+    reporter->field1 = 22 + counter;
+    char *field2 = reporter->field2;
+    strcpy(field2, "Indeed");
+    printf("%d field1 is: %d", i, reporter->field1);
+    printf("%d field2 is: %s", i, field2);
+    free(field2);
+    free(reporter);
+  }
+
+  return counter / -8;
 }
 
 int crash_trap() {
@@ -61,6 +80,78 @@ int crash_stack_overflow(int counter, char *input) {
   strcpy(stack, input);
 
   return 4 / counter;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigtrapScenario_crash(JNIEnv *env,
+                                                                      jobject instance,
+                                                                      jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGTRAP);
+  }
+  printf("Shields up! Rrrrred alert!.\n");
+  return value / x;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigbusScenario_crash(JNIEnv *env,
+                                                                      jobject instance,
+                                                                      jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGBUS);
+  }
+  printf("A surprise party? Mr. Worf, I hate surprise parties. I would *never* do that to you.\n");
+  return value / x / 8;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigabrtScenario_crash(JNIEnv *env,
+                                                                        jobject instance,
+                                                                        jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGABRT);
+  }
+  printf("Is it my imagination, or have tempers become a little frayed on the ship lately?\n");
+  return value / x / 8;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigfpeScenario_crash(JNIEnv *env,
+                                                                      jobject instance,
+                                                                      jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGFPE);
+  }
+  printf("We know you're dealing in stolen ore.\n");
+  return value / x / 8;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigsegvScenario_crash(JNIEnv *env,
+                                                                       jobject instance,
+                                                                       jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("That might've been one of the shortest assignments in the history of Starfleet.\n");
+  return value / x / 8;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigillScenario_crash(JNIEnv *env,
+                                                                      jobject instance,
+                                                                      jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGILL);
+  }
+  printf("In all trust, there is the possibility for betrayal.\n");
+  return value / x / 8;
 }
 
 JNIEXPORT void JNICALL
@@ -85,18 +176,22 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXTrapScenario_crash(JNIEnv *env,
   printf("This one here: %ld\n", (long) crash_trap());
 }
 
-
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXUseAfterFreeScenario_crash(JNIEnv *env,
-                                                                            jobject instance,
-                                                                            jint counter) {
-    printf("This one here: %ld\n", (long) crash_released_obj((int)counter));
+Java_com_bugsnag_android_mazerunner_scenarios_CXXDoubleFreeScenario_crash(JNIEnv *env,
+                                                                                   jobject instance) {
+    printf("This one here: %d\n", crash_double_free(42));
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXUndefinedInstructionScenario_crash(JNIEnv *env,
-                                                                            jobject instance) {
-    printf("This one here: %s\n", somefakefunc());
+Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_crash(JNIEnv *env,
+                                                                                   jobject instance) {
+    printf("This one here: %d\n", crash_write_read_only_mem(42));
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash(JNIEnv *env,
+                                                                                jobject instance) {
+    printf("This one here: %s\n", crash_improper_cast(39));
 }
 
 JNIEXPORT void JNICALL

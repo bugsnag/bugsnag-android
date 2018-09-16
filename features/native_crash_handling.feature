@@ -11,11 +11,21 @@ Feature: Native crash reporting
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
-    Scenario: Stack Overflow
+    # This scenario will not pass on API levels < 18, as stack corruption
+    # is handled without calling atexit handlers, etc.
+    # In the device logs you will see:
+    # system/bin/app_process([proc id]): stack corruption detected: aborted
+    # Original code here:
+    # https://android.googlesource.com/platform/bionic/+/d0f2b7e7e65f19f978c59abcbb522c08e76b1508/libc/bionic/ssp.c
+    # Refactored here to use abort() on newer versions:
+    # https://android.googlesource.com/platform/bionic/+/fb7eb5e07f43587c2bedf2aaa53b21fa002417bb
+    @skip_below_api18
+    Scenario: Stack buffer overflow
         When I run "CXXStackoverflowScenario"
         And I wait a bit
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
+        And I wait a bit
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception reflects a signal was raised
@@ -34,25 +44,32 @@ Feature: Native crash reporting
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
-    Scenario: Use pointer after free
-        When I run "CXXUseAfterFreeScenario"
+    Scenario: Write to read-only memory
+        When I run "CXXWriteReadOnlyMemoryScenario"
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
-        And the exception reflects a signal was raised
+        And the exception "errorClass" equals "SIGSEGV"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
-    Scenario: Reference undefined instruction
-        When I run "CXXUndefinedInstructionScenario"
-        And I wait a bit
+    Scenario: Double free() allocated memory
+        When I run "CXXDoubleFreeScenario"
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
-        And the exception reflects a signal was raised
+        And the exception "errorClass" equals "SIGSEGV"
+        And the exception "type" equals "c"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+
+    Scenario: Improper object type cast
+        When I run "CXXImproperTypecastScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the exception "errorClass" equals "SIGSEGV"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -81,6 +98,80 @@ Feature: Native crash reporting
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
+    Scenario: Raise SIGILL
+        When I run "CXXSigillScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed native report
+        And the exception "errorClass" equals "SIGILL"
+        And the exception "type" equals "c"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+
+    Scenario: Raise SIGSEGV
+        When I run "CXXSigsegvScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed native report
+        And the exception "errorClass" equals "SIGSEGV"
+        And the exception "type" equals "c"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+
+    Scenario: Raise SIGABRT
+        When I run "CXXSigabrtScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed native report
+        And the exception "errorClass" equals "SIGABRT"
+        And the exception "type" equals "c"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+
     Scenario: Raise SIGBUS
+        When I run "CXXSigbusScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed native report
+        And the exception "errorClass" equals "SIGBUS"
+        And the exception "type" equals "c"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+
+    Scenario: Raise SIGFPE
+        When I run "CXXSigfpeScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed native report
+        And the exception "errorClass" equals "SIGFPE"
+        And the exception "type" equals "c"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
 
     Scenario: Raise SIGTRAP
+        When I run "CXXSigtrapScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed native report
+        And the exception "errorClass" equals "SIGTRAP"
+        And the exception "type" equals "c"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+
+    Scenario: Undefined JNI method
+        When I run "UnsatisfiedLinkErrorScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the report contains the required fields
+        And the exception "errorClass" equals "java.lang.UnsatisfiedLinkError"
+        And the exception "type" equals "android"
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+

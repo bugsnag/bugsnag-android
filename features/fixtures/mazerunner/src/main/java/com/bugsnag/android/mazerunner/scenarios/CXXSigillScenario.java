@@ -6,16 +6,16 @@ import com.bugsnag.android.Configuration;
 
 import android.support.annotation.NonNull;
 
-public class CXXUseAfterFreeScenario extends Scenario {
+public class CXXSigillScenario extends Scenario {
 
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash(int counter);
+    public native int crash(int value);
 
-    public CXXUseAfterFreeScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXSigillScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }
@@ -27,6 +27,6 @@ public class CXXUseAfterFreeScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        crash(23);
+        crash(2726);
     }
 }
