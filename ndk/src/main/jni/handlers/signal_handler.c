@@ -1,6 +1,7 @@
 #include "signal_handler.h"
 
 #include <bugsnag_ndk.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <report.h>
@@ -10,8 +11,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../utils/serializer.h"
 #include "../utils/crash_info.h"
+#include "../utils/serializer.h"
 #include "../utils/string.h"
 #define BSG_HANDLED_SIGNAL_COUNT 6
 
@@ -81,7 +82,7 @@ bool bsg_handler_install_signal(bsg_environment *env) {
     int success = sigaction(signal, bsg_global_sigaction,
                             &bsg_global_sigaction_previous[i]);
     if (success != 0) {
-      // TODO: log errno in this case
+      BUGSNAG_LOG("Failed to install signal handler: %s", strerror(errno));
       return false;
     }
   }
@@ -109,7 +110,7 @@ bool bsg_configure_signal_stack() {
   bsg_global_signal_stack.ss_size = SIGSTKSZ;
   bsg_global_signal_stack.ss_flags = 0;
   if (sigaltstack(&bsg_global_signal_stack, 0) < 0) {
-    // TODO: log errno in this case
+    BUGSNAG_LOG("Failed to configure alt stack: %s", strerror(errno));
     return false;
   }
   return true;
@@ -133,7 +134,6 @@ void bsg_handle_signal(int signum, siginfo_t *info,
       break;
     }
   }
-  // TODO: handle failure to serialize report with error logging
   bsg_serialize_report_to_file(bsg_global_env);
   bsg_handler_uninstall_signal();
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; ++i) {
