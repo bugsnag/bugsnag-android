@@ -220,6 +220,8 @@ If you are a project maintainer, you can build and release a new version of
     persisted in the report on the dashboard?
   - [ ] Rotate the device before causing a native crash. Is the orientation at
     the time of the crash persisted in the report on the dashboard?
+  - [ ] Wait a few seconds before a native crash. Does the reported duration in
+    foreground match your expectation?
 - [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/bugsnag-website/tree/master/app/views/dashboard/projects/install) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 - [ ] Do the installation instructions work for a manual integration?
 

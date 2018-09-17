@@ -5,7 +5,6 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait a bit
         Then the request payload contains a completed native report
         And the event "app.inForeground" is true
-        And the event "app.durationInForeground" is greater than 0
         And the event "app.duration" is greater than 0
         And the event "context" equals "MainActivity"
         And the event "unhandled" is false
