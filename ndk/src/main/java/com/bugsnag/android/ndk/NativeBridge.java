@@ -30,6 +30,7 @@ public class NativeBridge implements Observer {
     private static final int METADATA_VALUE = 2;
     private static final String LOG_TAG = "BugsnagNDK:NativeBridge";
     private static final Lock lock = new ReentrantLock();
+    private static final AtomicBoolean installed = new AtomicBoolean(false);
 
     public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel);
 
@@ -76,7 +77,6 @@ public class NativeBridge implements Observer {
 
     public static native void updateUserName(String newValue);
 
-    private AtomicBoolean installed = new AtomicBoolean(false);
     private boolean loggingEnabled = true;
     private final String reportDirectory;
 
@@ -90,8 +90,7 @@ public class NativeBridge implements Observer {
         reportDirectory = NativeInterface.getNativeReportPath();
         File outFile = new File(reportDirectory);
         if (!outFile.exists() && !outFile.mkdirs()) {
-            warn("The native reporting directory cannot be created. Disabling NDK integration");
-            installed.set(false);
+            warn("The native reporting directory cannot be created.");
         }
     }
 
@@ -209,15 +208,19 @@ public class NativeBridge implements Observer {
         }
     }
 
-    @SuppressWarnings("unused")
     private void handleInstallMessage(Object arg) {
-        if (installed.get()) {
-            warn("Received duplicate setup message with arg: " + arg);
-            return;
+        lock.lock();
+        try {
+            if (installed.get()) {
+                warn("Received duplicate setup message with arg: " + arg);
+                return;
+            }
+            String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
+            install(reportPath, true, Build.VERSION.SDK_INT);
+            installed.set(true);
+        } finally {
+            lock.unlock();
         }
-        String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-        install(reportPath, true, Build.VERSION.SDK_INT);
-        installed.set(true);
     }
 
     private void handleAddBreadcrumb(Object arg) {
