@@ -1,28 +1,28 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
 
 import com.bugsnag.android.Configuration;
 
 import android.support.annotation.NonNull;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import android.content.Intent;
+import android.os.Handler;
 
-public class CXXBackgroundNotifyScenario extends Scenario {
+import java.lang.Runnable;
+
+public class CXXDelayedCrashScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("entrypoint");
     }
 
-    public native void activate();
+    public native int activate(int value);
 
     private boolean didActivate = false;
     private Handler handler = new Handler();
 
-    public CXXBackgroundNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXDelayedCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }
@@ -34,15 +34,15 @@ public class CXXBackgroundNotifyScenario extends Scenario {
             return;
         }
         didActivate = true;
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                activate();
+                activate(405);
             }
         }, 6000);
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        this.getContext().startActivity(intent);
     }
 }

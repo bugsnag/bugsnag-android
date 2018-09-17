@@ -3,8 +3,15 @@ When("I wait a bit") do
   step("I wait for #{wait_time} seconds")
 end
 
-When(/^I run "([^"]+)"$/) do |event_type|
+When(/^I run "([^"]+)"( and press the home button)?$/) do |event_type, pressed_home|
   step("I run \"#{event_type}\" against \"#{ENV['ANDROID_EMULATOR']}\"")
+  step("I press the home button") if pressed_home
+  step("I wait for #{wait_time} seconds")
+end
+
+When(/^I run "([^"]+)" in "([^"]+)" orientation$/) do |event_type, orientation|
+  step("I rotate the device to \"#{orientation}\"")
+  step("I run \"#{event_type}\"")
 end
 
 When(/^I run "([^"]+)" against "([^"]+)"$/) do |event_type, emulator|
@@ -17,7 +24,6 @@ When(/^I run "([^"]+)" against "([^"]+)"$/) do |event_type, emulator|
     And I set environment variable "BUGSNAG_API_KEY" to "a35a2a72bd230ac0aa0f52715bbdc6aa"
     And I set environment variable "EVENT_TYPE" to "#{event_type}"
     And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
-    And I wait for #{wait_time} seconds
   }
 end
 
