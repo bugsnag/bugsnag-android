@@ -1,7 +1,6 @@
 #include "report.h"
 #include "utils/string.h"
 #include <string.h>
-#include <time.h>
 
 int bsg_find_next_free_metadata_index(bugsnag_report *report) {
   if (report->metadata.value_count < BUGSNAG_METADATA_MAX) {
@@ -94,8 +93,23 @@ void bugsnag_report_set_context(bugsnag_report *report, char *value) {
   bsg_strncpy_safe(report->context, value, sizeof(report->context));
 }
 
-void bugsnag_report_set_orientation(bugsnag_report *report, char *value) {
-  bsg_strncpy_safe(report->device.orientation, value,
+const char *bsg_orientation_from_degrees(int orientation) {
+  if (orientation < 0) {
+    return "unknown";
+  } else if (orientation >= 315 || orientation <= 45) {
+    return "portrait";
+  } else if (orientation <= 135) {
+    return "landscape";
+  } else if (orientation <= 225) {
+    return "portrait";
+  } else {
+    return "landscape";
+  }
+}
+
+void bugsnag_report_set_orientation(bugsnag_report *report, int value) {
+  bsg_strncpy_safe(report->device.orientation,
+                   (char *)bsg_orientation_from_degrees(value),
                    sizeof(report->device.orientation));
 }
 

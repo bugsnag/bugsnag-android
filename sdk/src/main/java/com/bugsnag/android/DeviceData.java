@@ -130,14 +130,6 @@ class DeviceData {
     }
 
     /**
-     * The computed orientation of the device
-     * @return a String representation of the device rotation
-     */
-    String getOrientation() {
-        return calculateOrientation();
-    }
-
-    /**
      * Check if the current Android device is rooted
      */
     private boolean isRooted() {

@@ -65,7 +65,7 @@ public class NativeBridge implements Observer {
 
     public static native void updateLowMemory(boolean lowMemory);
 
-    public static native void updateOrientation(String orientation);
+    public static native void updateOrientation(int orientation);
 
     public static native void updateMetadata(Object metadata);
 
@@ -321,10 +321,10 @@ public class NativeBridge implements Observer {
     }
 
     private void handleOrientationChange(Object arg) {
-        if (arg instanceof String) {
-            updateOrientation((String) arg);
+        if (arg instanceof Integer) {
+            updateOrientation((int) arg);
         } else if (arg == null) {
-            updateOrientation("unknown");
+            warn("UPDATE_ORIENTATION object is null");
         } else {
             warn("UPDATE_ORIENTATION object is invalid: " + arg);
         }

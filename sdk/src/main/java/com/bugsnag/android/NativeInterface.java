@@ -88,7 +88,7 @@ public class NativeInterface {
         UPDATE_METADATA,
         /**
          * Set a new value for `device.orientation`. The message object should
-         * be the orientation String value
+         * be the orientation in degrees
          */
         UPDATE_ORIENTATION,
         /**

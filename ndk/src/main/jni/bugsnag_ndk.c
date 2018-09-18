@@ -266,18 +266,13 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
                                                             jobject _this,
-                                                            jstring new_value) {
+                                                            jint orientation) {
   if (bsg_global_env == NULL)
     return;
-  char *value = new_value == NULL
-                    ? NULL
-                    : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
+
   bsg_request_env_write_lock();
-  bugsnag_report_set_orientation(&bsg_global_env->next_report, value);
+  bugsnag_report_set_orientation(&bsg_global_env->next_report, orientation);
   bsg_release_env_write_lock();
-  if (new_value != NULL) {
-    (*env)->ReleaseStringUTFChars(env, new_value, value);
-  }
 }
 
 JNIEXPORT void JNICALL

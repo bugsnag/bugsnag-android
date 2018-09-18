@@ -306,7 +306,7 @@ void bugsnag_report_remove_metadata(bugsnag_report *report, char *section,
                                     char *name);
 void bugsnag_report_remove_metadata_tab(bugsnag_report *report, char *section);
 void bugsnag_report_set_context(bugsnag_report *report, char *value);
-void bugsnag_report_set_orientation(bugsnag_report *report, char *value);
+void bugsnag_report_set_orientation(bugsnag_report *report, int value);
 void bugsnag_report_set_app_version(bugsnag_report *report, char *value);
 void bugsnag_report_set_build_uuid(bugsnag_report *report, char *value);
 void bugsnag_report_set_release_stage(bugsnag_report *report, char *value);
