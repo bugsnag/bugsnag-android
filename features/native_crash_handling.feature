@@ -7,6 +7,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
+        And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -40,6 +41,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
+        And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -50,6 +52,7 @@ Feature: Native crash reporting
         And I relaunch the app
         Then I should receive a request
         And the exception "errorClass" equals "SIGSEGV"
+        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -60,6 +63,7 @@ Feature: Native crash reporting
         And I relaunch the app
         Then I should receive a request
         And the exception "errorClass" equals "SIGSEGV"
+        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -70,6 +74,7 @@ Feature: Native crash reporting
         And I relaunch the app
         Then I should receive a request
         And the exception "errorClass" equals "SIGSEGV"
+        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -81,6 +86,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGFPE"
+        And the exception "message" equals "Floating-point exception"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -94,6 +100,9 @@ Feature: Native crash reporting
         And the exception "errorClass" equals one of:
             | SIGABRT |
             | SIGSEGV |
+        And the exception "message" equals one of:
+            | Abort program |
+            | Segmentation violation (invalid memory reference) |
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -105,6 +114,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
+        And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -116,6 +126,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGSEGV"
+        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -127,6 +138,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGABRT"
+        And the exception "message" equals "Abort program"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -138,6 +150,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGBUS"
+        And the exception "message" equals "Bus error (bad memory access)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -149,6 +162,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGFPE"
+        And the exception "message" equals "Floating-point exception"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -160,6 +174,7 @@ Feature: Native crash reporting
         Then I should receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGTRAP"
+        And the exception "message" equals "Trace/breakpoint trap"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true

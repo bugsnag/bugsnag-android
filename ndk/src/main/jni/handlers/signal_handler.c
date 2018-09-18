@@ -54,6 +54,13 @@ static const int bsg_native_signals[BSG_HANDLED_SIGNAL_COUNT + 1] = {
     SIGILL, SIGTRAP, SIGABRT, SIGBUS, SIGFPE, SIGSEGV};
 static const char bsg_native_signal_names[BSG_HANDLED_SIGNAL_COUNT + 1][8] = {
     "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGSEGV"};
+static const char bsg_native_signal_msgs[BSG_HANDLED_SIGNAL_COUNT + 1][60] = {
+    "Illegal instruction",
+    "Trace/breakpoint trap",
+    "Abort program",
+    "Bus error (bad memory access)",
+    "Floating-point exception",
+    "Segmentation violation (invalid memory reference)"};
 
 bool bsg_handler_install_signal(bsg_environment *env) {
   static pthread_mutex_t bsg_signal_handler_config = PTHREAD_MUTEX_INITIALIZER;
@@ -132,6 +139,8 @@ void bsg_handle_signal(int signum, siginfo_t *info,
     if (signal == signum) {
       bsg_strcpy(bsg_global_env->next_report.exception.name,
                  (char *)bsg_native_signal_names[i]);
+      bsg_strcpy(bsg_global_env->next_report.exception.message,
+                 (char *)bsg_native_signal_msgs[i]);
       break;
     }
   }
