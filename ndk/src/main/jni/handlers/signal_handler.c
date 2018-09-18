@@ -118,9 +118,10 @@ bool bsg_configure_signal_stack() {
 
 void bsg_handle_signal(int signum, siginfo_t *info,
                        void *user_context) __asyncsafe {
-  if (bsg_global_env == NULL)
+  if (bsg_global_env == NULL || bsg_global_env->handling_crash)
     return;
 
+  bsg_global_env->handling_crash = true;
   bsg_populate_report_as(bsg_global_env);
   bsg_global_env->next_report.exception.frame_count = bsg_unwind_stack(
       bsg_global_env->unwind_style,

@@ -39,6 +39,11 @@ typedef struct {
      * Time when last re-entering foreground
      */
     time_t foreground_start_time;
+    /**
+     * true if a crash is currently being handled. Disallows multiple crashes
+     * from being processed simultaneously
+     */
+    bool handling_crash;
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();
