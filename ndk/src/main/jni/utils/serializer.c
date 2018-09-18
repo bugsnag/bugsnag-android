@@ -131,7 +131,12 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
   json_array_append_value(exceptions, ex_val);
   char *serialized_string = NULL;
   {
-    json_object_set_string(event, "context", report->context);
+    if (strlen(report->context) > 0) {
+      json_object_set_string(event, "context", report->context);
+    } else {
+      json_object_set_string(event, "context", report->app.active_screen);
+    }
+
     json_object_set_string(event, "severity",
                            bsg_severity_string(report->severity));
     // FUTURE(dm): severityReason/unhandled attributes are currently
