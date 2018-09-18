@@ -3,7 +3,6 @@
  */
 #ifndef BUGSNAG_NDK_H
 #define BUGSNAG_NDK_H
-#define BUGSNAG_NOTIFIER_VERSION "2.0.0"
 
 #include <android/log.h>
 #include <stdbool.h>
