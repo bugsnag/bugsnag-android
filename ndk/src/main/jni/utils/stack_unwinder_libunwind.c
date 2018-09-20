@@ -23,9 +23,6 @@ bsg_libunwind_callback(struct _Unwind_Context *context, void *arg) __asyncsafe {
 
   if (state->frame_count >= BUGSNAG_FRAMES_MAX) {
     return _URC_END_OF_STACK;
-  } else if (state->frame_count > 0 &&
-             ip == state->frame_addresses[state->frame_count - 1]) { // already counted
-    return _URC_NO_REASON;
   } else if (state->frame_count > 0 && (void *)ip == NULL) { // nobody's home
     return _URC_NO_REASON;
   }

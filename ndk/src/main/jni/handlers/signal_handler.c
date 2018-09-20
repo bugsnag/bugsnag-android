@@ -114,11 +114,14 @@ void bsg_handler_uninstall_signal() {
 }
 
 bool bsg_configure_signal_stack() {
-  if ((bsg_global_signal_stack.ss_sp = malloc(SIGSTKSZ)) == NULL) {
-    // Failed to allocate a alternate stack for unwinding signals
+  static size_t bsg_stack_size = SIGSTKSZ * 2;
+  if ((bsg_global_signal_stack.ss_sp = calloc(1, bsg_stack_size)) == NULL) {
+    BUGSNAG_LOG(
+        "Failed to allocate a alternate stack (%udKiB) for unwinding signals",
+        (unsigned int)bsg_stack_size);
     return false;
   }
-  bsg_global_signal_stack.ss_size = SIGSTKSZ;
+  bsg_global_signal_stack.ss_size = bsg_stack_size;
   bsg_global_signal_stack.ss_flags = 0;
   if (sigaltstack(&bsg_global_signal_stack, 0) < 0) {
     BUGSNAG_LOG("Failed to configure alt stack: %s", strerror(errno));
