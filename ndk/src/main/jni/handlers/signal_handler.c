@@ -66,6 +66,7 @@ bool bsg_handler_install_signal(bsg_environment *env) {
   static pthread_mutex_t bsg_signal_handler_config = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_lock(&bsg_signal_handler_config);
   if (!bsg_configure_signal_stack()) {
+    pthread_mutex_unlock(&bsg_signal_handler_config);
     return false;
   }
 
@@ -73,6 +74,7 @@ bool bsg_handler_install_signal(bsg_environment *env) {
   bsg_global_sigaction =
       calloc(sizeof(struct sigaction), BSG_HANDLED_SIGNAL_COUNT);
   if (bsg_global_sigaction == NULL) {
+    pthread_mutex_unlock(&bsg_signal_handler_config);
     return false;
   }
   sigemptyset(&bsg_global_sigaction->sa_mask);
@@ -82,6 +84,7 @@ bool bsg_handler_install_signal(bsg_environment *env) {
   bsg_global_sigaction_previous =
       calloc(sizeof(struct sigaction), BSG_HANDLED_SIGNAL_COUNT);
   if (bsg_global_sigaction_previous == NULL) {
+    pthread_mutex_unlock(&bsg_signal_handler_config);
     return false;
   }
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
@@ -90,6 +93,7 @@ bool bsg_handler_install_signal(bsg_environment *env) {
                             &bsg_global_sigaction_previous[i]);
     if (success != 0) {
       BUGSNAG_LOG("Failed to install signal handler: %s", strerror(errno));
+      pthread_mutex_unlock(&bsg_signal_handler_config);
       return false;
     }
   }
