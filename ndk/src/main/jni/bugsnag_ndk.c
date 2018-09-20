@@ -237,11 +237,14 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
                        ? NULL
                        : (char *)(*env)->GetStringUTFChars(env, activity_, 0);
   bsg_request_env_write_lock();
+  bool was_in_foreground = bsg_global_env->next_report.app.in_foreground;
   bsg_global_env->next_report.app.in_foreground = (bool)new_value;
   bsg_strncpy_safe(bsg_global_env->next_report.app.active_screen, activity,
                    sizeof(bsg_global_env->next_report.app.active_screen));
   if ((bool)new_value) {
-    time(&bsg_global_env->foreground_start_time);
+    if (!was_in_foreground) {
+      time(&bsg_global_env->foreground_start_time);
+    }
   } else {
     bsg_global_env->foreground_start_time = 0;
     bsg_global_env->next_report.app.duration_in_foreground_ms_offset = 0;
