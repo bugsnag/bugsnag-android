@@ -1,6 +1,7 @@
 #include "stack_unwinder.h"
 #include "stack_unwinder_libcorkscrew.h"
 #include "stack_unwinder_libunwind.h"
+#include "stack_unwinder_simple.h"
 #include "string.h"
 #include <asm/siginfo.h>
 #include <dlfcn.h>
@@ -50,19 +51,7 @@ ssize_t bsg_unwind_stack(bsg_unwinder unwind_style,
   } else if (unwind_style == BSG_LIBCORKSCREW) {
     frame_count = bsg_unwind_stack_libcorkscrew(stacktrace, info, user_context);
   } else {
-    frame_count = 1;
-    if (user_context != NULL) {
-      ucontext_t *ctx = (ucontext_t *)user_context;
-#if defined(__i386__)
-      stacktrace[0].frame_address = ctx->uc_mcontext.gregs[REG_EIP];
-#elif defined(__x86_64__)
-      stacktrace[0].frame_address = ctx->uc_mcontext.gregs[REG_RIP];
-#elif defined(__aarch64__) || defined(__arm__)
-      stacktrace[0].frame_address = ctx->uc_mcontext.fault_address;
-#else
-      stacktrace[0].frame_address = (uintptr_t)info->si_addr;
-#endif
-    }
+    frame_count = bsg_unwind_stack_simple(stacktrace, info, user_context);
   }
   bsg_insert_fileinfo(frame_count,
                       stacktrace); // none of this is safe ¯\_(ツ)_/¯

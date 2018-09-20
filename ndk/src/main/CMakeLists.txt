@@ -15,6 +15,7 @@ add_library( # Specifies the name of the library.
              jni/utils/stack_unwinder.c
              jni/utils/stack_unwinder_libcorkscrew.c
              jni/utils/stack_unwinder_libunwind.c
+             jni/utils/stack_unwinder_simple.c
              jni/utils/serializer.c
              jni/utils/string.c
              jni/deps/parson/parson.c
