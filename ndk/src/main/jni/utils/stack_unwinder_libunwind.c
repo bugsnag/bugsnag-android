@@ -36,6 +36,7 @@ ssize_t
 bsg_unwind_stack_libunwind(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
                            siginfo_t*_info, void *_user_context) {
   bsg_global_libunwind_state->frame_count = 0;
+  // The return value of _Unwind_Backtrace sits on a throne of lies
   _Unwind_Backtrace(bsg_libunwind_callback, bsg_global_libunwind_state);
   for (int i = 0; i < bsg_global_libunwind_state->frame_count; ++i) {
     stacktrace[i].frame_address =
