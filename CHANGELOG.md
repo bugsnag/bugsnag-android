@@ -3,7 +3,8 @@
 ## TBD
 
 This release includes new versions of both bugsnag-android and
-bugsnag-android-ndk, which will be released together going forward.
+bugsnag-android-ndk, which will be released at the same time and with the same
+version number going forward.
 
 The NDK library has been rebuilt from the ground up and will use the same
 version number as bugsnag-android.

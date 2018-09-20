@@ -1,6 +1,18 @@
 Upgrading Guide
 ===============
 
+Upgrade bugsnag-android-ndk from 1.x to 4.x
+-----------------------
+
+This is a backwards-compatible release. Update the version number to 4.+ to
+upgrade:
+
+```groovy
+dependencies {
+  implementation 'com.bugsnag:bugsnag-android-ndk:4.+'
+}
+```
+
 Upgrade from 3.X to 4.X
 -----------------------
 - Increase the `minSdkVersion` to 14 or higher in your app's build.gradle file.
