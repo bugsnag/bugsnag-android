@@ -83,9 +83,10 @@ void bugsnag_report_remove_metadata_tab(bugsnag_report *report, char *section) {
 }
 
 void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
-                                  long started_at) {
+                                  char *started_at) {
   bsg_strncpy_safe(report->session_id, session_id, sizeof(report->session_id));
-  report->session_start = started_at;
+  bsg_strncpy_safe(report->session_start, started_at,
+                   sizeof(report->session_start));
   report->handled_events = 0;
 }
 

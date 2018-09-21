@@ -122,15 +122,17 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
-    JNIEnv *env, jobject _this, jstring session_id_, jlong start_date_) {
+    JNIEnv *env, jobject _this, jstring session_id_, jstring start_date_) {
   if (bsg_global_env == NULL || session_id_ == NULL)
     return;
   char *session_id = (char *)(*env)->GetStringUTFChars(env, session_id_, 0);
+  char *started_at = (char *)(*env)->GetStringUTFChars(env, start_date_, 0);
   bsg_request_env_write_lock();
   bugsnag_report_start_session(&bsg_global_env->next_report, session_id,
-                               (long)start_date_);
+                               started_at);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, session_id_, session_id);
+  (*env)->ReleaseStringUTFChars(env, start_date_, started_at);
 }
 
 JNIEXPORT void JNICALL

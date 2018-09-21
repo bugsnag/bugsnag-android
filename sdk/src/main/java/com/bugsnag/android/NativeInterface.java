@@ -53,7 +53,7 @@ public class NativeInterface {
         /**
          * A new session was started. The Message object should be a string
          * array
-         * containing [id, startDate]
+         * containing [id, startDateIsoString]
          */
         START_SESSION,
         /**

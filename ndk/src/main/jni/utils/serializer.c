@@ -252,9 +252,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     if (strlen(report->user.id) > 0)
       json_object_dotset_string(event, "user.id", report->user.id);
     if (strlen(report->session_id) > 0) {
-      strftime(report_time, sizeof report_time, "%FT%TZ",
-               gmtime(&report->session_start));
-      json_object_dotset_string(event, "session.startedAt", report_time);
+      json_object_dotset_string(event, "session.startedAt",
+                                report->session_start);
       json_object_dotset_string(event, "session.id", report->session_id);
       json_object_dotset_number(event, "session.events.handled",
                                 report->handled_events);

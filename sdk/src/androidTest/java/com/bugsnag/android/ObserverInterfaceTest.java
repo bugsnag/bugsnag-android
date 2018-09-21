@@ -159,7 +159,7 @@ public class ObserverInterfaceTest {
                 NativeInterface.MessageType.START_SESSION, List.class);
         assertEquals(2, sessionInfo.size());
         assertTrue(sessionInfo.get(0) instanceof String);
-        assertTrue(sessionInfo.get(1) instanceof Long);
+        assertTrue(sessionInfo.get(1) instanceof String);
     }
 
     @Test

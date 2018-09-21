@@ -289,7 +289,7 @@ typedef struct {
   bsg_severity_t severity;
 
   char session_id[33];
-  time_t session_start;
+  char session_start[33];
   int handled_events;
 } bugsnag_report;
 
@@ -314,7 +314,7 @@ void bugsnag_report_set_user_email(bugsnag_report *report, char *value);
 void bugsnag_report_set_user_id(bugsnag_report *report, char *value);
 void bugsnag_report_set_user_name(bugsnag_report *report, char *value);
 void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
-                                  long started_at);
+                                  char *started_at);
 #ifdef __cplusplus
 }
 #endif

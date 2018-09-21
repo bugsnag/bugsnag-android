@@ -53,7 +53,7 @@ public class NativeBridge implements Observer {
 
     public static native void removeMetadata(String tab, String key);
 
-    public static native void startedSession(String sessionID, long key);
+    public static native void startedSession(String sessionID, String key);
 
     public static native void updateAppVersion(String appVersion);
 
@@ -302,8 +302,8 @@ public class NativeBridge implements Observer {
             if (metadata.size() == 2) {
                 Object id = metadata.get(0);
                 Object startTime = metadata.get(1);
-                if (id instanceof String && startTime instanceof Long) {
-                    startedSession((String)id, (Long)startTime);
+                if (id instanceof String && startTime instanceof String) {
+                    startedSession((String)id, (String)startTime);
                     return;
                 }
             }
