@@ -28,7 +28,11 @@ class Stacktrace implements JsonStream.Streamable {
             StackTraceElement el = stacktrace[k];
             try {
                 writer.beginObject();
-                writer.name("method").value(el.getClassName() + "." + el.getMethodName());
+                if (el.getClassName().length() > 0) {
+                    writer.name("method").value(el.getClassName() + "." + el.getMethodName());
+                } else {
+                    writer.name("method").value(el.getMethodName());
+                }
                 writer.name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName());
                 writer.name("lineNumber").value(el.getLineNumber());
 
