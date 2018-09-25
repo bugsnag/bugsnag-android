@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+* Capture trace of error reporting thread and identify with boolean flag [#355](https://github.com/bugsnag/bugsnag-android/pull/355)
+
 ## 4.6.1 (2018-08-21)
 
 ### Bug fixes

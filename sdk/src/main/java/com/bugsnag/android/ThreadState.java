@@ -1,11 +1,11 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,33 +15,38 @@ import java.util.Set;
 class ThreadState implements JsonStream.Streamable {
     private static final String THREAD_TYPE = "android";
 
-    final Configuration config;
+    private final Configuration config;
     private final Thread[] threads;
     private final Map<Thread, StackTraceElement[]> stackTraces;
+    private final long currentThreadId;
 
-    ThreadState(Configuration config) {
+    public ThreadState(@NonNull Configuration config,
+                       @NonNull Thread currentThread,
+                       @NonNull Map<Thread, StackTraceElement[]> allStackTraces,
+                       @Nullable Throwable exc) {
         this.config = config;
-        stackTraces = Thread.getAllStackTraces();
-        threads = sanitiseThreads(Thread.currentThread().getId(), stackTraces);
+        stackTraces = allStackTraces;
+
+        // API 24/25 don't record the currentThread, add it in manually
+        // https://issuetracker.google.com/issues/64122757
+        if (!stackTraces.containsKey(currentThread)) {
+            stackTraces.put(currentThread, currentThread.getStackTrace());
+        }
+        if (exc != null) { // unhandled errors use the exception trace
+            stackTraces.put(currentThread, exc.getStackTrace());
+        }
+
+        currentThreadId = currentThread.getId();
+        threads = sanitiseThreads(stackTraces);
     }
 
     /**
-     * Returns an array of threads excluding the current thread, sorted by thread id
+     * Returns an array of threads including the current thread, sorted by thread id
      *
-     * @param currentThreadId the current thread id
-     * @param liveThreads     all live threads
+     * @param liveThreads all live threads
      */
-    private Thread[] sanitiseThreads(long currentThreadId,
-                                     Map<Thread, StackTraceElement[]> liveThreads) {
+    private Thread[] sanitiseThreads(Map<Thread, StackTraceElement[]> liveThreads) {
         Set<Thread> threadSet = liveThreads.keySet();
-
-        // remove current thread
-        for (Iterator<Thread> iterator = threadSet.iterator(); iterator.hasNext(); ) {
-            Thread thread = iterator.next();
-            if (thread.getId() == currentThreadId) {
-                iterator.remove();
-            }
-        }
 
         Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
         Arrays.sort(threads, new Comparator<Thread>() {
@@ -63,6 +68,10 @@ class ThreadState implements JsonStream.Streamable {
 
             StackTraceElement[] stacktrace = stackTraces.get(thread);
             writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
+
+            if (currentThreadId == thread.getId()) {
+                writer.name("errorReportingThread").value(true);
+            }
             writer.endObject();
         }
         writer.endArray();
