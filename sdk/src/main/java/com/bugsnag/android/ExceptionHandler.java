@@ -77,12 +77,12 @@ class ExceptionHandler implements UncaughtExceptionHandler {
                 StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
 
                 client.cacheAndNotify(throwable, Severity.ERROR,
-                    metaData, severityReason, violationDesc);
+                    metaData, severityReason, violationDesc, thread);
 
                 StrictMode.setThreadPolicy(originalThreadPolicy);
             } else {
                 client.cacheAndNotify(throwable, Severity.ERROR,
-                    metaData, severityReason, violationDesc);
+                    metaData, severityReason, violationDesc, thread);
             }
         }
 
