@@ -223,6 +223,7 @@ If you are a project maintainer, you can build and release a new version of
     the time of the crash persisted in the report on the dashboard?
   - [ ] Wait a few seconds before a native crash. Does the reported duration in
     foreground match your expectation? Is the value for "inForeground" correct?
+  - [ ] Do the function names demangle correctly when using notify?
 - [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/bugsnag-website/tree/master/app/views/dashboard/projects/install) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 - [ ] Do the installation instructions work for a manual integration?
 
