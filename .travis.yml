@@ -74,7 +74,8 @@ jobs:
     env: NDK_VERSION=r16b
   # Emulators for API 22,23,25 just don't boot ¯\_(ツ)_/¯
   # Emulators for API 14,15,26 hang regularly
-  # There are no images for API 20
+  # Emulators for API 17,18 were working fine but now periodically crash
+  # There are no images for API 20 (which was Android Wear release)
   # There's no emulators for x86 because we can't run x86 on Travis
   - stage: end-to-end tests
     env:
@@ -85,19 +86,6 @@ jobs:
   - stage: end-to-end tests
     env:
     - ANDROID_TARGET=android-19
-  - stage: end-to-end tests
-    env:
-    - ANDROID_TARGET=android-18
-    - EMULATOR_FLAGS=-no-audio
-    - MAZE_ARGS=--verbose
-    - MAZE_WAIT_TIME=20
-  - stage: end-to-end tests
-    env:
-    - ANDROID_TARGET=android-17
-    - EMULATOR_FLAGS=-no-audio
-    - MAZE_TAGS="not @skip_below_api18"
-    - MAZE_WAIT_TIME=30
-    - MAZE_ARGS=--verbose
   - stage: end-to-end tests
     env:
     - ANDROID_TARGET=android-16
