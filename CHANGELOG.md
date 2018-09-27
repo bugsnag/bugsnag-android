@@ -15,7 +15,8 @@ version number as bugsnag-android.
   significantly more crash-time information, across the board but especially on
   newer API levels.
 * [NDK] Reduce memory usage
-* [NDK] Add support for session information and unhandled report tracking
+* [NDK] Add support for session information
+* [NDK] Add support for unhandled report tracking
 
 ### Bug Fixes
 
