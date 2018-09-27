@@ -16,6 +16,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.4.2'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
@@ -65,52 +66,10 @@ dependencies {
     api "com.android.support:support-annotations:27.0.0"
 }
 
-// Install CMake dependencies without an additional network request for the plugin
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.TaskAction
+apply plugin: 'com.bugsnag.android.gradle'
 
-class BugsnagTestNdkSetupTask extends DefaultTask {
-
-    BugsnagTestNdkSetupTask() {
-        super()
-        this.description = "Copies shared object files from the bugsnag-android AAR to the required build directory"
-    }
-
-    @TaskAction
-    void setupNdkProject() {
-        def configs = project.configurations.findAll {
-            it.toString().contains('CompileClasspath')
-        }.each { config ->
-            def artifactFile = config.resolvedConfiguration.getFiles().find {
-                it.toString().contains("bugsnag-android-ndk")
-            }
-            if (artifactFile) {
-                File buildDir = project.buildDir
-                File dst = new File(buildDir, "/intermediates/bugsnag-libs")
-
-                project.copy {
-                    from project.zipTree(artifactFile)
-                    into(project.file(dst))
-                }
-            }
-        }
-    }
-
-}
-
-project.afterEvaluate {
-    def cleanTasks = project.tasks.findAll {
-        it.name.startsWith("externalNative") && it.name.contains("Clean")
-    }
-    def buildTasks = project.tasks.findAll {
-        it.name.startsWith("externalNative") && !it.name.contains("Clean")
-    }
-
-    def ndkSetupTask = project.tasks.create("bugsnagInstallAllJniLibsTask", BugsnagTestNdkSetupTask)
-
-    buildTasks.forEach {
-        ndkSetupTask.mustRunAfter(cleanTasks)
-        it.dependsOn ndkSetupTask
-        it.doFirst { ndkSetupTask }
-    }
+bugsnag {
+    ndk true
+    autoUpload false
+    autoReportBuilds false
 }

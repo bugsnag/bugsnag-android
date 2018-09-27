@@ -102,11 +102,12 @@ task("checkstyle", type: Checkstyle) {
     classpath = files()
 }
 
+// Local development setting
+assemble.dependsOn ":ndk:assemble"
 /**
- * Gradle configuration for unpacking native API for CMake
+ * Gradle configuration for unpacking native API for CMake. Only required
+ * when building against local artifacts.
  */
-// FUTURE(dm): Implement similar logic in the gradle plugin to allow CMake
-// integration when installing bugsnag-android-ndk manually from artifacts
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -126,16 +127,7 @@ class BugsnagTestNdkSetupTask extends DefaultTask {
     File findBugsnagNdkArchive() {
         for (def config in project.configurations) {
             try {
-                def artifactFile
-                for (def artifact in config.resolvedConfiguration.getResolvedArtifacts()) {
-                    def identifier = artifact.getId().getComponentIdentifier().toString()
-                    if (identifier.contains("bugsnag-android-ndk")
-                        && artifact.getFile() != null) {
-                        artifactFile = artifact.getFile()
-                        break
-                    }
-                }
-                artifactFile = config.resolvedConfiguration.getFiles().find {
+                def artifactFile = config.resolvedConfiguration.getFiles().find {
                     it.toString().contains("bugsnag-android-ndk")
                 }
                 if (artifactFile && artifactFile.exists()) {
@@ -152,7 +144,7 @@ project.afterEvaluate {
         it.name.startsWith("externalNative") && it.name.contains("Clean")
     }
     def buildTasks = project.tasks.findAll {
-        it.name.startsWith("externalNative") && !it.name.contains("Clean")
+        it.name.startsWith("externalNative") && it.name.contains("Build") && !it.name.contains("Clean")
     }
 
     def ndkSetupTask = project.tasks.create("bugsnagInstallAllJniLibsTask", BugsnagTestNdkSetupTask)
