@@ -11,7 +11,6 @@ repositories {
 
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
         // Note minSdkVersion must be >=21 for 64 bit architectures
