@@ -1,5 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.app.Activity
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
@@ -12,16 +13,19 @@ import com.bugsnag.android.createDefaultDelivery
  */
 internal class CustomClientSessionFlushScenario(config: Configuration,
                                                 context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+        disableAllDelivery(config)
+    }
 
     override fun run() {
         super.run()
 
-        if ("DeliverSessions" == eventMetaData) {
+        if (eventMetaData == "online") {
             // simulate activity lifecycle callback occurring before api client can be set
             Bugsnag.startSession()
             config.delivery = createCustomHeaderDelivery(context)
         } else {
-            disableAllDelivery()
             Bugsnag.startSession()
         }
     }

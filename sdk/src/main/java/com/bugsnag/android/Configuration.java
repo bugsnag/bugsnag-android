@@ -25,6 +25,7 @@ public class Configuration extends Observable implements Observer {
     private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
     private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
     private static final int DEFAULT_MAX_SIZE = 32;
+    static final String DEFAULT_EXCEPTION_TYPE = "android";
 
     @NonNull
     private final String apiKey;
@@ -47,9 +48,6 @@ public class Configuration extends Observable implements Observer {
     private boolean automaticallyCollectBreadcrumbs = true;
 
     @NonNull
-    String defaultExceptionType = "android";
-
-    @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
@@ -69,6 +67,16 @@ public class Configuration extends Observable implements Observer {
         this.apiKey = apiKey;
         this.metaData = new MetaData();
         this.metaData.addObserver(this);
+    }
+
+    /**
+     * Respond to an update notification from observed objects, like MetaData
+     */
+    public void update(Observable observable, Object arg) {
+        if (arg instanceof NativeInterface.Message) {
+            setChanged();
+            notifyObservers(arg);
+        }
     }
 
     /**
@@ -98,7 +106,9 @@ public class Configuration extends Observable implements Observer {
      */
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
-        notifyBugsnagObservers(NotifyType.APP);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_APP_VERSION, appVersion));
     }
 
     /**
@@ -119,7 +129,9 @@ public class Configuration extends Observable implements Observer {
      */
     public void setContext(String context) {
         this.context = context;
-        notifyBugsnagObservers(NotifyType.CONTEXT);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_CONTEXT, context));
     }
 
     /**
@@ -224,7 +236,9 @@ public class Configuration extends Observable implements Observer {
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setBuildUUID(String buildUuid) {
         this.buildUuid = buildUuid;
-        notifyBugsnagObservers(NotifyType.APP);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
     }
 
     /**
@@ -298,7 +312,6 @@ public class Configuration extends Observable implements Observer {
      */
     public void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         this.notifyReleaseStages = notifyReleaseStages;
-        notifyBugsnagObservers(NotifyType.RELEASE_STAGES);
     }
 
     /**
@@ -345,7 +358,9 @@ public class Configuration extends Observable implements Observer {
      */
     public void setReleaseStage(String releaseStage) {
         this.releaseStage = releaseStage;
-        notifyBugsnagObservers(NotifyType.APP);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_RELEASE_STAGE, releaseStage));
     }
 
     /**
@@ -423,16 +438,16 @@ public class Configuration extends Observable implements Observer {
      */
     protected void setMetaData(@NonNull MetaData metaData) {
         this.metaData.deleteObserver(this);
-
         //noinspection ConstantConditions
         if (metaData == null) {
             this.metaData = new MetaData();
         } else {
             this.metaData = metaData;
         }
-
+        this.setChanged();
+        this.notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_METADATA, metaData));
         this.metaData.addObserver(this);
-        notifyBugsnagObservers(NotifyType.META);
     }
 
     /**
@@ -556,7 +571,7 @@ public class Configuration extends Observable implements Observer {
      * Retrieves the maximum number of breadcrumbs to keep and sent to Bugsnag.
      * By default, we'll keep and send the 32 most recent breadcrumb log
      * messages.
-     * 
+     *
      * @return the maximum number of breadcrumb log messages to send
      */
     public int getMaxBreadcrumbs() {
@@ -687,22 +702,6 @@ public class Configuration extends Observable implements Observer {
         }
 
         return false;
-    }
-
-    private void notifyBugsnagObservers(@NonNull NotifyType type) {
-        setChanged();
-        super.notifyObservers(type.getValue());
-    }
-
-    @Override
-    public void update(Observable observable, Object arg) {
-        if (arg instanceof Integer) {
-            NotifyType type = NotifyType.fromInt((Integer) arg);
-
-            if (type != null) {
-                notifyBugsnagObservers(type);
-            }
-        }
     }
 
     /**

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
@@ -166,11 +167,23 @@ class ErrorStore extends FileStore<Error> {
 
     @NonNull
     @Override
-    String getFilename(Error error) {
-        boolean isStartupCrash = isStartupCrash(AppData.getDurationMs());
-        String suffix = isStartupCrash ? STARTUP_CRASH : "";
+    String getFilename(Object object) {
+        String suffix = "";
+        if (object instanceof Error) {
+            Error error = (Error) object;
+            Map<String, Object> appData = error.getAppData();
+            if (appData instanceof Map) {
+                Object duration = appData.get("duration");
+                if (duration instanceof Number
+                    && isStartupCrash(((Number) appData.get("duration")).longValue())) {
+                    suffix = STARTUP_CRASH;
+                }
+            }
+        } else {
+            suffix = "not-jvm";
+        }
         return String.format(Locale.US, "%s%d_%s%s.json",
-            storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
+                storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
     }
 
     boolean isStartupCrash(long durationMs) {

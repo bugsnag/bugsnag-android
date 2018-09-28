@@ -15,6 +15,7 @@
     android:paddingTop="32dp">
 
     <!-- Trigger unhandled exceptions -->
+
     <TextView
       style="@style/header_text"
       android:layout_width="match_parent"
@@ -28,6 +29,14 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/trigger_fatal_crash" />
+
+    <Button
+      android:id="@+id/btn_native_crash"
+      style="@style/ButtonTheme"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:onClick="crashWithNativeSignal"
+      android:text="@string/trigger_native_crash" />
 
     <View style="@style/separator" />
 
@@ -54,6 +63,14 @@
       android:text="@string/custom_severity" />
 
     <!-- Enhancing error reports -->
+    <Button
+      android:id="@+id/btn_native_notify"
+      style="@style/ButtonTheme"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:onClick="notifyNativeHandled"
+      android:text="@string/trigger_native_notify" />
+
     <View style="@style/separator" />
 
     <TextView

@@ -1,7 +1,7 @@
 Feature: Reporting Stack overflow
 
 Scenario: Stack Overflow sends
-    When I run "StackOverflowScenario" with the defaults
+    When I run "StackOverflowScenario"
 #   Need to wait a while to trigger this in release mode
     And I wait for 30 seconds
     Then I should receive a request

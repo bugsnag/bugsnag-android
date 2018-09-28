@@ -71,4 +71,20 @@ public class StacktraceTest {
         assertEquals(200, jsonArray.length());
     }
 
+    @Test
+    public void testClassNameResolution() throws JSONException, IOException {
+        JSONArray stacktraceJson = streamableToJsonArray(
+            new Stacktrace(config, new StackTraceElement[] {
+                new StackTraceElement("SomeClass", "someMethod", "someFile", 12)}));
+
+        JSONObject frame = (JSONObject) stacktraceJson.get(0);
+        assertEquals("SomeClass.someMethod", frame.get("method"));
+
+        stacktraceJson = streamableToJsonArray(
+            new Stacktrace(config, new StackTraceElement[] {
+                new StackTraceElement("", "someMethod", "someFile", 12)}));
+
+        frame = (JSONObject) stacktraceJson.get(0);
+        assertEquals("someMethod", frame.get("method"));
+    }
 }

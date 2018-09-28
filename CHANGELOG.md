@@ -1,5 +1,30 @@
 # Changelog
 
+## TBD
+
+This release includes new versions of both bugsnag-android and
+bugsnag-android-ndk, which will be released at the same time and with the same
+version number going forward.
+
+The NDK library has been rebuilt from the ground up and will use the same
+version number as bugsnag-android.
+
+### Enhancements
+
+* [NDK] Improve stack trace quality for all native crashes. There should be
+  significantly more crash-time information, across the board but especially on
+  newer API levels.
+* [NDK] Reduce memory usage
+* [NDK] Add support for session information
+* [NDK] Add support for unhandled report tracking
+
+### Bug Fixes
+
+* [NDK] Fix possible crash when leaving breadcrumbs from multiple threads
+  [#6](https://github.com/bugsnag/bugsnag-android-ndk/issues/6)
+  [#10](https://github.com/bugsnag/bugsnag-android-ndk/issues/10)
+
+
 ## 4.7.0 (2018-09-26)
 
 * Capture trace of error reporting thread and identify with boolean flag [#355](https://github.com/bugsnag/bugsnag-android/pull/355)
@@ -24,7 +49,7 @@
 
 ## 4.5.0 (2018-06-18)
 
-This release alters the behaviour of the notifier to track sessions automatically. 
+This release alters the behaviour of the notifier to track sessions automatically.
 A session will be automatically captured on each app launch and sent to [https://sessions.bugsnag.com](https://sessions.bugsnag.com). If you
 use Bugsnag On-Premise, it is now also recommended that you set your notify and session endpoints
 via `config.setEndpoints(String notify, String sessions)`.

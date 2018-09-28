@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
+import com.bugsnag.android.NativeInterface.Message;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -16,6 +18,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.view.OrientationEventListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,6 +74,8 @@ public class Client extends Observable implements Observer {
     private final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
+
+    private final OrientationEventListener orientationListener;
 
     /**
      * Initialize a Bugsnag client
@@ -200,13 +206,25 @@ public class Client extends Observable implements Observer {
             Logger.warn("Failed to register for automatic breadcrumb broadcasts", ex);
         }
 
-
-        config.addObserver(this);
-
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
             appData.guessReleaseStage());
         Logger.setEnabled(isNotProduction);
 
+        config.addObserver(this);
+        breadcrumbs.addObserver(this);
+        sessionTracker.addObserver(this);
+        user.addObserver(this);
+
+        final Client client = this;
+        orientationListener = new OrientationEventListener(appContext) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                client.setChanged();
+                client.notifyObservers(new Message(
+                    NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
+            }
+        };
+        orientationListener.enable();
 
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
@@ -230,19 +248,32 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    public void notifyBugsnagObservers(@NonNull NotifyType type) {
+    void sendNativeSetupNotification() {
         setChanged();
-        super.notifyObservers(type.getValue());
+        super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, config));
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    enqueuePendingNativeReports();
+                }
+            });
+        } catch (RejectedExecutionException ex) {
+            Logger.warn("Failed to enqueue native reports, will retry next launch: ", ex);
+        }
+    }
+
+    private void enqueuePendingNativeReports() {
+        setChanged();
+        notifyObservers(new Message(
+            NativeInterface.MessageType.DELIVER_PENDING, null));
     }
 
     @Override
     public void update(Observable observable, Object arg) {
-        if (arg instanceof Integer) {
-            NotifyType type = NotifyType.fromInt((Integer) arg);
-
-            if (type != null) {
-                notifyBugsnagObservers(type);
-            }
+        if (arg instanceof Message) {
+            setChanged();
+            super.notifyObservers(arg);
         }
     }
 
@@ -489,7 +520,6 @@ public class Client extends Observable implements Observer {
             .remove(USER_EMAIL_KEY)
             .remove(USER_NAME_KEY)
             .apply();
-        notifyBugsnagObservers(NotifyType.USER);
     }
 
     /**
@@ -500,24 +530,10 @@ public class Client extends Observable implements Observer {
      * @param id a unique identifier of the current user
      */
     public void setUserId(String id) {
-        setUserId(id, true);
-    }
-
-    /**
-     * Sets the user ID with the option to not notify any NDK components of the change
-     *
-     * @param id     a unique identifier of the current user
-     * @param notify whether or not to notify NDK components
-     */
-    void setUserId(String id, boolean notify) {
         user.setId(id);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_ID_KEY, id);
-        }
-
-        if (notify) {
-            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -528,24 +544,10 @@ public class Client extends Observable implements Observer {
      * @param email the email address of the current user
      */
     public void setUserEmail(String email) {
-        setUserEmail(email, true);
-    }
-
-    /**
-     * Sets the user email with the option to not notify any NDK components of the change
-     *
-     * @param email  the email address of the current user
-     * @param notify whether or not to notify NDK components
-     */
-    void setUserEmail(String email, boolean notify) {
         user.setEmail(email);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_EMAIL_KEY, email);
-        }
-
-        if (notify) {
-            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -556,24 +558,10 @@ public class Client extends Observable implements Observer {
      * @param name the name of the current user
      */
     public void setUserName(String name) {
-        setUserName(name, true);
-    }
-
-    /**
-     * Sets the user name with the option to not notify any NDK components of the change
-     *
-     * @param name   the name of the current user
-     * @param notify whether or not to notify NDK components
-     */
-    void setUserName(String name, boolean notify) {
         user.setName(name);
 
         if (config.getPersistUserBetweenSessions()) {
             storeInSharedPrefs(USER_NAME_KEY, name);
-        }
-
-        if (notify) {
-            notifyBugsnagObservers(NotifyType.USER);
         }
     }
 
@@ -867,6 +855,11 @@ public class Client extends Observable implements Observer {
             sessionTracker.incrementUnhandledError();
         } else {
             sessionTracker.incrementHandledError();
+            if (sessionTracker.getCurrentSession() != null) {
+                setChanged();
+                notifyObservers(new NativeInterface.Message(
+                            NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
+            }
         }
 
         switch (style) {
@@ -1161,28 +1154,20 @@ public class Client extends Observable implements Observer {
 
         if (runBeforeBreadcrumbTasks(crumb)) {
             breadcrumbs.add(crumb);
-            notifyBugsnagObservers(NotifyType.BREADCRUMB);
         }
     }
 
+    /**
+     * Leave a "breadcrumb" log message, representing an action which occurred
+     * in your app, to aid with debugging.
+     */
     public void leaveBreadcrumb(@NonNull String name,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, String> metadata) {
-        leaveBreadcrumb(name, type, metadata, true);
-    }
-
-    void leaveBreadcrumb(@NonNull String name,
-                         @NonNull BreadcrumbType type,
-                         @NonNull Map<String, String> metadata,
-                         boolean notify) {
         Breadcrumb crumb = new Breadcrumb(name, type, metadata);
 
         if (runBeforeBreadcrumbTasks(crumb)) {
             breadcrumbs.add(crumb);
-
-            if (notify) {
-                notifyBugsnagObservers(NotifyType.BREADCRUMB);
-            }
         }
     }
 
@@ -1204,7 +1189,6 @@ public class Client extends Observable implements Observer {
      */
     public void clearBreadcrumbs() {
         breadcrumbs.clear();
-        notifyBugsnagObservers(NotifyType.BREADCRUMB);
     }
 
     /**
@@ -1294,6 +1278,10 @@ public class Client extends Observable implements Observer {
         SharedPreferences sharedPref =
             appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         sharedPref.edit().putString(key, value).apply();
+    }
+
+    ErrorStore getErrorStore() {
+        return errorStore;
     }
 
     /**

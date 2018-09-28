@@ -3,11 +3,12 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.Observable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
-class Breadcrumbs implements JsonStream.Streamable {
+class Breadcrumbs extends Observable implements JsonStream.Streamable {
 
     private static final int MAX_PAYLOAD_SIZE = 4096;
     final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
@@ -36,6 +37,9 @@ class Breadcrumbs implements JsonStream.Streamable {
 
     void clear() {
         store.clear();
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.CLEAR_BREADCRUMBS, null));
     }
 
     private void addToStore(@NonNull Breadcrumb breadcrumb) {
@@ -46,6 +50,9 @@ class Breadcrumbs implements JsonStream.Streamable {
             }
             store.add(breadcrumb);
             pruneBreadcrumbs();
+            setChanged();
+            notifyObservers(new NativeInterface.Message(
+                        NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb));
         } catch (IOException ex) {
             Logger.warn("Dropping breadcrumb because it could not be serialized", ex);
         }

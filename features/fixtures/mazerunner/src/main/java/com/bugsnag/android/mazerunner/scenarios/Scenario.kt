@@ -9,8 +9,7 @@ abstract internal class Scenario(protected val config: Configuration,
     var eventMetaData: String? = null
 
     open fun run() {
-        Bugsnag.init(context, config)
-        Bugsnag.setLoggingEnabled(true)
+
     }
 
     /**

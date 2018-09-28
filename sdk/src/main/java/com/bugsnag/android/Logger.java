@@ -35,4 +35,7 @@ final class Logger {
         Logger.enabled = enabled;
     }
 
+    static boolean getEnabled() {
+        return enabled;
+    }
 }

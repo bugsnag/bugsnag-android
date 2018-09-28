@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,17 +19,14 @@ import java.util.Map;
  */
 public class Error implements JsonStream.Streamable {
 
-    @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
-    private Map<String, Object> appData;
+    private Map<String, Object> appData = new HashMap<String, Object>();
 
-    @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
-    private Map<String, Object> deviceData;
+    private Map<String, Object> deviceData = new HashMap<String, Object>();
 
-    @SuppressWarnings("NullableProblems") // set after construction
     @NonNull
-    private User user;
+    private User user = new User();
 
     @Nullable
     private Severity severity;
@@ -385,6 +383,10 @@ public class Error implements JsonStream.Streamable {
 
     HandledState getHandledState() {
         return handledState;
+    }
+
+    Exceptions getExceptions() {
+        return exceptions;
     }
 
     static class Builder {

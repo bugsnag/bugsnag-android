@@ -1,7 +1,7 @@
 Feature: Reporting OOMs
 
 Scenario: Out of Memory Error captured
-    When I run "OomScenario" with the defaults
+    When I run "OomScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"

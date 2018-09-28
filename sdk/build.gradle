@@ -93,12 +93,18 @@ version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 archivesBaseName = "bugsnag-android" // rename aars from 'sdk' to 'bugsnag-android'
 
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
 publishing {
     publications {
         Production(MavenPublication) {
             groupId 'com.bugsnag'
             artifactId 'bugsnag-android'
             version "${project.VERSION_NAME}"
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/bugsnag-android-release.aar")
 
             pom.withXml {
                 Node root = asNode()

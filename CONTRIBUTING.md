@@ -40,8 +40,20 @@ Here’s a bit about our process designing and building the Bugsnag libraries:
 * Our open source libraries span many languages and frameworks so we strive to ensure they are idiomatic on the given platform, but also consistent in terminology between platforms. That way the core concepts are familiar whether you adopt Bugsnag for one platform or many.
 * Finally, one of our goals is to ensure our libraries work reliably, even in crashy, multi-threaded environments. Oftentimes, this requires an intensive engineering design and code review process that adheres to our style and linting guidelines.
 
-Installing the Android SDK
---------------------------
+### Updating dependencies
+
+Most dependencies are controlled by the module-level gradle files, however
+running the NDK C/C++ components also depends on
+[`greatest`](https://github.com/silentbicycle/greatest) and [`parson`](https://github.com/kgabis/parson), managed by [clib](https://github.com/clibs/clib).
+Both libraries are vendored into the repository and clib is not required unless
+updating the dependencies.
+
+To update a clib dependency, reinstall it. For example, using parson:
+
+    clib install kgabis/parson -o src/test/cpp/deps --save
+
+
+## Installing the Android SDK
 
 Running `./gradlew` can automatically install both the Gradle build system
 and the Android SDK.
@@ -61,8 +73,7 @@ installed to `~/.android-sdk`.
 > building.
 
 
-Building the Library
----------------------
+## Building the Library
 
 You can build new `.aar` files as follows:
 
@@ -73,10 +84,11 @@ You can build new `.aar` files as follows:
 Files are generated into`build/outputs/aar`.
 
 
-Running Tests
--------------
+## Running Tests
 
 Running the test suite requires a connected android device or emulator.
+
+### Unit tests
 
 You can run the test suite on a device/emulator as follows from within the sdk directory:
 
@@ -84,29 +96,88 @@ You can run the test suite on a device/emulator as follows from within the sdk d
 ./gradlew connectedCheck
 ```
 
-Running Lint
-------------
+### End-to-end tests
+
+To run the end-to-end tests, first set up the environment by running
+[Bundler](https://bundler.io):
+
+```shell
+bundle install
+```
+
+The tests require two environment variables to be set:
+
+* `ANDROID_HOME`, set the the location of the Android SDK
+* `ANDROID_EMULATOR`, set to the name of an installed emulator
+
+Then run the tests using:
+
+```shell
+bundle exec maze-runner
+```
+
+### Running Lint
+
 You can run lint on the project using the following command:
 
 ```shell
-./gradlew lint
+./gradlew lint checkstyle
 ```
 
-Building the Example App
-------------------------
+## Building the Example App
 
 You can build and install the example app to as follows:
 
 ```shell
-cd examples/sdk-app-example && ../../gradlew clean installJavaExampleDebug
+# First build the NDK:
+./gradlew ndk:assembleRelease
+
+# Then install the example app:
+./gradlew installJavaExampleDebug
 ```
 
 This builds the latest version of the library and installs an app onto your
 device/emulator.
 
+## Installing/testing against a local maven repository
 
-Releasing a New Version
------------------------
+Sometimes its helpful to build and install the bugsnag-android libraries into a
+local repository and test the entire dependency flow inside of a sample
+application.
+
+To get started:
+
+1. In the `bugsnag-android` directory, run
+   `./gradlew assembleRelease publishProductionPublicationToMavenLocal`.
+   This installs `bugsnag-android` and `bugsnag-android-ndk` into your local
+   maven repository.
+2. In your sample application `build.gradle`, add `mavenLocal()` to the *top* of
+   your `allprojects` repositories section:
+
+   ```groovy
+   allprojects {
+     repositories {
+       mavenLocal()
+       // other repos as needed
+     }
+   }
+   ```
+3. In your sample application `app/build.gradle`, add the following to the
+   dependencies section, inserting the exact version number required:
+
+   ```groovy
+   dependencies {
+     implementation 'com.bugsnag:bugsnag-android-ndk:[VERSION NUMBER]'
+   }
+   ```
+4. Clean your sample application and reload dependencies *every time* you
+   rebuild/republish the local dependencies:
+
+   ```
+   ./gradlew clean --refresh-dependencies
+   ```
+
+# Releasing a New Version
 
 If you are a project maintainer, you can build and release a new version of
 `bugsnag-android` as follows:
@@ -145,6 +216,14 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] If no network connection is available, is the report queued for later?
   - [ ] On a throttled network, is the request timeout reasonable, and the main thread not blocked by any visible UI freeze? (Throttling can be achieved by setting both endpoints to "https://httpstat.us/200?sleep=5000")
   - [ ] Are queued reports sent asynchronously?
+- Native functionality checks:
+  - [ ] Rotate the device before notifying. Is the orientation at the time
+    persisted in the report on the dashboard?
+  - [ ] Rotate the device before causing a native crash. Is the orientation at
+    the time of the crash persisted in the report on the dashboard?
+  - [ ] Wait a few seconds before a native crash. Does the reported duration in
+    foreground match your expectation? Is the value for "inForeground" correct?
+  - [ ] Do the function names demangle correctly when using notify?
 - [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/bugsnag-website/tree/master/app/views/dashboard/projects/install) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 - [ ] Do the installation instructions work for a manual integration?
 

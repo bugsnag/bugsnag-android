@@ -1,5 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import com.bugsnag.android.*
@@ -20,23 +21,25 @@ import com.bugsnag.android.*
  */
 internal class StartupCrashFlushScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+        if (context is Activity) {
+            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            if ("CrashOfflineWithDelay" == eventMetaData || "CrashOfflineAtStartup" == eventMetaData) {
+                // Part 2 - Persist a startup crash to disk
+                disableAllDelivery(config)
+            }
+        }
+    }
 
     override fun run() {
+        super.run()
         if ("CrashOfflineWithDelay" == eventMetaData) {
-            // Part 1 - Persist a regular crash to disk
-            disableAllDelivery(config)
-            super.run()
             Handler().postDelayed({
             	throw RuntimeException("Regular crash")
 			}, 6000)
         } else if ("CrashOfflineAtStartup" == eventMetaData) {
-            // Part 2 - Persist a startup crash to disk
-            disableAllDelivery(config)
-            super.run()
             throw RuntimeException("Startup crash")
-        } else {
-            // Part 3 - Online, no crashes: send any cached reports
-            super.run()
         }
     }
 }

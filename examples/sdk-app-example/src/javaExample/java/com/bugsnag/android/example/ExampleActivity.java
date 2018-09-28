@@ -26,6 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 public class ExampleActivity extends AppCompatActivity {
+    static {
+        System.loadLibrary("entrypoint");
+    }
+
+    public native void doCrash();
+
+    public native void notifyFromCXX();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +46,12 @@ public class ExampleActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 crashUnhandled(view);
+            }
+        });
+        findViewById(R.id.btn_native_crash).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doCrash();
             }
         });
     }
@@ -61,6 +74,13 @@ public class ExampleActivity extends AppCompatActivity {
 
         // Mark the following packages as part of your app
         Bugsnag.setProjectPackages("com.bugsnag.android.example", "com.bugsnag.android.other");
+    }
+
+    /**
+     * Delivers an error notification from native (C/C++) code
+     */
+    public void notifyNativeHandled(View view) {
+        notifyFromCXX();
     }
 
     /**
@@ -167,7 +187,7 @@ public class ExampleActivity extends AppCompatActivity {
 
     /**
      * Reads the android bugsnag docs
-     * 
+     *
      * @param view the XML layout view
      */
     public void readDocs(View view) {

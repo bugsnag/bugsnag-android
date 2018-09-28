@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.bugsnag.android.example"
-  android:versionCode="1"
-  android:versionName="1.0">
+  android:versionCode="345"
+  android:versionName="2.0">
 
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -30,34 +30,7 @@
 
     <meta-data
       android:name="com.bugsnag.android.API_KEY"
-      android:value="${bugsnagApiKey}" />
-    <meta-data
-      android:name="com.bugsnag.android.BUILD_UUID"
-      android:value="${bugsnagBuildUUID}" />
-    <meta-data
-      android:name="com.bugsnag.android.APP_VERSION"
-      android:value="${bugsnagAppVersion}" />
-    <meta-data
-      android:name="com.bugsnag.android.ENDPOINT"
-      android:value="${bugsnagEndpoint}" />
-    <meta-data
-      android:name="com.bugsnag.android.SESSIONS_ENDPOINT"
-      android:value="${bugsnagSessionsEndpoint}" />
-    <meta-data
-      android:name="com.bugsnag.android.RELEASE_STAGE"
-      android:value="${bugsnagReleaseStage}" />
-    <meta-data
-      android:name="com.bugsnag.android.SEND_THREADS"
-      android:value="${bugsnagSendThreads}" />
-    <meta-data
-      android:name="com.bugsnag.android.ENABLE_EXCEPTION_HANDLER"
-      android:value="${bugsnagEnableExceptionHandler}" />
-    <meta-data
-      android:name="com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS"
-      android:value="${bugsnagPersistUserBetweenSessions}" />
-    <meta-data
-      android:name="com.bugsnag.android.AUTO_CAPTURE_SESSIONS"
-      android:value="false" />
+      android:value="YOUR-API-KEY-HERE" />
 
   </application>
 
