@@ -85,10 +85,6 @@ task javadoc(type: Javadoc) {
     failOnError false
 }
 
-// Tasks to release the library to maven central
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
-
-
 version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 archivesBaseName = "bugsnag-android" // rename aars from 'sdk' to 'bugsnag-android'
@@ -98,8 +94,21 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 publishing {
+    repositories {
+        maven {
+            if (VERSION_NAME.contains("SNAPSHOT")) {
+                url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            } else {
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            }
+            credentials {
+                username = NEXUS_USERNAME
+                password = NEXUS_PASSWORD
+            }
+        }
+    }
     publications {
-        Production(MavenPublication) {
+        SDK(MavenPublication) {
             groupId 'com.bugsnag'
             artifactId 'bugsnag-android'
             version "${project.VERSION_NAME}"
@@ -155,7 +164,7 @@ publishing {
 bintray {
     user = project.hasProperty("bintray_user") ? "$bintray_user" : System.getenv("bintray_user")
     key = project.hasProperty("bintray_api_key") ? "$bintray_api_key" : System.getenv("bintray_api_key")
-    publications = ['Production']
+    publications = ['SDK']
     configurations = ['archives']
 
     pkg {

@@ -71,14 +71,27 @@ version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 
 // Tasks to release the library to maven central
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier "sources"
 }
 publishing {
+    repositories {
+        maven {
+            if (VERSION_NAME.contains("SNAPSHOT")) {
+                url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            } else {
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            }
+            credentials {
+                username = NEXUS_USERNAME
+                password = NEXUS_PASSWORD
+            }
+        }
+    }
+
     publications {
-        Production(MavenPublication) {
+        NDK(MavenPublication) {
             groupId 'com.bugsnag'
             artifactId 'bugsnag-android-ndk'
             version "${project.VERSION_NAME}"
@@ -135,7 +148,7 @@ publishing {
 bintray {
     user = project.hasProperty("bintray_user") ? "$bintray_user" : System.getenv("bintray_user")
     key = project.hasProperty("bintray_api_key") ? "$bintray_api_key" : System.getenv("bintray_api_key")
-    publications = ['Production']
+    publications = ['NDK']
     configurations = ['archives']
 
     pkg {
