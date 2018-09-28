@@ -80,12 +80,15 @@ jobs:
   - stage: end-to-end tests
     env:
     - ANDROID_TARGET=android-24
+    - MAZE_ARGS=--verbose
   - stage: end-to-end tests
     env:
     - ANDROID_TARGET=android-21
+    - MAZE_ARGS=--verbose
   - stage: end-to-end tests
     env:
     - ANDROID_TARGET=android-19
+    - MAZE_ARGS=--verbose
   - stage: end-to-end tests
     env:
     - ANDROID_TARGET=android-16
