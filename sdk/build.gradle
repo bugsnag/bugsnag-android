@@ -103,8 +103,8 @@ publishing {
                 url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
             }
             credentials {
-                username = NEXUS_USERNAME
-                password = NEXUS_PASSWORD
+                username = project.hasProperty("NEXUS_USERNAME") ? "$NEXUS_USERNAME" : System.getenv("NEXUS_USERNAME")
+                password = project.hasProperty("NEXUS_PASSWORD") ? "$NEXUS_PASSWORD" : System.getenv("NEXUS_PASSWORD")
             }
         }
     }
