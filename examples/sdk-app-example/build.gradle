@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.1.0'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.30"
     }
 }
@@ -28,7 +28,7 @@ android {
         }
     }
     compileSdkVersion 27
-    buildToolsVersion "27.0.0"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
@@ -72,8 +72,10 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':sdk', configuration: 'default')
-    api project(path: ':ndk', configuration: 'default')
+    implementation 'com.bugsnag:bugsnag-android-ndk:4.8.0'
+    // If developing locally, replace the above line with the following:
+    // implementation project(path: ':sdk', configuration: 'default')
+    // api project(path: ':ndk', configuration: 'default')
     implementation 'com.android.support:appcompat-v7:27.0.0'
     implementation 'com.android.support:support-v4:27.0.0'
     kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.30"
@@ -89,7 +91,9 @@ dependencies {
 }
 
 apply plugin: 'com.bugsnag.android.gradle'
-
+bugsnag {
+    ndk true
+}
 apply plugin: 'checkstyle'
 
 checkstyle {
@@ -102,56 +106,57 @@ task("checkstyle", type: Checkstyle) {
     classpath = files()
 }
 
-// Local development setting
-assemble.dependsOn ":ndk:assemble"
-/**
- * Gradle configuration for unpacking native API for CMake. Only required
- * when building against local artifacts.
- */
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.TaskAction
-
-class BugsnagTestNdkSetupTask extends DefaultTask {
-
-    @TaskAction
-    void setupNdkProject() {
-        def artifactFile = findBugsnagNdkArchive()
-        File dst = new File(project.buildDir, "/intermediates/bugsnag-libs")
-
-        project.copy {
-            from project.zipTree(artifactFile)
-            into(project.file(dst))
-        }
-    }
-
-    File findBugsnagNdkArchive() {
-        for (def config in project.configurations) {
-            try {
-                def artifactFile = config.resolvedConfiguration.getFiles().find {
-                    it.toString().contains("bugsnag-android-ndk")
-                }
-                if (artifactFile && artifactFile.exists()) {
-                    return artifactFile
-                }
-            } catch (Exception e) {} // some configurations cannot be directly resolved
-        }
-        throw new Exception("SOLUTION: The bugsnag-android-ndk file was not found, please run `./gradlew ndk:assembleRelease`")
-    }
-}
-
-project.afterEvaluate {
-    def cleanTasks = project.tasks.findAll {
-        it.name.startsWith("externalNative") && it.name.contains("Clean")
-    }
-    def buildTasks = project.tasks.findAll {
-        it.name.startsWith("externalNative") && it.name.contains("Build") && !it.name.contains("Clean")
-    }
-
-    def ndkSetupTask = project.tasks.create("bugsnagInstallAllJniLibsTask", BugsnagTestNdkSetupTask)
-
-    buildTasks.forEach {
-        ndkSetupTask.mustRunAfter(cleanTasks)
-        it.dependsOn ndkSetupTask
-        it.doFirst { ndkSetupTask }
-    }
-}
+// Local development settings. Uncomment these if referencing
+// local dependencies:
+//assemble.dependsOn ":ndk:assemble"
+///**
+// * Gradle configuration for unpacking native API for CMake. Only required
+// * when building against local artifacts.
+// */
+//import org.gradle.api.DefaultTask
+//import org.gradle.api.tasks.TaskAction
+//
+//class BugsnagTestNdkSetupTask extends DefaultTask {
+//
+//    @TaskAction
+//    void setupNdkProject() {
+//        def artifactFile = findBugsnagNdkArchive()
+//        File dst = new File(project.buildDir, "/intermediates/bugsnag-libs")
+//
+//        project.copy {
+//            from project.zipTree(artifactFile)
+//            into(project.file(dst))
+//        }
+//    }
+//
+//    File findBugsnagNdkArchive() {
+//        for (def config in project.configurations) {
+//            try {
+//                def artifactFile = config.resolvedConfiguration.getFiles().find {
+//                    it.toString().contains("bugsnag-android-ndk")
+//                }
+//                if (artifactFile && artifactFile.exists()) {
+//                    return artifactFile
+//                }
+//            } catch (Exception e) {} // some configurations cannot be directly resolved
+//        }
+//        throw new Exception("SOLUTION: The bugsnag-android-ndk file was not found, please run `./gradlew ndk:assembleRelease`")
+//    }
+//}
+//
+//project.afterEvaluate {
+//    def cleanTasks = project.tasks.findAll {
+//        it.name.startsWith("externalNative") && it.name.contains("Clean")
+//    }
+//    def buildTasks = project.tasks.findAll {
+//        it.name.startsWith("externalNative") && it.name.contains("Build") && !it.name.contains("Clean")
+//    }
+//
+//    def ndkSetupTask = project.tasks.create("bugsnagInstallAllJniLibsTask", BugsnagTestNdkSetupTask)
+//
+//    buildTasks.forEach {
+//        ndkSetupTask.mustRunAfter(cleanTasks)
+//        it.dependsOn ndkSetupTask
+//        it.doFirst { ndkSetupTask }
+//    }
+//}
