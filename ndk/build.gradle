@@ -70,6 +70,8 @@ apply from: "../checkstyle.gradle"
 version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 
+// Tasks to release the library to maven central
+apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier "sources"
