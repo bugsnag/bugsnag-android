@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.8.0 (2018-09-27)
 
 This release includes new versions of both bugsnag-android and
 bugsnag-android-ndk, which will be released at the same time and with the same
