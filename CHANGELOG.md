@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.8.1 (2018-09-27)
+
+* [NDK] Fix a packaging issue on Maven Central in v4.8.0
+
 ## 4.8.0 (2018-09-27)
 
 This release includes new versions of both bugsnag-android and
