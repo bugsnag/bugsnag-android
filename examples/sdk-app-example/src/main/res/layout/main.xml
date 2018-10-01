@@ -35,7 +35,6 @@
       style="@style/ButtonTheme"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="crashWithNativeSignal"
       android:text="@string/trigger_native_crash" />
 
     <View style="@style/separator" />
