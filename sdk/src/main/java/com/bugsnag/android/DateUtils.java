@@ -2,8 +2,6 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;

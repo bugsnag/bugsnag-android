@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;

@@ -3,8 +3,6 @@ package com.bugsnag.android;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.io.File;
 import java.util.Comparator;
 import java.util.Locale;

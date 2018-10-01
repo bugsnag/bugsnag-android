@@ -3,8 +3,6 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;

@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 /**
  * Used to store information about an exception that was not provided with an exception object
  */

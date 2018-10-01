@@ -1,5 +1,13 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Add ThreadSafe annotation to com.bugsnag.android, remove infer dependency
+  [#370](https://github.com/bugsnag/bugsnag-android/pull/370)
+  [#366](https://github.com/bugsnag/bugsnag-android/issues/366)
+
 ## 4.8.1 (2018-09-27)
 
 * [NDK] Fix a packaging issue on Maven Central in v4.8.0

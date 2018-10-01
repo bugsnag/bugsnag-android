@@ -18,8 +18,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;

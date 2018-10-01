@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 /**
  * Recognized types of breadcrumbs
  */

@@ -2,8 +2,6 @@ package com.bugsnag.android;
 
 import android.util.Log;
 
-import com.facebook.infer.annotation.ThreadSafe;
-
 @ThreadSafe
 final class Logger {
 
