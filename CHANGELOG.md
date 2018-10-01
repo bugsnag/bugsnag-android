@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.8.2 (2018-10-01)
 
 ### Bug fixes
 
