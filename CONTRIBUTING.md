@@ -148,7 +148,7 @@ application.
 To get started:
 
 1. In the `bugsnag-android` directory, run
-   `./gradlew assembleRelease publishProductionPublicationToMavenLocal`.
+   `./gradlew assembleRelease publishSDKPublicationToMavenLocal publishNDKPublicationToMavenLocal`.
    This installs `bugsnag-android` and `bugsnag-android-ndk` into your local
    maven repository.
 2. In your sample application `build.gradle`, add `mavenLocal()` to the *top* of
