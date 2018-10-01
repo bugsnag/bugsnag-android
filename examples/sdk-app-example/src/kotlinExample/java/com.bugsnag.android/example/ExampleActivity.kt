@@ -13,6 +13,16 @@ import java.util.*
 
 class ExampleActivity : AppCompatActivity() {
 
+    companion object {
+        init {
+            System.loadLibrary("entrypoint")
+        }
+    }
+
+    external fun doCrash()
+
+    external fun notifyFromCXX()
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
@@ -21,6 +31,9 @@ class ExampleActivity : AppCompatActivity() {
 
         val view: View = findViewById(R.id.btn_fatal_crash)
         view.setOnClickListener { it -> crashUnhandled(it) }
+
+        val nativeBtn: View = findViewById(R.id.btn_native_crash)
+        nativeBtn.setOnClickListener { doCrash() }
     }
 
     private fun performAdditionalBugsnagSetup() {
@@ -60,6 +73,13 @@ class ExampleActivity : AppCompatActivity() {
         }
 
         displayToastNotification()
+    }
+
+    /**
+     * Delivers an error notification from native (C/C++) code
+     */
+    fun notifyNativeHandled(view: View) {
+        notifyFromCXX()
     }
 
     /**
