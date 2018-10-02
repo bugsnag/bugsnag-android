@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fix unlikely initialization failure if a device orientation event listener
+  cannot be enabled
+
 ## 4.9.3 (2018-11-29)
 
 ### Bug fixes

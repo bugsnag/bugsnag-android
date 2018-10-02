@@ -32,6 +32,7 @@ public class ClientTest {
 
     private Context context;
     private Configuration config;
+    private Client client;
 
     /**
      * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
@@ -52,6 +53,10 @@ public class ClientTest {
     public void tearDown() throws Exception {
         clearSharedPrefs();
         Async.cancelTasks();
+        if (client != null) {
+            client.getOrientationListener().disable();
+            client = null;
+        }
     }
 
     private void clearSharedPrefs() {
@@ -77,13 +82,13 @@ public class ClientTest {
 
     @Test(expected = NullPointerException.class)
     public void testNullContext() {
-        new Client(null, "api-key");
+        client = new Client(null, "api-key");
     }
 
     @Test
     public void testNotify() {
         // Notify should not crash
-        Client client = BugsnagTestUtils.generateClient();
+        client = BugsnagTestUtils.generateClient();
         client.notify(new RuntimeException("Testing"));
     }
 
@@ -92,7 +97,7 @@ public class ClientTest {
     public void testConfig() {
         config.setEndpoint("new-endpoint");
 
-        Client client = new Client(context, config);
+        client = new Client(context, config);
         client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
         client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
 
@@ -106,7 +111,7 @@ public class ClientTest {
 
         config.setPersistUserBetweenSessions(true);
         config.setDelivery(BugsnagTestUtils.generateDelivery());
-        Client client = new Client(context, config);
+        client = new Client(context, config);
 
         final User user = new User();
 
@@ -132,7 +137,7 @@ public class ClientTest {
     @Test
     public void testStoreUserInPrefs() {
         config.setPersistUserBetweenSessions(true);
-        Client client = new Client(context, config);
+        client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
         // Check that the user was store in prefs
@@ -145,7 +150,7 @@ public class ClientTest {
     @Test
     public void testStoreUserInPrefsDisabled() {
         config.setPersistUserBetweenSessions(false);
-        Client client = new Client(context, config);
+        client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
         // Check that the user was not stored in prefs
@@ -161,7 +166,7 @@ public class ClientTest {
         setUserPrefs();
 
         // Clear the user using the command
-        Client client = new Client(context, "api-key");
+        client = new Client(context, "api-key");
         client.clearUser();
 
         // Check that there is no user information in the prefs anymore
@@ -224,7 +229,7 @@ public class ClientTest {
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
-        Client client = generateClient();
+        client = generateClient();
         assertEquals(0, client.breadcrumbs.store.size());
 
         client.setMaxBreadcrumbs(1);
@@ -241,7 +246,7 @@ public class ClientTest {
 
     @Test
     public void testClearBreadcrumbs() {
-        Client client = generateClient();
+        client = generateClient();
         assertEquals(0, client.breadcrumbs.store.size());
 
         client.leaveBreadcrumb("test");
@@ -253,14 +258,14 @@ public class ClientTest {
 
     @Test
     public void testClientAddToTab() {
-        Client client = generateClient();
+        client = generateClient();
         client.addToTab("drink", "cola", "cherry");
         assertNotNull(client.getMetaData().getTab("drink"));
     }
 
     @Test
     public void testClientClearTab() {
-        Client client = generateClient();
+        client = generateClient();
         client.addToTab("drink", "cola", "cherry");
 
         client.clearTab("drink");
@@ -275,14 +280,14 @@ public class ClientTest {
 
     @Test
     public void testClientUser() {
-        Client client = generateClient();
+        client = generateClient();
         assertNotNull(client.getUser());
         assertNotNull(client.getUser().getId());
     }
 
     @Test
     public void testBreadcrumbGetter() {
-        Client client = generateClient();
+        client = generateClient();
         Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
 
         int breadcrumbCount = breadcrumbs.size();
@@ -292,7 +297,7 @@ public class ClientTest {
 
     @Test
     public void testBreadcrumbStoreNotModified() {
-        Client client = generateClient();
+        client = generateClient();
         Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
         int breadcrumbCount = client.breadcrumbs.store.size();
 
@@ -303,14 +308,14 @@ public class ClientTest {
 
     @Test
     public void testAppDataCollection() {
-        Client client = generateClient();
+        client = generateClient();
         AppData appData = client.getAppData();
         assertEquals(client.getAppData(), appData);
     }
 
     @Test
     public void testAppDataMetaData() {
-        Client client = generateClient();
+        client = generateClient();
         Map<String, Object> app = client.getAppData().getAppDataMetaData();
         assertEquals(6, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
@@ -323,14 +328,14 @@ public class ClientTest {
 
     @Test
     public void testDeviceDataCollection() {
-        Client client = generateClient();
+        client = generateClient();
         DeviceData deviceData = client.getDeviceData();
         assertEquals(client.getDeviceData(), deviceData);
     }
 
     @Test
     public void testPopulateDeviceMetadata() {
-        Client client = generateClient();
+        client = generateClient();
         Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
 
         assertEquals(14, metaData.size());
