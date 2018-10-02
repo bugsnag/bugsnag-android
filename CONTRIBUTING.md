@@ -184,6 +184,7 @@ If you are a project maintainer, you can build and release a new version of
 
 ## One-time setup
 
+-   Create a [Bintray](https://bintray.com/signup/oss) account, and ask a Bugsnag admin to add you to the organisation
 -   Create a [Sonatype JIRA](https://issues.sonatype.org) account
 -   Ask in the [Bugsnag Sonatype JIRA ticket](https://issues.sonatype.org/browse/OSSRH-5533) to become a contributor
 -   Ask an existing contributor (likely Simon) to confirm in the ticket
@@ -224,14 +225,15 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] Wait a few seconds before a native crash. Does the reported duration in
     foreground match your expectation? Is the value for "inForeground" correct?
   - [ ] Do the function names demangle correctly when using notify?
-- [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/bugsnag-website/tree/master/app/views/dashboard/projects/install) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
+- [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/dashboard-js/tree/master/js/dashboard/components/integration_instructions) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 - [ ] Do the installation instructions work for a manual integration?
 
 ### Making the release
 
+- Merge any remaining PRs to master, ensuring the commit message matches the release tag (e.g. v4.0.0)
 - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
 - [ ] Inspected the updated CHANGELOG, README, and version files to ensure they are correct
-- [ ] Release to GitHub, Maven Central, and Bintray by running `make VERSION=[number] release`
+- [ ] Release to GitHub, Maven Central, and Bintray by running `git tag vX.X.X && git push origin --tags && ./gradlew uploadArchives bintrayUpload`
   - [ ] "Promote" the release build on Maven Central
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”
