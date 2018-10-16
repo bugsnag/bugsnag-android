@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* [NDK] Improve stack trace quality for signals raised on ARM32 devices
+  [#378](https://github.com/bugsnag/bugsnag-android/pull/378)
+
 ## 4.8.2 (2018-10-01)
 
 ### Bug fixes
