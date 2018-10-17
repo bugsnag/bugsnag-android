@@ -11,6 +11,7 @@ public class CXXDoubleFreeScenario extends Scenario {
 
     static {
         System.loadLibrary("bugsnag-ndk");
+        System.loadLibrary("monochrome");
         System.loadLibrary("entrypoint");
     }
 

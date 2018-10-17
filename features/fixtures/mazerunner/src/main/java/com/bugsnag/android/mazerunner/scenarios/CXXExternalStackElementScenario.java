@@ -6,17 +6,16 @@ import com.bugsnag.android.Configuration;
 
 import android.support.annotation.NonNull;
 
-public class CXXAbortScenario extends Scenario {
-
+public class CXXExternalStackElementScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("monochrome");
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash();
+    public native void crash(int counter);
 
-    public CXXAbortScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXExternalStackElementScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }
@@ -28,6 +27,6 @@ public class CXXAbortScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        crash();
+        crash(34);
     }
 }
