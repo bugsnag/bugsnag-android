@@ -598,12 +598,14 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Add a "before notify" callback, to execute code before every
-     * report to Bugsnag.
+     * Add a "before notify" callback, to execute code before sending
+     * reports to Bugsnag.
      * <p/>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to halt execution.
+     * <code>false</code> from any callback to prevent delivery. "Before
+     * notify" callbacks do not run before reports generated in the event
+     * of immediate app termination from crashes in C/C++ code.
      * <p/>
      * For example:
      * <p/>

@@ -50,6 +50,7 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
+    private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
         = new ConcurrentLinkedQueue<>();
     private String codeBundleId;
@@ -461,6 +462,16 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * Gets any before send tasks to run
+     *
+     * @return the before send tasks
+     */
+    @NonNull
+    protected Collection<BeforeSend> getBeforeSendTasks() {
+        return beforeSendTasks;
+    }
+
+    /**
      * Get whether or not Bugsnag should persist user information between application settings
      *
      * @return whether or not Bugsnag should persist user information
@@ -632,6 +643,33 @@ public class Configuration extends Observable implements Observer {
         map.put(HEADER_API_KEY, apiKey);
         map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
         return map;
+    }
+
+    /**
+     * Add a callback to modify or cancel a report immediately before
+     * it is delivered to Bugsnag.
+     *
+     * Unlike {@link BeforeNotify} callbacks, "before send" callbacks are not
+     * necessarily run in the same app session as when the report was generated,
+     * as the application may have terminated before delivery or networking
+     * conditions prevented delivering the report until a later date.
+     * <p>
+     * Example usage:
+     * <pre>
+     * config.beforeSend((Report report) -&gt; {
+     *   Error error = report.getError();
+     *   error.setContext(getImportantField(error));
+     *   return true;
+     * });
+     * </pre>
+     * @param beforeSend a callback to run before delivering errors to Bugsnag
+     * @see BeforeSend
+     * @see Report
+     */
+    public void beforeSend(BeforeSend beforeSend) {
+        if (!beforeSendTasks.contains(beforeSend)) {
+            beforeSendTasks.add(beforeSend);
+        }
     }
 
     /**
