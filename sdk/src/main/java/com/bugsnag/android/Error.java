@@ -389,6 +389,10 @@ public class Error implements JsonStream.Streamable {
         return exceptions;
     }
 
+    Session getSession() {
+        return session;
+    }
+
     static class Builder {
         private final Configuration config;
         private final Throwable exception;

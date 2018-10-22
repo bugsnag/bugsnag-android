@@ -21,6 +21,16 @@ class Session implements JsonStream.Streamable {
         this.autoCaptured = new AtomicBoolean(autoCaptured);
     }
 
+    Session(String id, Date startedAt, User user, int unhandledCount, int handledCount) {
+        this.id = id;
+        this.startedAt = new Date(startedAt.getTime());
+        this.user = user;
+        this.autoCaptured = new AtomicBoolean(false);
+        this.unhandledCount = new AtomicInteger(unhandledCount);
+        this.handledCount = new AtomicInteger(handledCount);
+        this.tracked = new AtomicBoolean(true);
+    }
+
     private AtomicInteger unhandledCount = new AtomicInteger();
     private AtomicInteger handledCount = new AtomicInteger();
     private AtomicBoolean tracked = new AtomicBoolean(false);
