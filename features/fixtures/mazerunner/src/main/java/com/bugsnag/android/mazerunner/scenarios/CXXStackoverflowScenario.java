@@ -10,6 +10,7 @@ public class CXXStackoverflowScenario extends Scenario {
 
     static {
         System.loadLibrary("bugsnag-ndk");
+        System.loadLibrary("monochrome");
         System.loadLibrary("entrypoint");
     }
 

@@ -190,3 +190,21 @@ Feature: Native crash reporting
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
+    Scenario: Causing a crash in a separate library
+        When I run "CXXExternalStackElementScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed native report
+        And the event "severity" equals "error"
+        And the event "unhandled" is true
+        And the exception "errorClass" equals one of:
+            | SIGILL  |
+            | SIGTRAP |
+        And the exception "message" equals one of:
+            | Illegal instruction   |
+            | Trace/breakpoint trap |
+        And the exception "type" equals "c"
+        And the first significant stack frame methods and files should match:
+            | something_innocuous | libmonochrome.so |
+            | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | libentrypoint.so |

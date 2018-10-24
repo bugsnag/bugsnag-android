@@ -79,6 +79,21 @@ Then("the exception {string} equals one of:") do |keypath, possible_values|
   value = read_key_path(find_request(0)[:body], "events.0.exceptions.0.#{keypath}")
   assert_includes(possible_values.raw.flatten, value)
 end
+Then("the first significant stack frame methods and files should match:") do |expected_values|
+  stacktrace = read_key_path(find_request(0)[:body], "events.0.exceptions.0.stacktrace")
+  expected_frame_values = expected_values.raw
+  expected_index = 0
+  stacktrace.each_with_index do |item, index|
+    next if expected_index >= expected_frame_values.length
+    expected_frame = expected_frame_values[expected_index]
+    next if item["method"].start_with? "bsg_"
+    next if item["file"].start_with? "/system/"
+
+    assert_equal(expected_frame[0], item["method"])
+    assert(item["file"].end_with?(expected_frame[1]), "'#{item["file"]}' in frame #{index} does not end with '#{expected_frame[1]}'")
+    expected_index += 1
+  end
+end
 
 Then("the report in request {int} contains the required fields") do |index|
   steps %Q{

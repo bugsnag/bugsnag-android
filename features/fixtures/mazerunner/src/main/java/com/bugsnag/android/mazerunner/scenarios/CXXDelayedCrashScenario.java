@@ -14,6 +14,7 @@ import java.lang.Runnable;
 public class CXXDelayedCrashScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
+        System.loadLibrary("monochrome");
         System.loadLibrary("entrypoint");
     }
 

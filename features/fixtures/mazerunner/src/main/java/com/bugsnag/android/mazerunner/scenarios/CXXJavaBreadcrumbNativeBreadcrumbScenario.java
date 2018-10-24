@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
+        System.loadLibrary("monochrome");
         System.loadLibrary("entrypoint");
     }
 
