@@ -4,7 +4,7 @@
 Feature: Error Reporting Thread
 
 Scenario: Only 1 thread is flagged as the error reporting thread for handled exceptions
-    When I run "HandledExceptionScenario" with the defaults
+    When I run "HandledExceptionScenario"
     Then I should receive a request
     And the request is a valid for the error reporting API
     And the thread with name "main" contains the error reporting flag
@@ -12,7 +12,7 @@ Scenario: Only 1 thread is flagged as the error reporting thread for handled exc
     And the payload field "events.0.threads.0.stacktrace.0.method" ends with "getThreadStackTrace"
 
 Scenario: Only 1 thread is flagged as the error reporting thread for unhandled exceptions
-    When I run "UnhandledExceptionScenario" with the defaults
+    When I run "UnhandledExceptionScenario"
     Then I should receive 1 request
     And the request is a valid for the error reporting API
     And the thread with name "main" contains the error reporting flag
