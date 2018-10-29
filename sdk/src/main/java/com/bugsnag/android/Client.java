@@ -598,12 +598,14 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Add a "before notify" callback, to execute code before every
-     * report to Bugsnag.
+     * Add a "before notify" callback, to execute code before sending
+     * reports to Bugsnag.
      * <p/>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to halt execution.
+     * <code>false</code> from any callback to prevent delivery. "Before
+     * notify" callbacks do not run before reports generated in the event
+     * of immediate app termination from crashes in C/C++ code.
      * <p/>
      * For example:
      * <p/>
@@ -1207,6 +1209,10 @@ public class Client extends Observable implements Observer {
     }
 
     void deliver(@NonNull Report report, @NonNull Error error) {
+        if (!runBeforeSendTasks(report)) {
+            Logger.info("Skipping notification - beforeSend task returned false");
+            return;
+        }
         try {
             config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
@@ -1236,6 +1242,21 @@ public class Client extends Observable implements Observer {
             .build();
 
         notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
+    }
+
+    private boolean runBeforeSendTasks(Report report) {
+        for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+            try {
+                if (!beforeSend.run(report)) {
+                    return false;
+                }
+            } catch (Throwable ex) {
+                Logger.warn("BeforeSend threw an Exception", ex);
+            }
+        }
+
+        // By default, allow the error to be sent if there were no objections
+        return true;
     }
 
     private boolean runBeforeNotifyTasks(Error error) {

@@ -14,7 +14,7 @@ final class HandledState implements JsonStream.Streamable {
 
     @StringDef({REASON_UNHANDLED_EXCEPTION, REASON_STRICT_MODE, REASON_HANDLED_EXCEPTION,
         REASON_USER_SPECIFIED, REASON_CALLBACK_SPECIFIED, REASON_PROMISE_REJECTION,
-        REASON_LOG})
+        REASON_LOG, REASON_SIGNAL})
     @Retention(RetentionPolicy.SOURCE)
     @interface SeverityReason {
     }
@@ -25,6 +25,7 @@ final class HandledState implements JsonStream.Streamable {
     static final String REASON_USER_SPECIFIED = "userSpecifiedSeverity";
     static final String REASON_CALLBACK_SPECIFIED = "userCallbackSetSeverity";
     static final String REASON_PROMISE_REJECTION = "unhandledPromiseRejection";
+    static final String REASON_SIGNAL = "signal";
     static final String REASON_LOG = "log";
 
     @SeverityReason
@@ -75,7 +76,7 @@ final class HandledState implements JsonStream.Streamable {
         }
     }
 
-    private HandledState(String severityReasonType, Severity currentSeverity, boolean unhandled,
+    HandledState(String severityReasonType, Severity currentSeverity, boolean unhandled,
                          @Nullable String attributeValue) {
         this.severityReasonType = severityReasonType;
         this.defaultSeverity = currentSeverity;

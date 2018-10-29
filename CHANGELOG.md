@@ -2,6 +2,13 @@
 
 ## TBD
 
+### Enhancements
+
+* Add a callback to allow modifying reports immediately prior to delivery,
+  including fatal crashes from native C/C++ code. For more information, see the
+  [callback reference](https://docs.bugsnag.com/platforms/android/sdk/customizing-error-reports).
+  [#379](https://github.com/bugsnag/bugsnag-android/pull/379)
+
 ### Bug fixes
 
 * [NDK] Improve stack trace quality for signals raised on ARM32 devices

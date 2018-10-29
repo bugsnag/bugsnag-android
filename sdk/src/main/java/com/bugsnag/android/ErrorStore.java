@@ -133,7 +133,23 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Report report = new Report(config.getApiKey(), errorFile);
+            Report report = null;
+            if (config.getBeforeSendTasks().size() > 0) {
+                report = new Report(config.getApiKey(), ErrorReader.readError(config, errorFile));
+                for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+                    try {
+                        if (!beforeSend.run(report)) {
+                            deleteStoredFiles(Collections.singleton(errorFile));
+                            Logger.info("Deleting cancelled error file " + errorFile.getName());
+                            return;
+                        }
+                    } catch (Throwable ex) {
+                        Logger.warn("BeforeSend threw an Exception", ex);
+                    }
+                }
+            } else {
+                report = new Report(config.getApiKey(), errorFile);
+            }
             config.getDelivery().deliver(report, config);
 
             deleteStoredFiles(Collections.singleton(errorFile));

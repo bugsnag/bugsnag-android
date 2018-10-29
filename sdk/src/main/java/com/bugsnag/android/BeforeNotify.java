@@ -1,11 +1,12 @@
 package com.bugsnag.android;
 
 /**
- * A callback to be run before every report to Bugsnag.
+ * A callback to be run before reports are sent to Bugsnag.
  * <p>
  * <p>You can use this to add or modify information attached to an error
  * before it is sent to your dashboard. You can also return
  * <code>false</code> from any callback to halt execution.
+ * <p>"Before notify" callbacks do not run when a fatal C/C++ crash occurs.
  */
 @ThreadSafe
 public interface BeforeNotify {

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,17 +16,13 @@ import java.util.Set;
 class ThreadState implements JsonStream.Streamable {
     private static final String THREAD_TYPE = "android";
 
-    private final Configuration config;
-    private final Thread[] threads;
-    private final Map<Thread, StackTraceElement[]> stackTraces;
-    private final long currentThreadId;
+    private final CachedThread[] cachedThreads;
 
     public ThreadState(@NonNull Configuration config,
                        @NonNull Thread currentThread,
                        @NonNull Map<Thread, StackTraceElement[]> allStackTraces,
                        @Nullable Throwable exc) {
-        this.config = config;
-        stackTraces = allStackTraces;
+        Map<Thread, StackTraceElement[]> stackTraces = allStackTraces;
 
         // API 24/25 don't record the currentThread, add it in manually
         // https://issuetracker.google.com/issues/64122757
@@ -36,16 +33,27 @@ class ThreadState implements JsonStream.Streamable {
             stackTraces.put(currentThread, exc.getStackTrace());
         }
 
-        currentThreadId = currentThread.getId();
-        threads = sanitiseThreads(stackTraces);
+        long currentThreadId = currentThread.getId();
+        Thread[] threads = sortThreadsById(stackTraces);
+        this.cachedThreads = new CachedThread[threads.length];
+        for (int i = 0; i < threads.length; i++) {
+            Thread thread = threads[i];
+            this.cachedThreads[i] = new CachedThread(config, thread.getId(), thread.getName(),
+                THREAD_TYPE, thread.getId() == currentThreadId,
+                stackTraces.get(thread));
+        }
+    }
+
+    ThreadState(@NonNull CachedThread[] cachedThreads) {
+        this.cachedThreads = cachedThreads;
     }
 
     /**
-     * Returns an array of threads including the current thread, sorted by thread id
+     * Returns an array of threads sorted by thread id
      *
      * @param liveThreads all live threads
      */
-    private Thread[] sanitiseThreads(Map<Thread, StackTraceElement[]> liveThreads) {
+    private Thread[] sortThreadsById(Map<Thread, StackTraceElement[]> liveThreads) {
         Set<Thread> threadSet = liveThreads.keySet();
 
         Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
@@ -60,19 +68,8 @@ class ThreadState implements JsonStream.Streamable {
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
-        for (Thread thread : threads) {
-            writer.beginObject();
-            writer.name("id").value(thread.getId());
-            writer.name("name").value(thread.getName());
-            writer.name("type").value(THREAD_TYPE);
-
-            StackTraceElement[] stacktrace = stackTraces.get(thread);
-            writer.name("stacktrace").value(new Stacktrace(config, stacktrace));
-
-            if (currentThreadId == thread.getId()) {
-                writer.name("errorReportingThread").value(true);
-            }
-            writer.endObject();
+        for (CachedThread thread : cachedThreads) {
+            writer.value(thread);
         }
         writer.endArray();
     }

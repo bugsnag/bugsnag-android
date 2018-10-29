@@ -39,6 +39,14 @@ class Exceptions implements JsonStream.Streamable {
         writer.endArray();
     }
 
+    Throwable getException() {
+        return exception;
+    }
+
+    String getExceptionType() {
+        return exceptionType;
+    }
+
     void setExceptionType(@NonNull String type) {
         exceptionType = type;
     }
