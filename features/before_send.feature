@@ -47,3 +47,14 @@ Feature: Run callbacks before reports delivered
         And the exception "type" equals "android"
         And the event "severity" equals "error"
         And the event "unhandled" is false
+
+    Scenario: Unset context
+        When I run "NotifyBeforeSendUnsetContextScenario"
+        Then I should receive a request
+        And the request is a valid for the error reporting API
+        And the exception "errorClass" equals "java.lang.Exception"
+        And the exception "message" equals "Registration failure"
+        And the event "context" is null
+        And the exception "type" equals "android"
+        And the event "severity" equals "error"
+        And the event "unhandled" is false

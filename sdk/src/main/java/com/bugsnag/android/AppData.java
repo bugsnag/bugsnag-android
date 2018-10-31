@@ -108,7 +108,7 @@ class AppData {
         return client.sessionTracker.getDurationInForegroundMs(nowMs);
     }
 
-    private String getActiveScreenClass() {
+    String getActiveScreenClass() {
         return client.sessionTracker.getContextActivity();
     }
 

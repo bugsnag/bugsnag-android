@@ -838,6 +838,12 @@ public class Client extends Observable implements Observer {
         // Attach user info to the error
         error.setUser(user);
 
+        // Attach default context from active activity
+        if (TextUtils.isEmpty(error.getContext())) {
+            String context = config.getContext();
+            error.setContext(context != null ? context : appData.getActiveScreenClass());
+        }
+
         // Run beforeNotify tasks, don't notify if any return true
         if (!runBeforeNotifyTasks(error)) {
             Logger.info("Skipping notification - beforeNotify task returned false");

@@ -315,25 +315,10 @@ public class ErrorTest {
     }
 
     @Test
-    public void testConfigContext() throws Exception {
-        String expected = "Junit test suite";
-        error.setContext(null);
-        config.setContext(expected);
-        assertEquals(expected, error.getContext());
-    }
-
-    @Test
     public void testNullContext() throws Exception {
         error.setContext(null);
         error.setAppData(null);
         assertNull(error.getContext());
-    }
-
-    @Test
-    public void testActiveScreen() throws Exception {
-        error.setContext(null);
-        error.getMetaData().addToTab("app", "activeScreen", "FooActivity");
-        assertEquals("FooActivity", error.getContext());
     }
 
     @Test

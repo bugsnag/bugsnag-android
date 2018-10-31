@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -71,7 +70,7 @@ public class Error implements JsonStream.Streamable {
 
         // Write error basics
         writer.beginObject();
-        writer.name("context").value(getContext());
+        writer.name("context").value(context);
         writer.name("metaData").value(mergedMetaData);
 
         writer.name("severity").value(severity);
@@ -134,19 +133,7 @@ public class Error implements JsonStream.Streamable {
      */
     @Nullable
     public String getContext() {
-        if (!TextUtils.isEmpty(context)) {
-            return context;
-        } else if (config.getContext() != null) {
-            return config.getContext();
-        } else if (metaData != null) {
-            Map<String, Object> app = metaData.getTab("app");
-            Object activeScreen = app.get("activeScreen");
-
-            if (activeScreen instanceof String) {
-                return (String) activeScreen;
-            }
-        }
-        return null;
+        return context;
     }
 
     /**
