@@ -4,6 +4,10 @@
 #include <report.h>
 #include <unwind.h>
 
+#if defined(__arm__)
+#include <libunwind.h>
+#endif
+
 typedef struct {
   size_t frame_count;
   uintptr_t frame_addresses[BUGSNAG_FRAMES_MAX];

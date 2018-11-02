@@ -24,6 +24,7 @@ add_library( # Specifies the name of the library.
 include_directories(
              jni/
              jni/deps
+             jni/external/libunwind/include
              )
 
 target_include_directories(bugsnag-ndk PRIVATE ${BUGSNAG_DIR}/assets/include)
@@ -47,3 +48,9 @@ set_target_properties(bugsnag-ndk
                       COMPILE_OPTIONS
                       -Werror -Wall -pedantic)
 
+if(${ANDROID_ABI} STREQUAL "armeabi" OR ${ANDROID_ABI} STREQUAL "armeabi-v7a")
+    add_library(libunwind STATIC IMPORTED)
+    set_target_properties(libunwind PROPERTIES IMPORTED_LOCATION
+        ${ANDROID_NDK}/sources/cxx-stl/llvm-libc++/libs/${ANDROID_ABI}/libunwind.a)
+    target_link_libraries(bugsnag-ndk libunwind)
+endif()
