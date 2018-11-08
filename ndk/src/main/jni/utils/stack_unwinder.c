@@ -12,8 +12,8 @@
 #define BSG_LIBCORKSCREW_MIN_LEVEL 16
 #define BSG_LIBCORKSCREW_MAX_LEVEL 19
 
-bsg_unwinder bsg_get_unwind_type(int apiLevel) {
-  if (apiLevel >= BSG_LIBUNWIND_LEVEL && bsg_configure_libunwind()) {
+bsg_unwinder bsg_get_unwind_type(int apiLevel, bool is32bit) {
+  if (apiLevel >= BSG_LIBUNWIND_LEVEL && bsg_configure_libunwind(is32bit)) {
     return BSG_LIBUNWIND;
   } else if (apiLevel <= BSG_LIBCORKSCREW_MAX_LEVEL &&
              apiLevel >= BSG_LIBCORKSCREW_MIN_LEVEL &&

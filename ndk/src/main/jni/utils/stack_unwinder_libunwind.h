@@ -4,7 +4,7 @@
 #include "../report.h"
 #include <signal.h>
 
-bool bsg_configure_libunwind(void);
+bool bsg_configure_libunwind(bool is32bit);
 
 ssize_t
 bsg_unwind_stack_libunwind(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],

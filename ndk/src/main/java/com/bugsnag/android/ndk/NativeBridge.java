@@ -32,7 +32,8 @@ public class NativeBridge implements Observer {
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
-    public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel);
+    public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel,
+                                      boolean is32bit);
 
     public static native void deliverReportAtPath(String filePath);
 
@@ -216,7 +217,15 @@ public class NativeBridge implements Observer {
                 return;
             }
             String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-            install(reportPath, true, Build.VERSION.SDK_INT);
+            String[] abis = (String[])NativeInterface.getDeviceData().get("cpuAbi");
+            boolean is32bit = true;
+            for (String abi : abis) {
+                if (abi.contains("64")) {
+                    is32bit = false;
+                    break;
+                }
+            }
+            install(reportPath, true, Build.VERSION.SDK_INT, is32bit);
             installed.set(true);
         } finally {
             lock.unlock();
