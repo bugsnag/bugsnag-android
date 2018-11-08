@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.9.2 (2018-11-07)
 
 ### Bug fixes
 
