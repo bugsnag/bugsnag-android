@@ -287,6 +287,85 @@ public class NativeInterface {
     }
 
     /**
+     * Set the client report release stage
+     */
+    public static void setReleaseStage(final String stage) {
+        getClient().setReleaseStage(stage);
+    }
+
+    /**
+     * Return the client report release stage
+     */
+    public static String getReleaseStage() {
+        return getClient().getConfig().getReleaseStage();
+    }
+
+    /**
+     * Return the client session endpoint
+     */
+    public static String getSessionEndpoint() {
+        return getClient().getConfig().getSessionEndpoint();
+    }
+
+    /**
+     * Return the client report endpoint
+     */
+    public static String getEndpoint() {
+        return getClient().getConfig().getEndpoint();
+    }
+
+    /**
+     * Set the client session endpoint
+     */
+    @SuppressWarnings("deprecation")
+    public static void setSessionEndpoint(final String endpoint) {
+        getClient().getConfig().setSessionEndpoint(endpoint);
+    }
+
+    /**
+     * Set the client report endpoint
+     */
+    @SuppressWarnings("deprecation")
+    public static void setEndpoint(final String endpoint) {
+        getClient().getConfig().setEndpoint(endpoint);
+    }
+
+    /**
+     * Set the client report context
+     */
+    public static void setContext(final String context) {
+        getClient().setContext(context);
+    }
+
+    /**
+     * Set the client report app version
+     */
+    public static void setAppVersion(final String version) {
+        getClient().setAppVersion(version);
+    }
+
+    /**
+     * Return the client report app version
+     */
+    public static String getAppVersion() {
+        return getClient().getConfig().getAppVersion();
+    }
+
+    /**
+     * Return which release stages notify
+     */
+    public static String[] getNotifyReleaseStages() {
+        return getClient().getConfig().getNotifyReleaseStages();
+    }
+
+    /**
+     * Set which release stages notify
+     */
+    public static void setNotifyReleaseStages(String[] notifyReleaseStages) {
+        getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
+    }
+
+    /**
      * Deliver a report, serialized as an event JSON payload.
      *
      * @param releaseStage The release stage in which the event was captured. Used to determin
