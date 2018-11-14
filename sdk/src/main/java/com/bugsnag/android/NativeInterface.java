@@ -1,14 +1,15 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observer;
+import java.util.Queue;
 
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
@@ -225,9 +226,21 @@ public class NativeInterface {
         return deviceData;
     }
 
+    /**
+     * Retrieves global metadata from the static Client instance as a Map
+     */
     @NonNull
     public static Map<String, Object> getMetaData() {
-        return getClient().getMetaData().store;
+        return new HashMap<>(getClient().getMetaData().store);
+    }
+
+    /**
+     * Retrieves breadcrumbs from the static Client instance as a Map
+     */
+    @NonNull
+    public static List<Breadcrumb> getBreadcrumbs() {
+        Queue<Breadcrumb> store = getClient().breadcrumbs.store;
+        return new ArrayList<>(store);
     }
 
     /**
@@ -256,12 +269,100 @@ public class NativeInterface {
     }
 
     /**
+     * Leaves a breadcrumb on the static client instance
+     */
+    public static void leaveBreadcrumb(String name, String type, Map<String, String> metadata) {
+        String typeName = type.toUpperCase(Locale.US);
+        Map<String, String> map = metadata == null ? new HashMap<String, String>() : metadata;
+        getClient().leaveBreadcrumb(name, BreadcrumbType.valueOf(typeName), map);
+    }
+
+    /**
      * Add metadata to subsequent exception reports
      */
     public static void addToTab(final String tab,
                                 final String key,
                                 final Object value) {
         getClient().addToTab(tab, key, value);
+    }
+
+    /**
+     * Set the client report release stage
+     */
+    public static void setReleaseStage(final String stage) {
+        getClient().setReleaseStage(stage);
+    }
+
+    /**
+     * Return the client report release stage
+     */
+    public static String getReleaseStage() {
+        return getClient().getConfig().getReleaseStage();
+    }
+
+    /**
+     * Return the client session endpoint
+     */
+    public static String getSessionEndpoint() {
+        return getClient().getConfig().getSessionEndpoint();
+    }
+
+    /**
+     * Return the client report endpoint
+     */
+    public static String getEndpoint() {
+        return getClient().getConfig().getEndpoint();
+    }
+
+    /**
+     * Set the client session endpoint
+     */
+    @SuppressWarnings("deprecation")
+    public static void setSessionEndpoint(final String endpoint) {
+        getClient().getConfig().setSessionEndpoint(endpoint);
+    }
+
+    /**
+     * Set the client report endpoint
+     */
+    @SuppressWarnings("deprecation")
+    public static void setEndpoint(final String endpoint) {
+        getClient().getConfig().setEndpoint(endpoint);
+    }
+
+    /**
+     * Set the client report context
+     */
+    public static void setContext(final String context) {
+        getClient().setContext(context);
+    }
+
+    /**
+     * Set the client report app version
+     */
+    public static void setAppVersion(final String version) {
+        getClient().setAppVersion(version);
+    }
+
+    /**
+     * Return the client report app version
+     */
+    public static String getAppVersion() {
+        return getClient().getConfig().getAppVersion();
+    }
+
+    /**
+     * Return which release stages notify
+     */
+    public static String[] getNotifyReleaseStages() {
+        return getClient().getConfig().getNotifyReleaseStages();
+    }
+
+    /**
+     * Set which release stages notify
+     */
+    public static void setNotifyReleaseStages(String[] notifyReleaseStages) {
+        getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
