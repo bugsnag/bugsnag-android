@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.9.3 (2018-11-29)
+
+### Bug fixes
+
+* Handle null values in MetaData.mergeMaps, preventing potential NPE
+ [#386](https://github.com/bugsnag/bugsnag-android/pull/386)
+
+
+## 4.9.2 (2018-11-07)
+
+### Bug fixes
+
+* [NDK] Fix regression in 4.9.0 which truncated stacktraces on 64-bit devices to
+  a single frame
+  [#383](https://github.com/bugsnag/bugsnag-android/pull/383)
+
 ## 4.9.1 (2018-11-01)
 
 ### Bug fixes

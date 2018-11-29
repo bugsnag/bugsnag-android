@@ -146,9 +146,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
                 Object overridesValue = map.get(key);
 
                 if (overridesValue != null) {
-                    if (baseValue != null
-                        && baseValue instanceof Map
-                        && overridesValue instanceof Map) {
+                    if (baseValue instanceof Map && overridesValue instanceof Map) {
                         // Both original and overrides are Maps, go deeper
                         @SuppressWarnings("unchecked")
                         Map<String, Object> first = (Map<String, Object>) baseValue;
@@ -159,8 +157,9 @@ public class MetaData extends Observable implements JsonStream.Streamable {
                         result.put(key, overridesValue);
                     }
                 } else {
-                    // No collision, just use base value
-                    result.put(key, baseValue);
+                    if (baseValue != null) { // No collision, just use base value
+                        result.put(key, baseValue);
+                    }
                 }
             }
         }

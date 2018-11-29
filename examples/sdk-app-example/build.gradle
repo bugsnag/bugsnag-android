@@ -72,7 +72,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.bugsnag:bugsnag-android-ndk:4.8.1'
+    implementation 'com.bugsnag:bugsnag-android-ndk:4.9.2'
     // If developing locally, replace the above line with the following:
     // implementation project(path: ':sdk', configuration: 'default')
     // api project(path: ':ndk', configuration: 'default')

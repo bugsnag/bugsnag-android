@@ -23,7 +23,7 @@ typedef enum {
  * Everything else: custom unwinding logic
  * @return the preferred unwind type
  */
-bsg_unwinder bsg_get_unwind_type(int apiLevel);
+bsg_unwinder bsg_get_unwind_type(int apiLevel, bool is32bit);
 
 /**
  * Unwind the stack using the preferred tool/style. If info and a user
