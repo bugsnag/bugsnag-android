@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.X.X (TBD)
+## 4.9.3 (2018-11-29)
 
 ### Bug fixes
 
