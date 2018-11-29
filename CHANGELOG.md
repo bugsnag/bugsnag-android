@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.9.3 (2018-11-29)
+
+### Bug fixes
+
+* Handle null values in MetaData.mergeMaps, preventing potential NPE
+ [#386](https://github.com/bugsnag/bugsnag-android/pull/386)
+
+
 ## 4.9.2 (2018-11-07)
 
 ### Bug fixes
