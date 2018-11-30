@@ -30,6 +30,7 @@ android {
         abortOnError true
         warningsAsErrors true
         checkAllWarnings true
+        baseline file("lint-baseline.xml")
     }
 
     // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
