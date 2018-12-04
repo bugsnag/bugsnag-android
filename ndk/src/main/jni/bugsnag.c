@@ -13,10 +13,7 @@ static JNIEnv *bsg_global_jni_env = NULL;
 
 void bugsnag_set_binary_arch(JNIEnv *env);
 
-void bugsnag_init(JNIEnv *env) {
-    bsg_global_jni_env = env;
-    bugsnag_set_binary_arch(env);
-}
+void bugsnag_init(JNIEnv *env) { bsg_global_jni_env = env; }
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity);
@@ -114,6 +111,9 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
 
   jstring jname = (*env)->NewStringUTF(env, name);
   jstring jmessage = (*env)->NewStringUTF(env, message);
+
+  // set application's binary arch
+  bugsnag_set_binary_arch(env);
 
   (*env)->CallStaticVoidMethod(env, interface_class, notify_method, jname,
                                jmessage, jseverity, trace);
