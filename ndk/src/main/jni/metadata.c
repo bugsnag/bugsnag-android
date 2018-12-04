@@ -199,6 +199,20 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
   (*env)->DeleteLocalRef(env, keylist);
 }
 
+char *bsg_binary_arch() {
+#if defined(__i386__)
+    return "x86";
+#elif defined(__x86_64__)
+    return "x86_64";
+#elif defined(__arm__)
+    return "arm32";
+#elif defined(__aarch64__)
+    return "arm64";
+#else
+    return "unknown";
+#endif
+}
+
 void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                            bugsnag_report *report) {
   jobject data = (*env)->CallStaticObjectMethod(
@@ -232,6 +246,9 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   report->app.in_foreground =
       bsg_get_map_value_bool(env, jni_cache, data, "inForeground");
 
+  bsg_strncpy_safe(report->app.binaryArch,
+                     bsg_binary_arch(),
+                     sizeof(report->app.binaryArch));
   (*env)->DeleteLocalRef(env, data);
 }
 

@@ -3,6 +3,7 @@
 #include "bugsnag_ndk.h"
 #include "report.h"
 #include "utils/stack_unwinder.h"
+#include "metadata.h"
 #include <jni.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +11,12 @@
 
 static JNIEnv *bsg_global_jni_env = NULL;
 
-void bugsnag_init(JNIEnv *env) { bsg_global_jni_env = env; }
+void bugsnag_set_binary_arch(JNIEnv *env);
+
+void bugsnag_init(JNIEnv *env) {
+    bsg_global_jni_env = env;
+    bugsnag_set_binary_arch(env);
+}
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity);
@@ -117,6 +123,18 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
   (*env)->DeleteLocalRef(env, severity_class);
   (*env)->DeleteLocalRef(env, jseverity);
   (*env)->DeleteLocalRef(env, interface_class);
+}
+
+void bugsnag_set_binary_arch(JNIEnv *env) {
+    jclass interface_class =
+        (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
+    jmethodID set_arch_method = (*env)->GetStaticMethodID(
+        env, interface_class, "setBinaryArch", "(Ljava/lang/String;)V");
+
+    jstring arch = (*env)->NewStringUTF(env, bsg_binary_arch());
+    (*env)->CallStaticVoidMethod(env, interface_class, set_arch_method, arch);
+    (*env)->DeleteLocalRef(env, arch);
+    (*env)->DeleteLocalRef(env, interface_class);
 }
 
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {

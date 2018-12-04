@@ -19,4 +19,7 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report, jobject metadata
  */
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                  jobject metadata);
+
+char *bsg_binary_arch();
+
 #endif
