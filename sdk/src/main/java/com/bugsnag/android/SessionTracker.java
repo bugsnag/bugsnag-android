@@ -30,10 +30,11 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
     private final Collection<String>
         foregroundActivities = new ConcurrentLinkedQueue<>();
-    private final Configuration configuration;
     private final long timeoutMs;
-    private final Client client;
-    private final SessionStore sessionStore;
+
+    final Configuration configuration;
+    final Client client;
+    final SessionStore sessionStore;
 
     // This most recent time an Activity was stopped.
     private AtomicLong activityLastStoppedAtMs = new AtomicLong(0);

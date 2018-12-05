@@ -4,9 +4,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "com.android.tools.build:gradle:$agpVersion"
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.30"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -78,7 +78,7 @@ dependencies {
     // api project(path: ':ndk', configuration: 'default')
     implementation 'com.android.support:appcompat-v7:27.0.0'
     implementation 'com.android.support:support-v4:27.0.0'
-    kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.30"
+    kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     androidTestImplementation "com.android.support.test:runner:0.5", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }

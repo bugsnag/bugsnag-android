@@ -30,6 +30,7 @@ android {
         abortOnError true
         warningsAsErrors true
         checkAllWarnings true
+        baseline file("lint-baseline.xml")
     }
 
     // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
@@ -50,7 +51,7 @@ coveralls {
 dependencies {
     api "com.android.support:support-annotations:$supportLibVersion"
 
-    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"

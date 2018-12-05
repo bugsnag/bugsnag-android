@@ -71,7 +71,7 @@ public class Client extends Observable implements Observer {
 
     final SessionStore sessionStore;
 
-    private final EventReceiver eventReceiver;
+    final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
 
@@ -230,7 +230,7 @@ public class Client extends Observable implements Observer {
         errorStore.flushOnLaunch();
     }
 
-    private class ConnectivityChangeReceiver extends BroadcastReceiver {
+    class ConnectivityChangeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager cm =
@@ -263,7 +263,7 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    private void enqueuePendingNativeReports() {
+    void enqueuePendingNativeReports() {
         setChanged();
         notifyObservers(new Message(
             NativeInterface.MessageType.DELIVER_PENDING, null));
