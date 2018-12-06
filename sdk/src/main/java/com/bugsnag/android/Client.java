@@ -898,7 +898,9 @@ public class Client extends Observable implements Observer {
             default:
                 break;
         }
+    }
 
+    private void leaveErrorBreadcrumb(@NonNull Error error) {
         // Add a breadcrumb for this error occurring
         String exceptionMessage = error.getExceptionMessage();
         Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
@@ -1222,6 +1224,7 @@ public class Client extends Observable implements Observer {
         try {
             config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
+            leaveErrorBreadcrumb(error);
         } catch (DeliveryFailureException exception) {
             Logger.warn("Could not send error(s) to Bugsnag,"
                 + " saving to disk to send later", exception);
