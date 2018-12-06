@@ -1229,6 +1229,7 @@ public class Client extends Observable implements Observer {
             Logger.warn("Could not send error(s) to Bugsnag,"
                 + " saving to disk to send later", exception);
             errorStore.write(error);
+            leaveErrorBreadcrumb(error);
         } catch (Exception exception) {
             Logger.warn("Problem sending error to Bugsnag", exception);
         }
