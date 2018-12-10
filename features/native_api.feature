@@ -12,6 +12,7 @@ Feature: Native API
         And the event "user.id" equals "324523"
         And the event "user.email" is null
         And the event "unhandled" is false
+        And the event "app.binaryArch" is not null
 
     Scenario: Adding user information in Java followed by a C crash
         When I run "CXXJavaUserInfoNativeCrashScenario"

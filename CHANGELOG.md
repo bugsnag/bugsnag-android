@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Bug fixes
+
+* Add binary architecture of application to payload
+ [#389](https://github.com/bugsnag/bugsnag-android/pull/389)
+
 ## 4.9.3 (2018-11-29)
 
 ### Bug fixes

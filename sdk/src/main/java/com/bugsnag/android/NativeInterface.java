@@ -345,6 +345,13 @@ public class NativeInterface {
     }
 
     /**
+     * Set the binary arch used in the application
+     */
+    public static void setBinaryArch(final String binaryArch) {
+        getClient().setBinaryArch(binaryArch);
+    }
+
+    /**
      * Return the client report app version
      */
     public static String getAppVersion() {

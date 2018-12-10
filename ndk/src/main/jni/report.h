@@ -80,6 +80,7 @@ typedef struct {
   bool in_foreground;
   bool low_memory;
   size_t memory_usage;
+  char binaryArch[32];
 } bsg_app_info;
 
 typedef struct {

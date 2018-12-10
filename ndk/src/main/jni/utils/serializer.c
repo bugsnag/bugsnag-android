@@ -158,6 +158,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     if (strlen(report->app.build_uuid) > 0) {
       json_object_dotset_string(event, "app.buildUUID", report->app.build_uuid);
     }
+    json_object_dotset_string(event, "app.binaryArch",
+                              report->app.binaryArch);
     json_object_dotset_number(event, "app.duration", report->app.duration);
     json_object_dotset_number(event, "app.durationInForeground",
                               report->app.duration_in_foreground);

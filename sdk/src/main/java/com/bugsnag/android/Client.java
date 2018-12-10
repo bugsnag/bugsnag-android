@@ -1366,4 +1366,8 @@ public class Client extends Observable implements Observer {
         return AppData.getDurationMs();
     }
 
+    void setBinaryArch(String binaryArch) {
+        getAppData().setBinaryArch(binaryArch);
+    }
+
 }
