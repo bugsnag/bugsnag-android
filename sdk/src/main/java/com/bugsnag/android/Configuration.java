@@ -405,8 +405,19 @@ public class Configuration extends Observable implements Observer {
      * Get whether or not User sessions are captured automatically.
      *
      * @return true if sessions are captured automatically
+     * @deprecated use {@link #getAutoCaptureSessions()}
      */
+    @Deprecated
     public boolean shouldAutoCaptureSessions() {
+        return getAutoCaptureSessions();
+    }
+
+    /**
+     * Get whether or not User sessions are captured automatically.
+     *
+     * @return true if sessions are captured automatically
+     */
+    public boolean getAutoCaptureSessions() {
         return autoCaptureSessions;
     }
 
@@ -555,11 +566,11 @@ public class Configuration extends Observable implements Observer {
         this.codeBundleId = codeBundleId;
     }
 
-    String getCodeBundleId() {
+    public String getCodeBundleId() {
         return codeBundleId;
     }
 
-    String getNotifierType() {
+    public String getNotifierType() {
         return notifierType;
     }
 
