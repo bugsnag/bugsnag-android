@@ -218,7 +218,7 @@ public class ClientTest {
         assertEquals(false, protoConfig.getSendThreads());
         assertEquals(false, protoConfig.getEnableExceptionHandler());
         assertEquals(true, protoConfig.getPersistUserBetweenSessions());
-        assertEquals(true, protoConfig.shouldAutoCaptureSessions());
+        assertEquals(true, protoConfig.getAutoCaptureSessions());
     }
 
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
