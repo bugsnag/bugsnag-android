@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 
+import android.support.annotation.NonNull;
+
 /**
  * A callback to be run before an individual report is sent to Bugsnag.
  * <p>
@@ -11,5 +13,5 @@ package com.bugsnag.android;
  */
 public interface Callback {
 
-    void beforeNotify(Report report);
+    void beforeNotify(@NonNull Report report);
 }

@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.util.Map;
 
 /**
@@ -26,7 +28,9 @@ public interface ErrorReportApiClient {
      * @throws NetworkException     if the client was unable to complete the request
      * @throws BadResponseException when a non-200 response code is received from the server
      */
-    void postReport(String urlString, Report report, Map<String, String> headers)
+    void postReport(@NonNull String urlString,
+                    @NonNull Report report,
+                    @NonNull Map<String, String> headers)
         throws NetworkException, BadResponseException;
 
 }

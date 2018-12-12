@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.BufferedWriter;
@@ -23,8 +24,8 @@ class DefaultDelivery implements Delivery {
     }
 
     @Override
-    public void deliver(SessionTrackingPayload payload,
-                        Configuration config) throws DeliveryFailureException {
+    public void deliver(@NonNull SessionTrackingPayload payload,
+                        @NonNull Configuration config) throws DeliveryFailureException {
         String endpoint = config.getSessionEndpoint();
         int status = deliver(endpoint, payload, config.getSessionApiHeaders());
 
@@ -36,8 +37,8 @@ class DefaultDelivery implements Delivery {
     }
 
     @Override
-    public void deliver(Report report,
-                        Configuration config) throws DeliveryFailureException {
+    public void deliver(@NonNull Report report,
+                        @NonNull Configuration config) throws DeliveryFailureException {
         String endpoint = config.getEndpoint();
         int status = deliver(endpoint, report, config.getErrorApiHeaders());
 
