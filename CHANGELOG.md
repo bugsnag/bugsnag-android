@@ -1,12 +1,18 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Bug fixes
+
+* Prevent errors from leaving a self-referencing breadcrumb
+ [#391](https://github.com/bugsnag/bugsnag-android/pull/391)
+
 ## 4.9.3 (2018-11-29)
 
 ### Bug fixes
 
 * Handle null values in MetaData.mergeMaps, preventing potential NPE
  [#386](https://github.com/bugsnag/bugsnag-android/pull/386)
-
 
 ## 4.9.2 (2018-11-07)
 
