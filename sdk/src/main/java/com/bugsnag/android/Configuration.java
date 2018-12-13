@@ -575,10 +575,12 @@ public class Configuration extends Observable implements Observer {
         this.codeBundleId = codeBundleId;
     }
 
+    @Nullable
     public String getCodeBundleId() {
         return codeBundleId;
     }
 
+    @NonNull
     public String getNotifierType() {
         return notifierType;
     }
