@@ -2,39 +2,6 @@
 <issues format="4" by="lint 3.2.1" client="gradle" variant="all" version="3.2.1">
 
     <issue
-        id="KotlinPropertyAccess"
-        message="This method should be called `getAutoCaptureSessions` such that `autoCaptureSessions` can be accessed as a property from Kotlin; see https://android.github.io/kotlin-guides/interop.html#property-prefixes"
-        errorLine1="    public boolean shouldAutoCaptureSessions() {"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="409"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="KotlinPropertyAccess"
-        message="This getter should be public such that `codeBundleId` can be accessed as a property from Kotlin; see https://android.github.io/kotlin-guides/interop.html#property-prefixes"
-        errorLine1="    String getCodeBundleId() {"
-        errorLine2="           ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="558"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="KotlinPropertyAccess"
-        message="This getter should be public such that `notifierType` can be accessed as a property from Kotlin; see https://android.github.io/kotlin-guides/interop.html#property-prefixes"
-        errorLine1="    String getNotifierType() {"
-        errorLine2="           ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="562"
-            column="12"/>
-    </issue>
-
-    <issue
         id="UnknownNullness"
         message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
         errorLine1="    public BadResponseException(String msg, int responseCode) {"
@@ -1152,7 +1119,7 @@
         errorLine2="                                ~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="546"
+            line="557"
             column="33"/>
     </issue>
 
@@ -1163,8 +1130,30 @@
         errorLine2="                                ~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="554"
+            line="565"
             column="33"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    public String getCodeBundleId() {"
+        errorLine2="           ~~~~~~">
+        <location
+            file="src/main/java/com/bugsnag/android/Configuration.java"
+            line="569"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    public String getNotifierType() {"
+        errorLine2="           ~~~~~~">
+        <location
+            file="src/main/java/com/bugsnag/android/Configuration.java"
+            line="573"
+            column="12"/>
     </issue>
 
     <issue
@@ -1174,7 +1163,7 @@
         errorLine2="           ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="627"
+            line="638"
             column="12"/>
     </issue>
 
@@ -1185,7 +1174,7 @@
         errorLine2="           ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="640"
+            line="651"
             column="12"/>
     </issue>
 
@@ -1196,7 +1185,7 @@
         errorLine2="                           ~~~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="669"
+            line="680"
             column="28"/>
     </issue>
 
@@ -1207,7 +1196,7 @@
         errorLine2="                                                  ~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="681"
+            line="692"
             column="51"/>
     </issue>
 
@@ -1218,7 +1207,7 @@
         errorLine2="                                        ~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="696"
+            line="707"
             column="41"/>
     </issue>
 
@@ -1229,7 +1218,7 @@
         errorLine2="                                ~~~~~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="710"
+            line="721"
             column="33"/>
     </issue>
 
@@ -1240,7 +1229,7 @@
         errorLine2="                                          ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="721"
+            line="732"
             column="43"/>
     </issue>
 
@@ -1251,7 +1240,7 @@
         errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="750"
+            line="761"
             column="15"/>
     </issue>
 
@@ -1830,11 +1819,22 @@
     <issue
         id="UnknownNullness"
         message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    public static void setBinaryArch(final String binaryArch) {"
+        errorLine2="                                           ~~~~~~">
+        <location
+            file="src/main/java/com/bugsnag/android/NativeInterface.java"
+            line="350"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
         errorLine1="    public static String getAppVersion() {"
         errorLine2="                  ~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/NativeInterface.java"
-            line="350"
+            line="357"
             column="19"/>
     </issue>
 
@@ -1845,7 +1845,7 @@
         errorLine2="                  ~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/NativeInterface.java"
-            line="357"
+            line="364"
             column="19"/>
     </issue>
 
@@ -1856,7 +1856,7 @@
         errorLine2="                                              ~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/NativeInterface.java"
-            line="364"
+            line="371"
             column="47"/>
     </issue>
 
@@ -1867,7 +1867,7 @@
         errorLine2="                                     ~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/NativeInterface.java"
-            line="376"
+            line="383"
             column="38"/>
     </issue>
 
@@ -1878,7 +1878,7 @@
         errorLine2="                                                          ~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/NativeInterface.java"
-            line="376"
+            line="383"
             column="59"/>
     </issue>
 
@@ -1889,7 +1889,7 @@
         errorLine2="                                    ~~~~~~~~">
         <location
             file="src/main/java/com/bugsnag/android/NativeInterface.java"
-            line="396"
+            line="403"
             column="37"/>
     </issue>
 
