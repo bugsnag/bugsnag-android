@@ -86,7 +86,7 @@ public final class Bugsnag {
      *
      * @param appVersion the app version to send
      */
-    public static void setAppVersion(final String appVersion) {
+    public static void setAppVersion(@NonNull final String appVersion) {
         getClient().setAppVersion(appVersion);
     }
 
@@ -95,7 +95,7 @@ public final class Bugsnag {
      *
      * @return Context
      */
-    public static String getContext() {
+    @Nullable public static String getContext() {
         return getClient().getContext();
     }
 
@@ -106,7 +106,7 @@ public final class Bugsnag {
      *
      * @param context set what was happening at the time of a crash
      */
-    public static void setContext(final String context) {
+    public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
     }
 
@@ -121,7 +121,7 @@ public final class Bugsnag {
      * instead.
      */
     @Deprecated
-    public static void setEndpoint(final String endpoint) {
+    public static void setEndpoint(@NonNull final String endpoint) {
         getClient().setEndpoint(endpoint);
     }
 
@@ -134,7 +134,7 @@ public final class Bugsnag {
      * @param buildUuid the buildUuid.
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public static void setBuildUUID(final String buildUuid) {
+    public static void setBuildUUID(@Nullable final String buildUuid) {
         getClient().setBuildUUID(buildUuid);
     }
 
@@ -151,7 +151,7 @@ public final class Bugsnag {
      *
      * @param filters a list of keys to filter from metaData
      */
-    public static void setFilters(final String... filters) {
+    public static void setFilters(@NonNull final String... filters) {
         getClient().setFilters(filters);
     }
 
@@ -164,7 +164,7 @@ public final class Bugsnag {
      *
      * @param ignoreClasses a list of exception classes to ignore
      */
-    public static void setIgnoreClasses(final String... ignoreClasses) {
+    public static void setIgnoreClasses(@NonNull final String... ignoreClasses) {
         getClient().setIgnoreClasses(ignoreClasses);
     }
 
@@ -179,7 +179,7 @@ public final class Bugsnag {
      * @param notifyReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public static void setNotifyReleaseStages(final String... notifyReleaseStages) {
+    public static void setNotifyReleaseStages(@NonNull final String... notifyReleaseStages) {
         getClient().setNotifyReleaseStages(notifyReleaseStages);
     }
 
@@ -195,7 +195,7 @@ public final class Bugsnag {
      *
      * @param projectPackages a list of package names
      */
-    public static void setProjectPackages(final String... projectPackages) {
+    public static void setProjectPackages(@NonNull final String... projectPackages) {
         getClient().setProjectPackages(projectPackages);
     }
 
@@ -209,7 +209,7 @@ public final class Bugsnag {
      * @param releaseStage the release stage of the app
      * @see #setNotifyReleaseStages {@link #setLoggingEnabled(boolean)}
      */
-    public static void setReleaseStage(final String releaseStage) {
+    public static void setReleaseStage(@Nullable final String releaseStage) {
         getClient().setReleaseStage(releaseStage);
     }
 
@@ -247,7 +247,9 @@ public final class Bugsnag {
      * @param email the email address of the current user
      * @param name  the name of the current user
      */
-    public static void setUser(final String id, final String email, final String name) {
+    public static void setUser(@Nullable final String id,
+                               @Nullable final String email,
+                               @Nullable final String name) {
         getClient().setUser(id, email, name);
     }
 
@@ -265,7 +267,7 @@ public final class Bugsnag {
      *
      * @param id a unique identifier of the current user
      */
-    public static void setUserId(final String id) {
+    public static void setUserId(@Nullable final String id) {
         getClient().setUserId(id);
     }
 
@@ -275,7 +277,7 @@ public final class Bugsnag {
      *
      * @param email the email address of the current user
      */
-    public static void setUserEmail(final String email) {
+    public static void setUserEmail(@Nullable final String email) {
         getClient().setUserEmail(email);
     }
 
@@ -285,7 +287,7 @@ public final class Bugsnag {
      *
      * @param name the name of the current user
      */
-    public static void setUserName(final String name) {
+    public static void setUserName(@Nullable final String name) {
         getClient().setUserName(name);
     }
 
@@ -347,7 +349,7 @@ public final class Bugsnag {
      * @param beforeNotify a callback to run before sending errors to Bugsnag
      * @see BeforeNotify
      */
-    public static void beforeNotify(final BeforeNotify beforeNotify) {
+    public static void beforeNotify(@NonNull final BeforeNotify beforeNotify) {
         getClient().beforeNotify(beforeNotify);
     }
 
@@ -369,7 +371,8 @@ public final class Bugsnag {
      * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
      * @see BeforeRecordBreadcrumb
      */
-    public static void beforeRecordBreadcrumb(final BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+    public static void beforeRecordBreadcrumb(
+        @NonNull final BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
         getClient().beforeRecordBreadcrumb(beforeRecordBreadcrumb);
     }
 
@@ -389,7 +392,8 @@ public final class Bugsnag {
      * @param callback  callback invoked on the generated error report for
      *                  additional modification
      */
-    public static void notify(@NonNull final Throwable exception, final Callback callback) {
+    public static void notify(@NonNull final Throwable exception,
+                              @Nullable final Callback callback) {
         getClient().notify(exception, callback);
     }
 
@@ -405,7 +409,7 @@ public final class Bugsnag {
     public static void notify(@NonNull String name,
                               @NonNull String message,
                               @NonNull StackTraceElement[] stacktrace,
-                              Callback callback) {
+                              @Nullable Callback callback) {
         getClient().notify(name, message, stacktrace, callback);
     }
 
@@ -416,7 +420,8 @@ public final class Bugsnag {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      */
-    public static void notify(@NonNull final Throwable exception, final Severity severity) {
+    public static void notify(@NonNull final Throwable exception,
+                              @NonNull final Severity severity) {
         getClient().notify(exception, severity);
     }
 
@@ -448,7 +453,8 @@ public final class Bugsnag {
      * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
     @Deprecated
-    public static void notify(@NonNull final Throwable exception, final Severity severity,
+    public static void notify(@NonNull final Throwable exception,
+                              @NonNull final Severity severity,
                               @NonNull final MetaData metaData) {
         getClient().notify(exception, new Callback() {
             @Override
@@ -472,8 +478,10 @@ public final class Bugsnag {
      * to send and modify error reports
      */
     @Deprecated
-    public static void notify(@NonNull String name, @NonNull String message,
-                              @NonNull StackTraceElement[] stacktrace, Severity severity,
+    public static void notify(@NonNull String name,
+                              @NonNull String message,
+                              @NonNull StackTraceElement[] stacktrace,
+                              @NonNull Severity severity,
                               @NonNull MetaData metaData) {
         final Severity finalSeverity = severity;
         final MetaData finalMetaData = metaData;
@@ -502,8 +510,11 @@ public final class Bugsnag {
     @Deprecated
     @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
 
-    public static void notify(@NonNull String name, @NonNull String message, String context,
-                              @NonNull StackTraceElement[] stacktrace, Severity severity,
+    public static void notify(@NonNull String name,
+                              @NonNull String message,
+                              @Nullable String context,
+                              @NonNull StackTraceElement[] stacktrace,
+                              @NonNull Severity severity,
                               @NonNull MetaData metaData) {
         final String finalContext = context;
         final Severity finalSeverity = severity;
@@ -523,9 +534,9 @@ public final class Bugsnag {
      * Android is not supported.
      */
     public static void internalClientNotify(@NonNull final Throwable exception,
-                                            Map<String, Object> clientData,
+                                            @NonNull Map<String, Object> clientData,
                                             boolean blocking,
-                                            Callback callback) {
+                                            @Nullable Callback callback) {
         getClient().internalClientNotify(exception, clientData, blocking, callback);
     }
 
@@ -542,7 +553,9 @@ public final class Bugsnag {
      * @param key   the name of the diagnostic information
      * @param value the contents of the diagnostic information
      */
-    public static void addToTab(final String tab, final String key, final Object value) {
+    public static void addToTab(@NonNull final String tab,
+                                @NonNull final String key,
+                                @Nullable final Object value) {
         getClient().addToTab(tab, key, value);
     }
 
@@ -551,7 +564,7 @@ public final class Bugsnag {
      *
      * @param tabName the dashboard tab to remove diagnostic data from
      */
-    public static void clearTab(String tabName) {
+    public static void clearTab(@NonNull String tabName) {
         getClient().clearTab(tabName);
     }
 
