@@ -191,7 +191,7 @@ public class Error implements JsonStream.Streamable {
      * @param email the email address of the user
      * @param name  the name of the user
      */
-    public void setUser(String id, String email, String name) {
+    public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         this.user = new User(id, email, name);
     }
 
@@ -212,7 +212,7 @@ public class Error implements JsonStream.Streamable {
      *
      * @param id the id of the user
      */
-    public void setUserId(String id) {
+    public void setUserId(@Nullable String id) {
         this.user = new User(this.user);
         this.user.setId(id);
     }
@@ -222,7 +222,7 @@ public class Error implements JsonStream.Streamable {
      *
      * @param email the email address of the user
      */
-    public void setUserEmail(String email) {
+    public void setUserEmail(@Nullable String email) {
         this.user = new User(this.user);
         this.user.setEmail(email);
     }
@@ -232,7 +232,7 @@ public class Error implements JsonStream.Streamable {
      *
      * @param name the name of the user
      */
-    public void setUserName(String name) {
+    public void setUserName(@Nullable String name) {
         this.user = new User(this.user);
         this.user.setName(name);
     }
@@ -250,7 +250,7 @@ public class Error implements JsonStream.Streamable {
      * @param key     the name of the diagnostic information
      * @param value   the contents of the diagnostic information
      */
-    public void addToTab(String tabName, String key, Object value) {
+    public void addToTab(@NonNull String tabName, @NonNull String key, @Nullable Object value) {
         metaData.addToTab(tabName, key, value);
     }
 
@@ -259,7 +259,7 @@ public class Error implements JsonStream.Streamable {
      *
      * @param tabName the dashboard tab to remove diagnostic data from
      */
-    public void clearTab(String tabName) {
+    public void clearTab(@NonNull String tabName) {
         metaData.clearTab(tabName);
     }
 
@@ -299,6 +299,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * Get the class name from the exception contained in this Error report.
      */
+    @NonNull
     public String getExceptionName() {
         if (exception instanceof BugsnagException) {
             return ((BugsnagException) exception).getName();
@@ -319,6 +320,7 @@ public class Error implements JsonStream.Streamable {
     /**
      * The {@linkplain Throwable exception} which triggered this Error report.
      */
+    @NonNull
     public Throwable getException() {
         return exception;
     }

@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
@@ -23,6 +24,7 @@ public enum NotifyType {
         this.intValue = intValue;
     }
 
+    @NonNull
     public Integer getValue() {
         return intValue;
     }

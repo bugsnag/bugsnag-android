@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 /**
  * A callback to be run before every report sent to Bugsnag.
  * <p>
@@ -16,5 +18,5 @@ public interface BeforeSend {
      *
      * @param report the {@link Report} to be sent to Bugsnag
      */
-    boolean run(Report report);
+    boolean run(@NonNull Report report);
 }

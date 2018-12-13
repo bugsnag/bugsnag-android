@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 /**
  * A compatibility implementation of {@link Delivery} which wraps {@link ErrorReportApiClient} and
  * {@link SessionTrackingApiClient}. This class allows for backwards compatibility for users still
@@ -15,8 +17,8 @@ class DeliveryCompat implements Delivery {
     volatile SessionTrackingApiClient sessionTrackingApiClient;
 
     @Override
-    public void deliver(SessionTrackingPayload payload,
-                        Configuration config) throws DeliveryFailureException {
+    public void deliver(@NonNull SessionTrackingPayload payload,
+                        @NonNull Configuration config) throws DeliveryFailureException {
         if (sessionTrackingApiClient != null) {
             try {
                 sessionTrackingApiClient.postSessionTrackingPayload(config.getSessionEndpoint(),
@@ -28,7 +30,8 @@ class DeliveryCompat implements Delivery {
     }
 
     @Override
-    public void deliver(Report report, Configuration config) throws DeliveryFailureException {
+    public void deliver(@NonNull Report report,
+                        @NonNull Configuration config) throws DeliveryFailureException {
         if (errorReportApiClient != null) {
             try {
                 errorReportApiClient.postReport(config.getEndpoint(),

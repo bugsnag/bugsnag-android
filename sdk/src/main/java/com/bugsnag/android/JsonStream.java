@@ -26,7 +26,7 @@ public class JsonStream extends JsonWriter {
      *
      * @param out the writer
      */
-    public JsonStream(Writer out) {
+    public JsonStream(@NonNull Writer out) {
         super(out);
         setSerializeNulls(false);
         this.out = out;

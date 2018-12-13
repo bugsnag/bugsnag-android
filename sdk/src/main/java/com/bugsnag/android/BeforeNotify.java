@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 /**
  * A callback to be run before reports are sent to Bugsnag.
  * <p>
@@ -18,5 +20,5 @@ public interface BeforeNotify {
      * @param error the error to be sent to Bugsnag
      * @see Error
      */
-    boolean run(Error error);
+    boolean run(@NonNull Error error);
 }
