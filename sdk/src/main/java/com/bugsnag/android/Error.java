@@ -406,7 +406,7 @@ public class Error implements JsonStream.Streamable {
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
 
             if (session != null
-                && !config.shouldAutoCaptureSessions() && session.isAutoCaptured()) {
+                && !config.getAutoCaptureSessions() && session.isAutoCaptured()) {
                 this.session = null;
             } else {
                 this.session = session;

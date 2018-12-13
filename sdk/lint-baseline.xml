@@ -1,37 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <issues format="4" by="lint 3.2.1" client="gradle" variant="all" version="3.2.1">
 
-    <issue
-        id="KotlinPropertyAccess"
-        message="This method should be called `getAutoCaptureSessions` such that `autoCaptureSessions` can be accessed as a property from Kotlin; see https://android.github.io/kotlin-guides/interop.html#property-prefixes"
-        errorLine1="    public boolean shouldAutoCaptureSessions() {"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="409"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="KotlinPropertyAccess"
-        message="This getter should be public such that `codeBundleId` can be accessed as a property from Kotlin; see https://android.github.io/kotlin-guides/interop.html#property-prefixes"
-        errorLine1="    String getCodeBundleId() {"
-        errorLine2="           ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="558"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="KotlinPropertyAccess"
-        message="This getter should be public such that `notifierType` can be accessed as a property from Kotlin; see https://android.github.io/kotlin-guides/interop.html#property-prefixes"
-        errorLine1="    String getNotifierType() {"
-        errorLine2="           ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/bugsnag/android/Configuration.java"
-            line="562"
-            column="12"/>
-    </issue>
-
 </issues>

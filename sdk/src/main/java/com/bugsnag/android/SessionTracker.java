@@ -59,7 +59,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     /**
      * Starts a new session with the given date and user.
      * <p>
-     * A session will only be created if {@link Configuration#shouldAutoCaptureSessions()} returns
+     * A session will only be created if {@link Configuration#getAutoCaptureSessions()} returns
      * true.
      *
      * @param date the session start date
@@ -88,7 +88,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
 
         if (notifyForRelease
-            && (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured())
+            && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
             try {
                 final String endpoint = configuration.getSessionEndpoint();
@@ -288,7 +288,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             //FUTURE:SM Race condition between isEmpty and put
             if (foregroundActivities.isEmpty()
                 && noActivityRunningForMs >= timeoutMs
-                && configuration.shouldAutoCaptureSessions()) {
+                && configuration.getAutoCaptureSessions()) {
 
                 activityFirstStartedAtMs.set(nowMs);
                 startNewSession(new Date(nowMs), client.getUser(), true);
