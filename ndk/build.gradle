@@ -6,8 +6,9 @@ apply plugin: 'com.jfrog.bintray'
 archivesBaseName = "bugsnag-android-ndk"
 
 repositories {
-    jcenter()
     google()
+    mavenCentral()
+    jcenter()
 }
 
 android {
