@@ -1,5 +1,6 @@
 repositories {
     google()
+    mavenCentral()
     jcenter()
     flatDir {
         dirs 'libs'
@@ -10,6 +11,7 @@ apply plugin: 'com.android.application'
 buildscript {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     ext.kotlin_version = '1.2.30'
