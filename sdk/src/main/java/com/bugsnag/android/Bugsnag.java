@@ -151,7 +151,7 @@ public final class Bugsnag {
      *
      * @param filters a list of keys to filter from metaData
      */
-    public static void setFilters(@NonNull final String... filters) {
+    public static void setFilters(@Nullable final String... filters) {
         getClient().setFilters(filters);
     }
 
@@ -164,7 +164,7 @@ public final class Bugsnag {
      *
      * @param ignoreClasses a list of exception classes to ignore
      */
-    public static void setIgnoreClasses(@NonNull final String... ignoreClasses) {
+    public static void setIgnoreClasses(@Nullable final String... ignoreClasses) {
         getClient().setIgnoreClasses(ignoreClasses);
     }
 
@@ -179,7 +179,7 @@ public final class Bugsnag {
      * @param notifyReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public static void setNotifyReleaseStages(@NonNull final String... notifyReleaseStages) {
+    public static void setNotifyReleaseStages(@Nullable final String... notifyReleaseStages) {
         getClient().setNotifyReleaseStages(notifyReleaseStages);
     }
 
@@ -195,7 +195,7 @@ public final class Bugsnag {
      *
      * @param projectPackages a list of package names
      */
-    public static void setProjectPackages(@NonNull final String... projectPackages) {
+    public static void setProjectPackages(@Nullable final String... projectPackages) {
         getClient().setProjectPackages(projectPackages);
     }
 

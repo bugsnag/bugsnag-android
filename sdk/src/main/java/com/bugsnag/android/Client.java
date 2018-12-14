@@ -370,7 +370,7 @@ public class Client extends Observable implements Observer {
      *
      * @param filters a list of keys to filter from metaData
      */
-    public void setFilters(@NonNull String... filters) {
+    public void setFilters(@Nullable String... filters) {
         config.setFilters(filters);
     }
 
@@ -383,7 +383,7 @@ public class Client extends Observable implements Observer {
      *
      * @param ignoreClasses a list of exception classes to ignore
      */
-    public void setIgnoreClasses(@NonNull String... ignoreClasses) {
+    public void setIgnoreClasses(@Nullable String... ignoreClasses) {
         config.setIgnoreClasses(ignoreClasses);
     }
 
@@ -398,7 +398,7 @@ public class Client extends Observable implements Observer {
      * @param notifyReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public void setNotifyReleaseStages(@NonNull String... notifyReleaseStages) {
+    public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
         config.setNotifyReleaseStages(notifyReleaseStages);
     }
 
@@ -414,7 +414,7 @@ public class Client extends Observable implements Observer {
      *
      * @param projectPackages a list of package names
      */
-    public void setProjectPackages(@NonNull String... projectPackages) {
+    public void setProjectPackages(@Nullable String... projectPackages) {
         config.setProjectPackages(projectPackages);
     }
 

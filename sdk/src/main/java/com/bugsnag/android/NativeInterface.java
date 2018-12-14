@@ -374,7 +374,7 @@ public class NativeInterface {
     /**
      * Return which release stages notify
      */
-    @NonNull
+    @Nullable
     public static String[] getNotifyReleaseStages() {
         return getClient().getConfig().getNotifyReleaseStages();
     }
@@ -382,7 +382,7 @@ public class NativeInterface {
     /**
      * Set which release stages notify
      */
-    public static void setNotifyReleaseStages(@NonNull String[] notifyReleaseStages) {
+    public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }
 
