@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -15,6 +16,7 @@ apply plugin: 'kotlin-android'
 
 repositories {
     google()
+    mavenCentral()
     jcenter()
 }
 
