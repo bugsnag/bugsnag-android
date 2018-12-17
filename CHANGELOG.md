@@ -2,6 +2,9 @@
 
 ## 4.X.X (TBD)
 
+* Added additional nullability annotations to public API
+ [#395](https://github.com/bugsnag/bugsnag-android/pull/395)
+
 ### Bug fixes
 
 * Add binary architecture of application to payload
