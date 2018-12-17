@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 /**
  * Used to store information about an exception that was not provided with an exception object
  */
@@ -19,7 +21,9 @@ public class BugsnagException extends Throwable {
      * @param message The exception message
      * @param frames  The exception stack trace
      */
-    public BugsnagException(String name, String message, StackTraceElement[] frames) {
+    public BugsnagException(@NonNull String name,
+                            @NonNull String message,
+                            @NonNull StackTraceElement[] frames) {
         super(message);
 
         super.setStackTrace(frames);
@@ -29,6 +33,7 @@ public class BugsnagException extends Throwable {
     /**
      * @return The name of the exception (used instead of the exception class)
      */
+    @NonNull
     public String getName() {
         return name;
     }

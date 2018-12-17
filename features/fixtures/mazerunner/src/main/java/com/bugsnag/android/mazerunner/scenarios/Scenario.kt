@@ -18,11 +18,11 @@ abstract internal class Scenario(protected val config: Configuration,
     protected fun disableSessionDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
                 throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
             }
 
-            override fun deliver(report: Report?, config: Configuration?) {
+            override fun deliver(report: Report, config: Configuration) {
                 baseDelivery.deliver(report, config)
             }
         }
@@ -34,11 +34,11 @@ abstract internal class Scenario(protected val config: Configuration,
     protected fun disableReportDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
                 baseDelivery.deliver(payload, config)
             }
 
-            override fun deliver(report: Report?, config: Configuration?) {
+            override fun deliver(report: Report, config: Configuration) {
                 throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
             }
         }
@@ -57,11 +57,11 @@ abstract internal class Scenario(protected val config: Configuration,
 
     protected fun disableAllDelivery(config: Configuration) {
         config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload?, config: Configuration?) {
+            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
                 throw DeliveryFailureException("Error Delivery NOP", RuntimeException("NOP"))
             }
 
-            override fun deliver(report: Report?, config: Configuration?) {
+            override fun deliver(report: Report, config: Configuration) {
                 throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
             }
         }

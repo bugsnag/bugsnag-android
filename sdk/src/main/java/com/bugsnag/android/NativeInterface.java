@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,10 +116,14 @@ public class NativeInterface {
      * Wrapper for messages sent to native observers
      */
     public static class Message {
+
+        @NonNull
         public final MessageType type;
+
+        @Nullable
         public final Object value;
 
-        public Message(MessageType type, Object value) {
+        public Message(@NonNull MessageType type, @Nullable Object value) {
             this.type = type;
             this.value = value;
         }
@@ -173,6 +178,7 @@ public class NativeInterface {
         client.sendNativeSetupNotification();
     }
 
+    @Nullable
     public static String getContext() {
         return getClient().getContext();
     }
@@ -181,6 +187,7 @@ public class NativeInterface {
         return Logger.getEnabled();
     }
 
+    @NonNull
     public static String getNativeReportPath() {
         return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
     }
@@ -251,9 +258,9 @@ public class NativeInterface {
      * @param name name
      */
     @SuppressWarnings("unused")
-    public static void setUser(final String id,
-                               final String email,
-                               final String name) {
+    public static void setUser(@Nullable final String id,
+                               @Nullable final String email,
+                               @Nullable final String name) {
         Client client = getClient();
         client.setUserId(id);
         client.setUserEmail(email);
@@ -271,7 +278,9 @@ public class NativeInterface {
     /**
      * Leaves a breadcrumb on the static client instance
      */
-    public static void leaveBreadcrumb(String name, String type, Map<String, String> metadata) {
+    public static void leaveBreadcrumb(@NonNull String name,
+                                       @NonNull String type,
+                                       @NonNull Map<String, String> metadata) {
         String typeName = type.toUpperCase(Locale.US);
         Map<String, String> map = metadata == null ? new HashMap<String, String>() : metadata;
         getClient().leaveBreadcrumb(name, BreadcrumbType.valueOf(typeName), map);
@@ -280,22 +289,23 @@ public class NativeInterface {
     /**
      * Add metadata to subsequent exception reports
      */
-    public static void addToTab(final String tab,
-                                final String key,
-                                final Object value) {
+    public static void addToTab(@NonNull final String tab,
+                                @NonNull final String key,
+                                @Nullable final Object value) {
         getClient().addToTab(tab, key, value);
     }
 
     /**
      * Set the client report release stage
      */
-    public static void setReleaseStage(final String stage) {
+    public static void setReleaseStage(@Nullable final String stage) {
         getClient().setReleaseStage(stage);
     }
 
     /**
      * Return the client report release stage
      */
+    @Nullable
     public static String getReleaseStage() {
         return getClient().getConfig().getReleaseStage();
     }
@@ -303,6 +313,7 @@ public class NativeInterface {
     /**
      * Return the client session endpoint
      */
+    @NonNull
     public static String getSessionEndpoint() {
         return getClient().getConfig().getSessionEndpoint();
     }
@@ -310,6 +321,7 @@ public class NativeInterface {
     /**
      * Return the client report endpoint
      */
+    @NonNull
     public static String getEndpoint() {
         return getClient().getConfig().getEndpoint();
     }
@@ -318,7 +330,7 @@ public class NativeInterface {
      * Set the client session endpoint
      */
     @SuppressWarnings("deprecation")
-    public static void setSessionEndpoint(final String endpoint) {
+    public static void setSessionEndpoint(@NonNull final String endpoint) {
         getClient().getConfig().setSessionEndpoint(endpoint);
     }
 
@@ -326,34 +338,35 @@ public class NativeInterface {
      * Set the client report endpoint
      */
     @SuppressWarnings("deprecation")
-    public static void setEndpoint(final String endpoint) {
+    public static void setEndpoint(@NonNull final String endpoint) {
         getClient().getConfig().setEndpoint(endpoint);
     }
 
     /**
      * Set the client report context
      */
-    public static void setContext(final String context) {
+    public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
     }
 
     /**
      * Set the client report app version
      */
-    public static void setAppVersion(final String version) {
+    public static void setAppVersion(@NonNull final String version) {
         getClient().setAppVersion(version);
     }
 
     /**
      * Set the binary arch used in the application
      */
-    public static void setBinaryArch(final String binaryArch) {
+    public static void setBinaryArch(@NonNull final String binaryArch) {
         getClient().setBinaryArch(binaryArch);
     }
 
     /**
      * Return the client report app version
      */
+    @NonNull
     public static String getAppVersion() {
         return getClient().getConfig().getAppVersion();
     }
@@ -361,6 +374,7 @@ public class NativeInterface {
     /**
      * Return which release stages notify
      */
+    @Nullable
     public static String[] getNotifyReleaseStages() {
         return getClient().getConfig().getNotifyReleaseStages();
     }
@@ -368,7 +382,7 @@ public class NativeInterface {
     /**
      * Set which release stages notify
      */
-    public static void setNotifyReleaseStages(String[] notifyReleaseStages) {
+    public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }
 
@@ -380,7 +394,7 @@ public class NativeInterface {
      *                     stages
      */
     @SuppressWarnings("unused")
-    public static void deliverReport(String releaseStage, String payload) {
+    public static void deliverReport(@Nullable String releaseStage, @NonNull String payload) {
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
@@ -400,7 +414,7 @@ public class NativeInterface {
      */
     public static void notify(@NonNull final String name,
                               @NonNull final String message,
-                              final Severity severity,
+                              @NonNull final Severity severity,
                               @NonNull final StackTraceElement[] stacktrace) {
 
         getClient().notify(name, message, stacktrace, new Callback() {
