@@ -19,9 +19,10 @@ import java.util.Map;
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
 public final class Bugsnag {
 
-    @Nullable
+    private static final Object lock = new Object();
+
     @SuppressLint("StaticFieldLeak")
-    static Client client;
+    static volatile Client client;
 
     private Bugsnag() {
     }
@@ -33,8 +34,14 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext) {
-        client = new Client(androidContext);
-        NativeInterface.configureClientObservers(client);
+        synchronized (lock) {
+            if (client == null) {
+                client = new Client(androidContext);
+                NativeInterface.configureClientObservers(client);
+            } else {
+                logClientInitWarning();
+            }
+        }
         return client;
     }
 
@@ -46,8 +53,14 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
-        client = new Client(androidContext, apiKey);
-        NativeInterface.configureClientObservers(client);
+        synchronized (lock) {
+            if (client == null) {
+                client = new Client(androidContext, apiKey);
+                NativeInterface.configureClientObservers(client);
+            } else {
+                logClientInitWarning();
+            }
+        }
         return client;
     }
 
@@ -62,8 +75,14 @@ public final class Bugsnag {
     public static Client init(@NonNull Context androidContext,
                               @Nullable String apiKey,
                               boolean enableExceptionHandler) {
-        client = new Client(androidContext, apiKey, enableExceptionHandler);
-        NativeInterface.configureClientObservers(client);
+        synchronized (lock) {
+            if (client == null) {
+                client = new Client(androidContext, apiKey, enableExceptionHandler);
+                NativeInterface.configureClientObservers(client);
+            } else {
+                logClientInitWarning();
+            }
+        }
         return client;
     }
 
@@ -75,9 +94,21 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext, @NonNull Configuration config) {
-        client = new Client(androidContext, config);
-        NativeInterface.configureClientObservers(client);
+        synchronized (lock) {
+            if (client == null) {
+                client = new Client(androidContext, config);
+                NativeInterface.configureClientObservers(client);
+            } else {
+                logClientInitWarning();
+            }
+        }
         return client;
+    }
+
+    private static void logClientInitWarning() {
+        Logger.warn("It appears that Bugsnag.init() was called more than once. Subsequent " +
+            "calls have no effect, but may indicate that Bugsnag is not integrated in an" +
+            " Application subclass, which can lead to undesired behaviour.");
     }
 
     /**
