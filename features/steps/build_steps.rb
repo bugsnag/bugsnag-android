@@ -139,7 +139,7 @@ Then("the report in request {int} contains the required fields") do |index|
     And the payload field "events.0.metaData.device.time" is not null for request #{index}
     And the payload field "events.0.severity" is not null for request #{index}
     And the payload field "events.0.severityReason.type" is not null for request #{index}
-    And the payload field "events.0.metaData.device.cpuAbi" is a non-empty array for request #{index}
+    And the payload field "events.0.device.cpuAbi" is a non-empty array for request #{index}
   }
 end
 
