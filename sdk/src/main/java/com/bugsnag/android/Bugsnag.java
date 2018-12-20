@@ -22,7 +22,7 @@ public final class Bugsnag {
     private static final Object lock = new Object();
 
     @SuppressLint("StaticFieldLeak")
-    static volatile Client client;
+    static Client client;
 
     private Bugsnag() {
     }
