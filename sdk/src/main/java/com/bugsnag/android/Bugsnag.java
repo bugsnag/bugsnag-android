@@ -34,15 +34,7 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext) {
-        synchronized (lock) {
-            if (client == null) {
-                client = new Client(androidContext);
-                NativeInterface.configureClientObservers(client);
-            } else {
-                logClientInitWarning();
-            }
-        }
-        return client;
+        return init(androidContext, null, true);
     }
 
     /**
@@ -53,15 +45,7 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
-        synchronized (lock) {
-            if (client == null) {
-                client = new Client(androidContext, apiKey);
-                NativeInterface.configureClientObservers(client);
-            } else {
-                logClientInitWarning();
-            }
-        }
-        return client;
+        return init(androidContext, apiKey, true);
     }
 
     /**
@@ -75,15 +59,9 @@ public final class Bugsnag {
     public static Client init(@NonNull Context androidContext,
                               @Nullable String apiKey,
                               boolean enableExceptionHandler) {
-        synchronized (lock) {
-            if (client == null) {
-                client = new Client(androidContext, apiKey, enableExceptionHandler);
-                NativeInterface.configureClientObservers(client);
-            } else {
-                logClientInitWarning();
-            }
-        }
-        return client;
+        Configuration config
+            = ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler);
+        return init(androidContext, config);
     }
 
     /**
