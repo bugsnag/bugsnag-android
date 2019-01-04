@@ -7,6 +7,10 @@
 * Prevent errors from leaving a self-referencing breadcrumb
  [#391](https://github.com/bugsnag/bugsnag-android/pull/391)
 
+* Prevent Bugsnag.init from instantiating more than one client
+ [#403](https://github.com/bugsnag/bugsnag-android/pull/403)
+
+
 ## 4.9.3 (2018-11-29)
 
 ### Bug fixes
