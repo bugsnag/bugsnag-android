@@ -2,6 +2,9 @@
 
 ## 4.X.X (TBD)
 
+* Migrate metaData.device.cpuAbi to device.cpuAbi in JSON payload
+ [#404](https://github.com/bugsnag/bugsnag-android/pull/404)
+
 * Added additional nullability annotations to public API
  [#395](https://github.com/bugsnag/bugsnag-android/pull/395)
 

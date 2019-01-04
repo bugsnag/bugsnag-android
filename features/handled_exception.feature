@@ -9,6 +9,7 @@ Scenario: Test handled Kotlin Exception
     And the payload field "events" is an array with 1 element
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledExceptionScenario"
+    And the payload field "events.0.device.cpuAbi" is a non-empty array for request 0
 
 Scenario: Test handled Java Exception
     When I run "HandledExceptionJavaScenario"
