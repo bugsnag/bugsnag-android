@@ -57,7 +57,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      * @param key     the name of the diagnostic information
      * @param value   the contents of the diagnostic information
      */
-    public void addToTab(String tabName, String key, Object value) {
+    public void addToTab(@NonNull String tabName, @NonNull String key, @Nullable Object value) {
         Map<String, Object> tab = getTab(tabName);
         setChanged();
         if (value != null) {
@@ -78,7 +78,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
      *
      * @param tabName the dashboard tab to remove diagnostic data from
      */
-    public void clearTab(String tabName) {
+    public void clearTab(@NonNull String tabName) {
         store.remove(tabName);
         setChanged();
         notifyObservers(new NativeInterface.Message(

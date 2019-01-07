@@ -10,6 +10,7 @@ Scenario: Test Unhandled Kotlin Exception without Session
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "UnhandledExceptionScenario"
     And the event "session" is null
+    And the payload field "events.0.device.cpuAbi" is a non-empty array for request 0
 
 Scenario: Test Unhandled Java Exception with Session
     When I run "UnhandledExceptionJavaScenario"

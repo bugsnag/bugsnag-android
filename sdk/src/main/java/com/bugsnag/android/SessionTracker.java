@@ -30,10 +30,11 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
     private final Collection<String>
         foregroundActivities = new ConcurrentLinkedQueue<>();
-    private final Configuration configuration;
     private final long timeoutMs;
-    private final Client client;
-    private final SessionStore sessionStore;
+
+    final Configuration configuration;
+    final Client client;
+    final SessionStore sessionStore;
 
     // This most recent time an Activity was stopped.
     private AtomicLong lastExitedForegroundMs = new AtomicLong(0);
@@ -58,7 +59,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     /**
      * Starts a new session with the given date and user.
      * <p>
-     * A session will only be created if {@link Configuration#shouldAutoCaptureSessions()} returns
+     * A session will only be created if {@link Configuration#getAutoCaptureSessions()} returns
      * true.
      *
      * @param date the session start date
@@ -87,7 +88,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
 
         if (notifyForRelease
-            && (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured())
+            && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
             try {
                 final String endpoint = configuration.getSessionEndpoint();
@@ -289,7 +290,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 lastEnteredForegroundMs.set(nowMs);
 
                 if (noActivityRunningForMs >= timeoutMs
-                    && configuration.shouldAutoCaptureSessions()) {
+                    && configuration.getAutoCaptureSessions()) {
                     startNewSession(new Date(nowMs), client.getUser(), true);
                 }
             }

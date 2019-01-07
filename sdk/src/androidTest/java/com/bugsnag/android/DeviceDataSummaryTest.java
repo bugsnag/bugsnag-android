@@ -66,6 +66,7 @@ public class DeviceDataSummaryTest {
         assertNotNull(deviceDataJson.getString("osVersion"));
         assertNotNull(deviceDataJson.getString("manufacturer"));
         assertNotNull(deviceDataJson.getString("model"));
+        assertNotNull(deviceDataJson.get("cpuAbi"));
         assertTrue(deviceDataJson.has("jailbroken"));
     }
 

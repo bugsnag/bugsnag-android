@@ -158,6 +158,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     if (strlen(report->app.build_uuid) > 0) {
       json_object_dotset_string(event, "app.buildUUID", report->app.build_uuid);
     }
+    json_object_dotset_string(event, "app.binaryArch",
+                              report->app.binaryArch);
     json_object_dotset_number(event, "app.duration", report->app.duration);
     json_object_dotset_number(event, "app.durationInForeground",
                               report->app.duration_in_foreground);
@@ -182,6 +184,14 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     json_object_dotset_string(event, "device.model", report->device.model);
     json_object_dotset_string(event, "device.orientation",
                               report->device.orientation);
+
+    JSON_Value *abi_val = json_value_init_array();
+    JSON_Array *cpu_abis = json_value_get_array(abi_val);
+    json_object_dotset_value(event, "device.cpuAbi", abi_val);
+    for (int i = 0; i < report->device.cpu_abi_count; i++) {
+        json_array_append_string(cpu_abis, report->device.cpu_abi[i].value);
+    }
+
     json_object_dotset_string(event, "metaData.device.osBuild",
                               report->device.os_build);
     json_object_dotset_number(event, "device.totalMemory",
@@ -211,12 +221,6 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
       strftime(report_time, sizeof report_time, "%FT%TZ",
                gmtime(&report->device.time));
       json_object_dotset_string(event, "metaData.device.time", report_time);
-    }
-    JSON_Value *abi_val = json_value_init_array();
-    JSON_Array *cpu_abis = json_value_get_array(abi_val);
-    json_object_dotset_value(event, "metaData.device.cpuAbi", abi_val);
-    for (int i = 0; i < report->device.cpu_abi_count; i++) {
-      json_array_append_string(cpu_abis, report->device.cpu_abi[i].value);
     }
 
     // Serialize custom metadata

@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 import java.util.Map;
 
 /**
@@ -22,9 +24,9 @@ public interface SessionTrackingApiClient {
      * @throws NetworkException     if the client was unable to complete the request
      * @throws BadResponseException when a non-202 response code is received from the server
      */
-    void postSessionTrackingPayload(String urlString,
-                                    SessionTrackingPayload payload,
-                                    Map<String, String> headers)
+    void postSessionTrackingPayload(@NonNull String urlString,
+                                    @NonNull SessionTrackingPayload payload,
+                                    @NonNull Map<String, String> headers)
         throws NetworkException, BadResponseException;
 
 }

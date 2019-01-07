@@ -218,7 +218,7 @@ public class ClientTest {
         assertEquals(false, protoConfig.getSendThreads());
         assertEquals(false, protoConfig.getEnableExceptionHandler());
         assertEquals(true, protoConfig.getPersistUserBetweenSessions());
-        assertEquals(true, protoConfig.shouldAutoCaptureSessions());
+        assertEquals(true, protoConfig.getAutoCaptureSessions());
     }
 
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
@@ -333,7 +333,7 @@ public class ClientTest {
         Client client = generateClient();
         Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
 
-        assertEquals(14, metaData.size());
+        assertEquals(13, metaData.size());
         assertNotNull(metaData.get("batteryLevel"));
         assertNotNull(metaData.get("charging"));
         assertNotNull(metaData.get("locationStatus"));
@@ -347,6 +347,5 @@ public class ClientTest {
         assertNotNull(metaData.get("dpi"));
         assertNotNull(metaData.get("emulator"));
         assertNotNull(metaData.get("screenResolution"));
-        assertNotNull(metaData.get("cpuAbi"));
     }
 }

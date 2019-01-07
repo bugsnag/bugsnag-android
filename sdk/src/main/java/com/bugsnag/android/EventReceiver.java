@@ -25,12 +25,12 @@ public class EventReceiver extends BroadcastReceiver {
 
     private final Client client;
 
-    public EventReceiver(Client client) {
+    public EventReceiver(@NonNull Client client) {
         this.client = client;
     }
 
     @Override
-    public void onReceive(Context context, @NonNull Intent intent) {
+    public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         try {
             Map<String, String> meta = new HashMap<>();
             String fullAction = intent.getAction();

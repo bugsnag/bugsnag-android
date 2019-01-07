@@ -73,7 +73,7 @@ public class Configuration extends Observable implements Observer {
     /**
      * Respond to an update notification from observed objects, like MetaData
      */
-    public void update(Observable observable, Object arg) {
+    public void update(@NonNull Observable observable, @NonNull Object arg) {
         if (arg instanceof NativeInterface.Message) {
             setChanged();
             notifyObservers(arg);
@@ -95,6 +95,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return App Version
      */
+    @NonNull
     public String getAppVersion() {
         return appVersion;
     }
@@ -105,7 +106,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param appVersion the app version to send
      */
-    public void setAppVersion(String appVersion) {
+    public void setAppVersion(@NonNull String appVersion) {
         this.appVersion = appVersion;
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -117,6 +118,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Context
      */
+    @Nullable
     public String getContext() {
         return context;
     }
@@ -128,7 +130,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param context set what was happening at the time of a crash
      */
-    public void setContext(String context) {
+    public void setContext(@Nullable String context) {
         this.context = context;
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -140,6 +142,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Endpoint
      */
+    @NonNull
     public String getEndpoint() {
         return endpoint;
     }
@@ -154,7 +157,7 @@ public class Configuration extends Observable implements Observer {
      * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
      */
     @Deprecated
-    public void setEndpoint(String endpoint) {
+    public void setEndpoint(@NonNull String endpoint) {
         this.endpoint = endpoint;
     }
 
@@ -198,6 +201,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the endpoint
      */
+    @NonNull
     public String getSessionEndpoint() {
         return sessionEndpoint;
     }
@@ -212,7 +216,7 @@ public class Configuration extends Observable implements Observer {
      * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
      */
     @Deprecated
-    public void setSessionEndpoint(String endpoint) {
+    public void setSessionEndpoint(@NonNull String endpoint) {
         this.sessionEndpoint = endpoint;
     }
 
@@ -222,6 +226,7 @@ public class Configuration extends Observable implements Observer {
      * @return build UUID
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    @Nullable
     public String getBuildUUID() {
         return buildUuid;
     }
@@ -235,7 +240,7 @@ public class Configuration extends Observable implements Observer {
      * @param buildUuid the buildUUID.
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(String buildUuid) {
+    public void setBuildUUID(@Nullable String buildUuid) {
         this.buildUuid = buildUuid;
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -247,6 +252,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Filters
      */
+    @Nullable
     public String[] getFilters() {
         return metaData.getFilters();
     }
@@ -264,7 +270,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param filters a list of keys to filter from metaData
      */
-    public void setFilters(String[] filters) {
+    public void setFilters(@Nullable String[] filters) {
         this.metaData.setFilters(filters);
     }
 
@@ -273,6 +279,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Ignore classes
      */
+    @Nullable
     public String[] getIgnoreClasses() {
         return ignoreClasses;
     }
@@ -286,7 +293,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param ignoreClasses a list of exception classes to ignore
      */
-    public void setIgnoreClasses(String[] ignoreClasses) {
+    public void setIgnoreClasses(@Nullable String[] ignoreClasses) {
         this.ignoreClasses = ignoreClasses;
     }
 
@@ -320,6 +327,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return packages
      */
+    @Nullable
     public String[] getProjectPackages() {
         return projectPackages;
     }
@@ -336,7 +344,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param projectPackages a list of package names
      */
-    public void setProjectPackages(String[] projectPackages) {
+    public void setProjectPackages(@Nullable String[] projectPackages) {
         this.projectPackages = projectPackages;
     }
 
@@ -345,6 +353,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return release stage
      */
+    @Nullable
     public String getReleaseStage() {
         return releaseStage;
     }
@@ -357,7 +366,7 @@ public class Configuration extends Observable implements Observer {
      * @param releaseStage the release stage of the app
      * @see #setNotifyReleaseStages
      */
-    public void setReleaseStage(String releaseStage) {
+    public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -405,8 +414,19 @@ public class Configuration extends Observable implements Observer {
      * Get whether or not User sessions are captured automatically.
      *
      * @return true if sessions are captured automatically
+     * @deprecated use {@link #getAutoCaptureSessions()}
      */
+    @Deprecated
     public boolean shouldAutoCaptureSessions() {
+        return getAutoCaptureSessions();
+    }
+
+    /**
+     * Get whether or not User sessions are captured automatically.
+     *
+     * @return true if sessions are captured automatically
+     */
+    public boolean getAutoCaptureSessions() {
         return autoCaptureSessions;
     }
 
@@ -543,7 +563,7 @@ public class Configuration extends Observable implements Observer {
      * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
      * @param notifierType the notifier type
      */
-    public void setNotifierType(String notifierType) {
+    public void setNotifierType(@NonNull String notifierType) {
         this.notifierType = notifierType;
     }
 
@@ -551,15 +571,17 @@ public class Configuration extends Observable implements Observer {
      * Intended for internal use only - sets the code bundle id for React Native
      * @param codeBundleId the code bundle id
      */
-    public void setCodeBundleId(String codeBundleId) {
+    public void setCodeBundleId(@Nullable String codeBundleId) {
         this.codeBundleId = codeBundleId;
     }
 
-    String getCodeBundleId() {
+    @Nullable
+    public String getCodeBundleId() {
         return codeBundleId;
     }
 
-    String getNotifierType() {
+    @NonNull
+    public String getNotifierType() {
         return notifierType;
     }
 
@@ -624,6 +646,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the HTTP headers
      */
+    @NonNull
     public Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
@@ -637,6 +660,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the HTTP headers
      */
+    @NonNull
     public Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
@@ -666,7 +690,7 @@ public class Configuration extends Observable implements Observer {
      * @see BeforeSend
      * @see Report
      */
-    public void beforeSend(BeforeSend beforeSend) {
+    public void beforeSend(@NonNull BeforeSend beforeSend) {
         if (!beforeSendTasks.contains(beforeSend)) {
             beforeSendTasks.add(beforeSend);
         }
@@ -678,7 +702,7 @@ public class Configuration extends Observable implements Observer {
      * @param releaseStage the release stage to check
      * @return true if the release state should be notified else false
      */
-    protected boolean shouldNotifyForReleaseStage(String releaseStage) {
+    protected boolean shouldNotifyForReleaseStage(@Nullable String releaseStage) {
         if (this.notifyReleaseStages == null) {
             return true;
         }
@@ -693,7 +717,7 @@ public class Configuration extends Observable implements Observer {
      * @param className the exception class to check
      * @return true if the exception class should be ignored else false
      */
-    protected boolean shouldIgnoreClass(String className) {
+    protected boolean shouldIgnoreClass(@Nullable String className) {
         if (this.ignoreClasses == null) {
             return false;
         }
@@ -707,7 +731,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param beforeNotify the new before notify task
      */
-    protected void beforeNotify(BeforeNotify beforeNotify) {
+    protected void beforeNotify(@NonNull BeforeNotify beforeNotify) {
         if (!beforeNotifyTasks.contains(beforeNotify)) {
             beforeNotifyTasks.add(beforeNotify);
         }
@@ -718,7 +742,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param beforeRecordBreadcrumb the new before breadcrumb task
      */
-    protected void beforeRecordBreadcrumb(BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+    protected void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
         if (!beforeRecordBreadcrumbTasks.contains(beforeRecordBreadcrumb)) {
             beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
         }
@@ -747,6 +771,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return the before breadcrumb tasks
      */
+    @NonNull
     protected Collection<BeforeRecordBreadcrumb> getBeforeRecordBreadcrumbTasks() {
         return beforeRecordBreadcrumbTasks;
     }

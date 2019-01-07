@@ -26,7 +26,7 @@ class ErrorStore extends FileStore<Error> {
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
-    private volatile boolean flushOnLaunchCompleted = false;
+    volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
@@ -116,7 +116,7 @@ class ErrorStore extends FileStore<Error> {
         }
     }
 
-    private void flushReports(Collection<File> storedReports) {
+    void flushReports(Collection<File> storedReports) {
         if (!storedReports.isEmpty() && semaphore.tryAcquire(1)) {
             try {
                 Logger.info(String.format(Locale.US,

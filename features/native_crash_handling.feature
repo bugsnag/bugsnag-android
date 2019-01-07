@@ -11,6 +11,8 @@ Feature: Native crash reporting
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
+        And the event "app.binaryArch" is not null
+        And the payload field "events.0.device.cpuAbi" is a non-empty array for request 0
 
     # This scenario will not pass on API levels < 18, as stack corruption
     # is handled without calling atexit handlers, etc.

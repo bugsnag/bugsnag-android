@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+
 /**
  * Recognized types of breadcrumbs
  */
@@ -40,11 +42,12 @@ public enum BreadcrumbType {
 
     private final String type;
 
-    BreadcrumbType(String type) {
+    BreadcrumbType(@NonNull String type) {
         this.type = type;
     }
 
     @Override
+    @NonNull
     public String toString() {
         return type;
     }

@@ -139,6 +139,11 @@ public class ErrorReaderTest {
         assertEquals("sdk_phone_armv7", data.get("model"));
         assertEquals("portrait", data.get("orientation"));
         assertEquals(134217728, data.get("totalMemory"));
+
+        @SuppressWarnings("unchecked")
+        List<String> cpuAbi = (List<String>) data.get("cpuAbi");
+        assertEquals("armeabi-v7a", cpuAbi.get(0));
+        assertEquals("armeabi", cpuAbi.get(1));
     }
 
     @Test
@@ -174,10 +179,6 @@ public class ErrorReaderTest {
         assertEquals(1, metadata.getTab("device").get("screenDensity"));
         assertEquals("480x320", metadata.getTab("device").get("screenResolution"));
         assertEquals("2018-10-19T18:56:13Z", metadata.getTab("device").get("time"));
-        @SuppressWarnings("unchecked")
-        List<String> cpuAbi = (List<String>)metadata.getTab("device").get("cpuAbi");
-        assertEquals("armeabi-v7a", cpuAbi.get(0));
-        assertEquals("armeabi", cpuAbi.get(1));
     }
 
     @Test

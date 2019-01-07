@@ -1,18 +1,32 @@
 # Changelog
 
-## 4.X.X (TBD)
+## 4.10.0 (2019-01-07)
+
+* Improve kotlin support by allowing property access
+ [#393](https://github.com/bugsnag/bugsnag-android/pull/393)
+
+* Added additional nullability annotations to public API
+ [#395](https://github.com/bugsnag/bugsnag-android/pull/395)
+
+* Migrate metaData.device.cpuAbi to device.cpuAbi in JSON payload
+ [#404](https://github.com/bugsnag/bugsnag-android/pull/404)
 
 ### Bug fixes
 
-* Make config.metadata publicly accessible
- [#406](https://github.com/bugsnag/bugsnag-android/pull/406)
+* Add binary architecture of application to payload
+ [#389](https://github.com/bugsnag/bugsnag-android/pull/389)
 
 * Prevent errors from leaving a self-referencing breadcrumb
  [#391](https://github.com/bugsnag/bugsnag-android/pull/391)
 
+* Fix calculation of durationInForeground when autoCaptureSessions is false
+ [#394](https://github.com/bugsnag/bugsnag-android/pull/394)
+
 * Prevent Bugsnag.init from instantiating more than one client
  [#403](https://github.com/bugsnag/bugsnag-android/pull/403)
 
+* Make config.metadata publicly accessible
+ [#406](https://github.com/bugsnag/bugsnag-android/pull/406)
 
 ## 4.9.3 (2018-11-29)
 

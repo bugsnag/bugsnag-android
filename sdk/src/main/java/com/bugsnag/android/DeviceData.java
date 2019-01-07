@@ -95,6 +95,7 @@ class DeviceData {
         map.put("jailbroken", isRooted());
         map.put("osName", "android");
         map.put("osVersion", Build.VERSION.RELEASE);
+        map.put("cpuAbi", cpuAbi);
         return map;
     }
 
@@ -123,7 +124,6 @@ class DeviceData {
         map.put("dpi", dpi);
         map.put("emulator", emulator);
         map.put("screenResolution", screenResolution);
-        map.put("cpuAbi", cpuAbi);
         return map;
     }
 
