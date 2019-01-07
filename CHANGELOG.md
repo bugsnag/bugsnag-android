@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.X.X (TBD)
+## 4.10.0 (2019-01-07)
 
 * Improve kotlin support by allowing property access
  [#393](https://github.com/bugsnag/bugsnag-android/pull/393)
