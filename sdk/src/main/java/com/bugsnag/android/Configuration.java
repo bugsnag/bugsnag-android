@@ -428,7 +428,7 @@ public class Configuration extends Observable implements Observer {
      * @return meta data
      */
     @NonNull
-    protected MetaData getMetaData() {
+    public MetaData getMetaData() {
         return metaData;
     }
 
@@ -437,7 +437,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param metaData meta data
      */
-    protected void setMetaData(@NonNull MetaData metaData) {
+    public void setMetaData(@NonNull MetaData metaData) {
         this.metaData.deleteObserver(this);
         //noinspection ConstantConditions
         if (metaData == null) {

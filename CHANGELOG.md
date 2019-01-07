@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Make config.metadata publicly accessible
+ [#406](https://github.com/bugsnag/bugsnag-android/pull/406)
+
 * Prevent errors from leaving a self-referencing breadcrumb
  [#391](https://github.com/bugsnag/bugsnag-android/pull/391)
 
