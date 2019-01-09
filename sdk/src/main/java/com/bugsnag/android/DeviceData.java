@@ -127,6 +127,10 @@ class DeviceData {
         return map;
     }
 
+    String getId() {
+        return id;
+    }
+
     /**
      * Check if the current Android device is rooted
      */

@@ -217,19 +217,24 @@ public class NativeBridge implements Observer {
                 return;
             }
             String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-            String[] abis = (String[])NativeInterface.getDeviceData().get("cpuAbi");
-            boolean is32bit = true;
-            for (String abi : abis) {
-                if (abi.contains("64")) {
-                    is32bit = false;
-                    break;
-                }
-            }
-            install(reportPath, true, Build.VERSION.SDK_INT, is32bit);
+            install(reportPath, true, Build.VERSION.SDK_INT, is32bit());
             installed.set(true);
         } finally {
             lock.unlock();
         }
+    }
+
+    private boolean is32bit() {
+        String[] abis = NativeInterface.getCpuAbi();
+
+        boolean is32bit = true;
+        for (String abi : abis) {
+            if (abi.contains("64")) {
+                is32bit = false;
+                break;
+            }
+        }
+        return is32bit;
     }
 
     private void handleAddBreadcrumb(Object arg) {
