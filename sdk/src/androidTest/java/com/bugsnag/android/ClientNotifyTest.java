@@ -34,11 +34,6 @@ public class ClientNotifyTest {
         client.setErrorReportApiClient(apiClient);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testNotifyBlockingDefaultSeverity() {
         client.notifyBlocking(new RuntimeException("Testing"));

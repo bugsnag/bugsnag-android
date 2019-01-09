@@ -28,11 +28,6 @@ public class ConfigurationTest {
         config = new Configuration("api-key");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testEndpoints() {
         String notify = "https://notify.myexample.com";

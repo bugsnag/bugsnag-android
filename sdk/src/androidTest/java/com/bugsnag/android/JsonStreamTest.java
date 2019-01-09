@@ -43,11 +43,6 @@ public class JsonStreamTest {
         file.delete();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testSaneValues() throws JSONException, IOException {
         final Long nullLong = null;

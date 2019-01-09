@@ -43,11 +43,6 @@ public class ObserverInterfaceTest {
         client.addObserver(observer);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testUpdateMetadataFromClientSendsMessage() {
         MetaData metadata = new MetaData(new HashMap<String, Object>());

@@ -26,11 +26,6 @@ public class ConcurrentCallbackTest {
         client = BugsnagTestUtils.generateClient();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testClientNotifyModification() throws Exception {
         final Collection<BeforeNotify> beforeNotifyTasks = client.config.getBeforeNotifyTasks();

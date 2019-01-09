@@ -30,10 +30,6 @@ class BreadcrumbsTest {
         breadcrumbs = Breadcrumbs(config)
     }
 
-    @After
-    fun tearDown() {
-        Async.cancelTasks()
-    }
 
     /**
      * Verifies that the breadcrumb message is truncated after the max limit is reached

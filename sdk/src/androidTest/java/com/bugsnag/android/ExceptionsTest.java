@@ -29,11 +29,6 @@ public class ExceptionsTest {
         config = new Configuration("api-key");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testBasicException() throws JSONException, IOException {
         Exceptions exceptions = new Exceptions(config, new RuntimeException("oops"));
