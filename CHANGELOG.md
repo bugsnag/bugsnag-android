@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Bug fixes
+
+* Prevent unnecessary free disk calculations on initialisation
+ [#409](https://github.com/bugsnag/bugsnag-android/pull/409)
+
 ## 4.10.0 (2019-01-07)
 
 * Improve kotlin support by allowing property access
