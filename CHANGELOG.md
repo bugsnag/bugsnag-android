@@ -2,6 +2,12 @@
 
 ## 4.X.X (TBD)
 
+### Enhancements
+
+* [NDK] Improve support for C++ exceptions, adding the exception class name
+  and description to reports and improving the stacktrace quality
+  [#412](https://github.com/bugsnag/bugsnag-android/pull/412)
+
 ### Bug fixes
 
 * Fix cached error deserialisation where the Throwable has a cause
@@ -15,7 +21,7 @@
 
 * Cache result of device root check
   [#411](https://github.com/bugsnag/bugsnag-android/pull/411)
-  
+
 * Prevent unnecessary free disk calculations on initialisation
  [#409](https://github.com/bugsnag/bugsnag-android/pull/409)
 

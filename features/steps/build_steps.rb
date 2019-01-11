@@ -86,10 +86,15 @@ Then("the first significant stack frame methods and files should match:") do |ex
   stacktrace.each_with_index do |item, index|
     next if expected_index >= expected_frame_values.length
     expected_frame = expected_frame_values[expected_index]
-    next if item["method"].start_with? "bsg_"
-    next if item["file"].start_with? "/system/"
+    method = `c++filt -_ _#{item["method"]}`.chomp
+    method = item["method"] if method == "_#{item["method"]}"
+    next if method.start_with? "bsg_" or
+            method.start_with? "std::" or
+            method.start_with? "__cxx" or
+            item["file"].start_with? "/system/" or
+            item["file"].end_with? "libbugsnag-ndk.so"
 
-    assert_equal(expected_frame[0], item["method"])
+    assert_equal(expected_frame[0], method)
     assert(item["file"].end_with?(expected_frame[1]), "'#{item["file"]}' in frame #{index} does not end with '#{expected_frame[1]}'")
     expected_index += 1
   end

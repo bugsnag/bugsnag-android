@@ -4,6 +4,23 @@
 #include <signal.h>
 #include <time.h>
 
+#include <stdexcept>
+
+bool __attribute__((noinline)) run_away(bool value) {
+  if (value)
+    throw new std::runtime_error("How about NO");
+
+  return false;
+}
+
+bool __attribute__((noinline)) run_back(int value, int boundary) {
+  printf("boundary: %d\n", boundary);
+  if (value > -boundary)
+    throw 42;
+
+  return false;
+}
+
 extern "C" {
 
 static char * __attribute__((used)) somefakefunc(void) {};
@@ -42,6 +59,22 @@ int crash_write_read_only_mem(int counter) {
     *pointer = counter;
   }
   return counter / 14;
+}
+
+int __attribute__((noinline)) throw_an_object(bool value, int boundary) {
+  if (value) {
+    printf("Now we know what they mean by 'advanced' tactical training: %d", boundary);
+    return (int)run_back(value, boundary);
+  }
+  return boundary * 2;
+}
+
+int __attribute__((noinline)) trigger_an_exception(bool value) {
+  printf("Shields up! Rrrrred alert!.\n");
+  if (value)
+    return (int)run_away(value);
+  else
+    return 405;
 }
 
 char *crash_improper_cast(int counter) {
@@ -159,6 +192,22 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXNullPointerScenario_crash(JNIEn
                                                                            jobject instance) {
   int x = 38;
   printf("This one here: %ld\n", (long) crash_null_pointer(x > 0));
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionScenario_crash(JNIEnv *env,
+                                                                         jobject instance) {
+  int x = 61;
+  printf("This one here: %ld\n", (long) trigger_an_exception(x > 0));
+  printf("This one here: %ld\n", (long) throw_an_object(x > 0, x));
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingScenario_crash(JNIEnv *env,
+                                                                              jobject instance,
+                                                                              jint num) {
+  printf("This one here: %ld\n", (long) throw_an_object((num - 10) > 0, num));
+  printf("This one here: %ld\n", (long) trigger_an_exception(num > 0));
 }
 
 JNIEXPORT void JNICALL
