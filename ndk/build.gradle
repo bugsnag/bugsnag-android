@@ -22,6 +22,12 @@ android {
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'armeabi', 'x86', 'x86_64'
         }
         consumerProguardFiles 'proguard-rules.pro'
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_CPP_FEATURES=exceptions',
+                          '-DANDROID_STL=c++_static'
+            }
+        }
     }
 
     externalNativeBuild {
