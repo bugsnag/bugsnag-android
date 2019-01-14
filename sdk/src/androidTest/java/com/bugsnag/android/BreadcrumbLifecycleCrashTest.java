@@ -29,11 +29,6 @@ public class BreadcrumbLifecycleCrashTest {
         sessionTracker = new SessionTracker(configuration, null, sessionStore);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testLifecycleBreadcrumbCrash() {
         // should not crash with a null client

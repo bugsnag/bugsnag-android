@@ -33,11 +33,6 @@ public class ClientConfigTest {
         client = new Client(context, config);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testSetReleaseStage() throws Exception {
         client.setReleaseStage("beta");

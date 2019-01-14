@@ -39,11 +39,6 @@ public class SessionTrackerTest {
         user = new User();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void startNewSession() throws Exception {
         assertNotNull(sessionTracker);

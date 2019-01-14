@@ -51,7 +51,6 @@ public class ClientTest {
     @After
     public void tearDown() throws Exception {
         clearSharedPrefs();
-        Async.cancelTasks();
     }
 
     private void clearSharedPrefs() {

@@ -33,11 +33,6 @@ public class ExceptionHandlerTest {
         Thread.setDefaultUncaughtExceptionHandler(null);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testEnableDisable() {
         Client client = new Client(context, "api-key");

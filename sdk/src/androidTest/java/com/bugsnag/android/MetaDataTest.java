@@ -36,11 +36,6 @@ public class MetaDataTest {
         client = BugsnagTestUtils.generateClient();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
         MetaData metaData = new MetaData();

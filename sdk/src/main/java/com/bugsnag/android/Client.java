@@ -146,7 +146,7 @@ public class Client extends Observable implements Observer {
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
 
-        String deviceId = getStringFromMap("id", deviceData.getDeviceData());
+        String deviceId = deviceData.getId();
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
