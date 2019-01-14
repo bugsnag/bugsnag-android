@@ -16,6 +16,7 @@ import java.util.Queue;
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
  */
 public class NativeInterface {
+
     public enum MessageType {
         /**
          * Add a breadcrumb. The Message object should be the breadcrumb
@@ -231,6 +232,14 @@ public class NativeInterface {
         deviceData.putAll(source.getDeviceMetaData());
         deviceData.putAll(source.getDeviceData()); // wat
         return deviceData;
+    }
+
+    /**
+     * Retrieve the CPU ABI(s) for the current device
+     */
+    @NonNull
+    public static String[] getCpuAbi() {
+        return getClient().deviceData.cpuAbi;
     }
 
     /**
