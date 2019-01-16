@@ -69,7 +69,7 @@ public class JsonStream extends JsonWriter {
         }
 
         super.flush();
-        beforeValue(false); // add comma if in array
+        beforeValue(); // add comma if in array
 
         // Copy the file contents onto the stream
         Reader input = null;
