@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+* Update vendored GSON dependency to latest available version
+ [#415](https://github.com/bugsnag/bugsnag-android/pull/415)
+
 ## 4.10.0 (2019-01-07)
 
 * Improve kotlin support by allowing property access
