@@ -104,6 +104,7 @@ void bsg_handle_cpp_terminate() {
               message_length);
 
   bsg_serialize_report_to_file(bsg_global_env);
+  bsg_global_env->crash_handled = true;
   bsg_handler_uninstall_cpp();
   if (bsg_global_terminate_previous != NULL) {
     bsg_global_terminate_previous();
