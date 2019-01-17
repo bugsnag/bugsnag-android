@@ -16,6 +16,9 @@
 
 package com.bugsnag.android;
 
+// last retrieved from gson-parent-2.8.5 on 17/01/2019
+// https://github.com/google/gson/tree/gson-parent-2.8.5/gson/src/main/java/com/google/gson/stream
+
 /**
  * Lexical scoping elements within a JSON reader or writer.
  *
