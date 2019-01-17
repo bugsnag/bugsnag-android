@@ -46,7 +46,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
     jint _api_level, jboolean is32bit) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
-  bugsnag_env->unwind_style = bsg_get_unwind_type((int)_api_level, (bool)is32bit);
+  bsg_set_unwind_types((int)_api_level, (bool)is32bit,
+                       &bugsnag_env->signal_unwind_style,
+                       &bugsnag_env->unwind_style);
   bugsnag_env->report_header.big_endian =
       htonl(47) == 47; // potentially too clever, see man 3 htonl
   bugsnag_env->report_header.version = BUGSNAG_REPORT_VERSION;

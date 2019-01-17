@@ -102,6 +102,9 @@ bsg_unwind_stack_libunwind(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
     return bsg_unwind_stack_libunwind_arm32(stacktrace, info, user_context);
   }
 #endif
+  if (bsg_global_libunwind_state == NULL) {
+    return 0;
+  }
   bsg_global_libunwind_state->frame_count = 0;
   // The return value of _Unwind_Backtrace sits on a throne of lies
   _Unwind_Backtrace(bsg_libunwind_callback, bsg_global_libunwind_state);

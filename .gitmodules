@@ -1,0 +1,3 @@
+[submodule "ndk/src/main/jni/external/libunwindstack"]
+	path = ndk/src/main/jni/external/libunwindstack
+	url = https://github.com/bugsnag/libunwindstack-ndk

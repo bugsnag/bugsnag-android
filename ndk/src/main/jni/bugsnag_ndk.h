@@ -20,6 +20,13 @@ extern "C" {
 #endif
 
 typedef struct {
+    /**
+     * Unwinding style used for signal-safe handling
+     */
+    bsg_unwinder signal_unwind_style;
+    /**
+     * Preferred unwinding style
+     */
     bsg_unwinder unwind_style;
     bsg_report_header report_header;
     /**
