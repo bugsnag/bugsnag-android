@@ -75,6 +75,12 @@ installed to `~/.android-sdk`.
 
 ## Building the Library
 
+Be sure to clone the repository submodules:
+
+```shell
+git submodule update --init --recursive
+```
+
 You can build new `.aar` files as follows:
 
 ```shell

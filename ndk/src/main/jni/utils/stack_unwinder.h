@@ -11,19 +11,23 @@ extern "C" {
 
 typedef enum {
   BSG_LIBUNWIND,
+  BSG_LIBUNWINDSTACK,
   BSG_LIBCORKSCREW,
   BSG_CUSTOM_UNWIND,
 } bsg_unwinder;
+
 
 /**
  * Based on the current environment, determine what unwinding library to use.
  *
  * Android API level 21+: libunwind
- * Android API level 16-19: libcorkscrew
+ * Android API level 16-19: libunwind, unless in a signal handler. Then
+ * libcorkscrew.
  * Everything else: custom unwinding logic
- * @return the preferred unwind type
  */
-bsg_unwinder bsg_get_unwind_type(int apiLevel, bool is32bit);
+void bsg_set_unwind_types(int apiLevel, bool is32bit,
+                          bsg_unwinder *signal_type,
+                          bsg_unwinder *other_type);
 
 /**
  * Unwind the stack using the preferred tool/style. If info and a user
