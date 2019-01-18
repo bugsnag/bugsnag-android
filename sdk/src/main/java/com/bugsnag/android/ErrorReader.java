@@ -242,32 +242,36 @@ class ErrorReader {
         ArrayList<StackTraceElement> frames = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            String method = null;
-            String file = null;
-            int lineNumber = 0;
-            reader.beginObject();
-            while (reader.hasNext()) {
-                switch (reader.nextName()) {
-                    case "method":
-                        method = reader.nextString();
-                        break;
-                    case "file":
-                        file = reader.nextString();
-                        break;
-                    case "lineNumber":
-                        lineNumber = reader.nextInt();
-                        break;
-                    default:
-                        reader.skipValue();
-                        break;
-
-                }
-            }
-            reader.endObject();
-            frames.add(new StackTraceElement("", method, file, lineNumber));
+            frames.add(readStackFrame(reader));
         }
         reader.endArray();
         return frames.toArray(new StackTraceElement[frames.size()]);
+    }
+
+    private static StackTraceElement readStackFrame(JsonReader reader) throws IOException {
+        String method = null;
+        String file = null;
+        int lineNumber = 0;
+        reader.beginObject();
+        while (reader.hasNext()) {
+            switch (reader.nextName()) {
+                case "method":
+                    method = reader.nextString();
+                    break;
+                case "file":
+                    file = reader.nextString();
+                    break;
+                case "lineNumber":
+                    lineNumber = reader.nextInt();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+
+            }
+        }
+        reader.endObject();
+        return new StackTraceElement("", method, file, lineNumber);
     }
 
     /**
