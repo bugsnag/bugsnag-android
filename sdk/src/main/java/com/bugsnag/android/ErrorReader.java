@@ -123,47 +123,57 @@ class ErrorReader {
         Breadcrumbs crumbs = new Breadcrumbs(config);
         reader.beginArray();
         while (reader.hasNext()) {
-            String name = null;
-            String type = null;
-            Map<String, String> metadata = new HashMap<>();
-            Date captureDate = null;
-            reader.beginObject();
-            while (reader.hasNext()) {
-                switch (reader.nextName()) {
-                    case "name":
-                        name = reader.nextString();
-                        break;
-                    case "timestamp":
-                        try {
-                            captureDate = DateUtils.fromIso8601(reader.nextString());
-                        } catch (Exception ex) {
-                            throw new IOException("Failed to parse breadcrumb timestamp: ", ex);
-                        }
-                        break;
-                    case "type":
-                        type = reader.nextString().toUpperCase(Locale.US);
-                        break;
-                    case "metaData":
-                        reader.beginObject();
-                        while (reader.hasNext()) {
-                            metadata.put(reader.nextName(), reader.nextString());
-                        }
-                        reader.endObject();
-                        break;
-                    default:
-                        reader.skipValue();
-                        break;
-                }
-            }
+            Breadcrumb breadcrumb = readBreadcrumb(reader);
 
-            reader.endObject();
-            if (name != null && captureDate != null && type != null) {
-                crumbs.add(new Breadcrumb(name, BreadcrumbType.valueOf(type),
-                                          captureDate, metadata));
+            if (breadcrumb != null) {
+                crumbs.add(breadcrumb);
             }
         }
         reader.endArray();
         return crumbs;
+    }
+
+    private static Breadcrumb readBreadcrumb(JsonReader reader) throws IOException {
+        String name = null;
+        String type = null;
+        Map<String, String> metadata = new HashMap<>();
+        Date captureDate = null;
+        reader.beginObject();
+        while (reader.hasNext()) {
+            switch (reader.nextName()) {
+                case "name":
+                    name = reader.nextString();
+                    break;
+                case "timestamp":
+                    try {
+                        captureDate = DateUtils.fromIso8601(reader.nextString());
+                    } catch (Exception ex) {
+                        throw new IOException("Failed to parse breadcrumb timestamp: ", ex);
+                    }
+                    break;
+                case "type":
+                    type = reader.nextString().toUpperCase(Locale.US);
+                    break;
+                case "metaData":
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        metadata.put(reader.nextName(), reader.nextString());
+                    }
+                    reader.endObject();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+            }
+        }
+
+        reader.endObject();
+        if (name != null && captureDate != null && type != null) {
+            return new Breadcrumb(name, BreadcrumbType.valueOf(type),
+                                      captureDate, metadata);
+        } else {
+            return null;
+        }
     }
 
     private static Exceptions readExceptions(Configuration config, JsonReader reader)
