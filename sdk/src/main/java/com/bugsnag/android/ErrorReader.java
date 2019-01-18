@@ -389,41 +389,52 @@ class ErrorReader {
         List<CachedThread> threads = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            long id = 0;
-            String name = null;
-            String type = null;
-            boolean errorReportingThread = false;
-            StackTraceElement[] frames = null;
-            reader.beginObject();
-            while (reader.hasNext()) {
-                switch (reader.nextName()) {
-                    case "id":
-                        id = reader.nextLong();
-                        break;
-                    case "name":
-                        name = reader.nextString();
-                        break;
-                    case "type":
-                        type = reader.nextString();
-                        break;
-                    case "stacktrace":
-                        frames = readStackFrames(reader);
-                        break;
-                    case "errorReportingThread":
-                        errorReportingThread = reader.nextBoolean();
-                        break;
-                    default:
-                        reader.skipValue();
-                        break;
-                }
-            }
-            reader.endObject();
-            if (type != null && frames != null) {
-                threads.add(new CachedThread(config, id, name, type, errorReportingThread, frames));
+            CachedThread cachedThread = readThread(config, reader);
+
+            if (cachedThread != null) {
+                threads.add(cachedThread);
             }
         }
         reader.endArray();
         return new ThreadState(threads.toArray(new CachedThread[threads.size()]));
+    }
+
+    private static CachedThread readThread(Configuration config,
+                                           JsonReader reader) throws IOException {
+        long id = 0;
+        String name = null;
+        String type = null;
+        boolean errorReportingThread = false;
+        StackTraceElement[] frames = null;
+        reader.beginObject();
+        while (reader.hasNext()) {
+            switch (reader.nextName()) {
+                case "id":
+                    id = reader.nextLong();
+                    break;
+                case "name":
+                    name = reader.nextString();
+                    break;
+                case "type":
+                    type = reader.nextString();
+                    break;
+                case "stacktrace":
+                    frames = readStackFrames(reader);
+                    break;
+                case "errorReportingThread":
+                    errorReportingThread = reader.nextBoolean();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+            }
+        }
+        reader.endObject();
+        if (type != null && frames != null) {
+            return new CachedThread(config, id, name, type, errorReportingThread, frames);
+        } else {
+            return null;
+        }
     }
 
     private static Map<String, Object> jsonObjectToMap(JsonReader reader) throws IOException {
