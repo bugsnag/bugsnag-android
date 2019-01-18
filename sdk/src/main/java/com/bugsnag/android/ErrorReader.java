@@ -169,6 +169,34 @@ class ErrorReader {
     private static Exceptions readExceptions(Configuration config, JsonReader reader)
         throws IOException {
         reader.beginArray();
+
+        Throwable root = null;
+
+        while (reader.hasNext()) {
+            Throwable exc = readException(reader);
+
+            if (root == null) {
+                root = exc;
+            } else {
+                Throwable throwable = root;
+
+                while (throwable.getCause() != null) {
+                    throwable = throwable.getCause();
+                }
+                throwable.initCause(exc);
+            }
+        }
+
+        reader.endArray();
+        Exceptions ex = new Exceptions(config, root);
+
+        if (root != null) {
+            ex.setExceptionType(((BugsnagException) root).getType());
+        }
+        return ex;
+    }
+
+    private static BugsnagException readException(JsonReader reader) throws IOException {
         reader.beginObject();
         String errorClass = null;
         String message = null;
@@ -194,11 +222,11 @@ class ErrorReader {
             }
         }
         reader.endObject();
-        reader.endArray();
-        Exceptions ex = new Exceptions(config, new BugsnagException(errorClass, message, frames));
-        ex.setExceptionType(type);
-        return ex;
+        BugsnagException bugsnagException = new BugsnagException(errorClass, message, frames);
+        bugsnagException.setType(type);
+        return bugsnagException;
     }
+
 
     private static StackTraceElement[] readStackFrames(JsonReader reader) throws IOException {
         ArrayList<StackTraceElement> frames = new ArrayList<>();
