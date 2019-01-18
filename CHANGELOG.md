@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Fix cached error deserialisation where the Throwable has a cause
+  [#418](https://github.com/bugsnag/bugsnag-android/pull/418)
+
 * Cache result of device root check
   [#411](https://github.com/bugsnag/bugsnag-android/pull/411)
   
