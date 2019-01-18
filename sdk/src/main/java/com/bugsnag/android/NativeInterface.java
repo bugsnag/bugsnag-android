@@ -1,19 +1,22 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observer;
+import java.util.Queue;
 
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
  */
 public class NativeInterface {
+
     public enum MessageType {
         /**
          * Add a breadcrumb. The Message object should be the breadcrumb
@@ -114,10 +117,14 @@ public class NativeInterface {
      * Wrapper for messages sent to native observers
      */
     public static class Message {
+
+        @NonNull
         public final MessageType type;
+
+        @Nullable
         public final Object value;
 
-        public Message(MessageType type, Object value) {
+        public Message(@NonNull MessageType type, @Nullable Object value) {
             this.type = type;
             this.value = value;
         }
@@ -172,6 +179,7 @@ public class NativeInterface {
         client.sendNativeSetupNotification();
     }
 
+    @Nullable
     public static String getContext() {
         return getClient().getContext();
     }
@@ -180,6 +188,7 @@ public class NativeInterface {
         return Logger.getEnabled();
     }
 
+    @NonNull
     public static String getNativeReportPath() {
         return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
     }
@@ -225,9 +234,29 @@ public class NativeInterface {
         return deviceData;
     }
 
+    /**
+     * Retrieve the CPU ABI(s) for the current device
+     */
+    @NonNull
+    public static String[] getCpuAbi() {
+        return getClient().deviceData.cpuAbi;
+    }
+
+    /**
+     * Retrieves global metadata from the static Client instance as a Map
+     */
     @NonNull
     public static Map<String, Object> getMetaData() {
-        return getClient().getMetaData().store;
+        return new HashMap<>(getClient().getMetaData().store);
+    }
+
+    /**
+     * Retrieves breadcrumbs from the static Client instance as a Map
+     */
+    @NonNull
+    public static List<Breadcrumb> getBreadcrumbs() {
+        Queue<Breadcrumb> store = getClient().breadcrumbs.store;
+        return new ArrayList<>(store);
     }
 
     /**
@@ -238,9 +267,9 @@ public class NativeInterface {
      * @param name name
      */
     @SuppressWarnings("unused")
-    public static void setUser(final String id,
-                               final String email,
-                               final String name) {
+    public static void setUser(@Nullable final String id,
+                               @Nullable final String email,
+                               @Nullable final String name) {
         Client client = getClient();
         client.setUserId(id);
         client.setUserEmail(email);
@@ -256,12 +285,114 @@ public class NativeInterface {
     }
 
     /**
+     * Leaves a breadcrumb on the static client instance
+     */
+    public static void leaveBreadcrumb(@NonNull String name,
+                                       @NonNull String type,
+                                       @NonNull Map<String, String> metadata) {
+        String typeName = type.toUpperCase(Locale.US);
+        Map<String, String> map = metadata == null ? new HashMap<String, String>() : metadata;
+        getClient().leaveBreadcrumb(name, BreadcrumbType.valueOf(typeName), map);
+    }
+
+    /**
      * Add metadata to subsequent exception reports
      */
-    public static void addToTab(final String tab,
-                                final String key,
-                                final Object value) {
+    public static void addToTab(@NonNull final String tab,
+                                @NonNull final String key,
+                                @Nullable final Object value) {
         getClient().addToTab(tab, key, value);
+    }
+
+    /**
+     * Set the client report release stage
+     */
+    public static void setReleaseStage(@Nullable final String stage) {
+        getClient().setReleaseStage(stage);
+    }
+
+    /**
+     * Return the client report release stage
+     */
+    @Nullable
+    public static String getReleaseStage() {
+        return getClient().getConfig().getReleaseStage();
+    }
+
+    /**
+     * Return the client session endpoint
+     */
+    @NonNull
+    public static String getSessionEndpoint() {
+        return getClient().getConfig().getSessionEndpoint();
+    }
+
+    /**
+     * Return the client report endpoint
+     */
+    @NonNull
+    public static String getEndpoint() {
+        return getClient().getConfig().getEndpoint();
+    }
+
+    /**
+     * Set the client session endpoint
+     */
+    @SuppressWarnings("deprecation")
+    public static void setSessionEndpoint(@NonNull final String endpoint) {
+        getClient().getConfig().setSessionEndpoint(endpoint);
+    }
+
+    /**
+     * Set the client report endpoint
+     */
+    @SuppressWarnings("deprecation")
+    public static void setEndpoint(@NonNull final String endpoint) {
+        getClient().getConfig().setEndpoint(endpoint);
+    }
+
+    /**
+     * Set the client report context
+     */
+    public static void setContext(@Nullable final String context) {
+        getClient().setContext(context);
+    }
+
+    /**
+     * Set the client report app version
+     */
+    public static void setAppVersion(@NonNull final String version) {
+        getClient().setAppVersion(version);
+    }
+
+    /**
+     * Set the binary arch used in the application
+     */
+    public static void setBinaryArch(@NonNull final String binaryArch) {
+        getClient().setBinaryArch(binaryArch);
+    }
+
+    /**
+     * Return the client report app version
+     */
+    @NonNull
+    public static String getAppVersion() {
+        return getClient().getConfig().getAppVersion();
+    }
+
+    /**
+     * Return which release stages notify
+     */
+    @Nullable
+    public static String[] getNotifyReleaseStages() {
+        return getClient().getConfig().getNotifyReleaseStages();
+    }
+
+    /**
+     * Set which release stages notify
+     */
+    public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
+        getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
@@ -272,7 +403,7 @@ public class NativeInterface {
      *                     stages
      */
     @SuppressWarnings("unused")
-    public static void deliverReport(String releaseStage, String payload) {
+    public static void deliverReport(@Nullable String releaseStage, @NonNull String payload) {
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
@@ -292,7 +423,7 @@ public class NativeInterface {
      */
     public static void notify(@NonNull final String name,
                               @NonNull final String message,
-                              final Severity severity,
+                              @NonNull final Severity severity,
                               @NonNull final StackTraceElement[] stacktrace) {
 
         getClient().notify(name, message, stacktrace, new Callback() {

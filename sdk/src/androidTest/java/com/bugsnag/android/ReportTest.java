@@ -36,11 +36,6 @@ public class ReportTest {
         report = new Report("api-key", error);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testInMemoryError() throws JSONException, IOException {
         JSONObject reportJson = streamableToJson(report);

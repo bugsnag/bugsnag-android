@@ -35,7 +35,6 @@ public class ClientConfigTest {
 
     @After
     public void tearDown() throws Exception {
-        Async.cancelTasks();
         client.getOrientationListener().disable();
     }
 
@@ -48,7 +47,7 @@ public class ClientConfigTest {
     @Test
     public void testSetAutoCaptureSessions() throws Exception {
         client.setAutoCaptureSessions(true);
-        assertEquals(true, config.shouldAutoCaptureSessions());
+        assertEquals(true, config.getAutoCaptureSessions());
     }
 
     @Test

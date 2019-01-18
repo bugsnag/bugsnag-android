@@ -26,6 +26,7 @@ class AppData {
     private final Context appContext;
 
     private final String packageName;
+    private String binaryArch = null;
 
     @Nullable
     final String appName;
@@ -76,6 +77,7 @@ class AppData {
         map.put("durationInForeground", calculateDurationInForeground());
         map.put("inForeground", client.sessionTracker.isInForeground());
         map.put("packageName", packageName);
+        map.put("binaryArch", binaryArch);
         return map;
     }
 
@@ -88,6 +90,10 @@ class AppData {
         map.put("memoryUsage", getMemoryUsage());
         map.put("lowMemory", isLowMemory());
         return map;
+    }
+
+    void setBinaryArch(String binaryArch) {
+        this.binaryArch = binaryArch;
     }
 
     /**

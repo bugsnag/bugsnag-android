@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 
+import android.support.annotation.NonNull;
+
 /**
  * Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.
  * <p>
@@ -36,8 +38,8 @@ public interface Delivery {
      * @throws DeliveryFailureException when delivery is not successful and
      *                                  the report should be stored for future attempts.
      */
-    void deliver(SessionTrackingPayload payload,
-                 Configuration config) throws DeliveryFailureException;
+    void deliver(@NonNull SessionTrackingPayload payload,
+                 @NonNull Configuration config) throws DeliveryFailureException;
 
     /**
      * Posts an Error Report to the Bugsnag Error Reporting API.
@@ -58,6 +60,6 @@ public interface Delivery {
      * @throws DeliveryFailureException when delivery is not successful and
      *                                  the report should be stored for future attempts.
      */
-    void deliver(Report report,
-                 Configuration config) throws DeliveryFailureException;
+    void deliver(@NonNull Report report,
+                 @NonNull Configuration config) throws DeliveryFailureException;
 }

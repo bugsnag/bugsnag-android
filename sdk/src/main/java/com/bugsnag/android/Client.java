@@ -71,7 +71,7 @@ public class Client extends Observable implements Observer {
 
     final SessionStore sessionStore;
 
-    private final EventReceiver eventReceiver;
+    final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
     SharedPreferences sharedPrefs;
 
@@ -146,7 +146,7 @@ public class Client extends Observable implements Observer {
         // Set sensible defaults
         setProjectPackages(appContext.getPackageName());
 
-        String deviceId = getStringFromMap("id", deviceData.getDeviceData());
+        String deviceId = deviceData.getId();
 
         if (config.getPersistUserBetweenSessions()) {
             // Check to see if a user was stored in the SharedPreferences
@@ -234,7 +234,7 @@ public class Client extends Observable implements Observer {
         errorStore.flushOnLaunch();
     }
 
-    private class ConnectivityChangeReceiver extends BroadcastReceiver {
+    class ConnectivityChangeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager cm =
@@ -267,14 +267,14 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    private void enqueuePendingNativeReports() {
+    void enqueuePendingNativeReports() {
         setChanged();
         notifyObservers(new Message(
             NativeInterface.MessageType.DELIVER_PENDING, null));
     }
 
     @Override
-    public void update(Observable observable, Object arg) {
+    public void update(@NonNull Observable observable, @NonNull Object arg) {
         if (arg instanceof Message) {
             setChanged();
             super.notifyObservers(arg);
@@ -298,7 +298,7 @@ public class Client extends Observable implements Observer {
      * This is an integration point for custom libraries implementing automatic session capture
      * which differs from the default activity-based initialization.
      */
-    public void startFirstSession(Activity activity) {
+    public void startFirstSession(@NonNull Activity activity) {
         sessionTracker.startFirstSession(activity);
     }
 
@@ -308,7 +308,7 @@ public class Client extends Observable implements Observer {
      *
      * @param appVersion the app version to send
      */
-    public void setAppVersion(String appVersion) {
+    public void setAppVersion(@NonNull String appVersion) {
         config.setAppVersion(appVersion);
     }
 
@@ -317,7 +317,7 @@ public class Client extends Observable implements Observer {
      *
      * @return Context
      */
-    public String getContext() {
+    @Nullable public String getContext() {
         return config.getContext();
     }
 
@@ -328,7 +328,7 @@ public class Client extends Observable implements Observer {
      *
      * @param context set what was happening at the time of a crash
      */
-    public void setContext(String context) {
+    public void setContext(@Nullable String context) {
         config.setContext(context);
     }
 
@@ -343,7 +343,7 @@ public class Client extends Observable implements Observer {
      * instead.
      */
     @Deprecated
-    public void setEndpoint(String endpoint) {
+    public void setEndpoint(@NonNull String endpoint) {
         config.setEndpoint(endpoint);
     }
 
@@ -356,7 +356,7 @@ public class Client extends Observable implements Observer {
      * @param buildUuid the buildUuid.
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(final String buildUuid) {
+    public void setBuildUUID(@Nullable final String buildUuid) {
         config.setBuildUUID(buildUuid);
     }
 
@@ -374,7 +374,7 @@ public class Client extends Observable implements Observer {
      *
      * @param filters a list of keys to filter from metaData
      */
-    public void setFilters(String... filters) {
+    public void setFilters(@Nullable String... filters) {
         config.setFilters(filters);
     }
 
@@ -387,7 +387,7 @@ public class Client extends Observable implements Observer {
      *
      * @param ignoreClasses a list of exception classes to ignore
      */
-    public void setIgnoreClasses(String... ignoreClasses) {
+    public void setIgnoreClasses(@Nullable String... ignoreClasses) {
         config.setIgnoreClasses(ignoreClasses);
     }
 
@@ -402,7 +402,7 @@ public class Client extends Observable implements Observer {
      * @param notifyReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public void setNotifyReleaseStages(String... notifyReleaseStages) {
+    public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
         config.setNotifyReleaseStages(notifyReleaseStages);
     }
 
@@ -418,7 +418,7 @@ public class Client extends Observable implements Observer {
      *
      * @param projectPackages a list of package names
      */
-    public void setProjectPackages(String... projectPackages) {
+    public void setProjectPackages(@Nullable String... projectPackages) {
         config.setProjectPackages(projectPackages);
     }
 
@@ -430,7 +430,7 @@ public class Client extends Observable implements Observer {
      * @param releaseStage the release stage of the app
      * @see #setNotifyReleaseStages
      */
-    public void setReleaseStage(String releaseStage) {
+    public void setReleaseStage(@Nullable String releaseStage) {
         config.setReleaseStage(releaseStage);
         Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
@@ -474,7 +474,7 @@ public class Client extends Observable implements Observer {
      * @param email the email address of the current user
      * @param name  the name of the current user
      */
-    public void setUser(String id, String email, String name) {
+    public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         setUserId(id);
         setUserEmail(email);
         setUserName(name);
@@ -533,7 +533,7 @@ public class Client extends Observable implements Observer {
      *
      * @param id a unique identifier of the current user
      */
-    public void setUserId(String id) {
+    public void setUserId(@Nullable String id) {
         user.setId(id);
 
         if (config.getPersistUserBetweenSessions()) {
@@ -547,7 +547,7 @@ public class Client extends Observable implements Observer {
      *
      * @param email the email address of the current user
      */
-    public void setUserEmail(String email) {
+    public void setUserEmail(@Nullable String email) {
         user.setEmail(email);
 
         if (config.getPersistUserBetweenSessions()) {
@@ -561,7 +561,7 @@ public class Client extends Observable implements Observer {
      *
      * @param name the name of the current user
      */
-    public void setUserName(String name) {
+    public void setUserName(@Nullable String name) {
         user.setName(name);
 
         if (config.getPersistUserBetweenSessions()) {
@@ -623,7 +623,7 @@ public class Client extends Observable implements Observer {
      * @param beforeNotify a callback to run before sending errors to Bugsnag
      * @see BeforeNotify
      */
-    public void beforeNotify(BeforeNotify beforeNotify) {
+    public void beforeNotify(@NonNull BeforeNotify beforeNotify) {
         config.beforeNotify(beforeNotify);
     }
 
@@ -645,7 +645,7 @@ public class Client extends Observable implements Observer {
      * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
      * @see BeforeRecordBreadcrumb
      */
-    public void beforeRecordBreadcrumb(BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
+    public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
         config.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
     }
 
@@ -669,7 +669,7 @@ public class Client extends Observable implements Observer {
      * @param callback  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exception, Callback callback) {
+    public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
             Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
@@ -689,7 +689,7 @@ public class Client extends Observable implements Observer {
     public void notify(@NonNull String name,
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
-                       Callback callback) {
+                       @Nullable Callback callback) {
         Error error = new Error.Builder(config, name, message, stacktrace,
             sessionTracker.getCurrentSession(), Thread.currentThread())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
@@ -704,7 +704,7 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      */
-    public void notify(@NonNull Throwable exception, Severity severity) {
+    public void notify(@NonNull Throwable exception, @NonNull Severity severity) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
             Thread.currentThread(), false)
             .severity(severity)
@@ -740,7 +740,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
      */
     @Deprecated
-    public void notify(@NonNull Throwable exception, Severity severity,
+    public void notify(@NonNull Throwable exception, @NonNull Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
             Thread.currentThread(), false)
@@ -764,7 +764,7 @@ public class Client extends Observable implements Observer {
      */
     @Deprecated
     public void notify(@NonNull String name, @NonNull String message,
-                       @NonNull StackTraceElement[] stacktrace, Severity severity,
+                       @NonNull StackTraceElement[] stacktrace, @NonNull Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
             stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
@@ -790,9 +790,9 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notify(@NonNull String name,
                        @NonNull String message,
-                       String context,
+                       @Nullable String context,
                        @NonNull StackTraceElement[] stacktrace,
-                       Severity severity,
+                       @NonNull Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
             stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
@@ -902,7 +902,9 @@ public class Client extends Observable implements Observer {
             default:
                 break;
         }
+    }
 
+    private void leaveErrorBreadcrumb(@NonNull Error error) {
         // Add a breadcrumb for this error occurring
         String exceptionMessage = error.getExceptionMessage();
         Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
@@ -929,7 +931,7 @@ public class Client extends Observable implements Observer {
      * @param callback  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notifyBlocking(@NonNull Throwable exception, Callback callback) {
+    public void notifyBlocking(@NonNull Throwable exception, @Nullable Callback callback) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
             Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
@@ -949,7 +951,7 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull String name,
                                @NonNull String message,
                                @NonNull StackTraceElement[] stacktrace,
-                               Callback callback) {
+                               @Nullable Callback callback) {
         Error error = new Error.Builder(config, name, message,
             stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
@@ -985,7 +987,7 @@ public class Client extends Observable implements Observer {
      * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send and modify error reports
      */
     @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception, Severity severity,
+    public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
             Thread.currentThread(), false)
@@ -1011,7 +1013,7 @@ public class Client extends Observable implements Observer {
     public void notifyBlocking(@NonNull String name,
                                @NonNull String message,
                                @NonNull StackTraceElement[] stacktrace,
-                               Severity severity,
+                               @NonNull Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
             stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
@@ -1037,9 +1039,9 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notifyBlocking(@NonNull String name,
                                @NonNull String message,
-                               String context,
+                               @Nullable String context,
                                @NonNull StackTraceElement[] stacktrace,
-                               Severity severity,
+                               @NonNull Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
             stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
@@ -1057,7 +1059,7 @@ public class Client extends Observable implements Observer {
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      */
-    public void notifyBlocking(@NonNull Throwable exception, Severity severity) {
+    public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity) {
         Error error = new Error.Builder(config, exception,
             sessionTracker.getCurrentSession(), Thread.currentThread(), false)
             .severity(severity)
@@ -1074,9 +1076,9 @@ public class Client extends Observable implements Observer {
      * @param callback a callback when notifying
      */
     public void internalClientNotify(@NonNull Throwable exception,
-                              Map<String, Object> clientData,
+                              @NonNull Map<String, Object> clientData,
                               boolean blocking,
-                              Callback callback) {
+                              @Nullable Callback callback) {
         String severity = getKeyFromClientData(clientData, "severity", true);
         String severityReason =
             getKeyFromClientData(clientData, "severityReason", true);
@@ -1124,7 +1126,7 @@ public class Client extends Observable implements Observer {
      * @param key   the name of the diagnostic information
      * @param value the contents of the diagnostic information
      */
-    public void addToTab(String tab, String key, Object value) {
+    public void addToTab(@NonNull String tab, @NonNull String key, @Nullable Object value) {
         config.getMetaData().addToTab(tab, key, value);
     }
 
@@ -1133,7 +1135,7 @@ public class Client extends Observable implements Observer {
      *
      * @param tabName the dashboard tab to remove diagnostic data from
      */
-    public void clearTab(String tabName) {
+    public void clearTab(@NonNull String tabName) {
         config.getMetaData().clearTab(tabName);
     }
 
@@ -1226,10 +1228,12 @@ public class Client extends Observable implements Observer {
         try {
             config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
+            leaveErrorBreadcrumb(error);
         } catch (DeliveryFailureException exception) {
             Logger.warn("Could not send error(s) to Bugsnag,"
                 + " saving to disk to send later", exception);
             errorStore.write(error);
+            leaveErrorBreadcrumb(error);
         } catch (Exception exception) {
             Logger.warn("Problem sending error to Bugsnag", exception);
         }
@@ -1372,6 +1376,10 @@ public class Client extends Observable implements Observer {
      */
     public long getLaunchTimeMs() {
         return AppData.getDurationMs();
+    }
+
+    void setBinaryArch(String binaryArch) {
+        getAppData().setBinaryArch(binaryArch);
     }
 
 }

@@ -44,7 +44,6 @@ public class AppDataTest {
 
     @After
     public void tearDown() throws Exception {
-        Async.cancelTasks();
         client.getOrientationListener().disable();
     }
 

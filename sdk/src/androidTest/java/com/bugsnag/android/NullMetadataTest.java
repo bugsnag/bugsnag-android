@@ -35,11 +35,6 @@ public class NullMetadataTest {
         throwable = new RuntimeException("Test");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testErrorDefaultMetaData() throws Exception {
         Error error = new Error.Builder(config, throwable, null,

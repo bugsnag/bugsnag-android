@@ -90,11 +90,7 @@
       "dpi": 160,
       "screenDensity": 1,
       "screenResolution": "480x320",
-      "time": "2018-10-19T18:56:13Z",
-      "cpuAbi": [
-        "armeabi-v7a",
-        "armeabi"
-      ]
+      "time": "2018-10-19T18:56:13Z"
     },
     "customer": {
       "name": "Acme Co",
@@ -109,7 +105,11 @@
     "manufacturer": "Hudan",
     "model": "sdk_phone_armv7",
     "orientation": "portrait",
-    "totalMemory": 134217728
+    "totalMemory": 134217728,
+    "cpuAbi": [
+      "armeabi-v7a",
+      "armeabi"
+    ]
   },
   "session": {
     "id": "225bcada-e0c8-15a0-0bba-0e3c7f43c13f",

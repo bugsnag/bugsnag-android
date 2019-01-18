@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 /**
  * This should be thrown if delivery of a request was not successful and you wish to try again
  * later. The notifier will cache the payload and initiate delivery at a future time.
@@ -10,11 +13,11 @@ package com.bugsnag.android;
 public class DeliveryFailureException extends Exception {
     private static final long serialVersionUID = 1501477209400426470L;
 
-    public DeliveryFailureException(String message) {
+    public DeliveryFailureException(@NonNull String message) {
         super(message);
     }
 
-    public DeliveryFailureException(String message, Throwable cause) {
+    public DeliveryFailureException(@NonNull String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 }

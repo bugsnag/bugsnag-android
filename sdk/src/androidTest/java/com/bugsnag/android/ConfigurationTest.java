@@ -28,11 +28,6 @@ public class ConfigurationTest {
         config = new Configuration("api-key");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testEndpoints() {
         String notify = "https://notify.myexample.com";
@@ -58,15 +53,15 @@ public class ConfigurationTest {
     public void testInvalidSessionEndpoint() {
         //noinspection ConstantConditions
         config.setEndpoints("http://example.com", null);
-        assertFalse(config.shouldAutoCaptureSessions());
+        assertFalse(config.getAutoCaptureSessions());
         assertNull(config.getSessionEndpoint());
 
         config.setEndpoints("http://example.com", "");
-        assertFalse(config.shouldAutoCaptureSessions());
+        assertFalse(config.getAutoCaptureSessions());
         assertNull(config.getSessionEndpoint());
 
         config.setEndpoints("http://example.com", "http://sessions.example.com");
-        assertFalse(config.shouldAutoCaptureSessions());
+        assertFalse(config.getAutoCaptureSessions());
         assertEquals("http://sessions.example.com", config.getSessionEndpoint());
     }
 
@@ -74,7 +69,7 @@ public class ConfigurationTest {
     public void testAutoCaptureOverride() {
         config.setAutoCaptureSessions(false);
         config.setEndpoints("http://example.com", "http://example.com");
-        assertFalse(config.shouldAutoCaptureSessions());
+        assertFalse(config.getAutoCaptureSessions());
     }
 
     @SuppressWarnings("deprecation")
@@ -163,9 +158,9 @@ public class ConfigurationTest {
 
     @Test
     public void testAutoCaptureSessions() throws Exception {
-        assertTrue(config.shouldAutoCaptureSessions());
+        assertTrue(config.getAutoCaptureSessions());
         config.setAutoCaptureSessions(false);
-        assertFalse(config.shouldAutoCaptureSessions());
+        assertFalse(config.getAutoCaptureSessions());
     }
 
     @Test

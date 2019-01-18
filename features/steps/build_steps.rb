@@ -139,7 +139,7 @@ Then("the report in request {int} contains the required fields") do |index|
     And the payload field "events.0.metaData.device.time" is not null for request #{index}
     And the payload field "events.0.severity" is not null for request #{index}
     And the payload field "events.0.severityReason.type" is not null for request #{index}
-    And the payload field "events.0.metaData.device.cpuAbi" is a non-empty array for request #{index}
+    And the payload field "events.0.device.cpuAbi" is a non-empty array for request #{index}
   }
 end
 
@@ -174,4 +174,9 @@ Then("the stacktrace in request {int} contains native frame information") do |re
     assert_not_nil(frame['method'], "The method of frame #{index} is nil")
     assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
   end
+end
+
+Then(/^the payload field "(.+)" is greater than (\d+)(?: for request (\d+))?$/) do |field_path, int_value, request_index|
+  observed_value = read_key_path(find_request(request_index)[:body], field_path)
+  assert(observed_value > int_value)
 end

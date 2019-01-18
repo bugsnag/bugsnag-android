@@ -33,11 +33,6 @@ public class DeviceDataSummaryTest {
         this.deviceData = deviceData.getDeviceDataSummary();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testManufacturer() {
         assertNotNull(deviceData.get("manufacturer"));
@@ -66,6 +61,7 @@ public class DeviceDataSummaryTest {
         assertNotNull(deviceDataJson.getString("osVersion"));
         assertNotNull(deviceDataJson.getString("manufacturer"));
         assertNotNull(deviceDataJson.getString("model"));
+        assertNotNull(deviceDataJson.get("cpuAbi"));
         assertTrue(deviceDataJson.has("jailbroken"));
     }
 

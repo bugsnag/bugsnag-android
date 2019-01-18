@@ -44,11 +44,6 @@ public class ErrorTest {
         error = new Error.Builder(config, exception, null, Thread.currentThread(), false).build();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testShouldIgnoreClass() {
         config.setIgnoreClasses(new String[]{"java.io.IOException"});

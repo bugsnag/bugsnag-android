@@ -52,6 +52,7 @@ class DeviceData {
     private final Resources resources;
     private final DisplayMetrics displayMetrics;
     private final String id;
+    private final boolean rooted;
 
     @Nullable
     Float screenDensity;
@@ -86,15 +87,17 @@ class DeviceData {
         cpuAbi = getCpuAbi();
         emulator = isEmulator();
         id = retrieveUniqueInstallId();
+        rooted = isRooted();
     }
 
     Map<String, Object> getDeviceDataSummary() {
         Map<String, Object> map = new HashMap<>();
         map.put("manufacturer", Build.MANUFACTURER);
         map.put("model", Build.MODEL);
-        map.put("jailbroken", isRooted());
+        map.put("jailbroken", rooted);
         map.put("osName", "android");
         map.put("osVersion", Build.VERSION.RELEASE);
+        map.put("cpuAbi", cpuAbi);
         return map;
     }
 
@@ -123,8 +126,11 @@ class DeviceData {
         map.put("dpi", dpi);
         map.put("emulator", emulator);
         map.put("screenResolution", screenResolution);
-        map.put("cpuAbi", cpuAbi);
         return map;
+    }
+
+    String getId() {
+        return id;
     }
 
     /**

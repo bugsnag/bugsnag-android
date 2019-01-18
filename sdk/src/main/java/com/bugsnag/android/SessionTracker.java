@@ -30,16 +30,17 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
     private final Collection<String>
         foregroundActivities = new ConcurrentLinkedQueue<>();
-    private final Configuration configuration;
     private final long timeoutMs;
-    private final Client client;
-    private final SessionStore sessionStore;
+
+    final Configuration configuration;
+    final Client client;
+    final SessionStore sessionStore;
 
     // This most recent time an Activity was stopped.
-    private AtomicLong activityLastStoppedAtMs = new AtomicLong(0);
+    private AtomicLong lastExitedForegroundMs = new AtomicLong(0);
 
     // The first Activity in this 'session' was started at this time.
-    private AtomicLong activityFirstStartedAtMs = new AtomicLong(0);
+    private AtomicLong lastEnteredForegroundMs = new AtomicLong(0);
     private AtomicReference<Session> currentSession = new AtomicReference<>();
     private Semaphore flushingRequest = new Semaphore(1);
 
@@ -58,7 +59,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     /**
      * Starts a new session with the given date and user.
      * <p>
-     * A session will only be created if {@link Configuration#shouldAutoCaptureSessions()} returns
+     * A session will only be created if {@link Configuration#getAutoCaptureSessions()} returns
      * true.
      *
      * @param date the session start date
@@ -87,7 +88,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
 
         if (notifyForRelease
-            && (configuration.shouldAutoCaptureSessions() || !session.isAutoCaptured())
+            && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
             try {
                 final String endpoint = configuration.getSessionEndpoint();
@@ -261,7 +262,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         Session session = currentSession.get();
         if (session == null) {
             long nowMs = System.currentTimeMillis();
-            activityFirstStartedAtMs.set(nowMs);
+            lastEnteredForegroundMs.set(nowMs);
             startNewSession(new Date(nowMs), client.getUser(), true);
             foregroundActivities.add(getActivityName(activity));
         }
@@ -282,20 +283,24 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      */
     void updateForegroundTracker(String activityName, boolean activityStarting, long nowMs) {
         if (activityStarting) {
-            long noActivityRunningForMs = nowMs - activityLastStoppedAtMs.get();
+            long noActivityRunningForMs = nowMs - lastExitedForegroundMs.get();
 
             //FUTURE:SM Race condition between isEmpty and put
-            if (foregroundActivities.isEmpty()
-                && noActivityRunningForMs >= timeoutMs
-                && configuration.shouldAutoCaptureSessions()) {
+            if (foregroundActivities.isEmpty()) {
+                lastEnteredForegroundMs.set(nowMs);
 
-                activityFirstStartedAtMs.set(nowMs);
-                startNewSession(new Date(nowMs), client.getUser(), true);
+                if (noActivityRunningForMs >= timeoutMs
+                    && configuration.getAutoCaptureSessions()) {
+                    startNewSession(new Date(nowMs), client.getUser(), true);
+                }
             }
             foregroundActivities.add(activityName);
         } else {
             foregroundActivities.remove(activityName);
-            activityLastStoppedAtMs.set(nowMs);
+
+            if (foregroundActivities.isEmpty()) {
+                lastExitedForegroundMs.set(nowMs);
+            }
         }
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -310,7 +315,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     //FUTURE:SM This shouldnt be here
     long getDurationInForegroundMs(long nowMs) {
         long durationMs = 0;
-        long sessionStartTimeMs = activityFirstStartedAtMs.get();
+        long sessionStartTimeMs = lastEnteredForegroundMs.get();
 
         if (isInForeground() && sessionStartTimeMs != 0) {
             durationMs = nowMs - sessionStartTimeMs;

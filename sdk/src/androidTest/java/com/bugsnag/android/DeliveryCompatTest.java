@@ -30,11 +30,6 @@ public class DeliveryCompatTest {
         deliveryCompat = new DeliveryCompat();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @SuppressWarnings("deprecation")
     @Test
     public void deliverReport() throws Exception {

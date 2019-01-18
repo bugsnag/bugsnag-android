@@ -3,7 +3,7 @@
 [![Build status](https://travis-ci.org/bugsnag/bugsnag-android.svg?branch=master)](https://travis-ci.org/bugsnag/bugsnag-android)
 [![Coverage Status](https://coveralls.io/repos/github/bugsnag/bugsnag-android/badge.svg?branch=master)](https://coveralls.io/github/bugsnag/bugsnag-android?branch=master)
 <!-- Auto-generated line below: -->
-![Method count and size](https://img.shields.io/badge/Methods%20and%20size-88%20classes%20|%20666%20methods%20|%20348%20fields%20|%20128%20KB-e91e63.svg)
+![Method count and size](https://img.shields.io/badge/Methods%20and%20size-88%20classes%20|%20678%20methods%20|%20350%20fields%20|%20132%20KB-e91e63.svg)
 
 Get comprehensive [Android crash reports](https://www.bugsnag.com/platforms/android/) to quickly debug errors.
 
