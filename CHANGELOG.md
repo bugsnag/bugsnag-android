@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Refactor error report deserialisation
+  [#419](https://github.com/bugsnag/bugsnag-android/pull/419)
+
 * Cache result of device root check
   [#411](https://github.com/bugsnag/bugsnag-android/pull/411)
   
