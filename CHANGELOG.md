@@ -7,6 +7,9 @@
 * Fix cached error deserialisation where the Throwable has a cause
   [#418](https://github.com/bugsnag/bugsnag-android/pull/418)
   
+* Refactor error report deserialisation
+  [#419](https://github.com/bugsnag/bugsnag-android/pull/419)
+
 * Fix unlikely initialization failure if a device orientation event listener
   cannot be enabled
 

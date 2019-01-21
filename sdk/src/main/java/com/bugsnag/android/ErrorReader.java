@@ -123,47 +123,57 @@ class ErrorReader {
         Breadcrumbs crumbs = new Breadcrumbs(config);
         reader.beginArray();
         while (reader.hasNext()) {
-            String name = null;
-            String type = null;
-            Map<String, String> metadata = new HashMap<>();
-            Date captureDate = null;
-            reader.beginObject();
-            while (reader.hasNext()) {
-                switch (reader.nextName()) {
-                    case "name":
-                        name = reader.nextString();
-                        break;
-                    case "timestamp":
-                        try {
-                            captureDate = DateUtils.fromIso8601(reader.nextString());
-                        } catch (Exception ex) {
-                            throw new IOException("Failed to parse breadcrumb timestamp: ", ex);
-                        }
-                        break;
-                    case "type":
-                        type = reader.nextString().toUpperCase(Locale.US);
-                        break;
-                    case "metaData":
-                        reader.beginObject();
-                        while (reader.hasNext()) {
-                            metadata.put(reader.nextName(), reader.nextString());
-                        }
-                        reader.endObject();
-                        break;
-                    default:
-                        reader.skipValue();
-                        break;
-                }
-            }
+            Breadcrumb breadcrumb = readBreadcrumb(reader);
 
-            reader.endObject();
-            if (name != null && captureDate != null && type != null) {
-                crumbs.add(new Breadcrumb(name, BreadcrumbType.valueOf(type),
-                                          captureDate, metadata));
+            if (breadcrumb != null) {
+                crumbs.add(breadcrumb);
             }
         }
         reader.endArray();
         return crumbs;
+    }
+
+    private static Breadcrumb readBreadcrumb(JsonReader reader) throws IOException {
+        String name = null;
+        String type = null;
+        Map<String, String> metadata = new HashMap<>();
+        Date captureDate = null;
+        reader.beginObject();
+        while (reader.hasNext()) {
+            switch (reader.nextName()) {
+                case "name":
+                    name = reader.nextString();
+                    break;
+                case "timestamp":
+                    try {
+                        captureDate = DateUtils.fromIso8601(reader.nextString());
+                    } catch (Exception ex) {
+                        throw new IOException("Failed to parse breadcrumb timestamp: ", ex);
+                    }
+                    break;
+                case "type":
+                    type = reader.nextString().toUpperCase(Locale.US);
+                    break;
+                case "metaData":
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        metadata.put(reader.nextName(), reader.nextString());
+                    }
+                    reader.endObject();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+            }
+        }
+
+        reader.endObject();
+        if (name != null && captureDate != null && type != null) {
+            return new Breadcrumb(name, BreadcrumbType.valueOf(type),
+                                      captureDate, metadata);
+        } else {
+            return null;
+        }
     }
 
     private static Exceptions readExceptions(Configuration config, JsonReader reader)
@@ -225,32 +235,36 @@ class ErrorReader {
         ArrayList<StackTraceElement> frames = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            String method = null;
-            String file = null;
-            int lineNumber = 0;
-            reader.beginObject();
-            while (reader.hasNext()) {
-                switch (reader.nextName()) {
-                    case "method":
-                        method = reader.nextString();
-                        break;
-                    case "file":
-                        file = reader.nextString();
-                        break;
-                    case "lineNumber":
-                        lineNumber = reader.nextInt();
-                        break;
-                    default:
-                        reader.skipValue();
-                        break;
-
-                }
-            }
-            reader.endObject();
-            frames.add(new StackTraceElement("", method, file, lineNumber));
+            frames.add(readStackFrame(reader));
         }
         reader.endArray();
         return frames.toArray(new StackTraceElement[frames.size()]);
+    }
+
+    private static StackTraceElement readStackFrame(JsonReader reader) throws IOException {
+        String method = null;
+        String file = null;
+        int lineNumber = 0;
+        reader.beginObject();
+        while (reader.hasNext()) {
+            switch (reader.nextName()) {
+                case "method":
+                    method = reader.nextString();
+                    break;
+                case "file":
+                    file = reader.nextString();
+                    break;
+                case "lineNumber":
+                    lineNumber = reader.nextInt();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+
+            }
+        }
+        reader.endObject();
+        return new StackTraceElement("", method, file, lineNumber);
     }
 
     /**
@@ -368,41 +382,52 @@ class ErrorReader {
         List<CachedThread> threads = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            long id = 0;
-            String name = null;
-            String type = null;
-            boolean errorReportingThread = false;
-            StackTraceElement[] frames = null;
-            reader.beginObject();
-            while (reader.hasNext()) {
-                switch (reader.nextName()) {
-                    case "id":
-                        id = reader.nextLong();
-                        break;
-                    case "name":
-                        name = reader.nextString();
-                        break;
-                    case "type":
-                        type = reader.nextString();
-                        break;
-                    case "stacktrace":
-                        frames = readStackFrames(reader);
-                        break;
-                    case "errorReportingThread":
-                        errorReportingThread = reader.nextBoolean();
-                        break;
-                    default:
-                        reader.skipValue();
-                        break;
-                }
-            }
-            reader.endObject();
-            if (type != null && frames != null) {
-                threads.add(new CachedThread(config, id, name, type, errorReportingThread, frames));
+            CachedThread cachedThread = readThread(config, reader);
+
+            if (cachedThread != null) {
+                threads.add(cachedThread);
             }
         }
         reader.endArray();
         return new ThreadState(threads.toArray(new CachedThread[threads.size()]));
+    }
+
+    private static CachedThread readThread(Configuration config,
+                                           JsonReader reader) throws IOException {
+        long id = 0;
+        String name = null;
+        String type = null;
+        boolean errorReportingThread = false;
+        StackTraceElement[] frames = null;
+        reader.beginObject();
+        while (reader.hasNext()) {
+            switch (reader.nextName()) {
+                case "id":
+                    id = reader.nextLong();
+                    break;
+                case "name":
+                    name = reader.nextString();
+                    break;
+                case "type":
+                    type = reader.nextString();
+                    break;
+                case "stacktrace":
+                    frames = readStackFrames(reader);
+                    break;
+                case "errorReportingThread":
+                    errorReportingThread = reader.nextBoolean();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+            }
+        }
+        reader.endObject();
+        if (type != null && frames != null) {
+            return new CachedThread(config, id, name, type, errorReportingThread, frames);
+        } else {
+            return null;
+        }
     }
 
     private static Map<String, Object> jsonObjectToMap(JsonReader reader) throws IOException {
