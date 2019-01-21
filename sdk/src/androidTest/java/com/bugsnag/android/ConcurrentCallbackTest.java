@@ -26,6 +26,11 @@ public class ConcurrentCallbackTest {
         client = BugsnagTestUtils.generateClient();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        client.getOrientationListener().disable();
+    }
+
     @Test
     public void testClientNotifyModification() throws Exception {
         final Collection<BeforeNotify> beforeNotifyTasks = client.config.getBeforeNotifyTasks();

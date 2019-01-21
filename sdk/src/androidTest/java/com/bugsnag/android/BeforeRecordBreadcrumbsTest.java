@@ -34,6 +34,11 @@ public class BeforeRecordBreadcrumbsTest {
         assertEquals(0, client.breadcrumbs.store.size());
     }
 
+    @After
+    public void tearDown() throws Exception {
+        client.getOrientationListener().disable();
+    }
+
     @Test
     public void noCallback() throws Exception {
         client.leaveBreadcrumb("Hello");
