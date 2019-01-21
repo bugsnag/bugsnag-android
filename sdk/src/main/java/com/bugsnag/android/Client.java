@@ -224,7 +224,11 @@ public class Client extends Observable implements Observer {
                     NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
             }
         };
-        orientationListener.enable();
+        try {
+            orientationListener.enable();
+        } catch (IllegalStateException ex) {
+            Logger.warn("Failed to set up orientation tracking: " + ex);
+        }
 
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
@@ -1267,6 +1271,10 @@ public class Client extends Observable implements Observer {
 
         // By default, allow the error to be sent if there were no objections
         return true;
+    }
+
+    OrientationEventListener getOrientationListener() {
+        return orientationListener; // this only exists for tests
     }
 
     private boolean runBeforeNotifyTasks(Error error) {

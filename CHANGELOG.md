@@ -6,6 +6,9 @@
 
 * Fix cached error deserialisation where the Throwable has a cause
   [#418](https://github.com/bugsnag/bugsnag-android/pull/418)
+  
+* Fix unlikely initialization failure if a device orientation event listener
+  cannot be enabled
 
 * Cache result of device root check
   [#411](https://github.com/bugsnag/bugsnag-android/pull/411)
@@ -47,6 +50,7 @@
 
 * Handle null values in MetaData.mergeMaps, preventing potential NPE
  [#386](https://github.com/bugsnag/bugsnag-android/pull/386)
+
 
 ## 4.9.2 (2018-11-07)
 

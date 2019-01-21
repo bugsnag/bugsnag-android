@@ -34,6 +34,11 @@ public class ClientNotifyTest {
         client.setErrorReportApiClient(apiClient);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        client.getOrientationListener().disable();
+    }
+
     @Test
     public void testNotifyBlockingDefaultSeverity() {
         client.notifyBlocking(new RuntimeException("Testing"));

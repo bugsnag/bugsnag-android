@@ -33,6 +33,11 @@ public class ClientConfigTest {
         client = new Client(context, config);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        client.getOrientationListener().disable();
+    }
+
     @Test
     public void testSetReleaseStage() throws Exception {
         client.setReleaseStage("beta");

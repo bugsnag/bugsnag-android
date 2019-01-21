@@ -26,6 +26,11 @@ public class ErrorReportApiClientTest {
         Bugsnag.init(InstrumentationRegistry.getContext(), "123");
     }
 
+    @After
+    public void tearDown() throws Exception {
+        Bugsnag.getClient().getOrientationListener().disable();
+    }
+
     @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void testApiClientNullValidation() {

@@ -36,6 +36,11 @@ public class MetaDataTest {
         client = BugsnagTestUtils.generateClient();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        client.getOrientationListener().disable();
+    }
+
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
         MetaData metaData = new MetaData();

@@ -42,6 +42,11 @@ public class AppDataTest {
         appData = new AppData(client).getAppData();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        client.getOrientationListener().disable();
+    }
+
     @Test
     public void testPackageName() {
         assertEquals("com.bugsnag.android.test", appData.get("packageName"));
