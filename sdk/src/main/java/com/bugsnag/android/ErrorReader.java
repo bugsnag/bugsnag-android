@@ -170,28 +170,21 @@ class ErrorReader {
         throws IOException {
         reader.beginArray();
 
-        Throwable root = null;
+        BugsnagException root = readException(reader);
+        Throwable ref = root; // the latest throwable pulled from the reader
 
         while (reader.hasNext()) {
             Throwable exc = readException(reader);
-
-            if (root == null) {
-                root = exc;
-            } else {
-                Throwable throwable = root;
-
-                while (throwable.getCause() != null) {
-                    throwable = throwable.getCause();
-                }
-                throwable.initCause(exc);
-            }
+            // initialise this throwable as the cause of the previous throwable
+            ref.initCause(exc);
+            ref = exc;
         }
 
         reader.endArray();
         Exceptions ex = new Exceptions(config, root);
 
         if (root != null) {
-            ex.setExceptionType(((BugsnagException) root).getType());
+            ex.setExceptionType(root.getType());
         }
         return ex;
     }
