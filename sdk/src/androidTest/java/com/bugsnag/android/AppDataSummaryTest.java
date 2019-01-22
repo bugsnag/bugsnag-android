@@ -36,11 +36,6 @@ public class AppDataSummaryTest {
         this.appData = appData.getAppDataSummary();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testVersionCode() {
         assertEquals(1, appData.get("versionCode"));

@@ -38,7 +38,7 @@ public class MetaDataTest {
 
     @After
     public void tearDown() throws Exception {
-        Async.cancelTasks();
+        client.getOrientationListener().disable();
     }
 
     @Test

@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "handlers/signal_handler.h"
+#include "handlers/cpp_handler.h"
 #include "metadata.h"
 #include "report.h"
 #include "utils/serializer.h"
@@ -45,7 +46,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
     jint _api_level, jboolean is32bit) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
-  bugsnag_env->unwind_style = bsg_get_unwind_type((int)_api_level, (bool)is32bit);
+  bsg_set_unwind_types((int)_api_level, (bool)is32bit,
+                       &bugsnag_env->signal_unwind_style,
+                       &bugsnag_env->unwind_style);
   bugsnag_env->report_header.big_endian =
       htonl(47) == 47; // potentially too clever, see man 3 htonl
   bugsnag_env->report_header.version = BUGSNAG_REPORT_VERSION;
@@ -54,6 +57,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
 
   if ((bool)auto_notify) {
     bsg_handler_install_signal(bugsnag_env);
+    bsg_handler_install_cpp(bugsnag_env);
   }
 
   // populate metadata from Java layer

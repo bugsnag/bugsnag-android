@@ -41,10 +41,14 @@ public class UniqueBeforeNotifyTest {
         client = BugsnagTestUtils.generateClient();
     }
 
+    /**
+     * Tears down the test.
+     * lol why is this comment required
+     */
     @After
     public void tearDown() throws Exception {
         callbackCount = 0;
-        Async.cancelTasks();
+        client.getOrientationListener().disable();
     }
 
     @Test

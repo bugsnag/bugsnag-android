@@ -75,6 +75,12 @@ installed to `~/.android-sdk`.
 
 ## Building the Library
 
+Be sure to clone the repository submodules:
+
+```shell
+git submodule update --init --recursive
+```
+
 You can build new `.aar` files as follows:
 
 ```shell
@@ -233,7 +239,7 @@ If you are a project maintainer, you can build and release a new version of
 - Merge any remaining PRs to master, ensuring the commit message matches the release tag (e.g. v4.0.0)
 - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
 - [ ] Inspected the updated CHANGELOG, README, and version files to ensure they are correct
-- [ ] Release to GitHub, Maven Central, and Bintray by running `git tag vX.X.X && git push origin --tags && ./gradlew assembleRelease publish`
+- [ ] Release to GitHub, Maven Central, and Bintray by running `git tag vX.X.X && git push origin --tags && ./gradlew assembleRelease publish bintrayUpload`
   - [ ] "Promote" the release build on Maven Central
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”

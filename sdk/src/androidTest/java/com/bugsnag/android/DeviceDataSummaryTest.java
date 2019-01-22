@@ -33,11 +33,6 @@ public class DeviceDataSummaryTest {
         this.deviceData = deviceData.getDeviceDataSummary();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Async.cancelTasks();
-    }
-
     @Test
     public void testManufacturer() {
         assertNotNull(deviceData.get("manufacturer"));

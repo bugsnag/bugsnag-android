@@ -130,29 +130,8 @@ bool bsg_configure_signal_stack() {
   return true;
 }
 
-void bsg_handle_signal(int signum, siginfo_t *info,
-                       void *user_context) __asyncsafe {
-  if (bsg_global_env == NULL || bsg_global_env->handling_crash)
-    return;
-
-  bsg_global_env->handling_crash = true;
-  bsg_populate_report_as(bsg_global_env);
-  bsg_global_env->next_report.exception.frame_count = bsg_unwind_stack(
-      bsg_global_env->unwind_style,
-      bsg_global_env->next_report.exception.stacktrace, info, user_context);
-
-  for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
-    const int signal = bsg_native_signals[i];
-    if (signal == signum) {
-      bsg_strcpy(bsg_global_env->next_report.exception.name,
-                 (char *)bsg_native_signal_names[i]);
-      bsg_strcpy(bsg_global_env->next_report.exception.message,
-                 (char *)bsg_native_signal_msgs[i]);
-      break;
-    }
-  }
-  bsg_serialize_report_to_file(bsg_global_env);
-  bsg_handler_uninstall_signal();
+void bsg_invoke_previous_signal_handler(int signum, siginfo_t *info,
+                                        void *user_context) __asyncsafe {
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; ++i) {
     const int signal = bsg_native_signals[i];
     if (signal == signum) {
@@ -178,4 +157,38 @@ void bsg_handle_signal(int signum, siginfo_t *info,
       }
     }
   }
+}
+
+void bsg_handle_signal(int signum, siginfo_t *info,
+                       void *user_context) __asyncsafe {
+  if (bsg_global_env == NULL || bsg_global_env->handling_crash) {
+    if (bsg_global_env->crash_handled) {
+      // The C++ handler default action is to raise a fatal signal once
+      // handling is complete. The report is already generated so at this
+      // point, the handler only needs to be uninstalled.
+      bsg_handler_uninstall_signal();
+      bsg_invoke_previous_signal_handler(signum, info, user_context);
+    }
+    return;
+  }
+
+  bsg_global_env->handling_crash = true;
+  bsg_populate_report_as(bsg_global_env);
+  bsg_global_env->next_report.exception.frame_count = bsg_unwind_stack(
+      bsg_global_env->signal_unwind_style,
+      bsg_global_env->next_report.exception.stacktrace, info, user_context);
+
+  for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
+    const int signal = bsg_native_signals[i];
+    if (signal == signum) {
+      bsg_strcpy(bsg_global_env->next_report.exception.name,
+                 (char *)bsg_native_signal_names[i]);
+      bsg_strcpy(bsg_global_env->next_report.exception.message,
+                 (char *)bsg_native_signal_msgs[i]);
+      break;
+    }
+  }
+  bsg_serialize_report_to_file(bsg_global_env);
+  bsg_handler_uninstall_signal();
+  bsg_invoke_previous_signal_handler(signum, info, user_context);
 }

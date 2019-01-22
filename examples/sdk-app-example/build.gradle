@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$agpVersion"
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.4.2'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -74,7 +74,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.bugsnag:bugsnag-android-ndk:4.9.2'
+    implementation 'com.bugsnag:bugsnag-android-ndk:4.10.0'
     // If developing locally, replace the above line with the following:
     // implementation project(path: ':sdk', configuration: 'default')
     // api project(path: ':ndk', configuration: 'default')

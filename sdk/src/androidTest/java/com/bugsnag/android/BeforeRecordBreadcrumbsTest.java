@@ -36,7 +36,7 @@ public class BeforeRecordBreadcrumbsTest {
 
     @After
     public void tearDown() throws Exception {
-        Async.cancelTasks();
+        client.getOrientationListener().disable();
     }
 
     @Test

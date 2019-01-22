@@ -1,0 +1,990 @@
+{
+    "context": "ExampleActivity",
+    "metaData": {
+        "app": {
+            "memoryUsage": 2349328,
+            "activeScreen": "ExampleActivity",
+            "name": "Bugsnag",
+            "packageName": "com.bugsnag.android.example.kotlin.debug",
+            "lowMemory": false,
+            "versionName": "2.0"
+        },
+        "foo": {
+            "bar": "what what"
+        },
+        "user": {
+            "age": 31
+        },
+        "device": {
+            "osBuild": "PSR1.180720.075",
+            "charging": true,
+            "locale": "en_US",
+            "locationStatus": "allowed",
+            "emulator": true,
+            "networkAccess": "wifi",
+            "screenDensity": 2.625,
+            "time": "2019-01-18T10:05:27Z",
+            "dpi": 420,
+            "screenResolution": "1794x1080",
+            "brand": "google",
+            "apiLevel": 28,
+            "batteryLevel": 1.0
+        }
+    },
+    "severity": "error",
+    "severityReason": {
+        "type": "unhandledException"
+    },
+    "unhandled": true,
+    "projectPackages": [
+        "com.bugsnag.android.example",
+        "com.bugsnag.android.other"
+    ],
+    "exceptions": [
+        {
+            "errorClass": "io.reactivex.exceptions.OnErrorNotImplementedException",
+            "message": "The exception was not handled due to missing onError handler in the subscribe() method call. Further reading: https://github.com/ReactiveX/RxJava/wiki/Error-Handling | java.lang.RuntimeException: Whoops!",
+            "type": "custom",
+            "stacktrace": [
+                {
+                    "method": "io.reactivex.internal.functions.Functions$OnErrorMissingConsumer.accept",
+                    "file": "Functions.java",
+                    "lineNumber": 704
+                },
+                {
+                    "method": "io.reactivex.internal.functions.Functions$OnErrorMissingConsumer.accept",
+                    "file": "Functions.java",
+                    "lineNumber": 701
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.onError",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 79
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.onError",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 101
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.fail",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 111
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableMap$MapSubscriber.onNext",
+                    "file": "FlowableMap.java",
+                    "lineNumber": 65
+                },
+                {
+                    "method": "io.reactivex.internal.subscriptions.ScalarSubscription.request",
+                    "file": "ScalarSubscription.java",
+                    "lineNumber": 55
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.request",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 153
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.request",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 114
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableInternalHelper$RequestMax.accept",
+                    "file": "FlowableInternalHelper.java",
+                    "lineNumber": 220
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableInternalHelper$RequestMax.accept",
+                    "file": "FlowableInternalHelper.java",
+                    "lineNumber": 216
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.onSubscribe",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 52
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.onSubscribe",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 67
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableJust.subscribeActual",
+                    "file": "FlowableJust.java",
+                    "lineNumber": 34
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14805
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableMap.subscribeActual",
+                    "file": "FlowableMap.java",
+                    "lineNumber": 37
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14805
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14742
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14630
+                },
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity.crashUnhandled",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 62,
+                    "inProject": true
+                },
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity$onCreate$1.onClick",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 34,
+                    "inProject": true
+                },
+                {
+                    "method": "android.view.View.performClick",
+                    "file": "View.java",
+                    "lineNumber": 6597
+                },
+                {
+                    "method": "android.view.View.performClickInternal",
+                    "file": "View.java",
+                    "lineNumber": 6574
+                },
+                {
+                    "method": "android.view.View.access$3100",
+                    "file": "View.java",
+                    "lineNumber": 778
+                },
+                {
+                    "method": "android.view.View$PerformClick.run",
+                    "file": "View.java",
+                    "lineNumber": 25885
+                },
+                {
+                    "method": "android.os.Handler.handleCallback",
+                    "file": "Handler.java",
+                    "lineNumber": 873
+                },
+                {
+                    "method": "android.os.Handler.dispatchMessage",
+                    "file": "Handler.java",
+                    "lineNumber": 99
+                },
+                {
+                    "method": "android.os.Looper.loop",
+                    "file": "Looper.java",
+                    "lineNumber": 193
+                },
+                {
+                    "method": "android.app.ActivityThread.main",
+                    "file": "ActivityThread.java",
+                    "lineNumber": 6669
+                },
+                {
+                    "method": "java.lang.reflect.Method.invoke",
+                    "file": "Method.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+                    "file": "RuntimeInit.java",
+                    "lineNumber": 493
+                },
+                {
+                    "method": "com.android.internal.os.ZygoteInit.main",
+                    "file": "ZygoteInit.java",
+                    "lineNumber": 858
+                }
+            ]
+        },
+        {
+            "errorClass": "java.lang.RuntimeException",
+            "message": "Whoops!",
+            "type": "custom",
+            "stacktrace": [
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity$crashUnhandled$s$1.apply",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 62,
+                    "inProject": true
+                },
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity$crashUnhandled$s$1.apply",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 15,
+                    "inProject": true
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableMap$MapSubscriber.onNext",
+                    "file": "FlowableMap.java",
+                    "lineNumber": 63
+                },
+                {
+                    "method": "io.reactivex.internal.subscriptions.ScalarSubscription.request",
+                    "file": "ScalarSubscription.java",
+                    "lineNumber": 55
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.request",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 153
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.request",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 114
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableInternalHelper$RequestMax.accept",
+                    "file": "FlowableInternalHelper.java",
+                    "lineNumber": 220
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableInternalHelper$RequestMax.accept",
+                    "file": "FlowableInternalHelper.java",
+                    "lineNumber": 216
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.onSubscribe",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 52
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.onSubscribe",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 67
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableJust.subscribeActual",
+                    "file": "FlowableJust.java",
+                    "lineNumber": 34
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14805
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableMap.subscribeActual",
+                    "file": "FlowableMap.java",
+                    "lineNumber": 37
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14805
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14742
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14630
+                },
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity.crashUnhandled",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 62,
+                    "inProject": true
+                },
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity$onCreate$1.onClick",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 34,
+                    "inProject": true
+                },
+                {
+                    "method": "android.view.View.performClick",
+                    "file": "View.java",
+                    "lineNumber": 6597
+                },
+                {
+                    "method": "android.view.View.performClickInternal",
+                    "file": "View.java",
+                    "lineNumber": 6574
+                },
+                {
+                    "method": "android.view.View.access$3100",
+                    "file": "View.java",
+                    "lineNumber": 778
+                },
+                {
+                    "method": "android.view.View$PerformClick.run",
+                    "file": "View.java",
+                    "lineNumber": 25885
+                },
+                {
+                    "method": "android.os.Handler.handleCallback",
+                    "file": "Handler.java",
+                    "lineNumber": 873
+                },
+                {
+                    "method": "android.os.Handler.dispatchMessage",
+                    "file": "Handler.java",
+                    "lineNumber": 99
+                },
+                {
+                    "method": "android.os.Looper.loop",
+                    "file": "Looper.java",
+                    "lineNumber": 193
+                },
+                {
+                    "method": "android.app.ActivityThread.main",
+                    "file": "ActivityThread.java",
+                    "lineNumber": 6669
+                },
+                {
+                    "method": "java.lang.reflect.Method.invoke",
+                    "file": "Method.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+                    "file": "RuntimeInit.java",
+                    "lineNumber": 493
+                },
+                {
+                    "method": "com.android.internal.os.ZygoteInit.main",
+                    "file": "ZygoteInit.java",
+                    "lineNumber": 858
+                }
+            ]
+        }
+    ],
+    "user": {
+        "id": "123456",
+        "email": "joebloggs@example.com",
+        "name": "Joe Bloggs"
+    },
+    "app": {
+        "duration": 14977,
+        "durationInForeground": 13845,
+        "inForeground": true,
+        "releaseStage": "development",
+        "buildUUID": "8a5f34d3-4eb4-47b7-b154-b2148ddf0613",
+        "id": "com.bugsnag.android.example.kotlin.debug",
+        "packageName": "com.bugsnag.android.example.kotlin.debug",
+        "type": "android",
+        "version": "2.0",
+        "versionCode": 345
+    },
+    "device": {
+        "cpuAbi": [
+            "x86"
+        ],
+        "orientation": "portrait",
+        "totalMemory": 402653184,
+        "osVersion": "9",
+        "jailbroken": false,
+        "model": "Android SDK built for x86",
+        "id": "a9187575-fcba-40e4-ade7-fc98740a96c4",
+        "osName": "android",
+        "freeMemory": 400303856,
+        "freeDisk": 6240665600,
+        "manufacturer": "Google"
+    },
+    "breadcrumbs": [
+        {
+            "timestamp": "2019-01-18T10:05:12Z",
+            "name": "ExampleActivity",
+            "type": "navigation",
+            "metaData": {
+                "ActivityLifecycle": "onCreate()"
+            }
+        },
+        {
+            "timestamp": "2019-01-18T10:05:13Z",
+            "name": "ExampleActivity",
+            "type": "navigation",
+            "metaData": {
+                "ActivityLifecycle": "onStart()"
+            }
+        },
+        {
+            "timestamp": "2019-01-18T10:05:13Z",
+            "name": "ExampleActivity",
+            "type": "navigation",
+            "metaData": {
+                "ActivityLifecycle": "onResume()"
+            }
+        },
+        {
+            "timestamp": "2019-01-18T10:05:13Z",
+            "name": "RINGER_MODE_CHANGED",
+            "type": "state",
+            "metaData": {
+                "Extra": "RINGER_MODE_CHANGED: 2",
+                "Intent Action": "android.media.RINGER_MODE_CHANGED"
+            }
+        }
+    ],
+    "threads": [
+        {
+            "id": 2,
+            "name": "main",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "io.reactivex.internal.functions.Functions$OnErrorMissingConsumer.accept",
+                    "file": "Functions.java",
+                    "lineNumber": 704
+                },
+                {
+                    "method": "io.reactivex.internal.functions.Functions$OnErrorMissingConsumer.accept",
+                    "file": "Functions.java",
+                    "lineNumber": 701
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.onError",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 79
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.onError",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 101
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.fail",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 111
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableMap$MapSubscriber.onNext",
+                    "file": "FlowableMap.java",
+                    "lineNumber": 65
+                },
+                {
+                    "method": "io.reactivex.internal.subscriptions.ScalarSubscription.request",
+                    "file": "ScalarSubscription.java",
+                    "lineNumber": 55
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.request",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 153
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.request",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 114
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableInternalHelper$RequestMax.accept",
+                    "file": "FlowableInternalHelper.java",
+                    "lineNumber": 220
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableInternalHelper$RequestMax.accept",
+                    "file": "FlowableInternalHelper.java",
+                    "lineNumber": 216
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.LambdaSubscriber.onSubscribe",
+                    "file": "LambdaSubscriber.java",
+                    "lineNumber": 52
+                },
+                {
+                    "method": "io.reactivex.internal.subscribers.BasicFuseableSubscriber.onSubscribe",
+                    "file": "BasicFuseableSubscriber.java",
+                    "lineNumber": 67
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableJust.subscribeActual",
+                    "file": "FlowableJust.java",
+                    "lineNumber": 34
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14805
+                },
+                {
+                    "method": "io.reactivex.internal.operators.flowable.FlowableMap.subscribeActual",
+                    "file": "FlowableMap.java",
+                    "lineNumber": 37
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14805
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14742
+                },
+                {
+                    "method": "io.reactivex.Flowable.subscribe",
+                    "file": "Flowable.java",
+                    "lineNumber": 14630
+                },
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity.crashUnhandled",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 62,
+                    "inProject": true
+                },
+                {
+                    "method": "com.bugsnag.android.example.ExampleActivity$onCreate$1.onClick",
+                    "file": "ExampleActivity.kt",
+                    "lineNumber": 34,
+                    "inProject": true
+                },
+                {
+                    "method": "android.view.View.performClick",
+                    "file": "View.java",
+                    "lineNumber": 6597
+                },
+                {
+                    "method": "android.view.View.performClickInternal",
+                    "file": "View.java",
+                    "lineNumber": 6574
+                },
+                {
+                    "method": "android.view.View.access$3100",
+                    "file": "View.java",
+                    "lineNumber": 778
+                },
+                {
+                    "method": "android.view.View$PerformClick.run",
+                    "file": "View.java",
+                    "lineNumber": 25885
+                },
+                {
+                    "method": "android.os.Handler.handleCallback",
+                    "file": "Handler.java",
+                    "lineNumber": 873
+                },
+                {
+                    "method": "android.os.Handler.dispatchMessage",
+                    "file": "Handler.java",
+                    "lineNumber": 99
+                },
+                {
+                    "method": "android.os.Looper.loop",
+                    "file": "Looper.java",
+                    "lineNumber": 193
+                },
+                {
+                    "method": "android.app.ActivityThread.main",
+                    "file": "ActivityThread.java",
+                    "lineNumber": 6669
+                },
+                {
+                    "method": "java.lang.reflect.Method.invoke",
+                    "file": "Method.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+                    "file": "RuntimeInit.java",
+                    "lineNumber": 493
+                },
+                {
+                    "method": "com.android.internal.os.ZygoteInit.main",
+                    "file": "ZygoteInit.java",
+                    "lineNumber": 858
+                }
+            ],
+            "errorReportingThread": true
+        },
+        {
+            "id": 648,
+            "name": "Jit thread pool worker thread 0",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 649,
+            "name": "Signal Catcher",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 651,
+            "name": "ReferenceQueueDaemon",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "java.lang.Object.wait",
+                    "file": "Object.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "java.lang.Daemons$ReferenceQueueDaemon.runInternal",
+                    "file": "Daemons.java",
+                    "lineNumber": 178
+                },
+                {
+                    "method": "java.lang.Daemons$Daemon.run",
+                    "file": "Daemons.java",
+                    "lineNumber": 103
+                },
+                {
+                    "method": "java.lang.Thread.run",
+                    "file": "Thread.java",
+                    "lineNumber": 764
+                }
+            ]
+        },
+        {
+            "id": 652,
+            "name": "FinalizerDaemon",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "java.lang.Object.wait",
+                    "file": "Object.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "java.lang.Object.wait",
+                    "file": "Object.java",
+                    "lineNumber": 422
+                },
+                {
+                    "method": "java.lang.ref.ReferenceQueue.remove",
+                    "file": "ReferenceQueue.java",
+                    "lineNumber": 188
+                },
+                {
+                    "method": "java.lang.ref.ReferenceQueue.remove",
+                    "file": "ReferenceQueue.java",
+                    "lineNumber": 209
+                },
+                {
+                    "method": "java.lang.Daemons$FinalizerDaemon.runInternal",
+                    "file": "Daemons.java",
+                    "lineNumber": 232
+                },
+                {
+                    "method": "java.lang.Daemons$Daemon.run",
+                    "file": "Daemons.java",
+                    "lineNumber": 103
+                },
+                {
+                    "method": "java.lang.Thread.run",
+                    "file": "Thread.java",
+                    "lineNumber": 764
+                }
+            ]
+        },
+        {
+            "id": 653,
+            "name": "FinalizerWatchdogDaemon",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "java.lang.Thread.sleep",
+                    "file": "Thread.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "java.lang.Thread.sleep",
+                    "file": "Thread.java",
+                    "lineNumber": 373
+                },
+                {
+                    "method": "java.lang.Thread.sleep",
+                    "file": "Thread.java",
+                    "lineNumber": 314
+                },
+                {
+                    "method": "java.lang.Daemons$FinalizerWatchdogDaemon.sleepFor",
+                    "file": "Daemons.java",
+                    "lineNumber": 342
+                },
+                {
+                    "method": "java.lang.Daemons$FinalizerWatchdogDaemon.waitForFinalization",
+                    "file": "Daemons.java",
+                    "lineNumber": 364
+                },
+                {
+                    "method": "java.lang.Daemons$FinalizerWatchdogDaemon.runInternal",
+                    "file": "Daemons.java",
+                    "lineNumber": 281
+                },
+                {
+                    "method": "java.lang.Daemons$Daemon.run",
+                    "file": "Daemons.java",
+                    "lineNumber": 103
+                },
+                {
+                    "method": "java.lang.Thread.run",
+                    "file": "Thread.java",
+                    "lineNumber": 764
+                }
+            ]
+        },
+        {
+            "id": 654,
+            "name": "HeapTaskDaemon",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 655,
+            "name": "Binder:11535_1",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 656,
+            "name": "Binder:11535_2",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 657,
+            "name": "Binder:11535_3",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 661,
+            "name": "Profile Saver",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 663,
+            "name": "Bugsnag Thread #1",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "java.lang.Object.wait",
+                    "file": "Object.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "java.lang.Thread.parkFor$",
+                    "file": "Thread.java",
+                    "lineNumber": 2137
+                },
+                {
+                    "method": "sun.misc.Unsafe.park",
+                    "file": "Unsafe.java",
+                    "lineNumber": 358
+                },
+                {
+                    "method": "java.util.concurrent.locks.LockSupport.park",
+                    "file": "LockSupport.java",
+                    "lineNumber": 190
+                },
+                {
+                    "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+                    "file": "AbstractQueuedSynchronizer.java",
+                    "lineNumber": 2059
+                },
+                {
+                    "method": "java.util.concurrent.LinkedBlockingQueue.take",
+                    "file": "LinkedBlockingQueue.java",
+                    "lineNumber": 442
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 1092
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 1152
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 641
+                },
+                {
+                    "method": "java.lang.Thread.run",
+                    "file": "Thread.java",
+                    "lineNumber": 764
+                }
+            ]
+        },
+        {
+            "id": 664,
+            "name": "Bugsnag Thread #2",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "java.lang.Object.wait",
+                    "file": "Object.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "java.lang.Thread.parkFor$",
+                    "file": "Thread.java",
+                    "lineNumber": 2137
+                },
+                {
+                    "method": "sun.misc.Unsafe.park",
+                    "file": "Unsafe.java",
+                    "lineNumber": 358
+                },
+                {
+                    "method": "java.util.concurrent.locks.LockSupport.park",
+                    "file": "LockSupport.java",
+                    "lineNumber": 190
+                },
+                {
+                    "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+                    "file": "AbstractQueuedSynchronizer.java",
+                    "lineNumber": 2059
+                },
+                {
+                    "method": "java.util.concurrent.LinkedBlockingQueue.take",
+                    "file": "LinkedBlockingQueue.java",
+                    "lineNumber": 442
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 1092
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 1152
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 641
+                },
+                {
+                    "method": "java.lang.Thread.run",
+                    "file": "Thread.java",
+                    "lineNumber": 764
+                }
+            ]
+        },
+        {
+            "id": 665,
+            "name": "Bugsnag Thread #3",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "java.lang.Object.wait",
+                    "file": "Object.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "java.lang.Thread.parkFor$",
+                    "file": "Thread.java",
+                    "lineNumber": 2137
+                },
+                {
+                    "method": "sun.misc.Unsafe.park",
+                    "file": "Unsafe.java",
+                    "lineNumber": 358
+                },
+                {
+                    "method": "java.util.concurrent.locks.LockSupport.park",
+                    "file": "LockSupport.java",
+                    "lineNumber": 190
+                },
+                {
+                    "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+                    "file": "AbstractQueuedSynchronizer.java",
+                    "lineNumber": 2059
+                },
+                {
+                    "method": "java.util.concurrent.LinkedBlockingQueue.take",
+                    "file": "LinkedBlockingQueue.java",
+                    "lineNumber": 442
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 1092
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 1152
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 641
+                },
+                {
+                    "method": "java.lang.Thread.run",
+                    "file": "Thread.java",
+                    "lineNumber": 764
+                }
+            ]
+        },
+        {
+            "id": 667,
+            "name": "RenderThread",
+            "type": "android",
+            "stacktrace": []
+        },
+        {
+            "id": 668,
+            "name": "OkHttp ConnectionPool",
+            "type": "android",
+            "stacktrace": [
+                {
+                    "method": "java.lang.Object.wait",
+                    "file": "Object.java",
+                    "lineNumber": -2
+                },
+                {
+                    "method": "com.android.okhttp.ConnectionPool$1.run",
+                    "file": "ConnectionPool.java",
+                    "lineNumber": 101
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 1167
+                },
+                {
+                    "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+                    "file": "ThreadPoolExecutor.java",
+                    "lineNumber": 641
+                },
+                {
+                    "method": "java.lang.Thread.run",
+                    "file": "Thread.java",
+                    "lineNumber": 764
+                }
+            ]
+        },
+        {
+            "id": 669,
+            "name": "Binder:11535_4",
+            "type": "android",
+            "stacktrace": []
+        }
+    ],
+    "session": {
+        "id": "28ce9722-7500-4664-b8c5-8c3cd93366e9",
+        "startedAt": "2019-01-18T10:05:13Z",
+        "events": {
+            "handled": 0,
+            "unhandled": 1
+        }
+    }
+}

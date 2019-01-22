@@ -28,7 +28,7 @@ public class ErrorReportApiClientTest {
 
     @After
     public void tearDown() throws Exception {
-        Async.cancelTasks();
+        Bugsnag.getClient().getOrientationListener().disable();
     }
 
     @SuppressWarnings("deprecation")

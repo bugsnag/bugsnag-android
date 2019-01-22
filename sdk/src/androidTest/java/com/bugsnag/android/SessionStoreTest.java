@@ -45,7 +45,6 @@ public class SessionStoreTest {
      */
     @After
     public void tearDown() throws Exception {
-        Async.cancelTasks();
         FileUtils.clearFilesInDir(storageDir);
     }
 

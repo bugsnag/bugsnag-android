@@ -2,8 +2,31 @@
 
 ## 4.X.X (TBD)
 
+### Enhancements
+
+* [NDK] Improve support for C++ exceptions, adding the exception class name
+  and description to reports and improving the stacktrace quality
+  [#412](https://github.com/bugsnag/bugsnag-android/pull/412)
+
 * Update vendored GSON dependency to latest available version
- [#415](https://github.com/bugsnag/bugsnag-android/pull/415)
+[#415](https://github.com/bugsnag/bugsnag-android/pull/415)
+
+### Bug fixes
+
+* Fix cached error deserialisation where the Throwable has a cause
+  [#418](https://github.com/bugsnag/bugsnag-android/pull/418)
+  
+* Refactor error report deserialisation
+  [#419](https://github.com/bugsnag/bugsnag-android/pull/419)
+
+* Fix unlikely initialization failure if a device orientation event listener
+  cannot be enabled
+
+* Cache result of device root check
+  [#411](https://github.com/bugsnag/bugsnag-android/pull/411)
+
+* Prevent unnecessary free disk calculations on initialisation
+ [#409](https://github.com/bugsnag/bugsnag-android/pull/409)
 
 ## 4.10.0 (2019-01-07)
 
@@ -39,6 +62,7 @@
 
 * Handle null values in MetaData.mergeMaps, preventing potential NPE
  [#386](https://github.com/bugsnag/bugsnag-android/pull/386)
+
 
 ## 4.9.2 (2018-11-07)
 

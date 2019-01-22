@@ -14,6 +14,8 @@ public class BugsnagException extends Throwable {
      */
     private final String name;
 
+    private String type;
+
     /**
      * Constructor
      *
@@ -36,5 +38,13 @@ public class BugsnagException extends Throwable {
     @NonNull
     public String getName() {
         return name;
+    }
+
+    String getType() {
+        return type;
+    }
+
+    void setType(String type) {
+        this.type = type;
     }
 }
