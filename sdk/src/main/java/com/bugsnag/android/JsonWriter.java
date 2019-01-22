@@ -16,38 +16,45 @@
 
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+// last retrieved from gson-parent-2.8.5 on 17/01/2019
+// https://github.com/google/gson/tree/gson-parent-2.8.5/gson/src/main/java/com/google/gson/stream
+
+import static com.bugsnag.android.JsonScope.DANGLING_NAME;
+import static com.bugsnag.android.JsonScope.EMPTY_ARRAY;
+import static com.bugsnag.android.JsonScope.EMPTY_DOCUMENT;
+import static com.bugsnag.android.JsonScope.EMPTY_OBJECT;
+import static com.bugsnag.android.JsonScope.NONEMPTY_ARRAY;
+import static com.bugsnag.android.JsonScope.NONEMPTY_DOCUMENT;
+import static com.bugsnag.android.JsonScope.NONEMPTY_OBJECT;
 
 import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Writes a JSON (<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)
+ * Writes a JSON (<a href="http://www.ietf.org/rfc/rfc7159.txt">RFC 7159</a>)
  * encoded value to a stream, one token at a time. The stream includes both
  * literal values (strings, numbers, booleans and nulls) as well as the begin
  * and end delimiters of objects and arrays.
- * <p>
+ *
  * <h3>Encoding JSON</h3>
  * To encode your data as JSON, create a new {@code JsonWriter}. Each JSON
  * document must contain one top-level array or object. Call methods on the
  * writer as you walk the structure's contents, nesting arrays and objects as
  * necessary:
  * <ul>
- * <li>To write <strong>arrays</strong>, first call {@link #beginArray()}.
- * Write each of the array's elements with the appropriate {@link #value}
- * methods or by nesting other arrays and objects. Finally close the array
- * using {@link #endArray()}.
- * <li>To write <strong>objects</strong>, first call {@link #beginObject()}.
- * Write each of the object's properties by alternating calls to
- * {@link #name} with the property's value. Write property values with the
- * appropriate {@link #value} method or by nesting other objects or arrays.
- * Finally close the object using {@link #endObject()}.
+ *   <li>To write <strong>arrays</strong>, first call {@link #beginArray()}.
+ *       Write each of the array's elements with the appropriate {@link #value}
+ *       methods or by nesting other arrays and objects. Finally close the array
+ *       using {@link #endArray()}.
+ *   <li>To write <strong>objects</strong>, first call {@link #beginObject()}.
+ *       Write each of the object's properties by alternating calls to
+ *       {@link #name} with the property's value. Write property values with the
+ *       appropriate {@link #value} method or by nesting other objects or arrays.
+ *       Finally close the object using {@link #endObject()}.
  * </ul>
- * <p>
+ *
  * <h3>Example</h3>
  * Suppose we'd like to encode a stream of messages such as the following: <pre> {@code
  * [
@@ -73,11 +80,11 @@ import java.util.List;
  * This code encodes the above structure: <pre>   {@code
  *   public void writeJsonStream(OutputStream out, List<Message> messages) throws IOException {
  *     JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
- *     writer.setIndentSpaces(4);
+ *     writer.setIndent("    ");
  *     writeMessagesArray(writer, messages);
  *     writer.close();
  *   }
- * <p>
+ *
  *   public void writeMessagesArray(JsonWriter writer, List<Message> messages) throws IOException {
  *     writer.beginArray();
  *     for (Message message : messages) {
@@ -85,7 +92,7 @@ import java.util.List;
  *     }
  *     writer.endArray();
  *   }
- * <p>
+ *
  *   public void writeMessage(JsonWriter writer, Message message) throws IOException {
  *     writer.beginObject();
  *     writer.name("id").value(message.getId());
@@ -100,14 +107,14 @@ import java.util.List;
  *     writeUser(writer, message.getUser());
  *     writer.endObject();
  *   }
- * <p>
+ *
  *   public void writeUser(JsonWriter writer, User user) throws IOException {
  *     writer.beginObject();
  *     writer.name("name").value(user.getName());
  *     writer.name("followers_count").value(user.getFollowersCount());
  *     writer.endObject();
  *   }
- * <p>
+ *
  *   public void writeDoublesArray(JsonWriter writer, List<Double> doubles) throws IOException {
  *     writer.beginArray();
  *     for (Double value : doubles) {
@@ -115,7 +122,7 @@ import java.util.List;
  *     }
  *     writer.endArray();
  *   }}</pre>
- * <p>
+ *
  * <p>Each {@code JsonWriter} may be used to write a single JSON stream.
  * Instances of this class are not thread safe. Calls that would result in a
  * malformed JSON string will fail with an {@link IllegalStateException}.
@@ -123,65 +130,11 @@ import java.util.List;
  * @author Jesse Wilson
  * @since 1.6
  */
-@SuppressWarnings({"checkstyle:AvoidEscapedUnicodeCharacters", "checkstyle:IllegalTokenText"})
-public class JsonWriter implements Closeable {
-
-    /**
-     * Lexical scoping elements within a JSON reader or writer.
-     *
-     * @author Jesse Wilson
-     * @since 1.6
-     */
-    enum JsonScope {
-
-        /**
-         * An array with no elements requires no separators or newlines before
-         * it is closed.
-         */
-        EMPTY_ARRAY,
-
-        /**
-         * A array with at least one value requires a comma and newline before
-         * the next element.
-         */
-        NONEMPTY_ARRAY,
-
-        /**
-         * An object with no name/value pairs requires no separators or newlines
-         * before it is closed.
-         */
-        EMPTY_OBJECT,
-
-        /**
-         * An object whose most recent element is a key. The next element must
-         * be a value.
-         */
-        DANGLING_NAME,
-
-        /**
-         * An object with at least one name/value pair requires a comma and
-         * newline before the next element.
-         */
-        NONEMPTY_OBJECT,
-
-        /**
-         * No object or array has been started.
-         */
-        EMPTY_DOCUMENT,
-
-        /**
-         * A document with at an array or object.
-         */
-        NONEMPTY_DOCUMENT,
-
-        /**
-         * A document that's been closed and cannot be accessed.
-         */
-        CLOSED,
-    }
+@SuppressWarnings("all")
+class JsonWriter implements Closeable, Flushable {
 
     /*
-     * From RFC 4627, "All Unicode characters may be placed within the
+     * From RFC 7159, "All Unicode characters may be placed within the
      * quotation marks except for the characters that must be escaped:
      * quotation mark, reverse solidus, and the control characters
      * (U+0000 through U+001F)."
@@ -190,10 +143,8 @@ public class JsonWriter implements Closeable {
      * newline characters. This prevents eval() from failing with a syntax
      * error. http://code.google.com/p/google-gson/issues/detail?id=341
      */
-    @NonNull
     private static final String[] REPLACEMENT_CHARS;
     private static final String[] HTML_SAFE_REPLACEMENT_CHARS;
-
     static {
         REPLACEMENT_CHARS = new String[128];
         for (int i = 0; i <= 0x1f; i++) {
@@ -214,36 +165,30 @@ public class JsonWriter implements Closeable {
         HTML_SAFE_REPLACEMENT_CHARS['\''] = "\\u0027";
     }
 
-    /**
-     * The output data, containing at most one top-level array or object.
-     */
-    @Nullable
+    /** The output data, containing at most one top-level array or object. */
     private final Writer out;
 
-    private final List<JsonScope> stack = new ArrayList<>();
-
+    private int[] stack = new int[32];
+    private int stackSize = 0;
     {
-        stack.add(JsonScope.EMPTY_DOCUMENT);
+        push(EMPTY_DOCUMENT);
     }
 
     /**
      * A string containing a full set of spaces for a single level of
      * indentation, or null for no pretty printing.
      */
-    @Nullable
     private String indent;
 
     /**
      * The name/value separator; either ":" or ": ".
      */
-    @NonNull
     private String separator = ":";
 
     private boolean lenient;
 
     private boolean htmlSafe;
 
-    @Nullable
     private String deferredName;
 
     private boolean serializeNulls = true;
@@ -253,7 +198,7 @@ public class JsonWriter implements Closeable {
      * For best performance, ensure {@link Writer} is buffered; wrapping in
      * {@link java.io.BufferedWriter BufferedWriter} if necessary.
      */
-    public JsonWriter(@Nullable Writer out) {
+    public JsonWriter(Writer out) {
         if (out == null) {
             throw new NullPointerException("out == null");
         }
@@ -268,7 +213,7 @@ public class JsonWriter implements Closeable {
      *
      * @param indent a string containing only whitespace.
      */
-    public final void setIndent(@NonNull String indent) {
+    public final void setIndent(String indent) {
         if (indent.length() == 0) {
             this.indent = null;
             this.separator = ":";
@@ -281,13 +226,13 @@ public class JsonWriter implements Closeable {
     /**
      * Configure this writer to relax its syntax rules. By default, this writer
      * only emits well-formed JSON as specified by <a
-     * href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>. Setting the writer
+     * href="http://www.ietf.org/rfc/rfc7159.txt">RFC 7159</a>. Setting the writer
      * to lenient permits the following:
      * <ul>
-     * <li>Top-level values of any type. With strict writing, the top-level
-     * value must be an object or an array.
-     * <li>Numbers may be {@link Double#isNaN() NaNs} or {@link
-     * Double#isInfinite() infinities}.
+     *   <li>Top-level values of any type. With strict writing, the top-level
+     *       value must be an object or an array.
+     *   <li>Numbers may be {@link Double#isNaN() NaNs} or {@link
+     *       Double#isInfinite() infinities}.
      * </ul>
      */
     public final void setLenient(boolean lenient) {
@@ -342,10 +287,9 @@ public class JsonWriter implements Closeable {
      *
      * @return this writer.
      */
-    @NonNull
     public JsonWriter beginArray() throws IOException {
         writeDeferredName();
-        return open(JsonScope.EMPTY_ARRAY, "[");
+        return open(EMPTY_ARRAY, "[");
     }
 
     /**
@@ -353,9 +297,8 @@ public class JsonWriter implements Closeable {
      *
      * @return this writer.
      */
-    @NonNull
     public JsonWriter endArray() throws IOException {
-        return close(JsonScope.EMPTY_ARRAY, JsonScope.NONEMPTY_ARRAY, "]");
+        return close(EMPTY_ARRAY, NONEMPTY_ARRAY, "]");
     }
 
     /**
@@ -364,10 +307,9 @@ public class JsonWriter implements Closeable {
      *
      * @return this writer.
      */
-    @NonNull
     public JsonWriter beginObject() throws IOException {
         writeDeferredName();
-        return open(JsonScope.EMPTY_OBJECT, "{");
+        return open(EMPTY_OBJECT, "{");
     }
 
     /**
@@ -375,19 +317,17 @@ public class JsonWriter implements Closeable {
      *
      * @return this writer.
      */
-    @NonNull
     public JsonWriter endObject() throws IOException {
-        return close(JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, "}");
+        return close(EMPTY_OBJECT, NONEMPTY_OBJECT, "}");
     }
 
     /**
      * Enters a new scope by appending any necessary whitespace and the given
      * bracket.
      */
-    @NonNull
-    private JsonWriter open(JsonScope empty, @NonNull String openBracket) throws IOException {
-        beforeValue(true);
-        stack.add(empty);
+    private JsonWriter open(int empty, String openBracket) throws IOException {
+        beforeValue();
+        push(empty);
         out.write(openBracket);
         return this;
     }
@@ -396,18 +336,17 @@ public class JsonWriter implements Closeable {
      * Closes the current scope by appending any necessary whitespace and the
      * given bracket.
      */
-    @NonNull
-    private JsonWriter close(JsonScope empty, JsonScope nonempty, @NonNull String closeBracket)
+    private JsonWriter close(int empty, int nonempty, String closeBracket)
         throws IOException {
-        JsonScope context = peek();
+        int context = peek();
         if (context != nonempty && context != empty) {
-            throw new IllegalStateException("Nesting problem: " + stack);
+            throw new IllegalStateException("Nesting problem.");
         }
         if (deferredName != null) {
             throw new IllegalStateException("Dangling name: " + deferredName);
         }
 
-        stack.remove(stack.size() - 1);
+        stackSize--;
         if (context == nonempty) {
             newline();
         }
@@ -415,37 +354,30 @@ public class JsonWriter implements Closeable {
         return this;
     }
 
-    /**
-     * Flushes and closes this writer and the underlying {@link Writer}.
-     *
-     * @throws IOException if the JSON document is incomplete.
-     */
-    public void close() throws IOException {
-        out.close();
-
-        int size = stack.size();
-        if (size > 1 || size == 1 && stack.get(size - 1) != JsonScope.NONEMPTY_DOCUMENT) {
-            throw new IOException("Incomplete document");
+    private void push(int newTop) {
+        if (stackSize == stack.length) {
+            int[] newStack = new int[stackSize * 2];
+            System.arraycopy(stack, 0, newStack, 0, stackSize);
+            stack = newStack;
         }
-        stack.clear();
+        stack[stackSize++] = newTop;
     }
 
     /**
      * Returns the value on the top of the stack.
      */
-    private JsonScope peek() {
-        int size = stack.size();
-        if (size == 0) {
+    private int peek() {
+        if (stackSize == 0) {
             throw new IllegalStateException("JsonWriter is closed.");
         }
-        return stack.get(size - 1);
+        return stack[stackSize - 1];
     }
 
     /**
      * Replace the value on the top of the stack with the given value.
      */
-    private void replaceTop(JsonScope topOfStack) {
-        stack.set(stack.size() - 1, topOfStack);
+    private void replaceTop(int topOfStack) {
+        stack[stackSize - 1] = topOfStack;
     }
 
     /**
@@ -454,15 +386,14 @@ public class JsonWriter implements Closeable {
      * @param name the name of the forthcoming value. May not be null.
      * @return this writer.
      */
-    @NonNull
-    public JsonWriter name(@Nullable String name) throws IOException {
+    public JsonWriter name(String name) throws IOException {
         if (name == null) {
             throw new NullPointerException("name == null");
         }
         if (deferredName != null) {
             throw new IllegalStateException();
         }
-        if (stack.isEmpty()) {
+        if (stackSize == 0) {
             throw new IllegalStateException("JsonWriter is closed.");
         }
         deferredName = name;
@@ -478,11 +409,43 @@ public class JsonWriter implements Closeable {
     }
 
     /**
+     * Encodes {@code value}.
+     *
+     * @param value the literal string value, or null to encode a null literal.
+     * @return this writer.
+     */
+    public JsonWriter value(String value) throws IOException {
+        if (value == null) {
+            return nullValue();
+        }
+        writeDeferredName();
+        beforeValue();
+        string(value);
+        return this;
+    }
+
+    /**
+     * Writes {@code value} directly to the writer without quoting or
+     * escaping.
+     *
+     * @param value the literal string value, or null to encode a null literal.
+     * @return this writer.
+     */
+    public JsonWriter jsonValue(String value) throws IOException {
+        if (value == null) {
+            return nullValue();
+        }
+        writeDeferredName();
+        beforeValue();
+        out.append(value);
+        return this;
+    }
+
+    /**
      * Encodes {@code null}.
      *
      * @return this writer.
      */
-    @NonNull
     public JsonWriter nullValue() throws IOException {
         if (deferredName != null) {
             if (serializeNulls) {
@@ -492,7 +455,7 @@ public class JsonWriter implements Closeable {
                 return this; // skip the name and the value
             }
         }
-        beforeValue(false);
+        beforeValue();
         out.write("null");
         return this;
     }
@@ -500,29 +463,11 @@ public class JsonWriter implements Closeable {
     /**
      * Encodes {@code value}.
      *
-     * @param value the literal string value, or null to encode a null literal.
      * @return this writer.
      */
-    @NonNull
-    public JsonWriter value(@Nullable String value) throws IOException {
-        if (value == null) {
-            return nullValue();
-        }
-        writeDeferredName();
-        beforeValue(false);
-        string(value);
-        return this;
-    }
-
-    /**
-     * Encodes {@code value}.
-     *
-     * @return this writer.
-     */
-    @NonNull
     public JsonWriter value(boolean value) throws IOException {
         writeDeferredName();
-        beforeValue(false);
+        beforeValue();
         out.write(value ? "true" : "false");
         return this;
     }
@@ -532,13 +477,12 @@ public class JsonWriter implements Closeable {
      *
      * @return this writer.
      */
-    @NonNull
-    public JsonWriter value(@Nullable Boolean value) throws IOException {
+    public JsonWriter value(Boolean value) throws IOException {
         if (value == null) {
             return nullValue();
         }
         writeDeferredName();
-        beforeValue(false);
+        beforeValue();
         out.write(value ? "true" : "false");
         return this;
     }
@@ -547,16 +491,15 @@ public class JsonWriter implements Closeable {
      * Encodes {@code value}.
      *
      * @param value a finite value. May not be {@link Double#isNaN() NaNs} or
-     *              {@link Double#isInfinite() infinities}.
+     *     {@link Double#isInfinite() infinities}.
      * @return this writer.
      */
-    @NonNull
     public JsonWriter value(double value) throws IOException {
-        if (Double.isNaN(value) || Double.isInfinite(value)) {
+        writeDeferredName();
+        if (!lenient && (Double.isNaN(value) || Double.isInfinite(value))) {
             throw new IllegalArgumentException("Numeric values must be finite, but was " + value);
         }
-        writeDeferredName();
-        beforeValue(false);
+        beforeValue();
         out.append(Double.toString(value));
         return this;
     }
@@ -566,10 +509,9 @@ public class JsonWriter implements Closeable {
      *
      * @return this writer.
      */
-    @NonNull
     public JsonWriter value(long value) throws IOException {
         writeDeferredName();
-        beforeValue(false);
+        beforeValue();
         out.write(Long.toString(value));
         return this;
     }
@@ -578,11 +520,10 @@ public class JsonWriter implements Closeable {
      * Encodes {@code value}.
      *
      * @param value a finite value. May not be {@link Double#isNaN() NaNs} or
-     *              {@link Double#isInfinite() infinities}.
+     *     {@link Double#isInfinite() infinities}.
      * @return this writer.
      */
-    @NonNull
-    public JsonWriter value(@Nullable Number value) throws IOException {
+    public JsonWriter value(Number value) throws IOException {
         if (value == null) {
             return nullValue();
         }
@@ -593,7 +534,7 @@ public class JsonWriter implements Closeable {
             && (string.equals("-Infinity") || string.equals("Infinity") || string.equals("NaN"))) {
             throw new IllegalArgumentException("Numeric values must be finite, but was " + value);
         }
-        beforeValue(false);
+        beforeValue();
         out.append(string);
         return this;
     }
@@ -603,28 +544,43 @@ public class JsonWriter implements Closeable {
      * and flushes that writer.
      */
     public void flush() throws IOException {
-        if (stack.isEmpty()) {
+        if (stackSize == 0) {
             throw new IllegalStateException("JsonWriter is closed.");
         }
         out.flush();
     }
 
-    private void string(@NonNull String value) throws IOException {
+    /**
+     * Flushes and closes this writer and the underlying {@link Writer}.
+     *
+     * @throws IOException if the JSON document is incomplete.
+     */
+    public void close() throws IOException {
+        out.close();
+
+        int size = stackSize;
+        if (size > 1 || size == 1 && stack[size - 1] != NONEMPTY_DOCUMENT) {
+            throw new IOException("Incomplete document");
+        }
+        stackSize = 0;
+    }
+
+    private void string(String value) throws IOException {
         String[] replacements = htmlSafe ? HTML_SAFE_REPLACEMENT_CHARS : REPLACEMENT_CHARS;
         out.write("\"");
         int last = 0;
         int length = value.length();
         for (int i = 0; i < length; i++) {
-            char charAt = value.charAt(i);
+            char c = value.charAt(i);
             String replacement;
-            if (charAt < 128) {
-                replacement = replacements[charAt];
+            if (c < 128) {
+                replacement = replacements[c];
                 if (replacement == null) {
                     continue;
                 }
-            } else if (charAt == '\u2028') {
+            } else if (c == '\u2028') {
                 replacement = "\\u2028";
-            } else if (charAt == '\u2029') {
+            } else if (c == '\u2029') {
                 replacement = "\\u2029";
             } else {
                 continue;
@@ -647,7 +603,7 @@ public class JsonWriter implements Closeable {
         }
 
         out.write("\n");
-        for (int i = 1; i < stack.size(); i++) {
+        for (int i = 1, size = stackSize; i < size; i++) {
             out.write(indent);
         }
     }
@@ -657,26 +613,23 @@ public class JsonWriter implements Closeable {
      * adjusts the stack to expect the name's value.
      */
     private void beforeName() throws IOException {
-        JsonScope context = peek();
-        if (context == JsonScope.NONEMPTY_OBJECT) { // first in object
+        int context = peek();
+        if (context == NONEMPTY_OBJECT) { // first in object
             out.write(',');
-        } else if (context != JsonScope.EMPTY_OBJECT) { // not in an object!
-            throw new IllegalStateException("Nesting problem: " + stack);
+        } else if (context != EMPTY_OBJECT) { // not in an object!
+            throw new IllegalStateException("Nesting problem.");
         }
         newline();
-        replaceTop(JsonScope.DANGLING_NAME);
+        replaceTop(DANGLING_NAME);
     }
 
     /**
      * Inserts any necessary separators and whitespace before a literal value,
      * inline array, or inline object. Also adjusts the stack to expect either a
      * closing bracket or another element.
-     *
-     * @param root true if the value is a new array or object, the two values
-     *             permitted as top-level elements.
      */
     @SuppressWarnings("fallthrough")
-    void beforeValue(boolean root) throws IOException {
+    void beforeValue() throws IOException {
         switch (peek()) {
             case NONEMPTY_DOCUMENT:
                 if (!lenient) {
@@ -685,15 +638,11 @@ public class JsonWriter implements Closeable {
                 }
                 // fall-through
             case EMPTY_DOCUMENT: // first in document
-                if (!lenient && !root) {
-                    throw new IllegalStateException(
-                        "JSON must start with an array or an object.");
-                }
-                replaceTop(JsonScope.NONEMPTY_DOCUMENT);
+                replaceTop(NONEMPTY_DOCUMENT);
                 break;
 
             case EMPTY_ARRAY: // first in array
-                replaceTop(JsonScope.NONEMPTY_ARRAY);
+                replaceTop(NONEMPTY_ARRAY);
                 newline();
                 break;
 
@@ -704,11 +653,11 @@ public class JsonWriter implements Closeable {
 
             case DANGLING_NAME: // value for name
                 out.append(separator);
-                replaceTop(JsonScope.NONEMPTY_OBJECT);
+                replaceTop(NONEMPTY_OBJECT);
                 break;
 
             default:
-                throw new IllegalStateException("Nesting problem: " + stack);
+                throw new IllegalStateException("Nesting problem.");
         }
     }
 }

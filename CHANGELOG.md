@@ -1,12 +1,15 @@
 # Changelog
 
-## 4.X.X (TBD)
+## 4.11.0 (2019-01-22)
 
 ### Enhancements
 
 * [NDK] Improve support for C++ exceptions, adding the exception class name
   and description to reports and improving the stacktrace quality
   [#412](https://github.com/bugsnag/bugsnag-android/pull/412)
+
+* Update vendored GSON dependency to latest available version
+[#415](https://github.com/bugsnag/bugsnag-android/pull/415)
 
 ### Bug fixes
 
