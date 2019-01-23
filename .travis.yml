@@ -68,10 +68,13 @@ jobs:
     env: NDK_VERSION=r12b
   - stage: unit tests
     script: ./gradlew createDebugCoverageReport coveralls || (adb logcat -v brief -d '*:S BugsnagNDKTest' && false)
-    env: NDK_VERSION=r14b
-  - stage: unit tests
-    script: ./gradlew createDebugCoverageReport coveralls || (adb logcat -v brief -d '*:S BugsnagNDKTest' && false)
     env: NDK_VERSION=r16b
+  - stage: unit tests
+    script:
+    # Remove unsupported ABI
+    - sed --in-place="" --expression="s/'armeabi',//" ndk/build.gradle examples/sdk-app-example/build.gradle
+    - ./gradlew createDebugCoverageReport coveralls || (adb logcat -v brief -d '*:S BugsnagNDKTest' && false)
+    env: NDK_VERSION=r19
   # Emulators for API 22,23,25 just don't boot ¯\_(ツ)_/¯
   # Emulators for API 14,15,26 hang regularly
   # Emulators for API 17,18 were working fine but now periodically crash
