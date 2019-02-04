@@ -87,8 +87,16 @@ You can build new `.aar` files as follows:
 ./gradlew clean :build
 ```
 
-Files are generated into`build/outputs/aar`.
+Files are generated into`[module]/build/outputs/aar`.
 
+### Building with custom ABIs
+
+To build the NDK module with specific ABIs, use the `ABI_FILTERS` project
+option:
+
+```shell
+./gradlew clean :assemble -PABI_FILTERS=x86,arm64-v8a
+```
 
 ## Running Tests
 
