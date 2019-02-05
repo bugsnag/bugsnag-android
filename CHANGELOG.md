@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Bug fixes
+
+* Prevent overwriting config.projectPackages if already set
+  [#428](https://github.com/bugsnag/bugsnag-android/pull/428)
+
 ## 4.11.0 (2019-01-22)
 
 ### Enhancements
