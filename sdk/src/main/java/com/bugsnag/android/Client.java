@@ -143,8 +143,10 @@ public class Client extends Observable implements Observer {
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);
 
-        // Set sensible defaults
-        setProjectPackages(appContext.getPackageName());
+        // Set sensible defaults if project packages not already set
+        if (config.getProjectPackages() == null) {
+            setProjectPackages(appContext.getPackageName());
+        }
 
         String deviceId = deviceData.getId();
 
