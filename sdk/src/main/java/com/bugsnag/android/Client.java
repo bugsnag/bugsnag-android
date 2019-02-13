@@ -282,20 +282,62 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Manually starts tracking a new session.
+     * Starts tracking a new session.
+     * <p/>
+     * By default, sessions are automatically started when the application enters the foreground.
+     * If you wish to manually call {@link #startSession()} at
+     * the appropriate time in your application instead, the default behaviour can be disabled via
+     * {@link Configuration#setAutoCaptureSessions(boolean)}.
+     *<p/>
+     * Any errors which occur in an active session count towards your application's
+     * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
+     * stability score</a>. You can prevent errors from counting towards your stability
+     * score by calling {@link #stopSession()} and {@link #resumeSession()} at the appropriate
+     * time in your application.
      *
-     * Automatic session tracking can be enabled via
-     * {@link Configuration#setAutoCaptureSessions(boolean)}, which will automatically create a new
-     * session everytime the app enters the foreground.
+     * @see #stopSession()
+     * @see #resumeSession()
+     * @see Configuration#setAutoCaptureSessions(boolean)
      */
     public void startSession() {
         sessionTracker.startSession(false);
     }
 
+    /**
+     * Stops tracking a session.
+     * <p/>
+     * When a session is stopped, errors will not count towards your application's
+     * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
+     * stability score</a>. This can be advantageous if you do not wish these calculations to
+     * include a certain type of error, for example, a crash in a background service.
+     * <p/>
+     * A stopped session can be resumed by calling {@link #resumeSession()},
+     * which will make any subsequent errors count towards your application's
+     * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
+     * stability score</a>. Alternatively, an
+     * entirely new session can be created by calling {@link #startSession()}.
+     *
+     * @see #startSession()
+     * @see #resumeSession()
+     * @see Configuration#setAutoCaptureSessions(boolean)
+     */
     public final void stopSession() {
         sessionTracker.stopSession();
     }
 
+    /**
+     * Resumes a session which has previously been stopped, or starts a new session if none exists.
+     *
+     * When a session is resumed, any subsequent errors will count towards your application's
+     * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
+     * stability score</a>.
+     *
+     * @return true if a previous session was resumed, false if a new session was started.
+     *
+     * @see #startSession()
+     * @see #stopSession()
+     * @see Configuration#setAutoCaptureSessions(boolean)
+     */
     public final boolean resumeSession() {
         return sessionTracker.resumeSession();
     }
