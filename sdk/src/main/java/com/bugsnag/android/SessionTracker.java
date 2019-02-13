@@ -7,6 +7,7 @@ import android.app.Application;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import java.io.File;
 import java.util.Arrays;
@@ -65,7 +66,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      * @param date the session start date
      * @param user the session user (if any)
      */
-    @Nullable Session startNewSession(@NonNull Date date, @Nullable User user,
+    @Nullable
+    @VisibleForTesting
+    Session startNewSession(@NonNull Date date, @Nullable User user,
                                       boolean autoCaptured) {
         if (configuration.getSessionEndpoint() == null) {
             Logger.warn("The session tracking endpoint has not been set. "
@@ -76,6 +79,29 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         currentSession.set(session);
         trackSessionIfNeeded(session);
         return session;
+    }
+
+    void startSession(boolean autoCaptured) {
+        startNewSession(new Date(), client.getUser(), autoCaptured);
+    }
+
+    void stopSession() {
+        Session session = currentSession.get();
+
+        if (session != null) {
+            session.isStopped.set(true);
+        }
+    }
+
+    boolean resumeSession() {
+        Session session = currentSession.get();
+
+        if (session == null) {
+            startSession(false);
+            return false;
+        } else {
+            return session.isStopped.compareAndSet(true, false);
+        }
     }
 
     /**
@@ -141,18 +167,23 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
     @Nullable
     Session getCurrentSession() {
-        return currentSession.get();
+        Session session = currentSession.get();
+
+        if (session != null && !session.isStopped.get()) {
+            return session;
+        }
+        return null;
     }
 
     void incrementUnhandledError() {
-        Session session = currentSession.get();
+        Session session = getCurrentSession();
         if (session != null) {
             session.incrementUnhandledErrCount();
         }
     }
 
     void incrementHandledError() {
-        Session session = currentSession.get();
+        Session session = getCurrentSession();
         if (session != null) {
             session.incrementHandledErrCount();
         }
