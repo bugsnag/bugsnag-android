@@ -121,7 +121,11 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
   if (bsg_global_env == NULL)
     return;
   bsg_request_env_write_lock();
-  bsg_global_env->next_report.handled_events++;
+  bugsnag_report *report = &bsg_global_env->next_report;
+
+  if (report->stoppedSession) {
+    report->handled_events++;
+  }
   bsg_release_env_write_lock();
 }
 
@@ -137,6 +141,17 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, session_id_, session_id);
   (*env)->ReleaseStringUTFChars(env, start_date_, started_at);
+}
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_stoppedSession(
+    JNIEnv *env, jobject _this) {
+    if (bsg_global_env == NULL) {
+        return;
+    }
+    bsg_request_env_write_lock();
+    bugsnag_report *report = &bsg_global_env->next_report;
+    report->stoppedSession = true;
+    bsg_release_env_write_lock();
 }
 
 JNIEXPORT void JNICALL

@@ -292,6 +292,7 @@ typedef struct {
   char session_id[33];
   char session_start[33];
   int handled_events;
+  bool stoppedSession;
 } bugsnag_report;
 
 void bugsnag_report_add_metadata_double(bugsnag_report *report, char *section,

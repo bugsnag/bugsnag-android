@@ -88,6 +88,7 @@ void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
   bsg_strncpy_safe(report->session_start, started_at,
                    sizeof(report->session_start));
   report->handled_events = 0;
+  report->stoppedSession = false;
 }
 
 void bugsnag_report_set_context(bugsnag_report *report, char *value) {

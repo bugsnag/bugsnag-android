@@ -332,6 +332,7 @@ void bsg_populate_report(JNIEnv *env, bugsnag_report *report) {
   bsg_populate_app_data(env, jni_cache, report);
   bsg_populate_device_data(env, jni_cache, report);
   bsg_populate_user_data(env, jni_cache, report);
+  report->stoppedSession = false;
 }
 void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report,
                            jobject metadata) {

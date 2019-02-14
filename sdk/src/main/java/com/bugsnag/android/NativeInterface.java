@@ -59,6 +59,12 @@ public class NativeInterface {
          * containing [id, startDateIsoString]
          */
         START_SESSION,
+
+        /**
+         * A session was stopped.
+         */
+        STOP_SESSION,
+
         /**
          * Set a new app version. The Message object should be the new app
          * version

@@ -56,6 +56,8 @@ public class NativeBridge implements Observer {
 
     public static native void startedSession(String sessionID, String key);
 
+    public static native void stoppedSession();
+
     public static native void updateAppVersion(String appVersion);
 
     public static native void updateBuildUUID(String uuid);
@@ -130,6 +132,9 @@ public class NativeBridge implements Observer {
                 break;
             case START_SESSION:
                 handleStartSession(arg);
+                break;
+            case STOP_SESSION:
+                handleStopSession();
                 break;
             case UPDATE_APP_VERSION:
                 handleAppVersionChange(arg);
@@ -324,6 +329,10 @@ public class NativeBridge implements Observer {
         }
 
         warn("START_SESSION object is invalid: " + arg);
+    }
+
+    private void handleStopSession() {
+        stoppedSession();
     }
 
     private void handleReleaseStageChange(Object arg) {
