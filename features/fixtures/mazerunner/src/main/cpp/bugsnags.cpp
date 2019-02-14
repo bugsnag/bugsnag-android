@@ -18,6 +18,26 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXAutoContextScenario_activate(JN
 }
 
 JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXStartSessionScenario_crash(JNIEnv *env,
+                                                                            jobject instance,
+                                                                            jint value) {
+    int x = 22;
+    if (x > 0)
+        __builtin_trap();
+    return 338;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXStopSessionScenario_crash(JNIEnv *env,
+                                                                           jobject instance,
+                                                                           jint value) {
+    int x = 22552;
+    if (x > 0)
+        __builtin_trap();
+    return 555;
+}
+
+JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXUpdateContextCrashScenario_crash(JNIEnv *env,
                                                                          jobject instance,
                                                                          jint value) {
