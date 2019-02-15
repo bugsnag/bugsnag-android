@@ -316,7 +316,7 @@ void bugsnag_report_set_user_email(bugsnag_report *report, char *value);
 void bugsnag_report_set_user_id(bugsnag_report *report, char *value);
 void bugsnag_report_set_user_name(bugsnag_report *report, char *value);
 void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
-                                  char *started_at);
+                                  char *started_at, int handled_count);
 #ifdef __cplusplus
 }
 #endif

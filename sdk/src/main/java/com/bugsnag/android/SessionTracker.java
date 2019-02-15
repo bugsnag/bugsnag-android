@@ -116,7 +116,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         String startedAt = DateUtils.toIso8601(session.getStartedAt());
         notifyObservers(new NativeInterface.Message(
             NativeInterface.MessageType.START_SESSION,
-            Arrays.asList(session.getId(), startedAt)));
+            Arrays.asList(session.getId(), startedAt, session.getHandledCount())));
     }
 
     /**
@@ -131,6 +131,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         if (notifyForRelease
             && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
+            notifySessionStartObserver(session);
+
             try {
                 final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
@@ -157,7 +159,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 // This is on the current thread but there isn't much else we can do
                 sessionStore.write(session);
             }
-            notifySessionStartObserver(session);
         }
     }
 

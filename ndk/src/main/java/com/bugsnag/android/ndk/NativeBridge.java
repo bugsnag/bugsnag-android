@@ -54,7 +54,7 @@ public class NativeBridge implements Observer {
 
     public static native void removeMetadata(String tab, String key);
 
-    public static native void startedSession(String sessionID, String key);
+    public static native void startedSession(String sessionID, String key, int handledCount);
 
     public static native void stoppedSession();
 
@@ -318,11 +318,14 @@ public class NativeBridge implements Observer {
         if (arg instanceof List) {
             @SuppressWarnings("unchecked")
             List<Object> metadata = (List<Object>)arg;
-            if (metadata.size() == 2) {
+            if (metadata.size() == 3) {
                 Object id = metadata.get(0);
                 Object startTime = metadata.get(1);
-                if (id instanceof String && startTime instanceof String) {
-                    startedSession((String)id, (String)startTime);
+                Object handledCount = metadata.get(2);
+
+                if (id instanceof String && startTime instanceof String
+                    && handledCount instanceof Integer) {
+                    startedSession((String)id, (String)startTime, (Integer) handledCount);
                     return;
                 }
             }
