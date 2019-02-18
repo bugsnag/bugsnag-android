@@ -678,6 +678,14 @@ public final class Bugsnag {
         getClient().startSession();
     }
 
+    public static boolean resumeSession() {
+        return getClient().resumeSession();
+    }
+
+    public static void stopSession() {
+        getClient().stopSession();
+    }
+
     /**
      * Get the current Bugsnag Client instance.
      */
