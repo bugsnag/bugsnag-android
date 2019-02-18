@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.support.test.InstrumentationRegistry;
@@ -156,6 +157,14 @@ public class ObserverInterfaceTest {
         assertTrue(sessionInfo.get(0) instanceof String);
         assertTrue(sessionInfo.get(1) instanceof String);
         assertTrue(sessionInfo.get(2) instanceof Integer);
+    }
+
+    @Test
+    public void testStopSessionSendsmessage() {
+        client.startSession();
+        client.stopSession();
+        Object msg = findMessageInQueue(NativeInterface.MessageType.STOP_SESSION, null);
+        assertNull(msg);
     }
 
     @Test

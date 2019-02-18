@@ -134,7 +134,7 @@ public class NativeBridge implements Observer {
                 handleStartSession(arg);
                 break;
             case STOP_SESSION:
-                handleStopSession();
+                stoppedSession();
                 break;
             case UPDATE_APP_VERSION:
                 handleAppVersionChange(arg);
