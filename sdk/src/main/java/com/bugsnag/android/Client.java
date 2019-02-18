@@ -863,6 +863,12 @@ public class Client extends Observable implements Observer {
             callback.beforeNotify(report);
         }
 
+        if (sessionTracker.getCurrentSession() != null) {
+            setChanged();
+            notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
+        }
+
         switch (style) {
             case SAME_THREAD:
                 deliver(report, error);
