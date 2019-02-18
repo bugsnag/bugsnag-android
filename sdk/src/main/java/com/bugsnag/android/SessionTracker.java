@@ -144,18 +144,20 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         return currentSession.get();
     }
 
-    void incrementUnhandledError() {
+    Session incrementUnhandledError() {
         Session session = currentSession.get();
         if (session != null) {
-            session.incrementUnhandledErrCount();
+            return session.incrementUnhandledErrCount();
         }
+        return null;
     }
 
-    void incrementHandledError() {
+    Session incrementHandledError() {
         Session session = currentSession.get();
         if (session != null) {
-            session.incrementHandledErrCount();
+            return session.incrementHandledErrCount();
         }
+        return null;
     }
 
     /**
