@@ -123,7 +123,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
   bsg_request_env_write_lock();
   bugsnag_report *report = &bsg_global_env->next_report;
 
-  if (!report->stoppedSession) {
+  if (bugsnag_report_has_session(report)) {
     report->handled_events++;
   }
   bsg_release_env_write_lock();
@@ -151,7 +151,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_stoppedSession(
     }
     bsg_request_env_write_lock();
     bugsnag_report *report = &bsg_global_env->next_report;
-    report->stoppedSession = true;
+    memset(report->session_id, 0, strlen(report->session_id));
+    memset(report->session_start, 0, strlen(report->session_start));
+    report->handled_events = 0;
     bsg_release_env_write_lock();
 }
 

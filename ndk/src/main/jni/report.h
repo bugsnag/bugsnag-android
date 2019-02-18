@@ -292,7 +292,6 @@ typedef struct {
   char session_id[33];
   char session_start[33];
   int handled_events;
-  bool stoppedSession;
 } bugsnag_report;
 
 void bugsnag_report_add_metadata_double(bugsnag_report *report, char *section,
@@ -317,6 +316,8 @@ void bugsnag_report_set_user_id(bugsnag_report *report, char *value);
 void bugsnag_report_set_user_name(bugsnag_report *report, char *value);
 void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
                                   char *started_at, int handled_count);
+bool bugsnag_report_has_session(bugsnag_report *report);
+
 #ifdef __cplusplus
 }
 #endif
