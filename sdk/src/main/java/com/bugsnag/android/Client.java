@@ -282,20 +282,66 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Manually starts tracking a new session.
+     * Starts tracking a new session. You should disable automatic session tracking via
+     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * <p/>
+     * You should call this at the appropriate time in your application when you wish to start a
+     * session. Any subsequent errors which occur in your application will still be reported to
+     * Bugsnag but will not count towards your application's
+     * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
+     * stability score</a>. This will start a new session even if there is already an existing
+     * session; you should call {@link #resumeSession()} if you only want to start a session
+     * when one doesn't already exist.
      *
-     * Automatic session tracking can be enabled via
-     * {@link Configuration#setAutoCaptureSessions(boolean)}, which will automatically create a new
-     * session everytime the app enters the foreground.
+     * @see #resumeSession()
+     * @see #stopSession()
+     * @see Configuration#setAutoCaptureSessions(boolean)
      */
     public void startSession() {
         sessionTracker.startSession(false);
     }
 
+    /**
+     * Stops tracking a session. You should disable automatic session tracking via
+     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * <p/>
+     * You should call this at the appropriate time in your application when you wish to stop a
+     * session. Any subsequent errors which occur in your application will still be reported to
+     * Bugsnag but will not count towards your application's
+     * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
+     * stability score</a>. This can be advantageous if, for example, you do not wish the
+     * stability score to include crashes in a background service.
+     *
+     * @see #startSession()
+     * @see #resumeSession()
+     * @see Configuration#setAutoCaptureSessions(boolean)
+     */
     public final void stopSession() {
         sessionTracker.stopSession();
     }
 
+    /**
+     * Resumes a session which has previously been stopped, or starts a new session if none exists.
+     * If a session has already been resumed or started and has not been stopped, calling this
+     * method will have no effect. You should disable automatic session tracking via
+     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * <p/>
+     * It's important to note that sessions are stored in memory for the lifetime of the
+     * application process and are not persisted on disk. Therefore calling this method on app
+     * startup would start a new session, rather than continuing any previous session.
+     * <p/>
+     * You should call this at the appropriate time in your application when you wish to resume
+     * a previously started session. Any subsequent errors which occur in your application will
+     * still be reported to Bugsnag but will not count towards your application's
+     * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
+     * stability score</a>.
+     *
+     * @see #startSession()
+     * @see #stopSession()
+     * @see Configuration#setAutoCaptureSessions(boolean)
+     *
+     * @return true if a previous session was resumed, false if a new session was started.
+     */
     public final boolean resumeSession() {
         return sessionTracker.resumeSession();
     }
