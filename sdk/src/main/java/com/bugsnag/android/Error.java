@@ -457,9 +457,9 @@ public class Error implements JsonStream.Streamable {
             }
             if (config.getAutoCaptureSessions() || !currentSession.isAutoCaptured()) {
                 if (handledState.isUnhandled()) {
-                    reportedSession = sessionTracker.incrementUnhandledError();
+                    reportedSession = sessionTracker.incrementUnhandledAndCopy();
                 } else {
-                    reportedSession = sessionTracker.incrementHandledError();
+                    reportedSession = sessionTracker.incrementHandledAndCopy();
                 }
             }
             return reportedSession;

@@ -63,12 +63,12 @@ class Session implements JsonStream.Streamable {
         return handledCount.intValue();
     }
 
-    Session incrementHandledErrCount() {
+    Session incrementHandledAndCopy() {
         handledCount.incrementAndGet();
         return copySession(this);
     }
 
-    Session incrementUnhandledErrCount() {
+    Session incrementUnhandledAndCopy() {
         unhandledCount.incrementAndGet();
         return copySession(this);
     }

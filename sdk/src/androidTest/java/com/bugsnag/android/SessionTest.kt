@@ -21,14 +21,14 @@ class SessionTest {
 
     @Test
     fun handledIncrementCopiesSession() {
-        val copy = session.incrementHandledErrCount()
+        val copy = session.incrementHandledAndCopy()
         assertNotEquals(session, copy)
         validateSessionCopied(copy)
     }
 
     @Test
     fun unhandledIncrementCopiesSession() {
-        val copy = session.incrementUnhandledErrCount()
+        val copy = session.incrementUnhandledAndCopy()
         assertNotEquals(session, copy)
         validateSessionCopied(copy)
     }

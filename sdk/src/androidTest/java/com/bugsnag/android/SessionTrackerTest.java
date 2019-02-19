@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionStore;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTrackingApiClient;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -10,7 +9,6 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -80,11 +78,11 @@ public class SessionTrackerTest {
     @Test
     public void testIncrementCounts() throws Exception {
         sessionTracker.startNewSession(new Date(), user, false);
-        sessionTracker.incrementHandledError();
-        sessionTracker.incrementHandledError();
-        sessionTracker.incrementUnhandledError();
-        sessionTracker.incrementUnhandledError();
-        sessionTracker.incrementUnhandledError();
+        sessionTracker.incrementHandledAndCopy();
+        sessionTracker.incrementHandledAndCopy();
+        sessionTracker.incrementUnhandledAndCopy();
+        sessionTracker.incrementUnhandledAndCopy();
+        sessionTracker.incrementUnhandledAndCopy();
 
         Session session = sessionTracker.getCurrentSession();
         assertNotNull(session);

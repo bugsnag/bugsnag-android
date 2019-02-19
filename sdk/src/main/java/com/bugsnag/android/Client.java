@@ -863,7 +863,7 @@ public class Client extends Observable implements Observer {
             callback.beforeNotify(report);
         }
 
-        if (sessionTracker.getCurrentSession() != null) {
+        if (!error.getHandledState().isUnhandled() && error.getSession() != null) {
             setChanged();
             notifyObservers(new NativeInterface.Message(
                 NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
