@@ -26,10 +26,10 @@ internal class NewSessionScenario(config: Configuration,
             client.startSession()
             client.notifyBlocking(generateException())
 
-            // send 2nd exception which should not include session info
+            // stop tracking the existing session
             client.stopSession()
 
-            // send 3rd exception which should contain new session info
+            // send 2nd exception which should contain new session info
             client.startSession()
             client.notifyBlocking(generateException())
         }
