@@ -17,3 +17,5 @@ Scenario: When a session is resumed the error uses the previous session informat
     And the request 2 is valid for the error reporting API
     And the payload field "events.0.session.events.handled" equals 1 for request 1
     And the payload field "events.0.session.events.handled" equals 2 for request 2
+    And the payload field "events.0.session.id" of request 1 equals the payload field "events.0.session.id" of request 2
+    And the payload field "events.0.session.startedAt" of request 1 equals the payload field "events.0.session.startedAt" of request 2
