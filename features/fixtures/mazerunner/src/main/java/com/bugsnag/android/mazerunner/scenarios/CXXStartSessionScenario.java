@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
@@ -13,6 +14,8 @@ public class CXXStartSessionScenario extends Scenario {
         System.loadLibrary("monochrome");
         System.loadLibrary("entrypoint");
     }
+
+    private Handler handler = new Handler();
 
     public native int crash(int counter);
 
@@ -28,7 +31,13 @@ public class CXXStartSessionScenario extends Scenario {
 
         if (metadata == null || !metadata.equals("non-crashy")) {
             Bugsnag.getClient().startSession();
-            crash(0);
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    crash(0);
+                }
+            }, 8000);
         }
     }
 }

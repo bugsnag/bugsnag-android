@@ -2,6 +2,8 @@ Feature: NDK Session Tracking
 
 Scenario: Stopped session is not in payload of unhandled NDK error
     When I run "CXXStopSessionScenario"
+    And I wait a bit
+    And I wait a bit
     And I configure the app to run in the "non-crashy" state
     And I relaunch the app
     Then I should receive 2 requests
@@ -11,6 +13,8 @@ Scenario: Stopped session is not in payload of unhandled NDK error
 
 Scenario: Started session is in payload of unhandled NDK error
     When I run "CXXStartSessionScenario"
+    And I wait a bit
+    And I wait a bit
     And I configure the app to run in the "non-crashy" state
     And I relaunch the app
     Then I should receive 2 requests
