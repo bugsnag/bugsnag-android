@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Enhancements
+
+* Add stopSession() and resumeSession() to Client
+[#429](https://github.com/bugsnag/bugsnag-android/pull/429)
+
 ## 4.11.0 (2019-01-22)
 
 ### Enhancements

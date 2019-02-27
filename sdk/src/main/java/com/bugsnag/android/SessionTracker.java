@@ -7,6 +7,7 @@ import android.app.Application;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import java.io.File;
 import java.util.Arrays;
@@ -65,7 +66,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      * @param date the session start date
      * @param user the session user (if any)
      */
-    @Nullable Session startNewSession(@NonNull Date date, @Nullable User user,
+    @Nullable
+    @VisibleForTesting
+    Session startNewSession(@NonNull Date date, @Nullable User user,
                                       boolean autoCaptured) {
         if (configuration.getSessionEndpoint() == null) {
             Logger.warn("The session tracking endpoint has not been set. "
@@ -76,6 +79,44 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         currentSession.set(session);
         trackSessionIfNeeded(session);
         return session;
+    }
+
+    Session startSession(boolean autoCaptured) {
+        return startNewSession(new Date(), client.getUser(), autoCaptured);
+    }
+
+    void stopSession() {
+        Session session = currentSession.get();
+
+        if (session != null) {
+            session.isStopped.set(true);
+            setChanged();
+            notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.STOP_SESSION, null));
+        }
+    }
+
+    boolean resumeSession() {
+        Session session = currentSession.get();
+        boolean resumed;
+
+        if (session == null) {
+            session = startSession(false);
+            resumed = false;
+        } else {
+            resumed = session.isStopped.compareAndSet(true, false);
+        }
+
+        notifySessionStartObserver(session);
+        return resumed;
+    }
+
+    private void notifySessionStartObserver(Session session) {
+        setChanged();
+        String startedAt = DateUtils.toIso8601(session.getStartedAt());
+        notifyObservers(new NativeInterface.Message(
+            NativeInterface.MessageType.START_SESSION,
+            Arrays.asList(session.getId(), startedAt, session.getHandledCount())));
     }
 
     /**
@@ -90,6 +131,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         if (notifyForRelease
             && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
+            notifySessionStartObserver(session);
+
             try {
                 final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
@@ -116,11 +159,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 // This is on the current thread but there isn't much else we can do
                 sessionStore.write(session);
             }
-            setChanged();
-            String startedAt = DateUtils.toIso8601(session.getStartedAt());
-            notifyObservers(new NativeInterface.Message(
-                        NativeInterface.MessageType.START_SESSION,
-                        Arrays.asList(session.getId(), startedAt)));
         }
     }
 
@@ -141,18 +179,23 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
     @Nullable
     Session getCurrentSession() {
-        return currentSession.get();
+        Session session = currentSession.get();
+
+        if (session != null && !session.isStopped.get()) {
+            return session;
+        }
+        return null;
     }
 
     void incrementUnhandledError() {
-        Session session = currentSession.get();
+        Session session = getCurrentSession();
         if (session != null) {
             session.incrementUnhandledErrCount();
         }
     }
 
     void incrementHandledError() {
-        Session session = currentSession.get();
+        Session session = getCurrentSession();
         if (session != null) {
             session.incrementHandledErrCount();
         }

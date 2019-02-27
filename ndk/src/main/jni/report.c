@@ -83,11 +83,11 @@ void bugsnag_report_remove_metadata_tab(bugsnag_report *report, char *section) {
 }
 
 void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
-                                  char *started_at) {
+                                  char *started_at, int handled_count) {
   bsg_strncpy_safe(report->session_id, session_id, sizeof(report->session_id));
   bsg_strncpy_safe(report->session_start, started_at,
                    sizeof(report->session_start));
-  report->handled_events = 0;
+  report->handled_events = handled_count;
 }
 
 void bugsnag_report_set_context(bugsnag_report *report, char *value) {
@@ -157,4 +157,8 @@ void bugsnag_report_add_breadcrumb(bugsnag_report *report,
 void bugsnag_report_clear_breadcrumbs(bugsnag_report *report) {
   report->crumb_count = 0;
   report->crumb_first_index = 0;
+}
+
+bool bugsnag_report_has_session(bugsnag_report *report) {
+    return strlen(report->session_id) > 0;
 }

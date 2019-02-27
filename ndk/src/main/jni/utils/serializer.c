@@ -255,13 +255,14 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
       json_object_dotset_string(event, "user.email", report->user.email);
     if (strlen(report->user.id) > 0)
       json_object_dotset_string(event, "user.id", report->user.id);
-    if (strlen(report->session_id) > 0) {
-      json_object_dotset_string(event, "session.startedAt",
-                                report->session_start);
-      json_object_dotset_string(event, "session.id", report->session_id);
-      json_object_dotset_number(event, "session.events.handled",
-                                report->handled_events);
-      json_object_dotset_number(event, "session.events.unhandled", 1);
+
+    if (bugsnag_report_has_session(report)) {
+        json_object_dotset_string(event, "session.startedAt",
+                                  report->session_start);
+        json_object_dotset_string(event, "session.id", report->session_id);
+        json_object_dotset_number(event, "session.events.handled",
+                                  report->handled_events);
+        json_object_dotset_number(event, "session.events.unhandled", 1);
     }
 
     json_object_set_string(exception, "errorClass", report->exception.name);
