@@ -42,6 +42,7 @@ class Session implements JsonStream.Streamable {
     private AtomicInteger unhandledCount = new AtomicInteger();
     private AtomicInteger handledCount = new AtomicInteger();
     private AtomicBoolean tracked = new AtomicBoolean(false);
+    final AtomicBoolean isStopped = new AtomicBoolean(false);
 
     String getId() {
         return id;
