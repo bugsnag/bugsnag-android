@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.X.X (TBD)
+## 4.12.0 (2019-02-27)
 
 ### Enhancements
 
