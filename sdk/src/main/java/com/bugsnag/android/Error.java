@@ -385,7 +385,7 @@ public class Error implements JsonStream.Streamable {
     static class Builder {
         private final Configuration config;
         private final Throwable exception;
-        private final Session session;
+        private final SessionTracker sessionTracker;
         private final ThreadState threadState;
         private Severity severity = Severity.WARNING;
         private MetaData metaData;
@@ -396,7 +396,7 @@ public class Error implements JsonStream.Streamable {
 
         Builder(@NonNull Configuration config,
                 @NonNull Throwable exception,
-                @Nullable Session session,
+                SessionTracker sessionTracker,
                 @NonNull Thread thread,
                 boolean unhandled) {
             Throwable exc = unhandled ? exception : null;
@@ -404,19 +404,14 @@ public class Error implements JsonStream.Streamable {
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
-
-            if (session != null
-                && !config.getAutoCaptureSessions() && session.isAutoCaptured()) {
-                this.session = null;
-            } else {
-                this.session = session;
-            }
+            this.sessionTracker = sessionTracker;
         }
 
         Builder(@NonNull Configuration config, @NonNull String name,
                 @NonNull String message, @NonNull StackTraceElement[] frames,
-                Session session, Thread thread) {
-            this(config, new BugsnagException(name, message, frames), session, thread, false);
+                SessionTracker sessionTracker, Thread thread) {
+            this(config, new BugsnagException(name, message, frames), sessionTracker,
+                thread, false);
         }
 
         Builder severityReasonType(@HandledState.SeverityReason String severityReasonType) {
@@ -442,6 +437,8 @@ public class Error implements JsonStream.Streamable {
         Error build() {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
+            Session session = getSession(handledState);
+
             Error error = new Error(config, exception, handledState,
                 severity, session, threadState);
 
@@ -449,6 +446,23 @@ public class Error implements JsonStream.Streamable {
                 error.setMetaData(metaData);
             }
             return error;
+        }
+
+        private Session getSession(HandledState handledState) {
+            Session currentSession = sessionTracker.getCurrentSession();
+            Session reportedSession = null;
+
+            if (currentSession == null) {
+                return null;
+            }
+            if (config.getAutoCaptureSessions() || !currentSession.isAutoCaptured()) {
+                if (handledState.isUnhandled()) {
+                    reportedSession = sessionTracker.incrementUnhandledAndCopy();
+                } else {
+                    reportedSession = sessionTracker.incrementHandledAndCopy();
+                }
+            }
+            return reportedSession;
         }
     }
 }

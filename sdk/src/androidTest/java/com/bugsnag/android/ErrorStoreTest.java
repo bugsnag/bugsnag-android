@@ -72,7 +72,7 @@ public class ErrorStoreTest {
     @NonNull
     private Error writeErrorToStore() {
         Error error = new Error.Builder(config, new RuntimeException(),
-            null, Thread.currentThread(), false).build();
+            BugsnagTestUtils.generateSessionTracker(), Thread.currentThread(), false).build();
         errorStore.write(error);
         return error;
     }

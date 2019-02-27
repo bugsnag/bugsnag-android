@@ -7,6 +7,14 @@
 * Add stopSession() and resumeSession() to Client
 [#429](https://github.com/bugsnag/bugsnag-android/pull/429)
 
+### Bug fixes
+
+* Prevent overwriting config.projectPackages if already set
+  [#428](https://github.com/bugsnag/bugsnag-android/pull/428)
+
+* Fix incorrect session handledCount when notifying in quick succession
+  [#434](https://github.com/bugsnag/bugsnag-android/pull/434)
+
 ## 4.11.0 (2019-01-22)
 
 ### Enhancements

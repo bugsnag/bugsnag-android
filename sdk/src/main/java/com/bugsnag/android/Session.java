@@ -14,6 +14,14 @@ class Session implements JsonStream.Streamable {
     private final User user;
     private AtomicBoolean autoCaptured;
 
+    static Session copySession(Session session) {
+        Session copy = new Session(session.id, session.startedAt,
+            session.user, session.unhandledCount.get(), session.handledCount.get());
+        copy.tracked.set(session.tracked.get());
+        copy.autoCaptured.set(session.isAutoCaptured());
+        return copy;
+    }
+
     public Session(String id, Date startedAt, User user, boolean autoCaptured) {
         this.id = id;
         this.startedAt = new Date(startedAt.getTime());
@@ -56,12 +64,14 @@ class Session implements JsonStream.Streamable {
         return handledCount.intValue();
     }
 
-    void incrementHandledErrCount() {
+    Session incrementHandledAndCopy() {
         handledCount.incrementAndGet();
+        return copySession(this);
     }
 
-    void incrementUnhandledErrCount() {
+    Session incrementUnhandledAndCopy() {
         unhandledCount.incrementAndGet();
+        return copySession(this);
     }
 
     AtomicBoolean isTracked() {

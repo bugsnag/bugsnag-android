@@ -103,20 +103,20 @@ class SessionTrackerStopResumeTest {
     @Test
     fun stoppedSessionDoesNotIncrement() {
         tracker.startSession(false)
-        tracker.incrementHandledError()
-        tracker.incrementUnhandledError()
+        tracker.incrementHandledAndCopy()
+        tracker.incrementUnhandledAndCopy()
         assertEquals(1, tracker.currentSession?.handledCount)
         assertEquals(1, tracker.currentSession?.unhandledCount)
 
         tracker.stopSession()
-        tracker.incrementHandledError()
-        tracker.incrementUnhandledError()
+        tracker.incrementHandledAndCopy()
+        tracker.incrementUnhandledAndCopy()
         tracker.resumeSession()
         assertEquals(1, tracker.currentSession?.handledCount)
         assertEquals(1, tracker.currentSession?.unhandledCount)
 
-        tracker.incrementHandledError()
-        tracker.incrementUnhandledError()
+        tracker.incrementHandledAndCopy()
+        tracker.incrementUnhandledAndCopy()
         assertEquals(2, tracker.currentSession?.handledCount)
         assertEquals(2, tracker.currentSession?.unhandledCount)
     }

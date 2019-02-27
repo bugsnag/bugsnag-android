@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 
 import android.support.test.filters.SmallTest
 import android.support.test.runner.AndroidJUnit4
+import com.bugsnag.android.BugsnagTestUtils.generateSessionTracker
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,7 +24,7 @@ class BeforeNotifyTest {
             false
         }
 
-        val error = Error.Builder(config, RuntimeException("Test"), null,
+        val error = Error.Builder(config, RuntimeException("Test"), generateSessionTracker(),
             Thread.currentThread(), false).build()
         beforeNotify.run(error)
         assertEquals(context, error.context)

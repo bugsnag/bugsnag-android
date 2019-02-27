@@ -66,7 +66,8 @@ public class ExceptionsTest {
         StackTraceElement element = new StackTraceElement("Class", "method", "Class.java", 123);
         StackTraceElement[] frames = new StackTraceElement[]{element};
         Error error = new Error.Builder(config, "RuntimeException",
-            "Example message", frames, null, Thread.currentThread()).build();
+            "Example message", frames, BugsnagTestUtils.generateSessionTracker(),
+            Thread.currentThread()).build();
         Exceptions exceptions = new Exceptions(config, error.getException());
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);

@@ -187,18 +187,32 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         return null;
     }
 
-    void incrementUnhandledError() {
+    /**
+     * Increments the unhandled error count on the current session, then returns a deep-copy
+     * of the current session.
+     *
+     * @return a copy of the current session, or null if no session has been started.
+     */
+    Session incrementUnhandledAndCopy() {
         Session session = getCurrentSession();
         if (session != null) {
-            session.incrementUnhandledErrCount();
+            return session.incrementUnhandledAndCopy();
         }
+        return null;
     }
 
-    void incrementHandledError() {
+    /**
+     * Increments the handled error count on the current session, then returns a deep-copy
+     * of the current session.
+     *
+     * @return a copy of the current session, or null if no session has been started.
+     */
+    Session incrementHandledAndCopy() {
         Session session = getCurrentSession();
         if (session != null) {
-            session.incrementHandledErrCount();
+            return session.incrementHandledAndCopy();
         }
+        return null;
     }
 
     /**

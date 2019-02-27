@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
-import static com.bugsnag.android.BugsnagTestUtils.generateSession;
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -41,7 +42,8 @@ public class ErrorTest {
     public void setUp() throws Exception {
         config = new Configuration("api-key");
         RuntimeException exception = new RuntimeException("Example message");
-        error = new Error.Builder(config, exception, null, Thread.currentThread(), false).build();
+        error = new Error.Builder(config, exception, generateSessionTracker(),
+            Thread.currentThread(), false).build();
     }
 
     @Test
@@ -51,13 +53,13 @@ public class ErrorTest {
         // Shouldn't ignore classes not in ignoreClasses
         RuntimeException runtimeException = new RuntimeException("Test");
         Error error = new Error.Builder(config,
-            runtimeException, null, Thread.currentThread(), false).build();
+            runtimeException, generateSessionTracker(), Thread.currentThread(), false).build();
         assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
         IOException ioException = new IOException("Test");
         error = new Error.Builder(config,
-            ioException, null, Thread.currentThread(), false).build();
+            ioException, generateSessionTracker(), Thread.currentThread(), false).build();
         assertTrue(error.shouldIgnoreClass());
     }
 
@@ -89,7 +91,7 @@ public class ErrorTest {
     @Test
     public void testHandledSerialisation() throws Exception {
         Error err = new Error.Builder(config,
-            new RuntimeException(), null, Thread.currentThread(), false)
+            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
 
@@ -107,7 +109,7 @@ public class ErrorTest {
     @Test
     public void testUnhandledSerialisation() throws Exception {
         Error err = new Error.Builder(config,
-            new RuntimeException(), null, Thread.currentThread(), false)
+            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_UNHANDLED_EXCEPTION)
             .severity(Severity.ERROR)
             .build();
@@ -126,7 +128,7 @@ public class ErrorTest {
     @Test
     public void testPromiseRejectionSerialisation() throws Exception {
         Error err = new Error.Builder(config,
-            new RuntimeException(), null, Thread.currentThread(), false)
+            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_PROMISE_REJECTION)
             .severity(Severity.ERROR)
             .build();
@@ -145,7 +147,7 @@ public class ErrorTest {
     @Test
     public void testLogSerialisation() throws Exception {
         Error err = new Error.Builder(config,
-            new RuntimeException(), null, Thread.currentThread(), false)
+            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_LOG)
             .severity(Severity.WARNING)
             .attributeValue("warning")
@@ -181,7 +183,7 @@ public class ErrorTest {
     @Test
     public void testStrictModeSerialisation() throws Exception {
         Error err = new Error.Builder(config,
-            new RuntimeException(), null, Thread.currentThread(), false)
+            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_STRICT_MODE)
             .attributeValue("Test")
             .build();
@@ -245,9 +247,10 @@ public class ErrorTest {
 
     @Test
     public void testSessionIncluded() throws Exception {
-        Session session = generateSession();
+        SessionTracker sessionTracker = generateSessionTracker();
+        final Session session = sessionTracker.startNewSession(new Date(), new User(), false);
         Error err = new Error.Builder(config,
-            new RuntimeException(), session, Thread.currentThread(), false).build();
+            new RuntimeException(), sessionTracker, Thread.currentThread(), false).build();
 
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
@@ -262,13 +265,14 @@ public class ErrorTest {
         JSONObject eventsNode = sessionNode.getJSONObject("events");
         assertNotNull(eventsNode);
         assertEquals(2, eventsNode.length());
-        assertEquals(0, eventsNode.get("handled"));
+        assertEquals(1, eventsNode.get("handled"));
     }
 
     @Test(expected = JSONException.class)
     public void testSessionExcluded() throws Exception {
         Error err = new Error.Builder(config,
-            new RuntimeException(), null, Thread.currentThread(), false).build();
+            new RuntimeException(), generateSessionTracker(),
+            Thread.currentThread(), false).build();
 
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
@@ -279,11 +283,13 @@ public class ErrorTest {
     public void checkExceptionMessageNullity() throws Exception {
         String msg = "Foo";
         Error err = new Error.Builder(config,
-            new RuntimeException(msg), null, Thread.currentThread(), false).build();
+            new RuntimeException(msg), generateSessionTracker(),
+            Thread.currentThread(), false).build();
         assertEquals(msg, err.getExceptionMessage());
 
         err = new Error.Builder(config,
-            new RuntimeException(), null, Thread.currentThread(), false).build();
+            new RuntimeException(), generateSessionTracker(),
+            Thread.currentThread(), false).build();
         assertEquals("", err.getExceptionMessage());
     }
 
@@ -305,7 +311,7 @@ public class ErrorTest {
         BugsnagException exception = new BugsnagException("Busgang", "exceptional",
             new StackTraceElement[]{});
         Error err = new Error.Builder(config,
-            exception, null, Thread.currentThread(), false).build();
+            exception, generateSessionTracker(), Thread.currentThread(), false).build();
         assertEquals("Busgang", err.getExceptionName());
     }
 
@@ -350,7 +356,8 @@ public class ErrorTest {
     public void testBuilderMetaData() {
         Configuration config = new Configuration("api-key");
         Error.Builder builder = new Error.Builder(config,
-            new RuntimeException("foo"), null, Thread.currentThread(), false);
+            new RuntimeException("foo"), generateSessionTracker(),
+            Thread.currentThread(), false);
 
         assertNotNull(builder.metaData(new MetaData()).build());
 
@@ -392,9 +399,9 @@ public class ErrorTest {
         config.setAutoCaptureSessions(false);
         RuntimeException exception = new RuntimeException("foo");
 
-        Session session = generateSession();
-        session.setAutoCaptured(true);
-        error = new Error.Builder(config, exception, session,
+        SessionTracker sessionTracker = generateSessionTracker();
+        sessionTracker.startNewSession(new Date(), new User(), true);
+        error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false).build();
 
         JSONObject errorJson = streamableToJson(error);
