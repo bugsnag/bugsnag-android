@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
+import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
@@ -31,13 +33,13 @@ public class NullMetadataTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        BugsnagTestUtils.generateClient();
+        generateClient();
         throwable = new RuntimeException("Test");
     }
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, throwable, null,
+        Error error = new Error.Builder(config, throwable, generateSessionTracker(),
             Thread.currentThread(), false).build();
         validateDefaultMetadata(error.getMetaData());
     }
@@ -46,13 +48,14 @@ public class NullMetadataTest {
     public void testSecondErrorDefaultMetaData() throws Exception {
         Error error = new Error.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
-            null, Thread.currentThread()).build();
+            generateSessionTracker(), Thread.currentThread()).build();
         validateDefaultMetadata(error.getMetaData());
     }
 
     @Test
     public void testErrorSetMetadataRef() throws Exception {
-        Error error = new Error.Builder(config, throwable, null,
+        Error error = new Error.Builder(config, throwable,
+            generateSessionTracker(),
             Thread.currentThread(), false).build();
         MetaData metaData = new MetaData();
         metaData.addToTab(TAB_KEY, "test", "data");
@@ -62,7 +65,8 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorSetNullMetadata() throws Exception {
-        Error error = new Error.Builder(config, throwable, null,
+        Error error = new Error.Builder(config, throwable,
+            generateSessionTracker(),
             Thread.currentThread(), false).build();
         error.setMetaData(null);
         validateDefaultMetadata(error.getMetaData());
@@ -97,7 +101,7 @@ public class NullMetadataTest {
             }
         });
         Error error = new Error.Builder(config, new Throwable(),
-            null, Thread.currentThread(), false).build();
+            generateSessionTracker(), Thread.currentThread(), false).build();
         Client client = Bugsnag.getClient();
         client.notify(error, DeliveryStyle.SAME_THREAD, null);
     }

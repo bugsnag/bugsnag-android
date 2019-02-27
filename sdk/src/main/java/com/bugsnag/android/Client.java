@@ -657,7 +657,7 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -672,7 +672,7 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -693,7 +693,7 @@ public class Client extends Observable implements Observer {
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable Callback callback) {
         Error error = new Error.Builder(config, name, message, stacktrace,
-            sessionTracker.getCurrentSession(), Thread.currentThread())
+            sessionTracker, Thread.currentThread())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -707,7 +707,7 @@ public class Client extends Observable implements Observer {
      *                  Severity.WARNING or Severity.INFO
      */
     public void notify(@NonNull Throwable exception, @NonNull Severity severity) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .severity(severity)
             .build();
@@ -724,7 +724,7 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notify(@NonNull Throwable exception,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .metaData(metaData)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
@@ -744,7 +744,7 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notify(@NonNull Throwable exception, @NonNull Severity severity,
                        @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .metaData(metaData)
             .severity(severity)
@@ -769,7 +769,7 @@ public class Client extends Observable implements Observer {
                        @NonNull StackTraceElement[] stacktrace, @NonNull Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
+            stacktrace, sessionTracker, Thread.currentThread())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -797,7 +797,7 @@ public class Client extends Observable implements Observer {
                        @NonNull Severity severity,
                        @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
+            stacktrace, sessionTracker, Thread.currentThread())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -863,17 +863,10 @@ public class Client extends Observable implements Observer {
             callback.beforeNotify(report);
         }
 
-        HandledState handledState = report.getError().getHandledState();
-
-        if (handledState.isUnhandled()) {
-            sessionTracker.incrementUnhandledError();
-        } else {
-            sessionTracker.incrementHandledError();
-            if (sessionTracker.getCurrentSession() != null) {
-                setChanged();
-                notifyObservers(new NativeInterface.Message(
-                            NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
-            }
+        if (!error.getHandledState().isUnhandled() && error.getSession() != null) {
+            setChanged();
+            notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
         }
 
         switch (style) {
@@ -919,7 +912,7 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notifyBlocking(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -934,7 +927,7 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notifyBlocking(@NonNull Throwable exception, @Nullable Callback callback) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -955,7 +948,7 @@ public class Client extends Observable implements Observer {
                                @NonNull StackTraceElement[] stacktrace,
                                @Nullable Callback callback) {
         Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
+            stacktrace, sessionTracker, Thread.currentThread())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -971,7 +964,7 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notifyBlocking(@NonNull Throwable exception,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .metaData(metaData)
@@ -991,7 +984,7 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity,
                                @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker.getCurrentSession(),
+        Error error = new Error.Builder(config, exception, sessionTracker,
             Thread.currentThread(), false)
             .metaData(metaData)
             .severity(severity)
@@ -1018,7 +1011,7 @@ public class Client extends Observable implements Observer {
                                @NonNull Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
+            stacktrace, sessionTracker, Thread.currentThread())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1046,7 +1039,7 @@ public class Client extends Observable implements Observer {
                                @NonNull Severity severity,
                                @NonNull MetaData metaData) {
         Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker.getCurrentSession(), Thread.currentThread())
+            stacktrace, sessionTracker, Thread.currentThread())
             .severity(severity)
             .metaData(metaData)
             .build();
@@ -1063,7 +1056,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity) {
         Error error = new Error.Builder(config, exception,
-            sessionTracker.getCurrentSession(), Thread.currentThread(), false)
+            sessionTracker, Thread.currentThread(), false)
             .severity(severity)
             .build();
         notify(error, BLOCKING);
@@ -1092,7 +1085,7 @@ public class Client extends Observable implements Observer {
 
         @SuppressWarnings("WrongConstant")
         Error error = new Error.Builder(config, exception,
-            sessionTracker.getCurrentSession(), Thread.currentThread(), false)
+            sessionTracker, Thread.currentThread(), false)
             .severity(Severity.fromString(severity))
             .severityReasonType(severityReason)
             .attributeValue(logLevel)
@@ -1250,7 +1243,7 @@ public class Client extends Observable implements Observer {
                         @HandledState.SeverityReason String severityReason,
                         @Nullable String attributeValue, Thread thread) {
         Error error = new Error.Builder(config, exception,
-            sessionTracker.getCurrentSession(), thread, true)
+            sessionTracker, thread, true)
             .severity(severity)
             .metaData(metaData)
             .severityReasonType(severityReason)
