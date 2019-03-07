@@ -47,6 +47,9 @@ public class Configuration extends Observable implements Observer {
     private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
 
+    private boolean detectAnrs = true;
+    private long anrThresholdMs = 5000;
+
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
@@ -639,6 +642,22 @@ public class Configuration extends Observable implements Observer {
             throw new IllegalArgumentException("Delivery cannot be null");
         }
         this.delivery = delivery;
+    }
+
+    public boolean getDetectAnrs() {
+        return detectAnrs;
+    }
+
+    public void setDetectAnrs(boolean detectAnrs) {
+        this.detectAnrs = detectAnrs;
+    }
+
+    public long getAnrThresholdMs() {
+        return anrThresholdMs;
+    }
+
+    public void setAnrThresholdMs(long anrThresholdMs) {
+        this.anrThresholdMs = anrThresholdMs;
     }
 
     /**
