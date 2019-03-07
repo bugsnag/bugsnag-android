@@ -24,13 +24,14 @@ final class BlockedThreadDetector {
         void onThreadBlocked(Thread thread);
     }
 
-    private final Delegate delegate;
-    private final Looper looper;
-    private final long checkIntervalMs;
-    private final long blockedThresholdMs;
-    private final Handler handler;
+    final Looper looper;
+    final long checkIntervalMs;
+    final long blockedThresholdMs;
+    final Handler handler;
+    final Delegate delegate;
 
-    private volatile long lastUpdateMs;
+    volatile long lastUpdateMs;
+    volatile boolean isAlreadyBlocked = false;
 
     BlockedThreadDetector(long blockedThresholdMs,
                           Looper looper,
@@ -54,7 +55,7 @@ final class BlockedThreadDetector {
         this.handler = new Handler(looper);
     }
 
-    private void updateLivenessTimestamp() {
+    void updateLivenessTimestamp() {
         lastUpdateMs = SystemClock.elapsedRealtime();
     }
 
@@ -73,6 +74,29 @@ final class BlockedThreadDetector {
     final Thread watcherThread = new Thread() {
         @Override
         public void run() {
+            while (!isInterrupted()) {
+                handler.post(livenessCheck);
+
+                try {
+                    Thread.sleep(checkIntervalMs); // throttle checks to the configured threshold
+                } catch (InterruptedException exc) {
+                    interrupt();
+                }
+                checkIfThreadBlocked();
+            }
+        }
+
+        private void checkIfThreadBlocked() {
+            long delta = SystemClock.elapsedRealtime() - lastUpdateMs;
+
+            if (delta > blockedThresholdMs) {
+                if (!isAlreadyBlocked) {
+                    delegate.onThreadBlocked(looper.getThread());
+                }
+                isAlreadyBlocked = true; // prevents duplicate reports for the same ANR
+            } else {
+                isAlreadyBlocked = false;
+            }
         }
     };
 }
