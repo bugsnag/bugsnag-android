@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -47,7 +48,7 @@ public class Configuration extends Observable implements Observer {
     private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
 
-    private boolean detectAnrs = true;
+    private boolean detectAnrs = !Debug.isDebuggerConnected();
     private long anrThresholdMs = 5000;
 
     @NonNull
