@@ -644,18 +644,54 @@ public class Configuration extends Observable implements Observer {
         this.delivery = delivery;
     }
 
+    /**
+     * @return whether ANRs will be captured or not
+     * @see #setDetectAnrs(boolean)
+     */
     public boolean getDetectAnrs() {
         return detectAnrs;
     }
 
+    /**
+     * Sets whether <a href="https://developer.android.com/topic/performance/vitals/anr">ANRs</a>
+     * should be reported to Bugsnag. By default, Bugsnag will record an ANR whenever the main
+     * thread has been blocked for 5000 milliseconds or longer, when no debugger is attached to
+     * the app.
+     * <p/>
+     * If you wish to disable ANR detection, you should set this property to false; if you wish to
+     * configure the time threshold required to capture an ANR, you should use the
+     * {@link #setAnrThresholdMs(long)} property.
+     *
+     * @param detectAnrs whether ANRs should be captured or not
+     * @see #setAnrThresholdMs(long)
+     */
     public void setDetectAnrs(boolean detectAnrs) {
         this.detectAnrs = detectAnrs;
     }
 
+    /**
+     * @return the threshold at which ANRs are detected, in ms
+     * @see #setAnrThresholdMs(long)
+     */
     public long getAnrThresholdMs() {
         return anrThresholdMs;
     }
 
+    /**
+     * Sets the time in milliseconds at which an
+     * <a href="https://developer.android.com/topic/performance/vitals/anr">ANR</a> is detected
+     * by Bugsnag. By default, Bugsnag will record an ANR whenever the main thread has been blocked
+     * for 5000 milliseconds or longer.
+     * <p/>
+     * If you wish to disable ANR detection completely, you should set the
+     * {@link #setDetectAnrs(boolean)} property to false.
+     * <p/>
+     * Attempting to set this property to any value below 100ms will result in the anrThresholdMs
+     * being set as 100ms.
+     *
+     * @param anrThresholdMs the threshold in ms at which ANRs should be detected
+     * @see #setDetectAnrs(boolean)
+     */
     public void setAnrThresholdMs(long anrThresholdMs) {
         this.anrThresholdMs = anrThresholdMs;
     }
