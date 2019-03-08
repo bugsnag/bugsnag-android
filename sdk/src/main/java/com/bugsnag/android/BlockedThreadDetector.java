@@ -11,7 +11,7 @@ import android.os.SystemClock;
  */
 final class BlockedThreadDetector {
 
-    private static final int DEFAULT_CHECK_INTERVAL_MS = 15;
+    private static final int DEFAULT_CHECK_INTERVAL_MS = 150;
 
     interface Delegate {
 
