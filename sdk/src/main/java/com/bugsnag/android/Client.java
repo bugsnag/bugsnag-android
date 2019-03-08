@@ -251,10 +251,8 @@ public class Client extends Observable implements Observer {
                     + config.getAnrThresholdMs() + " ms";
                 BugsnagException exc = new BugsnagException("ANR", errMsg, thread.getStackTrace());
 
-                // TODO set severityReason to ANRError
-                String severityReason = HandledState.REASON_UNHANDLED_EXCEPTION;
                 cacheAndNotify(exc, Severity.ERROR, new MetaData(),
-                    severityReason, null, thread);
+                    HandledState.REASON_ANR, null, thread);
             }
         };
         BlockedThreadDetector detector = new BlockedThreadDetector(thresholdMs, looper, delegate);
