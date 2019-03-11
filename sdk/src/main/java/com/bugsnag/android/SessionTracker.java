@@ -79,6 +79,25 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     }
 
     /**
+     * Cache details of a previously captured session.
+     * Append session details to all subsequent reports.
+     *
+     * @param date           the session start date
+     * @param sessionId      the unique session identifier
+     * @param user           the session user (if any)
+     * @param unhandledCount the number of unhandled events which have occurred during the session
+     * @param handledCount   the number of handled events which have occurred during the session
+     * @return the session
+     */
+    @Nullable Session registerExistingSession(@NonNull Date date, @NonNull String sessionId,
+                                              @Nullable User user, int unhandledCount,
+                                              int handledCount) {
+        Session session = new Session(sessionId, date, user, unhandledCount, handledCount);
+        currentSession.set(session);
+        return session;
+    }
+
+    /**
      * Determines whether or not a session should be tracked. If this is true, the session will be
      * stored and sent to the Bugsnag API, otherwise no action will occur in this method.
      *

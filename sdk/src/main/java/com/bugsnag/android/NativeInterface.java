@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -393,6 +394,17 @@ public class NativeInterface {
      */
     public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
+    }
+
+    /**
+     * Update the current session with a given start time, ID, and event counts
+     */
+    public static void registerSession(long startedAt, @NonNull String sessionId,
+                                       int unhandledCount, int handledCount) {
+        Client client = getClient();
+        User user = client.getUser();
+        client.getSessionTracker().registerExistingSession(new Date(startedAt), sessionId, user,
+                                                           unhandledCount, handledCount);
     }
 
     /**

@@ -1277,6 +1277,10 @@ public class Client extends Observable implements Observer {
         return orientationListener; // this only exists for tests
     }
 
+    SessionTracker getSessionTracker() {
+        return sessionTracker;
+    }
+
     private boolean runBeforeNotifyTasks(Error error) {
         for (BeforeNotify beforeNotify : config.getBeforeNotifyTasks()) {
             try {
