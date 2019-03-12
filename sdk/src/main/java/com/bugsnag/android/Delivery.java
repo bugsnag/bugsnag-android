@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-
 import android.support.annotation.NonNull;
 
 /**
