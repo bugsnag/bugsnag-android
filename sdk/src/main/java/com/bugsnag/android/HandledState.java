@@ -70,6 +70,8 @@ final class HandledState implements JsonStream.Streamable {
                 return new HandledState(severityReasonType, Severity.ERROR, true, null);
             case REASON_LOG:
                 return new HandledState(severityReasonType, severity, false, attributeValue);
+            case REASON_ANR:
+                return new HandledState(severityReasonType, Severity.ERROR, true, null);
             default:
                 String msg = String.format("Invalid argument '%s' for severityReason",
                     severityReasonType);
