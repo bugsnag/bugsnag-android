@@ -405,11 +405,12 @@ public class NativeInterface {
     /**
      * Update the current session with a given start time, ID, and event counts
      */
-    public static void registerSession(long startedAt, @NonNull String sessionId,
+    public static void registerSession(long startedAt, @Nullable String sessionId,
                                        int unhandledCount, int handledCount) {
         Client client = getClient();
         User user = client.getUser();
-        client.getSessionTracker().registerExistingSession(new Date(startedAt), sessionId, user,
+        Date startDate = startedAt > 0 ? new Date(startedAt) : null;
+        client.getSessionTracker().registerExistingSession(startDate, sessionId, user,
                                                            unhandledCount, handledCount);
     }
 
