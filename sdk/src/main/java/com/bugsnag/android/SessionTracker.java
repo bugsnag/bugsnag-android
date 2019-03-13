@@ -89,10 +89,13 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      * @param handledCount   the number of handled events which have occurred during the session
      * @return the session
      */
-    @Nullable Session registerExistingSession(@NonNull Date date, @NonNull String sessionId,
+    @Nullable Session registerExistingSession(@Nullable Date date, @Nullable String sessionId,
                                               @Nullable User user, int unhandledCount,
                                               int handledCount) {
-        Session session = new Session(sessionId, date, user, unhandledCount, handledCount);
+        Session session = null;
+        if (date != null && sessionId != null) {
+            session = new Session(sessionId, date, user, unhandledCount, handledCount);
+        }
         currentSession.set(session);
         return session;
     }
