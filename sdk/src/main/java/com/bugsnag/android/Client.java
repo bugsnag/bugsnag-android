@@ -16,6 +16,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -24,7 +25,7 @@ import android.view.OrientationEventListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -193,6 +194,10 @@ public class Client extends Observable implements Observer {
             enableExceptionHandler();
         }
 
+        if (config.getDetectAnrs()) {
+            enableAnrDetection();
+        }
+
         // register a receiver for automatic breadcrumbs
 
         try {
@@ -234,6 +239,24 @@ public class Client extends Observable implements Observer {
 
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
+    }
+
+    private void enableAnrDetection() {
+        long thresholdMs = config.getAnrThresholdMs();
+        Looper looper = Looper.getMainLooper();
+        BlockedThreadDetector.Delegate delegate = new BlockedThreadDetector.Delegate() {
+            @Override
+            public void onThreadBlocked(Thread thread) {
+                String errMsg = "Application did not respond for at least "
+                    + config.getAnrThresholdMs() + " ms";
+                BugsnagException exc = new BugsnagException("ANR", errMsg, thread.getStackTrace());
+
+                cacheAndNotify(exc, Severity.ERROR, new MetaData(),
+                    HandledState.REASON_ANR, null, thread);
+            }
+        };
+        BlockedThreadDetector detector = new BlockedThreadDetector(thresholdMs, looper, delegate);
+        detector.start(); // begin monitoring for ANRs
     }
 
     class ConnectivityChangeReceiver extends BroadcastReceiver {
