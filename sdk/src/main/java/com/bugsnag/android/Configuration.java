@@ -694,7 +694,7 @@ public class Configuration extends Observable implements Observer {
      * @see #setDetectAnrs(boolean)
      */
     public void setAnrThresholdMs(long anrThresholdMs) {
-        this.anrThresholdMs = anrThresholdMs;
+        this.anrThresholdMs = anrThresholdMs < 100 ? 100 : anrThresholdMs;
     }
 
     /**

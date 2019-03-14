@@ -26,7 +26,7 @@ class AnrConfigTest {
 
         arrayOf(100, 99, 0, -5, Long.MIN_VALUE).forEach {
             config.anrThresholdMs = it
-            assertEquals(it, config.anrThresholdMs)
+            assertEquals(100, config.anrThresholdMs)
         }
     }
 }
