@@ -45,6 +45,7 @@ class MainActivity : Activity() {
         val config = Configuration(intent.getStringExtra("BUGSNAG_API_KEY"))
         val port = intent.getStringExtra("BUGSNAG_PORT")
         config.setEndpoints("${findHostname()}:$port", "${findHostname()}:$port")
+        config.detectAnrs = false
         return config
     }
 
