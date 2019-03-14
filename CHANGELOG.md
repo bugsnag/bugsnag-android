@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Enhancements
+
+* Add ANR detection to bugsnag-android
+[#442](https://github.com/bugsnag/bugsnag-android/pull/442)
+
 ## 4.12.0 (2019-02-27)
 
 ### Enhancements
