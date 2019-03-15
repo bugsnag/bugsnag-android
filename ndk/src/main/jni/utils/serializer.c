@@ -262,7 +262,7 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
         json_object_dotset_string(event, "session.id", report->session_id);
         json_object_dotset_number(event, "session.events.handled",
                                   report->handled_events);
-        json_object_dotset_number(event, "session.events.unhandled", 1);
+        json_object_dotset_number(event, "session.events.unhandled", report->unhandled_events);
     }
 
     json_object_set_string(exception, "errorClass", report->exception.name);
