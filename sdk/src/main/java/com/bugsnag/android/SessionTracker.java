@@ -136,6 +136,11 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         Session session = null;
         if (date != null && sessionId != null) {
             session = new Session(sessionId, date, user, unhandledCount, handledCount);
+            notifySessionStartObserver(session);
+        } else {
+            setChanged();
+            notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.STOP_SESSION, null));
         }
         currentSession.set(session);
         return session;
