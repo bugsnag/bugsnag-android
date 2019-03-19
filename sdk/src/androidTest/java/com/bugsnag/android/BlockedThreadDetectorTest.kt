@@ -26,9 +26,4 @@ class BlockedThreadDetectorTest {
     fun testInvalidDelegate() {
         BlockedThreadDetector(1, 1, looper, null)
     }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun testExcessiveCheckInterval() {
-        BlockedThreadDetector(100, 1000, looper) {}
-    }
 }

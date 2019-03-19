@@ -14,7 +14,7 @@ class AnrConfigTest {
     }
 
     /**
-     * Verifies that attempts to set the ANR threshold below 100ms set the value as 100ms
+     * Verifies that attempts to set the ANR threshold below 1000ms set the value as 1000ms
      */
     @Test
     fun testAnrThresholdMs() {
@@ -24,9 +24,9 @@ class AnrConfigTest {
         config.anrThresholdMs = 10000
         assertEquals(10000, config.anrThresholdMs)
 
-        arrayOf(100, 99, 0, -5, Long.MIN_VALUE).forEach {
+        arrayOf(1000, 999, 0, -5, Long.MIN_VALUE).forEach {
             config.anrThresholdMs = it
-            assertEquals(100, config.anrThresholdMs)
+            assertEquals(1000, config.anrThresholdMs)
         }
     }
 }

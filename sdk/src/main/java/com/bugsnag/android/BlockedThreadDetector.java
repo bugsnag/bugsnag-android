@@ -11,7 +11,7 @@ import android.os.SystemClock;
  */
 final class BlockedThreadDetector {
 
-    private static final int DEFAULT_CHECK_INTERVAL_MS = 1000;
+    static final int MIN_CHECK_INTERVAL_MS = 1000;
 
     interface Delegate {
 
@@ -36,7 +36,7 @@ final class BlockedThreadDetector {
     BlockedThreadDetector(long blockedThresholdMs,
                           Looper looper,
                           Delegate delegate) {
-        this(blockedThresholdMs, DEFAULT_CHECK_INTERVAL_MS, looper, delegate);
+        this(blockedThresholdMs, MIN_CHECK_INTERVAL_MS, looper, delegate);
     }
 
     BlockedThreadDetector(long blockedThresholdMs,
@@ -44,8 +44,7 @@ final class BlockedThreadDetector {
                           Looper looper,
                           Delegate delegate) {
         if ((blockedThresholdMs <= 0 || checkIntervalMs <= 0
-            || looper == null || delegate == null
-            || checkIntervalMs > blockedThresholdMs)) {
+            || looper == null || delegate == null)) {
             throw new IllegalArgumentException();
         }
         this.blockedThresholdMs = blockedThresholdMs;

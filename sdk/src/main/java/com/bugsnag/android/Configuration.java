@@ -687,14 +687,15 @@ public class Configuration extends Observable implements Observer {
      * If you wish to disable ANR detection completely, you should set the
      * {@link #setDetectAnrs(boolean)} property to false.
      * <p/>
-     * Attempting to set this property to any value below 100ms will result in the anrThresholdMs
-     * being set as 100ms.
+     * Attempting to set this property to any value below 1000ms will result in the anrThresholdMs
+     * being set as 1000ms.
      *
      * @param anrThresholdMs the threshold in ms at which ANRs should be detected
      * @see #setDetectAnrs(boolean)
      */
     public void setAnrThresholdMs(long anrThresholdMs) {
-        this.anrThresholdMs = anrThresholdMs < 100 ? 100 : anrThresholdMs;
+        this.anrThresholdMs = anrThresholdMs < BlockedThreadDetector.MIN_CHECK_INTERVAL_MS
+            ? BlockedThreadDetector.MIN_CHECK_INTERVAL_MS : anrThresholdMs;
     }
 
     /**
