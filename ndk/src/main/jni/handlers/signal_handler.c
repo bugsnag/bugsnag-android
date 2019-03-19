@@ -174,6 +174,7 @@ void bsg_handle_signal(int signum, siginfo_t *info,
 
   bsg_global_env->handling_crash = true;
   bsg_populate_report_as(bsg_global_env);
+  bsg_global_env->next_report.unhandled_events++;
   bsg_global_env->next_report.exception.frame_count = bsg_unwind_stack(
       bsg_global_env->signal_unwind_style,
       bsg_global_env->next_report.exception.stacktrace, info, user_context);
