@@ -34,6 +34,8 @@ class ExampleActivity : AppCompatActivity() {
 
         val nativeBtn: View = findViewById(R.id.btn_native_crash)
         nativeBtn.setOnClickListener { doCrash() }
+
+        findViewById<View>(R.id.btn_anr).setOnClickListener { Thread.sleep(10000) }
     }
 
     private fun performAdditionalBugsnagSetup() {
