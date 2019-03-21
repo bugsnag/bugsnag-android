@@ -31,7 +31,7 @@
 /**
  * Version of the bugsnag_report struct. Serialized to report header.
  */
-#define BUGSNAG_REPORT_VERSION 1
+#define BUGSNAG_REPORT_VERSION 2
 
 #define BUGSNAG_USER_INFO_LEN 64
 #ifdef __cplusplus
@@ -292,6 +292,7 @@ typedef struct {
   char session_id[33];
   char session_start[33];
   int handled_events;
+  int unhandled_events;
 } bugsnag_report;
 
 void bugsnag_report_add_metadata_double(bugsnag_report *report, char *section,
@@ -315,7 +316,7 @@ void bugsnag_report_set_user_email(bugsnag_report *report, char *value);
 void bugsnag_report_set_user_id(bugsnag_report *report, char *value);
 void bugsnag_report_set_user_name(bugsnag_report *report, char *value);
 void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
-                                  char *started_at, int handled_count);
+                                  char *started_at, int handled_count, int unhandled_count);
 bool bugsnag_report_has_session(bugsnag_report *report);
 
 #ifdef __cplusplus
