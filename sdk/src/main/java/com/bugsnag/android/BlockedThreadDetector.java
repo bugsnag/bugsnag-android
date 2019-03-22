@@ -1,6 +1,9 @@
 package com.bugsnag.android;
 
+import android.app.ActivityManager;
+import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
 
@@ -27,7 +30,9 @@ final class BlockedThreadDetector {
     final Looper looper;
     final long checkIntervalMs;
     final long blockedThresholdMs;
-    final Handler handler;
+    final Handler uiHandler;
+    final Handler watchdogHandler;
+    private final HandlerThread watchdogHandlerThread;
     final Delegate delegate;
 
     volatile long lastUpdateMs;
@@ -51,55 +56,66 @@ final class BlockedThreadDetector {
         this.checkIntervalMs = checkIntervalMs;
         this.looper = looper;
         this.delegate = delegate;
-        this.handler = new Handler(looper);
-    }
+        this.uiHandler = new Handler(looper);
 
-    void updateLivenessTimestamp() {
-        lastUpdateMs = SystemClock.elapsedRealtime();
+        watchdogHandlerThread = new HandlerThread("bugsnag-anr-watchdog");
+        watchdogHandlerThread.start();
+        watchdogHandler = new Handler(watchdogHandlerThread.getLooper());
     }
 
     void start() {
         updateLivenessTimestamp();
-        handler.post(livenessCheck);
-        watcherThread.start();
+        uiHandler.post(livenessCheck);
+        watchdogHandler.postDelayed(watchdogCheck, calculateNextCheckIn());
+    }
+
+    void updateLivenessTimestamp() {
+        lastUpdateMs = SystemClock.uptimeMillis();
     }
 
     final Runnable livenessCheck = new Runnable() {
         @Override
         public void run() {
             updateLivenessTimestamp();
-            handler.postDelayed(this, checkIntervalMs);
+            uiHandler.postDelayed(this, checkIntervalMs);
         }
     };
 
-    final Thread watcherThread = new Thread() {
+    final Runnable watchdogCheck = new Runnable() {
         @Override
         public void run() {
-            while (!isInterrupted()) {
-                // when we would next consider the app blocked if no timestamp updates take place
-                long now = SystemClock.elapsedRealtime();
-                long nextCheckIn = Math.max(lastUpdateMs + blockedThresholdMs - now, 0);
-
-                try {
-                    Thread.sleep(nextCheckIn); // throttle checks to the configured threshold
-                } catch (InterruptedException exc) {
-                    interrupt();
-                }
-                checkIfThreadBlocked();
-            }
-        }
-
-        private void checkIfThreadBlocked() {
-            long delta = SystemClock.elapsedRealtime() - lastUpdateMs;
-
-            if (delta > blockedThresholdMs) {
-                if (!isAlreadyBlocked) {
-                    delegate.onThreadBlocked(looper.getThread());
-                }
-                isAlreadyBlocked = true; // prevents duplicate reports for the same ANR
-            } else {
-                isAlreadyBlocked = false;
-            }
+            checkIfThreadBlocked();
+            watchdogHandler.postDelayed(this, calculateNextCheckIn());
         }
     };
+
+    long calculateNextCheckIn() {
+        long currentUptimeMs = SystemClock.uptimeMillis();
+        return Math.max(lastUpdateMs + blockedThresholdMs - currentUptimeMs, 0);
+    }
+
+    void checkIfThreadBlocked() {
+        long delta = SystemClock.uptimeMillis() - lastUpdateMs;
+        boolean inForeground = isInForeground();
+
+        if (inForeground && delta > blockedThresholdMs) {
+            if (!isAlreadyBlocked) {
+                delegate.onThreadBlocked(looper.getThread());
+            }
+            isAlreadyBlocked = true; // prevents duplicate reports for the same ANR
+        } else {
+            isAlreadyBlocked = false;
+        }
+    }
+
+    private boolean isInForeground() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityManager.RunningAppProcessInfo info
+                = new ActivityManager.RunningAppProcessInfo();
+            ActivityManager.getMyMemoryState(info);
+            return info.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
+        } else {
+            return true;
+        }
+    }
 }
