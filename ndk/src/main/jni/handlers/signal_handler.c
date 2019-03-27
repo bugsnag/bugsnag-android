@@ -161,7 +161,10 @@ void bsg_invoke_previous_signal_handler(int signum, siginfo_t *info,
 
 void bsg_handle_signal(int signum, siginfo_t *info,
                        void *user_context) __asyncsafe {
-  if (bsg_global_env == NULL || bsg_global_env->handling_crash) {
+  if (bsg_global_env == NULL) {
+    return;
+  }
+  if (bsg_global_env->handling_crash) {
     if (bsg_global_env->crash_handled) {
       // The C++ handler default action is to raise a fatal signal once
       // handling is complete. The report is already generated so at this
