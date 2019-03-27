@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* [NDK] Fix possible null pointer dereference
+
 ## 4.13.0 (2019-04-03)
 
 ### Enhancements
