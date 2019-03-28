@@ -5,7 +5,6 @@
 
 ssize_t bsg_unwind_stack_simple(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
                                 siginfo_t *info, void *user_context) {
-  ssize_t frame_count = 0;
   if (user_context != NULL) {
     // program counter / instruction pointer
     uintptr_t ip = 0;
@@ -22,10 +21,10 @@ ssize_t bsg_unwind_stack_simple(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
     ip = (uintptr_t)info->si_addr;
 #endif
     if (ip != 0) {
-      stacktrace[frame_count++].frame_address = ip;
-      frame_count = 1;
+      stacktrace[0].frame_address = ip;
+      return 1;
     }
   }
 
-  return frame_count;
+  return 0;
 }
