@@ -5,6 +5,8 @@
 ### Bug fixes
 
 * [NDK] Fix possible null pointer dereference
+* [NDK] Fix possible memory leak if bugsnag-android-ndk fails to successfully
+  parse a cached crash report
 
 ## 4.13.0 (2019-04-03)
 
