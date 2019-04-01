@@ -9,21 +9,21 @@ class BlockedThreadDetectorTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun testInvalidBlockedThresholdMs() {
-        BlockedThreadDetector(-1, 1, looper) {}
+        BlockedThreadDetector(-1, 1, looper, null) {}
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testInvalidCheckIntervalMs() {
-        BlockedThreadDetector(1, -1, looper) {}
+        BlockedThreadDetector(1, -1, looper, null) {}
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testInvalidThread() {
-        BlockedThreadDetector(1, 1, null) {}
+        BlockedThreadDetector(1, 1, null, null) {}
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testInvalidDelegate() {
-        BlockedThreadDetector(1, 1, looper, null)
+        BlockedThreadDetector(1, 1, looper, null, null)
     }
 }

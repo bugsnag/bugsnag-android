@@ -6,6 +6,7 @@ import static com.bugsnag.android.MapUtils.getStringFromMap;
 import com.bugsnag.android.NativeInterface.Message;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -255,7 +256,12 @@ public class Client extends Observable implements Observer {
                     HandledState.REASON_ANR, null, thread);
             }
         };
-        BlockedThreadDetector detector = new BlockedThreadDetector(thresholdMs, looper, delegate);
+
+        ActivityManager activityManager =
+            (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+
+        BlockedThreadDetector detector =
+            new BlockedThreadDetector(thresholdMs, looper, activityManager, delegate);
         detector.start(); // begin monitoring for ANRs
     }
 
