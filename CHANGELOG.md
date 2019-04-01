@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Bug fixes
+
+* Prevent NPE occurring when calling resumeSession()
+[#444](https://github.com/bugsnag/bugsnag-android/pull/444)
+
 ## 4.12.0 (2019-02-27)
 
 ### Enhancements

@@ -107,7 +107,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             resumed = session.isStopped.compareAndSet(true, false);
         }
 
-        notifySessionStartObserver(session);
+        if (session != null) {
+            notifySessionStartObserver(session);
+        }
         return resumed;
     }
 
