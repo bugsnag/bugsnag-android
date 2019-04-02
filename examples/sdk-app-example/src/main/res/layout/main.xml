@@ -37,6 +37,13 @@
       android:layout_height="wrap_content"
       android:text="@string/trigger_native_crash" />
 
+    <Button
+      android:id="@+id/btn_anr"
+      style="@style/ButtonTheme"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/trigger_anr" />
+
     <View style="@style/separator" />
 
     <!-- Trigger handled exceptions -->

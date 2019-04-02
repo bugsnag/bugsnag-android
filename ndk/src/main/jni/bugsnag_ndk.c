@@ -129,15 +129,30 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
   bsg_release_env_write_lock();
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_addUnhandledEvent(JNIEnv *env,
+                                                            jobject _this) {
+    if (bsg_global_env == NULL)
+        return;
+    bsg_request_env_write_lock();
+    bugsnag_report *report = &bsg_global_env->next_report;
+
+    if (bugsnag_report_has_session(report)) {
+        report->unhandled_events++;
+    }
+    bsg_release_env_write_lock();
+}
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
-    JNIEnv *env, jobject _this, jstring session_id_, jstring start_date_, jint handled_count) {
+    JNIEnv *env, jobject _this, jstring session_id_, jstring start_date_,
+    jint handled_count, jint unhandled_count) {
   if (bsg_global_env == NULL || session_id_ == NULL)
     return;
   char *session_id = (char *)(*env)->GetStringUTFChars(env, session_id_, 0);
   char *started_at = (char *)(*env)->GetStringUTFChars(env, start_date_, 0);
   bsg_request_env_write_lock();
   bugsnag_report_start_session(&bsg_global_env->next_report, session_id,
-                               started_at, handled_count);
+                               started_at, handled_count, unhandled_count);
 
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, session_id_, session_id);
@@ -154,6 +169,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_stoppedSession(
     memset(report->session_id, 0, strlen(report->session_id));
     memset(report->session_start, 0, strlen(report->session_start));
     report->handled_events = 0;
+    report->unhandled_events = 0;
     bsg_release_env_write_lock();
 }
 
