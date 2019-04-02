@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$agpVersion"
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.6.0'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -42,23 +42,9 @@ android {
         }
     }
     buildTypes {
-        debug {
-            applicationIdSuffix ".debug"
-        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
-            signingConfig signingConfigs.config
-        }
-    }
-    flavorDimensions "regular"
-    productFlavors {
-        javaExample {
-            applicationIdSuffix ".java"
-            signingConfig signingConfigs.config
-        }
-        kotlinExample {
-            applicationIdSuffix ".kotlin"
             signingConfig signingConfigs.config
         }
     }
@@ -85,19 +71,9 @@ dependencies {
         implementation 'com.bugsnag:bugsnag-android-ndk:4.12.0'
     }
 
-    implementation 'com.android.support:appcompat-v7:27.0.0'
-    implementation 'com.android.support:support-v4:27.0.0'
-
-    kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    androidTestImplementation "com.android.support.test:runner:0.5", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestImplementation "com.android.support.test:rules:0.5", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:2.2.2", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 apply from: 'checkstyle.gradle'
