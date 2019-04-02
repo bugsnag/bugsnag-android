@@ -31,7 +31,7 @@ class CachedThread implements JsonStream.Streamable {
         writer.name("id").value(id);
         writer.name("name").value(name);
         writer.name("type").value(type);
-        writer.name("stacktrace").value(new Stacktrace(config, frames));
+        writer.name("stacktrace").value(new Stacktrace(frames, config.getProjectPackages()));
         if (isErrorReportingThread) {
             writer.name("errorReportingThread").value(true);
         }

@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
@@ -11,11 +13,13 @@ class Exceptions implements JsonStream.Streamable {
     private final Configuration config;
     private final Throwable exception;
     private String exceptionType;
+    private String[] projectPackages;
 
     Exceptions(Configuration config, Throwable exception) {
         this.config = config;
         this.exception = exception;
         exceptionType = Configuration.DEFAULT_EXCEPTION_TYPE;
+        projectPackages = config.getProjectPackages();
     }
 
     @Override
@@ -51,6 +55,14 @@ class Exceptions implements JsonStream.Streamable {
         exceptionType = type;
     }
 
+    String[] getProjectPackages() {
+        return projectPackages;
+    }
+
+    void setProjectPackages(String[] projectPackages) {
+        this.projectPackages = projectPackages;
+    }
+
     /**
      * Get the class name from the exception contained in this Error report.
      */
@@ -71,7 +83,7 @@ class Exceptions implements JsonStream.Streamable {
         writer.name("message").value(message);
         writer.name("type").value(exceptionType);
 
-        Stacktrace stacktrace = new Stacktrace(config, frames);
+        Stacktrace stacktrace = new Stacktrace(frames, projectPackages);
         writer.name("stacktrace").value(stacktrace);
         writer.endObject();
     }

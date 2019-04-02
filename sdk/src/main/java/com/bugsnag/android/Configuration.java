@@ -754,16 +754,10 @@ public class Configuration extends Observable implements Observer {
      * @param className the class to check
      * @return true if the class should be considered in the project else false
      */
+    @Deprecated
     protected boolean inProject(@NonNull String className) {
-        if (projectPackages != null) {
-            for (String packageName : projectPackages) {
-                if (packageName != null && className.startsWith(packageName)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages);
+        return stacktrace.inProject(className);
     }
 
     /**

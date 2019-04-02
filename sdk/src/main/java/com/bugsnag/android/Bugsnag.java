@@ -203,7 +203,9 @@ public final class Bugsnag {
      * By default, we'll mark the current package name as part of you app.
      *
      * @param projectPackages a list of package names
+     * @deprecated use {{@link Configuration#setProjectPackages(String[])}} instead
      */
+    @Deprecated
     public static void setProjectPackages(@Nullable final String... projectPackages) {
         getClient().setProjectPackages(projectPackages);
     }

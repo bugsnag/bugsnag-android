@@ -41,7 +41,7 @@ public class Error implements JsonStream.Streamable {
 
     @NonNull
     final Configuration config;
-    private final String[] projectPackages;
+    private String[] projectPackages;
     private final Exceptions exceptions;
     private Breadcrumbs breadcrumbs;
     private final Throwable exception;
@@ -380,6 +380,17 @@ public class Error implements JsonStream.Streamable {
 
     Session getSession() {
         return session;
+    }
+
+    String[] getProjectPackages() {
+        return projectPackages;
+    }
+
+    void setProjectPackages(String[] projectPackages) {
+        this.projectPackages = projectPackages;
+        if (exceptions != null) {
+            exceptions.setProjectPackages(projectPackages);
+        }
     }
 
     static class Builder {
