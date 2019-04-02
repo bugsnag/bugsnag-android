@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import com.bugsnag.android.*
-import com.bugsnag.android.other.CrashyClass
+import com.example.foo.CrashyClass
 import java.util.*
 
 class ExampleActivity : AppCompatActivity() {
@@ -30,7 +30,7 @@ class ExampleActivity : AppCompatActivity() {
         performAdditionalBugsnagSetup()
 
         val view: View = findViewById(R.id.btn_fatal_crash)
-        view.setOnClickListener { it -> crashUnhandled(it) }
+        view.setOnClickListener(::crashUnhandled)
 
         val nativeBtn: View = findViewById(R.id.btn_native_crash)
         nativeBtn.setOnClickListener { doCrash() }

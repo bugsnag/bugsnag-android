@@ -1,4 +1,4 @@
-package com.bugsnag.android.other;
+package com.example.foo;
 
 public class CrashyClass {
 
