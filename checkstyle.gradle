@@ -1,7 +1,7 @@
 apply plugin: 'checkstyle'
 
 checkstyle {
-    toolVersion = "6.16"
+    toolVersion = "8.18"
 }
 
 task("checkstyle", type: Checkstyle) {

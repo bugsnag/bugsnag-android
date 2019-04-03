@@ -170,7 +170,8 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
 bool bsg_get_map_value_bool(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
                             const char *_key) {
   jstring key = (*env)->NewStringUTF(env, _key);
-  return (bool)(*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+  jobject obj = (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+  return (*env)->CallBooleanMethod(env, obj, jni_cache->boolean_bool_value);
 }
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,

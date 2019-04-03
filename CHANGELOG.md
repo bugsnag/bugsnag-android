@@ -10,6 +10,14 @@
 * Add unhandled_events field to native payload
 [#445](https://github.com/bugsnag/bugsnag-android/pull/445)
 
+### Bug fixes
+
+* Ensure boolean object from map serialised as boolean primitive in JNI
+[#452](https://github.com/bugsnag/bugsnag-android/pull/452)
+
+* Prevent NPE occurring when calling resumeSession()
+[#444](https://github.com/bugsnag/bugsnag-android/pull/444)
+
 ## 4.12.0 (2019-02-27)
 
 ### Enhancements

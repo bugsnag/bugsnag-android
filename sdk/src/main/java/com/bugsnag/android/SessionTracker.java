@@ -107,7 +107,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             resumed = session.isStopped.compareAndSet(true, false);
         }
 
-        notifySessionStartObserver(session);
+        if (session != null) {
+            notifySessionStartObserver(session);
+        }
         return resumed;
     }
 
@@ -118,6 +120,33 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             NativeInterface.MessageType.START_SESSION,
             Arrays.asList(session.getId(), startedAt,
                 session.getHandledCount(), session.getUnhandledCount())));
+    }
+
+    /**
+     * Cache details of a previously captured session.
+     * Append session details to all subsequent reports.
+     *
+     * @param date           the session start date
+     * @param sessionId      the unique session identifier
+     * @param user           the session user (if any)
+     * @param unhandledCount the number of unhandled events which have occurred during the session
+     * @param handledCount   the number of handled events which have occurred during the session
+     * @return the session
+     */
+    @Nullable Session registerExistingSession(@Nullable Date date, @Nullable String sessionId,
+                                              @Nullable User user, int unhandledCount,
+                                              int handledCount) {
+        Session session = null;
+        if (date != null && sessionId != null) {
+            session = new Session(sessionId, date, user, unhandledCount, handledCount);
+            notifySessionStartObserver(session);
+        } else {
+            setChanged();
+            notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.STOP_SESSION, null));
+        }
+        currentSession.set(session);
+        return session;
     }
 
     /**
