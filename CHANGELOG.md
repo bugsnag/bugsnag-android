@@ -1,6 +1,14 @@
 # Changelog
 
-## 4.X.X (TBD)
+## 4.13.0 (2019-04-03)
+
+### Enhancements
+
+* Add ANR detection to bugsnag-android
+[#442](https://github.com/bugsnag/bugsnag-android/pull/442)
+
+* Add unhandled_events field to native payload
+[#445](https://github.com/bugsnag/bugsnag-android/pull/445)
 
 ### Bug fixes
 

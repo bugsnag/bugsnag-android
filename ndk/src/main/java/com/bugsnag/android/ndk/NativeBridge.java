@@ -48,13 +48,16 @@ public class NativeBridge implements Observer {
 
     public static native void addHandledEvent();
 
+    public static native void addUnhandledEvent();
+
     public static native void clearBreadcrumbs();
 
     public static native void clearMetadataTab(String tab);
 
     public static native void removeMetadata(String tab, String key);
 
-    public static native void startedSession(String sessionID, String key, int handledCount);
+    public static native void startedSession(String sessionID, String key,
+                                             int handledCount, int unhandledCount);
 
     public static native void stoppedSession();
 
@@ -126,6 +129,9 @@ public class NativeBridge implements Observer {
                 break;
             case NOTIFY_HANDLED:
                 addHandledEvent();
+                break;
+            case NOTIFY_UNHANDLED:
+                addUnhandledEvent();
                 break;
             case REMOVE_METADATA:
                 handleRemoveMetadata(arg);
@@ -318,14 +324,16 @@ public class NativeBridge implements Observer {
         if (arg instanceof List) {
             @SuppressWarnings("unchecked")
             List<Object> metadata = (List<Object>)arg;
-            if (metadata.size() == 3) {
+            if (metadata.size() == 4) {
                 Object id = metadata.get(0);
                 Object startTime = metadata.get(1);
                 Object handledCount = metadata.get(2);
+                Object unhandledCount = metadata.get(3);
 
                 if (id instanceof String && startTime instanceof String
-                    && handledCount instanceof Integer) {
-                    startedSession((String)id, (String)startTime, (Integer) handledCount);
+                    && handledCount instanceof Integer && unhandledCount instanceof Integer) {
+                    startedSession((String)id, (String)startTime,
+                        (Integer) handledCount, (Integer) unhandledCount);
                     return;
                 }
             }

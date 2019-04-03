@@ -153,10 +153,11 @@ public class ObserverInterfaceTest {
         client.startSession();
         List<Object> sessionInfo = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.START_SESSION, List.class);
-        assertEquals(3, sessionInfo.size());
+        assertEquals(4, sessionInfo.size());
         assertTrue(sessionInfo.get(0) instanceof String);
         assertTrue(sessionInfo.get(1) instanceof String);
         assertTrue(sessionInfo.get(2) instanceof Integer);
+        assertTrue(sessionInfo.get(3) instanceof Integer);
     }
 
     @Test

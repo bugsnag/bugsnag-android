@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$agpVersion"
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:3.6.0'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -42,23 +42,9 @@ android {
         }
     }
     buildTypes {
-        debug {
-            applicationIdSuffix ".debug"
-        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
-            signingConfig signingConfigs.config
-        }
-    }
-    flavorDimensions "regular"
-    productFlavors {
-        javaExample {
-            applicationIdSuffix ".java"
-            signingConfig signingConfigs.config
-        }
-        kotlinExample {
-            applicationIdSuffix ".kotlin"
             signingConfig signingConfigs.config
         }
     }
@@ -73,92 +59,26 @@ android {
     }
 }
 
+// set this value to true if you wish to test with a local artefact
+// it will instruct gradle to copy the SO files from the AAR to the correct build directory
+def usingLocalArtefact = false
+
 dependencies {
-    implementation 'com.bugsnag:bugsnag-android-ndk:4.10.0'
-    // If developing locally, replace the above line with the following:
-    // implementation project(path: ':sdk', configuration: 'default')
-    // api project(path: ':ndk', configuration: 'default')
-    implementation 'com.android.support:appcompat-v7:27.0.0'
-    implementation 'com.android.support:support-v4:27.0.0'
-    kotlinExampleImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    androidTestImplementation "com.android.support.test:runner:0.5", {
-        exclude group: 'com.android.support', module: 'support-annotations'
+    if (usingLocalArtefact) {
+        implementation project(path: ':sdk', configuration: 'default')
+        api project(path: ':ndk', configuration: 'default')
+    } else {
+        implementation 'com.bugsnag:bugsnag-android-ndk:4.12.0'
     }
-    androidTestImplementation "com.android.support.test:rules:0.5", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:2.2.2", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
+
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
+apply from: 'checkstyle.gradle'
 apply plugin: 'com.bugsnag.android.gradle'
-bugsnag {
-    ndk true
-}
-apply plugin: 'checkstyle'
 
-checkstyle {
-    toolVersion = "6.16"
+if (usingLocalArtefact) {
+    apply from: 'ndk_local_setup.gradle'
 }
-task("checkstyle", type: Checkstyle) {
-    configFile rootProject.file("config/checkstyle/checkstyle.xml")
-    source "src/javaExample/java"
-    include "**/*.java"
-    classpath = files()
-}
-
-// Local development settings. Uncomment these if referencing
-// local dependencies:
-//assemble.dependsOn ":ndk:assemble"
-///**
-// * Gradle configuration for unpacking native API for CMake. Only required
-// * when building against local artifacts.
-// */
-//import org.gradle.api.DefaultTask
-//import org.gradle.api.tasks.TaskAction
-//
-//class BugsnagTestNdkSetupTask extends DefaultTask {
-//
-//    @TaskAction
-//    void setupNdkProject() {
-//        def artifactFile = findBugsnagNdkArchive()
-//        File dst = new File(project.buildDir, "/intermediates/bugsnag-libs")
-//
-//        project.copy {
-//            from project.zipTree(artifactFile)
-//            into(project.file(dst))
-//        }
-//    }
-//
-//    File findBugsnagNdkArchive() {
-//        for (def config in project.configurations) {
-//            try {
-//                def artifactFile = config.resolvedConfiguration.getFiles().find {
-//                    it.toString().contains("bugsnag-android-ndk")
-//                }
-//                if (artifactFile && artifactFile.exists()) {
-//                    return artifactFile
-//                }
-//            } catch (Exception e) {} // some configurations cannot be directly resolved
-//        }
-//        throw new Exception("SOLUTION: The bugsnag-android-ndk file was not found, please run `./gradlew ndk:assembleRelease`")
-//    }
-//}
-//
-//project.afterEvaluate {
-//    def cleanTasks = project.tasks.findAll {
-//        it.name.startsWith("externalNative") && it.name.contains("Clean")
-//    }
-//    def buildTasks = project.tasks.findAll {
-//        it.name.startsWith("externalNative") && it.name.contains("Build") && !it.name.contains("Clean")
-//    }
-//
-//    def ndkSetupTask = project.tasks.create("bugsnagInstallAllJniLibsTask", BugsnagTestNdkSetupTask)
-//
-//    buildTasks.forEach {
-//        ndkSetupTask.mustRunAfter(cleanTasks)
-//        it.dependsOn ndkSetupTask
-//        it.doFirst { ndkSetupTask }
-//    }
-//}

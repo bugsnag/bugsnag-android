@@ -50,6 +50,10 @@ public class NativeInterface {
          */
         NOTIFY_HANDLED,
         /**
+         * Send a report for an unhandled error in the Java layer
+         */
+        NOTIFY_UNHANDLED,
+        /**
          * Remove a metadata value. The Message object should be a string array
          * containing [tab, key]
          */
