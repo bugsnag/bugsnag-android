@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Ensure boolean object from map serialised as boolean primitive in JNI
+[#452](https://github.com/bugsnag/bugsnag-android/pull/452)
+
 * Prevent NPE occurring when calling resumeSession()
 [#444](https://github.com/bugsnag/bugsnag-android/pull/444)
 
