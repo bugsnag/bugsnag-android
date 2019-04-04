@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -756,8 +757,13 @@ public class Configuration extends Observable implements Observer {
      */
     @Deprecated
     protected boolean inProject(@NonNull String className) {
-        Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages);
-        return stacktrace.inProject(className);
+        List<String> packages;
+        if (projectPackages != null) {
+            packages = Arrays.asList(projectPackages);
+        } else {
+            packages = Collections.emptyList();
+        }
+        return Stacktrace.inProject(className, packages);
     }
 
     /**

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,13 +16,16 @@ class Stacktrace implements JsonStream.Streamable {
 
     private static final int STACKTRACE_TRIM_LENGTH = 200;
 
-    private final List<String> projectPackages = new ArrayList<>();
+    private final List<String> projectPackages;
     final StackTraceElement[] stacktrace;
 
     Stacktrace(StackTraceElement[] stacktrace, String[] projectPackages) {
         this.stacktrace = stacktrace;
+
         if (projectPackages != null) {
-            this.projectPackages.addAll(Arrays.asList(projectPackages));
+            this.projectPackages = Arrays.asList(projectPackages);
+        } else {
+            this.projectPackages = Collections.emptyList();
         }
     }
 
@@ -41,7 +45,7 @@ class Stacktrace implements JsonStream.Streamable {
                 writer.name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName());
                 writer.name("lineNumber").value(el.getLineNumber());
 
-                if (inProject(el.getClassName())) {
+                if (inProject(el.getClassName(), projectPackages)) {
                     writer.name("inProject").value(true);
                 }
 
@@ -54,7 +58,7 @@ class Stacktrace implements JsonStream.Streamable {
         writer.endArray();
     }
 
-    boolean inProject(String className) {
+    static boolean inProject(String className, List<String> projectPackages) {
         for (String packageName : projectPackages) {
             if (packageName != null && className.startsWith(packageName)) {
                 return true;
