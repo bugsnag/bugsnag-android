@@ -1,13 +1,13 @@
 #include <greatest/greatest.h>
 #include <utils/serializer.h>
 #include <stdlib.h>
+#include <utils/migrate.h>
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type);
 
-bugsnag_report *bsg_generate_report(void) {
-  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
+void generate_basic_report(bugsnag_report *report) {
   strcpy(report->context, "SomeActivity");
   strcpy(report->exception.name, "SIGBUS");
   strcpy(report->exception.message, "POSIX is serious about oncoming traffic");
@@ -43,8 +43,25 @@ bugsnag_report *bsg_generate_report(void) {
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.", BSG_CRUMB_USER);
   bugsnag_report_add_breadcrumb(report, crumb2);
 
+  report->handled_events = 1;
+  report->unhandled_events = 1;
+  strcpy(report->session_id, "f1ab");
+  strcpy(report->session_start, "2019-03-19T12:58:19+00:00");
+}
+
+bugsnag_report_v1 *bsg_generate_report_v1(void) {
+  bugsnag_report_v1 *report = calloc(1, sizeof(bugsnag_report_v1));
+  generate_basic_report(report);
   return report;
 }
+
+bugsnag_report *bsg_generate_report(void) {
+  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
+  generate_basic_report(report);
+  report->unhandled_events = 2;
+  return report;
+}
+
 TEST test_report_to_file(void) {
   bsg_environment *env = malloc(sizeof(bsg_environment));
   env->report_header.version = 7;
@@ -79,6 +96,29 @@ TEST test_file_to_report(void) {
   PASS();
 }
 
+TEST test_report_v1_migration(void) {
+  bsg_environment *env = malloc(sizeof(bsg_environment));
+  env->report_header.version = 1;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
+  bugsnag_report_v1 *generated_report = bsg_generate_report_v1();
+  memcpy(&env->next_report, generated_report, sizeof(bugsnag_report_v1));
+  strcpy(env->next_report_path, SERIALIZE_TEST_FILE);
+  bsg_serialize_report_to_file(env);
+
+  bugsnag_report *report = bsg_deserialize_report_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(report != NULL);
+  ASSERT(strcmp("f1ab", report->session_id) == 0);
+  ASSERT(strcmp("2019-03-19T12:58:19+00:00", report->session_start) == 0);
+  ASSERT_EQ(1, report->handled_events);
+  ASSERT_EQ(1, report->unhandled_events);
+
+  free(generated_report);
+  free(env);
+  free(report);
+  PASS();
+}
+
 // helper function
 JSON_Value *bsg_generate_json(void) {
   bugsnag_report *report = bsg_generate_report();
@@ -101,6 +141,16 @@ TEST test_report_app_info_to_json(void) {
   ASSERT(strcmp( "2.0", json_object_dotget_string(event, "metaData.app.versionName")) == 0);
   ASSERT(strcmp( "1234-9876-adfe", json_object_dotget_string(event, "app.buildUUID")) == 0);
   json_value_free(root_value);
+  PASS();
+}
+
+TEST test_session_handled_counts(void) {
+  JSON_Value *root_value = bsg_generate_json();
+  JSON_Object *event = json_value_get_object(root_value);
+  ASSERT(strcmp("f1ab", json_object_dotget_string(event, "session.id")) == 0);
+  ASSERT(strcmp("2019-03-19T12:58:19+00:00", json_object_dotget_string(event, "session.startedAt")) == 0);
+  ASSERT_EQ(1, json_object_dotget_number(event, "session.events.handled"));
+  ASSERT_EQ(2, json_object_dotget_number(event, "session.events.unhandled"));
   PASS();
 }
 
@@ -192,6 +242,8 @@ TEST test_report_breadcrumbs_to_json(void) {
 SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
+  RUN_TEST(test_report_v1_migration);
+  RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_report_context_to_json);
   RUN_TEST(test_report_app_info_to_json);
   RUN_TEST(test_report_device_info_to_json);

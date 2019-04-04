@@ -83,11 +83,12 @@ void bugsnag_report_remove_metadata_tab(bugsnag_report *report, char *section) {
 }
 
 void bugsnag_report_start_session(bugsnag_report *report, char *session_id,
-                                  char *started_at, int handled_count) {
+                                  char *started_at, int handled_count, int unhandled_count) {
   bsg_strncpy_safe(report->session_id, session_id, sizeof(report->session_id));
   bsg_strncpy_safe(report->session_start, started_at,
                    sizeof(report->session_start));
   report->handled_events = handled_count;
+  report->unhandled_events = unhandled_count;
 }
 
 void bugsnag_report_set_context(bugsnag_report *report, char *value) {

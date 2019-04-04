@@ -3,6 +3,7 @@
   <string name="unhandled_exceptions">Unhandled Exceptions</string>
   <string name="trigger_fatal_crash">Trigger a fatal crash</string>
   <string name="trigger_native_crash">Trigger a native crash</string>
+  <string name="trigger_anr">Trigger an ANR</string>
 
   <string name="handled_exceptions">Handled Exceptions</string>
   <string name="trigger_nonfatal_crash">Trigger a non-fatal crash</string>

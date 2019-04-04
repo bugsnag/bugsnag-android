@@ -8,6 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <utils/migrate.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,18 +41,68 @@ bugsnag_report *bsg_deserialize_report_from_file(char *filepath) {
   return bsg_report_read(fd);
 }
 
+bugsnag_report_v1 *bsg_report_v1_read(int fd) {
+    size_t report_size = sizeof(bugsnag_report_v1);
+    bugsnag_report_v1 *report = malloc(report_size);
+
+    ssize_t len = read(fd, report, report_size);
+    if (len != report_size) {
+        return NULL;
+    }
+    return report;
+}
+
+bugsnag_report *bsg_report_v2_read(int fd) {
+    size_t report_size = sizeof(bugsnag_report);
+    bugsnag_report *report = malloc(report_size);
+
+    ssize_t len = read(fd, report, report_size);
+    if (len != report_size) {
+        return NULL;
+    }
+    return report;
+}
+
 bugsnag_report *bsg_report_read(int fd) {
   bsg_report_header *header = bsg_report_header_read(fd);
   if (header == NULL) {
     return NULL;
   }
-  // FUTURE: use header info to check version/endianness & migrate
-  free(header);
-  bugsnag_report *report = malloc(sizeof(bugsnag_report));
 
-  ssize_t len = read(fd, report, sizeof(bugsnag_report));
-  if (len != sizeof(bugsnag_report)) {
-    return NULL;
+  int report_version = header->version;
+  free(header);
+
+  bugsnag_report *report = NULL;
+
+  if (report_version == 1) { // 'report->unhandled_events' was added in v2
+      bugsnag_report_v1 *report_v1 = bsg_report_v1_read(fd);
+
+      if (report_v1 != NULL) {
+          report = malloc(sizeof(bugsnag_report));
+
+          report->notifier = report_v1->notifier;
+          report->app = report_v1->app;
+          report->device = report_v1->device;
+          report->user = report_v1->user;
+          report->exception = report_v1->exception;
+          report->metadata = report_v1->metadata;
+          report->crumb_count = report_v1->crumb_count;
+          report->crumb_first_index = report_v1->crumb_first_index;
+
+          size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+          memcpy(&report->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
+
+          strcpy(report->context, report_v1->context);
+          report->severity = report_v1->severity;
+          strcpy(report->session_id, report_v1->session_id);
+          strcpy(report->session_start, report_v1->session_start);
+          report->handled_events = report_v1->handled_events;
+          report->unhandled_events = 1;
+
+          free(report_v1);
+      }
+  } else {
+      report = bsg_report_v2_read(fd);
   }
   return report;
 }
@@ -262,7 +313,7 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
         json_object_dotset_string(event, "session.id", report->session_id);
         json_object_dotset_number(event, "session.events.handled",
                                   report->handled_events);
-        json_object_dotset_number(event, "session.events.unhandled", 1);
+        json_object_dotset_number(event, "session.events.unhandled", report->unhandled_events);
     }
 
     json_object_set_string(exception, "errorClass", report->exception.name);
