@@ -18,6 +18,9 @@
 * Prevent NPE occurring when calling resumeSession()
 [#444](https://github.com/bugsnag/bugsnag-android/pull/444)
 
+* Read projectPackages array when serialising error reports
+[#451](https://github.com/bugsnag/bugsnag-android/pull/451)
+
 ## 4.12.0 (2019-02-27)
 
 ### Enhancements

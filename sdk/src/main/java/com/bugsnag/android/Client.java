@@ -502,7 +502,9 @@ public class Client extends Observable implements Observer {
      * By default, we'll mark the current package name as part of you app.
      *
      * @param projectPackages a list of package names
+     * @deprecated use {{@link Configuration#setProjectPackages(String[])}} instead
      */
+    @Deprecated
     public void setProjectPackages(@Nullable String... projectPackages) {
         config.setProjectPackages(projectPackages);
     }

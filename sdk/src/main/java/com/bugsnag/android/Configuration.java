@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -811,16 +812,9 @@ public class Configuration extends Observable implements Observer {
      * @param className the class to check
      * @return true if the class should be considered in the project else false
      */
+    @Deprecated
     protected boolean inProject(@NonNull String className) {
-        if (projectPackages != null) {
-            for (String packageName : projectPackages) {
-                if (packageName != null && className.startsWith(packageName)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return Stacktrace.inProject(className, projectPackages);
     }
 
     /**
