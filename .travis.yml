@@ -56,7 +56,7 @@ script:
 jobs:
   include:
   - stage: lint
-    script: ./gradlew lint checkstyle
+    script: ./gradlew lint checkstyle detekt
   # Run SDK unit tests against API 16:
   - stage: unit tests
     script: ./gradlew sdk:createDebugCoverageReport coveralls
