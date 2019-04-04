@@ -814,13 +814,7 @@ public class Configuration extends Observable implements Observer {
      */
     @Deprecated
     protected boolean inProject(@NonNull String className) {
-        List<String> packages;
-        if (projectPackages != null) {
-            packages = Arrays.asList(projectPackages);
-        } else {
-            packages = Collections.emptyList();
-        }
-        return Stacktrace.inProject(className, packages);
+        return Stacktrace.inProject(className, projectPackages);
     }
 
     /**

@@ -21,12 +21,7 @@ class Stacktrace implements JsonStream.Streamable {
 
     Stacktrace(StackTraceElement[] stacktrace, String[] projectPackages) {
         this.stacktrace = stacktrace;
-
-        if (projectPackages != null) {
-            this.projectPackages = Arrays.asList(projectPackages);
-        } else {
-            this.projectPackages = Collections.emptyList();
-        }
+        this.projectPackages = sanitiseProjectPackages(projectPackages);
     }
 
     @Override
@@ -58,7 +53,19 @@ class Stacktrace implements JsonStream.Streamable {
         writer.endArray();
     }
 
-    static boolean inProject(String className, List<String> projectPackages) {
+    private static List<String> sanitiseProjectPackages(String[] projectPackages) {
+        if (projectPackages != null) {
+            return Arrays.asList(projectPackages);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    static boolean inProject(String className, String[] projectPackages) {
+        return inProject(className, sanitiseProjectPackages(projectPackages));
+    }
+
+    private static boolean inProject(String className, List<String> projectPackages) {
         for (String packageName : projectPackages) {
             if (packageName != null && className.startsWith(packageName)) {
                 return true;
