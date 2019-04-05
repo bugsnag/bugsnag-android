@@ -90,6 +90,7 @@ class DefaultDelivery implements Delivery {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void checkHasNetworkConnection() throws DeliveryFailureException {
         if (connectivityManager == null) {
             return; // unlikely case, allow delivery attempt without checking connection first
