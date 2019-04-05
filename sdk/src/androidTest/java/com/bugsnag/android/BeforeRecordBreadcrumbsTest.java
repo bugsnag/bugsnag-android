@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
