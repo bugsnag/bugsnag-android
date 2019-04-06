@@ -3,8 +3,6 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
