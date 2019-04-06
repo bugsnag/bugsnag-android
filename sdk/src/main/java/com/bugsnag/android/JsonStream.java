@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 public class JsonStream extends JsonWriter {
 
@@ -75,7 +76,7 @@ public class JsonStream extends JsonWriter {
         Reader input = null;
         try {
             FileInputStream fis = new FileInputStream(file);
-            input = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+            input = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8));
             IOUtils.copy(input, out);
         } finally {
             IOUtils.closeQuietly(input);

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,7 +66,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         Writer out = null;
         try {
             FileOutputStream fos = new FileOutputStream(filename);
-            out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            out = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
             out.write(content);
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
@@ -96,7 +97,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         try {
             FileOutputStream fos = new FileOutputStream(filename);
-            Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            Writer out = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
             stream = new JsonStream(out);
             stream.value(streamable);
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
