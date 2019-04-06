@@ -75,7 +75,7 @@ public class Client extends Observable implements Observer {
 
     final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
-    SharedPreferences sharedPrefs;
+    final SharedPreferences sharedPrefs;
 
     private final OrientationEventListener orientationListener;
 
