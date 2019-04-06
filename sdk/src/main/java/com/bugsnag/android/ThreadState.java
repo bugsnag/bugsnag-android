@@ -56,7 +56,7 @@ class ThreadState implements JsonStream.Streamable {
     private Thread[] sortThreadsById(Map<Thread, StackTraceElement[]> liveThreads) {
         Set<Thread> threadSet = liveThreads.keySet();
 
-        Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
+        Thread[] threads = threadSet.toArray(new Thread[0]);
         Arrays.sort(threads, new Comparator<Thread>() {
             public int compare(@NonNull Thread lhs, @NonNull Thread rhs) {
                 return Long.valueOf(lhs.getId()).compareTo(rhs.getId());

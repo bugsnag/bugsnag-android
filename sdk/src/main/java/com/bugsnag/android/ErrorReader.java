@@ -245,7 +245,7 @@ class ErrorReader {
             frames.add(readStackFrame(reader));
         }
         reader.endArray();
-        return frames.toArray(new StackTraceElement[frames.size()]);
+        return frames.toArray(new StackTraceElement[0]);
     }
 
     private static StackTraceElement readStackFrame(JsonReader reader) throws IOException {
@@ -396,7 +396,7 @@ class ErrorReader {
             }
         }
         reader.endArray();
-        return new ThreadState(threads.toArray(new CachedThread[threads.size()]));
+        return new ThreadState(threads.toArray(new CachedThread[0]));
     }
 
     private static CachedThread readThread(Configuration config,

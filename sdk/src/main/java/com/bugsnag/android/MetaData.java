@@ -122,7 +122,7 @@ public class MetaData extends Observable implements JsonStream.Streamable {
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         MetaData newMeta = new MetaData(mergeMaps(stores.toArray(new Map[0])));
-        newMeta.setFilters(filters.toArray(new String[filters.size()]));
+        newMeta.setFilters(filters.toArray(new String[0]));
 
         return newMeta;
     }
