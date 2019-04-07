@@ -5,6 +5,7 @@ env:
     global:
     - ADB_INSTALL_TIMEOUT=8
     - EMULATOR_ANDROID_VERSION=24
+    - ANDROID_EMULATOR=test
     - ANDROID_TARGET=android-24
     - NDK_VERSION=r16b
     - MAZE_WAIT_TIME=18
