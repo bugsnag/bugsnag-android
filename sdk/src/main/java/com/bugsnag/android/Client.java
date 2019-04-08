@@ -118,6 +118,7 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
+    @SuppressWarnings("deprecation")
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
@@ -265,6 +266,7 @@ public class Client extends Observable implements Observer {
         detector.start(); // begin monitoring for ANRs
     }
 
+    @SuppressWarnings("deprecation")
     class ConnectivityChangeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

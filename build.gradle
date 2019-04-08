@@ -24,7 +24,7 @@ allprojects {
     }
 }
 ext {
-    supportLibVersion = "27.1.1"
+    supportLibVersion = "28.0.0"
     supportTestVersion = "0.5"
     espressoVersion = "2.2.2"
     junitVersion = "4.12"

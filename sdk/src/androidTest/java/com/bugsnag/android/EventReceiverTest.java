@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.EventReceiver.shortenActionNameIfNeeded;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import android.support.test.filters.SmallTest;
 

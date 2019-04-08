@@ -134,6 +134,7 @@ class AppData {
      * in AndroidManifest.xml
      */
     @Nullable
+    @SuppressWarnings("deprecation")
     private Integer calculateVersionCode() {
         if (packageInfo != null) {
             return packageInfo.versionCode;
