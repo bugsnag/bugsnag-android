@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.X.X (TBD)
+
+### Enhancements
+
+* Alter In foreground calculation
+[#466](https://github.com/bugsnag/bugsnag-android/pull/466)
+
 ## 4.13.0 (2019-04-03)
 
 ### Enhancements
