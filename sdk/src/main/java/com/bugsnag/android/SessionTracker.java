@@ -44,6 +44,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private AtomicLong lastEnteredForegroundMs = new AtomicLong(0);
     private AtomicReference<Session> currentSession = new AtomicReference<>();
     private Semaphore flushingRequest = new Semaphore(1);
+    private final ForegroundDetector foregroundDetector;
 
     SessionTracker(Configuration configuration, Client client, SessionStore sessionStore) {
         this(configuration, client, DEFAULT_TIMEOUT_MS, sessionStore);
@@ -55,6 +56,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
+        this.foregroundDetector = new ForegroundDetector(client.appContext);
+        notifyNdkInForeground();
     }
 
     /**
@@ -390,13 +393,17 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             }
         }
         setChanged();
+        notifyNdkInForeground();
+    }
+
+    private void notifyNdkInForeground() {
         notifyObservers(new NativeInterface.Message(
             NativeInterface.MessageType.UPDATE_IN_FOREGROUND,
-            Arrays.asList(!foregroundActivities.isEmpty(), getContextActivity())));
+            Arrays.asList(isInForeground(), getContextActivity())));
     }
 
     boolean isInForeground() {
-        return !foregroundActivities.isEmpty();
+        return foregroundDetector.isInForeground();
     }
 
     //FUTURE:SM This shouldnt be here
