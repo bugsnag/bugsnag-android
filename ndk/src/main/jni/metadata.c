@@ -196,6 +196,7 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
     (*env)->ReleaseStringUTFChars(env, _key, key);
     (*env)->ReleaseStringUTFChars(env, _value, value);
   }
+  free(jni_cache);
   (*env)->DeleteLocalRef(env, keyset);
   (*env)->DeleteLocalRef(env, keylist);
 }
@@ -333,6 +334,7 @@ void bsg_populate_report(JNIEnv *env, bugsnag_report *report) {
   bsg_populate_app_data(env, jni_cache, report);
   bsg_populate_device_data(env, jni_cache, report);
   bsg_populate_user_data(env, jni_cache, report);
+  free(jni_cache);
 }
 void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report,
                            jobject metadata) {
@@ -392,4 +394,5 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report,
   } else {
     report->metadata.value_count = 0;
   }
+  free(jni_cache);
 }
