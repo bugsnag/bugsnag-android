@@ -1,3 +1,7 @@
+plugins {
+    id("io.gitlab.arturbosch.detekt").version("1.0.0-RC14")
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'maven-publish'
@@ -190,6 +194,17 @@ bintray {
 }
 
 apply from: "../checkstyle.gradle"
+
+detekt {
+    input = files("src")
+    filters = ".*/resources/.*,.*/build/.*"
+
+    reports {
+        html {
+            enabled = true
+        }
+    }
+}
 
 dexcount {
     includeClasses = true

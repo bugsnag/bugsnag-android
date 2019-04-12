@@ -365,6 +365,7 @@ class DeviceData {
      * Get the current status of network access, eg "cellular"
      */
     @Nullable
+    @SuppressWarnings("deprecation")
     private String getNetworkAccess() {
         try {
             ConnectivityManager cm =

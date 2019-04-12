@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ class ErrorReader {
             ThreadState threadState = null;
             Breadcrumbs crumbs = null;
             ArrayList<String> severityReasonValues = null;
+            List<String> projectPackages = Collections.emptyList();
             boolean unhandled = false;
 
             reader = new JsonReader(new FileReader(errorFile));
@@ -56,6 +58,9 @@ class ErrorReader {
                         break;
                     case "device":
                         deviceData = jsonObjectToMap(reader);
+                        break;
+                    case "projectPackages":
+                        projectPackages = jsonArrayToList(reader);
                         break;
                     case "exceptions":
                         exceptions = readExceptions(config, reader);
@@ -97,9 +102,11 @@ class ErrorReader {
                 : null;
             HandledState handledState = new HandledState(severityReasonValues.get(0), severity,
                                                          unhandled, severityReasonAttribute);
+
             Error error = new Error(config, exceptions.getException(), handledState, severity,
                                     session, threadState);
             error.getExceptions().setExceptionType(exceptions.getExceptionType());
+            error.setProjectPackages(projectPackages.toArray(new String[]{}));
             error.setUser(user);
             error.setContext(context);
             error.setGroupingHash(groupingHash);
@@ -445,11 +452,11 @@ class ErrorReader {
         return data;
     }
 
-    private static List<Object> jsonArrayToList(JsonReader reader) throws IOException {
-        List<Object> objects = new ArrayList<>();
+    private static <T> List<T> jsonArrayToList(JsonReader reader) throws IOException {
+        List<T> objects = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            Object value = coerceSerializableFromJSON(reader);
+            T value = coerceSerializableFromJSON(reader);
             if (value != null) {
                 objects.add(value);
             }
@@ -458,26 +465,27 @@ class ErrorReader {
         return objects;
     }
 
-    private static Object coerceSerializableFromJSON(JsonReader reader) throws IOException {
+    @SuppressWarnings("unchecked")
+    private static <T> T coerceSerializableFromJSON(JsonReader reader) throws IOException {
         switch (reader.peek()) {
             case BEGIN_OBJECT:
-                return jsonObjectToMap(reader);
+                return (T) jsonObjectToMap(reader);
             case STRING:
-                return reader.nextString();
+                return (T) reader.nextString();
             case BOOLEAN:
-                return reader.nextBoolean();
+                return (T)(Boolean) reader.nextBoolean();
             case NUMBER:
                 try {
-                    return reader.nextInt();
+                    return (T)(Integer) reader.nextInt();
                 } catch (NumberFormatException ex) {
                     try {
-                        return reader.nextLong();
+                        return (T)(Long) reader.nextLong();
                     } catch (NumberFormatException ex2) {
-                        return reader.nextDouble();
+                        return (T)(Double) reader.nextDouble();
                     }
                 }
             case BEGIN_ARRAY:
-                return jsonArrayToList(reader);
+                return (T) jsonArrayToList(reader);
             default:
                 return null;
         }

@@ -126,6 +126,7 @@ public class ConfigurationTest {
         assertTrue(config.shouldIgnoreClass(className));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testInProject() {
         // Shouldn't be inProject if projectPackages hasn't been set

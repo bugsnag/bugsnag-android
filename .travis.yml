@@ -1,67 +1,60 @@
-sudo: false
 language: android
-
-jdk:
-- oraclejdk8
+jdk: oraclejdk8
 
 env:
-  global:
-  - ADB_INSTALL_TIMEOUT=4
-  - ANDROID_EMULATOR=test # default emulator name (used in tests)
-  - ANDROID_ABI=armeabi-v7a
-  - ANDROID_TARGET=android-21
-  - NDK_VERSION=r16b
-  - EMULATOR_FLAVOR=default
-  - ANDROID_HOME=/usr/local/android-sdk
-  - TOOLS=${ANDROID_HOME}/tools
-    # Set the path to ensure that the right version of `emulator` (among
-    # other things) is called!
-  - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
-  - QEMU_AUDIO_DRV=none # Prevents some fatal audio issues on API 24+
-  - MAZE_WAIT_TIME=18
-  - MAZE_TAGS="not @skip"
-
-android:
-  components:
-  - tools
-    # See https://github.com/travis-ci/travis-ci/issues/8874
-  - android-27
-  - extra-google-m2repository
+    global:
+    - ADB_INSTALL_TIMEOUT=8
+    - EMULATOR_ANDROID_VERSION=24
+    - ANDROID_EMULATOR=test
+    - ANDROID_TARGET=android-24
+    - NDK_VERSION=r16b
+    - MAZE_WAIT_TIME=18
 
 before_install:
+- mkdir "$ANDROID_HOME/licenses" || true
+- echo -e "8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
+- echo -e "84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+- yes | sdkmanager "platforms;android-28"
 - bundle install >/dev/null
 - ./scripts/install-ndk.sh
 - env
 
 install:
-# Installs tools a second time to get newer versions. Without this,
-# you get old packages and there's no avdmanager. It doesn't work to
-# put it in the components list a second time, though it used to work
-# and its documented on Travis as how you get newer packages.
-- echo y | sdkmanager "platform-tools" >/dev/null
-- echo y | sdkmanager "tools" >/dev/null
-- echo y | sdkmanager "build-tools;27.0.0" >/dev/null
-- echo y | sdkmanager "platforms;$ANDROID_TARGET" >/dev/null
-- echo y | sdkmanager "system-images;$ANDROID_TARGET;$EMULATOR_FLAVOR;$ANDROID_ABI" >/dev/null
-- echo no | avdmanager create avd --force -n test -k "system-images;$ANDROID_TARGET;$EMULATOR_FLAVOR;$ANDROID_ABI" -c 10M
+- $ANDROID_HOME/tools/bin/sdkmanager --channel=0 "tools" "platform-tools" "build-tools;28.0.1" "platforms;android-28"
+
+android:
+    components:
+    - tools
 
 before_script:
-- emulator -avd test $EMULATOR_FLAGS -engine classic -no-window -camera-back none -camera-front none -selinux permissive &
+- $ANDROID_HOME/tools/bin/sdkmanager --channel=0 "platforms;android-$EMULATOR_ANDROID_VERSION" "system-images;android-$EMULATOR_ANDROID_VERSION;default;armeabi-v7a"
+- echo no | $ANDROID_HOME/tools/bin/avdmanager create avd -f -n test -k "system-images;android-$EMULATOR_ANDROID_VERSION;default;armeabi-v7a"
+- echo 'disk.dataPartition.size=512M' >> ~/.android/avd/test.avd/config.ini
+- $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -verbose -show-kernel &
 - android-wait-for-emulator
 - adb shell input keyevent 82 &
 
 script:
-- bundle exec bugsnag-maze-runner --format progress --color --tags "$MAZE_TAGS" $MAZE_ARGS features/native*.feature
+- bundle exec bugsnag-maze-runner --format progress --color --verbose features/native*.feature
 
 jobs:
   include:
+  # Run static analysis and confirm the project builds before running expensive unit/E2E tests
   - stage: lint
-    script: ./gradlew lint checkstyle
+    install:
+    - sudo apt-get install -y cppcheck
+    before_script: skip
+    script:
+    # Remove unsupported ABI
+    - sed --in-place="" --expression="s/'armeabi',//" ndk/build.gradle examples/sdk-app-example/build.gradle
+    - ./gradlew lint checkstyle detekt
+    - cppcheck --enable=warning,performance ndk/src/main/jni -i ndk/src/main/jni/deps -i ndk/src/main/jni/external --error-exitcode=1
   # Run SDK unit tests against API 16:
   - stage: unit tests
     script: ./gradlew sdk:createDebugCoverageReport coveralls
     env:
     - ANDROID_TARGET=android-16
+
   # Run NDK and SDK unit tests against different NDK revisions:
   - stage: unit tests
     script: ./gradlew createDebugCoverageReport coveralls || (adb logcat -v brief -d '*:S BugsnagNDKTest' && false)
@@ -75,29 +68,11 @@ jobs:
     - sed --in-place="" --expression="s/'armeabi',//" ndk/build.gradle examples/sdk-app-example/build.gradle
     - ./gradlew createDebugCoverageReport coveralls || (adb logcat -v brief -d '*:S BugsnagNDKTest' && false)
     env: NDK_VERSION=r19
-  # Emulators for API 22,23,25 just don't boot ¯\_(ツ)_/¯
-  # Emulators for API 14,15,26 hang regularly
-  # Emulators for API 17,18 were working fine but now periodically crash
-  # There are no images for API 20 (which was Android Wear release)
-  # There's no emulators for x86 because we can't run x86 on Travis
+
+  # Run mazerunner scenarios
   - stage: end-to-end tests
-    env:
-    - ANDROID_TARGET=android-24
-    - MAZE_ARGS=--verbose
-  - stage: end-to-end tests
-    env:
-    - ANDROID_TARGET=android-21
-    - MAZE_ARGS=--verbose
-  - stage: end-to-end tests
-    env:
-    - ANDROID_TARGET=android-19
-    - MAZE_ARGS=--verbose
-  - stage: end-to-end tests
-    env:
-    - ANDROID_TARGET=android-16
-    - EMULATOR_FLAGS=-no-audio
-    - MAZE_TAGS="not @skip_below_api18"
-    - MAZE_ARGS=--verbose
+
+  # Deploy javadoc to GH pages
   - stage: deploy
     script: skip
     before_deploy: ./gradlew javadoc

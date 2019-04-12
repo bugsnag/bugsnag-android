@@ -3,6 +3,10 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Serialize an exception stacktrace and mark frames as "in-project"
@@ -12,12 +16,12 @@ class Stacktrace implements JsonStream.Streamable {
 
     private static final int STACKTRACE_TRIM_LENGTH = 200;
 
-    final Configuration config;
+    private final List<String> projectPackages;
     final StackTraceElement[] stacktrace;
 
-    Stacktrace(Configuration config, StackTraceElement[] stacktrace) {
-        this.config = config;
+    Stacktrace(StackTraceElement[] stacktrace, String[] projectPackages) {
         this.stacktrace = stacktrace;
+        this.projectPackages = sanitiseProjectPackages(projectPackages);
     }
 
     @Override
@@ -36,7 +40,7 @@ class Stacktrace implements JsonStream.Streamable {
                 writer.name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName());
                 writer.name("lineNumber").value(el.getLineNumber());
 
-                if (config.inProject(el.getClassName())) {
+                if (inProject(el.getClassName(), projectPackages)) {
                     writer.name("inProject").value(true);
                 }
 
@@ -47,5 +51,26 @@ class Stacktrace implements JsonStream.Streamable {
         }
 
         writer.endArray();
+    }
+
+    private static List<String> sanitiseProjectPackages(String[] projectPackages) {
+        if (projectPackages != null) {
+            return Arrays.asList(projectPackages);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    static boolean inProject(String className, String[] projectPackages) {
+        return inProject(className, sanitiseProjectPackages(projectPackages));
+    }
+
+    private static boolean inProject(String className, List<String> projectPackages) {
+        for (String packageName : projectPackages) {
+            if (packageName != null && className.startsWith(packageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

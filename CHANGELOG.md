@@ -7,6 +7,12 @@
 * Alter In foreground calculation
 [#466](https://github.com/bugsnag/bugsnag-android/pull/466)
 
+### Bug fixes
+
+* [NDK] Fix possible null pointer dereference
+* [NDK] Fix possible memory leak if bugsnag-android-ndk fails to successfully
+  parse a cached crash report
+
 ## 4.13.0 (2019-04-03)
 
 ### Enhancements
@@ -24,6 +30,9 @@
 
 * Prevent NPE occurring when calling resumeSession()
 [#444](https://github.com/bugsnag/bugsnag-android/pull/444)
+
+* Read projectPackages array when serialising error reports
+[#451](https://github.com/bugsnag/bugsnag-android/pull/451)
 
 ## 4.12.0 (2019-02-27)
 
