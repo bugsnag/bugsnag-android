@@ -19,10 +19,10 @@ import java.util.Map;
 public class Error implements JsonStream.Streamable {
 
     @NonNull
-    private Map<String, Object> appData = new HashMap<String, Object>();
+    private Map<String, Object> appData = new HashMap<>();
 
     @NonNull
-    private Map<String, Object> deviceData = new HashMap<String, Object>();
+    private Map<String, Object> deviceData = new HashMap<>();
 
     @NonNull
     private User user = new User();

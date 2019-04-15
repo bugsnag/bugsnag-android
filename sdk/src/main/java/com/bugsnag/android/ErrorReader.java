@@ -290,16 +290,19 @@ class ErrorReader {
         String type = null;
         String attributeValue = null;
         while (reader.hasNext()) {
-            String name = reader.nextName();
-            if (name.equals("type")) {
-                type = reader.nextString();
-            } else if (name.equals("attributes")) {
-                reader.beginObject();
-                reader.nextName();
-                attributeValue = reader.nextString();
-                reader.endObject();
-            } else {
-                reader.skipValue();
+            switch (reader.nextName()) {
+                case "type":
+                    type = reader.nextString();
+                    break;
+                case "attributes":
+                    reader.beginObject();
+                    reader.nextName();
+                    attributeValue = reader.nextString();
+                    reader.endObject();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
             }
         }
         reader.endObject();
@@ -324,32 +327,40 @@ class ErrorReader {
         User user = null;
         reader.beginObject();
         while (reader.hasNext()) {
-            String name = reader.nextName();
-            if (name.equals("id")) {
-                id = reader.nextString();
-            } else if (name.equals("startedAt")) {
-                try {
-                    startedAt = DateUtils.fromIso8601(reader.nextString());
-                } catch (Exception ex) {
-                    throw new IOException("Unable to parse session startedAt: ", ex);
-                }
-            } else if (name.equals("events")) {
-                reader.beginObject();
-                while (reader.hasNext()) {
-                    String eventName = reader.nextName();
-                    if (eventName.equals("unhandled")) {
-                        unhandled = reader.nextInt();
-                    } else if (eventName.equals("handled")) {
-                        handled = reader.nextInt();
-                    } else {
-                        reader.skipValue();
+            switch (reader.nextName()) {
+                case "id":
+                    id = reader.nextString();
+                    break;
+                case "startedAt":
+                    try {
+                        startedAt = DateUtils.fromIso8601(reader.nextString());
+                    } catch (Exception ex) {
+                        throw new IOException("Unable to parse session startedAt: ", ex);
                     }
-                }
-                reader.endObject();
-            } else if (name.equals("user")) {
-                user = readUser(reader);
-            } else {
-                reader.skipValue();
+                    break;
+                case "events":
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        switch (reader.nextName()) {
+                            case "unhandled":
+                                unhandled = reader.nextInt();
+                                break;
+                            case "handled":
+                                handled = reader.nextInt();
+                                break;
+                            default:
+                                reader.skipValue();
+                                break;
+                        }
+                    }
+                    reader.endObject();
+                    break;
+                case "user":
+                    user = readUser(reader);
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
             }
         }
         reader.endObject();
