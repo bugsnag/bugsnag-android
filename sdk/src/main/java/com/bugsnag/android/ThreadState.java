@@ -20,9 +20,8 @@ class ThreadState implements JsonStream.Streamable {
 
     public ThreadState(@NonNull Configuration config,
                        @NonNull Thread currentThread,
-                       @NonNull Map<Thread, StackTraceElement[]> allStackTraces,
+                       @NonNull Map<Thread, StackTraceElement[]> stackTraces,
                        @Nullable Throwable exc) {
-        Map<Thread, StackTraceElement[]> stackTraces = allStackTraces;
 
         // API 24/25 don't record the currentThread, add it in manually
         // https://issuetracker.google.com/issues/64122757
