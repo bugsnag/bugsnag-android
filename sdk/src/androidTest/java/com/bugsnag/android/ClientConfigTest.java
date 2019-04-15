@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -105,13 +106,13 @@ public class ClientConfigTest {
         config = BugsnagTestUtils.generateConfiguration();
         Delivery customDelivery = new Delivery() {
             @Override
-            public void deliver(SessionTrackingPayload payload,
-                                Configuration config)
+            public void deliver(@NonNull SessionTrackingPayload payload,
+                                @NonNull Configuration config)
                 throws DeliveryFailureException {}
 
             @Override
-            public void deliver(Report report,
-                                Configuration config)
+            public void deliver(@NonNull Report report,
+                                @NonNull Configuration config)
                 throws DeliveryFailureException {}
 
         };

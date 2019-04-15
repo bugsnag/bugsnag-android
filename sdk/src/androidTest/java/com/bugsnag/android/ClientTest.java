@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -116,7 +117,7 @@ public class ClientTest {
 
         client.beforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(Error error) {
+            public boolean run(@NonNull Error error) {
                 // Pull out the user information
                 user.setId(error.getUser().getId());
                 user.setEmail(error.getUser().getEmail());

@@ -5,6 +5,7 @@ import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 
 import org.junit.After;
@@ -95,7 +96,7 @@ public class NullMetadataTest {
     public void testNotify() throws Exception {
         Bugsnag.beforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(Error error) {
+            public boolean run(@NonNull Error error) {
                 validateDefaultMetadata(error.getMetaData());
                 return false;
             }

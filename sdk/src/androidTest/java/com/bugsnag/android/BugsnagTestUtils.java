@@ -75,9 +75,9 @@ final class BugsnagTestUtils {
     static SessionTrackingApiClient generateSessionTrackingApiClient() {
         return new SessionTrackingApiClient() {
             @Override
-            public void postSessionTrackingPayload(String urlString,
-                                                   SessionTrackingPayload payload,
-                                                   Map<String, String> headers)
+            public void postSessionTrackingPayload(@NonNull String urlString,
+                                                   @NonNull SessionTrackingPayload payload,
+                                                   @NonNull Map<String, String> headers)
                 throws NetworkException, BadResponseException {
 
             }
@@ -88,9 +88,9 @@ final class BugsnagTestUtils {
     static ErrorReportApiClient generateErrorReportApiClient() { // no-op
         return new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString,
-                                   Report report,
-                                   Map<String, String> headers)
+            public void postReport(@NonNull String urlString,
+                                   @NonNull Report report,
+                                   @NonNull Map<String, String> headers)
                 throws NetworkException, BadResponseException {
 
             }
@@ -100,13 +100,13 @@ final class BugsnagTestUtils {
     public static Delivery generateDelivery() {
         return new Delivery() {
             @Override
-            public void deliver(SessionTrackingPayload payload,
-                                Configuration config)
+            public void deliver(@NonNull SessionTrackingPayload payload,
+                                @NonNull Configuration config)
                 throws DeliveryFailureException {}
 
             @Override
-            public void deliver(Report report,
-                                Configuration config)
+            public void deliver(@NonNull Report report,
+                                @NonNull Configuration config)
                 throws DeliveryFailureException {}
 
         };
