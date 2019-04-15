@@ -12,7 +12,7 @@ class Session implements JsonStream.Streamable {
     private final String id;
     private final Date startedAt;
     private final User user;
-    private AtomicBoolean autoCaptured;
+    private final AtomicBoolean autoCaptured;
 
     static Session copySession(Session session) {
         Session copy = new Session(session.id, session.startedAt,

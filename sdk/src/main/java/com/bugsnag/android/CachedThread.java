@@ -8,12 +8,12 @@ import java.io.IOException;
  * A representation of a thread recorded in a {@link Report}
  */
 class CachedThread implements JsonStream.Streamable {
-    private long id;
-    private String name;
-    private String type;
-    private boolean isErrorReportingThread;
-    private StackTraceElement[] frames;
-    private Configuration config;
+    private final long id;
+    private final String name;
+    private final String type;
+    private final boolean isErrorReportingThread;
+    private final StackTraceElement[] frames;
+    private final Configuration config;
 
     CachedThread(Configuration config, long id, String name, String type,
                  boolean isErrorReportingThread, StackTraceElement[] frames) {
