@@ -9,7 +9,6 @@ env:
     - ANDROID_TARGET=android-24
     - NDK_VERSION=r16b
     - MAZE_WAIT_TIME=18
-    - SKIP_EMULATOR_BOOT=false
 
 before_install:
 - mkdir "$ANDROID_HOME/licenses" || true
@@ -20,20 +19,20 @@ before_install:
 - ./scripts/install-ndk.sh
 - env
 
-install: true
+install:
+- $ANDROID_HOME/tools/bin/sdkmanager --channel=0 "tools" "platform-tools" "build-tools;28.0.1" "platforms;android-28"
 
 android:
     components:
     - tools
 
 before_script:
-- $ANDROID_HOME/tools/bin/sdkmanager --channel=0 "tools" "platform-tools" "build-tools;28.0.1" "platforms;android-28"
-- $SKIP_EMULATOR_BOOT || $ANDROID_HOME/tools/bin/sdkmanager --channel=0 "platforms;android-$EMULATOR_ANDROID_VERSION" "system-images;android-$EMULATOR_ANDROID_VERSION;default;armeabi-v7a"
-- $SKIP_EMULATOR_BOOT || echo no | $ANDROID_HOME/tools/bin/avdmanager create avd -f -n test -k "system-images;android-$EMULATOR_ANDROID_VERSION;default;armeabi-v7a"
-- $SKIP_EMULATOR_BOOT || echo 'disk.dataPartition.size=512M' >> ~/.android/avd/test.avd/config.ini
-- $SKIP_EMULATOR_BOOT || $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -verbose -show-kernel &
-- $SKIP_EMULATOR_BOOT || android-wait-for-emulator
-- $SKIP_EMULATOR_BOOT || adb shell input keyevent 82 &
+- $ANDROID_HOME/tools/bin/sdkmanager --channel=0 "platforms;android-$EMULATOR_ANDROID_VERSION" "system-images;android-$EMULATOR_ANDROID_VERSION;default;armeabi-v7a"
+- echo no | $ANDROID_HOME/tools/bin/avdmanager create avd -f -n test -k "system-images;android-$EMULATOR_ANDROID_VERSION;default;armeabi-v7a"
+- echo 'disk.dataPartition.size=512M' >> ~/.android/avd/test.avd/config.ini
+- $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -verbose -show-kernel &
+- android-wait-for-emulator
+- adb shell input keyevent 82 &
 
 script:
 - bundle exec bugsnag-maze-runner --format progress --color --verbose features/native*.feature
@@ -42,10 +41,14 @@ jobs:
   include:
   # Run static analysis and confirm the project builds before running expensive unit/E2E tests
   - stage: lint
-    env:
-    - SKIP_EMULATOR_BOOT=true
-    script: ./gradlew lint checkstyle detekt
-
+    install:
+    - sudo apt-get install -y cppcheck
+    before_script: skip
+    script:
+    # Remove unsupported ABI
+    - sed --in-place="" --expression="s/'armeabi',//" ndk/build.gradle examples/sdk-app-example/build.gradle
+    - ./gradlew lint checkstyle detekt
+    - cppcheck --enable=warning,performance ndk/src/main/jni -i ndk/src/main/jni/deps -i ndk/src/main/jni/external --error-exitcode=1
   # Run SDK unit tests against API 16:
   - stage: unit tests
     script: ./gradlew sdk:createDebugCoverageReport coveralls

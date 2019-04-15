@@ -4,9 +4,9 @@ RUNNING_CI = ENV['TRAVIS'] == 'true'
 # Install latest versions of bugsnag-android(-ndk)
 run_required_commands([
   ["./gradlew", "clean", "sdk:assembleRelease", "ndk:assembleRelease"],
-  ["cp", "sdk/build/outputs/aar/bugsnag-android-release.aar",
+  ["cp", "sdk/build/outputs/aar/bugsnag-android-*.aar",
    "features/fixtures/mazerunner/libs/bugsnag-android.aar"],
-  ["cp", "ndk/build/outputs/aar/bugsnag-android-ndk-release.aar",
+  ["cp", "ndk/build/outputs/aar/bugsnag-android-ndk-*.aar",
    "features/fixtures/mazerunner/libs/bugsnag-android-ndk.aar"],
 ])
 

@@ -108,7 +108,7 @@ publishing {
             artifactId 'bugsnag-android-ndk'
             version "${project.VERSION_NAME}"
             artifact(sourceJar)
-            artifact("$buildDir/outputs/aar/bugsnag-android-ndk-release.aar")
+            artifact("$buildDir/outputs/aar/bugsnag-android-ndk-${project.VERSION_NAME}.aar")
 
             pom.withXml {
                 Node root = asNode()

@@ -5,6 +5,12 @@
 * Resolve pre-existing Android Inspection violations
 [#468](https://github.com/bugsnag/bugsnag-android/pull/468)
 
+### Bug fixes
+
+* [NDK] Fix possible null pointer dereference
+* [NDK] Fix possible memory leak if bugsnag-android-ndk fails to successfully
+  parse a cached crash report
+
 ## 4.13.0 (2019-04-03)
 
 ### Enhancements

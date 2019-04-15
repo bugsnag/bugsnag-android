@@ -47,6 +47,7 @@ bugsnag_report_v1 *bsg_report_v1_read(int fd) {
 
     ssize_t len = read(fd, report, report_size);
     if (len != report_size) {
+        free(report);
         return NULL;
     }
     return report;
@@ -58,7 +59,8 @@ bugsnag_report *bsg_report_v2_read(int fd) {
 
     ssize_t len = read(fd, report, report_size);
     if (len != report_size) {
-        return NULL;
+      free(report);
+      return NULL;
     }
     return report;
 }
@@ -111,6 +113,7 @@ bsg_report_header *bsg_report_header_read(int fd) {
   bsg_report_header *header = malloc(sizeof(bsg_report_header));
   ssize_t len = read(fd, header, sizeof(bsg_report_header));
   if (len != sizeof(bsg_report_header)) {
+    free(header);
     return NULL;
   }
 
