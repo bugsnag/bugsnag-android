@@ -290,8 +290,7 @@ class ErrorReader {
         String type = null;
         String attributeValue = null;
         while (reader.hasNext()) {
-            String name = reader.nextName();
-            switch (name) {
+            switch (reader.nextName()) {
                 case "type":
                     type = reader.nextString();
                     break;
@@ -328,8 +327,7 @@ class ErrorReader {
         User user = null;
         reader.beginObject();
         while (reader.hasNext()) {
-            String name = reader.nextName();
-            switch (name) {
+            switch (reader.nextName()) {
                 case "id":
                     id = reader.nextString();
                     break;
@@ -343,8 +341,7 @@ class ErrorReader {
                 case "events":
                     reader.beginObject();
                     while (reader.hasNext()) {
-                        String eventName = reader.nextName();
-                        switch (eventName) {
+                        switch (reader.nextName()) {
                             case "unhandled":
                                 unhandled = reader.nextInt();
                                 break;
