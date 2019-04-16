@@ -1,6 +1,9 @@
 # Changelog
 
-## TBD
+## 4.X.X (TBD)
+
+* Resolve pre-existing Android Inspection violations
+[#468](https://github.com/bugsnag/bugsnag-android/pull/468)
 
 ### Bug fixes
 

@@ -55,19 +55,19 @@ class DeviceData {
     private final boolean rooted;
 
     @Nullable
-    Float screenDensity;
+    final Float screenDensity;
 
     @Nullable
-    Integer dpi;
+    final Integer dpi;
 
     @Nullable
-    String screenResolution;
+    final String screenResolution;
 
     @NonNull
-    String locale;
+    final String locale;
 
     @NonNull
-    String[] cpuAbi;
+    final String[] cpuAbi;
 
     DeviceData(Client client) {
         this.client = client;

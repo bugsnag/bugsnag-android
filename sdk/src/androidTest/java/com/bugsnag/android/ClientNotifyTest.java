@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 
+import android.support.annotation.NonNull;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -49,7 +50,7 @@ public class ClientNotifyTest {
     public void testNotifyBlockingCallback() {
         client.notifyBlocking(new RuntimeException("Testing"), new Callback() {
             @Override
-            public void beforeNotify(Report report) {
+            public void beforeNotify(@NonNull Report report) {
                 report.getError().setUserName("Foo");
             }
         });
@@ -72,7 +73,7 @@ public class ClientNotifyTest {
 
         client.notifyBlocking("Name", "Message", stacktrace, new Callback() {
             @Override
-            public void beforeNotify(Report report) {
+            public void beforeNotify(@NonNull Report report) {
                 report.getError().setSeverity(Severity.ERROR);
             }
         });
@@ -89,9 +90,9 @@ public class ClientNotifyTest {
         Report report;
 
         @Override
-        public void postReport(String urlString,
-                               Report report,
-                               Map<String, String> headers)
+        public void postReport(@NonNull String urlString,
+                               @NonNull Report report,
+                               @NonNull Map<String, String> headers)
             throws NetworkException, BadResponseException {
             try {
                 Thread.sleep(10); // simulate async request

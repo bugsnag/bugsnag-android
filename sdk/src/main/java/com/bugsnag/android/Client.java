@@ -26,7 +26,6 @@ import android.view.OrientationEventListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -75,7 +74,7 @@ public class Client extends Observable implements Observer {
 
     final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
-    SharedPreferences sharedPrefs;
+    final SharedPreferences sharedPrefs;
 
     private final OrientationEventListener orientationListener;
 
