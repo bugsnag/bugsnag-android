@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -137,7 +138,14 @@ class AppData {
     @SuppressWarnings("deprecation")
     private Integer calculateVersionCode() {
         if (packageInfo != null) {
-            return packageInfo.versionCode;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                // Android P added an android:versionCodeMajor field for anyone who ran out of
+                // space in android:versionCode. As it's stored in the upper 32 bits
+                // we want to ignore those, and retrieve the versionCode value only.
+                return (int) (packageInfo.getLongVersionCode() & 0x0000FFFFL);
+            } else {
+                return packageInfo.versionCode;
+            }
         } else {
             return null;
         }
