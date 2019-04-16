@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Use packageInfo.longVersionCode to collect versionCode on API 28+
+[#471](https://github.com/bugsnag/bugsnag-android/pull/471)
+
 ### Bug fixes
 
 * [NDK] Fix possible null pointer dereference
