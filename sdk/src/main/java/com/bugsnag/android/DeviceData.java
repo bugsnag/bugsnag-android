@@ -19,7 +19,6 @@ import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;

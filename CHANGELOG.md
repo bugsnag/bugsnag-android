@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Migrate version information to device.runtimeVersions
+[#472](https://github.com/bugsnag/bugsnag-android/pull/472)
+
 ### Bug fixes
 
 * [NDK] Fix possible null pointer dereference
