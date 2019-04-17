@@ -145,6 +145,25 @@ int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
   return 0;
 }
 
+int bsg_populate_api_level_from_map(JNIEnv *env, bsg_jni_cache *jni_cache, jobject device_data) {
+    int value = -1;
+    jstring map_key = (*env)->NewStringUTF(env, "runtimeVersions");
+    jstring version_key = (*env)->NewStringUTF(env, "androidApiLevel");
+    jobject _map = (*env)->CallObjectMethod(env, device_data, jni_cache->hash_map_get, map_key);
+
+    if (_map != NULL) {
+        jobject _versions =
+            (*env)->CallObjectMethod(env, _map, jni_cache->hash_map_get, version_key);
+
+        if (_versions != NULL) {
+            value = (int)(*env)->CallIntMethod(env, _versions, jni_cache->integer_int_value);
+            (*env)->DeleteLocalRef(env, _versions);
+        }
+        (*env)->DeleteLocalRef(env, _map);
+    }
+    return value;
+}
+
 int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
                                   jobject map, bsg_device_info *device) {
   jstring key = (*env)->NewStringUTF(env, "cpuAbi");
@@ -291,14 +310,14 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
       bsg_get_map_value_bool(env, jni_cache, data, "emulator");
   report->device.jailbroken =
       bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
-  report->device.api_level =
-      bsg_get_map_value_int(env, jni_cache, data, "apiLevel");
   report->device.total_memory =
       bsg_get_map_value_long(env, jni_cache, data, "totalMemory");
   report->device.dpi = bsg_get_map_value_int(env, jni_cache, data, "dpi");
   report->device.screen_density =
       bsg_get_map_value_float(env, jni_cache, data, "screenDensity");
   bsg_populate_cpu_abi_from_map(env, jni_cache, data, &report->device);
+
+  report->device.api_level = bsg_populate_api_level_from_map(env, jni_cache, data);
 
   (*env)->DeleteLocalRef(env, data);
 }
