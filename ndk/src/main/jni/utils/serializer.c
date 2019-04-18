@@ -42,27 +42,60 @@ bugsnag_report *bsg_deserialize_report_from_file(char *filepath) {
 }
 
 bugsnag_report_v1 *bsg_report_v1_read(int fd) {
-    size_t report_size = sizeof(bugsnag_report_v1);
-    bugsnag_report_v1 *report = malloc(report_size);
+  size_t report_size = sizeof(bugsnag_report_v1);
+  bugsnag_report_v1 *report = malloc(report_size);
 
-    ssize_t len = read(fd, report, report_size);
-    if (len != report_size) {
-        free(report);
-        return NULL;
-    }
-    return report;
+  ssize_t len = read(fd, report, report_size);
+  if (len != report_size) {
+    free(report);
+    return NULL;
+  }
+  return report;
 }
 
-bugsnag_report *bsg_report_v2_read(int fd) {
-    size_t report_size = sizeof(bugsnag_report);
-    bugsnag_report *report = malloc(report_size);
+bugsnag_report_v2 *bsg_report_v2_read(int fd) {
+  size_t report_size = sizeof(bugsnag_report_v2);
+  bugsnag_report_v2 *report = malloc(report_size);
 
-    ssize_t len = read(fd, report, report_size);
-    if (len != report_size) {
-      free(report);
-      return NULL;
-    }
-    return report;
+  ssize_t len = read(fd, report, report_size);
+  if (len != report_size) {
+    free(report);
+    return NULL;
+  }
+  return report;
+}
+
+bugsnag_report *bsg_report_v3_read(int fd) {
+  size_t report_size = sizeof(bugsnag_report);
+  bugsnag_report *report = malloc(report_size);
+
+  ssize_t len = read(fd, report, report_size);
+  if (len != report_size) {
+    free(report);
+    return NULL;
+  }
+  return report;
+}
+
+void migrate_app_v1_to_app(bsg_app_info *app, bsg_app_info_v1 *app_v1) {
+  strcpy(app->name, app_v1->name);
+  strcpy(app->id, app_v1->id);
+  strcpy(app->package_name, app_v1->package_name);
+  strcpy(app->release_stage, app_v1->release_stage);
+  strcpy(app->type, app_v1->type);
+  strcpy(app->version, app_v1->version);
+  strcpy(app->version_name, app_v1->version_name);
+  strcpy(app->active_screen, app_v1->active_screen);
+  app->version_code = app_v1->version_code;
+  strcpy(app->build_uuid, app_v1->build_uuid);
+  app->duration = app_v1->duration;
+  app->duration_in_foreground = app_v1->duration_in_foreground;
+  app->duration_ms_offset = app_v1->duration_ms_offset;
+  app->duration_in_foreground_ms_offset = app_v1->duration_in_foreground_ms_offset;
+  app->in_foreground = app_v1->in_foreground;
+  app->low_memory = app_v1->low_memory;
+  app->memory_usage = app_v1->memory_usage;
+  strcpy(app->binaryArch, app_v1->binaryArch);
 }
 
 bugsnag_report *bsg_report_read(int fd) {
@@ -76,35 +109,69 @@ bugsnag_report *bsg_report_read(int fd) {
 
   bugsnag_report *report = NULL;
 
-  if (report_version == 1) { // 'report->unhandled_events' was added in v2
+  switch (report_version) {
+    case 1: { // 'report->unhandled_events' was added in v2
       bugsnag_report_v1 *report_v1 = bsg_report_v1_read(fd);
 
       if (report_v1 != NULL) {
-          report = malloc(sizeof(bugsnag_report));
+        report = malloc(sizeof(bugsnag_report));
 
-          report->notifier = report_v1->notifier;
-          report->app = report_v1->app;
-          report->device = report_v1->device;
-          report->user = report_v1->user;
-          report->exception = report_v1->exception;
-          report->metadata = report_v1->metadata;
-          report->crumb_count = report_v1->crumb_count;
-          report->crumb_first_index = report_v1->crumb_first_index;
+        report->notifier = report_v1->notifier;
+        report->device = report_v1->device;
+        report->user = report_v1->user;
+        report->exception = report_v1->exception;
+        report->metadata = report_v1->metadata;
+        report->crumb_count = report_v1->crumb_count;
+        report->crumb_first_index = report_v1->crumb_first_index;
 
-          size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
-          memcpy(&report->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
+        size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+        memcpy(&report->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
 
-          strcpy(report->context, report_v1->context);
-          report->severity = report_v1->severity;
-          strcpy(report->session_id, report_v1->session_id);
-          strcpy(report->session_start, report_v1->session_start);
-          report->handled_events = report_v1->handled_events;
-          report->unhandled_events = 1;
+        strcpy(report->context, report_v1->context);
+        report->severity = report_v1->severity;
+        strcpy(report->session_id, report_v1->session_id);
+        strcpy(report->session_start, report_v1->session_start);
+        report->handled_events = report_v1->handled_events;
+        report->unhandled_events = 1;
 
-          free(report_v1);
+        migrate_app_v1_to_app(&report->app, &report_v1->app);
+        free(report_v1);
       }
-  } else {
-      report = bsg_report_v2_read(fd);
+      break;
+    }
+    case 2: { // report->app.version_code was changed from int to long in v3
+      bugsnag_report_v2 *report_v2 = bsg_report_v2_read(fd);
+
+      if (report_v2 != NULL) {
+        report = malloc(sizeof(bugsnag_report));
+
+        report->notifier = report_v2->notifier;
+        report->device = report_v2->device;
+        report->user = report_v2->user;
+        report->exception = report_v2->exception;
+        report->metadata = report_v2->metadata;
+        report->crumb_count = report_v2->crumb_count;
+        report->crumb_first_index = report_v2->crumb_first_index;
+
+        size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+        memcpy(&report->breadcrumbs, report_v2->breadcrumbs, breadcrumb_size);
+
+        strcpy(report->context, report_v2->context);
+        report->severity = report_v2->severity;
+        strcpy(report->session_id, report_v2->session_id);
+        strcpy(report->session_start, report_v2->session_start);
+        report->handled_events = report_v2->handled_events;
+        report->unhandled_events = report_v2->unhandled_events;
+
+        migrate_app_v1_to_app(&report->app, &report_v2->app);
+        free(report_v2);
+      }
+      break;
+    }
+    default: {
+      report = bsg_report_v3_read(fd);
+      break;
+    }
   }
   return report;
 }

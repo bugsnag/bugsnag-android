@@ -55,6 +55,12 @@ bugsnag_report_v1 *bsg_generate_report_v1(void) {
   return report;
 }
 
+bugsnag_report_v1 *bsg_generate_report_v2(void) {
+  bugsnag_report_v1 *report = calloc(1, sizeof(bugsnag_report_v2));
+  generate_basic_report(report);
+  return report;
+}
+
 bugsnag_report *bsg_generate_report(void) {
   bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
   generate_basic_report(report);
@@ -112,6 +118,26 @@ TEST test_report_v1_migration(void) {
   ASSERT(strcmp("2019-03-19T12:58:19+00:00", report->session_start) == 0);
   ASSERT_EQ(1, report->handled_events);
   ASSERT_EQ(1, report->unhandled_events);
+
+  free(generated_report);
+  free(env);
+  free(report);
+  PASS();
+}
+
+TEST test_report_v2_migration(void) {
+  bsg_environment *env = malloc(sizeof(bsg_environment));
+  env->report_header.version = 1;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
+  bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
+  memcpy(&env->next_report, generated_report, sizeof(bugsnag_report_v2));
+  strcpy(env->next_report_path, SERIALIZE_TEST_FILE);
+  bsg_serialize_report_to_file(env);
+
+  bugsnag_report *report = bsg_deserialize_report_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(report != NULL);
+  ASSERT_EQ(57, report->app.version_code);
 
   free(generated_report);
   free(env);
@@ -243,6 +269,7 @@ SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
   RUN_TEST(test_report_v1_migration);
+  RUN_TEST(test_report_v2_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_report_context_to_json);
   RUN_TEST(test_report_app_info_to_json);
