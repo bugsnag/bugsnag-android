@@ -31,7 +31,7 @@
 /**
  * Version of the bugsnag_report struct. Serialized to report header.
  */
-#define BUGSNAG_REPORT_VERSION 2
+#define BUGSNAG_REPORT_VERSION 3
 
 #define BUGSNAG_USER_INFO_LEN 64
 #ifdef __cplusplus
