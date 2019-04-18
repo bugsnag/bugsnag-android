@@ -61,7 +61,7 @@ typedef struct {
   char version[32];
   char version_name[32];
   char active_screen[64];
-  int version_code;
+  long version_code;
   char build_uuid[64];
   time_t duration;
   time_t duration_in_foreground;

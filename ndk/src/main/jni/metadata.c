@@ -243,7 +243,7 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   report->app.duration_in_foreground_ms_offset =
       bsg_get_map_value_long(env, jni_cache, data, "durationInForeground");
   report->app.version_code =
-      bsg_get_map_value_int(env, jni_cache, data, "versionCode");
+      bsg_get_map_value_long(env, jni_cache, data, "versionCode");
   report->app.in_foreground =
       bsg_get_map_value_bool(env, jni_cache, data, "inForeground");
 
