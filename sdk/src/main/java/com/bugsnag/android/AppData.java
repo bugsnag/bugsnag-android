@@ -136,15 +136,14 @@ class AppData {
      */
     @Nullable
     @SuppressWarnings("deprecation")
-    private Integer calculateVersionCode() {
+    private Long calculateVersionCode() {
         if (packageInfo != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 // Android P added an android:versionCodeMajor field for anyone who ran out of
-                // space in android:versionCode. As it's stored in the upper 32 bits
-                // we want to ignore those, and retrieve the versionCode value only.
-                return (int) (packageInfo.getLongVersionCode() & 0x0000FFFFL);
+                // space in android:versionCode, which is stored in the upper 32 bits of this field.
+                return packageInfo.getLongVersionCode();
             } else {
-                return packageInfo.versionCode;
+                return (long) packageInfo.versionCode;
             }
         } else {
             return null;
