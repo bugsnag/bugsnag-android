@@ -17,6 +17,18 @@ class ForegroundDetector {
             (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
     }
 
+    /**
+     * Determines whether or not the application is in the foreground, by using the process'
+     * importance as a proxy.
+     * <p/>
+     * In the unlikely event that information about the process cannot be retrieved, this method
+     * will return true. This is deemed preferable as ANRs are only reported when the application
+     * is in the foreground, and we would rather deliver false-positives than miss true ANRs in
+     * this case. We also need to report 'inForeground' as a boolean value in API calls, and
+     * need to keep the definition of the value consistent throughout the application.
+     *
+     * @return whether the application is in the foreground or not
+     */
     boolean isInForeground() {
         ActivityManager.RunningAppProcessInfo info = getProcessInfo();
 
