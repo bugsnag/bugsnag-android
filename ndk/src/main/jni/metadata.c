@@ -146,20 +146,20 @@ int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
 }
 
 int bsg_populate_api_level_from_map(JNIEnv *env, bsg_jni_cache *jni_cache, jobject device_data) {
-    int value = -1;
-    jstring map_key = (*env)->NewStringUTF(env, "runtimeVersions");
-    jstring version_key = (*env)->NewStringUTF(env, "androidApiLevel");
-    jobject _map = (*env)->CallObjectMethod(env, device_data, jni_cache->hash_map_get, map_key);
+    int value = 0;
+    jstring runtime_versions_key = (*env)->NewStringUTF(env, "runtimeVersions");
+    jstring api_level_key = (*env)->NewStringUTF(env, "androidApiLevel");
+    jobject _runtime_versions = (*env)->CallObjectMethod(env, device_data, jni_cache->hash_map_get, runtime_versions_key);
 
-    if (_map != NULL) {
-        jobject _versions =
-            (*env)->CallObjectMethod(env, _map, jni_cache->hash_map_get, version_key);
+    if (_runtime_versions != NULL) {
+        jobject _api_level =
+            (*env)->CallObjectMethod(env, _runtime_versions, jni_cache->hash_map_get, api_level_key);
 
-        if (_versions != NULL) {
-            value = (int)(*env)->CallIntMethod(env, _versions, jni_cache->integer_int_value);
-            (*env)->DeleteLocalRef(env, _versions);
+        if (_api_level != NULL) {
+            value = (int)(*env)->CallIntMethod(env, _api_level, jni_cache->integer_int_value);
+            (*env)->DeleteLocalRef(env, _api_level);
         }
-        (*env)->DeleteLocalRef(env, _map);
+        (*env)->DeleteLocalRef(env, _runtime_versions);
     }
     return value;
 }

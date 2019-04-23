@@ -65,7 +65,7 @@ public class DeviceDataSummaryTest {
         assertTrue(deviceDataJson.has("jailbroken"));
 
         JSONObject versions = deviceDataJson.getJSONObject("runtimeVersions");
-        assertNotNull(versions.get("androidApiLevel"));
+        assertTrue((Integer) versions.get("androidApiLevel") >= 14);
     }
 
 }
