@@ -1,6 +1,11 @@
 # Changelog
 
-## TBD
+## 4.X.X (TBD)
+
+### Enhancements
+
+* Alter In foreground calculation
+[#466](https://github.com/bugsnag/bugsnag-android/pull/466)
 
 * Migrate version information to device.runtimeVersions
 [#472](https://github.com/bugsnag/bugsnag-android/pull/472)
