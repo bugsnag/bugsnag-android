@@ -129,7 +129,7 @@ typedef struct {
    */
   int big_endian;
   /**
-   * The value of metaData.device.osBuild
+   * The value of device.runtimeVersions.osBuild
    */
   char os_build[64];
 } bsg_report_header;
