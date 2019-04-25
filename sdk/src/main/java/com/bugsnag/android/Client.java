@@ -1472,4 +1472,8 @@ public class Client extends Observable implements Observer {
         getAppData().setBinaryArch(binaryArch);
     }
 
+    void addBeforeSendSession(BeforeSendSession beforeSendSession) {
+        sessionTracker.addBeforeSendSession(beforeSendSession);
+    }
+
 }

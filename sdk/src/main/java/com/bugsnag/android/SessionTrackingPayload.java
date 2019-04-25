@@ -49,4 +49,8 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
     Session getSession() {
         return session;
     }
+
+    Map<String, Object> getDevice() {
+        return deviceDataSummary;
+    }
 }
