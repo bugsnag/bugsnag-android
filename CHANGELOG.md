@@ -10,6 +10,9 @@
 * Migrate version information to device.runtimeVersions
 [#472](https://github.com/bugsnag/bugsnag-android/pull/472)
 
+* Add internal api for mutating session payload before sending
+[#472](https://github.com/bugsnag/bugsnag-android/pull/474)
+
 ### Bug fixes
 
 * [NDK] Fix possible null pointer dereference
