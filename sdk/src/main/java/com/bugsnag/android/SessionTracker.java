@@ -45,7 +45,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private AtomicReference<Session> currentSession = new AtomicReference<>();
     private Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
-    final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
 
     SessionTracker(Configuration configuration, Client client, SessionStore sessionStore) {
         this(configuration, client, DEFAULT_TIMEOUT_MS, sessionStore);
@@ -180,8 +179,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 client.appData, client.deviceData);
 
                         try {
-                            for (BeforeSendSession callback : sessionCallbacks) {
-                                callback.beforeSendSession(payload);
+                            for (BeforeSendSession mutator : configuration.getSessionCallbacks()) {
+                                mutator.beforeSendSession(payload);
                             }
 
                             configuration.getDelivery().deliver(payload, configuration);
@@ -433,9 +432,5 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             String[] activities = foregroundActivities.toArray(new String[size]);
             return activities[size - 1];
         }
-    }
-
-    void addBeforeSendSession(BeforeSendSession beforeSendSession) {
-        sessionCallbacks.add(beforeSendSession);
     }
 }

@@ -19,6 +19,9 @@ class BeforeSendSessionTest {
         val latch = CountDownLatch(1)
         var data: SessionTrackingPayload? = null
 
+        client.config.addBeforeSendSession { it.device["foo"] = "bar" }
+        client.config.addBeforeSendSession { it.device["foo2"] = 5 }
+
         client.config.delivery = object : Delivery {
             override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
                 data = payload
@@ -28,8 +31,6 @@ class BeforeSendSessionTest {
             override fun deliver(report: Report, config: Configuration) {}
         }
 
-        client.addBeforeSendSession { it.device["foo"] = "bar" }
-        client.addBeforeSendSession { it.device["foo2"] = 5 }
         sessionTracker.startSession(false)
         latch.await()
 
