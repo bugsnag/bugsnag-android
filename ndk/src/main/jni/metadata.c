@@ -89,25 +89,30 @@ bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
   return jni_cache;
 }
 
+jobject bsg_get_map_value_obj(JNIEnv *env, bsg_jni_cache *jni_cache,
+                              jobject map, const char *_key) {
+    jstring key = (*env)->NewStringUTF(env, _key);
+    jobject obj = (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+    (*env)->DeleteLocalRef(env, key);
+    return obj;
+}
+
 void bsg_copy_map_value_string(JNIEnv *env, bsg_jni_cache *jni_cache,
                                jobject map, const char *_key, char *dest,
                                int len) {
-  jstring key = (*env)->NewStringUTF(env, _key);
-  jobject _value =
-      (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
+
   if (_value != NULL) {
     char *value = (char *)(*env)->GetStringUTFChars(env, (jstring)_value, 0);
     bsg_strncpy_safe(dest, value, len);
     (*env)->ReleaseStringUTFChars(env, _value, value);
   }
-  (*env)->DeleteLocalRef(env, key);
 }
 
 long bsg_get_map_value_long(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
                             const char *_key) {
-  jstring key = (*env)->NewStringUTF(env, _key);
-  jobject _value =
-      (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
+
   if (_value != NULL) {
     long value = (long)(*env)->CallDoubleMethod(env, _value,
                                                 jni_cache->number_double_value);
@@ -119,9 +124,8 @@ long bsg_get_map_value_long(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
 
 float bsg_get_map_value_float(JNIEnv *env, bsg_jni_cache *jni_cache,
                               jobject map, const char *_key) {
-  jstring key = (*env)->NewStringUTF(env, _key);
-  jobject _value =
-      (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
+
   if (_value != NULL) {
     float value = (float)(*env)->CallFloatMethod(env, _value,
                                                  jni_cache->float_float_value);
@@ -133,9 +137,8 @@ float bsg_get_map_value_float(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
                           const char *_key) {
-  jstring key = (*env)->NewStringUTF(env, _key);
-  jobject _value =
-      (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
+
   if (_value != NULL) {
     jint value =
         (int)(*env)->CallIntMethod(env, _value, jni_cache->integer_int_value);
@@ -143,6 +146,12 @@ int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
     return value;
   }
   return 0;
+}
+
+bool bsg_get_map_value_bool(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
+                            const char *_key) {
+  jobject obj = bsg_get_map_value_obj(env, jni_cache, map, _key);
+  return (*env)->CallBooleanMethod(env, obj, jni_cache->boolean_bool_value);
 }
 
 int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
@@ -165,13 +174,6 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
     return count;
   }
   return 0;
-}
-
-bool bsg_get_map_value_bool(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
-                            const char *_key) {
-  jstring key = (*env)->NewStringUTF(env, _key);
-  jobject obj = (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
-  return (*env)->CallBooleanMethod(env, obj, jni_cache->boolean_bool_value);
 }
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
@@ -278,9 +280,6 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   bsg_copy_map_value_string(env, jni_cache, data, "networkAccess",
                             report->device.network_access,
                             sizeof(report->device.network_access));
-  bsg_copy_map_value_string(env, jni_cache, data, "osBuild",
-                            report->device.os_build,
-                            sizeof(report->device.os_build));
   bsg_copy_map_value_string(env, jni_cache, data, "osVersion",
                             report->device.os_version,
                             sizeof(report->device.os_version));
@@ -291,14 +290,23 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
       bsg_get_map_value_bool(env, jni_cache, data, "emulator");
   report->device.jailbroken =
       bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
-  report->device.api_level =
-      bsg_get_map_value_int(env, jni_cache, data, "apiLevel");
   report->device.total_memory =
       bsg_get_map_value_long(env, jni_cache, data, "totalMemory");
   report->device.dpi = bsg_get_map_value_int(env, jni_cache, data, "dpi");
   report->device.screen_density =
       bsg_get_map_value_float(env, jni_cache, data, "screenDensity");
   bsg_populate_cpu_abi_from_map(env, jni_cache, data, &report->device);
+
+  jobject _runtime_versions = bsg_get_map_value_obj(env, jni_cache, data, "runtimeVersions");
+
+  if (_runtime_versions != NULL) {
+    bsg_copy_map_value_string(env, jni_cache, _runtime_versions, "osBuild",
+                              report->device.os_build,
+                              sizeof(report->device.os_build));
+
+    report->device.api_level = bsg_get_map_value_int(env, jni_cache, _runtime_versions, "androidApiLevel");
+    (*env)->DeleteLocalRef(env, _runtime_versions);
+  }
 
   (*env)->DeleteLocalRef(env, data);
 }
