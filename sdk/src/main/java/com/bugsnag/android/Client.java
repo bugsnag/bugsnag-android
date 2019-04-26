@@ -1427,6 +1427,7 @@ public class Client extends Observable implements Observer {
                 Logger.warn("Receiver not registered");
             }
         }
+
         super.finalize();
     }
 

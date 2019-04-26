@@ -179,6 +179,10 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 client.appData, client.deviceData);
 
                         try {
+                            for (BeforeSendSession mutator : configuration.getSessionCallbacks()) {
+                                mutator.beforeSendSession(payload);
+                            }
+
                             configuration.getDelivery().deliver(payload, configuration);
                         } catch (DeliveryFailureException exception) { // store for later sending
                             Logger.warn("Storing session payload for future delivery", exception);
@@ -429,5 +433,4 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             return activities[size - 1];
         }
     }
-
 }
