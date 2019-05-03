@@ -33,11 +33,6 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
             return;
         }
         Bugsnag.leaveBreadcrumb("Reverse thrusters");
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                activate();
-            }
-        }, 1000);
+        activate();
     }
 }
