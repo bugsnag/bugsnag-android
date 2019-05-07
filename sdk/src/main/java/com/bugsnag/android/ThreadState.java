@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,9 +19,8 @@ class ThreadState implements JsonStream.Streamable {
 
     public ThreadState(@NonNull Configuration config,
                        @NonNull Thread currentThread,
-                       @NonNull Map<Thread, StackTraceElement[]> allStackTraces,
+                       @NonNull Map<Thread, StackTraceElement[]> stackTraces,
                        @Nullable Throwable exc) {
-        Map<Thread, StackTraceElement[]> stackTraces = allStackTraces;
 
         // API 24/25 don't record the currentThread, add it in manually
         // https://issuetracker.google.com/issues/64122757
@@ -56,7 +54,7 @@ class ThreadState implements JsonStream.Streamable {
     private Thread[] sortThreadsById(Map<Thread, StackTraceElement[]> liveThreads) {
         Set<Thread> threadSet = liveThreads.keySet();
 
-        Thread[] threads = threadSet.toArray(new Thread[threadSet.size()]);
+        Thread[] threads = threadSet.toArray(new Thread[0]);
         Arrays.sort(threads, new Comparator<Thread>() {
             public int compare(@NonNull Thread lhs, @NonNull Thread rhs) {
                 return Long.valueOf(lhs.getId()).compareTo(rhs.getId());

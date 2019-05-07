@@ -13,11 +13,16 @@
 * Add internal api for mutating session payload before sending
 [#472](https://github.com/bugsnag/bugsnag-android/pull/474)
 
+* Resolve pre-existing Android Inspection violations
+[#468](https://github.com/bugsnag/bugsnag-android/pull/468)
+
 ### Bug fixes
 
 * [NDK] Fix possible null pointer dereference
 * [NDK] Fix possible memory leak if bugsnag-android-ndk fails to successfully
   parse a cached crash report
+* [NDK] Fix possible memory leak when using `bugsnag_leave_breadcrumb()` or
+  `bugsnag_notify()`
 
 ## 4.13.0 (2019-04-03)
 

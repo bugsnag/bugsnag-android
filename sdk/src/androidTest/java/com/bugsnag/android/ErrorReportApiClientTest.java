@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -53,9 +54,9 @@ public class ErrorReportApiClientTest {
         private Report report;
 
         @Override
-        public void postReport(String urlString,
-                               Report report,
-                               Map<String, String> headers)
+        public void postReport(@NonNull String urlString,
+                               @NonNull Report report,
+                               @NonNull Map<String, String> headers)
             throws NetworkException, BadResponseException {
             this.report = report;
         }

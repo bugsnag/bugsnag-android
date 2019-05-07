@@ -62,6 +62,9 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+    lintOptions {
+        tasks.lint.enabled = false
+    }
 }
 
 dependencies {

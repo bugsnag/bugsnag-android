@@ -3,20 +3,16 @@ package com.bugsnag.android;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
 class Exceptions implements JsonStream.Streamable {
-    private final Configuration config;
     private final Throwable exception;
     private String exceptionType;
     private String[] projectPackages;
 
     Exceptions(Configuration config, Throwable exception) {
-        this.config = config;
         this.exception = exception;
         exceptionType = Configuration.DEFAULT_EXCEPTION_TYPE;
         projectPackages = config.getProjectPackages();

@@ -38,12 +38,12 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     final SessionStore sessionStore;
 
     // This most recent time an Activity was stopped.
-    private AtomicLong lastExitedForegroundMs = new AtomicLong(0);
+    private final AtomicLong lastExitedForegroundMs = new AtomicLong(0);
 
     // The first Activity in this 'session' was started at this time.
-    private AtomicLong lastEnteredForegroundMs = new AtomicLong(0);
-    private AtomicReference<Session> currentSession = new AtomicReference<>();
-    private Semaphore flushingRequest = new Semaphore(1);
+    private final AtomicLong lastEnteredForegroundMs = new AtomicLong(0);
+    private final AtomicReference<Session> currentSession = new AtomicReference<>();
+    private final Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
 
     SessionTracker(Configuration configuration, Client client, SessionStore sessionStore) {

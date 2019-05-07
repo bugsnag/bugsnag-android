@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import android.support.annotation.NonNull;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +40,9 @@ public class DeliveryCompatTest {
 
         deliveryCompat.errorReportApiClient = new ErrorReportApiClient() {
             @Override
-            public void postReport(String urlString,
-                                   Report report,
-                                   Map<String, String> headers)
+            public void postReport(@NonNull String urlString,
+                                   @NonNull Report report,
+                                   @NonNull Map<String, String> headers)
                 throws NetworkException, BadResponseException {
                 customCount.incrementAndGet();
             }
@@ -58,9 +60,9 @@ public class DeliveryCompatTest {
 
         deliveryCompat.sessionTrackingApiClient = new SessionTrackingApiClient() {
             @Override
-            public void postSessionTrackingPayload(String urlString,
-                                                   SessionTrackingPayload payload,
-                                                   Map<String, String> headers)
+            public void postSessionTrackingPayload(@NonNull String urlString,
+                                                   @NonNull SessionTrackingPayload payload,
+                                                   @NonNull Map<String, String> headers)
                 throws NetworkException, BadResponseException {
                 customCount.incrementAndGet();
             }

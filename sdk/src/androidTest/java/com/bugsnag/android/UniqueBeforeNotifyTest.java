@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 
+import android.support.annotation.NonNull;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -20,14 +21,14 @@ public class UniqueBeforeNotifyTest {
 
     private BeforeNotify firstCb = new BeforeNotify() {
         @Override
-        public boolean run(Error error) {
+        public boolean run(@NonNull Error error) {
             return handleCallback();
         }
     };
 
     private BeforeNotify secondCb = new BeforeNotify() {
         @Override
-        public boolean run(Error error) {
+        public boolean run(@NonNull Error error) {
             return handleCallback();
         }
     };
@@ -72,7 +73,7 @@ public class UniqueBeforeNotifyTest {
     public void testCallbackOrder() {
         client.beforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(Error error) {
+            public boolean run(@NonNull Error error) {
                 assertEquals(0, callbackCount);
                 callbackCount++;
                 return false;
@@ -80,7 +81,7 @@ public class UniqueBeforeNotifyTest {
         });
         client.beforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(Error error) {
+            public boolean run(@NonNull Error error) {
                 assertEquals(1, callbackCount);
                 return false;
             }

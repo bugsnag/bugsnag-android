@@ -30,7 +30,6 @@ final class BlockedThreadDetector {
     final long blockedThresholdMs;
     final Handler uiHandler;
     final Handler watchdogHandler;
-    private final HandlerThread watchdogHandlerThread;
     final Delegate delegate;
     final ForegroundDetector foregroundDetector;
 
@@ -60,7 +59,7 @@ final class BlockedThreadDetector {
         this.uiHandler = new Handler(looper);
         this.foregroundDetector = foregroundDetector;
 
-        watchdogHandlerThread = new HandlerThread("bugsnag-anr-watchdog");
+        HandlerThread watchdogHandlerThread = new HandlerThread("bugsnag-anr-watchdog");
         watchdogHandlerThread.start();
         watchdogHandler = new Handler(watchdogHandlerThread.getLooper());
     }
