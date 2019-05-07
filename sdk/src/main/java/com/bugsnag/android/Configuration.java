@@ -57,6 +57,8 @@ public class Configuration extends Observable implements Observer {
     private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
         = new ConcurrentLinkedQueue<>();
+    private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
+
     private String codeBundleId;
     private String notifierType;
 
@@ -824,5 +826,13 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     protected Collection<BeforeRecordBreadcrumb> getBeforeRecordBreadcrumbTasks() {
         return beforeRecordBreadcrumbTasks;
+    }
+
+    void addBeforeSendSession(BeforeSendSession beforeSendSession) {
+        sessionCallbacks.add(beforeSendSession);
+    }
+
+    Collection<BeforeSendSession> getSessionCallbacks() {
+        return sessionCallbacks;
     }
 }

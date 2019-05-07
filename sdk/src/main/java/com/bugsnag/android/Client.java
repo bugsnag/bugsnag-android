@@ -257,11 +257,9 @@ public class Client extends Observable implements Observer {
             }
         };
 
-        ActivityManager activityManager =
-            (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-
+        ForegroundDetector foregroundDetector = new ForegroundDetector(appContext);
         BlockedThreadDetector detector =
-            new BlockedThreadDetector(thresholdMs, looper, activityManager, delegate);
+            new BlockedThreadDetector(thresholdMs, looper, foregroundDetector, delegate);
         detector.start(); // begin monitoring for ANRs
     }
 
@@ -1428,6 +1426,7 @@ public class Client extends Observable implements Observer {
                 Logger.warn("Receiver not registered");
             }
         }
+
         super.finalize();
     }
 

@@ -238,6 +238,10 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     json_object_dotset_string(event, "device.model", report->device.model);
     json_object_dotset_string(event, "device.orientation",
                               report->device.orientation);
+    json_object_dotset_number(event, "device.runtimeVersions.androidApiLevel",
+                              report->device.api_level);
+    json_object_dotset_string(event, "device.runtimeVersions.osBuild",
+                              report->device.os_build);
 
     JSON_Value *abi_val = json_value_init_array();
     JSON_Array *cpu_abis = json_value_get_array(abi_val);
@@ -246,12 +250,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
         json_array_append_string(cpu_abis, report->device.cpu_abi[i].value);
     }
 
-    json_object_dotset_string(event, "metaData.device.osBuild",
-                              report->device.os_build);
     json_object_dotset_number(event, "device.totalMemory",
                               report->device.total_memory);
-    json_object_dotset_number(event, "metaData.device.apiLevel",
-                              report->device.api_level);
     json_object_dotset_string(event, "metaData.device.brand",
                               report->device.brand);
     json_object_dotset_boolean(event, "metaData.device.emulator",
