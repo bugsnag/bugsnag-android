@@ -98,6 +98,11 @@ class DeviceData {
         map.put("osName", "android");
         map.put("osVersion", Build.VERSION.RELEASE);
         map.put("cpuAbi", cpuAbi);
+
+        Map<String, Object> versions = new HashMap<>();
+        versions.put("androidApiLevel", Build.VERSION.SDK_INT);
+        versions.put("osBuild", Build.DISPLAY);
+        map.put("runtimeVersions", versions);
         return map;
     }
 
@@ -119,8 +124,6 @@ class DeviceData {
         map.put("networkAccess", getNetworkAccess());
         map.put("time", getTime());
         map.put("brand", Build.BRAND);
-        map.put("apiLevel", Build.VERSION.SDK_INT);
-        map.put("osBuild", Build.DISPLAY);
         map.put("locale", locale);
         map.put("screenDensity", screenDensity);
         map.put("dpi", dpi);

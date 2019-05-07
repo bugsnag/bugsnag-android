@@ -69,7 +69,7 @@ public class AppDataTest {
 
     @Test
     public void testInForeground() {
-        assertFalse((Boolean) appData.get("inForeground"));
+        assertTrue((Boolean) appData.get("inForeground"));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class AppDataTest {
         assertNotNull(appDataJson.get("buildUUID"));
         assertNotNull(appDataJson.get("duration"));
         assertNotNull(appDataJson.get("durationInForeground"));
-        assertFalse(appDataJson.getBoolean("inForeground"));
+        assertTrue(appDataJson.getBoolean("inForeground"));
     }
 
     @Test

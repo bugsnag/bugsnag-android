@@ -1,6 +1,17 @@
 # Changelog
 
-## 4.X.X (TBD)
+## 4.14.0 (2019-05-07)
+
+### Enhancements
+
+* Alter In foreground calculation
+[#466](https://github.com/bugsnag/bugsnag-android/pull/466)
+
+* Migrate version information to device.runtimeVersions
+[#472](https://github.com/bugsnag/bugsnag-android/pull/472)
+
+* Add internal api for mutating session payload before sending
+[#472](https://github.com/bugsnag/bugsnag-android/pull/474)
 
 * Resolve pre-existing Android Inspection violations
 [#468](https://github.com/bugsnag/bugsnag-android/pull/468)
