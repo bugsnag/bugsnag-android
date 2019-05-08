@@ -115,7 +115,6 @@ public class EventReceiver extends BroadcastReceiver {
         actions.put("android.intent.action.SCREEN_ON", BreadcrumbType.STATE);
         actions.put("android.intent.action.TIMEZONE_CHANGED", BreadcrumbType.STATE);
         actions.put("android.intent.action.TIME_SET", BreadcrumbType.STATE);
-        actions.put("android.media.RINGER_MODE_CHANGED", BreadcrumbType.STATE);
         actions.put("android.os.action.DEVICE_IDLE_MODE_CHANGED", BreadcrumbType.STATE);
         actions.put("android.os.action.POWER_SAVE_MODE_CHANGED", BreadcrumbType.STATE);
         return actions;
