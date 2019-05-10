@@ -1,0 +1,20 @@
+version: '3.6'
+services:
+  android-base:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-base
+
+  android-instrumentation-tests:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-instrumentation-tests
+
+  android-linter:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-linter
+
+networks:
+  default:
+    name: ${BUILDKITE_JOB_ID:-android-maze-runner}
