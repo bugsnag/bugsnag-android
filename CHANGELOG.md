@@ -4,7 +4,7 @@
 
 ### Bug fixes
 
-* Remove `RINGER_MODE_CHANGED` action from broadcast receiver
+* Remove `RINGER_MODE_CHANGED` action from broadcast receiver, which a fixes `SecurityException` thrown in Instant Apps
 [#481](https://github.com/bugsnag/bugsnag-android/pull/481)
 
 ## 4.14.0 (2019-05-07)
