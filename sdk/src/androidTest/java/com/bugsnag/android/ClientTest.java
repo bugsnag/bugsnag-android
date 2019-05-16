@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
+import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -229,7 +230,9 @@ public class ClientTest {
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
-        client = generateClient();
+        Configuration config = generateConfiguration();
+        config.setAutomaticallyCollectBreadcrumbs(false);
+        client = generateClient(config);
         assertEquals(0, client.breadcrumbs.store.size());
 
         client.setMaxBreadcrumbs(1);
@@ -246,7 +249,9 @@ public class ClientTest {
 
     @Test
     public void testClearBreadcrumbs() {
-        client = generateClient();
+        Configuration config = generateConfiguration();
+        config.setAutomaticallyCollectBreadcrumbs(false);
+        client = generateClient(config);
         assertEquals(0, client.breadcrumbs.store.size());
 
         client.leaveBreadcrumb("test");
