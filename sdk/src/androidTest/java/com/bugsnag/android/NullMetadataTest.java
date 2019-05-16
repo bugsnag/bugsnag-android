@@ -25,6 +25,7 @@ public class NullMetadataTest {
 
     private Configuration config;
     private Throwable throwable;
+    private Client client;
 
     /**
      * Generates a bugsnag client with a NOP error api client
@@ -34,7 +35,7 @@ public class NullMetadataTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        generateClient();
+        client = generateClient(config);
         throwable = new RuntimeException("Test");
     }
 
@@ -94,7 +95,7 @@ public class NullMetadataTest {
 
     @Test
     public void testNotify() throws Exception {
-        Bugsnag.beforeNotify(new BeforeNotify() {
+        client.beforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 validateDefaultMetadata(error.getMetaData());
@@ -103,7 +104,6 @@ public class NullMetadataTest {
         });
         Error error = new Error.Builder(config, new Throwable(),
             generateSessionTracker(), Thread.currentThread(), false).build();
-        Client client = Bugsnag.getClient();
         client.notify(error, DeliveryStyle.SAME_THREAD, null);
     }
 

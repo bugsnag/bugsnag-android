@@ -44,10 +44,13 @@ final class BugsnagTestUtils {
         return context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
     }
 
+    static Client generateClient(Configuration config) {
+        config.setDelivery(generateDelivery());
+        return new Client(InstrumentationRegistry.getTargetContext(), config);
+    }
+
     static Client generateClient() {
-        Client client = new Client(InstrumentationRegistry.getContext(), "api-key");
-        client.config.setDelivery(generateDelivery());
-        return client;
+        return generateClient(new Configuration("api-key"));
     }
 
     static Session generateSession() {
