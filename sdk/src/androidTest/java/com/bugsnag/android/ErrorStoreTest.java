@@ -130,23 +130,6 @@ public class ErrorStoreTest {
     }
 
     @Test
-    public void testFindStoredFiles() {
-        assertEquals(0, errorStore.queuedFiles.size());
-        writeErrorToStore();
-        assertEquals(0, errorStore.queuedFiles.size());
-
-        List<File> storedFiles = errorStore.findStoredFiles();
-        assertEquals(1, storedFiles.size());
-        assertEquals(1, errorStore.queuedFiles.size());
-
-        writeErrorToStore();
-        writeErrorToStore();
-        storedFiles = errorStore.findStoredFiles();
-        assertEquals(2, storedFiles.size());
-        assertEquals(3, errorStore.queuedFiles.size());
-    }
-
-    @Test
     public void testCancelQueuedFiles() {
         assertEquals(0, errorStore.queuedFiles.size());
         writeErrorToStore();
