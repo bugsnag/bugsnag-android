@@ -1,0 +1,34 @@
+FROM openjdk:8-jdk-stretch
+
+RUN apt-get update
+RUN apt-get install -y gradle jq
+
+WORKDIR /sdk
+RUN wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+RUN unzip sdk-tools-linux-4333796.zip
+
+ENV PATH="${PATH}:/sdk/tools:/sdk/tools/bin"
+
+RUN yes | sdkmanager "platform-tools"
+
+ENV PATH="${PATH}:/sdk/platform-tools"
+ENV ANDROID_HOME="/sdk/"
+
+WORKDIR /app
+
+COPY gradlew checkstyle.gradle build.gradle settings.gradle gradle.properties /app/
+COPY gradle/ /app/gradle/
+COPY sdk/ sdk/
+COPY ndk/ ndk/
+COPY scripts/ scripts/
+
+RUN scripts/install-ndk.sh
+
+RUN ./gradlew
+
+# Everything above this point should be derived from android-base
+
+RUN ./gradlew sdk:assembleAndroidTest
+RUN ./gradlew ndk:assembleAndroidTest
+
+CMD ./scripts/run-instrumentation-test.sh

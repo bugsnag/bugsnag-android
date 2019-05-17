@@ -9,6 +9,11 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-instrumentation-tests
+    environment:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
+      INSTRUMENTATION_DEVICES:
+      APP_LOCATION:
 
   android-linter:
     build:
