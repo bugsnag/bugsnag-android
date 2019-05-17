@@ -3,6 +3,8 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.SecondActivity
@@ -18,12 +20,11 @@ internal class AutoContextScenario(config: Configuration,
 
     override fun run() {
         super.run()
+        registerActivityLifecycleCallbacks()
         context.startActivity(Intent(context, SecondActivity::class.java))
-
-        val a = context as Activity
-        a.window.decorView.postDelayed({
-            Bugsnag.notify(generateException())
-        }, 2000)
     }
 
+    override fun onActivityStarted(activity: Activity) {
+        Bugsnag.notify(generateException())
+    }
 }
