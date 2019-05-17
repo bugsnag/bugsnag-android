@@ -7,6 +7,9 @@
 * Remove `RINGER_MODE_CHANGED` action from broadcast receiver, which a fixes `SecurityException` thrown in Instant Apps
 [#481](https://github.com/bugsnag/bugsnag-android/pull/481)
 
+* Reduce sensitivity of Foreground Detection, reducing potential ANR false positives
+[#482](https://github.com/bugsnag/bugsnag-android/pull/482)
+
 ## 4.14.0 (2019-05-07)
 
 ### Enhancements
