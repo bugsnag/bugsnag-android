@@ -42,10 +42,15 @@ class MainActivity : Activity() {
     }
 
     private fun prepareConfig(): Configuration {
+        val eventType = intent.getStringExtra("EVENT_TYPE")
         val config = Configuration(intent.getStringExtra("BUGSNAG_API_KEY"))
         val port = intent.getStringExtra("BUGSNAG_PORT")
         config.setEndpoints("${findHostname()}:$port", "${findHostname()}:$port")
-        config.detectAnrs = false
+
+        // Added to stop override of the default ANR state
+        if (eventType != "AppNotRespondingDefaultsScenario") {
+            config.detectAnrs = false
+        }
         return config
     }
 

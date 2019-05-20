@@ -25,3 +25,7 @@ Scenario: Test ANR wait time can be set to under default time
 Scenario: Test ANR wait time can be set to over default time
     When I run "AppNotRespondingLongerThresholdScenario"
     Then I should receive 0 requests
+
+Scenario: Test does not capture ANRs by default
+    When I run "AppNotRespondingDefaultsScenario"
+    Then I should receive 0 requests
