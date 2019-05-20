@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Disable ANR detection by default [#484](https://github.com/bugsnag/bugsnag-android/pull/484)
+
 ## 4.14.1 (2019-05-17)
 
 ### Bug fixes
@@ -85,7 +91,7 @@
 
 * Fix cached error deserialisation where the Throwable has a cause
   [#418](https://github.com/bugsnag/bugsnag-android/pull/418)
-  
+
 * Refactor error report deserialisation
   [#419](https://github.com/bugsnag/bugsnag-android/pull/419)
 
