@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class AnrConfigTest {
@@ -10,7 +10,7 @@ class AnrConfigTest {
 
     @Test
     fun testDetectAnrDefault() {
-        assertTrue(config.detectAnrs)
+        assertFalse(config.detectAnrs)
     }
 
     /**
