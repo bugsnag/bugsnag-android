@@ -1,0 +1,56 @@
+FROM openjdk:8-jdk-stretch
+
+RUN apt-get update
+RUN apt-get install -y gradle
+
+WORKDIR /sdk
+RUN wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+RUN unzip sdk-tools-linux-4333796.zip
+
+ENV PATH="${PATH}:/sdk/tools:/sdk/tools/bin"
+
+RUN yes | sdkmanager "platform-tools"
+
+ENV PATH="${PATH}:/sdk/platform-tools"
+ENV ANDROID_HOME="/sdk/"
+
+WORKDIR /app
+
+COPY gradlew checkstyle.gradle build.gradle settings.gradle gradle.properties /app/
+COPY gradle/ /app/gradle/
+COPY sdk/ sdk/
+COPY ndk/ ndk/
+COPY scripts/ scripts/
+
+RUN scripts/install-ndk.sh
+
+RUN ./gradlew
+
+# Everything above this point should be derived from android-base
+
+ARG MAVEN_VERSION
+RUN curl http://apache.mirror.anlx.net/maven/maven-3/3.6.1/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz > apache-maven-$MAVEN_VERSION.tar.gz
+
+RUN tar -xzvf apache-maven-$MAVEN_VERSION.tar.gz
+
+ENV PATH="${PATH}:/app/apache-maven-$MAVEN_VERSION/bin"
+
+# Setup signing
+RUN apt-get install -y gnupg1
+COPY features/scripts/generate_gpg_key generate_gpg_key
+RUN gpg1 --gen-key --batch generate_gpg_key
+RUN gpg1 --list-keys | awk -F '[/\ ]' 'FNR==3{printf "signing.keyId=%s\n", $5}' >> ~/.gradle/gradle.properties
+RUN echo "signing.password=password" >> ~/.gradle/gradle.properties
+RUN echo "signing.secretKeyRingFile=/root/.gnupg/secring.gpg" >> ~/.gradle/gradle.properties
+
+# Build and upload to the local maven as version 9.9.9
+RUN sed -i -e 's/VERSION_NAME=.*/VERSION_NAME=9.9.9/g' gradle.properties
+RUN ./gradlew assembleRelease publishSDKPublicationToMavenLocal publishNDKPublicationToMavenLocal
+
+COPY features/ /app/features
+
+WORKDIR /app/features/fixtures/mazerunner
+
+RUN ../../../gradlew assembleRelease
+
+CMD cp build/outputs/apk/release/mazerunner-release.apk /app/build/fixture.apk

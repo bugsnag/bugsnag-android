@@ -1,5 +1,6 @@
 repositories {
     google()
+    mavenLocal()
     mavenCentral()
     jcenter()
     flatDir {
@@ -68,8 +69,7 @@ android {
 }
 
 dependencies {
-    implementation(name:'bugsnag-android', ext:'aar')
-    implementation(name:'bugsnag-android-ndk', ext:'aar')
+    implementation("com.bugsnag:bugsnag-android:9.9.9")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
     api "com.android.support:support-annotations:27.0.0"

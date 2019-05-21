@@ -19,7 +19,15 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-linter
-
+  
+  android-builder:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-builder
+      args:
+        - MAVEN_VERSION
+    volumes:
+      - ./build:/app/build
 networks:
   default:
     name: ${BUILDKITE_JOB_ID:-android-maze-runner}
