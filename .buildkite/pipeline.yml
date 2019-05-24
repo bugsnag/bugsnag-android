@@ -54,21 +54,21 @@ steps:
       - docker-compose#v2.6.0:
           run: android-linter
 
-  - label: ':android: SDK Instruementation tests'
+  - label: ':android: SDK Instrumentation tests'
     plugins:
       - docker-compose#2.6.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '[\"Google Pixel 3-9.0\"]'
+      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
 
-  - label: ':android: NDK Instruementation tests'
+  - label: ':android: NDK Instrumentation tests'
     plugins:
       - docker-compose#2.6.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/ndk/build/outputs/apk/androidTest/debug/bugsnag-android-ndk-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '[\"Google Pixel 3-9.0\"]'
+      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
 
   - label: ':android: Build fixture APK'
     artifact_paths: build/fixture.apk
