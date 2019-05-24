@@ -38,6 +38,8 @@ steps:
             - android-builder
           cache-from:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+    env:
+      MAVEN_VERSION: "3.6.1"
 
   - label: ':docker: Build Android maze runner image'
     plugins:
