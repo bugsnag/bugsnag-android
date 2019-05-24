@@ -23,10 +23,6 @@ public class CXXExternalStackElementScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         crash(34);
     }
 }

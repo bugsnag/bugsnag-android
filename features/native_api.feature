@@ -2,9 +2,8 @@ Feature: Native API
 
     Scenario: Adding user information in C followed by notifying in C
         When I run "CXXUserInfoScenario"
-        And I wait a bit
-        Then I should receive a request
-        And the request payload contains a completed native report
+        And I wait to receive a request
+        Then the request payload contains a completed native report
         And the exception "errorClass" equals "Connection lost"
         And the exception "message" equals "No antenna detected"
         And the event "severity" equals "info"
@@ -13,14 +12,12 @@ Feature: Native API
         And the event "user.email" is null
         And the event "unhandled" is false
         And the event "app.binaryArch" is not null
-        And the payload field "events.0.device.cpuAbi" is a non-empty array for request 0
+#        And the payload field "events.0.device.cpuAbi" is a non-empty array for request 0
 
     Scenario: Adding user information in Java followed by a C crash
-        When I run "CXXJavaUserInfoNativeCrashScenario"
-        And I configure the app to run in the "non-crashy" state
-        And I relaunch the app
-        Then I should receive a request
-        And the request payload contains a completed native report
+        And I run "CXXJavaUserInfoNativeCrashScenario"
+        And I wait to receive a request
+        Then the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
         And the event "user.name" equals "Strulyegha  Ghaumon  Rabelban  Snefkal  Angengtai  Samperris  D"
@@ -30,9 +27,8 @@ Feature: Native API
 
     Scenario: Notifying in C
         When I run "CXXNotifyScenario"
-        And I wait a bit
-        Then I should receive a request
-        And the request payload contains a completed native report
+        And I wait to receive a request
+        Then the request payload contains a completed native report
         And the event "severity" equals "error"
         And the event "context" equals "MainActivity"
         And the exception "errorClass" equals "Vitamin C deficiency"
@@ -41,9 +37,8 @@ Feature: Native API
 
     Scenario: Changing intents followed by notifying in C
         When I run "CXXAutoContextScenario"
-        And I wait a bit
-        Then I should receive a request
-        And the request payload contains a completed native report
+        And I wait to receive a request
+        Then the request payload contains a completed native report
         And the event "severity" equals "info"
         And the event "context" equals "SecondActivity"
         And the exception "errorClass" equals "Hello hello"
@@ -52,11 +47,10 @@ Feature: Native API
 
     Scenario: Update context in Java followed by crashing in C
         When I run "CXXUpdateContextCrashScenario"
-        And I wait a bit
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 2 seconds
         And I relaunch the app
-        Then I should receive a request
-        And the request payload contains a completed native report
+        And I wait to receive a request
+        Then the request payload contains a completed native report
         And the event "severity" equals "error"
         And the event "context" equals "Everest"
         And the exception "errorClass" equals "SIGILL"
@@ -64,9 +58,8 @@ Feature: Native API
 
     Scenario: Leaving a breadcrumb followed by notifying in C
         When I run "CXXBreadcrumbScenario"
-        And I wait a bit
-        Then I should receive a request
-        And the request payload contains a completed native report
+        And I wait to receive a request
+        Then the request payload contains a completed native report
         And the event "severity" equals "info"
         And the exception "errorClass" equals "Bean temperature loss"
         And the exception "message" equals "100% more microwave required"
@@ -75,10 +68,10 @@ Feature: Native API
 
     Scenario: Leaving a breadcrumb followed by a C crash
         When I run "CXXNativeBreadcrumbNativeCrashScenario"
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 2 seconds
         And I relaunch the app
-        Then I should receive a request
-        And the request payload contains a completed native report
+        And I wait to receive a request
+        Then the request payload contains a completed native report
         And the event has a "request" breadcrumb named "Substandard nacho error"
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
@@ -86,21 +79,21 @@ Feature: Native API
 
     Scenario: Starting a session, notifying, followed by a C crash
         When I run "CXXSessionInfoCrashScenario"
-        And I wait a bit
-        And I wait a bit
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 5 seconds
         And I relaunch the app
-        Then I should receive 4 requests
-        And the payload in request 3 contains a completed native report
-        And the event in request 3 contains session info
-        And the payload field "events.0.session.events.unhandled" equals 1 for request 3
-        And the payload field "events.0.session.events.handled" equals 2 for request 3
+        And I wait to receive 4 requests
+        And I discard the oldest request
+        And I discard the oldest request
+        Then the request payload contains a completed native report
+        And the event contains session info
+        And the payload field "events.0.session.events.unhandled" equals 1
+        And the payload field "events.0.session.events.handled" equals 2
 
     Scenario: Leaving breadcrumbs in Java and C followed by a C crash
         When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario"
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 2 seconds
         And I relaunch the app
-        Then I should receive a request
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
@@ -110,8 +103,8 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in Java and followed by notifying in C
         When I run "CXXJavaBreadcrumbNativeNotifyScenario"
-        And I wait a bit
-        Then I should receive a request
+        And I wait for 2 seconds
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "Failed instantiation"
         And the exception "message" equals "Could not allocate"
@@ -122,9 +115,9 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in Java followed by a C crash
         When I run "CXXJavaBreadcrumbNativeCrashScenario"
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 2 seconds
         And I relaunch the app
-        Then I should receive a request
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
@@ -133,9 +126,9 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in C followed by a Java crash
         When I run "CXXNativeBreadcrumbJavaCrashScenario"
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 2 seconds
         And I relaunch the app
-        Then I should receive a request
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "java.lang.ArrayIndexOutOfBoundsException"
         And the exception "message" equals "length=2; index=2"
@@ -145,8 +138,7 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in C followed by notifying in Java
         When I run "CXXNativeBreadcrumbJavaNotifyScenario"
-        And I wait a bit
-        Then I should receive a request
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "java.lang.Exception"
         And the exception "message" equals "Did not like"
@@ -156,9 +148,9 @@ Feature: Native API
 
     Scenario: Set extraordinarily long app information
         When I run "CXXExtraordinaryLongStringScenario"
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 2 seconds
         And I relaunch the app
-        Then I should receive a request
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
         And the event "app.version" equals "22.312.749.78.300.810.24.167.32"
@@ -167,8 +159,8 @@ Feature: Native API
 
     Scenario: Add custom metadata followed by notifying in C
         When I run "CXXCustomMetadataNativeNotifyScenario"
-        And I wait a bit
-        Then I should receive a request
+        And I wait for 2 seconds
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "Twitter Overdose"
         And the exception "message" equals "Turn off the internet and go outside"
@@ -180,9 +172,9 @@ Feature: Native API
 
     Scenario: Add custom metadata followed by a C crash
         When I run "CXXCustomMetadataNativeCrashScenario"
-        And I configure the app to run in the "non-crashy" state
+        And I wait for 2 seconds
         And I relaunch the app
-        Then I should receive a request
+        And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"

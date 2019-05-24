@@ -24,10 +24,6 @@ public class CXXStackoverflowScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         crash(1209, "some moderately long text, longer than 7 characters at least.");
     }
 }

@@ -27,18 +27,14 @@ public class CXXStopSessionScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
+        Bugsnag.getClient().startSession();
+        Bugsnag.getClient().stopSession();
 
-        if (metadata == null || !metadata.equals("non-crashy")) {
-            Bugsnag.getClient().startSession();
-            Bugsnag.getClient().stopSession();
-
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    crash(0);
-                }
-            }, 8000);
-        }
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                crash(0);
+            }
+        }, 8000);
     }
 }

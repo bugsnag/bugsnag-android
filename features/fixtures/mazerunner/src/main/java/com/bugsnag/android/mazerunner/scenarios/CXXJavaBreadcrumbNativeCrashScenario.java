@@ -24,10 +24,6 @@ public class CXXJavaBreadcrumbNativeCrashScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         Bugsnag.leaveBreadcrumb("Bridge connector activated");
         activate();
     }

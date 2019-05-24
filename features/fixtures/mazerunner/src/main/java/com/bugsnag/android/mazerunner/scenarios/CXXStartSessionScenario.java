@@ -27,17 +27,13 @@ public class CXXStartSessionScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
+        Bugsnag.getClient().startSession();
 
-        if (metadata == null || !metadata.equals("non-crashy")) {
-            Bugsnag.getClient().startSession();
-
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    crash(0);
-                }
-            }, 8000);
-        }
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                crash(0);
+            }
+        }, 8000);
     }
 }

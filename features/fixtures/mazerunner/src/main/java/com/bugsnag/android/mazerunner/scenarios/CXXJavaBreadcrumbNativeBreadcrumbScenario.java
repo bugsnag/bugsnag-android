@@ -28,10 +28,6 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         Bugsnag.leaveBreadcrumb("Reverse thrusters");
         handler.postDelayed(new Runnable() {
             @Override

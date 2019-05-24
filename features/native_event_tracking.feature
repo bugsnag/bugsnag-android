@@ -27,7 +27,7 @@ Feature: Synchronizing app/device metadata in the native layer
 #    Scenario: Capture foreground state while in a foreground crash
 #        When I run "CXXTrapScenario"
 #        And I wait a bit
-#        And I configure the app to run in the "non-crashy" state
+#        And I wait for 2 seconds
 #        And I relaunch the app
 #        Then the request payload contains a completed native report
 #        And the event "app.inForeground" is true
@@ -39,7 +39,7 @@ Feature: Synchronizing app/device metadata in the native layer
 #    Scenario: Capture foreground state while in a background crash
 #        When I run "CXXDelayedCrashScenario" and press the home button
 #        And I wait a bit
-#        And I configure the app to run in the "non-crashy" state
+#        And I wait for 2 seconds
 #        And I relaunch the app
 #        Then the request payload contains a completed native report
 #        And the event "app.inForeground" is false

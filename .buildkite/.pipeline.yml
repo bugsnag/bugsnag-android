@@ -1,0 +1,93 @@
+steps:
+  - label: ':docker: Build Android base image'
+    plugins:
+      - docker-compose#v2.6.0:
+        build:
+          - android-base
+        image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
+        cache-from:
+          - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+          - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+      - docker-compose#v2.6.0:
+        push:
+          - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+          - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+
+  - wait
+
+  - label: ':docker: Build Android linter image'
+    plugins:
+      - docker-compose#v2.6.0:
+        build:
+          - android-linter
+        cache-from:
+          - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+
+  - label: ':docker: Build Android instrumentation image'
+    plugins:
+      - docker-compose#v2.6.0:
+        build:
+          - android-instrumentation-tests
+        cache-from:
+          - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+
+  - label: ':docker: Build Android apk builder image'
+    plugins:
+      - docker-compose#v2.6.0:
+        build:
+          - android-builder
+        cache-from:
+          - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+
+  - label: ':docker: Build Android maze runner image'
+    plugins:
+      - docker-compose#v2.6.0:
+        build:
+          - android-maze-runner
+
+  - wait
+
+  - label: ':android: Linter'
+    plugins:
+      - docker-compose#v2.6.0:
+        run:
+          - android-linter
+
+  - label: ':android: SDK Instruementation tests'
+    plugins:
+      - docker-compose#2.6.0:
+        run:
+          - android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '[\"Google Pixel 3-9.0\"]'
+
+  - label: ':android: NDK Instruementation tests'
+    plugins:
+      - docker-compose#2.6.0:
+        run:
+          - android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/ndk/build/outputs/apk/androidTest/debug/bugsnag-android-ndk-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '[\"Google Pixel 3-9.0\"]'
+
+  - label: ':android: Build fixture APK'
+    artifact_paths: build/fixture.apk
+    plugins:
+      - docker-compose#v2.6.0:
+        run:
+          - android-builder
+    env:
+      MAVEN_VERSION: "3.6.1"
+
+  - wait
+
+  - label: ':android: Android 6 end-to-end tests'
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#2.6.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_6"
+      APP_LOCATION: "/app/features/fixtures/builds/fixture.apk"

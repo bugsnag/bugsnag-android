@@ -27,10 +27,6 @@ public class BeforeSendScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         throw new RuntimeException("Ruh-roh");
     }
 }

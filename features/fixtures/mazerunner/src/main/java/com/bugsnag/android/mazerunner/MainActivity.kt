@@ -55,8 +55,8 @@ class MainActivity : Activity() {
     }
 
     private fun prepareConfig(): Configuration {
-        val config = Configuration(intent.getStringExtra("BUGSNAG_API_KEY"))
-        config.setEndpoints("http://10.0.2.2:9339", "http://10.0.2.2:9339")
+        val config = Configuration("ABCDEFGHIJKLMNOPQRSTUVWXYZ012345")
+        config.setEndpoints("http://bs-local.com:9339", "http://bs-local.com:9339")
         config.detectAnrs = false
         return config
     }

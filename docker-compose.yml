@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-linter
-  
+
   android-builder:
     build:
       context: .
@@ -27,7 +27,25 @@ services:
       args:
         - MAVEN_VERSION
     volumes:
-      - ./build:/app/build
+      - ./features/fixtures/builds:/app/build
+
+  android-maze-runner:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android
+    environment:
+      VERBOSE:
+      DEBUG:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
+      BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
+      DEVICE_TYPE:
+      APP_LOCATION:
+    command: --tags ~@ignore features/app_version.feature
+    volumes:
+      - ./features/fixtures/builds:/app/build
+      - ./maze-output:/app/maze-output
+
 networks:
   default:
     name: ${BUILDKITE_JOB_ID:-android-maze-runner}

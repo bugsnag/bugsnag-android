@@ -1,60 +1,24 @@
-wait_time = ENV['MAZE_WAIT_TIME'] || (RUNNING_CI ? '20' : '5')
-When("I wait a bit") do
-  step("I wait for #{wait_time} seconds")
-end
-
-When(/^I run "([^"]+)"( and press the home button)?$/) do |event_type, pressed_home|
-  step("I run \"#{event_type}\" against \"#{ENV['ANDROID_EMULATOR']}\"")
-  step("I press the home button") if pressed_home
-  step("I wait for #{wait_time} seconds")
-end
-
-When(/^I run "([^"]+)" in "([^"]+)" orientation$/) do |event_type, orientation|
-  step("I rotate the device to \"#{orientation}\"")
-  step("I run \"#{event_type}\"")
-end
-
-When(/^I run "([^"]+)" against "([^"]+)"$/) do |event_type, emulator|
-  assert(emulator && emulator.length > 0, "ANDROID_EMULATOR variable is not set")
-  assert(ENV['ANDROID_HOME'] && ENV['ANDROID_HOME'].length > 0, "ANDROID_HOME variable is not set")
-  step("I start Android emulator \"#{emulator}\"") unless RUNNING_CI # emulator is prebooted on CI
+When(/^I run "([^"]+)"$/) do |event_type|
   steps %Q{
-    When I install the "com.bugsnag.android.mazerunner" Android app from "features/fixtures/mazerunner/build/outputs/apk/release/mazerunner-release.apk"
-    And I clear the "com.bugsnag.android.mazerunner" Android app data
-    And I set environment variable "BUGSNAG_API_KEY" to "a35a2a72bd230ac0aa0f52715bbdc6aa"
-    And I set environment variable "EVENT_TYPE" to "#{event_type}"
-    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
+    Given the element "scenarioText" is present
+    And the element "startScenarioButton" is present
+    And I send the keys "#{event_type}" to the element "scenarioText"
+    And I click the element "startScenarioButton"
   }
 end
 
 When("I relaunch the app") do
-  steps %Q{
-    When I force stop the "com.bugsnag.android.mazerunner" Android app
-    And I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity
-    And I wait for #{wait_time} seconds
-  }
+  $driver.close_app
+  $driver.launch_app
 end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
-  step("I set environment variable \"EVENT_METADATA\" to \"#{event_metadata}\"")
-end
-
-When("I press the home button") do
   steps %Q{
-    And I run the script "features/scripts/show-home-screen.sh" synchronously
+    Given the element "scenarioMetaData" is present
+    And I send the keys "#{event_metadata}" to the element "scenarioMetaData"
   }
 end
 
-When("I bring the app to the foreground") do
-  step 'I start the "com.bugsnag.android.mazerunner" Android app using the "com.bugsnag.android.mazerunner.MainActivity" activity'
-end
-
-When("I rotate the device to {string}") do |orientation|
-  steps %Q{
-    When I set environment variable "DEVICE_ORIENTATION" to "#{orientation}"
-    And I run the script "features/scripts/rotate-device.sh" synchronously
-  }
-end
 Then("the exception reflects a signal was raised") do
   value = read_key_path(find_request(0)[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]
@@ -108,12 +72,10 @@ Then("the report in request {int} contains the required fields") do |index|
       | 4   |
       | 4.0 |
     And the "Bugsnag-Sent-At" header is a timestamp for request #{index}
-
     And the payload field "notifier.name" is not null for request #{index}
     And the payload field "notifier.url" is not null for request #{index}
     And the payload field "notifier.version" is not null for request #{index}
     And the payload field "events" is a non-empty array for request #{index}
-
     Then the payload field "events.0.unhandled" is not null for request #{index}
     And the payload field "events.0.app.duration" is not null for request #{index}
     And the payload field "events.0.app.durationInForeground" is not null for request #{index}

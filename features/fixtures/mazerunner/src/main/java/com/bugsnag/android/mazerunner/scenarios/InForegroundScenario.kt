@@ -23,7 +23,7 @@ internal class InForegroundScenario(config: Configuration,
         val thread = HandlerThread("HandlerThread")
         thread.start()
         Handler(thread.looper).post {
-            Thread.sleep(5000)
+            Thread.sleep(3000)
             Bugsnag.notify(generateException())
         }
 

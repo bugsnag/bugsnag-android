@@ -13,7 +13,6 @@ internal class SessionCacheScenario(config: Configuration,
     init {
         config.setAutoCaptureSessions(false)
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
             if (eventMetaData == "offline") {
                 disableAllDelivery(config)
             }

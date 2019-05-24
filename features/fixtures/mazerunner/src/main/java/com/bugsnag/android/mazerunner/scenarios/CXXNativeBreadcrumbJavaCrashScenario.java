@@ -25,10 +25,6 @@ public class CXXNativeBreadcrumbJavaCrashScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         activate();
         String[] items = new String[]{"one","two"};
         System.out.println("Last item is: " + items[2]);

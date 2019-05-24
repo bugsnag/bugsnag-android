@@ -24,10 +24,6 @@ public class CXXJavaUserInfoNativeCrashScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         Bugsnag.setUser("9816734", "j@example.com", "Strulyegha  Ghaumon  Rabelban  Snefkal  Angengtai  Samperris  Dreperwar Raygariss  Haytther  Ackworkin  Turdrakin  Clardon");
         crash();
     }
