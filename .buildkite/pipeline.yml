@@ -96,7 +96,7 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
-    - label: ':android: Android 9 end-to-end tests'
+  - label: ':android: Android 9 end-to-end tests'
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
