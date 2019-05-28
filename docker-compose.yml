@@ -43,7 +43,7 @@ services:
       APP_LOCATION:
     command: --tags ~@ignore features/app-version.feature
     volumes:
-      - ./features/fixtures/builds:/app/build
+      - ./build:/app/build
       - ./maze-output:/app/maze-output
 
 networks:

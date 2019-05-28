@@ -92,6 +92,6 @@ steps:
         run: android-maze-runner
     env:
       DEVICE_TYPE: "ANDROID_6"
-      APP_LOCATION: "/app/features/fixtures/builds/fixture.apk"
+      APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
