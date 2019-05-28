@@ -36,7 +36,7 @@ Scenario: Test handled Kotlin Exception with Session
 
 Scenario: Test cached Unhandled Exception with Session sends
     When I run "ReportCacheScenario"
-    And I wait for two seconds
+    And I wait for 2 seconds
     Then I should receive no requests
 
     And I relaunch the app
