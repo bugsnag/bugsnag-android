@@ -47,10 +47,6 @@ class MainActivity : Activity() {
         val port = intent.getStringExtra("BUGSNAG_PORT")
         config.setEndpoints("${findHostname()}:$port", "${findHostname()}:$port")
 
-        // Added to stop override of the default ANR state
-        if (eventType != "AppNotRespondingDefaultsScenario") {
-            config.detectAnrs = false
-        }
         return config
     }
 

@@ -55,6 +55,9 @@ When("I rotate the device to {string}") do |orientation|
     And I run the script "features/scripts/rotate-device.sh" synchronously
   }
 end
+When("I tap the screen") do
+  step('I run the script "features/scripts/tap-screen.sh" synchronously')
+end
 Then("the exception reflects a signal was raised") do
   value = read_key_path(find_request(0)[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]

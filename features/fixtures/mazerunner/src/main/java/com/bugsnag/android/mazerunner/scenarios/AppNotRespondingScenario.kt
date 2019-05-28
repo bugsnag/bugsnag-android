@@ -1,14 +1,15 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Bugsnag
+import android.os.Looper
+import android.os.Handler
 import com.bugsnag.android.Configuration
 
 /**
  * Stops the app from responding for a time period
  */
 internal class AppNotRespondingScenario(config: Configuration,
-                                  context: Context) : Scenario(config, context) {
+                                        context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
         config.detectAnrs = true
@@ -16,7 +17,9 @@ internal class AppNotRespondingScenario(config: Configuration,
 
     override fun run() {
         super.run()
-        Thread.sleep(6000)
+        val main = Handler(Looper.getMainLooper())
+        main.postDelayed({
+            Thread.sleep(50000) // FOREVER
+        }, 1) // A moment of delay so there is something to 'tap' onscreen
     }
-
 }
