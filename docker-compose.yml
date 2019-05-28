@@ -27,7 +27,7 @@ services:
       args:
         - MAVEN_VERSION
     volumes:
-      - ./features/fixtures/builds:/app/features/fixtures/mazerunner/build/outputs/apk/release/
+      - ./features/fixtures/builds:/app/build
 
   android-maze-runner:
     build:
@@ -41,7 +41,7 @@ services:
       BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
       DEVICE_TYPE:
       APP_LOCATION:
-    command: --tags ~@ignore features/android-builder.feature
+    command: --tags ~@ignore features/app-version.feature
     volumes:
       - ./features/fixtures/builds:/app/build
       - ./maze-output:/app/maze-output
