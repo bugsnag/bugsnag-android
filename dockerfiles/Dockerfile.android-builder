@@ -51,6 +51,4 @@ COPY features/ /app/features
 
 WORKDIR /app/features/fixtures/mazerunner
 
-RUN ../../../gradlew assembleRelease
-
-CMD cp build/outputs/apk/release/mazerunner-release.apk /app/build/fixture.apk
+CMD ../../../gradlew assembleRelease
