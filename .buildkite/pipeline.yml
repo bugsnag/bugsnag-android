@@ -54,16 +54,6 @@ steps:
       - docker-compose#v2.6.0:
           run: android-linter
 
-  - label: ':android: SDK Instrumentation tests'
-    plugins:
-      - docker-compose#2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
   - label: ':android: NDK Instrumentation tests'
     plugins:
       - docker-compose#2.6.0:
@@ -83,6 +73,16 @@ steps:
       MAVEN_VERSION: "3.6.1"
 
   - wait
+
+  - label: ':android: SDK Instrumentation tests'
+    plugins:
+      - docker-compose#2.6.0:
+          run: android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 6 end-to-end tests'
     plugins:
