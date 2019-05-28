@@ -36,7 +36,9 @@
 
 * [NDK] Improve ANR detection by using a signal handler to detect `SIGQUIT`
   events, removing dependence on "in foreground" calculations. This change
-  should remove false positives.
+  should remove false positives. This change deprecates the configuration
+  options `setAnrThresholdMs`/`getAnrThresholdMs` as they now have no effect and
+  the underlying OS ANR threshold is used in all cases.
 
 ### Bug fixes
 

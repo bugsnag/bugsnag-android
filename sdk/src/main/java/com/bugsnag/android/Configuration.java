@@ -695,7 +695,10 @@ public class Configuration extends Observable implements Observer {
     /**
      * @return the threshold at which ANRs are detected, in ms
      * @see #setAnrThresholdMs(long)
+     *
+     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
      */
+    @Deprecated
     public long getAnrThresholdMs() {
         return anrThresholdMs;
     }
@@ -714,7 +717,10 @@ public class Configuration extends Observable implements Observer {
      *
      * @param anrThresholdMs the threshold in ms at which ANRs should be detected
      * @see #setDetectAnrs(boolean)
+     *
+     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
      */
+    @Deprecated
     public void setAnrThresholdMs(long anrThresholdMs) {
         this.anrThresholdMs = anrThresholdMs < BlockedThreadDetector.MIN_CHECK_INTERVAL_MS
             ? BlockedThreadDetector.MIN_CHECK_INTERVAL_MS : anrThresholdMs;
