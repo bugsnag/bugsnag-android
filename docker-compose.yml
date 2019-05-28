@@ -27,7 +27,7 @@ services:
       args:
         - MAVEN_VERSION
     volumes:
-      - ./features/fixtures/builds:/app/build
+      - ./build:/app/build
 
   android-maze-runner:
     build:

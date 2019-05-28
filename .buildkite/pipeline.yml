@@ -61,6 +61,8 @@ steps:
     env:
       APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK Instrumentation tests'
     plugins:
@@ -69,9 +71,11 @@ steps:
     env:
       APP_LOCATION: "/app/ndk/build/outputs/apk/androidTest/debug/bugsnag-android-ndk-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
 
   - label: ':android: Build fixture APK'
-    artifact_paths: ./features/fixtures/builds/
+    artifact_paths: build/fixture.apk
     plugins:
       - docker-compose#v2.6.0:
           run: android-builder
@@ -89,3 +93,5 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_6"
       APP_LOCATION: "/app/features/fixtures/builds/fixture.apk"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
