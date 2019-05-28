@@ -71,7 +71,7 @@ steps:
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
 
   - label: ':android: Build fixture APK'
-    artifact_paths: /app/build/
+    artifact_paths: ./features/fixtures/builds/
     plugins:
       - docker-compose#v2.6.0:
           run: android-builder
