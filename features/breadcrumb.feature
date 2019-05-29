@@ -2,8 +2,9 @@ Feature: Reporting Breadcrumbs
 
 Scenario: Manually added breadcrumbs are sent in report
     When I run "BreadcrumbScenario"
-    Then I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And I clear any error dialogue
+    And I wait to receive a request
+    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "BreadcrumbScenario"
     And the event "breadcrumbs" is not null
 

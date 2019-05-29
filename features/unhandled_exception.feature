@@ -2,6 +2,7 @@ Feature: Reporting Unhandled Exceptions
 
 Scenario: Test Unhandled Kotlin Exception without Session
     When I run "UnhandledExceptionScenario"
+    And I clear any error dialogue
     And I relaunch the app
     And I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -13,6 +14,7 @@ Scenario: Test Unhandled Kotlin Exception without Session
 
 Scenario: Test Unhandled Java Exception with Session
     When I run "UnhandledExceptionJavaScenario"
+    And I clear any error dialogue
     And I relaunch the app
     And I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -22,6 +24,7 @@ Scenario: Test Unhandled Java Exception with Session
 
 Scenario: Test handled Kotlin Exception with Session
     When I run "UnhandledExceptionSessionScenario"
+    And I clear any error dialogue
     And I relaunch the app
     And I wait to receive a request
 #   And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -36,6 +39,7 @@ Scenario: Test handled Kotlin Exception with Session
 
 Scenario: Test cached Unhandled Exception with Session sends
     When I run "ReportCacheScenario"
+    And I clear any error dialogue
     And I wait for 2 seconds
     Then I should receive no requests
 

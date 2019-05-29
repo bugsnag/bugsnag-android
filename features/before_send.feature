@@ -4,6 +4,7 @@ Feature: Run callbacks before reports delivered
 
     Scenario: Change report before native crash report delivered
         When I run "NativeBeforeSendScenario"
+        And I clear any error dialogue
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the exception "errorClass" equals "SIGSEGV"
@@ -15,6 +16,7 @@ Feature: Run callbacks before reports delivered
 
     Scenario: Change report before JVM crash report delivered
         When I run "BeforeSendScenario"
+        And I clear any error dialogue
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -26,8 +28,9 @@ Feature: Run callbacks before reports delivered
 
     Scenario: Change report before native notify() report delivered
         When I run "NativeNotifyBeforeSendScenario"
+        And I clear any error dialogue
         And I wait to receive a request
-#        And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+        Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the exception "errorClass" equals "Ad-hoc"
         And the exception "message" equals "Auto-generated issue"
         And the event "context" equals "hello"
@@ -37,8 +40,9 @@ Feature: Run callbacks before reports delivered
 
     Scenario: Change report before notify() report delivered
         When I run "NotifyBeforeSendScenario"
+        And I clear any error dialogue
         And I wait to receive a request
-#        And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+        Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the exception "errorClass" equals "java.lang.Exception"
         And the exception "message" equals "Registration failure"
         And the event "context" equals "RESET"
@@ -48,8 +52,9 @@ Feature: Run callbacks before reports delivered
 
     Scenario: Unset context
         When I run "NotifyBeforeSendUnsetContextScenario"
+        And I clear any error dialogue
         And I wait to receive a request
-#        And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+        Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the exception "errorClass" equals "java.lang.Exception"
         And the exception "message" equals "Registration failure"
         And the event "context" is null

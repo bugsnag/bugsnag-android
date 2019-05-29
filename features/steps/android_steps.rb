@@ -7,6 +7,11 @@ When(/^I run "([^"]+)"$/) do |event_type|
   }
 end
 
+When("I clear any error dialogue") do
+  error_dialogue = $driver.wait_for_element(:aerr_close, 5)
+  $driver.click_element(:aerr_close) if error_dialogue
+end
+
 When("I relaunch the app") do
   $driver.close_app
   $driver.launch_app
