@@ -12,14 +12,14 @@ Scenario: Exception not reported when release stage null
 Scenario: Exception reported when release stages null
     When I run "NullNotifyReleaseStageScenario"
     Then I wait to receive a request
-#    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "NullNotifyReleaseStageScenario"
 
 Scenario: Exception reported when inside release stage
     When I run "InsideReleaseStageScenario"
     Then I wait to receive a request
-#    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the payload field "notifier.name" equals "Android Bugsnag Notifier"
  #   And the payload field "events" is an array with 1 element
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -28,6 +28,6 @@ Scenario: Exception reported when inside release stage
 Scenario: Exception reported when inside Notify release stage array
     When I run "ArrayNotifyReleaseStageScenario"
     Then I wait to receive a request
-#    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "ArrayNotifyReleaseStageScenario"
