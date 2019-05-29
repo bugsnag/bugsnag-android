@@ -722,8 +722,6 @@ public class Configuration extends Observable implements Observer {
      */
     @Deprecated
     public void setAnrThresholdMs(long anrThresholdMs) {
-        this.anrThresholdMs = anrThresholdMs < BlockedThreadDetector.MIN_CHECK_INTERVAL_MS
-            ? BlockedThreadDetector.MIN_CHECK_INTERVAL_MS : anrThresholdMs;
     }
 
     /**
