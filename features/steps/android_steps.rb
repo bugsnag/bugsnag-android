@@ -12,13 +12,13 @@ When("I clear any error dialogue") do
     $driver.wait_for_element(:aerr_close, 3)
   rescue Selenium::WebDriver::Error::TimeoutError => ex
   else
-    $driver.click_element(:aerr_close)
+    $driver.close_app
   end
   begin
-    $driver.wait_for_element(:button1, 3)
+    $driver.wait_for_element(:content, 3)
   rescue Selenium::WebDriver::Error::TimeoutError => ex
   else
-    $driver.click_element(:button1)
+    $driver.close_app
   end
 end
 
