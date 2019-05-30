@@ -56,7 +56,7 @@ steps:
 
   - label: ':android: NDK Instrumentation tests'
     plugins:
-      - docker-compose#2.6.0:
+      - docker-compose#v2.6.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/ndk/build/outputs/apk/androidTest/debug/bugsnag-android-ndk-debug-androidTest.apk"
@@ -76,7 +76,7 @@ steps:
 
   - label: ':android: SDK Instrumentation tests'
     plugins:
-      - docker-compose#2.6.0:
+      - docker-compose#v2.6.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
@@ -88,7 +88,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#2.6.0:
+      docker-compose#v2.6.0:
         run: android-maze-runner
     env:
       DEVICE_TYPE: "ANDROID_6"
@@ -100,7 +100,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#2.6.0:
+      docker-compose#v2.6.0:
         run: android-maze-runner
     env:
       DEVICE_TYPE: "ANDROID_9"
