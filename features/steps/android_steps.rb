@@ -10,7 +10,7 @@ end
 
 When("I clear any error dialogue") do
   pp "Begin"
-  pp $driver.page_source
+  pp $driver.get_source
   begin
     $driver.wait_for_element(:aerr_close, 3)
   rescue Selenium::WebDriver::Error::TimeoutError
@@ -18,7 +18,7 @@ When("I clear any error dialogue") do
     $driver.close_app
   end
   pp "Middle"
-  pp $driver.page_source
+  pp $driver.get_source
   begin
     $driver.wait_for_element(:content, 3)
   rescue Selenium::WebDriver::Error::TimeoutError
@@ -26,7 +26,7 @@ When("I clear any error dialogue") do
     $driver.close_app
   end
   pp "End"
-  pp $driver.page_source
+  pp $driver.get_source
 end
 
 When("I relaunch the app") do
