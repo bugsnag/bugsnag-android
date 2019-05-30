@@ -4,7 +4,7 @@ Scenario: Test handled Kotlin Exception
     When I run "HandledExceptionScenario"
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-#    And the payload field "events" is an array with 1 element
+    And the payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledExceptionScenario"
     And the payload field "events.0.device.cpuAbi" is a non-empty array
@@ -14,14 +14,14 @@ Scenario: Test handled Java Exception
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the payload field "notifier.name" equals "Android Bugsnag Notifier"
-#    And the payload field "events" is an array with 1 element
+    And the payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledExceptionJavaScenario"
 
 Scenario: Test handled Exception with Session
     When I run "HandledExceptionSessionScenario"
     Then I wait to receive a request
- #   And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledExceptionSessionScenario"
     And the event "session" is not null

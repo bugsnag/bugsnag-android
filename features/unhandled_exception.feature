@@ -6,11 +6,11 @@ Scenario: Test Unhandled Kotlin Exception without Session
     And I relaunch the app
     And I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-#    And the payload field "events" is an array with 1 element
+    And the payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "UnhandledExceptionScenario"
     And the event "session" is null
-#    And the payload field "events.0.device.cpuAbi" is a non-empty array for request 0
+    And the payload field "events.0.device.cpuAbi" is a non-empty array
 
 Scenario: Test Unhandled Java Exception with Session
     When I run "UnhandledExceptionJavaScenario"
@@ -18,7 +18,7 @@ Scenario: Test Unhandled Java Exception with Session
     And I relaunch the app
     And I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-#    And the payload field "events" is an array with 1 element
+    And the payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "UnhandledExceptionJavaScenario"
 
@@ -27,7 +27,7 @@ Scenario: Test handled Kotlin Exception with Session
     And I clear any error dialogue
     And I relaunch the app
     And I wait to receive a request
-#   And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "UnhandledExceptionSessionScenario"
     And the event "session" is not null
@@ -47,6 +47,6 @@ Scenario: Test cached Unhandled Exception with Session sends
     And I wait to receive a request
 
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-#    And the payload field "events" is an array with 1 element
+    And the payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "ReportCacheScenario"
