@@ -25,10 +25,8 @@ Feature: Native crash reporting
     @skip_below_api18
     Scenario: Stack buffer overflow
         When I run "CXXStackoverflowScenario"
-        And I wait a bit
         And I wait for 2 seconds
         And I relaunch the app
-        And I wait a bit
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception reflects a signal was raised
