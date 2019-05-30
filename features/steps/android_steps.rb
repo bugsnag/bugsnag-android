@@ -1,4 +1,3 @@
-require 'pp'
 When(/^I run "([^"]+)"$/) do |event_type|
   steps %Q{
     Given the element "scenarioText" is present
@@ -9,24 +8,18 @@ When(/^I run "([^"]+)"$/) do |event_type|
 end
 
 When("I clear any error dialogue") do
-  pp "Begin"
-  pp $driver.get_source
   begin
     $driver.wait_for_element("android:id/aerr_close", 3)
   rescue Selenium::WebDriver::Error::TimeoutError
   else
     $driver.click_element("android:id/aerr_close")
   end
-  pp "Middle"
-  pp $driver.get_source
   begin
     $driver.wait_for_element("android:id/button1", 3)
   rescue Selenium::WebDriver::Error::TimeoutError
   else
     $driver.click_element("android:id/button1")
   end
-  pp "End"
-  pp $driver.get_source
 end
 
 When("I relaunch the app") do
