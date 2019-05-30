@@ -4,6 +4,7 @@ When(/^I run "([^"]+)"$/) do |event_type|
     And the element "startScenarioButton" is present
     And I send the keys "#{event_type}" to the element "scenarioText"
     And I click the element "startScenarioButton"
+    And I clear any error dialogue
   }
 end
 
