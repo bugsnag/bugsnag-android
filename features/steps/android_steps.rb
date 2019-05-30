@@ -11,9 +11,9 @@ When("I clear any error dialogue") do
   begin
     $driver.wait_for_element(:aerr_close, 5)
   rescue Selenium::WebDriver::Error::TimeoutError => ex
-    return
+  else
+    $driver.click_element(:aerr_close)
   end
-  $driver.click_element(:aerr_close)
 end
 
 When("I relaunch the app") do
