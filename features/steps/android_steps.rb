@@ -15,7 +15,7 @@ When("I clear any error dialogue") do
     $driver.wait_for_element("android:id/aerr_close", 3)
   rescue Selenium::WebDriver::Error::TimeoutError
   else
-    $driver.close_app
+    $driver.click_element("android:id/aerr_close")
   end
   pp "Middle"
   pp $driver.get_source
@@ -23,7 +23,7 @@ When("I clear any error dialogue") do
     $driver.wait_for_element("android:id/button1", 3)
   rescue Selenium::WebDriver::Error::TimeoutError
   else
-    $driver.close_app
+    $driver.click_element("android:id/button1")
   end
   pp "End"
   pp $driver.get_source
