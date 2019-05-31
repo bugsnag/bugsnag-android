@@ -107,7 +107,6 @@ Then("the report contains the required fields") do
     And the payload field "events.0.metaData.app.versionName" is not null
     And the payload field "events.0.metaData.device.brand" is not null
     And the payload field "events.0.metaData.device.dpi" is not null
-    And the payload field "events.0.metaData.device.emulator" is true
     And the payload field "events.0.metaData.device.locale" is not null
     And the payload field "events.0.metaData.device.locationStatus" is not null
     And the payload field "events.0.metaData.device.networkAccess" is not null
