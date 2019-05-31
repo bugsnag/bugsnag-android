@@ -1,6 +1,5 @@
 When(/^I run "([^"]+)"$/) do |event_type|
   steps %Q{
-    Given I clear any error dialogue
     And the element "scenarioText" is present
     And the element "startScenarioButton" is present
     And I send the keys "#{event_type}" to the element "scenarioText"
