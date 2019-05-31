@@ -86,7 +86,7 @@ Then("the report contains the required fields") do
     And the payload field "notifier.url" is not null
     And the payload field "notifier.version" is not null
     And the payload field "events" is a non-empty array
-    Ahen the payload field "events.0.unhandled" is not null
+    And the payload field "events.0.unhandled" is not null
     And the payload field "events.0.app.duration" is not null
     And the payload field "events.0.app.durationInForeground" is not null
     And the payload field "events.0.app.id" is not null
