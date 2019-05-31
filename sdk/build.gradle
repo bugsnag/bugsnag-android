@@ -196,7 +196,7 @@ bintray {
 apply from: "../checkstyle.gradle"
 
 detekt {
-    input = files("src")
+    input = files("src/androidTest", "src/main/java", "src/test")
     filters = ".*/resources/.*,.*/build/.*"
 
     reports {
