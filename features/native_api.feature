@@ -12,7 +12,7 @@ Feature: Native API
         And the event "user.email" is null
         And the event "unhandled" is false
         And the event "app.binaryArch" is not null
-#        And the payload field "events.0.device.cpuAbi" is a non-empty array for request 0
+        And the payload field "events.0.device.cpuAbi" is a non-empty array
 
     Scenario: Adding user information in Java followed by a C crash
         And I run "CXXJavaUserInfoNativeCrashScenario"
