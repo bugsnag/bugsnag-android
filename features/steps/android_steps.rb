@@ -138,7 +138,7 @@ end
 
 Then("the stacktrace contains native frame information") do
   step("the payload field \"events.0.exceptions.0.stacktrace\" is a non-empty array")
-  stack = read_key_path(Server.current_request)[:body], "events.0.exceptions.0.stacktrace")
+  stack = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
   stack.each_with_index do |frame, index|
     assert_not_nil(frame['method'], "The method of frame #{index} is nil")
     assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
