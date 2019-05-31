@@ -1,3 +1,2 @@
-include ':sdk', ':ndk'
-include ':sdkAppExample'
-project(':sdkAppExample').projectDir = new File('examples/sdk-app-example')
+include ":sdk", ":sdkAppExample"
+project(":sdkAppExample").projectDir = new File("examples/sdk-app-example")

@@ -84,10 +84,10 @@ git submodule update --init --recursive
 You can build new `.aar` files as follows:
 
 ```shell
-./gradlew clean :build
+./gradlew sdk:assemble
 ```
 
-Files are generated into`[module]/build/outputs/aar`.
+Files are generated into`sdk/build/outputs/aar`.
 
 ### Building with custom ABIs
 
@@ -95,7 +95,7 @@ To build the NDK module with specific ABIs, use the `ABI_FILTERS` project
 option:
 
 ```shell
-./gradlew clean :assemble -PABI_FILTERS=x86,arm64-v8a
+./gradlew assemble -PABI_FILTERS=x86,arm64-v8a
 ```
 
 ## Running Tests
@@ -135,7 +135,7 @@ bundle exec maze-runner
 You can run lint on the project using the following command:
 
 ```shell
-./gradlew lint checkstyle
+./gradlew lint checkstyle detekt
 ```
 
 ## Building the Example App
@@ -143,11 +143,7 @@ You can run lint on the project using the following command:
 You can build and install the example app to as follows:
 
 ```shell
-# First build the NDK:
-./gradlew ndk:assembleRelease
-
-# Then install the example app:
-./gradlew installJavaExampleDebug
+./gradlew installDebug
 ```
 
 This builds the latest version of the library and installs an app onto your
@@ -162,7 +158,7 @@ application.
 To get started:
 
 1. In the `bugsnag-android` directory, run
-   `./gradlew assembleRelease publishSDKPublicationToMavenLocal publishNDKPublicationToMavenLocal`.
+   `./gradlew assembleRelease publishSDKPublicationToMavenLocal && ./gradlew assembleRelease publishSDKPublicationToMavenLocal -PreleaseNdkArtefact=true`.
    This installs `bugsnag-android` and `bugsnag-android-ndk` into your local
    maven repository.
 2. In your sample application `build.gradle`, add `mavenLocal()` to the *top* of
@@ -247,7 +243,8 @@ If you are a project maintainer, you can build and release a new version of
 - Merge any remaining PRs to master, ensuring the commit message matches the release tag (e.g. v4.0.0)
 - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
 - [ ] Inspected the updated CHANGELOG, README, and version files to ensure they are correct
-- [ ] Release to GitHub, Maven Central, and Bintray by running `git tag vX.X.X && git push origin --tags && ./gradlew ndk:assembleRelease sdk:assembleRelease publish bintrayUpload`
+- [ ] Create a Github release by running `git tag vX.X.X && git push origin --tags`
+- [ ] Release to Maven Central and Bintray by running `./gradlew sdk:assembleRelease publish bintrayUpload && ./gradlew sdk:assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true`
   - [ ] "Promote" the release build on Maven Central
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”
