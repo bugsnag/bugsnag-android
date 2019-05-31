@@ -8,6 +8,10 @@ app_location = ENV['APP_LOCATION']
 # Set this explicitly
 $api_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
 
+After do |scenario|
+  $driver.reset
+end
+
 AfterConfiguration do |config|
   AppAutomateDriver.new(bs_username, bs_access_key, bs_local_id, bs_device, app_location)
   $driver.start_driver
