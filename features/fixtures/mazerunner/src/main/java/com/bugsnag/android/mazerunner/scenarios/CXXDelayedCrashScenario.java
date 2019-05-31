@@ -40,6 +40,6 @@ public class CXXDelayedCrashScenario extends Scenario {
             public void run() {
                 activate(405);
             }
-        }, 6000);
+        }, 2000);
     }
 }

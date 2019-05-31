@@ -13,33 +13,6 @@ AfterConfiguration do |config|
   $driver.start_driver
 end
 
-After do |scenario|
-  $driver.reset
-  if scenario.failed?
-    write_failed_requests_to_disk(scenario)
-  end
-end
-
-def write_failed_requests_to_disk(scenario)
-  Dir.chdir("/app/maze-output") do
-    date = DateTime.now.strftime('%d%m%y%H%M%S%L')
-    Server.stored_requests.each_with_index do |request, i|
-      filename = "#{scenario.name}-request#{i}-#{date}.log"
-      File.open(filename, 'w+') do |file|
-        file.puts "URI: #{request[:request].request_uri}"
-        file.puts "HEADERS:"
-        request[:request].header.each do |key, values|
-          file.puts "  #{key}: #{values.map {|v| "'#{v}'"}.join(' ')}"
-        end
-        file.puts
-        file.puts "BODY:"
-        file.puts JSON.pretty_generate(request[:body])
-      end
-    end
-  end
-end
-
-
 at_exit do
   $driver.driver_quit
 end

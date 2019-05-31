@@ -37,6 +37,6 @@ public class CXXDelayedNotifyScenario extends Scenario {
             public void run() {
                 activate();
             }
-        }, 6000);
+        }, 2000);
     }
 }

@@ -5,9 +5,7 @@ Scenario: Test handled exception after delay
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event "app.inForeground" is true
-
-#    Duration in foreground should be a non-zero integer
-# Needs to be reimplemented |    And the payload field "events.0.app.durationInForeground" is greater than 0
+    And the payload field "events.0.app.durationInForeground" is greater than 0
 
 Scenario: Test handled exception in background
     When I run "InForegroundScenario"

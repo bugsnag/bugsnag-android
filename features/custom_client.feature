@@ -26,6 +26,7 @@ Scenario: Set a custom session API client and start a session
 Scenario: Set a custom error client and flush a stored error
     When I configure the app to run in the "offline" state
     And I run "CustomClientErrorFlushScenario"
+    And I relaunch the app
     And I configure the app to run in the "online" state
     And I run "CustomClientErrorFlushScenario"
     Then I wait to receive a request

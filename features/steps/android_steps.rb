@@ -1,6 +1,7 @@
 When(/^I run "([^"]+)"$/) do |event_type|
   steps %Q{
-    Given the element "scenarioText" is present
+    Given I clear any error dialogue
+    And the element "scenarioText" is present
     And the element "startScenarioButton" is present
     And I send the keys "#{event_type}" to the element "scenarioText"
     And I click the element "startScenarioButton"
@@ -10,13 +11,13 @@ end
 
 When("I clear any error dialogue") do
   begin
-    $driver.wait_for_element("android:id/aerr_close", 2)
+    $driver.wait_for_element("android:id/aerr_close", 1)
   rescue Selenium::WebDriver::Error::TimeoutError
   else
     $driver.click_element("android:id/aerr_close")
   end
   begin
-    $driver.wait_for_element("android:id/button1", 2)
+    $driver.wait_for_element("android:id/button1", 1)
   rescue Selenium::WebDriver::Error::TimeoutError
   else
     $driver.click_element("android:id/button1")

@@ -36,6 +36,6 @@ public class CXXSessionInfoCrashScenario extends Scenario {
             public void run() {
                 crash(3837);
             }
-        }, 8000);
+        }, 2000);
     }
 }
