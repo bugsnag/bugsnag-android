@@ -43,13 +43,6 @@ android {
         baseline file("lint-baseline.xml")
     }
 
-    // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
-    libraryVariants.all { variant ->
-        variant.generateBuildConfigProvider.configure { task ->
-            task.enabled = false
-        }
-    }
-
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
@@ -60,6 +53,11 @@ android {
         debug {
             testCoverageEnabled = true
         }
+    }
+
+    buildTypes.each { buildType ->
+        boolean detectNdkCrashes = project.hasProperty("releaseNdkArtefact")
+        buildType.buildConfigField("boolean", "DETECT_NDK_CRASHES", "$detectNdkCrashes")
     }
 
     testOptions.unitTests.all {

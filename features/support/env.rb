@@ -4,7 +4,7 @@ RUNNING_CI = ENV['TRAVIS'] == 'true'
 # Install latest versions of bugsnag-android
 run_required_commands([
   [
-    "./gradlew", "sdk:assembleRelease",
+    "./gradlew", "sdk:assembleRelease", "-PreleaseNdkArtefact=true",
     "-x", "lintVitalRelease",
     "-x", "countReleaseDexMethods"
   ],
