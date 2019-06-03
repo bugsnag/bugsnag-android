@@ -242,7 +242,7 @@ public class Client extends Observable implements Observer {
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
 
-        if (config.getDetectNdkCrashes()) {
+        if (config.getDetectNdkCrashes() || config.getDetectAnrs()) {
             NativeInterface.configureClientObservers(this);
         }
     }
