@@ -24,7 +24,8 @@ When("I clear any error dialogue") do
 end
 
 When("I relaunch the app") do
-  $driver.close_app
+  $driver.terminate_app("com.bugsnag.android.mazerunner")
+  sleep(2000)
   $driver.launch_app
 end
 
@@ -142,9 +143,4 @@ Then("the stacktrace contains native frame information") do
     assert_not_nil(frame['method'], "The method of frame #{index} is nil")
     assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
   end
-end
-
-Then("the payload field {string} is greater than {int}") do |field_path, int_value|
-  observed_value = read_key_path(Server.current_request[:body], field_path)
-  assert(observed_value > int_value)
 end
