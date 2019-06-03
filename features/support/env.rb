@@ -9,7 +9,7 @@ run_required_commands([
     "-x", "countReleaseDexMethods"
   ],
   ["cp", "sdk/build/outputs/aar/bugsnag-android-*.aar",
-   "features/fixtures/mazerunner/libs/bugsnag-android.aar"],
+   "features/fixtures/mazerunner/libs/bugsnag-android-ndk.aar"],
 ])
 
 # Build the harness app
