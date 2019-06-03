@@ -49,6 +49,7 @@ public class Configuration extends Observable implements Observer {
     private boolean automaticallyCollectBreadcrumbs = true;
 
     private boolean detectAnrs = false;
+    private boolean detectNdkCrashes = BuildConfig.DETECT_NDK_CRASHES;
     private long anrThresholdMs = 5000;
 
     @NonNull
@@ -669,6 +670,26 @@ public class Configuration extends Observable implements Observer {
      */
     public void setDetectAnrs(boolean detectAnrs) {
         this.detectAnrs = detectAnrs;
+    }
+
+    /**
+     * @return whether NDK crashes will be reported by bugsnag
+     * @see #setDetectNdkCrashes(boolean)
+     */
+    public boolean getDetectNdkCrashes() {
+        return detectNdkCrashes;
+    }
+
+    /**
+     * Determines whether NDK crashes such as signals and exceptions should be reported by bugsnag.
+     *
+     * If you are using bugsnag-android this flag is false by default; if you are using
+     * bugsnag-android-ndk this flag is true by default.
+     *
+     * @param detectNdkCrashes whether NDK crashes should be reported
+     */
+    public void setDetectNdkCrashes(boolean detectNdkCrashes) {
+        this.detectNdkCrashes = detectNdkCrashes;
     }
 
     /**
