@@ -26,6 +26,9 @@ end
 When("I relaunch the app") do
   $driver.close_app
   $driver.launch_app
+  steps %Q{
+    I run "NullScenario"
+  }
 end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
