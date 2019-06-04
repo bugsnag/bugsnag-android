@@ -18,12 +18,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Create Bugsnag client just to deliver existing requests
-        val config = prepareConfig()
-        config.autoCaptureSessions = false
-        config.enableExceptionHandler = false
-        Bugsnag.init(this, config)
-
         val scenarioStarter = findViewById<Button>(R.id.startScenarioButton)
 
         scenarioStarter.setOnClickListener {
