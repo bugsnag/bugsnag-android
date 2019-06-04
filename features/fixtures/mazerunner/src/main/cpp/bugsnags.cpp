@@ -182,4 +182,24 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeBreadcrumbS
     __builtin_trap();
   return 12167;
 }
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_DetectNdkDisabledScenario_crash(
+    JNIEnv *env,
+jobject instance) {
+int x = 47;
+if (x > 0)
+__builtin_trap();
+return 512345;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_DetectNdkEnabledScenario_crash(
+    JNIEnv *env,
+jobject instance) {
+int x = 47;
+if (x > 0)
+__builtin_trap();
+return 12633;
+}
 }

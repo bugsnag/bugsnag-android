@@ -4,6 +4,7 @@ import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
+import com.bugsnag.android.ndk.NativeBridge;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -240,6 +241,10 @@ public class Client extends Observable implements Observer {
 
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
+
+        if (config.getDetectNdkCrashes() || config.getDetectAnrs()) {
+            NativeInterface.configureClientObservers(this);
+        }
     }
 
     private void enableAnrDetection() {
