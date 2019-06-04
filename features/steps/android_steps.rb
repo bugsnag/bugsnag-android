@@ -25,7 +25,6 @@ end
 
 When("I relaunch the app") do
   $driver.close_app
-  sleep(2000)
   $driver.launch_app
 end
 
