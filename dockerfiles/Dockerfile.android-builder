@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-stretch
 
 RUN apt-get update
-RUN apt-get install -y gradle
+RUN apt-get install -y gradle jq
 
 WORKDIR /sdk
 RUN wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
