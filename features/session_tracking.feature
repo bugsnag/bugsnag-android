@@ -20,7 +20,6 @@ Scenario: Test cached Session sends
     Then I should receive no requests
 
     When I configure the app to run in the "online" state
-    And I relaunch and flush existing errors
     And I wait for 40 seconds
     Then I should receive 2 requests
 

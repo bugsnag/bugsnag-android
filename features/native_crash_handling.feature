@@ -3,7 +3,6 @@ Feature: Native crash reporting
     Scenario: Dereference a null pointer
         When I run "CXXNullPointerScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
@@ -26,7 +25,6 @@ Feature: Native crash reporting
     Scenario: Stack buffer overflow
         When I run "CXXStackoverflowScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception reflects a signal was raised
@@ -37,7 +35,6 @@ Feature: Native crash reporting
     Scenario: Program trap()
         When I run "CXXTrapScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
@@ -49,7 +46,6 @@ Feature: Native crash reporting
     Scenario: Write to read-only memory
         When I run "CXXWriteReadOnlyMemoryScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
@@ -60,7 +56,6 @@ Feature: Native crash reporting
     Scenario: Double free() allocated memory
         When I run "CXXDoubleFreeScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
@@ -71,7 +66,6 @@ Feature: Native crash reporting
     Scenario: Improper object type cast
         When I run "CXXImproperTypecastScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
@@ -82,7 +76,6 @@ Feature: Native crash reporting
     Scenario: Divide by zero
         When I run "CXXDivideByZeroScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGFPE"
@@ -94,7 +87,6 @@ Feature: Native crash reporting
     Scenario: Program abort()
         When I run "CXXAbortScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals one of:
@@ -110,7 +102,6 @@ Feature: Native crash reporting
     Scenario: Raise SIGILL
         When I run "CXXSigillScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
@@ -122,7 +113,6 @@ Feature: Native crash reporting
     Scenario: Raise SIGSEGV
         When I run "CXXSigsegvScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGSEGV"
@@ -134,7 +124,6 @@ Feature: Native crash reporting
     Scenario: Raise SIGABRT
         When I run "CXXSigabrtScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGABRT"
@@ -146,7 +135,6 @@ Feature: Native crash reporting
     Scenario: Raise SIGBUS
         When I run "CXXSigbusScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGBUS"
@@ -158,7 +146,6 @@ Feature: Native crash reporting
     Scenario: Raise SIGFPE
         When I run "CXXSigfpeScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGFPE"
@@ -170,7 +157,6 @@ Feature: Native crash reporting
     Scenario: Raise SIGTRAP
         When I run "CXXSigtrapScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGTRAP"
@@ -182,7 +168,6 @@ Feature: Native crash reporting
     Scenario: Undefined JNI method
         When I run "UnsatisfiedLinkErrorScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the report contains the required fields
         And the exception "errorClass" equals "java.lang.UnsatisfiedLinkError"
@@ -193,7 +178,6 @@ Feature: Native crash reporting
     Scenario: Causing a crash in a separate library
         When I run "CXXExternalStackElementScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the event "severity" equals "error"
@@ -212,7 +196,6 @@ Feature: Native crash reporting
     Scenario: Throwing an exception in C++
         When I run "CXXExceptionScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the event "severity" equals "error"
@@ -227,7 +210,6 @@ Feature: Native crash reporting
     Scenario: Throwing an object in C++
         When I run "CXXThrowSomethingScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the event "severity" equals "error"

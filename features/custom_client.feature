@@ -3,10 +3,8 @@ Feature: Using custom API clients for reporting errors
 Scenario: Set a custom session client and flush a stored session
     When I configure the app to run in the "offline" state
     And I run "CustomClientSessionFlushScenario"
-    And I relaunch and flush existing errors
     And I configure the app to run in the "online" state
     And I run "CustomClientSessionFlushScenario"
-    And I relaunch and flush existing errors
     And I wait to receive 2 requests
     Then the "Custom-Client" header equals "Hello World"
     And I discard the oldest request
@@ -27,7 +25,6 @@ Scenario: Set a custom session API client and start a session
 Scenario: Set a custom error client and flush a stored error
     When I configure the app to run in the "offline" state
     And I run "CustomClientErrorFlushScenario"
-    And I relaunch and flush existing errors
     And I configure the app to run in the "online" state
     And I run "CustomClientErrorFlushScenario"
     Then I wait to receive a request

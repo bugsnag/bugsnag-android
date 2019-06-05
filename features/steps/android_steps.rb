@@ -1,10 +1,13 @@
 When(/^I run "([^"]+)"$/) do |event_type|
   steps %Q{
     And the element "scenarioText" is present
-    And the element "startScenarioButton" is present
     And I send the keys "#{event_type}" to the element "scenarioText"
     And I click the element "startScenarioButton"
     And I clear any error dialogue
+    And I relaunch the app
+    And the element "scenarioText" is present
+    And I send the keys "NullScenario" to the element "scenarioText"
+    And I click the element "startScenarioButton"
   }
 end
 
@@ -21,14 +24,6 @@ When("I clear any error dialogue") do
   else
     $driver.click_element("android:id/button1")
   end
-end
-
-
-When("I relaunch and flush existing errors") do
-  steps %Q{
-    I relaunch the app
-    I run "NullScenario"
-  }
 end
 
 When("I relaunch the app") do

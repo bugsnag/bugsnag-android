@@ -48,7 +48,6 @@ Feature: Native API
     Scenario: Update context in Java followed by crashing in C
         When I run "CXXUpdateContextCrashScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "severity" equals "error"
@@ -69,7 +68,6 @@ Feature: Native API
     Scenario: Leaving a breadcrumb followed by a C crash
         When I run "CXXNativeBreadcrumbNativeCrashScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event has a "request" breadcrumb named "Substandard nacho error"
@@ -80,7 +78,6 @@ Feature: Native API
     Scenario: Starting a session, notifying, followed by a C crash
         When I run "CXXSessionInfoCrashScenario"
         And I wait for 5 seconds
-        And I relaunch and flush existing errors
         And I wait to receive 4 requests
         And I discard the oldest request
         And I discard the oldest request
@@ -92,7 +89,6 @@ Feature: Native API
     Scenario: Leaving breadcrumbs in Java and C followed by a C crash
         When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
@@ -116,7 +112,6 @@ Feature: Native API
     Scenario: Leaving breadcrumbs in Java followed by a C crash
         When I run "CXXJavaBreadcrumbNativeCrashScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
@@ -127,7 +122,6 @@ Feature: Native API
     Scenario: Leaving breadcrumbs in C followed by a Java crash
         When I run "CXXNativeBreadcrumbJavaCrashScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "java.lang.ArrayIndexOutOfBoundsException"
@@ -149,7 +143,6 @@ Feature: Native API
     Scenario: Set extraordinarily long app information
         When I run "CXXExtraordinaryLongStringScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
@@ -173,7 +166,6 @@ Feature: Native API
     Scenario: Add custom metadata followed by a C crash
         When I run "CXXCustomMetadataNativeCrashScenario"
         And I wait for 2 seconds
-        And I relaunch and flush existing errors
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
