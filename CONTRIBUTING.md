@@ -204,11 +204,26 @@ If you are a project maintainer, you can build and release a new version of
     ```ini
     # Your credentials for https://oss.sonatype.org/
     # NOTE: An equals sign (`=`) in any of these fields will break the parser
+    # NOTE: Do not wrap any field in quotes
+
     NEXUS_USERNAME=your-nexus-username
     NEXUS_PASSWORD=your-nexus-password
+    nexusUsername=your-nexus-username
+    nexusPassword=your-nexus-password
+
+    # Your credentials for Bintray
+    # From https://bintray.com/profile
+    bintray_user=your-bintray-username
+    # Get your Bintray API key from https://bintray.com/profile/edit > API Key
+    bintray_api_key=your-api-key
 
     # GPG key details
-    signing.keyId=your-gpg-key-id # From gpg --list-keys
+    # Your key must be added to a public key server, such as http://keys.gnupg.net:
+    # 1. Get your key id by running `gpg --list-keys --keyid-format=short`. It
+    #    should be 8-character hexadecimal.
+    # 2. Export your key using `gpg --armor --export <key-id>`
+    # 3. Upload to a server using `gpg --keyserver hkp://keys.gnupg.net --send-keys <key-id>`
+    signing.keyId=<key-id>
     signing.password=your-gpg-key-passphrase
     signing.secretKeyRingFile=/Users/{username}/.gnupg/secring.gpg
     ```
@@ -240,12 +255,18 @@ If you are a project maintainer, you can build and release a new version of
 
 ### Making the release
 
-- Merge any remaining PRs to master, ensuring the commit message matches the release tag (e.g. v4.0.0)
-- [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
-- [ ] Inspected the updated CHANGELOG, README, and version files to ensure they are correct
-- [ ] Create a Github release by running `git tag vX.X.X && git push origin --tags`
-- [ ] Release to Maven Central and Bintray by running `./gradlew sdk:assembleRelease publish bintrayUpload && ./gradlew sdk:assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true`
-  - [ ] "Promote" the release build on Maven Central
+- Make a PR to release the following changes to master, creating a release
+  branch from the "next" branch if this is a feature release:
+  - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
+  - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
+- Once merged:
+  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew ndk:assembleRelease sdk:assembleRelease`
+  - Release to GitHub:
+    - [ ] Run `git tag vX.X.X && git push origin --tags`
+    - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
+    - [ ] Upload the generated `.aar` file from `{sdk,ndk}/build/outputs/aar/bugsnag-android-*.aar`
+  - [ ] Release to Maven Central and Bintray by running `./gradlew publish bintrayUpload`
+  - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”
     - Select the com.bugsnag staging repository
@@ -253,11 +274,10 @@ If you are a project maintainer, you can build and release a new version of
     - Click the “refresh” button
     - Select the com.bugsnag closed repository
     - Click the “release” button in the toolbar
-  - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
-    - Add the contents of the latest changelog entry to the new release
-    - Upload the generated `.aar` file from `build/outputs/aar/bugsnag-android-release.aar`
-  - [ ] Open the [Bintray repository](https://bintray.com/bugsnag/maven/bugsnag-android) and publish the new artifacts
-- [ ] Merge outstanding docs PRs related to this release
+  - Open the Bintray repositories and publish the new artifacts:
+    - [ ] [SDK repo](https://bintray.com/bugsnag/maven/bugsnag-android/_latestVersion)
+    - [ ] [NDK repo](https://bintray.com/bugsnag/maven/bugsnag-android-ndk/_latestVersion)
+- Merge outstanding docs PRs related to this release
 
 
 ### Post-release Checklist

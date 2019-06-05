@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.14.2 (2019-05-21)
 
 ### Enhancements
 

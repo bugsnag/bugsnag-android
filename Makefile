@@ -35,7 +35,7 @@ endif
 	@awk 'BEGIN{ \
 		"cat counter.txt | grep \"com.bugsnag.android\$\"" | getline output;\
 		split(output, counts);\
-		"du -k sdk/build/outputs/aar/bugsnag-android-release.aar | cut -f1" | getline size;\
+		"du -k sdk/build/outputs/aar/bugsnag-android-*.aar | cut -f1" | getline size;\
 		printf "![Method count and size](https://img.shields.io/badge/Methods%%20and%%20size-";\
 		printf counts[1] "%%20classes%%20|%%20" counts[2] "%%20methods%%20|%%20" counts[3] "%%20fields%%20|%%20";\
 		printf size "%%20KB-e91e63.svg)";\
