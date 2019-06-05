@@ -1,10 +1,25 @@
 # Changelog
 
-## 4.14.2 (2019-05-21)
+## TBD
 
 ### Enhancements
 
+* Improve ANR detection by using a signal handler to detect `SIGQUIT`
+  events, removing dependence on "in foreground" calculations. This change
+  should remove false positives. This change deprecates the configuration
+  options `setAnrThresholdMs`/`getAnrThresholdMs` as they now have no effect and
+  the underlying OS ANR threshold is used in all cases.
+  [#490](https://github.com/bugsnag/bugsnag-android/pull/490)
+
+* Add `detectNdkCrashes` configuration option to toggle whether C/C++ crashes
+  are detected
+  [#491](https://github.com/bugsnag/bugsnag-android/pull/491)
+
 * Reduce AAR size [#492](https://github.com/bugsnag/bugsnag-android/pull/492)
+
+## 4.14.2 (2019-05-21)
+
+### Enhancements
 
 * Disable ANR detection by default [#484](https://github.com/bugsnag/bugsnag-android/pull/484)
 
@@ -33,14 +48,6 @@
 
 * Resolve pre-existing Android Inspection violations
 [#468](https://github.com/bugsnag/bugsnag-android/pull/468)
-
-### Enhancements
-
-* [NDK] Improve ANR detection by using a signal handler to detect `SIGQUIT`
-  events, removing dependence on "in foreground" calculations. This change
-  should remove false positives. This change deprecates the configuration
-  options `setAnrThresholdMs`/`getAnrThresholdMs` as they now have no effect and
-  the underlying OS ANR threshold is used in all cases.
 
 ### Bug fixes
 
