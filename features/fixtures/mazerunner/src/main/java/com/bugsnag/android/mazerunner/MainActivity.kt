@@ -18,6 +18,16 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val bugsnagStarter = findViewById<Button>(R.id.startBugsnagButton)
+
+        bugsnagStarter.setOnClickListener {
+            val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
+            val scenario = scenarioPicker.text.toString()
+            val scenarioMetaData = findViewById<EditText>(R.id.scenarioMetaData)
+            val metaData = scenarioMetaData.text.toString()
+            startBugsnag(scenario, metaData)
+        }
+
         val scenarioStarter = findViewById<Button>(R.id.startScenarioButton)
 
         scenarioStarter.setOnClickListener {
@@ -29,9 +39,11 @@ class MainActivity : Activity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.i("ON_START", "onStart")
+    private fun startBugsnag(eventType: String, metaData: String) {
+        val config = prepareConfig()
+        loadScenario(config, eventType, metaData)
+
+        Bugsnag.init(this, config)
     }
 
     private fun executeScenario(eventType: String, metaData: String) {

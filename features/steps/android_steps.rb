@@ -6,8 +6,8 @@ When(/^I run "([^"]+)"$/) do |event_type|
     And I clear any error dialogue
     And I relaunch the app
     And the element "scenarioText" is present
-    And I send the keys "NullScenario" to the element "scenarioText"
-    And I click the element "startScenarioButton"
+    And I send the keys "#{event_type}" to the element "scenarioText"
+    And I click the element "startBugsnagButton"
   }
 end
 

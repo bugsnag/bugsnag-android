@@ -28,6 +28,13 @@
         android:inputType="text" />
 
     <Button
+        android:id="@+id/startBugsnagButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="Start Bugsnag" />
+
+    <Button
         android:id="@+id/startScenarioButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
