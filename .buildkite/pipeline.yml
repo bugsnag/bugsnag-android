@@ -28,8 +28,8 @@ steps:
       - docker-compose#v2.6.0:
           build:
             - android-instrumentation-tests
-          cache-from:
-            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+          # cache-from:
+          #   - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
 
   - label: ':docker: Build Android apk builder image'
     plugins:
