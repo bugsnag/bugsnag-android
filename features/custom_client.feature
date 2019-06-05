@@ -6,6 +6,7 @@ Scenario: Set a custom session client and flush a stored session
     And I relaunch the app
     And I configure the app to run in the "online" state
     And I run "CustomClientSessionFlushScenario"
+    And I relaunch the app
     And I wait to receive 2 requests
     Then the "Custom-Client" header equals "Hello World"
     And I discard the oldest request
