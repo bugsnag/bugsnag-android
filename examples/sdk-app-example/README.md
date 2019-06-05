@@ -4,6 +4,3 @@
 2. Insert your API key into the AndroidManifest.xml
 3. Run the app! There are several examples of different kinds of errors which
    can be thrown.
-
-_Note:_ If you are using NDK revision 17+, remove `armeabi` from the `abiFilters`
-section of build.gradle.
