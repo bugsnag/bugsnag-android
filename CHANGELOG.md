@@ -4,6 +4,8 @@
 
 ### Enhancements
 
+* Reduce AAR size [#492](https://github.com/bugsnag/bugsnag-android/pull/492)
+
 * Disable ANR detection by default [#484](https://github.com/bugsnag/bugsnag-android/pull/484)
 
 ## 4.14.1 (2019-05-17)
