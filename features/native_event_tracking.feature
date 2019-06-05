@@ -28,7 +28,7 @@ Feature: Synchronizing app/device metadata in the native layer
 #        When I run "CXXTrapScenario"
 #        And I wait a bit
 #        And I wait for 2 seconds
-#        And I relaunch the app
+#        And I relaunch and flush existing errors
 #        Then the request payload contains a completed native report
 #        And the event "app.inForeground" is true
 #        And the event "app.durationInForeground" is greater than 0
@@ -40,7 +40,7 @@ Feature: Synchronizing app/device metadata in the native layer
 #        When I run "CXXDelayedCrashScenario" and press the home button
 #        And I wait a bit
 #        And I wait for 2 seconds
-#        And I relaunch the app
+#        And I relaunch and flush existing errors
 #        Then the request payload contains a completed native report
 #        And the event "app.inForeground" is false
 #        And the event "app.durationInForeground" equals 0

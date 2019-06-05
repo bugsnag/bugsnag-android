@@ -4,7 +4,7 @@ Feature: Run callbacks before reports delivered
 
     Scenario: Change report before native crash report delivered
         When I run "NativeBeforeSendScenario"
-        And I relaunch the app
+        And I relaunch and flush existing errors
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the exception "errorClass" equals "SIGSEGV"
