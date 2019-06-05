@@ -29,8 +29,7 @@ RUN scripts/install-ndk.sh ${NDK_VERSION}
 
 RUN sed --in-place="" --expression="s/'armeabi',//" ndk/build.gradle
 
-RUN ./gradlew
-
+RUN ./gradlew --stacktrace
 RUN ./gradlew sdk:assembleAndroidTest
 RUN ./gradlew ndk:assembleAndroidTest
 
