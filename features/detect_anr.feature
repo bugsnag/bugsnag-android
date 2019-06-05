@@ -12,6 +12,17 @@ Scenario: Sleeping the main thread with pending touch events when detectAnrs = t
     And the exception "message" equals "Application did not respond to UI input"
 
 @anr
+Scenario: Sleeping the main thread with pending touch events when detectAnrs = true and detectNdkCrashes = false
+    When I run "AppNotRespondingDisabledNdkScenario"
+    And I tap the screen
+    And I tap the screen
+    And I tap the screen
+    Then I should receive a request
+    And the request is a valid for the error reporting API
+    And the exception "errorClass" equals "ANR"
+    And the exception "message" equals "Application did not respond to UI input"
+
+@anr
 Scenario: Sleeping the main thread with pending touch events
     When I run "AppNotRespondingDisabledScenario"
     And I tap the screen
