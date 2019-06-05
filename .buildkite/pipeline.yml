@@ -32,7 +32,7 @@ steps:
              - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
       - docker-compose#v2.6.0:
           push:
-            - android-instrumentation-test:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
 
   - label: ':docker: Build Android apk builder image'
     plugins:
