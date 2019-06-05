@@ -39,31 +39,31 @@ When("I configure the app to run in the {string} state") do |event_metadata|
 end
 
 Then("the exception reflects a signal was raised") do
-  value = read_key_path(find_request(0)[:body], "events.0.exceptions.0")
+  value = read_key_path(Server.current_request[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]
   assert_block("The errorClass was not from a signal: #{error_class}") do
     ["SIGFPE","SIGILL","SIGSEGV","SIGABRT","SIGTRAP","SIGBUS"].include? error_class
   end
 end
 Then("the event {string} string is empty") do |keypath|
-  value = read_key_path(find_request(0)[:body], keypath)
+  value = read_key_path(Server.current_request[:body], keypath)
   assert_block("The #{keypath} is not empty: '#{value}'") do
     value.nil? or value.length == 0
   end
 end
 
 Then("the event {string} is greater than {int}") do |keypath, int|
-  value = read_key_path(find_request(0)[:body], "events.0.#{keypath}")
+  value = read_key_path(Server.current_request[:body], "events.0.#{keypath}")
   assert_false(value.nil?, "The event #{keypath} is nil")
   assert_true(value > int)
 end
 
 Then("the exception {string} equals one of:") do |keypath, possible_values|
-  value = read_key_path(find_request(0)[:body], "events.0.exceptions.0.#{keypath}")
+  value = read_key_path(Server.current_request[:body], "events.0.exceptions.0.#{keypath}")
   assert_includes(possible_values.raw.flatten, value)
 end
 Then("the first significant stack frame methods and files should match:") do |expected_values|
-  stacktrace = read_key_path(find_request(0)[:body], "events.0.exceptions.0.stacktrace")
+  stacktrace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
   expected_frame_values = expected_values.raw
   expected_index = 0
   stacktrace.each_with_index do |item, index|
