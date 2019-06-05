@@ -1,6 +1,7 @@
 package com.bugsnag.android.ndk;
 
 import com.bugsnag.android.Breadcrumb;
+import com.bugsnag.android.Configuration;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.NativeInterface;
 
@@ -10,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -33,8 +35,9 @@ public class NativeBridge implements Observer {
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
-    public static native void install(@NonNull String reportingDirectory,
-                                      boolean autoNotify, int apiLevel, boolean is32bit);
+    public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
+                                      int apiLevel, boolean is32bit,
+                                      @Nullable ByteBuffer anrSentinel);
 
     public static native void deliverReportAtPath(@NonNull String filePath);
 
@@ -230,11 +233,23 @@ public class NativeBridge implements Observer {
         try {
             if (installed.get()) {
                 warn("Received duplicate setup message with arg: " + arg);
-                return;
+            } else if (arg instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Object> values = (List<Object>)arg;
+                if (values.size() > 0 && values.get(0) instanceof Configuration) {
+                    Configuration config = (Configuration)values.get(0);
+                    ByteBuffer anrBuffer = null;
+                    if (values.size() > 1 && values.get(1) instanceof ByteBuffer) {
+                        anrBuffer = (ByteBuffer)values.get(1);
+                    }
+                    String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
+                    install(reportPath, config.getDetectNdkCrashes(), Build.VERSION.SDK_INT,
+                            is32bit(), anrBuffer);
+                    installed.set(true);
+                }
+            } else {
+                warn("Received install message with incorrect arg: " + arg);
             }
-            String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-            install(reportPath, true, Build.VERSION.SDK_INT, is32bit());
-            installed.set(true);
         } finally {
             lock.unlock();
         }

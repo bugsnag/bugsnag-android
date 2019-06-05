@@ -78,6 +78,7 @@ public class Client extends Observable implements Observer {
     final SharedPreferences sharedPrefs;
 
     private final OrientationEventListener orientationListener;
+    private AppNotRespondingMonitor anrMonitor;
 
     /**
      * Initialize a Bugsnag client
@@ -248,24 +249,18 @@ public class Client extends Observable implements Observer {
     }
 
     private void enableAnrDetection() {
-        long thresholdMs = config.getAnrThresholdMs();
-        Looper looper = Looper.getMainLooper();
-        BlockedThreadDetector.Delegate delegate = new BlockedThreadDetector.Delegate() {
+        AppNotRespondingMonitor.Delegate delegate = new AppNotRespondingMonitor.Delegate() {
             @Override
-            public void onThreadBlocked(Thread thread) {
-                String errMsg = "Application did not respond for at least "
-                    + config.getAnrThresholdMs() + " ms";
+            public void onAppNotResponding(Thread thread) {
+                String errMsg = "Application did not respond to UI input";
                 BugsnagException exc = new BugsnagException("ANR", errMsg, thread.getStackTrace());
 
                 cacheAndNotify(exc, Severity.ERROR, new MetaData(),
                     HandledState.REASON_ANR, null, thread);
             }
         };
-
-        ForegroundDetector foregroundDetector = new ForegroundDetector(appContext);
-        BlockedThreadDetector detector =
-            new BlockedThreadDetector(thresholdMs, looper, foregroundDetector, delegate);
-        detector.start(); // begin monitoring for ANRs
+        anrMonitor = new AppNotRespondingMonitor(delegate);
+        anrMonitor.start(); // begin monitoring for ANRs
     }
 
     @SuppressWarnings("deprecation")
@@ -289,7 +284,15 @@ public class Client extends Observable implements Observer {
 
     void sendNativeSetupNotification() {
         setChanged();
-        super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, config));
+        ArrayList<Object> messageArgs = new ArrayList<>();
+        messageArgs.add(config);
+        if (anrMonitor != null) {
+            Object buffer = anrMonitor.getSentinelBuffer();
+            if (buffer != null) {
+                messageArgs.add(buffer);
+            }
+        }
+        super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
         try {
             Async.run(new Runnable() {
                 @Override

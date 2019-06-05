@@ -22,6 +22,15 @@ Dir.chdir('features/fixtures/mazerunner') do
   ])
 end
 
+# Close any lingering ANR dialogs
+Before('@anr') do
+  run_required_commands([['features/scripts/close-anr-dialog.sh']])
+end
+After('@anr') do
+  sleep(5)
+  run_required_commands([['features/scripts/close-anr-dialog.sh']])
+end
+
 # Reset orientation after each scenario
 at_exit do
   ENV['DEVICE_ORIENTATION'] = 'portrait'

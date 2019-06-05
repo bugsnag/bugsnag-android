@@ -34,6 +34,14 @@
 * Resolve pre-existing Android Inspection violations
 [#468](https://github.com/bugsnag/bugsnag-android/pull/468)
 
+### Enhancements
+
+* [NDK] Improve ANR detection by using a signal handler to detect `SIGQUIT`
+  events, removing dependence on "in foreground" calculations. This change
+  should remove false positives. This change deprecates the configuration
+  options `setAnrThresholdMs`/`getAnrThresholdMs` as they now have no effect and
+  the underlying OS ANR threshold is used in all cases.
+
 ### Bug fixes
 
 * [NDK] Fix possible null pointer dereference
