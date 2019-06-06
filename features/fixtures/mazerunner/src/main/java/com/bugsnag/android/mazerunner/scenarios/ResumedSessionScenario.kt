@@ -2,6 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.flushAllSessions
 import com.bugsnag.android.Configuration
 import android.os.Handler
 import android.os.HandlerThread
@@ -24,6 +25,8 @@ internal class ResumedSessionScenario(config: Configuration,
         Handler(thread.looper).post {
             // send 1st exception
             client.startSession()
+            flushAllSessions()
+
             client.notifyBlocking(generateException())
 
             // send 2nd exception after resuming a session

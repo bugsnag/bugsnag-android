@@ -6,27 +6,17 @@ import android.os.Handler
 import com.bugsnag.android.*
 
 /**
- * Generates an uncaught exception, catches it, and persists it to disc, preventing any delivery.
- *
- * To generate a startup crash, set "eventMetaData" to "StartupCrash", otherwise the default
- * behaviour is to report a normal crash.
- *
- * The mazerunner scenario that tests this works in 3 parts:
- *
- * 1. Generate and persist a normal crash on disk, by waiting longer than the threshold for
- *    a startup crash
- * 2. Generate and persist a startup crash on disk, by crashing as soon as the scenario starts
- * 3. Send the stored reports. The startup crash should be delivered synchronously on the main thread,
- * and the normal crash asynchronously.
+ * Generates a crash on startup, then relaunches the scenario with another crash, to verify that
+ * the first crash is delivered synchronously regardless.
  */
 internal class StartupCrashFlushScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
+
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            if ("CrashOfflineWithDelay" == eventMetaData || "CrashOfflineAtStartup" == eventMetaData) {
-                // Part 2 - Persist a startup crash to disk
+            if ("CrashOfflineAtStartup" == eventMetaData) {
                 disableAllDelivery(config)
             }
         }
@@ -34,11 +24,8 @@ internal class StartupCrashFlushScenario(config: Configuration,
 
     override fun run() {
         super.run()
-        if ("CrashOfflineWithDelay" == eventMetaData) {
-            Handler().postDelayed({
-            	throw RuntimeException("Regular crash")
-			}, 6000)
-        } else if ("CrashOfflineAtStartup" == eventMetaData) {
+
+        if ("CrashOfflineAtStartup" == eventMetaData) {
             throw RuntimeException("Startup crash")
         }
     }
