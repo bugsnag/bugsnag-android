@@ -12,7 +12,7 @@ Feature: Synchronizing app/device metadata in the native layer
 
     Scenario: Capture foreground state while in the background
         When I run "CXXDelayedNotifyScenario"
-        And I send the app to the background for 5 seconds
+        And I send the app to the background for 10 seconds
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is false
@@ -34,7 +34,7 @@ Feature: Synchronizing app/device metadata in the native layer
 
     Scenario: Capture foreground state while in a background crash
         When I run "CXXDelayedCrashScenario"
-        And I send the app to the background for 5 seconds
+        And I send the app to the background for 10 seconds
         And I clear any error dialogue
         And I relaunch the app
         And I configure Bugsnag for "CXXStartSessionScenario"
