@@ -1,7 +1,7 @@
 Feature: In foreground field populates correctly
 
 Scenario: Test handled exception after delay
-    When I run "InForegroundScenario"
+    When I run "HandledExceptionScenario"
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event "app.inForeground" is true

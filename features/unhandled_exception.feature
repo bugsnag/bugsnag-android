@@ -33,16 +33,3 @@ Scenario: Test handled Kotlin Exception with Session
     And the event "session.events" is not null
     And the payload field "events.0.session.events.handled" equals 0
     And the payload field "events.0.session.events.unhandled" equals 1
-
-Scenario: Test cached Unhandled Exception with Session sends
-    When I run "ReportCacheScenario"
-    And I wait for 2 seconds
-    Then I should receive no requests
-
-    
-    And I wait to receive a request
-
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "ReportCacheScenario"

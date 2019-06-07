@@ -15,7 +15,8 @@ Feature: Native API
         And the payload field "events.0.device.cpuAbi" is a non-empty array
 
     Scenario: Adding user information in Java followed by a C crash
-        And I run "CXXJavaUserInfoNativeCrashScenario"
+        And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
@@ -30,7 +31,6 @@ Feature: Native API
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "severity" equals "error"
-        And the event "context" equals "MainActivity"
         And the exception "errorClass" equals "Vitamin C deficiency"
         And the exception "message" equals "9 out of 10 adults do not get their 5-a-day"
         And the event "unhandled" is false
@@ -46,7 +46,8 @@ Feature: Native API
         And the event "unhandled" is false
 
     Scenario: Update context in Java followed by crashing in C
-        When I run "CXXUpdateContextCrashScenario"
+        When I run "CXXUpdateContextCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXUpdateContextCrashScenario"
         And I wait for 2 seconds
         And I wait to receive a request
         Then the request payload contains a completed native report
@@ -66,7 +67,8 @@ Feature: Native API
         And the event "unhandled" is false
 
     Scenario: Leaving a breadcrumb followed by a C crash
-        When I run "CXXNativeBreadcrumbNativeCrashScenario"
+        When I run "CXXNativeBreadcrumbNativeCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXNativeBreadcrumbNativeCrashScenario"
         And I wait for 2 seconds
         And I wait to receive a request
         Then the request payload contains a completed native report
@@ -76,9 +78,11 @@ Feature: Native API
         And the event "unhandled" is true
 
     Scenario: Starting a session, notifying, followed by a C crash
-        When I run "CXXSessionInfoCrashScenario"
+        When I run "CXXSessionInfoCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXSessionInfoCrashScenario"
         And I wait for 5 seconds
         And I wait to receive 4 requests
+        And I discard the oldest request
         And I discard the oldest request
         And I discard the oldest request
         Then the request payload contains a completed native report
@@ -87,7 +91,8 @@ Feature: Native API
         And the payload field "events.0.session.events.handled" equals 2
 
     Scenario: Leaving breadcrumbs in Java and C followed by a C crash
-        When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario"
+        When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario" and relaunch the app
+        And I configure Bugsnag for "CXXJavaBreadcrumbNativeBreadcrumbScenario"
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
@@ -110,7 +115,8 @@ Feature: Native API
         And the event "unhandled" is false
 
     Scenario: Leaving breadcrumbs in Java followed by a C crash
-        When I run "CXXJavaBreadcrumbNativeCrashScenario"
+        When I run "CXXJavaBreadcrumbNativeCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXJavaBreadcrumbNativeCrashScenario"
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
@@ -120,7 +126,8 @@ Feature: Native API
         And the event "unhandled" is true
 
     Scenario: Leaving breadcrumbs in C followed by a Java crash
-        When I run "CXXNativeBreadcrumbJavaCrashScenario"
+        When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXNativeBreadcrumbJavaCrashScenario"
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
@@ -141,7 +148,8 @@ Feature: Native API
         And the event "unhandled" is false
 
     Scenario: Set extraordinarily long app information
-        When I run "CXXExtraordinaryLongStringScenario"
+        When I run "CXXExtraordinaryLongStringScenario" and relaunch the app
+        And I configure Bugsnag for "CXXExtraordinaryLongStringScenario"
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
@@ -164,7 +172,8 @@ Feature: Native API
         And the event "unhandled" is false
 
     Scenario: Add custom metadata followed by a C crash
-        When I run "CXXCustomMetadataNativeCrashScenario"
+        When I run "CXXCustomMetadataNativeCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXCustomMetadataNativeCrashScenario"
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report

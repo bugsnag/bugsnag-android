@@ -7,10 +7,10 @@ Scenario: Runtime versions included in JVM exception
     And the payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null
 
-# Potential issue here
 Scenario: Runtime versions included in NDK error
     When I configure the app to run in the "non-crashy" state
-    And I run "CXXNullPointerScenario"
+    And I run "CXXNullPointerScenario" and relaunch the app
+    And I configure Bugsnag for "CXXNullPointerScenario"
     Then I wait to receive a request
     And the request payload contains a completed native report
     And the payload field "events.0.device.runtimeVersions.androidApiLevel" is not null

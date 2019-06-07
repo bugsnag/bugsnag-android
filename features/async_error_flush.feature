@@ -1,7 +1,5 @@
 Feature: Flushing errors does not send duplicates
 
-# Issues!
-
 Scenario: Only 1 request sent if connectivity change occurs before launch
     When I run "AsyncErrorConnectivityScenario"
     Then I wait to receive a request

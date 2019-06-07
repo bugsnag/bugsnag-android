@@ -1,9 +1,8 @@
 Feature: Run callbacks before reports delivered
 
-# Issues!
-
     Scenario: Change report before native crash report delivered
-        When I run "NativeBeforeSendScenario"
+        When I run "NativeBeforeSendScenario" and relaunch the app
+        And I configure Bugsnag for "NativeBeforeSendScenario"
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the exception "errorClass" equals "SIGSEGV"
@@ -14,7 +13,8 @@ Feature: Run callbacks before reports delivered
         And the event "unhandled" is true
 
     Scenario: Change report before JVM crash report delivered
-        When I run "BeforeSendScenario"
+        When I run "BeforeSendScenario" and relaunch the app
+        And I configure Bugsnag for "BeforeSendScenario"
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the exception "errorClass" equals "java.lang.RuntimeException"

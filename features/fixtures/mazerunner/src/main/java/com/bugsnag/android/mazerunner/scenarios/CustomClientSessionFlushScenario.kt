@@ -15,19 +15,19 @@ internal class CustomClientSessionFlushScenario(config: Configuration,
                                                 context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
-        disableAllDelivery(config)
+        if (context is Activity) {
+            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            if ("online" == eventMetaData) {
+                config.delivery = createCustomHeaderDelivery(context)
+            } else {
+                disableAllDelivery(config)
+            }
+        }
     }
 
     override fun run() {
         super.run()
 
-        if (eventMetaData == "online") {
-            // simulate activity lifecycle callback occurring before api client can be set
-            Bugsnag.startSession()
-            config.delivery = createCustomHeaderDelivery(context)
-        } else {
-            Bugsnag.startSession()
-        }
+        Bugsnag.startSession()
     }
-
 }
