@@ -2,7 +2,7 @@ Feature: Synchronizing app/device metadata in the native layer
 
     Scenario: Capture foreground state while in the foreground
         When I run "CXXDelayedNotifyScenario"
-        And I wait a bit
+        And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is true
         And the event "app.durationInForeground" is greater than 0
@@ -11,8 +11,9 @@ Feature: Synchronizing app/device metadata in the native layer
         And the event "unhandled" is false
 
     Scenario: Capture foreground state while in the background
-        When I run "CXXDelayedNotifyScenario" and press the home button
-        And I wait a bit
+        When I run "CXXDelayedNotifyScenario"
+        And I send the app to the background for 5 seconds
+        And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is false
         And the event "app.durationInForeground" equals 0
@@ -21,9 +22,9 @@ Feature: Synchronizing app/device metadata in the native layer
         And the event "unhandled" is false
 
     Scenario: Capture foreground state while in a foreground crash
-        When I run "CXXTrapScenario"
-        And I wait a bit
-        And I wait for 2 seconds
+        When I run "CXXTrapScenario" and relaunch the app
+        And I configure Bugsnag for "CXXStartSessionScenario"
+        And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is true
         And the event "app.durationInForeground" is greater than 0
@@ -32,9 +33,12 @@ Feature: Synchronizing app/device metadata in the native layer
         And the event "unhandled" is true
 
     Scenario: Capture foreground state while in a background crash
-        When I run "CXXDelayedCrashScenario" and press the home button
-        And I wait a bit
-        And I wait for 2 seconds
+        When I run "CXXDelayedCrashScenario"
+        And I send the app to the background for 5 seconds
+        And I clear any error dialogue
+        And I relaunch the app
+        And I configure Bugsnag for "CXXStartSessionScenario"
+        And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is false
         And the event "app.durationInForeground" equals 0
