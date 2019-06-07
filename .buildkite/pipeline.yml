@@ -102,14 +102,26 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 9 end-to-end tests'
+  - label: ':android: Android 7 end-to-end tests'
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v2.6.0:
         run: android-maze-runner
     env:
-      DEVICE_TYPE: "ANDROID_9"
+      DEVICE_TYPE: "ANDROID_7"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 8 end-to-end tests'
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v2.6.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
