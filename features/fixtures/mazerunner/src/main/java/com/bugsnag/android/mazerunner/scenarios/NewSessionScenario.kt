@@ -5,6 +5,7 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import android.os.Handler
 import android.os.HandlerThread
+import com.bugsnag.android.flushAllSessions
 
 /**
  * Sends an exception after stopping the session
