@@ -22,6 +22,12 @@ When("I clear any error dialogue") do
     $driver.click_element("android:id/aerr_close")
   end
   begin
+    $driver.wait_for_element("android:id/aerr_restart", 2)
+  rescue Selenium::WebDriver::Error::TimeoutError
+  else
+    $driver.click_element("android:id/aerr_restart")
+  end
+  begin
     $driver.wait_for_element("android:id/button1", 2)
   rescue Selenium::WebDriver::Error::TimeoutError
   else
