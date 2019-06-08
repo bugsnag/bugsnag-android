@@ -74,7 +74,7 @@ class MainActivity : Activity() {
 
     private fun prepareConfig(): Configuration {
         val config = Configuration("ABCDEFGHIJKLMNOPQRSTUVWXYZ012345")
-        config.setEndpoints("http://192.168.3.6:9339", "http://192.168.3.6:9339")
+        config.setEndpoints("http://bs-local.com:9339", "http://bs-local.com:9339")
         config.detectAnrs = false
         return config
     }
