@@ -49,6 +49,7 @@ public class Configuration extends Observable implements Observer {
     private boolean automaticallyCollectBreadcrumbs = true;
 
     private boolean detectAnrs = false;
+    private boolean detectNdkCrashes = BuildConfig.DETECT_NDK_CRASHES;
     private long anrThresholdMs = 5000;
 
     @NonNull
@@ -672,9 +673,32 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * @return whether NDK crashes will be reported by bugsnag
+     * @see #setDetectNdkCrashes(boolean)
+     */
+    public boolean getDetectNdkCrashes() {
+        return detectNdkCrashes;
+    }
+
+    /**
+     * Determines whether NDK crashes such as signals and exceptions should be reported by bugsnag.
+     *
+     * If you are using bugsnag-android this flag is false by default; if you are using
+     * bugsnag-android-ndk this flag is true by default.
+     *
+     * @param detectNdkCrashes whether NDK crashes should be reported
+     */
+    public void setDetectNdkCrashes(boolean detectNdkCrashes) {
+        this.detectNdkCrashes = detectNdkCrashes;
+    }
+
+    /**
      * @return the threshold at which ANRs are detected, in ms
      * @see #setAnrThresholdMs(long)
+     *
+     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
      */
+    @Deprecated
     public long getAnrThresholdMs() {
         return anrThresholdMs;
     }
@@ -693,10 +717,11 @@ public class Configuration extends Observable implements Observer {
      *
      * @param anrThresholdMs the threshold in ms at which ANRs should be detected
      * @see #setDetectAnrs(boolean)
+     *
+     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
      */
+    @Deprecated
     public void setAnrThresholdMs(long anrThresholdMs) {
-        this.anrThresholdMs = anrThresholdMs < BlockedThreadDetector.MIN_CHECK_INTERVAL_MS
-            ? BlockedThreadDetector.MIN_CHECK_INTERVAL_MS : anrThresholdMs;
     }
 
     /**

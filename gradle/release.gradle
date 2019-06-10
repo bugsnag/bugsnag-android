@@ -1,0 +1,126 @@
+apply plugin: "maven-publish"
+apply plugin: "signing"
+apply plugin: "com.jfrog.bintray"
+
+boolean releaseNdkArtefact = project.hasProperty("releaseNdkArtefact")
+String pomName = releaseNdkArtefact ? "Bugsnag Android NDK" : "Bugsnag Android"
+
+archivesBaseName = releaseNdkArtefact ? "bugsnag-android-ndk" : "bugsnag-android"
+version = "${project.VERSION_NAME}"
+group = "${project.GROUP}"
+
+// Disable doclint:
+// https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        // disable the crazy super-strict doclint tool in Java 8
+        //noinspection SpellCheckingInspection
+        options.addStringOption("Xdoclint:none", "-quiet")
+    }
+}
+
+task javadoc(type: Javadoc) {
+    description = "Generates javadocs, ignoring any doclint errors, and places the artefact in the root of the project"
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("docs")
+    failOnError false
+}
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+publishing {
+    repositories {
+        maven {
+            if (VERSION_NAME.contains("SNAPSHOT")) {
+                url "https://oss.sonatype.org/content/repositories/snapshots/"
+            } else {
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+            credentials {
+                username = project.hasProperty("NEXUS_USERNAME") ? "$NEXUS_USERNAME" : System.getenv("NEXUS_USERNAME")
+                password = project.hasProperty("NEXUS_PASSWORD") ? "$NEXUS_PASSWORD" : System.getenv("NEXUS_PASSWORD")
+            }
+        }
+    }
+
+    publications {
+        SDK(MavenPublication) {
+            groupId "com.bugsnag"
+            artifactId archivesBaseName
+            version version
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/$archivesBaseName-${project.VERSION_NAME}.aar")
+
+            pom.withXml {
+                Node root = asNode()
+
+                // top-level metadata
+                Node packaging = root.get("packaging").first()
+                packaging.value = project.POM_PACKAGING
+                root.appendNode("name", pomName)
+                root.appendNode("description", project.POM_DESCRIPTION)
+                root.appendNode("url", project.POM_URL)
+
+                // licenses
+                Node licenseNode = root.appendNode("licenses").appendNode("license")
+                licenseNode.appendNode("name", project.POM_LICENCE_NAME)
+                licenseNode.appendNode("url", project.POM_LICENCE_URL)
+                licenseNode.appendNode("distribution", project.POM_LICENCE_DIST)
+
+                // developers
+                Node devNode = root.appendNode("developers").appendNode("developer")
+                devNode.appendNode("id", project.POM_DEVELOPER_ID)
+                devNode.appendNode("name", project.POM_DEVELOPER_NAME)
+
+                // scm
+                Node scmNode = root.appendNode("scm")
+                scmNode.appendNode("connection", project.POM_SCM_CONNECTION)
+                scmNode.appendNode("developerConnection", project.POM_SCM_DEV_CONNECTION)
+                scmNode.appendNode("url", project.POM_SCM_URL)
+
+                def dependenciesNode = root.appendNode("dependencies")
+
+                // Iterate over the implementation dependencies (we don"t want the test ones), adding a <dependency> node for each
+                configurations.implementation.allDependencies.each {
+                    // Ensure dependencies such as fileTree are not included in the pom.
+                    if (it.name != "unspecified") {
+                        def dependencyNode = dependenciesNode.appendNode("dependency")
+                        dependencyNode.appendNode("groupId", it.group)
+                        dependencyNode.appendNode("artifactId", it.name)
+                        dependencyNode.appendNode("version", it.version)
+                        dependencyNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications
+}
+
+// Bintray upload
+bintray {
+    user = project.hasProperty("bintray_user") ? "$bintray_user" : System.getenv("bintray_user")
+    key = project.hasProperty("bintray_api_key") ? "$bintray_api_key" : System.getenv("bintray_api_key")
+    publications = ["SDK"]
+    configurations = ["archives"]
+
+    pkg {
+        repo = "maven"
+        name = archivesBaseName
+        userOrg = "bugsnag"
+        licenses = ["MIT"]
+        vcsUrl = "https://github.com/bugsnag/bugsnag-android.git"
+
+        version {
+            name = "${project.VERSION_NAME}"
+            vcsTag = "v${project.VERSION_NAME}"
+        }
+    }
+}

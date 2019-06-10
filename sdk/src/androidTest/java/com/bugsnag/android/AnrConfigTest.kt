@@ -12,21 +12,4 @@ class AnrConfigTest {
     fun testDetectAnrDefault() {
         assertFalse(config.detectAnrs)
     }
-
-    /**
-     * Verifies that attempts to set the ANR threshold below 1000ms set the value as 1000ms
-     */
-    @Test
-    fun testAnrThresholdMs() {
-        val config = config
-        assertEquals(5000, config.anrThresholdMs)
-
-        config.anrThresholdMs = 10000
-        assertEquals(10000, config.anrThresholdMs)
-
-        arrayOf(1000, 999, 0, -5, Long.MIN_VALUE).forEach {
-            config.anrThresholdMs = it
-            assertEquals(1000, config.anrThresholdMs)
-        }
-    }
 }
