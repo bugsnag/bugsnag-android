@@ -45,6 +45,7 @@ RUN echo "signing.secretKeyRingFile=/root/.gnupg/secring.gpg" >> ~/.gradle/gradl
 
 # Build and upload to the local maven as version 9.9.9
 RUN sed -i -e 's/VERSION_NAME=.*/VERSION_NAME=9.9.9/g' gradle.properties
+RUN ls -R sdk
 RUN ./gradlew assembleRelease publishSDKPublicationToMavenLocal publishNDKPublicationToMavenLocal
 
 COPY features/ /app/features
