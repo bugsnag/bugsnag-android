@@ -1,0 +1,10 @@
+detekt {
+    input = files("src/androidTest", "src/main/java", "src/test")
+    filters = ".*/resources/.*,.*/build/.*"
+
+    reports {
+        html {
+            enabled = true
+        }
+    }
+}

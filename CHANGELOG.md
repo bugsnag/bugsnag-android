@@ -1,5 +1,30 @@
 # Changelog
 
+## 4.15.0 (2019-06-10)
+
+`bugsnag-android` now supports detecting and reporting C/C++ crashes without a separate library (previously `bugsnag-android-ndk` was required for native error reporting).
+
+`bugsnag-android` and `bugsnag-android-ndk` have essentially been merged. The only difference is that in `bugsnag-android-ndk`, NDK crash detection is enabled by default. To enable it in `bugsnag-android`, the configuration option `detectNdkCrashes` should be set to true.
+
+After the next major release `bugsnag-android-ndk` will no longer be published, so it is recommended that you migrate to the `bugsnag-android` artefact.
+
+### Enhancements
+
+* Improve ANR detection by using a signal handler to detect `SIGQUIT`
+  events, removing dependence on "in foreground" calculations. This change
+  should remove false positives. This change deprecates the configuration
+  options `setAnrThresholdMs`/`getAnrThresholdMs` as they now have no effect and
+  the underlying OS ANR threshold is used in all cases.
+  [#490](https://github.com/bugsnag/bugsnag-android/pull/490)
+
+* Add `detectNdkCrashes` configuration option to toggle whether C/C++ crashes
+  are detected
+  [#491](https://github.com/bugsnag/bugsnag-android/pull/491)
+
+* Reduce AAR size [#492](https://github.com/bugsnag/bugsnag-android/pull/492)
+
+* Make handledState.isUnhandled() publicly readable [#496](https://github.com/bugsnag/bugsnag-android/pull/496)
+
 ## 4.14.2 (2019-05-21)
 
 ### Enhancements
