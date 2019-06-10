@@ -29,7 +29,7 @@ public class CXXStartSessionScenario extends Scenario {
     public void run() {
         super.run();
         Bugsnag.getClient().startSession();
-        flushAllSessions()
+        flushAllSessions();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

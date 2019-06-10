@@ -32,7 +32,7 @@ public class CXXSessionInfoCrashScenario extends Scenario {
         Bugsnag.startSession();
         Bugsnag.notify(new Exception("For the first"));
         Bugsnag.notify(new Exception("For the second"));
-        flushAllSessions()
+        flushAllSessions();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

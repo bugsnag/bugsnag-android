@@ -30,7 +30,7 @@ public class CXXStopSessionScenario extends Scenario {
         super.run();
         Bugsnag.getClient().startSession();
         Bugsnag.getClient().stopSession();
-        flushAllSessions()
+        flushAllSessions();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
