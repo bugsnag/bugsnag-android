@@ -1,0 +1,10 @@
+apply plugin: "com.getkeepsafe.dexcount"
+
+dexcount {
+    includeClasses = true
+    includeClassCount = true
+    includeFieldCount = true
+    includeTotalMethodCount = true
+    orderByMethodCount = true
+    verbose true
+}

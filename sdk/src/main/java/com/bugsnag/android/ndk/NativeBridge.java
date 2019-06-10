@@ -1,14 +1,17 @@
 package com.bugsnag.android.ndk;
 
 import com.bugsnag.android.Breadcrumb;
+import com.bugsnag.android.Configuration;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.NativeInterface;
 
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -32,19 +35,23 @@ public class NativeBridge implements Observer {
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
-    public static native void install(String reportingDirectory, boolean autoNotify, int apiLevel,
-                                      boolean is32bit);
+    public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
+                                      int apiLevel, boolean is32bit,
+                                      @Nullable ByteBuffer anrSentinel);
 
-    public static native void deliverReportAtPath(String filePath);
+    public static native void deliverReportAtPath(@NonNull String filePath);
 
-    public static native void addBreadcrumb(String name, String type, String timestamp,
-                                            Object metadata);
+    public static native void addBreadcrumb(@NonNull String name, @NonNull String type,
+                                            @NonNull String timestamp, @NonNull Object metadata);
 
-    public static native void addMetadataString(String tab, String key, String value);
+    public static native void addMetadataString(@NonNull String tab, @NonNull String key,
+                                                @NonNull String value);
 
-    public static native void addMetadataDouble(String tab, String key, double value);
+    public static native void addMetadataDouble(@NonNull String tab, @NonNull String key,
+                                                double value);
 
-    public static native void addMetadataBoolean(String tab, String key, boolean value);
+    public static native void addMetadataBoolean(@NonNull String tab, @NonNull String key,
+                                                 boolean value);
 
     public static native void addHandledEvent();
 
@@ -52,36 +59,37 @@ public class NativeBridge implements Observer {
 
     public static native void clearBreadcrumbs();
 
-    public static native void clearMetadataTab(String tab);
+    public static native void clearMetadataTab(@NonNull String tab);
 
-    public static native void removeMetadata(String tab, String key);
+    public static native void removeMetadata(@NonNull String tab,@NonNull  String key);
 
-    public static native void startedSession(String sessionID, String key,
+    public static native void startedSession(@NonNull String sessionID, @NonNull String key,
                                              int handledCount, int unhandledCount);
 
     public static native void stoppedSession();
 
-    public static native void updateAppVersion(String appVersion);
+    public static native void updateAppVersion(@NonNull String appVersion);
 
-    public static native void updateBuildUUID(String uuid);
+    public static native void updateBuildUUID(@NonNull String uuid);
 
-    public static native void updateContext(String context);
+    public static native void updateContext(@NonNull String context);
 
-    public static native void updateInForeground(boolean inForeground, String activityName);
+    public static native void updateInForeground(boolean inForeground,
+                                                 @NonNull String activityName);
 
     public static native void updateLowMemory(boolean lowMemory);
 
     public static native void updateOrientation(int orientation);
 
-    public static native void updateMetadata(Object metadata);
+    public static native void updateMetadata(@NonNull Object metadata);
 
-    public static native void updateReleaseStage(String releaseStage);
+    public static native void updateReleaseStage(@NonNull String releaseStage);
 
-    public static native void updateUserId(String newValue);
+    public static native void updateUserId(@NonNull String newValue);
 
-    public static native void updateUserEmail(String newValue);
+    public static native void updateUserEmail(@NonNull String newValue);
 
-    public static native void updateUserName(String newValue);
+    public static native void updateUserName(@NonNull String newValue);
 
     private boolean loggingEnabled = true;
     private final String reportDirectory;
@@ -101,7 +109,7 @@ public class NativeBridge implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object rawMessage) {
+    public void update(@NonNull Observable observable, @Nullable Object rawMessage) {
         NativeInterface.Message message = parseMessage(rawMessage);
         if (message == null) {
             return;
@@ -180,7 +188,7 @@ public class NativeBridge implements Observer {
     }
 
     @Nullable
-    private NativeInterface.Message parseMessage(Object rawMessage) {
+    private NativeInterface.Message parseMessage(@Nullable Object rawMessage) {
         if (rawMessage instanceof NativeInterface.Message) {
             NativeInterface.Message message = (NativeInterface.Message)rawMessage;
             if (message.type != NativeInterface.MessageType.INSTALL && !installed.get()) {
@@ -220,16 +228,28 @@ public class NativeBridge implements Observer {
         }
     }
 
-    private void handleInstallMessage(Object arg) {
+    private void handleInstallMessage(@NonNull Object arg) {
         lock.lock();
         try {
             if (installed.get()) {
                 warn("Received duplicate setup message with arg: " + arg);
-                return;
+            } else if (arg instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Object> values = (List<Object>)arg;
+                if (values.size() > 0 && values.get(0) instanceof Configuration) {
+                    Configuration config = (Configuration)values.get(0);
+                    ByteBuffer anrBuffer = null;
+                    if (values.size() > 1 && values.get(1) instanceof ByteBuffer) {
+                        anrBuffer = (ByteBuffer)values.get(1);
+                    }
+                    String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
+                    install(reportPath, config.getDetectNdkCrashes(), Build.VERSION.SDK_INT,
+                            is32bit(), anrBuffer);
+                    installed.set(true);
+                }
+            } else {
+                warn("Received install message with incorrect arg: " + arg);
             }
-            String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-            install(reportPath, true, Build.VERSION.SDK_INT, is32bit());
-            installed.set(true);
         } finally {
             lock.unlock();
         }

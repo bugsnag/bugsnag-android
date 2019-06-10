@@ -8,6 +8,7 @@
 
 #include "handlers/signal_handler.h"
 #include "handlers/cpp_handler.h"
+#include "handlers/anr_handler.h"
 #include "metadata.h"
 #include "report.h"
 #include "utils/serializer.h"
@@ -44,7 +45,7 @@ bsg_unwinder bsg_configured_unwind_style() {
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
-    jint _api_level, jboolean is32bit) {
+    jint _api_level, jboolean is32bit, jobject anr_buffer) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,
@@ -58,6 +59,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   if ((bool)auto_notify) {
     bsg_handler_install_signal(bugsnag_env);
     bsg_handler_install_cpp(bugsnag_env);
+  }
+  // Presumes ANR detection is enabled if Buffer exists
+  if (!(*env)->IsSameObject(env, anr_buffer, NULL)) {
+    bsg_handler_install_anr((*env)->GetDirectBufferAddress(env, anr_buffer));
   }
 
   // populate metadata from Java layer

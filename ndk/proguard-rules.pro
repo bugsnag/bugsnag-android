@@ -1,2 +1,0 @@
--keepattributes LineNumberTable,SourceFile
--keep class com.bugsnag.android.ndk.NativeBridge { *; }

@@ -2,13 +2,8 @@ plugins {
     id("io.gitlab.arturbosch.detekt").version("1.0.0-RC14")
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.kt3k.coveralls'
-apply plugin: 'kotlin-android'
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
 
 repositories {
     google()
@@ -20,14 +15,24 @@ android {
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
 
     defaultConfig {
+        // Note minSdkVersion must be >=21 for 64 bit architectures
         minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'proguard-rules.pro'
-    }
+        consumerProguardFiles "proguard-rules.pro"
 
-    buildTypes {
-        debug {
-            testCoverageEnabled = true
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_CPP_FEATURES=exceptions",
+                    "-DANDROID_STL=c++_static"
+            }
+        }
+
+        ndk {
+            if (project.hasProperty("ABI_FILTERS")) {
+                abiFilters project.ABI_FILTERS.split(",")
+            } else {
+                abiFilters "arm64-v8a", "armeabi-v7a", "armeabi", "x86", "x86_64"
+            }
         }
     }
 
@@ -38,9 +43,30 @@ android {
         baseline file("lint-baseline.xml")
     }
 
-    // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
-    libraryVariants.all {
-        it.generateBuildConfig.enabled = false
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
+    }
+
+    buildTypes.each { buildType ->
+        boolean detectNdkCrashes = project.hasProperty("releaseNdkArtefact")
+        buildType.buildConfigField("boolean", "DETECT_NDK_CRASHES", "$detectNdkCrashes")
+    }
+
+    testOptions.unitTests.all {
+        testLogging {
+            events "passed", "skipped", "failed", "standardOut", "standardError"
+            outputs.upToDateWhen {false}
+            showStandardStreams = true
+            info.events = ["passed", "skipped", "failed", "standardOut", "standardError"]
+        }
     }
 }
 
@@ -50,168 +76,9 @@ gradle.projectsEvaluated {
     }
 }
 
-coveralls {
-    jacocoReportPath = "$buildDir/reports/coverage/debug/report.xml"
-}
-dependencies {
-    api "com.android.support:support-annotations:$supportLibVersion"
-
-    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-
-    androidTestImplementation "com.android.support.test:runner:$supportTestVersion", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestImplementation "com.android.support.test:rules:$supportTestVersion", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-
-    if (project.hasProperty('infer')) {
-        implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
-    }
-}
-
-// Disable doclint:
-// https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // disable the crazy super-strict doclint tool in Java 8
-        //noinspection SpellCheckingInspection
-        options.addStringOption('Xdoclint:none', '-quiet')
-    }
-}
-
-task javadoc(type: Javadoc) {
-    description = "Generates javadocs, ignoring any doclint errors, and places the artefact in the root of the project"
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("docs")
-    failOnError false
-}
-
-version = "${project.VERSION_NAME}"
-group = "${project.GROUP}"
-archivesBaseName = "bugsnag-android" // rename aars from 'sdk' to 'bugsnag-android'
-
-task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier "sources"
-}
-publishing {
-    repositories {
-        maven {
-            if (VERSION_NAME.contains("SNAPSHOT")) {
-                url 'https://oss.sonatype.org/content/repositories/snapshots/'
-            } else {
-                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-            }
-            credentials {
-                username = project.hasProperty("NEXUS_USERNAME") ? "$NEXUS_USERNAME" : System.getenv("NEXUS_USERNAME")
-                password = project.hasProperty("NEXUS_PASSWORD") ? "$NEXUS_PASSWORD" : System.getenv("NEXUS_PASSWORD")
-            }
-        }
-    }
-    publications {
-        SDK(MavenPublication) {
-            groupId 'com.bugsnag'
-            artifactId 'bugsnag-android'
-            version "${project.VERSION_NAME}"
-            artifact(sourceJar)
-            artifact("$buildDir/outputs/aar/bugsnag-android-${project.VERSION_NAME}.aar")
-
-            pom.withXml {
-                Node root = asNode()
-
-                // top-level metadata
-                Node packaging = root.get('packaging').first()
-                packaging.value = project.POM_PACKAGING
-                root.appendNode('name', project.POM_NAME)
-                root.appendNode('description', project.POM_DESCRIPTION)
-                root.appendNode('url', project.POM_URL)
-
-                // licenses
-                Node licenseNode = root.appendNode('licenses').appendNode('license')
-                licenseNode.appendNode('name', project.POM_LICENCE_NAME)
-                licenseNode.appendNode('url', project.POM_LICENCE_URL)
-                licenseNode.appendNode('distribution', project.POM_LICENCE_DIST)
-
-                // developers
-                Node devNode = root.appendNode('developers').appendNode('developer')
-                devNode.appendNode('id', project.POM_DEVELOPER_ID)
-                devNode.appendNode('name', project.POM_DEVELOPER_NAME)
-
-                // scm
-                Node scmNode = root.appendNode('scm')
-                scmNode.appendNode('connection', project.POM_SCM_CONNECTION)
-                scmNode.appendNode('developerConnection', project.POM_SCM_DEV_CONNECTION)
-                scmNode.appendNode('url', project.POM_SCM_URL)
-
-                def dependenciesNode = root.appendNode('dependencies')
-
-                // Iterate over the implementation dependencies (we don't want the test ones), adding a <dependency> node for each
-                configurations.implementation.allDependencies.each {
-                    // Ensure dependencies such as fileTree are not included in the pom.
-                    if (it.name != 'unspecified') {
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.group)
-                        dependencyNode.appendNode('artifactId', it.name)
-                        dependencyNode.appendNode('version', it.version)
-                        dependencyNode.appendNode('scope', 'compile')
-                    }
-                }
-            }
-        }
-    }
-}
-signing {
-    sign publishing.publications
-}
-
-// Bintray upload
-bintray {
-    user = project.hasProperty("bintray_user") ? "$bintray_user" : System.getenv("bintray_user")
-    key = project.hasProperty("bintray_api_key") ? "$bintray_api_key" : System.getenv("bintray_api_key")
-    publications = ['SDK']
-    configurations = ['archives']
-
-    pkg {
-        repo = 'maven'
-        name = 'bugsnag-android'
-        userOrg = 'bugsnag'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/bugsnag/bugsnag-android.git'
-
-        version {
-            name = "${project.VERSION_NAME}"
-            vcsTag = "v${project.VERSION_NAME}"
-        }
-    }
-}
-
-apply from: "../checkstyle.gradle"
-
-detekt {
-    input = files("src")
-    filters = ".*/resources/.*,.*/build/.*"
-
-    reports {
-        html {
-            enabled = true
-        }
-    }
-}
-
-dexcount {
-    includeClasses = true
-    includeClassCount = true
-    includeFieldCount = true
-    includeTotalMethodCount = true
-    orderByMethodCount = true
-    verbose true
-}
-
+apply from: "../gradle/dependencies.gradle"
+apply from: "../gradle/release.gradle"
+apply from: "../gradle/detekt.gradle"
+apply from: "../gradle/dexcount.gradle"
+apply from: "../gradle/coveralls.gradle"
+apply from: "../gradle/checkstyle.gradle"
