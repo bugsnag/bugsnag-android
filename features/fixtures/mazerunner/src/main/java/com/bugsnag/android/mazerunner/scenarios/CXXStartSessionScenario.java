@@ -5,7 +5,7 @@ import android.os.Handler;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.flushAllSessions;
+import com.bugsnag.android.TestHarnessHooksKt;
 
 import android.support.annotation.NonNull;
 
@@ -29,7 +29,7 @@ public class CXXStartSessionScenario extends Scenario {
     public void run() {
         super.run();
         Bugsnag.getClient().startSession();
-        flushAllSessions();
+        TestHarnessHooksKt.flushAllSessions();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

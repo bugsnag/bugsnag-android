@@ -5,7 +5,7 @@ import android.os.Handler;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.flushAllSessions;
+import com.bugsnag.android.TestHarnessHooksKt;
 
 import android.support.annotation.NonNull;
 
@@ -32,7 +32,7 @@ public class CXXSessionInfoCrashScenario extends Scenario {
         Bugsnag.startSession();
         Bugsnag.notify(new Exception("For the first"));
         Bugsnag.notify(new Exception("For the second"));
-        flushAllSessions();
+        TestHarnessHooksKt.flushAllSessions();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
