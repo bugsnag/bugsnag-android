@@ -19,7 +19,9 @@ Feature: Native API
         And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the event "severity" equals "error"
         And the event "user.name" equals "Strulyegha  Ghaumon  Rabelban  Snefkal  Angengtai  Samperris  D"
         And the event "user.id" equals "9816734"
@@ -53,7 +55,9 @@ Feature: Native API
         Then the request payload contains a completed native report
         And the event "severity" equals "error"
         And the event "context" equals "Everest"
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the event "unhandled" is true
 
     Scenario: Leaving a breadcrumb followed by notifying in C
@@ -73,7 +77,9 @@ Feature: Native API
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event has a "request" breadcrumb named "Substandard nacho error"
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
@@ -96,7 +102,9 @@ Feature: Native API
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the event "severity" equals "error"
         And the event has a "log" breadcrumb named "Warm beer detected"
         And the event has a "manual" breadcrumb with message "Reverse thrusters"
@@ -120,7 +128,9 @@ Feature: Native API
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the event "severity" equals "error"
         And the event has a "manual" breadcrumb with message "Bridge connector activated"
         And the event "unhandled" is true
@@ -153,7 +163,9 @@ Feature: Native API
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the event "app.version" equals "22.312.749.78.300.810.24.167.32"
         And the event "context" equals "ObservableSessionInitializerStringParserStringSessionProxyGloba"
         And the event "unhandled" is true
@@ -177,7 +189,9 @@ Feature: Native API
         And I wait for 2 seconds
         And I wait to receive a request
         And the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the event "severity" equals "error"
         And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They wer"
         And the event "metaData.fruit.apple" equals "gala"

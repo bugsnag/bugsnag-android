@@ -77,16 +77,6 @@ steps:
 
   - wait
 
-  - label: ':android: SDK Instrumentation tests'
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]'
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
   - label: ':android: Android 6 end-to-end tests'
     plugins:
       artifacts#v1.2.0:
@@ -120,5 +110,15 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: SDK Instrumentation tests'
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]'
     concurrency: 5
     concurrency_group: 'browserstack-app'

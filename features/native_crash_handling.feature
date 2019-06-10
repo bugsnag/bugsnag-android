@@ -5,7 +5,9 @@ Feature: Native crash reporting
         And I configure Bugsnag for "CXXNullPointerScenario"
         And I wait to receive a request
         And the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
@@ -37,7 +39,9 @@ Feature: Native crash reporting
         And I configure Bugsnag for "CXXTrapScenario"
         And I wait to receive a request
         And the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGILL"
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
         And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
