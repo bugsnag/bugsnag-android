@@ -37,7 +37,7 @@ Feature: Synchronizing app/device metadata in the native layer
         And I send the app to the background for 10 seconds
         And I clear any error dialogue
         And I relaunch the app
-        And I configure Bugsnag for "CXXStartSessionScenario"
+        And I configure Bugsnag for "CXXDelayedCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is false

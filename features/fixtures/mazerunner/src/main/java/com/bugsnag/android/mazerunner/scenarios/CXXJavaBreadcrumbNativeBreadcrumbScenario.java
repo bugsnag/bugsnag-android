@@ -34,6 +34,6 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
             public void run() {
                 activate();
             }
-        }, 1000);
+        }, 500);
     }
 }

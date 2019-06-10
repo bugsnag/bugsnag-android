@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
+import com.bugsnag.android.flushAllSessions;
 
 import android.support.annotation.NonNull;
 
@@ -28,12 +29,12 @@ public class CXXStartSessionScenario extends Scenario {
     public void run() {
         super.run();
         Bugsnag.getClient().startSession();
-
+        flushAllSessions()
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 crash(0);
             }
-        }, 2000);
+        }, 500);
     }
 }
