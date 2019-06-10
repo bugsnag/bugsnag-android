@@ -2,6 +2,10 @@
 
 ## 4.15.0 (2019-06-10)
 
+This release adds NDK crash detection to `bugsnag-android`, which can be enabled by setting the `detectNdkCrashes` configuration option to true. For `bugsnag-android-ndk`, this option is enabled by default.
+
+After the next major release `bugsnag-android-ndk` will no longer be published, so it is recommended that you migrate to the `bugsnag-android` artefact.
+
 ### Enhancements
 
 * Improve ANR detection by using a signal handler to detect `SIGQUIT`
