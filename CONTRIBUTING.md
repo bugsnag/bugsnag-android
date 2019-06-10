@@ -260,12 +260,12 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
 - Once merged:
-  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew ndk:assembleRelease sdk:assembleRelease`
+  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew sdk:assembleRelease`
   - Release to GitHub:
     - [ ] Run `git tag vX.X.X && git push origin --tags`
     - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
     - [ ] Upload the generated `.aar` file from `{sdk,ndk}/build/outputs/aar/bugsnag-android-*.aar`
-  - [ ] Release to Maven Central and Bintray by running `./gradlew publish bintrayUpload`
+  - [ ] Release to Maven Central and Bintray by running `./gradlew sdk:assembleRelease publish bintrayUpload && ./gradlew sdk:assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”

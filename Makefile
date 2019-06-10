@@ -57,4 +57,4 @@ endif
 	@git commit -m "Release v$(VERSION)"
 	@git tag v$(VERSION)
 	@git push origin master v$(VERSION)
-	@./gradlew publish bintrayUpload
+	@./gradlew sdk:assembleRelease publish bintrayUpload && ./gradlew sdk:assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true
