@@ -2,7 +2,9 @@
 
 ## 4.15.0 (2019-06-10)
 
-This release adds NDK crash detection to `bugsnag-android`, which can be enabled by setting the `detectNdkCrashes` configuration option to true. For `bugsnag-android-ndk`, this option is enabled by default.
+`bugsnag-android` now supports detecting and reporting C/C++ crashes without a separate library (previously `bugsnag-android-ndk` was required for native error reporting).
+
+`bugsnag-android` and `bugsnag-android-ndk` have essentially been merged. The only difference is that in `bugsnag-android-ndk`, NDK crash detection is enabled by default. To enable it in `bugsnag-android`, the configuration option `detectNdkCrashes` should be set to true.
 
 After the next major release `bugsnag-android-ndk` will no longer be published, so it is recommended that you migrate to the `bugsnag-android` artefact.
 
