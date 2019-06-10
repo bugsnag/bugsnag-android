@@ -15,7 +15,7 @@ When("I run {string} and relaunch the app") do |event_type|
 end
 
 When("I clear any error dialogue") do
-  sleep(3000)
+  sleep(3)
   begin
     $driver.wait_for_element("android:id/button1", 1)
   rescue Selenium::WebDriver::Error::TimeoutError
