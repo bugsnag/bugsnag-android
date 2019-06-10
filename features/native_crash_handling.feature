@@ -8,7 +8,9 @@ Feature: Native crash reporting
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
-        And the exception "message" equals "Illegal instruction"
+        And the exception "message" equals one of:
+            | Illegal instruction   |
+            | Trace/breakpoint trap |
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -42,7 +44,9 @@ Feature: Native crash reporting
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
-        And the exception "message" equals "Illegal instruction"
+        And the exception "message" equals one of:
+            | Illegal instruction   |
+            | Trace/breakpoint trap |
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -109,7 +113,9 @@ Feature: Native crash reporting
         And I wait to receive a request
         And the request payload contains a completed native report
         And the exception "errorClass" equals "SIGILL"
-        And the exception "message" equals "Illegal instruction"
+        And the exception "message" equals one of:
+            | Illegal instruction   |
+            | Trace/breakpoint trap |
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
