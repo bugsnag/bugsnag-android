@@ -1,10 +1,8 @@
 # Changelog
 
-## TBD
+## 4.15.0 (2019-06-10)
 
 ### Enhancements
-
-* Make handledState.isUnhandled() publicly readable [#496](https://github.com/bugsnag/bugsnag-android/pull/496)
 
 * Improve ANR detection by using a signal handler to detect `SIGQUIT`
   events, removing dependence on "in foreground" calculations. This change
@@ -18,6 +16,8 @@
   [#491](https://github.com/bugsnag/bugsnag-android/pull/491)
 
 * Reduce AAR size [#492](https://github.com/bugsnag/bugsnag-android/pull/492)
+
+* Make handledState.isUnhandled() publicly readable [#496](https://github.com/bugsnag/bugsnag-android/pull/496)
 
 ## 4.14.2 (2019-05-21)
 
