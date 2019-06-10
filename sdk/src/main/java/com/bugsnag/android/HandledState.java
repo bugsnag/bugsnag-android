@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-final class HandledState implements JsonStream.Streamable {
+public final class HandledState implements JsonStream.Streamable {
 
 
     @StringDef({REASON_UNHANDLED_EXCEPTION, REASON_STRICT_MODE, REASON_HANDLED_EXCEPTION,
@@ -96,7 +96,7 @@ final class HandledState implements JsonStream.Streamable {
         return currentSeverity;
     }
 
-    boolean isUnhandled() {
+    public boolean isUnhandled() {
         return unhandled;
     }
 

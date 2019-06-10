@@ -4,6 +4,8 @@
 
 ### Enhancements
 
+* Make handledState.isUnhandled() publicly readable [#496](https://github.com/bugsnag/bugsnag-android/pull/496)
+
 * Improve ANR detection by using a signal handler to detect `SIGQUIT`
   events, removing dependence on "in foreground" calculations. This change
   should remove false positives. This change deprecates the configuration
