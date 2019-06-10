@@ -27,7 +27,7 @@ steps:
     plugins:
       - docker-compose#v2.6.0:
           build: android-instrumentation-tests
-          no-cache:
+          no-cache: true
       #     cache-from:
       #        - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
       # - docker-compose#v2.6.0:
@@ -38,7 +38,7 @@ steps:
     plugins:
       - docker-compose#v2.6.0:
           build: android-builder
-          no-cache:
+          no-cache: true
       #     cache-from:
       #       - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
       # - docker-compose#v2.6.0:
@@ -51,7 +51,7 @@ steps:
     plugins:
       - docker-compose#v2.6.0:
           build: android-maze-runner
-          no-cache:
+          no-cache: true
 
   - wait
 
