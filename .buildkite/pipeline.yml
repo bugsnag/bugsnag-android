@@ -26,8 +26,8 @@ steps:
   - label: ':docker: Build Android instrumentation image'
     plugins:
       - docker-compose#v2.6.0:
-          build:
-            - android-instrumentation-tests
+          build: android-instrumentation-tests
+          no-cache:
       #     cache-from:
       #        - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
       # - docker-compose#v2.6.0:
@@ -37,8 +37,8 @@ steps:
   - label: ':docker: Build Android apk builder image'
     plugins:
       - docker-compose#v2.6.0:
-          build:
-            - android-builder
+          build: android-builder
+          no-cache:
       #     cache-from:
       #       - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
       # - docker-compose#v2.6.0:
@@ -50,8 +50,8 @@ steps:
   - label: ':docker: Build Android maze runner image'
     plugins:
       - docker-compose#v2.6.0:
-          build:
-            - android-maze-runner
+          build: android-maze-runner
+          no-cache:
 
   - wait
 

@@ -16,15 +16,11 @@ ENV ANDROID_HOME="/sdk/"
 
 WORKDIR /app
 
-RUN ls -R
-
 COPY gradlew checkstyle.gradle build.gradle settings.gradle gradle.properties /app/
 COPY gradle/ /app/gradle/
 COPY sdk/ sdk/
 COPY ndk/ ndk/
 COPY scripts/ scripts/
-
-RUN ls -R
 
 # Everything above this point should be derived from android-base
 
