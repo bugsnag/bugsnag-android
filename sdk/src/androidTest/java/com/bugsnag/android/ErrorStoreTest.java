@@ -41,7 +41,7 @@ public class ErrorStoreTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("api-key");
-        errorStore = new ErrorStore(config, InstrumentationRegistry.getContext());
+        errorStore = new ErrorStore(config, InstrumentationRegistry.getContext(), null);
         assertNotNull(errorStore.storeDirectory);
         errorStorageDir = new File(errorStore.storeDirectory);
         FileUtils.clearFilesInDir(errorStorageDir);
@@ -55,18 +55,6 @@ public class ErrorStoreTest {
     @After
     public void tearDown() throws Exception {
         FileUtils.clearFilesInDir(errorStorageDir);
-    }
-
-    @Test
-    public void testWrite() throws Exception {
-        File[] files = errorStorageDir.listFiles();
-        int baseline = files.length; // record baseline number of files
-        Error error = writeErrorToStore();
-
-        files = errorStorageDir.listFiles();
-        assertEquals(baseline + 1, files.length);
-        File file = files[0];
-        checkFileMatchesErrorReport(file, error);
     }
 
     @NonNull
@@ -180,45 +168,6 @@ public class ErrorStoreTest {
         errorStore.cancelQueuedFiles(ogFiles);
         storedFiles = errorStore.findStoredFiles();
         assertEquals(1, storedFiles.size());
-    }
-
-    /**
-     * Ensures that the file can be serialised back into a JSON report, and contains the same info
-     * as the original
-     */
-    private static void checkFileMatchesErrorReport(File file, Error error) throws Exception {
-        // ensure that the file isn't empty
-        assertFalse(file.length() <= 0);
-
-        // ensure the file can be serialised into JSON report
-        JSONObject memory = getJsonObjectFromReport(new Report("api-key", file));
-        JSONObject disk = getJsonObjectFromReport(new Report("api-key", error));
-
-        // validate info
-        validateReportPayload(memory);
-        validateReportPayload(disk);
-    }
-
-    static void validateReportPayload(JSONObject payload) throws JSONException {
-        assertNotNull(payload);
-        assertEquals(4, payload.length());
-
-        JSONArray events = payload.getJSONArray("events");
-        assertNotNull(events);
-        assertEquals(1, events.length());
-
-        JSONObject error = events.getJSONObject(0);
-        assertNotNull(error);
-
-        JSONObject metaData = error.getJSONObject("metaData");
-        assertNotNull(metaData);
-    }
-
-    @NonNull
-    static JSONObject getJsonObjectFromReport(Report report) throws IOException, JSONException {
-        StringWriter stringWriter = new StringWriter();
-        report.toStream(new JsonStream(stringWriter));
-        return new JSONObject(stringWriter.toString());
     }
 
 }

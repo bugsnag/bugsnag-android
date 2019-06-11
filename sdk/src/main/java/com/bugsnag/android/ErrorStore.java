@@ -22,12 +22,17 @@ import java.util.concurrent.Semaphore;
 @ThreadSafe
 class ErrorStore extends FileStore<Error> {
 
+    interface Delegate {
+        void onErrorReadFailure(String filename);
+    }
+
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
+    private final Delegate delegate;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -47,9 +52,9 @@ class ErrorStore extends FileStore<Error> {
         }
     };
 
-    ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
-        super(config, appContext,
-            "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+    ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
+        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+        this.delegate = delegate;
     }
 
     void flushOnLaunch() {
@@ -133,22 +138,19 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Report report = null;
-            if (config.getBeforeSendTasks().size() > 0) {
-                report = new Report(config.getApiKey(), ErrorReader.readError(config, errorFile));
-                for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
-                    try {
-                        if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(errorFile));
-                            Logger.info("Deleting cancelled error file " + errorFile.getName());
-                            return;
-                        }
-                    } catch (Throwable ex) {
-                        Logger.warn("BeforeSend threw an Exception", ex);
+            Error error = ErrorReader.readError(config, errorFile);
+            Report report = new Report(config.getApiKey(), error);
+
+            for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+                try {
+                    if (!beforeSend.run(report)) {
+                        deleteStoredFiles(Collections.singleton(errorFile));
+                        Logger.info("Deleting cancelled error file " + errorFile.getName());
+                        return;
                     }
+                } catch (Throwable ex) {
+                    Logger.warn("BeforeSend threw an Exception", ex);
                 }
-            } else {
-                report = new Report(config.getApiKey(), errorFile);
             }
             config.getDelivery().deliver(report, config);
 
@@ -159,8 +161,10 @@ class ErrorStore extends FileStore<Error> {
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
+            if (delegate != null) {
+                delegate.onErrorReadFailure(errorFile.getName());
+            }
             deleteStoredFiles(Collections.singleton(errorFile));
-            Logger.warn("Problem sending unsent error from disk", exception);
         }
     }
 
