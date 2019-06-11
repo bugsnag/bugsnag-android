@@ -14,6 +14,7 @@ services:
       BROWSER_STACK_ACCESS_KEY:
       INSTRUMENTATION_DEVICES:
       APP_LOCATION:
+      NDK_VERSION:
 
   android-linter:
     build:
@@ -24,8 +25,6 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-builder
-      args:
-        - MAVEN_VERSION
     volumes:
       - ./build:/app/build
 

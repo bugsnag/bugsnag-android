@@ -33,8 +33,6 @@ echo "Android Tests [$(timestamp)]: Starting test run"
 build_response=$(curl -X POST "https://api-cloud.browserstack.com/app-automate/espresso/build" -d \ "{\"devices\": $INSTRUMENTATION_DEVICES, \"app\": \"$app_url\", \"deviceLogs\" : true, \"testSuite\": \"$test_url\"}" -H "Content-Type: application/json" -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY")
 build_id=$(echo $build_response | jq -r ".build_id")
 
-echo $build_response
-
 if [ -z $build_id ]; then
     echo "Android Tests [$(timestamp)]: Test start failed, exiting"
     echo $build_response
@@ -59,7 +57,6 @@ until [ $status == "\"done\"" ] || [ $WAIT_COUNT -eq 50 ]; do
 done
 
 echo "Android Tests [$(timestamp)]: Tests complete"
-echo $status_response
 
 NUMBER_OF_DEVICES=$(awk -F "," '{print NF}' <<< $INSTRUMENTATION_DEVICES)
 device_count=0

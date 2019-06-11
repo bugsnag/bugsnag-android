@@ -23,14 +23,6 @@ COPY ndk/ ndk/
 COPY scripts/ scripts/
 
 # Everything above this point should be derived from android-base
-
-ARG NDK_VERSION=r16b
-RUN scripts/install-ndk.sh ${NDK_VERSION}
-
 RUN sed --in-place="" --expression="s/'armeabi',//" ndk/build.gradle
 
-RUN ./gradlew
-RUN ./gradlew sdk:assembleAndroidTest --stacktrace
-RUN ./gradlew ndk:assembleAndroidTest --stacktrace
-
-CMD ./scripts/run-instrumentation-test.sh
+CMD ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
