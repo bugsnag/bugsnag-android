@@ -252,7 +252,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash(
     printf("This one here: %s\n", crash_improper_cast(39));
 }
 
-JNIEXPORT void JNICALL
+JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXDivideByZeroScenario_crash(JNIEnv *env,
                                                                             jobject instance,
                                                                             jint counter) {

@@ -24,6 +24,6 @@ public class CXXDivideByZeroScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        crash(0);
+        int val = crash(0);
     }
 }
