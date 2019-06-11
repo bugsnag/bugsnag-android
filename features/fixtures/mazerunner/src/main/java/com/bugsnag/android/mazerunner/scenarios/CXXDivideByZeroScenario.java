@@ -14,7 +14,7 @@ public class CXXDivideByZeroScenario extends Scenario {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash(int counter);
+    public native int crash(int counter);
 
     public CXXDivideByZeroScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
