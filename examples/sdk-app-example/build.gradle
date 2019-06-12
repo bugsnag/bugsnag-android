@@ -6,13 +6,13 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$agpVersion"
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.1.1'
+        classpath "com.bugsnag:bugsnag-android-gradle-plugin:4.2.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
 
 repositories {
     google()
@@ -23,10 +23,10 @@ repositories {
 android {
     signingConfigs {
         config {
-            keyAlias 'password'
-            keyPassword 'password'
-            storeFile file('../../features/fixtures/fakekeys.jks')
-            storePassword 'password'
+            keyAlias "password"
+            keyPassword "password"
+            storeFile file("../../features/fixtures/fakekeys.jks")
+            storePassword "password"
         }
     }
     compileSdkVersion 28
@@ -37,24 +37,23 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
         ndk {
-            // NOTE: remove armeabi if testing on NDK r17+
-            abiFilters 'arm64-v8a', 'armeabi-v7a', 'armeabi', 'x86', 'x86_64'
+            abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.pro'
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard.pro"
             signingConfig signingConfigs.config
         }
     }
     lintOptions {
-        disable 'OnClick'
+        disable "OnClick"
         abortOnError true
     }
     externalNativeBuild {
         cmake {
-            path 'CMakeLists.txt'
+            path "CMakeLists.txt"
         }
     }
 }
@@ -65,10 +64,9 @@ def usingLocalArtefact = false
 
 dependencies {
     if (usingLocalArtefact) {
-        implementation project(path: ':sdk', configuration: 'default')
-        api project(path: ':ndk', configuration: 'default')
+        implementation project(path: ":sdk", configuration: "default")
     } else {
-        implementation 'com.bugsnag:bugsnag-android-ndk:4.12.0'
+        implementation "com.bugsnag:bugsnag-android-ndk:4.15.0"
     }
 
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
@@ -76,9 +74,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
-apply from: 'checkstyle.gradle'
-apply plugin: 'com.bugsnag.android.gradle'
+apply from: "checkstyle.gradle"
+apply plugin: "com.bugsnag.android.gradle"
+
+bugsnag {
+    failOnUploadError false
+}
 
 if (usingLocalArtefact) {
-    apply from: 'ndk_local_setup.gradle'
+    apply from: "ndk_local_setup.gradle"
 }

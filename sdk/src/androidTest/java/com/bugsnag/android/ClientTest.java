@@ -193,6 +193,8 @@ public class ClientTest {
         assertEquals(config.getEnableExceptionHandler(), protoConfig.getEnableExceptionHandler());
         assertEquals(config.getPersistUserBetweenSessions(),
             protoConfig.getPersistUserBetweenSessions());
+        assertEquals(false, protoConfig.getDetectAnrs());
+        assertEquals(false, protoConfig.getDetectNdkCrashes());
     }
 
     @Test
@@ -213,6 +215,8 @@ public class ClientTest {
         data.putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false);
         data.putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true);
         data.putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", true);
+        data.putBoolean("com.bugsnag.android.DETECT_ANRS", true);
+        data.putBoolean("com.bugsnag.android.DETECT_NDK_CRASHES", true);
 
         Configuration protoConfig = new Configuration("api-key");
         ConfigFactory.populateConfigFromManifest(protoConfig, data);
@@ -225,6 +229,8 @@ public class ClientTest {
         assertEquals(false, protoConfig.getEnableExceptionHandler());
         assertEquals(true, protoConfig.getPersistUserBetweenSessions());
         assertEquals(true, protoConfig.getAutoCaptureSessions());
+        assertEquals(true, protoConfig.getDetectAnrs());
+        assertEquals(true, protoConfig.getDetectNdkCrashes());
     }
 
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs

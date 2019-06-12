@@ -370,7 +370,8 @@ public class Error implements JsonStream.Streamable {
         return config.shouldIgnoreClass(getExceptionName());
     }
 
-    HandledState getHandledState() {
+    @NonNull
+    public HandledState getHandledState() {
         return handledState;
     }
 

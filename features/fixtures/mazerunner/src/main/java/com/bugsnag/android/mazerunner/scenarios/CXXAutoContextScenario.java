@@ -2,13 +2,13 @@ package com.bugsnag.android.mazerunner.scenarios;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.bugsnag.android.Configuration;
-
-import android.content.Intent;
-import android.support.annotation.NonNull;
-
 import com.bugsnag.android.mazerunner.SecondActivity;
+
+import android.support.annotation.NonNull;
 
 public class CXXAutoContextScenario extends Scenario {
 
@@ -29,16 +29,12 @@ public class CXXAutoContextScenario extends Scenario {
     public void run() {
         super.run();
         Context context = getContext();
+        registerActivityLifecycleCallbacks();
         context.startActivity(new Intent(context, SecondActivity.class));
+    }
 
-        if (context instanceof Activity) {
-            Activity activity = (Activity)context;
-            activity.getWindow().getDecorView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    activate();
-                }
-            }, 2000);
-        }
+    @Override
+    public void onActivityStarted(Activity activity) {
+        activate();
     }
 }

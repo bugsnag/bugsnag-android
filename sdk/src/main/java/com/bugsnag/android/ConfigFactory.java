@@ -22,6 +22,8 @@ class ConfigFactory {
     private static final String MF_AUTO_CAPTURE_SESSIONS =
         BUGSNAG_NAMESPACE + ".AUTO_CAPTURE_SESSIONS";
     private static final String MF_API_KEY = BUGSNAG_NAMESPACE + ".API_KEY";
+    private static final String MF_DETECT_NDK_CRASHES = BUGSNAG_NAMESPACE + ".DETECT_NDK_CRASHES";
+    private static final String MF_DETECT_ANRS = BUGSNAG_NAMESPACE + ".DETECT_ANRS";
     static final String MF_BUILD_UUID = BUGSNAG_NAMESPACE + ".BUILD_UUID";
 
     /**
@@ -101,6 +103,12 @@ class ConfigFactory {
         config.setPersistUserBetweenSessions(
             data.getBoolean(MF_PERSIST_USER_BETWEEN_SESSIONS, false));
 
+        if (data.containsKey(MF_DETECT_NDK_CRASHES)) {
+            config.setDetectNdkCrashes(data.getBoolean(MF_DETECT_NDK_CRASHES));
+        }
+        if (data.containsKey(MF_DETECT_ANRS)) {
+            config.setDetectAnrs(data.getBoolean(MF_DETECT_ANRS));
+        }
         if (data.containsKey(MF_AUTO_CAPTURE_SESSIONS)) {
             config.setAutoCaptureSessions(data.getBoolean(MF_AUTO_CAPTURE_SESSIONS));
         }

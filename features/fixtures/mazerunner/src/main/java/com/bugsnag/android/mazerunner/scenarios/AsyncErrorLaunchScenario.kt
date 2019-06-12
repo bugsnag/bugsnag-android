@@ -21,7 +21,6 @@ internal class AsyncErrorLaunchScenario(config: Configuration,
         writeErrorToStore(Bugsnag.getClient())
         flushErrorStoreOnLaunch(Bugsnag.getClient())
         flushErrorStoreAsync(Bugsnag.getClient())
-        Thread.sleep(50)
     }
 
 }

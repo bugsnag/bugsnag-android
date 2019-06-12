@@ -48,7 +48,8 @@ public class Configuration extends Observable implements Observer {
     private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
 
-    private boolean detectAnrs = !Debug.isDebuggerConnected();
+    private boolean detectAnrs = false;
+    private boolean detectNdkCrashes = BuildConfig.DETECT_NDK_CRASHES;
     private long anrThresholdMs = 5000;
 
     @NonNull
@@ -657,11 +658,10 @@ public class Configuration extends Observable implements Observer {
 
     /**
      * Sets whether <a href="https://developer.android.com/topic/performance/vitals/anr">ANRs</a>
-     * should be reported to Bugsnag. By default, Bugsnag will record an ANR whenever the main
-     * thread has been blocked for 5000 milliseconds or longer, when no debugger is attached to
-     * the app.
+     * should be reported to Bugsnag. When enabled, Bugsnag will record an ANR whenever the main
+     * thread has been blocked for 5000 milliseconds or longer.
      * <p/>
-     * If you wish to disable ANR detection, you should set this property to false; if you wish to
+     * If you wish to enable ANR detection, you should set this property to true; if you wish to
      * configure the time threshold required to capture an ANR, you should use the
      * {@link #setAnrThresholdMs(long)} property.
      *
@@ -673,9 +673,32 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * @return whether NDK crashes will be reported by bugsnag
+     * @see #setDetectNdkCrashes(boolean)
+     */
+    public boolean getDetectNdkCrashes() {
+        return detectNdkCrashes;
+    }
+
+    /**
+     * Determines whether NDK crashes such as signals and exceptions should be reported by bugsnag.
+     *
+     * If you are using bugsnag-android this flag is false by default; if you are using
+     * bugsnag-android-ndk this flag is true by default.
+     *
+     * @param detectNdkCrashes whether NDK crashes should be reported
+     */
+    public void setDetectNdkCrashes(boolean detectNdkCrashes) {
+        this.detectNdkCrashes = detectNdkCrashes;
+    }
+
+    /**
      * @return the threshold at which ANRs are detected, in ms
      * @see #setAnrThresholdMs(long)
+     *
+     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
      */
+    @Deprecated
     public long getAnrThresholdMs() {
         return anrThresholdMs;
     }
@@ -686,18 +709,19 @@ public class Configuration extends Observable implements Observer {
      * by Bugsnag. By default, Bugsnag will record an ANR whenever the main thread has been blocked
      * for 5000 milliseconds or longer.
      * <p/>
-     * If you wish to disable ANR detection completely, you should set the
-     * {@link #setDetectAnrs(boolean)} property to false.
+     * If you wish to enable ANR detection, you should set the {@link #setDetectAnrs(boolean)}
+     * property to true.
      * <p/>
      * Attempting to set this property to any value below 1000ms will result in the anrThresholdMs
      * being set as 1000ms.
      *
      * @param anrThresholdMs the threshold in ms at which ANRs should be detected
      * @see #setDetectAnrs(boolean)
+     *
+     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
      */
+    @Deprecated
     public void setAnrThresholdMs(long anrThresholdMs) {
-        this.anrThresholdMs = anrThresholdMs < BlockedThreadDetector.MIN_CHECK_INTERVAL_MS
-            ? BlockedThreadDetector.MIN_CHECK_INTERVAL_MS : anrThresholdMs;
     }
 
     /**

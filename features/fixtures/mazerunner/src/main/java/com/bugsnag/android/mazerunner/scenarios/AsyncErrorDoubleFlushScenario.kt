@@ -20,7 +20,6 @@ internal class AsyncErrorDoubleFlushScenario(config: Configuration,
         writeErrorToStore(Bugsnag.getClient())
         flushErrorStoreAsync(Bugsnag.getClient())
         flushErrorStoreAsync(Bugsnag.getClient())
-        Thread.sleep(50)
     }
 
 }

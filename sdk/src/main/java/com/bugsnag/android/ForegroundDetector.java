@@ -33,9 +33,10 @@ class ForegroundDetector {
         ActivityManager.RunningAppProcessInfo info = getProcessInfo();
 
         if (info != null) {
-            return info.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
-        } else { // prefer a potential false positive if process info not available
-            return true;
+            return info.importance
+                <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+        } else { // prefer a false negative if process info not available
+            return false;
         }
     }
 

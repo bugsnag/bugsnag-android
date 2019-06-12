@@ -22,7 +22,6 @@ internal class AsyncErrorConnectivityScenario(config: Configuration,
         writeErrorToStore(Bugsnag.getClient())
         flushErrorStoreAsync(Bugsnag.getClient())
         flushErrorStoreOnLaunch(Bugsnag.getClient())
-        Thread.sleep(50)
     }
 
 }

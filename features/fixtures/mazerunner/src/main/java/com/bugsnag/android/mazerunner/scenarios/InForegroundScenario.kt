@@ -1,6 +1,9 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.app.Activity
 import android.content.Context
+import android.os.Bundle
+
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import java.lang.Thread
@@ -19,14 +22,11 @@ internal class InForegroundScenario(config: Configuration,
 
     override fun run() {
         super.run()
+        registerActivityLifecycleCallbacks()
+    }
 
-        val thread = HandlerThread("HandlerThread")
-        thread.start()
-        Handler(thread.looper).post {
-            Thread.sleep(3000)
-            Bugsnag.notify(generateException())
-        }
-
+    override fun onActivityStopped(activity: Activity) {
+        Bugsnag.notify(generateException())
     }
 
 }

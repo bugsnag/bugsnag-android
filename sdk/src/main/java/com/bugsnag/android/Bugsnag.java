@@ -75,7 +75,6 @@ public final class Bugsnag {
         synchronized (lock) {
             if (client == null) {
                 client = new Client(androidContext, config);
-                NativeInterface.configureClientObservers(client);
             } else {
                 logClientInitWarning();
             }
