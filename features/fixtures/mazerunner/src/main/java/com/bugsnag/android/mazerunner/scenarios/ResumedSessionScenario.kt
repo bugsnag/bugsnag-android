@@ -25,7 +25,8 @@ internal class ResumedSessionScenario(config: Configuration,
         Handler(thread.looper).post {
             // send 1st exception
             client.startSession()
-            flushAllSessions()
+            # TODO: Fix this to not require a sleep at a later date
+            Thread.sleep(50)
             client.notifyBlocking(generateException())
 
             // send 2nd exception after resuming a session
