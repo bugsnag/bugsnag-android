@@ -1,4 +1,4 @@
 ./scripts/install-ndk.sh
 
-./gradlew
-./gradlew sdk:assembleAndroidTest
+./gradlew --stacktrace
+./gradlew sdk:assembleAndroidTest --stacktrace
