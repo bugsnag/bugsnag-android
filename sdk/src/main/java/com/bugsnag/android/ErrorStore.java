@@ -183,12 +183,85 @@ class ErrorStore extends FileStore<Error> {
         return launchCrashes;
     }
 
+    String calculateFilenameForError(Error error) {
+        char handled = error.getHandledState().isUnhandled() ? 'u' : 'h';
+        char severity = error.getSeverity().getName().charAt(0);
+        String errClass = error.getExceptionName();
+        return String.format("%s-%s-%s", severity, handled, errClass);
+    }
+
+    /**
+     * Generates minimal error information from a filename, if the report was incomplete/corrupted.
+     * This allows bugsnag to send the severity, handled state, and error class as a minimal
+     * report.
+     *
+     * Error information is encoded in the filename for recent notifier versions
+     * as "$severity-$handled-$errorClass", and is not present in legacy versions
+     *
+     * @param filename the filename
+     * @return the minimal error, or null if the filename does not match the expected pattern.
+     */
+    Error generateErrorFromFilename(String filename) {
+        if (filename == null) {
+            return null;
+        }
+
+        try {
+            int errorInfoStart = filename.indexOf('_') + 1;
+            int errorInfoEnd = filename.indexOf('_', errorInfoStart);
+            String encodedErr = filename.substring(errorInfoStart, errorInfoEnd);
+
+            char sevChar = encodedErr.charAt(0);
+            Severity severity = calculateSeverity(sevChar);
+
+            boolean unhandled = encodedErr.charAt(2) == 'u';
+            HandledState handledState = HandledState.newInstance(unhandled
+                ? HandledState.REASON_UNHANDLED_EXCEPTION : HandledState.REASON_HANDLED_EXCEPTION);
+
+            // default if error has no name
+            String errClass = "";
+
+            if (encodedErr.length() >= 4) {
+                errClass = encodedErr.substring(4);
+            }
+            BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
+            return new Error(config, exc, handledState, severity, null, null);
+        } catch (IndexOutOfBoundsException exc) {
+            // simplifies above implementation by avoiding need for several length checks.
+            return null;
+        }
+    }
+
+    private Severity calculateSeverity(char sevChar) {
+        Severity severity;
+        switch (sevChar) {
+            case 'e':
+                severity = Severity.ERROR;
+                break;
+            case 'w':
+                severity = Severity.WARNING;
+                break;
+            case 'i':
+                severity = Severity.INFO;
+                break;
+            default:  // something went wrong serialising the filename
+                severity = Severity.ERROR;
+                break;
+        }
+        return severity;
+    }
+
     @NonNull
     @Override
     String getFilename(Object object) {
         String suffix = "";
+        String encodedInfo = "";
+        // TODO NDK getFileName should always be U + E, as it's fatal?
+
         if (object instanceof Error) {
             Error error = (Error) object;
+            encodedInfo = calculateFilenameForError(error);
+
             Map<String, Object> appData = error.getAppData();
             if (appData instanceof Map) {
                 Object duration = appData.get("duration");
@@ -198,10 +271,13 @@ class ErrorStore extends FileStore<Error> {
                 }
             }
         } else {
+            encodedInfo = "e-u-";
             suffix = "not-jvm";
         }
-        return String.format(Locale.US, "%s%d_%s%s.json",
-                storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
+        String uuid = UUID.randomUUID().toString();
+        long timestamp = System.currentTimeMillis();
+        return String.format(Locale.US, "%s%d%s_%s%s.json",
+                storeDirectory, timestamp, encodedInfo, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {

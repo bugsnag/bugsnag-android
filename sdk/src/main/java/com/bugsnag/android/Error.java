@@ -461,6 +461,9 @@ public class Error implements JsonStream.Streamable {
         }
 
         private Session getSession(HandledState handledState) {
+            if (sessionTracker == null) {
+                return null;
+            }
             Session currentSession = sessionTracker.getCurrentSession();
             Session reportedSession = null;
 
