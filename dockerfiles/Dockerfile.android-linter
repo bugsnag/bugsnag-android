@@ -34,5 +34,5 @@ COPY config/ config/
 RUN sed --in-place="" --expression="s/'armeabi',//" sdk/build.gradle examples/sdk-app-example/build.gradle
 
 CMD ./gradlew lint checkstyle detekt && \
-    cppcheck --enable=warning,performance sdk/src/main/jni -i sdk/src/main/jni/deps -i sdk/src/main/jni/external --error-exitcode
+    cppcheck --enable=warning,performance sdk/src/main/jni -i sdk/src/main/jni/deps -i sdk/src/main/jni/external
 
