@@ -16,10 +16,9 @@ ENV ANDROID_HOME="/sdk/"
 
 WORKDIR /app
 
-COPY gradlew checkstyle.gradle build.gradle settings.gradle gradle.properties /app/
+COPY gradlew build.gradle settings.gradle gradle.properties /app/
 COPY gradle/ /app/gradle/
 COPY sdk/ sdk/
-COPY ndk/ ndk/
 COPY scripts/ scripts/
 
 RUN scripts/install-ndk.sh
