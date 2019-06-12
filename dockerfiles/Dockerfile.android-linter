@@ -31,8 +31,8 @@ RUN apt-get install -y cppcheck
 COPY examples/sdk-app-example/ examples/sdk-app-example/
 COPY config/ config/
 
-RUN sed --in-place="" --expression="s/'armeabi',//" ndk/build.gradle examples/sdk-app-example/build.gradle
+RUN sed --in-place="" --expression="s/'armeabi',//" sdk/build.gradle examples/sdk-app-example/build.gradle
 
 CMD ./gradlew lint checkstyle detekt && \
-    cppcheck --enable=warning,performance ndk/src/main/jni -i ndk/src/main/jni/deps -i ndk/src/main/jni/external --error-exitcode=1
+    cppcheck --enable=warning,performance sdk/src/main/jni -i sdk/src/main/jni/deps -i sdk/src/main/jni/external --error-exitcode
 
