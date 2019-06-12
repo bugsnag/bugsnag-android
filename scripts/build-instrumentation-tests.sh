@@ -2,4 +2,3 @@
 
 ./gradlew
 ./gradlew sdk:assembleAndroidTest
-./gradlew ndk:assembleAndroidTest
