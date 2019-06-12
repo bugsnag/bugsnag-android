@@ -81,17 +81,6 @@ Feature: Native crash reporting
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
-    Scenario: Divide by zero
-        When I run "CXXDivideByZeroScenario" and relaunch the app
-        And I configure Bugsnag for "CXXDivideByZeroScenario"
-        And I wait to receive a request
-        And the request payload contains a completed native report
-        And the exception "errorClass" equals "SIGFPE"
-        And the exception "message" equals "Floating-point exception"
-        And the exception "type" equals "c"
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
     Scenario: Program abort()
         When I run "CXXAbortScenario" and relaunch the app
         And I configure Bugsnag for "CXXAbortScenario"

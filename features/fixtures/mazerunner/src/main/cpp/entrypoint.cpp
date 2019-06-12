@@ -252,14 +252,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash(
     printf("This one here: %s\n", crash_improper_cast(39));
 }
 
-JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXDivideByZeroScenario_crash(JNIEnv *env,
-                                                                            jobject instance,
-                                                                            jint counter) {
-    int amount = crash_floating_point(counter);
-    return amount;
-}
-
 // defined in libs/[ABI]/libmonochrome.so
 int something_innocuous(int input);
 
