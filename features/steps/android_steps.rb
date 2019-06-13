@@ -49,6 +49,13 @@ When("I relaunch the app") do
   $driver.launch_app
 end
 
+When("I swipe the screen") do
+  pp $driver
+  touch_action = Appium::TouchAction.new
+  touch_action.swipe(:start_x => 50, :start_y => 50, :end_x => 50, :end_y => 300, :duration => 500)
+  touch_action.perform
+end
+
 When("I configure the app to run in the {string} state") do |event_metadata|
   steps %Q{
     Given the element "scenarioMetaData" is present
