@@ -1,10 +1,10 @@
 Feature: Reporting OOMs
 
 Scenario: Out of Memory Error captured
-    When I run "OomScenario" and relaunch the app
-    And I configure Bugsnag for "OomScenario"
-    Then I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    When I run "OomScenario"
+    Then I should receive a request
+    And the request is a valid for the error reporting API
+    And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
     And the payload field "notifier.name" equals "Android Bugsnag Notifier"
-    And the payload field "events" is an array with 1 elements
+    And the payload field "events" is an array with 1 element
     And the exception "errorClass" equals "java.lang.OutOfMemoryError"

@@ -17,11 +17,16 @@ public class CXXNullPointerScenario extends Scenario {
 
     public CXXNullPointerScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override
     public void run() {
         super.run();
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
         crash();
     }
 }

@@ -9,6 +9,10 @@ import com.bugsnag.android.Configuration
  */
 internal class UserEmailScenario(config: Configuration,
                                  context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+    }
+
     override fun run() {
         super.run()
         Bugsnag.setUser(null, "user@example.com", null)

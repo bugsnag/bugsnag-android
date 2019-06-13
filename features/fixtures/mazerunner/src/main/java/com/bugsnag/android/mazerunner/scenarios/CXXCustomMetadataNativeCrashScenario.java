@@ -20,11 +20,16 @@ public class CXXCustomMetadataNativeCrashScenario extends Scenario {
 
     public CXXCustomMetadataNativeCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override
     public void run() {
         super.run();
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
         Bugsnag.addToTab("Riker Ipsum", "examples", "I'll be sure to note that in my log. You enjoyed that. They were just sucked into space. How long can two people talk about nothing? I've had twelve years to think about it. And if I had it to do over again, I would have grabbed the phaser and pointed it at you instead of them.");
         Bugsnag.addToTab("fruit", "apple", "gala");
         Bugsnag.addToTab("fruit", "counters", 47);

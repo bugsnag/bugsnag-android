@@ -22,8 +22,9 @@ import com.bugsnag.android.*
 internal class StartupCrashFlushScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
     init {
+        config.setAutoCaptureSessions(false)
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
             if ("CrashOfflineWithDelay" == eventMetaData || "CrashOfflineAtStartup" == eventMetaData) {
                 // Part 2 - Persist a startup crash to disk
                 disableAllDelivery(config)

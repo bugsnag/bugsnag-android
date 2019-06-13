@@ -1,36 +1,38 @@
 # Configure app environment
-bs_username = ENV['BROWSER_STACK_USERNAME']
-bs_access_key = ENV['BROWSER_STACK_ACCESS_KEY']
-bs_local_id = ENV['BROWSER_STACK_LOCAL_IDENTIFIER'] || 'maze_browser_stack_test_id'
-bs_device = ENV['DEVICE_TYPE']
-app_location = ENV['APP_LOCATION']
+RUNNING_CI = ENV['TRAVIS'] == 'true'
 
-# Set this explicitly
-$api_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
+# Install latest versions of bugsnag-android
+run_required_commands([
+  [
+    "./gradlew", "sdk:assembleRelease", "-PreleaseNdkArtefact=true",
+    "-x", "lintVitalRelease",
+    "-x", "countReleaseDexMethods"
+  ],
+  ["cp", "sdk/build/outputs/aar/bugsnag-android-*.aar",
+   "features/fixtures/mazerunner/libs/bugsnag-android-ndk.aar"],
+])
 
-After do |scenario|
-  $driver.reset
+# Build the harness app
+Dir.chdir('features/fixtures/mazerunner') do
+  run_required_commands([
+    [
+      "../../../gradlew", "assembleRelease",
+      "-x", "lintVitalRelease"
+    ],
+  ])
 end
 
-AfterConfiguration do |config|
-  AppAutomateDriver.new(bs_username, bs_access_key, bs_local_id, bs_device, app_location)
-  $driver.start_driver
+# Close any lingering ANR dialogs
+Before('@anr') do
+  run_required_commands([['features/scripts/close-anr-dialog.sh']])
+end
+After('@anr') do
+  sleep(5)
+  run_required_commands([['features/scripts/close-anr-dialog.sh']])
 end
 
+# Reset orientation after each scenario
 at_exit do
-  $driver.driver_quit
-end
-
-
-
-FAILED_SCENARIO_OUTPUT_PATH = "/app/maze-output"
-
-After do |scenario|
-  if scenario.failed?
-    write_failed_requests_to_disk(scenario)
-  end
-end
-
-def write_failed_requests_to_disk(scenario)
-  pp Server.current_request[:body]
+  ENV['DEVICE_ORIENTATION'] = 'portrait'
+  run_required_commands([["features/scripts/rotate-device.sh"]])
 end

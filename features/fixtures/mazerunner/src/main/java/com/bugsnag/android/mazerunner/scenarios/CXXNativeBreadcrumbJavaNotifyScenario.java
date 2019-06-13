@@ -19,6 +19,7 @@ public class CXXNativeBreadcrumbJavaNotifyScenario extends Scenario {
 
     public CXXNativeBreadcrumbJavaNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

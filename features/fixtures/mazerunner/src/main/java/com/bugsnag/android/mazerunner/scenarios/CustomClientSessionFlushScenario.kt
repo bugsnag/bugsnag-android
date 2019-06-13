@@ -14,19 +14,20 @@ import com.bugsnag.android.createDefaultDelivery
 internal class CustomClientSessionFlushScenario(config: Configuration,
                                                 context: Context) : Scenario(config, context) {
     init {
-        if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("eventMetaData")
-            if ("online" == eventMetaData) {
-                config.delivery = createCustomHeaderDelivery(context)
-            } else {
-                disableAllDelivery(config)
-            }
-        }
+        config.setAutoCaptureSessions(false)
+        disableAllDelivery(config)
     }
 
     override fun run() {
         super.run()
 
-        Bugsnag.startSession()
+        if (eventMetaData == "online") {
+            // simulate activity lifecycle callback occurring before api client can be set
+            Bugsnag.startSession()
+            config.delivery = createCustomHeaderDelivery(context)
+        } else {
+            Bugsnag.startSession()
+        }
     }
+
 }

@@ -2,4 +2,4 @@
 FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:v2-cli as android-maze-runner
 RUN apk add --no-cache ruby-dev build-base libffi-dev curl-dev curl
 
-COPY features features
+COPY tests/features features

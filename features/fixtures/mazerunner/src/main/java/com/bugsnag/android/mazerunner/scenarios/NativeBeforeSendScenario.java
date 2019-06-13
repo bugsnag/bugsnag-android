@@ -20,6 +20,7 @@ public class NativeBeforeSendScenario extends Scenario {
 
     public NativeBeforeSendScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
         config.beforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {
@@ -33,6 +34,10 @@ public class NativeBeforeSendScenario extends Scenario {
     @Override
     public void run() {
         super.run();
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
         crash();
     }
 }

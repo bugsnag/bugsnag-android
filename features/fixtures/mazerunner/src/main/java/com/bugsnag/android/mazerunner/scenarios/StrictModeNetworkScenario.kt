@@ -11,6 +11,10 @@ import java.net.URL
  */
 internal class StrictModeNetworkScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+    }
+
     override fun run() {
         super.run()
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()

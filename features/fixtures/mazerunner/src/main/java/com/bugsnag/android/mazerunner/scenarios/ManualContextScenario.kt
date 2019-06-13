@@ -10,6 +10,10 @@ import com.bugsnag.android.mazerunner.scenarios.Scenario
  */
 internal class ManualContextScenario(config: Configuration,
                                      context: Context) : Scenario(config, context) {
+    init {
+        config.setAutoCaptureSessions(false)
+    }
+
     override fun run() {
         super.run()
         Bugsnag.setContext("FooContext")

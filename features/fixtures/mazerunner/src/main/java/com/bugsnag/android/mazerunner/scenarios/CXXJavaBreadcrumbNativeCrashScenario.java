@@ -18,11 +18,16 @@ public class CXXJavaBreadcrumbNativeCrashScenario extends Scenario {
 
     public CXXJavaBreadcrumbNativeCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override
     public void run() {
         super.run();
+        String metadata = getEventMetaData();
+        if (metadata != null && metadata.equals("non-crashy")) {
+            return;
+        }
         Bugsnag.leaveBreadcrumb("Bridge connector activated");
         activate();
     }

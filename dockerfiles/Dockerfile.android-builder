@@ -35,7 +35,7 @@ ENV PATH="${PATH}:/app/apache-maven-3.6.1/bin"
 
 # Setup signing
 RUN apt-get install -y gnupg1
-COPY features/scripts/generate_gpg_key generate_gpg_key
+COPY tests/features/scripts/generate_gpg_key generate_gpg_key
 RUN gpg1 --gen-key --batch generate_gpg_key
 RUN gpg1 --list-keys | awk -F '[/\ ]' 'FNR==3{printf "signing.keyId=%s\n", $5}' >> ~/.gradle/gradle.properties
 RUN echo "signing.password=password" >> ~/.gradle/gradle.properties
@@ -46,7 +46,7 @@ RUN sed -i -e 's/VERSION_NAME=.*/VERSION_NAME=9.9.9/g' gradle.properties
 RUN ls -R sdk
 RUN ./gradlew assembleRelease publishSDKPublicationToMavenLocal && ./gradlew assembleRelease publishSDKPublicationToMavenLocal -PreleaseNdkArtefact=true
 
-COPY features/ /app/features
+COPY tests/features/ /app/features
 
 WORKDIR /app/features/fixtures/mazerunner
 

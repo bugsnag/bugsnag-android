@@ -11,6 +11,7 @@ import com.bugsnag.android.Configuration
 internal class AppNotRespondingScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
+        config.setAutoCaptureSessions(false)
         config.detectAnrs = true
     }
 
@@ -18,7 +19,7 @@ internal class AppNotRespondingScenario(config: Configuration,
         super.run()
         val main = Handler(Looper.getMainLooper())
         main.postDelayed({
-            Thread.sleep(5000)
+            Thread.sleep(50000) // FOREVER
         }, 1) // A moment of delay so there is something to 'tap' onscreen
     }
 }
