@@ -72,7 +72,7 @@ dependencies {
     implementation("com.bugsnag:bugsnag-android-ndk:9.9.9")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
-    api "com.android.support:support-annotations:27.0.0"
+    api "com.android.support:support-annotations:28.0.0"
 }
 
 apply plugin: 'com.bugsnag.android.gradle'
