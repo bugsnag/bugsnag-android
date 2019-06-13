@@ -189,17 +189,9 @@ public class Client extends Observable implements Observer {
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
             @Override
-            public void onErrorReadFailure(String filename) {
+            public void onErrorReadFailure(Error error) {
                 // send a minimal error to bugsnag with no cache
-                RuntimeException err = new RuntimeException();
-                Throwable exc = new RuntimeException("Failed to send cached bugsnag report", err);
-
-                // TODO use filename to populate these fields
-                Error emptyError = new Error.Builder(config, exc,
-                    null, Thread.currentThread(), false)
-                    .severity(Severity.INFO)
-                    .build();
-                Client.this.notify(emptyError, DeliveryStyle.NO_CACHE, null);
+                Client.this.notify(error, DeliveryStyle.NO_CACHE, null);
             }
         });
 

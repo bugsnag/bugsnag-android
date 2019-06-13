@@ -23,7 +23,14 @@ import java.util.concurrent.Semaphore;
 class ErrorStore extends FileStore<Error> {
 
     interface Delegate {
-        void onErrorReadFailure(String filename);
+
+        /**
+         * Invoked when a cached error report cannot be read, and a minimal error is
+         * read from the information encoded in the filename instead.
+         *
+         * @param minimalError the minimal error, if encoded in the filename
+         */
+        void onErrorReadFailure(Error minimalError);
     }
 
     private static final String STARTUP_CRASH = "_startupcrash";
@@ -162,7 +169,8 @@ class ErrorStore extends FileStore<Error> {
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
             if (delegate != null) {
-                delegate.onErrorReadFailure(errorFile.getName());
+                Error minimalError = generateErrorFromFilename(errorFile.getName());
+                delegate.onErrorReadFailure(minimalError);
             }
             deleteStoredFiles(Collections.singleton(errorFile));
         }
@@ -212,7 +220,8 @@ class ErrorStore extends FileStore<Error> {
             String encodedErr = filename.substring(errorInfoStart, errorInfoEnd);
 
             char sevChar = encodedErr.charAt(0);
-            Severity severity = calculateSeverity(sevChar);
+            Severity severity = Severity.fromChar(sevChar);
+            severity = severity == null ? Severity.ERROR : severity;
 
             boolean unhandled = encodedErr.charAt(2) == 'u';
             HandledState handledState = HandledState.newInstance(unhandled
@@ -232,31 +241,11 @@ class ErrorStore extends FileStore<Error> {
         }
     }
 
-    private Severity calculateSeverity(char sevChar) {
-        Severity severity;
-        switch (sevChar) {
-            case 'e':
-                severity = Severity.ERROR;
-                break;
-            case 'w':
-                severity = Severity.WARNING;
-                break;
-            case 'i':
-                severity = Severity.INFO;
-                break;
-            default:  // something went wrong serialising the filename
-                severity = Severity.ERROR;
-                break;
-        }
-        return severity;
-    }
-
     @NonNull
     @Override
     String getFilename(Object object) {
         String suffix = "";
-        String encodedInfo = "";
-        // TODO NDK getFileName should always be U + E, as it's fatal?
+        String encodedInfo;
 
         if (object instanceof Error) {
             Error error = (Error) object;
@@ -271,6 +260,7 @@ class ErrorStore extends FileStore<Error> {
                 }
             }
         } else {
+            // NDK should always be U + E, as these errors are always fatal
             encodedInfo = "e-u-";
             suffix = "not-jvm";
         }
