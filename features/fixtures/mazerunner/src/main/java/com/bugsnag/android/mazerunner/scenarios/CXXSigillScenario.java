@@ -18,7 +18,6 @@ public class CXXSigillScenario extends Scenario {
 
     public CXXSigillScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override

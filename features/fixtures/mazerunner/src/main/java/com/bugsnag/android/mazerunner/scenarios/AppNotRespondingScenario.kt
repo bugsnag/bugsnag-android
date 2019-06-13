@@ -11,7 +11,6 @@ import com.bugsnag.android.Configuration
 internal class AppNotRespondingScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
         config.detectAnrs = true
     }
 

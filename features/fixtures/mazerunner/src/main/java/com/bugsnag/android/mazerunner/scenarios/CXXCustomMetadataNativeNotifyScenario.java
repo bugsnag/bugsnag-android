@@ -20,7 +20,6 @@ public class CXXCustomMetadataNativeNotifyScenario extends Scenario {
 
     public CXXCustomMetadataNativeNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override

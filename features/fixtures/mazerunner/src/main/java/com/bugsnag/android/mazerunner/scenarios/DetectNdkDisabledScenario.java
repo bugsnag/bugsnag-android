@@ -16,7 +16,6 @@ public class DetectNdkDisabledScenario extends Scenario {
 
     public DetectNdkDisabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
         config.setDetectNdkCrashes(false);
     }
 

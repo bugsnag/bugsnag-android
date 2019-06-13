@@ -12,10 +12,6 @@ import android.os.HandlerThread
  */
 internal class StoppedSessionScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
-    init {
-        config.setAutoCaptureSessions(false)
-    }
-
     override fun run() {
         super.run()
         val client = Bugsnag.getClient()

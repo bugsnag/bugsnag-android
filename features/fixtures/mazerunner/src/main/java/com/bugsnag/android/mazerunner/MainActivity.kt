@@ -75,6 +75,7 @@ class MainActivity : Activity() {
     private fun prepareConfig(): Configuration {
         val config = Configuration("ABCDEFGHIJKLMNOPQRSTUVWXYZ012345")
         config.setEndpoints("http://bs-local.com:9339", "http://bs-local.com:9339")
+        config.setAutoCaptureSessions(false)
         config.detectAnrs = false
         return config
     }

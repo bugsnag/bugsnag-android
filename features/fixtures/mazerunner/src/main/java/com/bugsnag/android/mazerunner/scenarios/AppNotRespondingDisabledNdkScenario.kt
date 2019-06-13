@@ -11,7 +11,6 @@ import com.bugsnag.android.Configuration
 internal class AppNotRespondingDisabledNdkScenario(config: Configuration,
                                                    context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
         config.detectAnrs = true
         config.detectNdkCrashes = false
     }

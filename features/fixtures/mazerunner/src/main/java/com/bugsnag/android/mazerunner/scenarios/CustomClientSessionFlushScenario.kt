@@ -14,7 +14,6 @@ import com.bugsnag.android.createDefaultDelivery
 internal class CustomClientSessionFlushScenario(config: Configuration,
                                                 context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("eventMetaData")
             if ("online" == eventMetaData) {

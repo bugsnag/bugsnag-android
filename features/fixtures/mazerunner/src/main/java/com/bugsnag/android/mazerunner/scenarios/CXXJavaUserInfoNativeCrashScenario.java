@@ -18,7 +18,6 @@ public class CXXJavaUserInfoNativeCrashScenario extends Scenario {
 
     public CXXJavaUserInfoNativeCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override

@@ -10,10 +10,6 @@ import com.bugsnag.android.flushAllSessions
  */
 internal class ManualSessionScenario(config: Configuration,
                                      context: Context) : Scenario(config, context) {
-    init {
-        config.setAutoCaptureSessions(false)
-    }
-
     override fun run() {
         super.run()
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")

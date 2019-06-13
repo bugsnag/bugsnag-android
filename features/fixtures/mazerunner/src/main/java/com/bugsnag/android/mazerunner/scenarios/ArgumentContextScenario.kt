@@ -12,10 +12,6 @@ import com.bugsnag.android.mazerunner.scenarios.Scenario
  */
 internal class ArgumentContextScenario(config: Configuration,
                                        context: Context) : Scenario(config, context) {
-    init {
-        config.setAutoCaptureSessions(false)
-    }
-
     override fun run() {
         super.run()
         Bugsnag.getClient().notify("RuntimeException", "deprecated", "NewContext", emptyArray<StackTraceElement>(), Severity.ERROR, MetaData())

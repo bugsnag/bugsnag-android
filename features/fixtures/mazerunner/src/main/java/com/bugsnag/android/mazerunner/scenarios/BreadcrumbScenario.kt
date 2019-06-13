@@ -12,7 +12,6 @@ import java.util.*
 internal class BreadcrumbScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
         config.setAutomaticallyCollectBreadcrumbs(false)
     }
 

@@ -14,7 +14,6 @@ internal class CustomClientSessionScenario(config: Configuration,
 
     init {
         config.delivery = createCustomHeaderDelivery(context)
-        config.setAutoCaptureSessions(false)
     }
 
     override fun run() {

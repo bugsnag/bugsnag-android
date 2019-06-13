@@ -12,11 +12,6 @@ import com.bugsnag.android.mazerunner.SecondActivity
  */
 internal class AutoSessionScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
-
-    init {
-        // initial bugsnag init will be discarded
-        config.setAutoCaptureSessions(false)
-    }
     override fun run() {
         super.run()
         config.setAutoCaptureSessions(true)

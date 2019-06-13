@@ -18,7 +18,6 @@ public class CXXThrowSomethingScenario extends Scenario {
 
     public CXXThrowSomethingScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override

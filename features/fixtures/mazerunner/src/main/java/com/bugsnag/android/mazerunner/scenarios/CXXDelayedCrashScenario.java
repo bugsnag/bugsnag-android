@@ -25,7 +25,6 @@ public class CXXDelayedCrashScenario extends Scenario {
 
     public CXXDelayedCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override

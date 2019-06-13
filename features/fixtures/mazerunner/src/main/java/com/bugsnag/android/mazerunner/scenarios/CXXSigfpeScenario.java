@@ -18,7 +18,6 @@ public class CXXSigfpeScenario extends Scenario {
 
     public CXXSigfpeScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override

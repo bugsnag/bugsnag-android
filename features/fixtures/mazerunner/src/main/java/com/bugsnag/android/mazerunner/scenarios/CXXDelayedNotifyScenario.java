@@ -22,7 +22,6 @@ public class CXXDelayedNotifyScenario extends Scenario {
 
     public CXXDelayedNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override

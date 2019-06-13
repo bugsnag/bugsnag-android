@@ -10,10 +10,6 @@ import com.bugsnag.android.Configuration
  */
 internal class AppNotRespondingDisabledScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
-    init {
-        config.setAutoCaptureSessions(false)
-    }
-
     override fun run() {
         super.run()
         val main = Handler(Looper.getMainLooper())

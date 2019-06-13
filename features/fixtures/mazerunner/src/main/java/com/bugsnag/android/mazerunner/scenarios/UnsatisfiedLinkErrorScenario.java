@@ -18,7 +18,6 @@ public class UnsatisfiedLinkErrorScenario extends Scenario {
 
     public UnsatisfiedLinkErrorScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override
