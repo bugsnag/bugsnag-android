@@ -8,7 +8,6 @@ Feature: Synchronizing app/device metadata in the native layer
         # This needs to be uncommented with PLAT-3187 fixes
         #And the event "app.durationInForeground" is greater than 0
         And the event "app.duration" is greater than 0
-        And the event "context" equals "MainActivity"
         And the event "unhandled" is false
 
     Scenario: Capture foreground state while in the background
