@@ -14,7 +14,7 @@ internal class AppNotRespondingDisabledScenario(config: Configuration,
         super.run()
         val main = Handler(Looper.getMainLooper())
         main.postDelayed({
-            Thread.sleep(50000) // FOREVER
+            Thread.sleep(5000)
         }, 1) // A moment of delay so there is something to 'tap' onscreen
     }
 
