@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
@@ -49,6 +47,7 @@ class DeviceData {
     private final Client client;
     private final boolean emulator;
     private final Context appContext;
+    private final ConnectivityCompat connectivityCompat;
     private final Resources resources;
     private final DisplayMetrics displayMetrics;
     private final String id;
@@ -69,9 +68,10 @@ class DeviceData {
     @NonNull
     final String[] cpuAbi;
 
-    DeviceData(Client client) {
+    DeviceData(Client client, ConnectivityCompat connectivityCompat) {
         this.client = client;
         this.appContext = client.appContext;
+        this.connectivityCompat = connectivityCompat;
         resources = appContext.getResources();
 
         if (resources != null) {
@@ -368,35 +368,8 @@ class DeviceData {
      * Get the current status of network access, eg "cellular"
      */
     @Nullable
-    @SuppressWarnings("deprecation")
     private String getNetworkAccess() {
-        try {
-            ConnectivityManager cm =
-                (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            if (cm == null) {
-                return null;
-            }
-
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                if (activeNetwork.getType() == 1) {
-                    return "wifi";
-                } else if (activeNetwork.getType() == 9) {
-                    return "ethernet";
-                } else {
-                    // We default to cellular as the other enums are all cellular in some
-                    // form or another
-                    return "cellular";
-                }
-            } else {
-                return "none";
-            }
-        } catch (Exception exception) {
-            Logger.warn("Could not get network access information, we "
-                + "recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
-        }
-        return null;
+        return connectivityCompat.retrieveNetworkAccessState();
     }
 
     /**

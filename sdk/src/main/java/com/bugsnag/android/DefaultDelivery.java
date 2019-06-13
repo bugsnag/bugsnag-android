@@ -1,9 +1,6 @@
 package com.bugsnag.android;
 
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,10 +14,10 @@ import java.util.Map;
 class DefaultDelivery implements Delivery {
 
     private static final int HTTP_REQUEST_FAILED = 0;
-    @Nullable private final ConnectivityManager connectivityManager;
+    private final ConnectivityCompat connectivityCompat;
 
-    DefaultDelivery(@Nullable ConnectivityManager connectivityManager) {
-        this.connectivityManager = connectivityManager;
+    DefaultDelivery(ConnectivityCompat connectivityCompat) {
+        this.connectivityCompat = connectivityCompat;
     }
 
     @Override
@@ -52,7 +49,10 @@ class DefaultDelivery implements Delivery {
     int deliver(String urlString,
                 JsonStream.Streamable streamable,
                 Map<String, String> headers) throws DeliveryFailureException {
-        checkHasNetworkConnection();
+
+        if (connectivityCompat != null && !connectivityCompat.hasNetworkConnection()) {
+            throw new DeliveryFailureException("No network connection available", null);
+        }
         HttpURLConnection conn = null;
 
         try {
@@ -90,17 +90,4 @@ class DefaultDelivery implements Delivery {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private void checkHasNetworkConnection() throws DeliveryFailureException {
-        if (connectivityManager == null) {
-            return; // unlikely case, allow delivery attempt without checking connection first
-        }
-
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        // conserve device battery by avoiding radio use
-        if (!(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())) {
-            throw new DeliveryFailureException("No network connection available", null);
-        }
-    }
 }

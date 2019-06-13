@@ -379,7 +379,9 @@ public class ErrorTest {
 
     @Test
     public void testSetDeviceId() throws Throwable {
-        Map<String, Object> deviceData = new DeviceData(generateClient()).getDeviceData();
+        ConnectivityCompat connectivityCompat = BugsnagTestUtils.generateConnectivityCompat();
+        DeviceData data = new DeviceData(generateClient(), connectivityCompat);
+        Map<String, Object> deviceData = data.getDeviceData();
         error.setDeviceData(deviceData);
         assertEquals(deviceData, error.getDeviceData());
 

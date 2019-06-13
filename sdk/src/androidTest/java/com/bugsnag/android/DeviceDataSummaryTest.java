@@ -2,9 +2,7 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -13,12 +11,10 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -27,9 +23,13 @@ public class DeviceDataSummaryTest {
 
     private Map<String, Object> deviceData;
 
+    /**
+     * Generates a device data object
+     */
     @Before
     public void setUp() throws Exception {
-        DeviceData deviceData = new DeviceData(generateClient());
+        ConnectivityCompat connectivityCompat = BugsnagTestUtils.generateConnectivityCompat();
+        DeviceData deviceData = new DeviceData(generateClient(), connectivityCompat);
         this.deviceData = deviceData.getDeviceDataSummary();
     }
 
