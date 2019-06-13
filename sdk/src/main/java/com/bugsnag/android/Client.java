@@ -1341,13 +1341,7 @@ public class Client extends Observable implements Observer {
                 leaveErrorBreadcrumb(error);
             }
         } catch (Exception exception) {
-            // send a minimal error to bugsnag with no cache
-            Throwable exc = new RuntimeException("Failed to deliver bugsnag report", exception);
-            Error emptyError = new Error.Builder(config, exc,
-                null, Thread.currentThread(), false)
-                .severity(Severity.INFO)
-                .build();
-            notify(emptyError, DeliveryStyle.NO_CACHE, null);
+            Logger.warn("Problem sending error to Bugsnag", exception);
         }
     }
 

@@ -234,7 +234,9 @@ class ErrorStore extends FileStore<Error> {
                 errClass = encodedErr.substring(4);
             }
             BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
-            return new Error(config, exc, handledState, severity, null, null);
+            Error error = new Error(config, exc, handledState, severity, null, null);
+            error.setIncomplete(true);
+            return error;
         } catch (IndexOutOfBoundsException exc) {
             // simplifies above implementation by avoiding need for several length checks.
             return null;
@@ -266,8 +268,8 @@ class ErrorStore extends FileStore<Error> {
         }
         String uuid = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();
-        return String.format(Locale.US, "%s%d%s_%s%s.json",
-                storeDirectory, timestamp, encodedInfo, uuid, suffix);
+        return String.format(Locale.US, "%s%d_%s_%s%s.json",
+            storeDirectory, timestamp, encodedInfo, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {
