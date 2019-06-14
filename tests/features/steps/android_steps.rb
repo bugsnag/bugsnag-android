@@ -51,7 +51,7 @@ end
 
 When("I swipe the screen") do
   touch_action = Appium::TouchAction.new
-  touch_action.swipe(:start_x => 50, :start_y => 50, :end_x => 50, :end_y => 300, :duration => 500)
+  touch_action.swipe(:start_x => 50, :start_y => 150, :end_x => 50, :end_y => 500)
   touch_action.perform
 end
 
