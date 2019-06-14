@@ -12,6 +12,10 @@ After do |scenario|
   $driver.reset
 end
 
+Before('@skip_android_9') do |scenario|
+  skip_this_scenario("Skipping scenario") if device_type == 'ANDROID_9'
+end
+
 AfterConfiguration do |config|
   AppAutomateDriver.new(bs_username, bs_access_key, bs_local_id, bs_device, app_location)
   $driver.start_driver
@@ -19,18 +23,4 @@ end
 
 at_exit do
   $driver.driver_quit
-end
-
-
-
-FAILED_SCENARIO_OUTPUT_PATH = "/app/maze-output"
-
-After do |scenario|
-  if scenario.failed?
-    write_failed_requests_to_disk(scenario)
-  end
-end
-
-def write_failed_requests_to_disk(scenario)
-  pp Server.current_request[:body]
 end
