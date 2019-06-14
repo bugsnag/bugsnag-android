@@ -13,7 +13,7 @@ After do |scenario|
 end
 
 Before('@skip_android_9') do |scenario|
-  skip_this_scenario("Skipping scenario") if device_type == 'ANDROID_9'
+  skip_this_scenario("Skipping scenario") if bs_device == 'ANDROID_9'
 end
 
 AfterConfiguration do |config|
