@@ -5,7 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
+import android.support.annotation.RequiresApi
 
+@Suppress("DEPRECATION")
 class ConnectivityCompat(
     private val context: Context,
     internal val networkChange: ((connected: Boolean) -> Unit)? = null
@@ -25,7 +29,7 @@ class ConnectivityCompat(
         }
     }
 
-    fun retrieveNetworkAccessState(): String? {
+    fun retrieveNetworkAccessState(): String {
         try {
             val activeNetwork = cm?.activeNetworkInfo
             return if (activeNetwork != null && activeNetwork.isConnectedOrConnecting) {
