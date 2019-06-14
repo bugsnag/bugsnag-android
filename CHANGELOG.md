@@ -1,5 +1,13 @@
 # Changelog
 
+## TBD
+
+This release adds a compile-time dependency on the Kotlin standard library. This should not affect
+the use of any API supplied by bugsnag-android.
+
+* Use NetworkCallback to monitor connectivity changes on newer API levels
+[#501](https://github.com/bugsnag/bugsnag-android/pull/501)
+
 ## 4.15.0 (2019-06-10)
 
 `bugsnag-android` now supports detecting and reporting C/C++ crashes without a separate library (previously `bugsnag-android-ndk` was required for native error reporting).
