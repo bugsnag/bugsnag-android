@@ -14,10 +14,10 @@ import java.util.Map;
 class DefaultDelivery implements Delivery {
 
     private static final int HTTP_REQUEST_FAILED = 0;
-    private final ConnectivityCompat connectivityCompat;
+    private final Connectivity connectivity;
 
-    DefaultDelivery(ConnectivityCompat connectivityCompat) {
-        this.connectivityCompat = connectivityCompat;
+    DefaultDelivery(Connectivity connectivity) {
+        this.connectivity = connectivity;
     }
 
     @Override
@@ -50,7 +50,7 @@ class DefaultDelivery implements Delivery {
                 JsonStream.Streamable streamable,
                 Map<String, String> headers) throws DeliveryFailureException {
 
-        if (connectivityCompat != null && !connectivityCompat.hasNetworkConnection()) {
+        if (connectivity != null && !connectivity.hasNetworkConnection()) {
             throw new DeliveryFailureException("No network connection available", null);
         }
         HttpURLConnection conn = null;

@@ -47,7 +47,7 @@ class DeviceData {
     private final Client client;
     private final boolean emulator;
     private final Context appContext;
-    private final ConnectivityCompat connectivityCompat;
+    private final Connectivity connectivity;
     private final Resources resources;
     private final DisplayMetrics displayMetrics;
     private final String id;
@@ -68,10 +68,10 @@ class DeviceData {
     @NonNull
     final String[] cpuAbi;
 
-    DeviceData(Client client, ConnectivityCompat connectivityCompat) {
+    DeviceData(Client client, Connectivity connectivity) {
         this.client = client;
         this.appContext = client.appContext;
-        this.connectivityCompat = connectivityCompat;
+        this.connectivity = connectivity;
         resources = appContext.getResources();
 
         if (resources != null) {
@@ -369,7 +369,7 @@ class DeviceData {
      */
     @Nullable
     private String getNetworkAccess() {
-        return connectivityCompat.retrieveNetworkAccessState();
+        return connectivity.retrieveNetworkAccessState();
     }
 
     /**

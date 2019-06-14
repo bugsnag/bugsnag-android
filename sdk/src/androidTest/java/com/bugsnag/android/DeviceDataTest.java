@@ -29,8 +29,8 @@ public class DeviceDataTest {
      */
     @Before
     public void setUp() throws Exception {
-        ConnectivityCompat connectivityCompat = BugsnagTestUtils.generateConnectivityCompat();
-        DeviceData deviceData = new DeviceData(generateClient(), connectivityCompat);
+        Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
+        DeviceData deviceData = new DeviceData(generateClient(), connectivity);
         this.deviceData = deviceData.getDeviceData();
     }
 

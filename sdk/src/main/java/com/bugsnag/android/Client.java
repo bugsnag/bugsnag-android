@@ -74,7 +74,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private AppNotRespondingMonitor anrMonitor;
-    private final ConnectivityCompat connectivityCompat;
+    private final Connectivity connectivity;
 
     /**
      * Initialize a Bugsnag client
@@ -121,8 +121,7 @@ public class Client extends Observable implements Observer {
         config = configuration;
         sessionStore = new SessionStore(config, appContext);
 
-        // TODO bad naming
-        connectivityCompat = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
+        connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
             @Override
             public Unit invoke(Boolean connected) {
                 if (connected) {
@@ -134,7 +133,7 @@ public class Client extends Observable implements Observer {
 
         //noinspection ConstantConditions
         if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(connectivityCompat));
+            configuration.setDelivery(new DefaultDelivery(connectivity));
         }
 
         sessionTracker =
@@ -145,7 +144,7 @@ public class Client extends Observable implements Observer {
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appData = new AppData(this);
-        deviceData = new DeviceData(this, connectivityCompat);
+        deviceData = new DeviceData(this, connectivity);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);
@@ -216,7 +215,7 @@ public class Client extends Observable implements Observer {
         } catch (RejectedExecutionException ex) {
             Logger.warn("Failed to register for automatic breadcrumb broadcasts", ex);
         }
-        connectivityCompat.registerForNetworkChanges();
+        connectivity.registerForNetworkChanges();
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
             appData.guessReleaseStage());
@@ -1463,4 +1462,8 @@ public class Client extends Observable implements Observer {
         getAppData().setBinaryArch(binaryArch);
     }
 
+    void close() {
+        orientationListener.disable();
+        connectivity.unregisterForNetworkChanges();
+    }
 }

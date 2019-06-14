@@ -68,7 +68,7 @@ final class BugsnagTestUtils {
             generateSessionStore());
     }
 
-    static ConnectivityCompat generateConnectivityCompat() {
+    static Connectivity generateConnectivity() {
         return new ConnectivityCompat(InstrumentationRegistry.getContext(), null);
     }
 

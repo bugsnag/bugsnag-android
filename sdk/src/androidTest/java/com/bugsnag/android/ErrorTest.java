@@ -16,7 +16,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -379,8 +378,8 @@ public class ErrorTest {
 
     @Test
     public void testSetDeviceId() throws Throwable {
-        ConnectivityCompat connectivityCompat = BugsnagTestUtils.generateConnectivityCompat();
-        DeviceData data = new DeviceData(generateClient(), connectivityCompat);
+        Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
+        DeviceData data = new DeviceData(generateClient(), connectivity);
         Map<String, Object> deviceData = data.getDeviceData();
         error.setDeviceData(deviceData);
         assertEquals(deviceData, error.getDeviceData());
