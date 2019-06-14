@@ -189,8 +189,8 @@ Feature: Native crash reporting
             | Trace/breakpoint trap |
         And the exception "type" equals "c"
         And the first significant stack frame methods and files should match:
-            | something_innocuous | libmonochrome.so |
-            | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | libentrypoint.so |
+            | something_innocuous | | libmonochrome.so |
+            | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | | libentrypoint.so |
 
     Scenario: Throwing an exception in C++
         When I run "CXXExceptionScenario" and relaunch the app
@@ -202,9 +202,9 @@ Feature: Native crash reporting
         And the exception "errorClass" equals "PSt13runtime_error"
         And the exception "message" equals "How about NO"
         And the first significant stack frame methods and files should match:
-            | run_away(bool)       | libentrypoint.so |
-            | trigger_an_exception | libentrypoint.so |
-            | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionScenario_crash | libentrypoint.so |
+            | run_away(bool)       | | libentrypoint.so |
+            | trigger_an_exception | | libentrypoint.so |
+            | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionScenario_crash | | libentrypoint.so |
 
     Scenario: Throwing an object in C++
         When I run "CXXThrowSomethingScenario" and relaunch the app
@@ -216,6 +216,6 @@ Feature: Native crash reporting
         And the exception "errorClass" equals "i"
         And the exception "message" equals "42"
         And the first significant stack frame methods and files should match:
-            | run_back(int, int) | libentrypoint.so |
-            | throw_an_object    | libentrypoint.so |
-            | Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingScenario_crash | libentrypoint.so |
+            | run_back(int, int) | crash_abort | libentrypoint.so |
+            | throw_an_object    | | libentrypoint.so |
+            | Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingScenario_crash | | libentrypoint.so |

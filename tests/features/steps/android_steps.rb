@@ -86,24 +86,31 @@ Then("the exception {string} equals one of:") do |keypath, possible_values|
   value = read_key_path(Server.current_request[:body], "events.0.exceptions.0.#{keypath}")
   assert_includes(possible_values.raw.flatten, value)
 end
+
+# Checks whether the first  significant frames match several given frames
+#
+# @param expected_values [Array] A table dictating the expected files and methods of the frames
+#   The first two entries are methods (enabling flexibility across SDKs), the third is the file name
 Then("the first significant stack frame methods and files should match:") do |expected_values|
   stacktrace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
   expected_frame_values = expected_values.raw
-  expected_index = 0
-  stacktrace.each_with_index do |item, index|
-    next if expected_index >= expected_frame_values.length
-    expected_frame = expected_frame_values[expected_index]
-    method = `c++filt -_ _#{item["method"]}`.chomp
-    method = item["method"] if method == "_#{item["method"]}"
-    next if method.start_with? "bsg_" or
-            method.start_with? "std::" or
-            method.start_with? "__cxx" or
-            item["file"].start_with? "/system/" or
-            item["file"].end_with? "libbugsnag-ndk.so"
-
-    assert_equal(expected_frame[0], method)
-    assert(item["file"].end_with?(expected_frame[1]), "'#{item["file"]}' in frame #{index} does not end with '#{expected_frame[1]}'")
-    expected_index += 1
+  significant_frames = stacktrace.each_with_index.map do |frame, index|
+    method = `c++filt -_ _#{frame["method"]}`.chomp
+    method = frame["method"] if method == "_#{frame["method"]}"
+    insignificant = method.start_with?("bsg_") ||
+      method.start_with?("std::") ||
+      method.start_with?("__cxx") ||
+      frame["file"].start_with?("/system/") ||
+      frame["file"].end_with?("libbugsnag-ndk.so")
+    { :index => index, :method => method, :file => frame["file"] } unless insignificant
+  end
+  significant_frames.select! { |frame| frame }
+  expected_frame_values.each_with_index do |expected_frame, index|
+    test_frame = significant_frames[index]
+    method_match_a = expected_frame[0] == test_frame[:method]
+    method_match_b = expected_frame[1] == test_frame[:method]
+    assert(method_match_a || method_match_b, "'#{test_frame[:method]}' in frame #{test_frame[:index]} is not equal to '#{expected_frame[0]}' or '#{expected_frame[1]}'")
+    assert(test_frame[:file].end_with?(expected_frame[2]), "'#{test_frame[:file]}' in frame #{test_frame[:index]} does not end with '#{expected_frame[2]}'")
   end
 end
 
