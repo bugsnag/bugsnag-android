@@ -98,7 +98,7 @@ option:
 ./gradlew assemble -PABI_FILTERS=x86,arm64-v8a
 ```
 
-## Running Tests
+## Running Tests Locally
 
 Running the test suite requires a connected android device or emulator.
 
@@ -137,6 +137,34 @@ You can run lint on the project using the following command:
 ```shell
 ./gradlew lint checkstyle detekt
 ```
+
+## Running remote tests
+
+Remote tests can be run against real devices provided by BrowserStack. In order to run these tests, you need:
+
+A BrowserStack App Automate Username: `BROWSER_STACK_USERNAME`
+A BrowserStack App Automate Access Key: `BROWSER_STACK_ACCESS_KEY`
+A local docker and docker-compose installation.
+
+### Instrumentation tests
+
+Ensure that the following environment variables are set:
+
+* `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
+* `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
+* `NDK_VERSION`: The version of NDK that should be used to build the app
+
+Run `make remote-test`
+
+### End-to-end tests
+
+Ensure that the following environment variables are set:
+
+* `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
+* `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
+* `DEVICE_TYPE`: The android version to run the tests against, one of: ANDROID_5, ANDROID_6, ANDROID_7, ANDROID_8, ANDROID_9
+
+Run `make remote-integration-tests`
 
 ## Building the Example App
 

@@ -11,6 +11,15 @@ clean:
 test:
 	./gradlew :sdk:connectedCheck
 
+remote-test:
+	@APP_LOCATION=/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk \
+	 INSTRUMENTATION_DEVICES='["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]' \
+	 docker-compose up --build android-instrumentation-tests
+
+remote-integration-tests:
+	@docker-compose up --build android-builder
+	@APP_LOCATION=/app/build/fixture.apk docker-compose up --build android-maze-runner
+
 bump: badge
 ifneq ($(shell git diff --staged),)
 	@git diff --staged
