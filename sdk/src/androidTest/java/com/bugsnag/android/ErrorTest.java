@@ -10,6 +10,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -390,7 +394,11 @@ public class ErrorTest {
     @Test
     public void testSetDeviceId() throws Throwable {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
-        DeviceData data = new DeviceData(client, connectivity);
+        Context context = InstrumentationRegistry.getContext();
+        Resources resources = context.getResources();
+        SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
+        DeviceData data = new DeviceData(connectivity, context, resources, prefs);
+
         Map<String, Object> deviceData = data.getDeviceData();
         error.setDeviceData(deviceData);
         assertEquals(deviceData, error.getDeviceData());
