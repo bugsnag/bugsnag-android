@@ -11,6 +11,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class DeviceDataSummaryTest {
 
     private Map<String, Object> deviceData;
+    private Client client;
 
     /**
      * Generates a device data object
@@ -29,27 +31,21 @@ public class DeviceDataSummaryTest {
     @Before
     public void setUp() throws Exception {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
-        DeviceData deviceData = new DeviceData(generateClient(), connectivity);
+        client = generateClient();
+        DeviceData deviceData = new DeviceData(client, connectivity);
         this.deviceData = deviceData.getDeviceDataSummary();
     }
 
+    @After
+    public void tearDown() {
+        client.close();
+    }
+
     @Test
-    public void testManufacturer() {
+    public void testAccessors() {
         assertNotNull(deviceData.get("manufacturer"));
-    }
-
-    @Test
-    public void testModel() {
         assertNotNull(deviceData.get("model"));
-    }
-
-    @Test
-    public void testOsName() {
         assertNotNull(deviceData.get("osName"));
-    }
-
-    @Test
-    public void testOsVersion() {
         assertNotNull(deviceData.get("osVersion"));
     }
 

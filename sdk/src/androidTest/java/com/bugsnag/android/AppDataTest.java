@@ -1,14 +1,13 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -19,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -38,37 +36,21 @@ public class AppDataTest {
     @Before
     public void setUp() throws Exception {
         config = new Configuration("some-api-key");
-        client = new Client(InstrumentationRegistry.getContext(), config);
+        client = generateClient(config);
         appData = new AppData(client).getAppData();
     }
 
     @After
-    public void tearDown() throws Exception {
-        client.getOrientationListener().disable();
+    public void tearDown() {
+        client.close();
     }
 
     @Test
-    public void testPackageName() {
+    public void testAccessors() {
         assertEquals("com.bugsnag.android.test", appData.get("packageName"));
-    }
-
-    @Test
-    public void testBuildUuid() {
         assertNull(appData.get("buildUUID"));
-    }
-
-    @Test
-    public void testDuration() {
         assertTrue(((Long) appData.get("duration")) > 0);
-    }
-
-    @Test
-    public void testDurationInForeground() {
         assertEquals(0L, appData.get("durationInForeground"));
-    }
-
-    @Test
-    public void testInForeground() {
         assertFalse((Boolean) appData.get("inForeground"));
     }
 

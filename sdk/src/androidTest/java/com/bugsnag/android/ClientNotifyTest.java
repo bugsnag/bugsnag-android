@@ -36,8 +36,8 @@ public class ClientNotifyTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        client.getOrientationListener().disable();
+    public void tearDown() {
+        client.close();
     }
 
     @Test

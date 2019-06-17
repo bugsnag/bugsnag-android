@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -30,13 +31,13 @@ public class BeforeRecordBreadcrumbsTest {
     public void setUp() throws Exception {
         Configuration configuration = new Configuration("api-key");
         configuration.setAutomaticallyCollectBreadcrumbs(false);
-        client = new Client(InstrumentationRegistry.getContext(), configuration);
+        client = generateClient();
         assertEquals(0, client.breadcrumbs.store.size());
     }
 
     @After
-    public void tearDown() throws Exception {
-        client.getOrientationListener().disable();
+    public void tearDown() {
+        client.close();
     }
 
     @Test

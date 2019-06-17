@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -16,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -25,39 +23,25 @@ public class AppDataSummaryTest {
 
     private Map<String, Object> appData;
 
-    /**
-     * Configures a new AppDataSummary for testing accessors + serialisation
-     *
-     * @throws Exception if setup failed
-     */
+    private Client client;
+
     @Before
     public void setUp() throws Exception {
-        AppData appData = new AppData(generateClient());
-        this.appData = appData.getAppDataSummary();
+        client = generateClient();
+        appData = new AppData(client).getAppDataSummary();
+    }
+
+    @After
+    public void tearDown() {
+        client.close();
     }
 
     @Test
-    public void testVersionCode() {
+    public void testAccessors() {
         assertEquals(1, appData.get("versionCode"));
-    }
-
-    @Test
-    public void testVersionName() {
         assertEquals("1.0", appData.get("version"));
-    }
-
-    @Test
-    public void testReleaseStage() {
         assertEquals("development", appData.get("releaseStage"));
-    }
-
-    @Test
-    public void testNotifierType() {
         assertEquals("android", appData.get("type"));
-    }
-
-    @Test
-    public void testCodeBundleId() {
         assertNull(appData.get("codeBundleId"));
     }
 

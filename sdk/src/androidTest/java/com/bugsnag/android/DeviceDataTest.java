@@ -10,6 +10,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class DeviceDataTest {
 
     private Map<String, Object> deviceData;
+    private Client client;
 
     /**
      * Generates a device data object
@@ -30,27 +32,21 @@ public class DeviceDataTest {
     @Before
     public void setUp() throws Exception {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
-        DeviceData deviceData = new DeviceData(generateClient(), connectivity);
+        client = generateClient();
+        DeviceData deviceData = new DeviceData(client, connectivity);
         this.deviceData = deviceData.getDeviceData();
     }
 
+    @After
+    public void tearDown() {
+        client.close();
+    }
+
     @Test
-    public void testId() {
+    public void testAccessors() {
         assertNotNull(deviceData.get("id"));
-    }
-
-    @Test
-    public void testOrientation() {
         assertNotNull(deviceData.get("orientation"));
-    }
-
-    @Test
-    public void testFreeMemory() {
         assertTrue((Long) deviceData.get("freeMemory") > 0);
-    }
-
-    @Test
-    public void testTotalMemory() {
         assertTrue((Long) deviceData.get("totalMemory") > 0);
     }
 

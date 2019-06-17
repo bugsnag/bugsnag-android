@@ -32,6 +32,7 @@ public class SessionTrackingPayloadTest {
     private File storageDir;
     private SessionTrackingPayload payload;
     private DeviceData deviceData;
+    private Client client;
 
     /**
      * Configures a session tracking payload and session store, ensuring that 0 files are present
@@ -48,13 +49,13 @@ public class SessionTrackingPayloadTest {
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
         session = generateSession();
+        client = generateClient();
         payload = generatePayloadFromSession(context, generateSession());
         rootNode = streamableToJson(payload);
     }
 
     private SessionTrackingPayload generatePayloadFromSession(Context context,
                                                   Session session) throws Exception {
-        Client client = generateClient();
         appData = client.getAppData();
         deviceData = client.deviceData;
         return new SessionTrackingPayload(session, null, appData, deviceData);
@@ -66,8 +67,9 @@ public class SessionTrackingPayloadTest {
      * @throws Exception if the operation fails
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         FileUtils.clearFilesInDir(storageDir);
+        client.close();
     }
 
     @Test
