@@ -33,7 +33,7 @@ internal class ConnectivityCompat(
 
     override fun registerForNetworkChanges() = connectivity.registerForNetworkChanges()
     override fun hasNetworkConnection() = connectivity.hasNetworkConnection()
-    override fun unregisterForNetworkChanges() = connectivity.registerForNetworkChanges()
+    override fun unregisterForNetworkChanges() = connectivity.unregisterForNetworkChanges()
     override fun retrieveNetworkAccessState() = connectivity.retrieveNetworkAccessState()
 }
 
