@@ -22,8 +22,9 @@ class AppData {
     static final String RELEASE_STAGE_DEVELOPMENT = "development";
     static final String RELEASE_STAGE_PRODUCTION = "production";
 
-    private final Client client;
     private final Context appContext;
+    private final Configuration config;
+    private final SessionTracker sessionTracker;
 
     private final String packageName;
     private String binaryArch = null;
@@ -37,20 +38,22 @@ class AppData {
     @Nullable
     private ApplicationInfo applicationInfo;
 
-    @Nullable
     private PackageManager packageManager;
 
-    AppData(Client client) {
-        this.client = client;
-        this.appContext = client.appContext;
+    AppData(Context appContext, PackageManager packageManager,
+            Configuration config, SessionTracker sessionTracker) {
+        this.appContext = appContext;
+        this.packageManager = packageManager;
+        this.config = config;
+        this.sessionTracker = sessionTracker;
 
         // cache values which are widely used, expensive to lookup, or unlikely to change
         packageName = appContext.getPackageName();
 
         try {
-            packageManager = appContext.getPackageManager();
-            packageInfo = packageManager.getPackageInfo(packageName, 0);
-            applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+            this.packageManager = packageManager;
+            packageInfo = this.packageManager.getPackageInfo(packageName, 0);
+            applicationInfo = this.packageManager.getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException exception) {
             Logger.warn("Could not retrieve package/application information for " + packageName);
         }
@@ -60,8 +63,7 @@ class AppData {
 
     Map<String, Object> getAppDataSummary() {
         Map<String, Object> map = new HashMap<>();
-        Configuration config = client.config;
-        map.put("type", calculateNotifierType(config));
+        map.put("type", calculateNotifierType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
         map.put("versionCode", calculateVersionCode());
@@ -72,10 +74,10 @@ class AppData {
     Map<String, Object> getAppData() {
         Map<String, Object> map = getAppDataSummary();
         map.put("id", packageName);
-        map.put("buildUUID", client.config.getBuildUUID());
+        map.put("buildUUID", config.getBuildUUID());
         map.put("duration", getDurationMs());
         map.put("durationInForeground", calculateDurationInForeground());
-        map.put("inForeground", client.sessionTracker.isInForeground());
+        map.put("inForeground", sessionTracker.isInForeground());
         map.put("packageName", packageName);
         map.put("binaryArch", binaryArch);
         return map;
@@ -111,15 +113,15 @@ class AppData {
      */
     private long calculateDurationInForeground() {
         long nowMs = System.currentTimeMillis();
-        return client.sessionTracker.getDurationInForegroundMs(nowMs);
+        return sessionTracker.getDurationInForegroundMs(nowMs);
     }
 
     String getActiveScreenClass() {
-        return client.sessionTracker.getContextActivity();
+        return sessionTracker.getContextActivity();
     }
 
     @NonNull
-    private String calculateNotifierType(Configuration config) {
+    private String calculateNotifierType() {
         String notifierType = config.getNotifierType();
 
         if (notifierType != null) {
@@ -149,7 +151,7 @@ class AppData {
      */
     @Nullable
     private String calculateVersionName() {
-        String configAppVersion = client.config.getAppVersion();
+        String configAppVersion = config.getAppVersion();
 
         if (configAppVersion != null) {
             return configAppVersion;
@@ -167,7 +169,7 @@ class AppData {
      */
     @NonNull
     String guessReleaseStage() {
-        String configStage = client.config.getReleaseStage();
+        String configStage = config.getReleaseStage();
 
         if (configStage != null) {
             return configStage;

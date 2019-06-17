@@ -1,39 +1,44 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.test.InstrumentationRegistry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
-@RunWith(AndroidJUnit4.class)
-@SmallTest
+@RunWith(MockitoJUnitRunner.class)
 public class AppDataSummaryTest {
 
     private Map<String, Object> appData;
 
-    private Client client;
+    @Mock
+    Client client;
 
+    @Mock
+    SessionTracker sessionTracker;
+
+    /**
+     * Constructs an app data object
+     */
     @Before
     public void setUp() throws Exception {
-        client = generateClient();
-        appData = new AppData(client).getAppDataSummary();
-    }
-
-    @After
-    public void tearDown() {
-        client.close();
+        Context context = InstrumentationRegistry.getContext();
+        PackageManager packageManager = context.getPackageManager();
+        Configuration config = new Configuration("api-key");
+        AppData obj = new AppData(context, packageManager, config, sessionTracker);
+        this.appData = obj.getAppDataSummary();
     }
 
     @Test
