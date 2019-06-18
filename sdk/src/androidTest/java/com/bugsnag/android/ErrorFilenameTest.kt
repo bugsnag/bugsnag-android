@@ -11,6 +11,8 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
+class SuperCaliFragilisticExpiAlidociousBeanFactoryException: RuntimeException()
+
 class ErrorFilenameTest {
 
     private lateinit var errorStore: ErrorStore
@@ -40,6 +42,14 @@ class ErrorFilenameTest {
         val err = generateError(false, Severity.INFO, IllegalStateException("Whoops"))
         val filename = errorStore.calculateFilenameForError(err)
         assertEquals("i-h-java.lang.IllegalStateException", filename)
+    }
+
+    @Test
+    fun testCalculateTruncatedFilename() {
+        val err = generateError(false, Severity.INFO,
+            SuperCaliFragilisticExpiAlidociousBeanFactoryException())
+        val filename = errorStore.calculateFilenameForError(err)
+        assertEquals("i-h-com.bugsnag.android.SuperCaliFragilistic", filename)
     }
 
     @Test

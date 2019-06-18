@@ -22,6 +22,8 @@ import java.util.concurrent.Semaphore;
 @ThreadSafe
 class ErrorStore extends FileStore<Error> {
 
+    private static final int MAX_ERR_CLASS_LEN = 40;
+
     interface Delegate {
 
         /**
@@ -195,6 +197,10 @@ class ErrorStore extends FileStore<Error> {
         char handled = error.getHandledState().isUnhandled() ? 'u' : 'h';
         char severity = error.getSeverity().getName().charAt(0);
         String errClass = error.getExceptionName();
+
+        if (errClass.length() > MAX_ERR_CLASS_LEN) {
+            errClass = errClass.substring(0, MAX_ERR_CLASS_LEN);
+        }
         return String.format("%s-%s-%s", severity, handled, errClass);
     }
 
@@ -262,8 +268,7 @@ class ErrorStore extends FileStore<Error> {
                 }
             }
         } else {
-            // NDK should always be U + E, as these errors are always fatal
-            encodedInfo = "e-u-";
+            encodedInfo = ""; // don't encode for NDK errors, as they are always 'e-u'
             suffix = "not-jvm";
         }
         String uuid = UUID.randomUUID().toString();
