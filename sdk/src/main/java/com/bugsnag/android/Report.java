@@ -1,9 +1,7 @@
 package com.bugsnag.android;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -14,10 +12,7 @@ import java.io.IOException;
  */
 public class Report implements JsonStream.Streamable {
 
-    @Nullable
-    private final File errorFile;
-
-    @Nullable
+    @NonNull
     private final Error error;
 
     @NonNull
@@ -25,17 +20,10 @@ public class Report implements JsonStream.Streamable {
 
     @NonNull
     private String apiKey;
+    private transient boolean cachingDisabled;
 
-    Report(@NonNull String apiKey, @Nullable File errorFile) {
-        this.error = null;
-        this.errorFile = errorFile;
-        this.notifier = Notifier.getInstance();
-        this.apiKey = apiKey;
-    }
-
-    Report(@NonNull String apiKey, @Nullable Error error) {
+    Report(@NonNull String apiKey, @NonNull Error error) {
         this.error = error;
-        this.errorFile = null;
         this.notifier = Notifier.getInstance();
         this.apiKey = apiKey;
     }
@@ -55,13 +43,7 @@ public class Report implements JsonStream.Streamable {
         writer.name("events").beginArray();
 
         // Write in-memory event
-        if (error != null) {
-            writer.value(error);
-        } else if (errorFile != null) { // Write on-disk event
-            writer.value(errorFile);
-        } else {
-            Logger.warn("Expected error or errorFile, found empty payload instead");
-        }
+        writer.value(error);
 
         // End events array
         writer.endArray();
@@ -70,7 +52,7 @@ public class Report implements JsonStream.Streamable {
         writer.endObject();
     }
 
-    @Nullable
+    @NonNull
     public Error getError() {
         return error;
     }
@@ -115,5 +97,13 @@ public class Report implements JsonStream.Streamable {
     @NonNull
     public Notifier getNotifier() {
         return notifier;
+    }
+
+    boolean isCachingDisabled() {
+        return cachingDisabled;
+    }
+
+    void setCachingDisabled(boolean cachingDisabled) {
+        this.cachingDisabled = cachingDisabled;
     }
 }

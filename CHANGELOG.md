@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Send minimal error report if cached file is corrupted/empty
+[#500](https://github.com/bugsnag/bugsnag-android/pull/500)
+
 ## 4.15.0 (2019-06-10)
 
 `bugsnag-android` now supports detecting and reporting C/C++ crashes without a separate library (previously `bugsnag-android-ndk` was required for native error reporting).

@@ -39,6 +39,19 @@ public enum Severity implements JsonStream.Streamable {
         }
     }
 
+    static Severity fromChar(char sevChar) {
+        switch (sevChar) {
+            case 'e':
+                return Severity.ERROR;
+            case 'w':
+                return Severity.WARNING;
+            case 'i':
+                return Severity.INFO;
+            default:  // something went wrong serialising the filename
+                return null;
+        }
+    }
+
     @NonNull
     public String getName() {
         return name;
