@@ -5,8 +5,6 @@ Scenario: Test handled exception after delay
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event "app.inForeground" is true
-    # This needs to be uncommented with PLAT-3187 fixes
-    #And the payload field "events.0.app.durationInForeground" is greater than 0
 
 Scenario: Test handled exception in background
     When I run "InForegroundScenario"
@@ -14,5 +12,3 @@ Scenario: Test handled exception in background
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event "app.inForeground" is false
-    # This needs to be uncommented with PLAT-3187 fixes
-    #And the payload field "events.0.app.durationInForeground" equals 0

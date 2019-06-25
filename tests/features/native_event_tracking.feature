@@ -5,8 +5,6 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is true
-        # This needs to be uncommented with PLAT-3187 fixes
-        #And the event "app.durationInForeground" is greater than 0
         And the event "app.duration" is greater than 0
         And the event "unhandled" is false
 
@@ -27,8 +25,6 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is true
-        # This needs to be uncommented with PLAT-3187 fixes
-        #And the event "app.durationInForeground" is greater than 0
         And the event "app.durationInForeground" is not null
         And the event "app.duration" is not null
         And the event "unhandled" is true
@@ -42,8 +38,6 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait to receive a request
         Then the request payload contains a completed native report
         And the event "app.inForeground" is false
-        # This needs to be uncommented with PLAT-3187 fixes
-        #And the event "app.durationInForeground" equals 0
         And the event "app.duration" is greater than 0
         And the event "context" string is empty
         And the event "unhandled" is true

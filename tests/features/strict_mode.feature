@@ -1,6 +1,6 @@
 Feature: Reporting Strict Mode Exceptions
 
-# These scenarios are being skipped on Android 9 until PLAT-3213 is resolved
+# These scenarios are being skipped on Android 9 until ROAD-757 is resolved
 @skip_android_9
 Scenario: StrictMode DiscWrite violation
     When I run "StrictModeDiscScenario" and relaunch the app
