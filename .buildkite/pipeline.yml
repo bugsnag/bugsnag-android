@@ -5,13 +5,13 @@ steps:
           build:
             - android-base
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
-          # cache-from:
-          #   - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
-          #   - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
-      # - docker-compose#v2.6.0:
-      #     push:
-      #       - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
-      #       - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+          cache-from:
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+      - docker-compose#v2.6.0:
+          push:
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - wait
 
@@ -20,28 +20,33 @@ steps:
       - docker-compose#v2.6.0:
           build:
             - android-linter
-          # cache-from:
-          #   - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+          cache-from:
+            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - label: ':docker: Build Android instrumentation image'
     plugins:
       - docker-compose#v2.6.0:
           build: android-instrumentation-tests
-      #     cache-from:
-      #        - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
-      # - docker-compose#v2.6.0:
-      #     push:
-      #       - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+          cache-from:
+            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+      - docker-compose#v2.6.0:
+          push:
+            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - label: ':docker: Build Android apk builder image'
     plugins:
       - docker-compose#v2.6.0:
           build: android-builder
-      #     cache-from:
-      #       - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
-      # - docker-compose#v2.6.0:
-      #     push:
-      #       - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+          cache-from:
+            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}v
+            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+      - docker-compose#v2.6.0:
+          push:
+            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BUILDKITE_BRANCH}
+            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
     env:
       MAVEN_VERSION: "3.6.1"
 
