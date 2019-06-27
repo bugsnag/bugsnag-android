@@ -12,11 +12,23 @@ test:
 	./gradlew :sdk:connectedCheck
 
 remote-test:
+ifeq ($(BROWSER_STACK_USERNAME),)
+	@$(error BROWSER_STACK_USERNAME is not defined)
+endif
+ifeq ($(BROWSER_STACK_ACCESS_KEY),)
+	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
+endif
 	@APP_LOCATION=/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk \
 	 INSTRUMENTATION_DEVICES='["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]' \
 	 docker-compose up --build android-instrumentation-tests
 
 remote-integration-tests:
+ifeq ($(BROWSER_STACK_USERNAME),)
+	@$(error BROWSER_STACK_USERNAME is not defined)
+endif
+ifeq ($(BROWSER_STACK_ACCESS_KEY),)
+	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
+endif
 	@docker-compose up --build android-builder
 	@APP_LOCATION=/app/build/fixture.apk docker-compose up --build android-maze-runner
 
