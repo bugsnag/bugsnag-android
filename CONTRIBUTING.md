@@ -140,6 +140,30 @@ You can run lint on the project using the following command:
 
 ## Running remote tests
 
+These tests are implemented with our notifier testing tool [Maze runner](https://github.com/bugsnag/maze-runner).
+
+End to end tests are written in cucumber-style `.feature` files, and need Ruby-backed "steps" in order to know what to run. The tests are located in the top level [`tests`](/tests/) directory.
+
+Maze runner's CLI and the test fixtures are containerised so you'll need Docker (and Docker Compose) to run them.
+
+__Note: only Bugsnag employees can run the end-to-end tests.__ We have dedicated test infrastructure and private BrowserStack credentials which can't be shared outside of the organisation.
+
+##### Authenticating with the private container registry
+
+You'll need to set the credentials for the aws profile in order to access the private docker registry:
+
+```
+aws configure --profile=opensource
+```
+
+Subsequently you'll need to run the following commmand to authenticate with the registry:
+
+```
+$(aws ecr get-login --profile=opensource --no-include-email)
+```
+
+__Your session will periodically expire__, so you'll need to run this command to re-authenticate when that happens.
+
 Remote tests can be run against real devices provided by BrowserStack. In order to run these tests, you need:
 
 A BrowserStack App Automate Username: `BROWSER_STACK_USERNAME`
