@@ -12,6 +12,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -194,7 +196,13 @@ public class Client extends Observable implements Observer {
         }
 
         // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(config, appContext);
+        errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
+            @Override
+            public void onErrorReadFailure(Error error) {
+                // send a minimal error to bugsnag with no cache
+                Client.this.notify(error, DeliveryStyle.NO_CACHE, null);
+            }
+        });
 
         // Install a default exception handler with this client
         if (config.getEnableExceptionHandler()) {
@@ -955,22 +963,12 @@ public class Client extends Observable implements Observer {
             case SAME_THREAD:
                 deliver(report, error);
                 break;
+            case NO_CACHE:
+                report.setCachingDisabled(true);
+                deliverReportAsync(error, report);
+                break;
             case ASYNC:
-                final Report finalReport = report;
-                final Error finalError = error;
-
-                // Attempt to send the report in the background
-                try {
-                    Async.run(new Runnable() {
-                        @Override
-                        public void run() {
-                            deliver(finalReport, finalError);
-                        }
-                    });
-                } catch (RejectedExecutionException exception) {
-                    errorStore.write(error);
-                    Logger.warn("Exceeded max queue count, saving to disk to send later");
-                }
+                deliverReportAsync(error, report);
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
@@ -978,6 +976,24 @@ public class Client extends Observable implements Observer {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void deliverReportAsync(@NonNull Error error, Report report) {
+        final Report finalReport = report;
+        final Error finalError = error;
+
+        // Attempt to send the report in the background
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    deliver(finalReport, finalError);
+                }
+            });
+        } catch (RejectedExecutionException exception) {
+            errorStore.write(error);
+            Logger.warn("Exceeded max queue count, saving to disk to send later");
         }
     }
 
@@ -1307,10 +1323,12 @@ public class Client extends Observable implements Observer {
             Logger.info("Sent 1 new error to Bugsnag");
             leaveErrorBreadcrumb(error);
         } catch (DeliveryFailureException exception) {
-            Logger.warn("Could not send error(s) to Bugsnag,"
-                + " saving to disk to send later", exception);
-            errorStore.write(error);
-            leaveErrorBreadcrumb(error);
+            if (!report.isCachingDisabled()) {
+                Logger.warn("Could not send error(s) to Bugsnag,"
+                    + " saving to disk to send later", exception);
+                errorStore.write(error);
+                leaveErrorBreadcrumb(error);
+            }
         } catch (Exception exception) {
             Logger.warn("Problem sending error to Bugsnag", exception);
         }

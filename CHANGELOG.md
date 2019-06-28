@@ -7,6 +7,8 @@ the use of any API supplied by bugsnag-android.
 
 * Use NetworkCallback to monitor connectivity changes on newer API levels
 [#501](https://github.com/bugsnag/bugsnag-android/pull/501)
+* Send minimal error report if cached file is corrupted/empty
+[#500](https://github.com/bugsnag/bugsnag-android/pull/500)
 
 ## 4.15.0 (2019-06-10)
 

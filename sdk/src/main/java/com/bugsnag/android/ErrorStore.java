@@ -22,12 +22,26 @@ import java.util.concurrent.Semaphore;
 @ThreadSafe
 class ErrorStore extends FileStore<Error> {
 
+    private static final int MAX_ERR_CLASS_LEN = 40;
+
+    interface Delegate {
+
+        /**
+         * Invoked when a cached error report cannot be read, and a minimal error is
+         * read from the information encoded in the filename instead.
+         *
+         * @param minimalError the minimal error, if encoded in the filename
+         */
+        void onErrorReadFailure(Error minimalError);
+    }
+
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
+    private final Delegate delegate;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -47,9 +61,9 @@ class ErrorStore extends FileStore<Error> {
         }
     };
 
-    ErrorStore(@NonNull Configuration config, @NonNull Context appContext) {
-        super(config, appContext,
-            "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+    ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
+        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+        this.delegate = delegate;
     }
 
     void flushOnLaunch() {
@@ -133,22 +147,19 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Report report = null;
-            if (config.getBeforeSendTasks().size() > 0) {
-                report = new Report(config.getApiKey(), ErrorReader.readError(config, errorFile));
-                for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
-                    try {
-                        if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(errorFile));
-                            Logger.info("Deleting cancelled error file " + errorFile.getName());
-                            return;
-                        }
-                    } catch (Throwable ex) {
-                        Logger.warn("BeforeSend threw an Exception", ex);
+            Error error = ErrorReader.readError(config, errorFile);
+            Report report = new Report(config.getApiKey(), error);
+
+            for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+                try {
+                    if (!beforeSend.run(report)) {
+                        deleteStoredFiles(Collections.singleton(errorFile));
+                        Logger.info("Deleting cancelled error file " + errorFile.getName());
+                        return;
                     }
+                } catch (Throwable ex) {
+                    Logger.warn("BeforeSend threw an Exception", ex);
                 }
-            } else {
-                report = new Report(config.getApiKey(), errorFile);
             }
             config.getDelivery().deliver(report, config);
 
@@ -159,8 +170,11 @@ class ErrorStore extends FileStore<Error> {
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
+            if (delegate != null) {
+                Error minimalError = generateErrorFromFilename(errorFile.getName());
+                delegate.onErrorReadFailure(minimalError);
+            }
             deleteStoredFiles(Collections.singleton(errorFile));
-            Logger.warn("Problem sending unsent error from disk", exception);
         }
     }
 
@@ -179,12 +193,72 @@ class ErrorStore extends FileStore<Error> {
         return launchCrashes;
     }
 
+    String calculateFilenameForError(Error error) {
+        char handled = error.getHandledState().isUnhandled() ? 'u' : 'h';
+        char severity = error.getSeverity().getName().charAt(0);
+        String errClass = error.getExceptionName();
+
+        if (errClass.length() > MAX_ERR_CLASS_LEN) {
+            errClass = errClass.substring(0, MAX_ERR_CLASS_LEN);
+        }
+        return String.format("%s-%s-%s", severity, handled, errClass);
+    }
+
+    /**
+     * Generates minimal error information from a filename, if the report was incomplete/corrupted.
+     * This allows bugsnag to send the severity, handled state, and error class as a minimal
+     * report.
+     *
+     * Error information is encoded in the filename for recent notifier versions
+     * as "$severity-$handled-$errorClass", and is not present in legacy versions
+     *
+     * @param filename the filename
+     * @return the minimal error, or null if the filename does not match the expected pattern.
+     */
+    Error generateErrorFromFilename(String filename) {
+        if (filename == null) {
+            return null;
+        }
+
+        try {
+            int errorInfoStart = filename.indexOf('_') + 1;
+            int errorInfoEnd = filename.indexOf('_', errorInfoStart);
+            String encodedErr = filename.substring(errorInfoStart, errorInfoEnd);
+
+            char sevChar = encodedErr.charAt(0);
+            Severity severity = Severity.fromChar(sevChar);
+            severity = severity == null ? Severity.ERROR : severity;
+
+            boolean unhandled = encodedErr.charAt(2) == 'u';
+            HandledState handledState = HandledState.newInstance(unhandled
+                ? HandledState.REASON_UNHANDLED_EXCEPTION : HandledState.REASON_HANDLED_EXCEPTION);
+
+            // default if error has no name
+            String errClass = "";
+
+            if (encodedErr.length() >= 4) {
+                errClass = encodedErr.substring(4);
+            }
+            BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
+            Error error = new Error(config, exc, handledState, severity, null, null);
+            error.setIncomplete(true);
+            return error;
+        } catch (IndexOutOfBoundsException exc) {
+            // simplifies above implementation by avoiding need for several length checks.
+            return null;
+        }
+    }
+
     @NonNull
     @Override
     String getFilename(Object object) {
         String suffix = "";
+        String encodedInfo;
+
         if (object instanceof Error) {
             Error error = (Error) object;
+            encodedInfo = calculateFilenameForError(error);
+
             Map<String, Object> appData = error.getAppData();
             if (appData instanceof Map) {
                 Object duration = appData.get("duration");
@@ -194,10 +268,13 @@ class ErrorStore extends FileStore<Error> {
                 }
             }
         } else {
+            encodedInfo = ""; // don't encode for NDK errors, as they are always 'e-u'
             suffix = "not-jvm";
         }
-        return String.format(Locale.US, "%s%d_%s%s.json",
-                storeDirectory, System.currentTimeMillis(), UUID.randomUUID().toString(), suffix);
+        String uuid = UUID.randomUUID().toString();
+        long timestamp = System.currentTimeMillis();
+        return String.format(Locale.US, "%s%d_%s_%s%s.json",
+            storeDirectory, timestamp, encodedInfo, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {
