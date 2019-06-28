@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.content.Context
-import android.net.ConnectivityManager
 
 /**
  * Accesses the session tracker and flushes all stored sessions
@@ -22,8 +21,7 @@ internal fun flushErrorStoreOnLaunch(client: Client) {
  * Creates a delivery API client with a 500ms delay, emulating poor network connectivity
  */
 internal fun createSlowDelivery(context: Context): Delivery {
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-    val delivery = DefaultDelivery(cm)
+    val delivery = DefaultDelivery(null)
 
     return object : Delivery {
         override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
@@ -39,8 +37,7 @@ internal fun createSlowDelivery(context: Context): Delivery {
 }
 
 internal fun createDefaultDelivery(context: Context): DefaultDelivery {
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-    return DefaultDelivery(cm)
+    return DefaultDelivery(null)
 }
 
 internal fun createCustomHeaderDelivery(context: Context): Delivery {

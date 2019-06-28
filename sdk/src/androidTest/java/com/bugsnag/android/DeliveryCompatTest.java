@@ -20,6 +20,7 @@ public class DeliveryCompatTest {
     private DeliveryCompat deliveryCompat;
 
     private AtomicInteger customCount;
+    private Client client;
 
     /**
      * Generates a Delivery instance that increments a counter on each request
@@ -30,6 +31,12 @@ public class DeliveryCompatTest {
     public void setUp() throws Exception {
         customCount = new AtomicInteger();
         deliveryCompat = new DeliveryCompat();
+        client = BugsnagTestUtils.generateClient();
+    }
+
+    @After
+    public void tearDown() {
+        client.close();
     }
 
     @SuppressWarnings("deprecation")
@@ -75,7 +82,6 @@ public class DeliveryCompatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testClientCompat() {
-        Client client = BugsnagTestUtils.generateClient();
         Delivery delivery = client.config.getDelivery();
         assertFalse(delivery instanceof DeliveryCompat);
 

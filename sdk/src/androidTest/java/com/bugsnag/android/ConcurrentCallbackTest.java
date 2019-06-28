@@ -28,7 +28,7 @@ public class ConcurrentCallbackTest {
 
     @After
     public void tearDown() throws Exception {
-        client.getOrientationListener().disable();
+        client.close();
     }
 
     @Test

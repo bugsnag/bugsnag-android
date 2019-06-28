@@ -23,13 +23,19 @@ class BreadcrumbsTest {
 
     private lateinit var breadcrumbs: Breadcrumbs
     private lateinit var config: Configuration
+    private var client: Client? = null
 
     @Before
     fun setUp() {
         config = generateConfiguration()
         breadcrumbs = Breadcrumbs(config)
+        client = generateClient()
     }
 
+    @After
+    fun tearDown() {
+        client?.close()
+    }
 
     /**
      * Verifies that the breadcrumb message is truncated after the max limit is reached
@@ -169,9 +175,8 @@ class BreadcrumbsTest {
      */
     @Test
     fun testClientMethods() {
-        val client = generateClient()
-        client.leaveBreadcrumb("Hello World")
-        val store = client.breadcrumbs.store
+        client!!.leaveBreadcrumb("Hello World")
+        val store = client!!.breadcrumbs.store
         var count = 0
 
         for (breadcrumb in store) {

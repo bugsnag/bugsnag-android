@@ -39,6 +39,11 @@ public class NullMetadataTest {
         throwable = new RuntimeException("Test");
     }
 
+    @After
+    public void tearDown() {
+        client.close();
+    }
+
     @Test
     public void testErrorDefaultMetaData() throws Exception {
         Error error = new Error.Builder(config, throwable, generateSessionTracker(),

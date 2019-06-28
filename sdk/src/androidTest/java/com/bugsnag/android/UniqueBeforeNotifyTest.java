@@ -47,9 +47,9 @@ public class UniqueBeforeNotifyTest {
      * lol why is this comment required
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         callbackCount = 0;
-        client.getOrientationListener().disable();
+        client.close();
     }
 
     @Test

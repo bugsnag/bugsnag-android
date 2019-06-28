@@ -68,6 +68,10 @@ final class BugsnagTestUtils {
             generateSessionStore());
     }
 
+    static Connectivity generateConnectivity() {
+        return new ConnectivityCompat(InstrumentationRegistry.getContext(), null);
+    }
+
     @NonNull
     static SessionStore generateSessionStore() {
         return new SessionStore(generateConfiguration(), InstrumentationRegistry.getContext());

@@ -76,6 +76,12 @@ gradle.projectsEvaluated {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        allWarningsAsErrors = true
+    }
+}
+
 apply from: "../gradle/dependencies.gradle"
 apply from: "../gradle/release.gradle"
 apply from: "../gradle/detekt.gradle"

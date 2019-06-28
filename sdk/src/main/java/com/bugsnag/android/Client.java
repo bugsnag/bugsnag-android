@@ -7,19 +7,20 @@ import com.bugsnag.android.NativeInterface.Message;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,6 +77,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private AppNotRespondingMonitor anrMonitor;
+    private final Connectivity connectivity;
 
     /**
      * Initialize a Bugsnag client
@@ -116,19 +118,25 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
-    @SuppressWarnings("deprecation")
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
         sessionStore = new SessionStore(config, appContext);
 
-        ConnectivityManager cm =
-            (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
+            @Override
+            public Unit invoke(Boolean connected) {
+                if (connected) {
+                    errorStore.flushAsync();
+                }
+                return null;
+            }
+        });
 
         //noinspection ConstantConditions
         if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(cm));
+            configuration.setDelivery(new DefaultDelivery(connectivity));
         }
 
         sessionTracker =
@@ -138,8 +146,9 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(this);
-        deviceData = new DeviceData(this);
+        appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
+        Resources resources = appContext.getResources();
+        deviceData = new DeviceData(connectivity, this.appContext, resources, sharedPrefs);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);
@@ -211,13 +220,12 @@ public class Client extends Observable implements Observer {
                 @Override
                 public void run() {
                     appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
-                    appContext.registerReceiver(new ConnectivityChangeReceiver(),
-                        new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
                 }
             });
         } catch (RejectedExecutionException ex) {
             Logger.warn("Failed to register for automatic breadcrumb broadcasts", ex);
         }
+        connectivity.registerForNetworkChanges();
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
             appData.guessReleaseStage());
@@ -264,25 +272,6 @@ public class Client extends Observable implements Observer {
         };
         anrMonitor = new AppNotRespondingMonitor(delegate);
         anrMonitor.start(); // begin monitoring for ANRs
-    }
-
-    @SuppressWarnings("deprecation")
-    class ConnectivityChangeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (cm == null) {
-                return;
-            }
-
-            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-            boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
-
-            if (retryReports) {
-                errorStore.flushAsync();
-            }
-        }
     }
 
     void sendNativeSetupNotification() {
@@ -1493,4 +1482,8 @@ public class Client extends Observable implements Observer {
         getAppData().setBinaryArch(binaryArch);
     }
 
+    void close() {
+        orientationListener.disable();
+        connectivity.unregisterForNetworkChanges();
+    }
 }
