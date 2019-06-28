@@ -30,7 +30,12 @@ ifeq ($(BROWSER_STACK_ACCESS_KEY),)
 	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
 endif
 	@docker-compose up --build android-builder
-	@APP_LOCATION=/app/build/fixture.apk docker-compose up --build android-maze-runner
+	@docker-compose build android-maze-runner
+ifneq ($(TEST_FEATURE),)
+	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner features/$(TEST_FEATURE)
+else
+	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner
+endif
 
 bump: badge
 ifneq ($(shell git diff --staged),)

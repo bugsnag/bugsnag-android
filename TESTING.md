@@ -91,3 +91,8 @@ Ensure that the following environment variables are set:
 * `DEVICE_TYPE`: The android version to run the tests against, one of: ANDROID_5, ANDROID_6, ANDROID_7, ANDROID_8, ANDROID_9
 
 Run `make remote-integration-tests`
+
+If you wish to test a single feature, set the `TEST_FEATURE` environment variable to the name of the feature file.
+For example, to test the `breadcrumb` feature, use the following command:
+
+`TEST_FEATURE=breadcrumb.feature make remote-integration-tests`
