@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -20,31 +21,31 @@ import java.util.Map;
 public class ErrorReportApiClientTest {
 
     private FakeApiClient apiClient;
+    private Client client;
 
     @Before
     public void setUp() throws Exception {
         apiClient = new FakeApiClient();
-        Bugsnag.init(InstrumentationRegistry.getContext(), "123");
+        client = generateClient();
     }
 
     @After
-    public void tearDown() throws Exception {
-        Bugsnag.getClient().getOrientationListener().disable();
+    public void tearDown() {
+        client.close();
     }
 
     @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void testApiClientNullValidation() {
-        Bugsnag.setErrorReportApiClient(null);
+        client.setErrorReportApiClient(null);
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void testPostReportCalled() {
-        Bugsnag.setErrorReportApiClient(apiClient);
+        client.setErrorReportApiClient(apiClient);
 
         assertNull(apiClient.report);
-        Client client = Bugsnag.getClient();
         client.notifyBlocking(new Throwable());
         assertNotNull(apiClient.report);
     }

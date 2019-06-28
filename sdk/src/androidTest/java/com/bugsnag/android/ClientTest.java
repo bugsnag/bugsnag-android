@@ -55,7 +55,7 @@ public class ClientTest {
     public void tearDown() throws Exception {
         clearSharedPrefs();
         if (client != null) {
-            client.getOrientationListener().disable();
+            client.close();
             client = null;
         }
     }

@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -35,8 +34,8 @@ public class ClientConfigTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        client.getOrientationListener().disable();
+    public void tearDown() {
+        client.close();
     }
 
     @Test

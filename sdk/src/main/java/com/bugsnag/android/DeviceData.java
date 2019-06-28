@@ -44,11 +44,11 @@ class DeviceData {
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
-    private final Client client;
     private final boolean emulator;
     private final Context appContext;
     private final Connectivity connectivity;
     private final Resources resources;
+    private final SharedPreferences sharedPrefs;
     private final DisplayMetrics displayMetrics;
     private final String id;
     private final boolean rooted;
@@ -68,11 +68,12 @@ class DeviceData {
     @NonNull
     final String[] cpuAbi;
 
-    DeviceData(Client client, Connectivity connectivity) {
-        this.client = client;
-        this.appContext = client.appContext;
+    DeviceData(Connectivity connectivity, Context appContext, Resources resources,
+               SharedPreferences sharedPreferences) {
         this.connectivity = connectivity;
-        resources = appContext.getResources();
+        this.appContext = appContext;
+        this.resources = resources;
+        this.sharedPrefs = sharedPreferences;
 
         if (resources != null) {
             displayMetrics = resources.getDisplayMetrics();
@@ -231,12 +232,11 @@ class DeviceData {
      */
     @Nullable
     private String retrieveUniqueInstallId() {
-        SharedPreferences sharedPref = client.sharedPrefs;
-        String installId = sharedPref.getString(INSTALL_ID_KEY, null);
+        String installId = sharedPrefs.getString(INSTALL_ID_KEY, null);
 
         if (installId == null) {
             installId = UUID.randomUUID().toString();
-            sharedPref.edit().putString(INSTALL_ID_KEY, installId).apply();
+            sharedPrefs.edit().putString(INSTALL_ID_KEY, installId).apply();
         }
         return installId;
     }

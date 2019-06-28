@@ -1,25 +1,23 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.support.test.InstrumentationRegistry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
-@RunWith(AndroidJUnit4.class)
-@SmallTest
 public class DeviceDataTest {
 
     private Map<String, Object> deviceData;
@@ -30,27 +28,18 @@ public class DeviceDataTest {
     @Before
     public void setUp() throws Exception {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
-        DeviceData deviceData = new DeviceData(generateClient(), connectivity);
+        Context context = InstrumentationRegistry.getContext();
+        Resources resources = context.getResources();
+        SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
+        DeviceData deviceData = new DeviceData(connectivity, context, resources, prefs);
         this.deviceData = deviceData.getDeviceData();
     }
 
     @Test
-    public void testId() {
+    public void testAccessors() {
         assertNotNull(deviceData.get("id"));
-    }
-
-    @Test
-    public void testOrientation() {
         assertNotNull(deviceData.get("orientation"));
-    }
-
-    @Test
-    public void testFreeMemory() {
         assertTrue((Long) deviceData.get("freeMemory") > 0);
-    }
-
-    @Test
-    public void testTotalMemory() {
         assertTrue((Long) deviceData.get("totalMemory") > 0);
     }
 

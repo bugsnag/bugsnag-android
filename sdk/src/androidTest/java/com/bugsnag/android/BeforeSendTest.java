@@ -48,6 +48,7 @@ public class BeforeSendTest {
     @After
     public void tearDown() throws Exception {
         lastReport = null;
+        client.close();
     }
 
     @Test

@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -143,8 +144,9 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(this);
-        deviceData = new DeviceData(this, connectivity);
+        appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
+        Resources resources = appContext.getResources();
+        deviceData = new DeviceData(connectivity, this.appContext, resources, sharedPrefs);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);

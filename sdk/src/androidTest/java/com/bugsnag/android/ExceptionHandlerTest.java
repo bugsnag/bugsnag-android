@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 public class ExceptionHandlerTest {
 
     private Context context;
+    private Client client;
 
     /**
      * Sets the default exception handler to null to avoid any Bugsnag handlers created
@@ -31,11 +32,16 @@ public class ExceptionHandlerTest {
         context = InstrumentationRegistry.getContext();
         // Start in a clean state, since we've created clients before in tests
         Thread.setDefaultUncaughtExceptionHandler(null);
+        client = new Client(context, "api-key");
+    }
+
+    @After
+    public void tearDown() {
+        client.close();
     }
 
     @Test
     public void testEnableDisable() {
-        Client client = new Client(context, "api-key");
         assertTrue(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
 
         client.disableExceptionHandler();
@@ -44,7 +50,6 @@ public class ExceptionHandlerTest {
 
     @Test
     public void testMultipleClients() {
-        Client clientOne = new Client(context, "client-one");
         Client clientTwo = new Client(context, "client-two");
         Client clientThree = new Client(context, "client-two");
         clientThree.disableExceptionHandler();
