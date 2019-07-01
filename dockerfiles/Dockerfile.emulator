@@ -1,4 +1,4 @@
-FROM maven:3.5.2-jdk-8
+FROM maven:3.6.1-jdk-8
 RUN apt-get update -qqy \
     && apt-get -qqy install libglu1 qemu libvirt-dev virtinst bridge-utils msr-tools kmod make g++
 
