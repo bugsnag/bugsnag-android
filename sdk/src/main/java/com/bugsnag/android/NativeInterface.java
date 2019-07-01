@@ -291,6 +291,13 @@ public class NativeInterface {
     }
 
     /**
+     * Remove metadata from subsequent exception reports
+     */
+    public static void clearTab(@NonNull final String tab) {
+        getClient().clearTab(tab);
+    }
+
+    /**
      * Add metadata to subsequent exception reports
      */
     public static void addToTab(@NonNull final String tab,
