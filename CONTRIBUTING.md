@@ -98,45 +98,9 @@ option:
 ./gradlew assemble -PABI_FILTERS=x86,arm64-v8a
 ```
 
-## Running Tests
+## Testing
 
-Running the test suite requires a connected android device or emulator.
-
-### Unit tests
-
-You can run the test suite on a device/emulator as follows from within the sdk directory:
-
-```shell
-./gradlew connectedCheck
-```
-
-### End-to-end tests
-
-To run the end-to-end tests, first set up the environment by running
-[Bundler](https://bundler.io):
-
-```shell
-bundle install
-```
-
-The tests require two environment variables to be set:
-
-* `ANDROID_HOME`, set the the location of the Android SDK
-* `ANDROID_EMULATOR`, set to the name of an installed emulator
-
-Then run the tests using:
-
-```shell
-bundle exec maze-runner
-```
-
-### Running Lint
-
-You can run lint on the project using the following command:
-
-```shell
-./gradlew lint checkstyle detekt
-```
+Full details of how to build and run tests can be found in [the testing guide](`TESTING.md`)
 
 ## Building the Example App
 

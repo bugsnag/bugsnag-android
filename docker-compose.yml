@@ -1,0 +1,55 @@
+version: '3.6'
+services:
+  android-base:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-base
+
+  android-instrumentation-tests:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-instrumentation-tests
+    environment:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
+      INSTRUMENTATION_DEVICES:
+      APP_LOCATION:
+      NDK_VERSION:
+
+  android-linter:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-linter
+
+  android-builder:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-builder
+    volumes:
+      - ./build:/app/build
+
+  android-emulator:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.emulator
+
+  android-maze-runner:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android
+    environment:
+      VERBOSE:
+      DEBUG:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
+      BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
+      DEVICE_TYPE:
+      APP_LOCATION:
+    command: --tags ~@ignore
+    volumes:
+      - ./build:/app/build
+      - ./maze-output:/app/maze-output
+
+networks:
+  default:
+    name: ${BUILDKITE_JOB_ID:-android-maze-runner}

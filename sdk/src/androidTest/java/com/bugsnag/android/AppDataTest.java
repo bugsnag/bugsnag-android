@@ -68,11 +68,6 @@ public class AppDataTest {
     }
 
     @Test
-    public void testInForeground() {
-        assertFalse((Boolean) appData.get("inForeground"));
-    }
-
-    @Test
     public void testJsonSerialisation() throws JSONException {
         appData.put("buildUUID", "fa54de");
         JSONObject appDataJson = mapToJson(appData);
@@ -85,7 +80,7 @@ public class AppDataTest {
         assertNotNull(appDataJson.get("buildUUID"));
         assertNotNull(appDataJson.get("duration"));
         assertNotNull(appDataJson.get("durationInForeground"));
-        assertFalse(appDataJson.getBoolean("inForeground"));
+        assertNotNull(appDataJson.getBoolean("inForeground"));
     }
 
     @Test
