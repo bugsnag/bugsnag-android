@@ -9,6 +9,15 @@ Scenario: Test handled Kotlin Exception
     And the exception "message" equals "HandledExceptionScenario"
     And the payload field "events.0.device.cpuAbi" is a non-empty array
 
+Scenario: Report a handled exception without a message
+    When I run "HandledExceptionWithoutMessageScenario"
+    Then I wait to receive a request
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the payload field "events" is an array with 1 elements
+    And the exception "errorClass" equals "com.bugsnag.android.mazerunner.SomeException"
+    And the event "exceptions.0.message" is null
+    And the payload field "events.0.device.cpuAbi" is a non-empty array
+
 Scenario: Test handled Java Exception
     When I run "HandledExceptionJavaScenario"
     Then I wait to receive a request
