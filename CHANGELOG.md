@@ -7,6 +7,8 @@
 * Fix abort() in native code when storing breadcrumbs with null values in
   metadata
   [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
+* Convert metadata to map when notifying the NDK observer 
+  [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
 
 ## 4.15.0 (2019-06-10)
 
