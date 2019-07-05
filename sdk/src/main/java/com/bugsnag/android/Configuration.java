@@ -50,7 +50,6 @@ public class Configuration extends Observable implements Observer {
 
     private boolean detectAnrs = false;
     private boolean detectNdkCrashes = BuildConfig.DETECT_NDK_CRASHES;
-    private long anrThresholdMs = 5000;
 
     @NonNull
     private MetaData metaData;
@@ -155,20 +154,6 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * Set the endpoint to send data to. By default we'll send reports to
-     * the standard https://notify.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send report to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     */
-    @Deprecated
-    public void setEndpoint(@NonNull String endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    /**
      * Set the endpoints to send data to. By default we'll send error reports to
      * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
      * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoint.
@@ -211,20 +196,6 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     public String getSessionEndpoint() {
         return sessionEndpoint;
-    }
-
-    /**
-     * Set the endpoint to send Session Tracking data to. By default we'll send reports to
-     * the standard https://sessions.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send session data to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     */
-    @Deprecated
-    public void setSessionEndpoint(@NonNull String endpoint) {
-        this.sessionEndpoint = endpoint;
     }
 
     /**
@@ -415,17 +386,6 @@ public class Configuration extends Observable implements Observer {
      */
     public void setEnableExceptionHandler(boolean enableExceptionHandler) {
         this.enableExceptionHandler = enableExceptionHandler;
-    }
-
-    /**
-     * Get whether or not User sessions are captured automatically.
-     *
-     * @return true if sessions are captured automatically
-     * @deprecated use {@link #getAutoCaptureSessions()}
-     */
-    @Deprecated
-    public boolean shouldAutoCaptureSessions() {
-        return getAutoCaptureSessions();
     }
 
     /**
@@ -693,38 +653,6 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * @return the threshold at which ANRs are detected, in ms
-     * @see #setAnrThresholdMs(long)
-     *
-     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
-     */
-    @Deprecated
-    public long getAnrThresholdMs() {
-        return anrThresholdMs;
-    }
-
-    /**
-     * Sets the time in milliseconds at which an
-     * <a href="https://developer.android.com/topic/performance/vitals/anr">ANR</a> is detected
-     * by Bugsnag. By default, Bugsnag will record an ANR whenever the main thread has been blocked
-     * for 5000 milliseconds or longer.
-     * <p/>
-     * If you wish to enable ANR detection, you should set the {@link #setDetectAnrs(boolean)}
-     * property to true.
-     * <p/>
-     * Attempting to set this property to any value below 1000ms will result in the anrThresholdMs
-     * being set as 1000ms.
-     *
-     * @param anrThresholdMs the threshold in ms at which ANRs should be detected
-     * @see #setDetectAnrs(boolean)
-     *
-     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
-     */
-    @Deprecated
-    public void setAnrThresholdMs(long anrThresholdMs) {
-    }
-
-    /**
      * Supplies the headers which must be used in any request sent to the Error Reporting API.
      *
      * @return the HTTP headers
@@ -829,17 +757,6 @@ public class Configuration extends Observable implements Observer {
         if (!beforeRecordBreadcrumbTasks.contains(beforeRecordBreadcrumb)) {
             beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
         }
-    }
-
-    /**
-     * Checks if the given class name should be marked as in the project or not
-     *
-     * @param className the class to check
-     * @return true if the class should be considered in the project else false
-     */
-    @Deprecated
-    protected boolean inProject(@NonNull String className) {
-        return Stacktrace.inProject(className, projectPackages);
     }
 
     /**

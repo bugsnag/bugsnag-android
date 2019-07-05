@@ -9,7 +9,6 @@ import android.support.test.runner.AndroidJUnit4;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,26 +53,20 @@ public class ReportTest {
         assertEquals(groupingHash, event.getString("groupingHash"));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testModifyReportDetails() throws Exception {
-        String apiKey = "custom-api-key";
-        String notifierName = "React Native";
-        String notifierUrl = "https://bugsnag.com/reactnative";
-        String notifierVersion = "3.4.5";
-
-        report.setApiKey(apiKey);
-        report.setNotifierName(notifierName);
-        report.setNotifierURL(notifierUrl);
-        report.setNotifierVersion(notifierVersion);
+        report.setApiKey("custom-api-key");
+        report.getNotifier().setName("React Native");
+        report.getNotifier().setURL("https://bugsnag.com/reactnative");
+        report.getNotifier().setVersion("3.4.5");
 
         JSONObject reportJson = streamableToJson(report);
-        assertEquals(apiKey, reportJson.getString("apiKey"));
+        assertEquals("custom-api-key", reportJson.getString("apiKey"));
 
         JSONObject notifier = reportJson.getJSONObject("notifier");
-        assertEquals(notifierName, notifier.getString("name"));
-        assertEquals(notifierVersion, notifier.getString("version"));
-        assertEquals(notifierUrl, notifier.getString("url"));
+        assertEquals("React Native", notifier.getString("name"));
+        assertEquals("3.4.5", notifier.getString("version"));
+        assertEquals("https://bugsnag.com/reactnative", notifier.getString("url"));
     }
 
 }

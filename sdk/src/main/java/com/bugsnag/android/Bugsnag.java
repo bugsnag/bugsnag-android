@@ -119,21 +119,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Set the endpoint to send data to. By default we'll send reports to
-     * the standard https://notify.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send report to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     * instead.
-     */
-    @Deprecated
-    public static void setEndpoint(@NonNull final String endpoint) {
-        getClient().setEndpoint(endpoint);
-    }
-
-    /**
      * Set the buildUUID to your own value. This is used to identify proguard
      * mapping files in the case that you publish multiple different apps with
      * the same appId and versionCode. The default value is read from the
@@ -189,24 +174,6 @@ public final class Bugsnag {
      */
     public static void setNotifyReleaseStages(@Nullable final String... notifyReleaseStages) {
         getClient().setNotifyReleaseStages(notifyReleaseStages);
-    }
-
-    /**
-     * Set which packages should be considered part of your application.
-     * Bugsnag uses this to help with error grouping, and stacktrace display.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setProjectPackages("com.example.myapp");
-     * <p>
-     * By default, we'll mark the current package name as part of you app.
-     *
-     * @param projectPackages a list of package names
-     * @deprecated use {{@link Configuration#setProjectPackages(String[])}} instead
-     */
-    @Deprecated
-    public static void setProjectPackages(@Nullable final String... projectPackages) {
-        getClient().setProjectPackages(projectPackages);
     }
 
     /**
@@ -300,42 +267,6 @@ public final class Bugsnag {
     public static void setUserName(@Nullable final String name) {
         getClient().setUserName(name);
     }
-
-    /**
-     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
-     * requirements such as certificate pinning to be achieved.
-     * <p/>
-     * <p>
-     * The client implementation, and must be capable of sending Error Reports to the Bugsnag API,
-     * as documented here: <a href="https://docs.bugsnag.com/api/error-reporting/">
-     * https://docs.bugsnag.com/api/error-reporting/</a>
-     *
-     * @param errorReportApiClient the custom HTTP client implementation
-     *
-     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
-     */
-    @Deprecated
-    public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
-        getClient().setErrorReportApiClient(errorReportApiClient);
-    }
-
-    /**
-     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
-     * requirements such as certificate pinning to be achieved.
-     * <p/>
-     * <p>
-     * The client implementation, and must be capable of sending Session Tracking Payloads to
-     * the Bugsnag API.
-     *
-     * @param apiClient the custom HTTP client implementation
-     *
-     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
-     */
-    @Deprecated
-    public static void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
-        getClient().setSessionTrackingApiClient(apiClient);
-    }
-
 
     /**
      * Add a "before notify" callback, to execute code before sending
@@ -436,110 +367,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public static void notify(@NonNull final Throwable exception,
-                              @NonNull final MetaData metaData) {
-        getClient().notify(exception, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setMetaData(metaData);
-            }
-        });
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public static void notify(@NonNull final Throwable exception,
-                              @NonNull final Severity severity,
-                              @NonNull final MetaData metaData) {
-        getClient().notify(exception, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(severity);
-                report.getError().setMetaData(metaData);
-            }
-        });
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public static void notify(@NonNull String name,
-                              @NonNull String message,
-                              @NonNull StackTraceElement[] stacktrace,
-                              @NonNull Severity severity,
-                              @NonNull MetaData metaData) {
-        final Severity finalSeverity = severity;
-        final MetaData finalMetaData = metaData;
-        getClient().notify(name, message, stacktrace, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(finalSeverity);
-                report.getError().setMetaData(finalMetaData);
-            }
-        });
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-
-    public static void notify(@NonNull String name,
-                              @NonNull String message,
-                              @Nullable String context,
-                              @NonNull StackTraceElement[] stacktrace,
-                              @NonNull Severity severity,
-                              @NonNull MetaData metaData) {
-        final String finalContext = context;
-        final Severity finalSeverity = severity;
-        final MetaData finalMetaData = metaData;
-        getClient().notify(name, message, stacktrace, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(finalSeverity);
-                report.getError().setMetaData(finalMetaData);
-                report.getError().setContext(finalContext);
-            }
-        });
-    }
-
-    /**
      * Intended for use by other clients (React Native/Unity). Calling this method directly from
      * Android is not supported.
      */
@@ -618,19 +445,6 @@ public final class Bugsnag {
                                        @NonNull BreadcrumbType type,
                                        @NonNull Map<String, String> metadata) {
         getClient().leaveBreadcrumb(name, type, metadata);
-    }
-
-    /**
-     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
-     * By default, we'll keep and send the 20 most recent breadcrumb log
-     * messages.
-     *
-     * @param numBreadcrumbs number of breadcrumb log messages to send
-     * @deprecated use {@link Configuration#setMaxBreadcrumbs(int)} instead
-     */
-    @Deprecated
-    public static void setMaxBreadcrumbs(int numBreadcrumbs) {
-        getClient().config.setMaxBreadcrumbs(numBreadcrumbs);
     }
 
     /**

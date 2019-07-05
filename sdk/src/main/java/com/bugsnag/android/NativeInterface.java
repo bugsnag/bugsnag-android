@@ -335,7 +335,8 @@ public class NativeInterface {
      */
     @SuppressWarnings("deprecation")
     public static void setSessionEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setSessionEndpoint(endpoint);
+        Configuration config = getClient().getConfig();
+        config.setEndpoints(config.getEndpoint(), endpoint);
     }
 
     /**
@@ -343,7 +344,8 @@ public class NativeInterface {
      */
     @SuppressWarnings("deprecation")
     public static void setEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setEndpoint(endpoint);
+        Configuration config = getClient().getConfig();
+        config.setEndpoints(endpoint, config.getSessionEndpoint());
     }
 
     /**
