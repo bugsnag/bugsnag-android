@@ -1,7 +1,7 @@
 steps:
   - label: ':docker: Build Android base image'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           build:
             - android-base
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
@@ -17,7 +17,7 @@ steps:
 
   - label: ':docker: Build Android linter image'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           build:
             - android-linter
           cache-from:
@@ -30,7 +30,7 @@ steps:
 
   - label: ':docker: Build Android instrumentation image'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           build: android-instrumentation-tests
           cache-from:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -42,7 +42,7 @@ steps:
 
   - label: ':docker: Build Android apk builder image'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           build: android-builder
           cache-from:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -56,20 +56,20 @@ steps:
 
   - label: ':docker: Build Android maze runner image'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           build: android-maze-runner
 
   - wait
 
   - label: ':android: Linter'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           run: android-linter
 
   - label: ':android: Build fixture APK'
     artifact_paths: build/fixture.apk
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
@@ -138,7 +138,7 @@ steps:
 
   - label: ':android: NDK 12b SDK Instrumentation tests'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
@@ -149,7 +149,7 @@ steps:
 
   - label: ':android: NDK 16b SDK Instrumentation tests'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
@@ -160,7 +160,7 @@ steps:
 
   - label: ':android: NDK 19 SDK Instrumentation tests'
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.0.3:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
