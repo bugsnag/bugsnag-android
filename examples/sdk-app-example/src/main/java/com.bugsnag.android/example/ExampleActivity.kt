@@ -50,15 +50,13 @@ class ExampleActivity : AppCompatActivity() {
 
         // Add some global metaData
         Bugsnag.addToTab("user", "age", 31)
-
-        // Mark the following packages as part of your app
-        Bugsnag.setProjectPackages("com.bugsnag.android.example", "com.bugsnag.android.other")
     }
 
     /**
      * Throws an unhandled Exception. Bugsnag will automatically capture any uncaught exceptions
      * in your app and send an error report.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun crashUnhandled(view: View) {
         throw CrashyClass.crash("Fatal Crash")
     }
@@ -67,6 +65,7 @@ class ExampleActivity : AppCompatActivity() {
      * You can call [Bugsnag.notify] to send an error report for exceptions
      * which are already handled by your app.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun crashHandled(view: View) {
         try {
             throw RuntimeException("Non-Fatal Crash")
@@ -80,6 +79,7 @@ class ExampleActivity : AppCompatActivity() {
     /**
      * Delivers an error notification from native (C/C++) code
      */
+    @Suppress("UNUSED_PARAMETER")
     fun notifyNativeHandled(view: View) {
         notifyFromCXX()
     }
@@ -88,6 +88,7 @@ class ExampleActivity : AppCompatActivity() {
      * The severity of error reports can be altered. This can be useful for capturing handled
      * exceptions which occur often but are not visible to the user.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun crashWithCustomSeverity(view: View) {
         val e = RuntimeException("Error Report with altered Severity")
         Bugsnag.notify(e, Severity.INFO)
@@ -98,6 +99,7 @@ class ExampleActivity : AppCompatActivity() {
      * User details can be added globally, which will then appear in all error reports sent
      * to the Bugsnag dashboard.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun crashWithUserDetails(view: View) {
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         val e = RuntimeException("Error Report with User Info")
@@ -110,11 +112,15 @@ class ExampleActivity : AppCompatActivity() {
      * [Bugsnag.notify], as shown below, or registering a global callback
      * with [Bugsnag.beforeNotify] that adds metadata to the report.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun crashWithMetadata(view: View) {
         val e = RuntimeException("Error report with Additional Metadata")
-        val metaData = generateUserMetaData()
 
-        Bugsnag.notify(e, Severity.ERROR, metaData)
+        Bugsnag.notify(e) {report ->
+            val error = report.error
+            error?.severity = Severity.ERROR
+            error?.metaData?.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
+        }
         displayToastNotification()
     }
 
@@ -123,6 +129,7 @@ class ExampleActivity : AppCompatActivity() {
      * up to a crash. You can log your own breadcrumbs which will display on the Bugsnag Dashboard -
      * activity lifecycle callbacks and system intents are also captured automatically.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun crashWithBreadcrumbs(view: View) {
         Bugsnag.leaveBreadcrumb("LoginButtonClick")
 
@@ -139,13 +146,14 @@ class ExampleActivity : AppCompatActivity() {
      * When sending a handled error, a callback can be registered, which allows the Error Report
      * to be modified before it is sent.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun crashWithCallback(view: View) {
         val e = RuntimeException("Customized Error Report")
 
-        Bugsnag.notify(e, Callback { report ->
+        Bugsnag.notify(e) { report ->
             // modify the report
             report.error?.metaData = generateUserMetaData()
-        })
+        }
         displayToastNotification()
     }
 
@@ -163,6 +171,7 @@ class ExampleActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun readDocs(view: View) {
         val uri = Uri.parse("https://docs.bugsnag.com/platforms/android/sdk/")
         val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -172,16 +181,12 @@ class ExampleActivity : AppCompatActivity() {
     private fun generateUserMetaData(): MetaData {
         val completedLevels = Arrays.asList("Level 1 - The Beginning", "Level 2 - Tower Defence")
         val userDetails = HashMap<String, String>()
-        userDetails.put("playerName", "Joe Bloggs the Invincible")
+        userDetails["playerName"] = "Joe Bloggs the Invincible"
 
         val metaData = MetaData()
         metaData.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
         metaData.addToTab("CustomMetaData", "UserDetails", userDetails)
         metaData.addToTab("CustomMetaData", "CompletedLevels", completedLevels)
         return metaData
-    }
-
-    fun sendErrorWithCallback(callback: Callback) {
-        Bugsnag.notify(RuntimeException(), callback)
     }
 }

@@ -1,20 +1,8 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:$agpVersion"
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:4.2.0"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 repositories {
+    mavenLocal()
     google()
     mavenCentral()
     jcenter()
@@ -29,11 +17,11 @@ android {
             storePassword "password"
         }
     }
-    compileSdkVersion 28
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 28
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.compileSdkVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
         ndk {
@@ -47,15 +35,8 @@ android {
             signingConfig signingConfigs.config
         }
     }
-    lintOptions {
-        disable "OnClick"
-        abortOnError true
-    }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
+    lintOptions.disable "OnClick"
+    externalNativeBuild.cmake.path "CMakeLists.txt"
 }
 
 // set this value to true if you wish to test with a local artefact
@@ -74,12 +55,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
-apply from: "checkstyle.gradle"
 apply plugin: "com.bugsnag.android.gradle"
-
-bugsnag {
-    failOnUploadError false
-}
+bugsnag.failOnUploadError = false
 
 if (usingLocalArtefact) {
     apply from: "ndk_local_setup.gradle"

@@ -1,90 +1,13 @@
-plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.0.0-RC14")
-}
-
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
-
-repositories {
-    google()
-    mavenCentral()
-    jcenter()
-}
+apply plugin: "io.gitlab.arturbosch.detekt"
 
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
-
-    defaultConfig {
-        // Note minSdkVersion must be >=21 for 64 bit architectures
-        minSdkVersion Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "proguard-rules.pro"
-
-        externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_CPP_FEATURES=exceptions",
-                    "-DANDROID_STL=c++_static"
-            }
-        }
-
-        ndk {
-            if (project.hasProperty("ABI_FILTERS")) {
-                abiFilters project.ABI_FILTERS.split(",")
-            } else {
-                abiFilters "arm64-v8a", "armeabi-v7a", "armeabi", "x86", "x86_64"
-            }
-        }
-    }
-
-    lintOptions {
-        abortOnError true
-        warningsAsErrors true
-        checkAllWarnings true
-        baseline file("lint-baseline.xml")
-    }
-
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
-
-    buildTypes {
-        debug {
-            testCoverageEnabled = true
-        }
-    }
-
-    buildTypes.each { buildType ->
-        boolean detectNdkCrashes = project.hasProperty("releaseNdkArtefact")
-        buildType.buildConfigField("boolean", "DETECT_NDK_CRASHES", "$detectNdkCrashes")
-    }
-
-    testOptions.unitTests.all {
-        testLogging {
-            events "passed", "skipped", "failed", "standardOut", "standardError"
-            outputs.upToDateWhen {false}
-            showStandardStreams = true
-            info.events = ["passed", "skipped", "failed", "standardOut", "standardError"]
-        }
-    }
-}
-
-gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:all" << "-Werror"
-    }
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        allWarningsAsErrors = true
-    }
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
 }
 
 apply from: "../gradle/dependencies.gradle"
 apply from: "../gradle/release.gradle"
 apply from: "../gradle/detekt.gradle"
-apply from: "../gradle/dexcount.gradle"
-apply from: "../gradle/coveralls.gradle"
 apply from: "../gradle/checkstyle.gradle"

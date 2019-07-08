@@ -49,7 +49,7 @@ public class Configuration extends Observable implements Observer {
     private boolean automaticallyCollectBreadcrumbs = true;
 
     private boolean detectAnrs = false;
-    private boolean detectNdkCrashes = BuildConfig.DETECT_NDK_CRASHES;
+    private boolean detectNdkCrashes = false;
     private long anrThresholdMs = 5000;
 
     @NonNull
