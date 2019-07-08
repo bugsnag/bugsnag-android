@@ -1,3 +1,6 @@
-[submodule "sdk/src/main/jni/external/libunwindstack"]
-	path = sdk/src/main/jni/external/libunwindstack
+[submodule "bugsnag-android-ndk/src/main/jni/external/libunwindstack"]
+	path = bugsnag-android-ndk/src/main/jni/external/libunwindstack
+	url = https://github.com/bugsnag/libunwindstack-ndk
+[submodule "bugsnag-android-ndk/src/main/jni/external/libunwindstack-ndk"]
+	path = bugsnag-android-ndk/src/main/jni/external/libunwindstack-ndk
 	url = https://github.com/bugsnag/libunwindstack-ndk

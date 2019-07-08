@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.ndk.NativeBridge;
-
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Observer;
 import java.util.Queue;
 
 /**
@@ -170,7 +169,20 @@ public class NativeInterface {
      */
     public static void configureClientObservers(@NonNull Client client) {
         setClient(client);
-        client.addObserver(new NativeBridge());
+
+        try {
+            String className = "com.bugsnag.android.ndk.NativeBridge";
+            Class<?> clz = Class.forName(className);
+            Observer observer = (Observer) clz.newInstance();
+            client.addObserver(observer);
+        } catch (ClassNotFoundException exception) {
+            // ignore this one, will happen if the NDK plugin is not present
+            Logger.info("Bugsnag NDK integration not available");
+        } catch (InstantiationException exception) {
+            Logger.warn("Failed to instantiate NDK observer", exception);
+        } catch (IllegalAccessException exception) {
+            Logger.warn("Could not access NDK observer", exception);
+        }
         client.sendNativeSetupNotification();
     }
 

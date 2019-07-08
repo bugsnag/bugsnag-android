@@ -1,5 +1,5 @@
 include_directories(
-    ../main/jni/
+    ../main/jni
     ../main/jni/deps
     cpp
     cpp/deps

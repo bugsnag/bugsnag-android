@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../utils/string.h"
+#include "string.h"
 
 typedef struct {
   uintptr_t absolute_pc;

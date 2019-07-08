@@ -4,4 +4,3 @@
 -keep class com.bugsnag.android.Breadcrumbs { *; }
 -keep class com.bugsnag.android.BreadcrumbType { *; }
 -keep class com.bugsnag.android.Severity { *; }
--keep class com.bugsnag.android.ndk.NativeBridge { *; }

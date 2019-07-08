@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <string.h>
+#include "string.h"
 #include <parson/parson.h>
 #include "../bugsnag_ndk.h"
 #include "build.h"

@@ -1,4 +1,4 @@
-#include "../utils/string.h"
+#include "string.h"
 #include "stack_unwinder_simple.h"
 #include <stdlib.h>
 #include <ucontext.h>

@@ -7,11 +7,11 @@ android {
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-        externalNativeBuild.cmake.arguments "-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_static"
-        ndk.abiFilters = project.hasProperty("ABI_FILTERS") ? project.ABI_FILTERS.split(",") :
-            ["arm64-v8a", "armeabi-v7a", "armeabi", "x86", "x86_64"]
     }
-    externalNativeBuild.cmake.path = "CMakeLists.txt"
+}
+
+dependencies {
+    api project(":bugsnag-android-core")
 }
 
 apply from: "../gradle/dependencies.gradle"

@@ -6,29 +6,29 @@ add_library( # Specifies the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             jni/bugsnag_ndk.c
-             jni/bugsnag.c
-             jni/metadata.c
-             jni/report.c
-             jni/handlers/signal_handler.c
-             jni/handlers/anr_handler.c
-             jni/handlers/cpp_handler.cpp
-             jni/utils/crash_info.c
-             jni/utils/stack_unwinder.c
-             jni/utils/stack_unwinder_libunwindstack.cpp
-             jni/utils/stack_unwinder_libcorkscrew.c
-             jni/utils/stack_unwinder_libunwind.c
-             jni/utils/stack_unwinder_simple.c
-             jni/utils/serializer.c
-             jni/utils/string.c
-             jni/deps/parson/parson.c
+    jni/bugsnag_ndk.c
+    jni/bugsnag.c
+    jni/metadata.c
+    jni/report.c
+    jni/handlers/signal_handler.c
+    jni/handlers/anr_handler.c
+    jni/handlers/cpp_handler.cpp
+    jni/utils/crash_info.c
+    jni/utils/stack_unwinder.c
+    jni/utils/stack_unwinder_libunwindstack.cpp
+    jni/utils/stack_unwinder_libcorkscrew.c
+    jni/utils/stack_unwinder_libunwind.c
+    jni/utils/stack_unwinder_simple.c
+    jni/utils/serializer.c
+    jni/utils/string.c
+    jni/deps/parson/parson.c
              )
 
 include_directories(
-             jni/
-             jni/deps
-             jni/external/libunwind/include
-             jni/external/libunwindstack/include
+    jni
+    jni/deps
+    jni/external/libunwind/include
+    jni/external/libunwindstack-ndk/include
              )
 
 target_include_directories(bugsnag-ndk PRIVATE ${BUGSNAG_DIR}/assets/include)
@@ -52,7 +52,7 @@ set_target_properties(bugsnag-ndk
                       COMPILE_OPTIONS
                       -Werror -Wall -pedantic)
 
-add_subdirectory(jni/external/libunwindstack/cmake)
+add_subdirectory(jni/external/libunwindstack-ndk/cmake)
 target_link_libraries(bugsnag-ndk unwindstack)
 if(${ANDROID_ABI} STREQUAL "armeabi" OR ${ANDROID_ABI} STREQUAL "armeabi-v7a")
     add_library(libunwind STATIC IMPORTED)

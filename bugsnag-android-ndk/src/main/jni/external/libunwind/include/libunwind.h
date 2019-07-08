@@ -12,7 +12,7 @@
 //===----------------------------------------------------------------------===//
 #ifndef __LIBUNWIND__
 #define __LIBUNWIND__
-#include <__libunwind_config.h>
+#include "__libunwind_config.h"
 #include <stdint.h>
 #include <stddef.h>
 #ifdef __APPLE__

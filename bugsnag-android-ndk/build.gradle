@@ -14,6 +14,10 @@ android {
     externalNativeBuild.cmake.path = "CMakeLists.txt"
 }
 
+dependencies {
+    api project(":bugsnag-android-core")
+}
+
 apply from: "../gradle/dependencies.gradle"
 apply from: "../gradle/release.gradle"
 apply from: "../gradle/detekt.gradle"
