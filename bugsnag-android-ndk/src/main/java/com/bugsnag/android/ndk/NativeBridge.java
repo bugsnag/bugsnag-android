@@ -36,8 +36,7 @@ public class NativeBridge implements Observer {
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
     public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
-                                      int apiLevel, boolean is32bit,
-                                      @Nullable ByteBuffer anrSentinel);
+                                      int apiLevel, boolean is32bit);
 
     public static native void deliverReportAtPath(@NonNull String filePath);
 
@@ -238,13 +237,9 @@ public class NativeBridge implements Observer {
                 List<Object> values = (List<Object>)arg;
                 if (values.size() > 0 && values.get(0) instanceof Configuration) {
                     Configuration config = (Configuration)values.get(0);
-                    ByteBuffer anrBuffer = null;
-                    if (values.size() > 1 && values.get(1) instanceof ByteBuffer) {
-                        anrBuffer = (ByteBuffer)values.get(1);
-                    }
                     String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
                     install(reportPath, config.getDetectNdkCrashes(), Build.VERSION.SDK_INT,
-                            is32bit(), anrBuffer);
+                        is32bit());
                     installed.set(true);
                 }
             } else {
