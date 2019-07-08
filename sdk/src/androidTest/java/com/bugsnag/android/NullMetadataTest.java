@@ -92,13 +92,6 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testConfigSetNullMetadata() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(null);
-        validateDefaultMetadata(configuration.getMetaData());
-    }
-
-    @Test
     public void testNotify() throws Exception {
         client.beforeNotify(new BeforeNotify() {
             @Override

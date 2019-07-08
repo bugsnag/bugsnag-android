@@ -98,45 +98,9 @@ option:
 ./gradlew assemble -PABI_FILTERS=x86,arm64-v8a
 ```
 
-## Running Tests
+## Testing
 
-Running the test suite requires a connected android device or emulator.
-
-### Unit tests
-
-You can run the test suite on a device/emulator as follows from within the sdk directory:
-
-```shell
-./gradlew connectedCheck
-```
-
-### End-to-end tests
-
-To run the end-to-end tests, first set up the environment by running
-[Bundler](https://bundler.io):
-
-```shell
-bundle install
-```
-
-The tests require two environment variables to be set:
-
-* `ANDROID_HOME`, set the the location of the Android SDK
-* `ANDROID_EMULATOR`, set to the name of an installed emulator
-
-Then run the tests using:
-
-```shell
-bundle exec maze-runner
-```
-
-### Running Lint
-
-You can run lint on the project using the following command:
-
-```shell
-./gradlew lint checkstyle detekt
-```
+Full details of how to build and run tests can be found in [the testing guide](`TESTING.md`)
 
 ## Building the Example App
 
@@ -260,12 +224,12 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
 - Once merged:
-  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew ndk:assembleRelease sdk:assembleRelease`
+  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew sdk:assembleRelease`
   - Release to GitHub:
     - [ ] Run `git tag vX.X.X && git push origin --tags`
     - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
     - [ ] Upload the generated `.aar` file from `{sdk,ndk}/build/outputs/aar/bugsnag-android-*.aar`
-  - [ ] Release to Maven Central and Bintray by running `./gradlew publish bintrayUpload`
+  - [ ] Release to Maven Central and Bintray by running `./gradlew sdk:assembleRelease publish bintrayUpload && ./gradlew sdk:assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”

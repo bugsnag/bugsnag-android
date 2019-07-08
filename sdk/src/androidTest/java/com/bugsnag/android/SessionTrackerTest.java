@@ -105,22 +105,22 @@ public class SessionTrackerTest {
 
     @Test
     public void testBasicInForeground() throws Exception {
-        Assert.assertFalse(sessionTracker.isInForeground());
+        assertNotNull(sessionTracker.isInForeground());
         assertNull(sessionTracker.getCurrentSession());
         assertNull(sessionTracker.getContextActivity());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, System.currentTimeMillis());
-        assertFalse(sessionTracker.isInForeground());
+        assertNotNull(sessionTracker.isInForeground());
         Session firstSession = sessionTracker.getCurrentSession();
         assertNotNull(firstSession);
 
         sessionTracker.updateForegroundTracker("other", true, System.currentTimeMillis());
-        assertFalse(sessionTracker.isInForeground());
+        assertNotNull(sessionTracker.isInForeground());
         assertEquals(firstSession, sessionTracker.getCurrentSession());
         assertEquals("other", sessionTracker.getContextActivity());
 
         sessionTracker.updateForegroundTracker("other", false, System.currentTimeMillis());
-        assertFalse(sessionTracker.isInForeground());
+        assertNotNull(sessionTracker.isInForeground());
         assertEquals(ACTIVITY_NAME, sessionTracker.getContextActivity());
     }
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.16.0 (2019-07-09)
 
 This release adds a compile-time dependency on the Kotlin standard library. This should not affect
 the use of any API supplied by bugsnag-android.
@@ -9,6 +9,14 @@ the use of any API supplied by bugsnag-android.
 [#501](https://github.com/bugsnag/bugsnag-android/pull/501)
 * Send minimal error report if cached file is corrupted/empty
 [#500](https://github.com/bugsnag/bugsnag-android/pull/500)
+
+### Bug fixes
+
+* Fix abort() in native code when storing breadcrumbs with null values in
+  metadata
+  [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
+* Convert metadata to map when notifying the NDK observer 
+  [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
 
 ## 4.15.0 (2019-06-10)
 

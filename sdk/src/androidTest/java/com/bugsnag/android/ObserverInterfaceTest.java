@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -56,8 +57,8 @@ public class ObserverInterfaceTest {
         metadata.addToTab("foo", "bar", "baz");
         client.setMetaData(metadata);
         Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_METADATA, MetaData.class);
-        assertEquals(metadata, value);
+                NativeInterface.MessageType.UPDATE_METADATA, Map.class);
+        assertEquals(metadata.store, value);
     }
 
     @Test
@@ -66,8 +67,8 @@ public class ObserverInterfaceTest {
         metadata.addToTab("foo", "bar", "baz");
         client.getConfig().setMetaData(metadata);
         Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_METADATA, MetaData.class);
-        assertEquals(metadata, value);
+                NativeInterface.MessageType.UPDATE_METADATA, Map.class);
+        assertEquals(metadata.store, value);
     }
 
     @Test

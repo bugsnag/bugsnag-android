@@ -26,7 +26,7 @@ class BugsnagTestNdkSetupTask extends DefaultTask {
         for (def config in project.configurations) {
             try {
                 def artifactFile = config.resolvedConfiguration.getFiles().find {
-                    it.toString().contains("bugsnag-android-ndk")
+                    it.toString().contains("bugsnag-android")
                 }
                 if (artifactFile && artifactFile.exists()) {
                     return artifactFile
