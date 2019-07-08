@@ -4,15 +4,28 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
 
 public class NativeInterfaceTest {
 
+    private Client client;
+
+    @Before
+    public void setUp() throws Exception {
+        client = BugsnagTestUtils.generateClient();
+    }
+
+    @After
+    public void tearDown() {
+        client.close();
+    }
+
     @Test
     public void getMetaData() {
-        Client client = BugsnagTestUtils.generateClient();
         NativeInterface.setClient(client);
         assertNotSame(client.config.getMetaData().store, NativeInterface.getMetaData());
     }

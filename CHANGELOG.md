@@ -1,6 +1,14 @@
 # Changelog
 
-## TBD
+## 4.16.0 (2019-07-09)
+
+This release adds a compile-time dependency on the Kotlin standard library. This should not affect
+the use of any API supplied by bugsnag-android.
+
+* Use NetworkCallback to monitor connectivity changes on newer API levels
+[#501](https://github.com/bugsnag/bugsnag-android/pull/501)
+* Send minimal error report if cached file is corrupted/empty
+[#500](https://github.com/bugsnag/bugsnag-android/pull/500)
 
 ### Bug fixes
 

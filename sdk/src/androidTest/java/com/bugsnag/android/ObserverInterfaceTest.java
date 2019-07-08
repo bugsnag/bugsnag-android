@@ -26,6 +26,7 @@ import java.util.Observer;
 @SmallTest
 @SuppressWarnings("unchecked")
 public class ObserverInterfaceTest {
+
     private Configuration config;
     private Client client;
     private BugsnagTestObserver observer;
@@ -43,6 +44,11 @@ public class ObserverInterfaceTest {
         client.disableExceptionHandler();
         observer = new BugsnagTestObserver();
         client.addObserver(observer);
+    }
+
+    @After
+    public void tearDown() {
+        client.close();
     }
 
     @Test

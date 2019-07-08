@@ -1,34 +1,37 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.when;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.Map;
 
-@RunWith(AndroidJUnit4.class)
-@SmallTest
+@RunWith(MockitoJUnitRunner.class)
 public class AppDataTest {
 
-    private Configuration config;
     private Map<String, Object> appData;
-    private Client client;
+
+    @Mock
+    Client client;
+
+    @Mock
+    SessionTracker sessionTracker;
 
     /**
      * Configures a new AppData for testing accessors + serialisation
@@ -37,34 +40,23 @@ public class AppDataTest {
      */
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("some-api-key");
-        client = new Client(InstrumentationRegistry.getContext(), config);
-        appData = new AppData(client).getAppData();
-    }
+        when(sessionTracker.isInForeground()).thenReturn(true);
+        when(sessionTracker.getDurationInForegroundMs(anyLong())).thenReturn(500L);
 
-    @After
-    public void tearDown() throws Exception {
-        client.getOrientationListener().disable();
+        Context context = InstrumentationRegistry.getContext();
+        PackageManager packageManager = context.getPackageManager();
+        Configuration config = new Configuration("api-key");
+        AppData obj = new AppData(context, packageManager, config, sessionTracker);
+        this.appData = obj.getAppData();
     }
 
     @Test
-    public void testPackageName() {
+    public void testAccessors() {
         assertEquals("com.bugsnag.android.test", appData.get("packageName"));
-    }
-
-    @Test
-    public void testBuildUuid() {
         assertNull(appData.get("buildUUID"));
-    }
-
-    @Test
-    public void testDuration() {
         assertTrue(((Long) appData.get("duration")) > 0);
-    }
-
-    @Test
-    public void testDurationInForeground() {
-        assertEquals(0L, appData.get("durationInForeground"));
+        assertEquals(500L, appData.get("durationInForeground"));
+        assertTrue((Boolean) appData.get("inForeground"));
     }
 
     @Test
@@ -78,27 +70,8 @@ public class AppDataTest {
         assertEquals("android", appDataJson.get("type"));
         assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
         assertNotNull(appDataJson.get("buildUUID"));
-        assertNotNull(appDataJson.get("duration"));
-        assertNotNull(appDataJson.get("durationInForeground"));
-        assertNotNull(appDataJson.getBoolean("inForeground"));
+        assertTrue(((Long) appData.get("duration")) > 0);
+        assertEquals(500L, appData.get("durationInForeground"));
+        assertTrue(appDataJson.getBoolean("inForeground"));
     }
-
-    @Test
-    public void testAppVersionOverride() throws JSONException {
-        String appVersion = "1.2.3";
-        config.setAppVersion(appVersion);
-
-        JSONObject appDataJson = mapToJson(client.appData.getAppData());
-        assertEquals(appVersion, appDataJson.get("version"));
-    }
-
-    @Test
-    public void testReleaseStageOverride() throws JSONException {
-        String releaseStage = "test-stage";
-        config.setReleaseStage(releaseStage);
-
-        JSONObject appDataJson = mapToJson(client.appData.getAppData());
-        assertEquals(releaseStage, appDataJson.get("releaseStage"));
-    }
-
 }

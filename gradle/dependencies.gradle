@@ -1,10 +1,12 @@
 dependencies {
     api "com.android.support:support-annotations:$supportLibVersion"
 
-    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
+
+    androidTestImplementation "org.mockito:mockito-android:$mockitoVersion"
 
     androidTestImplementation "com.android.support.test:runner:$supportTestVersion", {
         exclude group: "com.android.support", module: "support-annotations"

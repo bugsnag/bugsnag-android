@@ -14,6 +14,7 @@ class ProjectPackagesTest {
 
         val client = Client(InstrumentationRegistry.getContext(), configuration)
         assertArrayEquals(arrayOf("com.bugsnag.android.test"), client.config.projectPackages)
+        client.close()
     }
 
     @Test
@@ -22,5 +23,6 @@ class ProjectPackagesTest {
         configuration.projectPackages = arrayOf("com.foo.example")
         val client = Client(InstrumentationRegistry.getContext(), configuration)
         assertArrayEquals(arrayOf("com.foo.example"), client.config.projectPackages)
+        client.close()
     }
 }

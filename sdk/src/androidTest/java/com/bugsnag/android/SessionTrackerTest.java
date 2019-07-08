@@ -7,8 +7,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +22,7 @@ public class SessionTrackerTest {
     private SessionTracker sessionTracker;
     private User user;
     private Configuration configuration;
+    private Client client;
 
     /**
      * Configures a session tracker that automatically captures sessions
@@ -32,10 +33,16 @@ public class SessionTrackerTest {
     public void setUp() throws Exception {
         configuration = new Configuration("test");
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
+        client = generateClient();
         sessionTracker
-            = new SessionTracker(configuration, generateClient(), generateSessionStore());
+            = new SessionTracker(configuration, client, generateSessionStore());
         configuration.setAutoCaptureSessions(true);
         user = new User();
+    }
+
+    @After
+    public void tearDown() {
+        client.close();
     }
 
     @Test
@@ -118,8 +125,27 @@ public class SessionTrackerTest {
     }
 
     @Test
+    public void testInForegroundDuration() throws Exception {
+        long now = System.currentTimeMillis();
+        sessionTracker = new SessionTracker(configuration, client,
+            0, generateSessionStore());
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 100));
+
+        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        assertEquals(0, sessionTracker.getDurationInForegroundMs(now + 200));
+    }
+
+    @Test
     public void testZeroSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, generateClient(),
+        sessionTracker = new SessionTracker(configuration, client,
             0, generateSessionStore());
 
         long now = System.currentTimeMillis();
@@ -134,7 +160,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, generateClient(),
+        sessionTracker = new SessionTracker(configuration, client,
             100, generateSessionStore());
 
         long now = System.currentTimeMillis();

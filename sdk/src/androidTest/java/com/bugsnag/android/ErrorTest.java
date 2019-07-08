@@ -6,11 +6,14 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -32,6 +35,7 @@ public class ErrorTest {
 
     private Configuration config;
     private Error error;
+    private Client client;
 
     /**
      * Generates a new default error for use by tests
@@ -44,6 +48,17 @@ public class ErrorTest {
         RuntimeException exception = new RuntimeException("Example message");
         error = new Error.Builder(config, exception, generateSessionTracker(),
             Thread.currentThread(), false).build();
+        client = generateClient();
+    }
+
+    /**
+     * Tears down the client
+     */
+    @After
+    public void tearDown() {
+        if (client != null) {
+            client.close();
+        }
     }
 
     @Test
@@ -75,7 +90,6 @@ public class ErrorTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
-        Client client = generateClient();
         error.setAppData(client.getAppData().getAppData());
 
         JSONObject errorJson = streamableToJson(error);
@@ -379,7 +393,13 @@ public class ErrorTest {
 
     @Test
     public void testSetDeviceId() throws Throwable {
-        Map<String, Object> deviceData = new DeviceData(generateClient()).getDeviceData();
+        Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
+        Context context = InstrumentationRegistry.getContext();
+        Resources resources = context.getResources();
+        SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
+        DeviceData data = new DeviceData(connectivity, context, resources, prefs);
+
+        Map<String, Object> deviceData = data.getDeviceData();
         error.setDeviceData(deviceData);
         assertEquals(deviceData, error.getDeviceData());
 

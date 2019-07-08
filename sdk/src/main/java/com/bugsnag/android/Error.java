@@ -48,6 +48,7 @@ public class Error implements JsonStream.Streamable {
     private final HandledState handledState;
     private final Session session;
     private final ThreadState threadState;
+    private boolean incomplete = false;
 
     Error(@NonNull Configuration config, @NonNull Throwable exception,
           HandledState handledState, @NonNull Severity severity,
@@ -76,6 +77,7 @@ public class Error implements JsonStream.Streamable {
         writer.name("severity").value(severity);
         writer.name("severityReason").value(handledState);
         writer.name("unhandled").value(handledState.isUnhandled());
+        writer.name("incomplete").value(incomplete);
 
         if (projectPackages != null) {
             writer.name("projectPackages").beginArray();
@@ -114,6 +116,14 @@ public class Error implements JsonStream.Streamable {
         }
 
         writer.endObject();
+    }
+
+    boolean isIncomplete() {
+        return incomplete;
+    }
+
+    void setIncomplete(boolean incomplete) {
+        this.incomplete = incomplete;
     }
 
     /**
@@ -461,6 +471,9 @@ public class Error implements JsonStream.Streamable {
         }
 
         private Session getSession(HandledState handledState) {
+            if (sessionTracker == null) {
+                return null;
+            }
             Session currentSession = sessionTracker.getCurrentSession();
             Session reportedSession = null;
 

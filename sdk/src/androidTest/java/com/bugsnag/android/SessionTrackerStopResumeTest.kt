@@ -3,6 +3,7 @@ package com.bugsnag.android
 import com.bugsnag.android.BugsnagTestUtils.generateClient
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateSessionStore
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -20,9 +21,17 @@ class SessionTrackerStopResumeTest {
     private val sessionStore = generateSessionStore()
     private lateinit var tracker: SessionTracker
 
+    private var client: Client? = null
+
     @Before
     fun setUp() {
-        tracker = SessionTracker(configuration, generateClient(), sessionStore)
+        client = generateClient()
+        tracker = SessionTracker(configuration, client, sessionStore)
+    }
+
+    @After
+    fun tearDown() {
+        client?.close()
     }
 
     /**

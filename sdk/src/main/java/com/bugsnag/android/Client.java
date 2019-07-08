@@ -4,25 +4,23 @@ import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
-import com.bugsnag.android.ndk.NativeBridge;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,6 +77,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private AppNotRespondingMonitor anrMonitor;
+    private final Connectivity connectivity;
 
     /**
      * Initialize a Bugsnag client
@@ -119,19 +118,25 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
-    @SuppressWarnings("deprecation")
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
         sessionStore = new SessionStore(config, appContext);
 
-        ConnectivityManager cm =
-            (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
+            @Override
+            public Unit invoke(Boolean connected) {
+                if (connected) {
+                    errorStore.flushAsync();
+                }
+                return null;
+            }
+        });
 
         //noinspection ConstantConditions
         if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(cm));
+            configuration.setDelivery(new DefaultDelivery(connectivity));
         }
 
         sessionTracker =
@@ -141,8 +146,9 @@ public class Client extends Observable implements Observer {
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(this);
-        deviceData = new DeviceData(this);
+        appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
+        Resources resources = appContext.getResources();
+        deviceData = new DeviceData(connectivity, this.appContext, resources, sharedPrefs);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);
@@ -190,7 +196,13 @@ public class Client extends Observable implements Observer {
         }
 
         // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(config, appContext);
+        errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
+            @Override
+            public void onErrorReadFailure(Error error) {
+                // send a minimal error to bugsnag with no cache
+                Client.this.notify(error, DeliveryStyle.NO_CACHE, null);
+            }
+        });
 
         // Install a default exception handler with this client
         if (config.getEnableExceptionHandler()) {
@@ -208,13 +220,12 @@ public class Client extends Observable implements Observer {
                 @Override
                 public void run() {
                     appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
-                    appContext.registerReceiver(new ConnectivityChangeReceiver(),
-                        new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
                 }
             });
         } catch (RejectedExecutionException ex) {
             Logger.warn("Failed to register for automatic breadcrumb broadcasts", ex);
         }
+        connectivity.registerForNetworkChanges();
 
         boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
             appData.guessReleaseStage());
@@ -261,25 +272,6 @@ public class Client extends Observable implements Observer {
         };
         anrMonitor = new AppNotRespondingMonitor(delegate);
         anrMonitor.start(); // begin monitoring for ANRs
-    }
-
-    @SuppressWarnings("deprecation")
-    class ConnectivityChangeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (cm == null) {
-                return;
-            }
-
-            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-            boolean retryReports = networkInfo != null && networkInfo.isConnectedOrConnecting();
-
-            if (retryReports) {
-                errorStore.flushAsync();
-            }
-        }
     }
 
     void sendNativeSetupNotification() {
@@ -971,22 +963,12 @@ public class Client extends Observable implements Observer {
             case SAME_THREAD:
                 deliver(report, error);
                 break;
+            case NO_CACHE:
+                report.setCachingDisabled(true);
+                deliverReportAsync(error, report);
+                break;
             case ASYNC:
-                final Report finalReport = report;
-                final Error finalError = error;
-
-                // Attempt to send the report in the background
-                try {
-                    Async.run(new Runnable() {
-                        @Override
-                        public void run() {
-                            deliver(finalReport, finalError);
-                        }
-                    });
-                } catch (RejectedExecutionException exception) {
-                    errorStore.write(error);
-                    Logger.warn("Exceeded max queue count, saving to disk to send later");
-                }
+                deliverReportAsync(error, report);
                 break;
             case ASYNC_WITH_CACHE:
                 errorStore.write(error);
@@ -994,6 +976,24 @@ public class Client extends Observable implements Observer {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void deliverReportAsync(@NonNull Error error, Report report) {
+        final Report finalReport = report;
+        final Error finalError = error;
+
+        // Attempt to send the report in the background
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    deliver(finalReport, finalError);
+                }
+            });
+        } catch (RejectedExecutionException exception) {
+            errorStore.write(error);
+            Logger.warn("Exceeded max queue count, saving to disk to send later");
         }
     }
 
@@ -1323,10 +1323,12 @@ public class Client extends Observable implements Observer {
             Logger.info("Sent 1 new error to Bugsnag");
             leaveErrorBreadcrumb(error);
         } catch (DeliveryFailureException exception) {
-            Logger.warn("Could not send error(s) to Bugsnag,"
-                + " saving to disk to send later", exception);
-            errorStore.write(error);
-            leaveErrorBreadcrumb(error);
+            if (!report.isCachingDisabled()) {
+                Logger.warn("Could not send error(s) to Bugsnag,"
+                    + " saving to disk to send later", exception);
+                errorStore.write(error);
+                leaveErrorBreadcrumb(error);
+            }
         } catch (Exception exception) {
             Logger.warn("Problem sending error to Bugsnag", exception);
         }
@@ -1480,4 +1482,8 @@ public class Client extends Observable implements Observer {
         getAppData().setBinaryArch(binaryArch);
     }
 
+    void close() {
+        orientationListener.disable();
+        connectivity.unregisterForNetworkChanges();
+    }
 }

@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
@@ -46,10 +44,11 @@ class DeviceData {
 
     private static final String INSTALL_ID_KEY = "install.iud";
 
-    private final Client client;
     private final boolean emulator;
     private final Context appContext;
+    private final Connectivity connectivity;
     private final Resources resources;
+    private final SharedPreferences sharedPrefs;
     private final DisplayMetrics displayMetrics;
     private final String id;
     private final boolean rooted;
@@ -69,10 +68,12 @@ class DeviceData {
     @NonNull
     final String[] cpuAbi;
 
-    DeviceData(Client client) {
-        this.client = client;
-        this.appContext = client.appContext;
-        resources = appContext.getResources();
+    DeviceData(Connectivity connectivity, Context appContext, Resources resources,
+               SharedPreferences sharedPreferences) {
+        this.connectivity = connectivity;
+        this.appContext = appContext;
+        this.resources = resources;
+        this.sharedPrefs = sharedPreferences;
 
         if (resources != null) {
             displayMetrics = resources.getDisplayMetrics();
@@ -231,12 +232,11 @@ class DeviceData {
      */
     @Nullable
     private String retrieveUniqueInstallId() {
-        SharedPreferences sharedPref = client.sharedPrefs;
-        String installId = sharedPref.getString(INSTALL_ID_KEY, null);
+        String installId = sharedPrefs.getString(INSTALL_ID_KEY, null);
 
         if (installId == null) {
             installId = UUID.randomUUID().toString();
-            sharedPref.edit().putString(INSTALL_ID_KEY, installId).apply();
+            sharedPrefs.edit().putString(INSTALL_ID_KEY, installId).apply();
         }
         return installId;
     }
@@ -368,35 +368,8 @@ class DeviceData {
      * Get the current status of network access, eg "cellular"
      */
     @Nullable
-    @SuppressWarnings("deprecation")
     private String getNetworkAccess() {
-        try {
-            ConnectivityManager cm =
-                (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            if (cm == null) {
-                return null;
-            }
-
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                if (activeNetwork.getType() == 1) {
-                    return "wifi";
-                } else if (activeNetwork.getType() == 9) {
-                    return "ethernet";
-                } else {
-                    // We default to cellular as the other enums are all cellular in some
-                    // form or another
-                    return "cellular";
-                }
-            } else {
-                return "none";
-            }
-        } catch (Exception exception) {
-            Logger.warn("Could not get network access information, we "
-                + "recommend granting the 'android.permission.ACCESS_NETWORK_STATE' permission");
-        }
-        return null;
+        return connectivity.retrieveNetworkAccessState();
     }
 
     /**
