@@ -474,7 +474,7 @@ public class Configuration extends Observable implements Observer {
         }
         this.setChanged();
         this.notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_METADATA, metaData));
+                    NativeInterface.MessageType.UPDATE_METADATA, metaData.store));
         this.metaData.addObserver(this);
     }
 

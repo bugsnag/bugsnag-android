@@ -189,14 +189,19 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                             jni_cache->arraylist_get, (jint)i);
     jstring _value =
         (*env)->CallObjectMethod(env, metadata, jni_cache->map_get, _key);
-    char *key = (char *)(*env)->GetStringUTFChars(env, _key, 0);
-    char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
-    bsg_strncpy_safe(crumb->metadata[i].key, key,
-                     sizeof(crumb->metadata[i].key));
-    bsg_strncpy_safe(crumb->metadata[i].value, value,
-                     sizeof(crumb->metadata[i].value));
-    (*env)->ReleaseStringUTFChars(env, _key, key);
-    (*env)->ReleaseStringUTFChars(env, _value, value);
+    if (_value == NULL) {
+      (*env)->DeleteLocalRef(env, _key);
+      (*env)->DeleteLocalRef(env, _value);
+    } else {
+      char *key = (char *)(*env)->GetStringUTFChars(env, _key, 0);
+      char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
+      bsg_strncpy_safe(crumb->metadata[i].key, key,
+                       sizeof(crumb->metadata[i].key));
+      bsg_strncpy_safe(crumb->metadata[i].value, value,
+                       sizeof(crumb->metadata[i].value));
+      (*env)->ReleaseStringUTFChars(env, _key, key);
+      (*env)->ReleaseStringUTFChars(env, _value, value);
+    }
   }
   free(jni_cache);
   (*env)->DeleteLocalRef(env, keyset);
