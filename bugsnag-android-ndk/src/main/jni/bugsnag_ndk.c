@@ -8,7 +8,6 @@
 
 #include "handlers/signal_handler.h"
 #include "handlers/cpp_handler.h"
-#include "handlers/anr_handler.h"
 #include "metadata.h"
 #include "report.h"
 #include "utils/serializer.h"

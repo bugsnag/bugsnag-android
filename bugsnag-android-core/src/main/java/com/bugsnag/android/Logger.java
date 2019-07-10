@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import android.util.Log;
 
 @ThreadSafe
-final class Logger {
+public final class Logger {
 
     private static final String LOG_TAG = "Bugsnag";
     private static volatile boolean enabled = true;
