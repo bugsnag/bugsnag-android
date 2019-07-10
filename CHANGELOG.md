@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.16.1 (2019-07-10)
 
 ### Bug fixes
 * Prevent overwrite of signal mask when installing ANR handler
