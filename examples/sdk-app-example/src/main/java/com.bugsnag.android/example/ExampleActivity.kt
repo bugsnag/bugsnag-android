@@ -118,8 +118,8 @@ class ExampleActivity : AppCompatActivity() {
 
         Bugsnag.notify(e) {report ->
             val error = report.error
-            error?.severity = Severity.ERROR
-            error?.metaData?.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
+            error.severity = Severity.ERROR
+            error.metaData.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
         }
         displayToastNotification()
     }
@@ -152,7 +152,7 @@ class ExampleActivity : AppCompatActivity() {
 
         Bugsnag.notify(e) { report ->
             // modify the report
-            report.error?.metaData = generateUserMetaData()
+            report.error.metaData = generateUserMetaData()
         }
         displayToastNotification()
     }

@@ -44,11 +44,16 @@ android {
 def usingLocalArtefact = false
 
 dependencies {
-    if (usingLocalArtefact) {
-        implementation project(path: ":sdk", configuration: "default")
-    } else {
-        implementation "com.bugsnag:bugsnag-android-ndk:4.15.0"
-    }
+
+//    implementation "com.bugsnag:bugsnag-android-core:9.9.9"
+//    implementation "com.bugsnag:bugsnag-android-ndk:9.9.9"
+//    implementation "com.bugsnag:bugsnag-android-anr:9.9.9"
+
+//    if (usingLocalArtefact) {
+//        implementation project(path: ":sdk", configuration: "default")
+//    } else {
+        implementation "com.bugsnag:bugsnag-android-ndk:4.16.1"
+//    }
 
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
