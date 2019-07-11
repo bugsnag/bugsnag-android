@@ -52,7 +52,7 @@ public class AppDataTest {
 
     @Test
     public void testAccessors() {
-        assertEquals("com.bugsnag.android.test", appData.get("packageName"));
+        assertEquals("com.bugsnag.android.core.test", appData.get("packageName"));
         assertNull(appData.get("buildUUID"));
         assertTrue(((Long) appData.get("duration")) > 0);
         assertEquals(500L, appData.get("durationInForeground"));
@@ -68,7 +68,7 @@ public class AppDataTest {
         assertEquals("1.0", appDataJson.get("version"));
         assertEquals("development", appDataJson.get("releaseStage"));
         assertEquals("android", appDataJson.get("type"));
-        assertEquals("com.bugsnag.android.test", appDataJson.get("id"));
+        assertEquals("com.bugsnag.android.core.test", appDataJson.get("id"));
         assertNotNull(appDataJson.get("buildUUID"));
         assertTrue(((Long) appData.get("duration")) > 0);
         assertEquals(500L, appData.get("durationInForeground"));

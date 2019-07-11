@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <utils/migrate.h>
 
-#define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.test/cache/foo.crash"
+#define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type);
 

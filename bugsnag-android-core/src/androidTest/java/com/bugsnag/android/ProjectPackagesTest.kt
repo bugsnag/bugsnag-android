@@ -13,7 +13,7 @@ class ProjectPackagesTest {
         assertNull(configuration.projectPackages)
 
         val client = Client(InstrumentationRegistry.getContext(), configuration)
-        assertArrayEquals(arrayOf("com.bugsnag.android.test"), client.config.projectPackages)
+        assertArrayEquals(arrayOf("com.bugsnag.android.core.test"), client.config.projectPackages)
         client.close()
     }
 

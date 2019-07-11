@@ -1,15 +1,10 @@
 package com.bugsnag.android
 
-import android.support.test.InstrumentationRegistry
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
-import com.bugsnag.android.test.R
 import org.json.JSONObject
-import org.junit.Assert.*
-
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
 import java.io.File
-import java.io.FileOutputStream
 
 class RxErrorTest {
 
@@ -48,10 +43,9 @@ class RxErrorTest {
     }
 
     private fun loadErrorFromFile(): Error? {
-        val input = InstrumentationRegistry.getContext().resources
-            .openRawResource(R.raw.rx_error)
+        val fileContents = javaClass.classLoader!!.getResource("rx_error.json")!!.readText()
         val fixtureFile = File.createTempFile("rx_error", ".json")
-        input.copyTo(FileOutputStream(fixtureFile))
+        fixtureFile.writeText(fileContents)
         return ErrorReader.readError(Configuration("key"), fixtureFile)
     }
 }

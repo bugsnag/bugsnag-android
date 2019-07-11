@@ -13,6 +13,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.bugsnag.android.core.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,8 +43,8 @@ public class ErrorReaderTest {
     /** Constructs an Error from a JSON file */
     @BeforeClass
     public static void setUp() throws IOException {
-        InputStream input = InstrumentationRegistry.getContext().getResources()
-            .openRawResource(com.bugsnag.android.test.R.raw.error);
+        ClassLoader classLoader = ErrorReaderTest.class.getClassLoader();
+        InputStream input = classLoader.getResourceAsStream("error.json");
         File fixtureFile = File.createTempFile("error", ".json");
         OutputStream output = new FileOutputStream(fixtureFile);
         try {
