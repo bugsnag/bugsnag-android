@@ -1,2 +1,3 @@
-include ":bugsnag-android-core", ":bugsnag-android-anr", ":bugsnag-android-ndk", ":sdkAppExample"
+include ":bugsnag-android", ":bugsnag-android-core", ":bugsnag-android-anr",
+    ":bugsnag-android-ndk", ":sdkAppExample"
 project(":sdkAppExample").projectDir = new File("examples/sdk-app-example")

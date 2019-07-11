@@ -1,0 +1,14 @@
+apply plugin: "com.android.library"
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
+}
+
+dependencies {
+    api project(":bugsnag-android-core")
+    api project(":bugsnag-android-anr")
+    api project(":bugsnag-android-ndk")
+}
+
+apply from: "../gradle/release.gradle"
