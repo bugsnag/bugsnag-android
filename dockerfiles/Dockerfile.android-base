@@ -18,7 +18,11 @@ WORKDIR /app
 
 COPY gradlew build.gradle settings.gradle gradle.properties /app/
 COPY gradle/ /app/gradle/
-COPY sdk/ sdk/
+COPY bugsnag-android/ bugsnag-android/
+COPY bugsnag-android-anr/ bugsnag-android-anr/
+COPY bugsnag-android-core/ bugsnag-android-core/
+COPY bugsnag-android-ndk/ bugsnag-android-ndk/
+COPY examples/ examples/
 COPY scripts/ scripts/
 
 RUN scripts/install-ndk.sh

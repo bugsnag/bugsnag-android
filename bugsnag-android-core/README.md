@@ -1,4 +1,4 @@
-# bugsnag-android
+# bugsnag-android-core
 
 This module detects JVM exceptions and reports them to bugsnag.
 

@@ -141,7 +141,7 @@ steps:
       - docker-compose#v2.6.0:
           run: android-instrumentation-tests
     env:
-      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
+      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]'
       NDK_VERSION: "r12b"
     concurrency: 5
@@ -152,7 +152,7 @@ steps:
       - docker-compose#v2.6.0:
           run: android-instrumentation-tests
     env:
-      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
+      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]'
       NDK_VERSION: "r16b"
     concurrency: 5
@@ -163,7 +163,7 @@ steps:
       - docker-compose#v2.6.0:
           run: android-instrumentation-tests
     env:
-      APP_LOCATION: "/app/sdk/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
+      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]'
       NDK_VERSION: "r19"
     concurrency: 5

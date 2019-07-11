@@ -1,4 +1,4 @@
-# bugsnag-android
+# bugsnag-android-anr
 
 This module detects ANRs and reports them to bugsnag.
 

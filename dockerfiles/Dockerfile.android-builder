@@ -18,7 +18,11 @@ WORKDIR /app
 
 COPY gradlew build.gradle settings.gradle gradle.properties /app/
 COPY gradle/ /app/gradle/
-COPY sdk/ sdk/
+COPY bugsnag-android/ bugsnag-android/
+COPY bugsnag-android-anr/ bugsnag-android-anr/
+COPY bugsnag-android-core/ bugsnag-android-core/
+COPY bugsnag-android-ndk/ bugsnag-android-ndk/
+COPY examples/ examples/
 COPY scripts/ scripts/
 
 RUN scripts/install-ndk.sh
@@ -43,7 +47,7 @@ RUN echo "signing.secretKeyRingFile=/root/.gnupg/secring.gpg" >> ~/.gradle/gradl
 
 # Build and upload to the local maven as version 9.9.9
 RUN sed -i -e 's/VERSION_NAME=.*/VERSION_NAME=9.9.9/g' gradle.properties
-RUN ./gradlew assembleRelease publishSDKPublicationToMavenLocal && ./gradlew assembleRelease publishSDKPublicationToMavenLocal -PreleaseNdkArtefact=true
+RUN ./gradlew assembleRelease publishToMavenLocal
 
 COPY tests/features/ /app/features
 

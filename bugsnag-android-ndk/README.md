@@ -1,4 +1,4 @@
-# bugsnag-android
+# bugsnag-android-ndk
 
 This module detects NDK signals/exceptions and reports them to bugsnag.
 

@@ -1,10 +1,17 @@
 repositories {
-    google()
     mavenLocal()
-    mavenCentral()
-    jcenter()
-    flatDir {
-        dirs 'libs'
+    google()
+
+    // ignore already published artefacts in jcenter/bintray in favour of mavenLocal artefact
+    mavenCentral() {
+        content {
+            excludeModule("com.bugsnag", "bugsnag-android")
+        }
+    }
+    jcenter {
+        content {
+            excludeModule("com.bugsnag", "bugsnag-android")
+        }
     }
 }
 
@@ -69,7 +76,7 @@ android {
 }
 
 dependencies {
-    implementation("com.bugsnag:bugsnag-android-ndk:9.9.9")
+    implementation "com.bugsnag:bugsnag-android:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.facebook.infer.annotation:infer-annotation:0.11.2"
     api "com.android.support:support-annotations:28.0.0"
