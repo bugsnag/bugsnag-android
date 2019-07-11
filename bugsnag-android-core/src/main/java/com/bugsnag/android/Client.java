@@ -256,17 +256,17 @@ public class Client extends Observable implements Observer {
         if (config.getDetectNdkCrashes()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
-            } catch (ClassNotFoundException e) {
-                Logger.warn("bugsnag-android-ndk artefact not found on classpath, " +
-                    "NDK errors will not be captured.");
+            } catch (ClassNotFoundException exc) {
+                Logger.warn("bugsnag-android-ndk artefact not found on classpath, "
+                    + "NDK errors will not be captured.");
             }
         }
         if (config.getDetectAnrs()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
-            } catch (ClassNotFoundException e) {
-                Logger.warn("bugsnag-android-anr artefact not found on classpath, " +
-                    "ANR errors will not be captured.");
+            } catch (ClassNotFoundException exc) {
+                Logger.warn("bugsnag-android-anr artefact not found on classpath, "
+                    + "ANR errors will not be captured.");
             }
         }
         pluginInterface.loadPlugins(this);

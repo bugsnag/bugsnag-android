@@ -8,7 +8,8 @@ internal class AnrPlugin : BugsnagPlugin {
 
     override fun initialisePlugin(client: Client) {
         System.loadLibrary("bugsnag-android-anr")
-        val monitor = AppNotRespondingMonitor { thread -> handleAnr(thread, client) }
+        val delegate: (Thread) -> Unit = { handleAnr(it, client) }
+        val monitor = AppNotRespondingMonitor(delegate)
         monitor.start()
         installAnrDetection(monitor.sentinelBuffer)
         Logger.info("Initialised ANR Plugin")

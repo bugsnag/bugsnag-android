@@ -1,6 +1,6 @@
 all: build
 
-.PHONY: build test clean bump badge release
+.PHONY: build test clean bump release
 
 build:
 	./gradlew sdk:build
@@ -37,7 +37,7 @@ else
 	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner
 endif
 
-bump: badge
+bump:
 ifneq ($(shell git diff --staged),)
 	@git diff --staged
 	@$(error You have uncommitted changes. Push or discard them to continue)
@@ -50,26 +50,6 @@ endif
 	@sed -i '' "s/NOTIFIER_VERSION = .*;/NOTIFIER_VERSION = \"$(VERSION)\";/"\
 	 sdk/src/main/java/com/bugsnag/android/Notifier.java
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
-
-badge: build
-ifneq ($(shell git diff),)
-	@git diff
-	@$(error You have unstaged changes. Commit or discard them to continue)
-endif
-	@echo "Counting ..."
-	@./gradlew countReleaseDexMethods > counter.txt
-	@awk 'BEGIN{ \
-		"cat counter.txt | grep \"com.bugsnag.android\$\"" | getline output;\
-		split(output, counts);\
-		"du -k sdk/build/outputs/aar/bugsnag-android-*.aar | cut -f1" | getline size;\
-		printf "![Method count and size](https://img.shields.io/badge/Methods%%20and%%20size-";\
-		printf counts[1] "%%20classes%%20|%%20" counts[2] "%%20methods%%20|%%20" counts[3] "%%20fields%%20|%%20";\
-		printf size "%%20KB-e91e63.svg)";\
-		};' > tmp_url.txt
-	@awk '/!.*Method count and size.*/ { getline < "tmp_url.txt" }1' README.md > README.md.tmp
-	@mv README.md.tmp README.md
-	@rm counter.txt tmp_url.txt
-
 
 # Makes a release
 release:

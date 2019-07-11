@@ -1,17 +1,16 @@
 package com.bugsnag.android.ndk;
 
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.bugsnag.android.Breadcrumb;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.MetaData;
 import com.bugsnag.android.NativeInterface;
 
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
+
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
