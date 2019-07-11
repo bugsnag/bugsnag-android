@@ -1,17 +1,26 @@
 package com.bugsnag.android
 
-internal class AnrPlugin : BugsnagPlugin {
-    companion object {
-        init {
-            BugsnagPluginInterface.registerPlugin(AnrPlugin::class.java)
-            System.loadLibrary("bugsnag-android-anr")
-        }
+import java.nio.ByteBuffer
 
-        // FIXME right jni name, bytebuffer
-        external fun bsg_handler_install_anr(): Boolean
-    }
+internal class AnrPlugin : BugsnagPlugin {
+
+    private external fun installAnrDetection(sentinelBuffer: ByteBuffer)
 
     override fun initialisePlugin(client: Client) {
-        bsg_handler_install_anr()
+        System.loadLibrary("bugsnag-android-anr")
+        val monitor = AppNotRespondingMonitor { thread -> handleAnr(thread, client) }
+        monitor.start()
+        installAnrDetection(monitor.sentinelBuffer)
+        Logger.info("Initialised ANR Plugin")
+    }
+
+    private fun handleAnr(thread: Thread, client: Client) {
+        val errMsg = "Application did not respond to UI input"
+        val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
+
+        client.cacheAndNotify(
+            exc, Severity.ERROR, MetaData(),
+            HandledState.REASON_ANR, null, thread
+        )
     }
 }

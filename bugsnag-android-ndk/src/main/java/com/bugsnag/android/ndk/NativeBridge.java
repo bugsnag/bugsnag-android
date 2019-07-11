@@ -24,9 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * Observes changes in the Bugsnag environment, propagating them to the native layer
  */
 public class NativeBridge implements Observer {
-    static {
-        System.loadLibrary("bugsnag-ndk");
-    }
 
     private static final int METADATA_SECTION = 0;
     private static final int METADATA_KEY = 1;

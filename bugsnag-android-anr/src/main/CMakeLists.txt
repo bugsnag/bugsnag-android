@@ -5,12 +5,11 @@ add_library( # Specifies the name of the library.
              SHARED
              # Provides a relative path to your source file(s).
     jni/anr_handler.c
+    jni/bugsnag_anr.c
     jni/utils/string.c
     )
 
 include_directories(jni)
-
-target_include_directories(bugsnag-android-anr PRIVATE ${BUGSNAG_DIR}/assets/include)
 
 find_library( # Defines the name of the path variable that stores the
               # location of the NDK library.

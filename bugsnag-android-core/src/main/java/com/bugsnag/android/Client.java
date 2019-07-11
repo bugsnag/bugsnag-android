@@ -12,8 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -76,7 +74,6 @@ public class Client extends Observable implements Observer {
     final SharedPreferences sharedPrefs;
 
     private final OrientationEventListener orientationListener;
-    private AppNotRespondingMonitor anrMonitor;
     private final Connectivity connectivity;
 
     /**
@@ -209,10 +206,6 @@ public class Client extends Observable implements Observer {
             enableExceptionHandler();
         }
 
-        if (config.getDetectAnrs()) {
-            enableAnrDetection();
-        }
-
         // register a receiver for automatic breadcrumbs
 
         try {
@@ -253,41 +246,37 @@ public class Client extends Observable implements Observer {
 
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
-
-
-        NativeInterface.setClient(this);
-        BugsnagPluginInterface.INSTANCE.loadPlugins(this);
-
-        if (config.getDetectNdkCrashes() || config.getDetectAnrs()) {
-            // FIXME respect this flag!
-        }
+        loadPlugins();
     }
 
-    private void enableAnrDetection() {
-        AppNotRespondingMonitor.Delegate delegate = new AppNotRespondingMonitor.Delegate() {
-            @Override
-            public void onAppNotResponding(Thread thread) {
-                String errMsg = "Application did not respond to UI input";
-                BugsnagException exc = new BugsnagException("ANR", errMsg, thread.getStackTrace());
+    private void loadPlugins() {
+        NativeInterface.setClient(this);
+        BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
 
-                cacheAndNotify(exc, Severity.ERROR, new MetaData(),
-                    HandledState.REASON_ANR, null, thread);
+        if (config.getDetectNdkCrashes()) {
+            try {
+                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
+            } catch (ClassNotFoundException e) {
+                Logger.warn("bugsnag-android-ndk artefact not found on classpath, " +
+                    "NDK errors will not be captured.");
             }
-        };
-        anrMonitor = new AppNotRespondingMonitor(delegate);
-        anrMonitor.start(); // begin monitoring for ANRs
+        }
+        if (config.getDetectAnrs()) {
+            try {
+                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
+            } catch (ClassNotFoundException e) {
+                Logger.warn("bugsnag-android-anr artefact not found on classpath, " +
+                    "ANR errors will not be captured.");
+            }
+        }
+        pluginInterface.loadPlugins(this);
     }
 
     void sendNativeSetupNotification() {
         setChanged();
         ArrayList<Object> messageArgs = new ArrayList<>();
         messageArgs.add(config);
-        if (anrMonitor != null) {
-            Object buffer = anrMonitor.getSentinelBuffer();
-            if (buffer != null) {
-                messageArgs.add(buffer);
-            }
-        }
+
         super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
         try {
             Async.run(new Runnable() {
