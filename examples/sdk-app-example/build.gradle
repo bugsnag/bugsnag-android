@@ -42,10 +42,6 @@ project.afterEvaluate {
     project.android.lintOptions.abortOnError = false
 }
 
-// set this value to true if you wish to test with a local artefact
-// it will instruct gradle to copy the SO files from the AAR to the correct build directory
-def usingLocalArtefact = false
-
 dependencies {
     implementation "com.bugsnag:bugsnag-android:4.16.1"
 
@@ -56,7 +52,3 @@ dependencies {
 
 apply plugin: "com.bugsnag.android.gradle"
 bugsnag.failOnUploadError = false
-
-if (usingLocalArtefact) {
-    apply from: "ndk_local_setup.gradle"
-}

@@ -27,6 +27,7 @@ class ExampleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setupToolbarLogo()
+        performAdditionalBugsnagSetup()
 
         val view: View = findViewById(R.id.btn_fatal_crash)
         view.setOnClickListener(::crashUnhandled)
@@ -172,11 +173,9 @@ class ExampleActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun readDocs(view: View) {
-        Bugsnag.init(this)
-//
-//        val uri = Uri.parse("https://docs.bugsnag.com/platforms/android/sdk/")
-//        val intent = Intent(Intent.ACTION_VIEW, uri)
-//        startActivity(intent)
+        val uri = Uri.parse("https://docs.bugsnag.com/platforms/android/sdk/")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
     }
 
     private fun generateUserMetaData(): MetaData {

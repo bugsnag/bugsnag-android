@@ -6,9 +6,9 @@ android {
 }
 
 dependencies {
-    api project(":bugsnag-android-core")
-    api project(":bugsnag-android-anr")
-    api project(":bugsnag-android-ndk")
+    api project(':bugsnag-plugin-android-jvm')
+    api project(':bugsnag-plugin-android-anr')
+    api project(':bugsnag-plugin-android-ndk')
 }
 
 apply from: "../gradle/release.gradle"

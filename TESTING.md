@@ -4,7 +4,7 @@ Commands can be run on the entire project, or on an individual module:
 
 ```shell
 ./gradlew build // builds whole project
-./gradlew bugsnag-android-anr:build // builds bugsnag-android-anr module only
+./gradlew bugsnag-plugin-android-anr:build // builds bugsnag-plugin-android-anr module only
 ```
 
 ## Static analysis
