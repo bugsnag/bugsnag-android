@@ -6,7 +6,7 @@ android {
 }
 
 dependencies {
-    api project(':bugsnag-plugin-android-jvm')
+    api project(':bugsnag-android-core')
     api project(':bugsnag-plugin-android-anr')
     api project(':bugsnag-plugin-android-ndk')
 }

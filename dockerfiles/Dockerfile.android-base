@@ -21,7 +21,7 @@ COPY gradle/ /app/gradle/
 COPY bugsnag-android/ bugsnag-android/
 COPY bugsnag-android-ndk/ bugsnag-android-ndk/
 COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
-COPY bugsnag-plugin-android-jvm/ bugsnag-plugin-android-jvm/
+COPY bugsnag-android-core/ bugsnag-android-core/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
 COPY examples/ examples/
 COPY scripts/ scripts/

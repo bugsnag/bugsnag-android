@@ -11,7 +11,7 @@ implementation "com.bugsnag:bugsnag-android:$version"
 Which is simpler than manually specifying every single dependency:
 
 ```
-implementation "com.bugsnag:bugsnag-plugin-android-jvm:$version"
+implementation "com.bugsnag:bugsnag-android-core:$version"
 implementation "com.bugsnag:bugsnag-plugin-android-ndk:$version"
 implementation "com.bugsnag:bugsnag-plugin-android-anr:$version"
 ```

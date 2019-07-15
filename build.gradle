@@ -2,6 +2,7 @@ import com.android.build.gradle.LibraryPlugin
 
 buildscript {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
         jcenter()
