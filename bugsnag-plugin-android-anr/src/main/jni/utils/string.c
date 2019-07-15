@@ -1,4 +1,4 @@
-#include <string.h>
+#include "string.h"
 
 void bsg_strncpy(char *dst, char *src, size_t len) {
     int i = 0;
