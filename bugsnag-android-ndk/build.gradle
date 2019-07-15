@@ -1,1 +1,18 @@
-apply from: "../bugsnag-android/build.gradle"
+apply plugin: "com.android.library"
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
+
+    buildTypes.each { buildType ->
+        buildType.buildConfigField("boolean", "DETECT_NDK_CRASHES", "true")
+    }
+}
+
+dependencies {
+    api project(':bugsnag-android-core')
+    api project(':bugsnag-plugin-android-anr')
+    api project(':bugsnag-plugin-android-ndk')
+}
+
+apply from: "../gradle/release.gradle"
