@@ -43,7 +43,7 @@ project.afterEvaluate {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:4.16.1"
+    implementation "com.bugsnag:bugsnag-android:+"
 
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
