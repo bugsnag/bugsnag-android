@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.16.1 (2019-07-10)
+
+### Bug fixes
+* Prevent overwrite of signal mask when installing ANR handler
+  [#520](https://github.com/bugsnag/bugsnag-android/pull/520)
+
 ## 4.16.0 (2019-07-09)
 
 This release adds a compile-time dependency on the Kotlin standard library. This should not affect

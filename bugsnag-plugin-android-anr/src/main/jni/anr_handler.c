@@ -63,7 +63,7 @@ bool bsg_handler_install_anr(void *byte_buffer) {
   sigemptyset(&bsg_anr_sigmask);
   sigaddset(&bsg_anr_sigmask, SIGQUIT);
 
-  int mask_status = pthread_sigmask(SIG_SETMASK, &bsg_anr_sigmask, NULL);
+  int mask_status = pthread_sigmask(SIG_BLOCK, &bsg_anr_sigmask, NULL);
   if (mask_status != 0) {
     BUGSNAG_LOG("Failed to mask SIGQUIT: %s", strerror(mask_status));
   } else {
