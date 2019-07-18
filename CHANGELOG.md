@@ -2,7 +2,7 @@
 
 ## 4.17.0 (2019-07-17)
 
-This release modularizes `bugsnag-android` into 3 separate artifacts: for JVM, NDK, and ANR error
+This release modularizes `bugsnag-android` into 3 separate artifacts: for JVM (Core), NDK, and ANR error
 detection. No change should be required to your integration in order to use this version - simply
 add a compile-time dependency on either `bugsnag-android` or `bugsnag-android-ndk` as before.
 
@@ -17,7 +17,7 @@ implementation("com.bugsnag:bugsnag-android:$version") {
 }
 ```
 
-* Modularise bugsnag-android into JVM, NDK, and ANR artifacts
+* Modularise bugsnag-android into Core, NDK, and ANR artifacts
   [#522](https://github.com/bugsnag/bugsnag-android/pull/522)
 
 ## 4.16.1 (2019-07-10)
