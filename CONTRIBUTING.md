@@ -84,10 +84,10 @@ git submodule update --init --recursive
 You can build new `.aar` files as follows:
 
 ```shell
-./gradlew sdk:assemble
+./gradlew assembleRelease
 ```
 
-Files are generated into`sdk/build/outputs/aar`.
+Files are generated into`<module>/build/outputs/aar`.
 
 ### Building with custom ABIs
 
@@ -95,52 +95,16 @@ To build the NDK module with specific ABIs, use the `ABI_FILTERS` project
 option:
 
 ```shell
-./gradlew assemble -PABI_FILTERS=x86,arm64-v8a
+./gradlew assembleRelease -PABI_FILTERS=x86,arm64-v8a
 ```
 
-## Running Tests
+## Testing
 
-Running the test suite requires a connected android device or emulator.
-
-### Unit tests
-
-You can run the test suite on a device/emulator as follows from within the sdk directory:
-
-```shell
-./gradlew connectedCheck
-```
-
-### End-to-end tests
-
-To run the end-to-end tests, first set up the environment by running
-[Bundler](https://bundler.io):
-
-```shell
-bundle install
-```
-
-The tests require two environment variables to be set:
-
-* `ANDROID_HOME`, set the the location of the Android SDK
-* `ANDROID_EMULATOR`, set to the name of an installed emulator
-
-Then run the tests using:
-
-```shell
-bundle exec maze-runner
-```
-
-### Running Lint
-
-You can run lint on the project using the following command:
-
-```shell
-./gradlew lint checkstyle detekt
-```
+Full details of how to build and run tests can be found in [the testing guide](`TESTING.md`)
 
 ## Building the Example App
 
-You can build and install the example app to as follows:
+You can build and install the example app as follows:
 
 ```shell
 ./gradlew installDebug
@@ -151,41 +115,15 @@ device/emulator.
 
 ## Installing/testing against a local maven repository
 
-Sometimes its helpful to build and install the bugsnag-android libraries into a
-local repository and test the entire dependency flow inside of a sample
-application.
+Change `VERSION_NAME` in `gradle.properties` to a version higher than the currently
+released bugsnag-android, then run:
 
-To get started:
+```shell
+./gradlew assembleRelease publishToMavenLocal
+```
 
-1. In the `bugsnag-android` directory, run
-   `./gradlew assembleRelease publishSDKPublicationToMavenLocal && ./gradlew assembleRelease publishSDKPublicationToMavenLocal -PreleaseNdkArtefact=true`.
-   This installs `bugsnag-android` and `bugsnag-android-ndk` into your local
-   maven repository.
-2. In your sample application `build.gradle`, add `mavenLocal()` to the *top* of
-   your `allprojects` repositories section:
-
-   ```groovy
-   allprojects {
-     repositories {
-       mavenLocal()
-       // other repos as needed
-     }
-   }
-   ```
-3. In your sample application `app/build.gradle`, add the following to the
-   dependencies section, inserting the exact version number required:
-
-   ```groovy
-   dependencies {
-     implementation 'com.bugsnag:bugsnag-android-ndk:[VERSION NUMBER]'
-   }
-   ```
-4. Clean your sample application and reload dependencies *every time* you
-   rebuild/republish the local dependencies:
-
-   ```
-   ./gradlew clean --refresh-dependencies
-   ```
+This installs bugsnag-android to a local maven repository. The example app should automatically use
+this version when you next run the app.
 
 # Releasing a New Version
 
@@ -260,12 +198,11 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
 - Once merged:
-  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew ndk:assembleRelease sdk:assembleRelease`
+  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew assembleRelease`
   - Release to GitHub:
     - [ ] Run `git tag vX.X.X && git push origin --tags`
     - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
-    - [ ] Upload the generated `.aar` file from `{sdk,ndk}/build/outputs/aar/bugsnag-android-*.aar`
-  - [ ] Release to Maven Central and Bintray by running `./gradlew publish bintrayUpload`
+  - [ ] Release to Maven Central and Bintray by running `./gradlew assembleRelease publish bintrayUpload`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”

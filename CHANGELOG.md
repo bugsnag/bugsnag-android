@@ -1,6 +1,12 @@
 # Changelog
 
-## TBD
+## 4.16.1 (2019-07-10)
+
+### Bug fixes
+* Prevent overwrite of signal mask when installing ANR handler
+  [#520](https://github.com/bugsnag/bugsnag-android/pull/520)
+
+## 4.16.0 (2019-07-09)
 
 This release adds a compile-time dependency on the Kotlin standard library. This should not affect
 the use of any API supplied by bugsnag-android.
@@ -11,6 +17,14 @@ the use of any API supplied by bugsnag-android.
 [#500](https://github.com/bugsnag/bugsnag-android/pull/500)
 * Remove deprecated interfaces from API 
 [#514](https://github.com/bugsnag/bugsnag-android/pull/514)
+
+### Bug fixes
+
+* Fix abort() in native code when storing breadcrumbs with null values in
+  metadata
+  [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
+* Convert metadata to map when notifying the NDK observer 
+  [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
 
 ## 4.15.0 (2019-06-10)
 

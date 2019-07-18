@@ -2,10 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "signing"
 apply plugin: "com.jfrog.bintray"
 
-boolean releaseNdkArtefact = project.hasProperty("releaseNdkArtefact")
-String pomName = releaseNdkArtefact ? "Bugsnag Android NDK" : "Bugsnag Android"
-
-archivesBaseName = releaseNdkArtefact ? "bugsnag-android-ndk" : "bugsnag-android"
+String pomName = project.getProperties().get("pomName")
+archivesBaseName = project.getProperties().get("artefactId")
 version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 
@@ -53,7 +51,7 @@ publishing {
             artifactId archivesBaseName
             version version
             artifact(sourceJar)
-            artifact("$buildDir/outputs/aar/$archivesBaseName-${project.VERSION_NAME}.aar")
+            artifact("$buildDir/outputs/aar/$archivesBaseName-release.aar")
 
             pom.withXml {
                 Node root = asNode()

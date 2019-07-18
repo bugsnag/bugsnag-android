@@ -1,6 +1,6 @@
 all: build
 
-.PHONY: build test clean bump badge release
+.PHONY: build test clean bump release
 
 build:
 	./gradlew sdk:build
@@ -11,7 +11,33 @@ clean:
 test:
 	./gradlew :sdk:connectedCheck
 
-bump: badge
+remote-test:
+ifeq ($(BROWSER_STACK_USERNAME),)
+	@$(error BROWSER_STACK_USERNAME is not defined)
+endif
+ifeq ($(BROWSER_STACK_ACCESS_KEY),)
+	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
+endif
+	@APP_LOCATION=/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk \
+	 INSTRUMENTATION_DEVICES='["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]' \
+	 docker-compose up --build android-instrumentation-tests
+
+remote-integration-tests:
+ifeq ($(BROWSER_STACK_USERNAME),)
+	@$(error BROWSER_STACK_USERNAME is not defined)
+endif
+ifeq ($(BROWSER_STACK_ACCESS_KEY),)
+	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
+endif
+	@docker-compose up --build android-builder
+	@docker-compose build android-maze-runner
+ifneq ($(TEST_FEATURE),)
+	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner features/$(TEST_FEATURE)
+else
+	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner
+endif
+
+bump:
 ifneq ($(shell git diff --staged),)
 	@git diff --staged
 	@$(error You have uncommitted changes. Push or discard them to continue)
@@ -25,26 +51,6 @@ endif
 	 sdk/src/main/java/com/bugsnag/android/Notifier.java
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
 
-badge: build
-ifneq ($(shell git diff),)
-	@git diff
-	@$(error You have unstaged changes. Commit or discard them to continue)
-endif
-	@echo "Counting ..."
-	@./gradlew countReleaseDexMethods > counter.txt
-	@awk 'BEGIN{ \
-		"cat counter.txt | grep \"com.bugsnag.android\$\"" | getline output;\
-		split(output, counts);\
-		"du -k sdk/build/outputs/aar/bugsnag-android-*.aar | cut -f1" | getline size;\
-		printf "![Method count and size](https://img.shields.io/badge/Methods%%20and%%20size-";\
-		printf counts[1] "%%20classes%%20|%%20" counts[2] "%%20methods%%20|%%20" counts[3] "%%20fields%%20|%%20";\
-		printf size "%%20KB-e91e63.svg)";\
-		};' > tmp_url.txt
-	@awk '/!.*Method count and size.*/ { getline < "tmp_url.txt" }1' README.md > README.md.tmp
-	@mv README.md.tmp README.md
-	@rm counter.txt tmp_url.txt
-
-
 # Makes a release
 release:
 ifneq ($(shell git diff origin/master..master),)
@@ -57,4 +63,4 @@ endif
 	@git commit -m "Release v$(VERSION)"
 	@git tag v$(VERSION)
 	@git push origin master v$(VERSION)
-	@./gradlew publish bintrayUpload
+	@./gradlew sdk:assembleRelease publish bintrayUpload && ./gradlew sdk:assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true

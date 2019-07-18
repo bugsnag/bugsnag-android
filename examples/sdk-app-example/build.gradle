@@ -1,20 +1,8 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:$agpVersion"
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:4.2.0"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 repositories {
+    mavenLocal()
     google()
     mavenCentral()
     jcenter()
@@ -25,20 +13,19 @@ android {
         config {
             keyAlias "password"
             keyPassword "password"
-            storeFile file("../../features/fixtures/fakekeys.jks")
+            storeFile file("fakekeys.jks")
             storePassword "password"
         }
     }
-    compileSdkVersion 28
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 28
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.compileSdkVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
         ndk {
-            // NOTE: remove armeabi if testing on NDK r17+
-            abiFilters "arm64-v8a", "armeabi-v7a", "armeabi", "x86", "x86_64"
+            abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
     buildTypes {
@@ -48,40 +35,20 @@ android {
             signingConfig signingConfigs.config
         }
     }
-    lintOptions {
-        disable "OnClick"
-        abortOnError true
-    }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
+    externalNativeBuild.cmake.path "CMakeLists.txt"
 }
 
-// set this value to true if you wish to test with a local artefact
-// it will instruct gradle to copy the SO files from the AAR to the correct build directory
-def usingLocalArtefact = false
+project.afterEvaluate {
+    project.android.lintOptions.abortOnError = false
+}
 
 dependencies {
-    if (usingLocalArtefact) {
-        implementation project(path: ":sdk", configuration: "default")
-    } else {
-        implementation "com.bugsnag:bugsnag-android-ndk:4.12.0"
-    }
+    implementation "com.bugsnag:bugsnag-android:+"
 
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
-apply from: "checkstyle.gradle"
 apply plugin: "com.bugsnag.android.gradle"
-
-bugsnag {
-    failOnUploadError false
-}
-
-if (usingLocalArtefact) {
-    apply from: "ndk_local_setup.gradle"
-}
+bugsnag.failOnUploadError = false

@@ -2,22 +2,17 @@
 RUNNING_CI = ENV['TRAVIS'] == 'true'
 
 # Install latest versions of bugsnag-android
-run_required_commands([
-  [
-    "./gradlew", "sdk:assembleRelease", "-PreleaseNdkArtefact=true",
-    "-x", "lintVitalRelease",
-    "-x", "countReleaseDexMethods"
-  ],
-  ["cp", "sdk/build/outputs/aar/bugsnag-android-*.aar",
-   "features/fixtures/mazerunner/libs/bugsnag-android-ndk.aar"],
-])
+  run_required_commands([
+    [
+      "./gradlew", "assembleRelease", "publishToMavenLocal", "-x", "lintVitalRelease"
+    ],
+  ])
 
 # Build the harness app
 Dir.chdir('features/fixtures/mazerunner') do
   run_required_commands([
     [
-      "../../../gradlew", "assembleRelease",
-      "-x", "lintVitalRelease"
+     "../../../gradlew", "assembleRelease", "-x", "lintVitalRelease"
     ],
   ])
 end
