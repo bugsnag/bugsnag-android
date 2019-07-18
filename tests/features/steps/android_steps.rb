@@ -16,24 +16,9 @@ end
 
 When("I clear any error dialogue") do
   sleep(3)
-  begin
-    $driver.wait_for_element("android:id/button1", 1)
-  rescue Selenium::WebDriver::Error::TimeoutError
-  else
-    $driver.click_element("android:id/button1")
-  end
-  begin
-    $driver.wait_for_element("android:id/aerr_close", 1)
-  rescue Selenium::WebDriver::Error::TimeoutError
-  else
-    $driver.click_element("android:id/aerr_close")
-  end
-  begin
-    $driver.wait_for_element("android:id/aerr_restart", 1)
-  rescue Selenium::WebDriver::Error::TimeoutError
-  else
-    $driver.click_element("android:id/aerr_restart")
-  end
+  $driver.click_element("android:id/button1") if $driver.wait_for_element("android:id/button1", 1)
+  $driver.click_element("android:id/aerr_close") if $driver.wait_for_element("android:id/aerr_close", 1)
+  $driver.click_element("android:id/aerr_restart") if $driver.wait_for_element("android:id/aerr_restart", 1)
 end
 
 When("I configure Bugsnag for {string}") do |event_type|
