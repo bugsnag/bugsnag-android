@@ -1,0 +1,13 @@
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
+}
+
+apply from: "../gradle/dependencies.gradle"
+apply from: "../gradle/release.gradle"
+apply from: "../gradle/detekt.gradle"
+apply from: "../gradle/checkstyle.gradle"

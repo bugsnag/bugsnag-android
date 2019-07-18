@@ -1,18 +1,27 @@
 # Testing the Bugsnag Android notifier
 
+Commands can be run on the entire project, or on an individual module:
+
+```shell
+./gradlew build // builds whole project
+./gradlew bugsnag-plugin-android-anr:build // builds bugsnag-plugin-android-anr module only
+```
+
+## Static analysis
+
+```shell
+./gradlew lint checkstyle detekt
+```
+
 ## Running Tests Locally
 
 Running the test suite requires a connected android device or emulator.
-
-### Unit tests
-
-You can run the test suite on a device/emulator as follows from within the sdk directory:
 
 ```shell
 ./gradlew connectedCheck
 ```
 
-### End-to-end tests
+## End-to-end tests
 
 To run the end-to-end tests, first set up the environment by running
 [Bundler](https://bundler.io):
@@ -30,14 +39,6 @@ Then run the tests using:
 
 ```shell
 bundle exec maze-runner
-```
-
-### Running Lint
-
-You can run lint on the project using the following command:
-
-```shell
-./gradlew lint checkstyle detekt
 ```
 
 ## Running remote tests
