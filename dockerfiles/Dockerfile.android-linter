@@ -18,7 +18,12 @@ WORKDIR /app
 
 COPY gradlew build.gradle settings.gradle gradle.properties /app/
 COPY gradle/ /app/gradle/
-COPY sdk/ sdk/
+COPY bugsnag-android/ bugsnag-android/
+COPY bugsnag-android-ndk/ bugsnag-android-ndk/
+COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
+COPY bugsnag-android-core/ bugsnag-android-core/
+COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
+COPY examples/ examples/
 COPY scripts/ scripts/
 
 RUN scripts/install-ndk.sh
@@ -31,8 +36,11 @@ RUN apt-get install -y cppcheck
 COPY examples/sdk-app-example/ examples/sdk-app-example/
 COPY config/ config/
 
-RUN sed --in-place="" --expression="s/'armeabi',//" sdk/build.gradle examples/sdk-app-example/build.gradle
+RUN sed --in-place="" --expression="s/'armeabi',//" bugsnag-plugin-android-anr/build.gradle \
+    bugsnag-plugin-android-ndk/build.gradle examples/sdk-app-example/build.gradle
 
 CMD ./gradlew lint checkstyle detekt && \
-    cppcheck --enable=warning,performance sdk/src/main/jni -i sdk/src/main/jni/deps -i sdk/src/main/jni/external
+    cppcheck --enable=warning,performance bugsnag-plugin-android-anr/src/main/jni && \
+    cppcheck --enable=warning,performance bugsnag-plugin-android-ndk/src/main/jni -i \
+    bugsnag-plugin-android-ndk/src/main/jni/deps -i bugsnag-plugin-android-ndk/src/main/jni/external
 

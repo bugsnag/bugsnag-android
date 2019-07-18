@@ -1,19 +1,24 @@
+import com.android.build.gradle.LibraryPlugin
+
 buildscript {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
         jcenter()
     }
     ext.kotlin_version = "1.3.21"
-    ext.agpVersion = "3.3.0"
+    ext.agpVersion = "3.4.2"
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$agpVersion"
+        classpath "com.android.tools.build:gradle:${agpVersion}"
         classpath "com.github.dcendents:android-maven-gradle-plugin:2.0"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
         classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.5"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC16"
+        classpath "com.bugsnag:bugsnag-android-gradle-plugin:4.5.2"
     }
 }
 allprojects {
@@ -22,8 +27,50 @@ allprojects {
         mavenCentral()
         jcenter()
     }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+            kotlinOptions {
+                allWarningsAsErrors = true
+            }
+        }
+    }
 }
+
+subprojects { proj ->
+    afterEvaluate {
+        configureAndroidProject(proj)
+    }
+}
+
+private void configureAndroidProject(Project proj) {
+    def lintOptions = proj.android.lintOptions
+    lintOptions.abortOnError = true
+    lintOptions.warningsAsErrors = true
+    lintOptions.checkAllWarnings = true
+
+    def defaultConfig = proj.android.defaultConfig
+    defaultConfig.testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+    defaultConfig.consumerProguardFiles = ["proguard-rules.pro"]
+
+    proj.android.testOptions.unitTests.all {
+        testLogging {
+            events "passed", "skipped", "failed", "standardOut", "standardError"
+            outputs.upToDateWhen {false}
+            showStandardStreams = true
+            info.events = ["passed", "skipped", "failed", "standardOut", "standardError"]
+        }
+    }
+}
+
 ext {
+    // Note minSdkVersion must be >=21 for 64 bit architectures
+    compileSdkVersion = 28
+    minSdkVersion = 14
     supportLibVersion = "28.0.0"
     supportTestVersion = "0.5"
     espressoVersion = "2.2.2"
