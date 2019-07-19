@@ -3,8 +3,7 @@
 ## 4.17.0 (2019-07-17)
 
 This release modularizes `bugsnag-android` into 3 separate artifacts: for JVM (Core), NDK, and ANR error
-detection. No change should be required to your integration in order to use this version - simply
-add a compile-time dependency on either `bugsnag-android` or `bugsnag-android-ndk` as before.
+detection. You should use v4.5.2 or above of the [bugsnag android gradle plugin](https://github.com/bugsnag/bugsnag-android-gradle-plugin/releases/tag/v4.5.2) in order to use this version, then add a compile-time dependency on either `bugsnag-android` or `bugsnag-android-ndk` as before.
 
 If you do not wish to use the NDK/ANR artifacts, it is possible to exclude these via gradle. You
 should also set `detectNdkCrashes` and `detectAnrs` to false on the `Configuration` object supplied
