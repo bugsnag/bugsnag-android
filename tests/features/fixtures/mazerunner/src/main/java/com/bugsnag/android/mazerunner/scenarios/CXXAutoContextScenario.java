@@ -22,6 +22,7 @@ public class CXXAutoContextScenario extends Scenario {
 
     public CXXAutoContextScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override
