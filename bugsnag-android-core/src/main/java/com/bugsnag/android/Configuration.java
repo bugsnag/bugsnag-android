@@ -46,7 +46,7 @@ public class Configuration extends Observable implements Observer {
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
     private boolean autoCaptureSessions = true;
-    private boolean automaticallyCollectBreadcrumbs = true;
+    private boolean autoCaptureBreadcrumbs = true;
 
     private boolean detectAnrs = false;
     private boolean detectNdkCrashes;
@@ -556,11 +556,27 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * @deprecated use {@link Configuration#getAutoCaptureBreadcrumbs()}
+     */
+    @Deprecated
+    public boolean isAutomaticallyCollectingBreadcrumbs() {
+        return autoCaptureBreadcrumbs;
+    }
+
+    /**
+     * @deprecated use {@link Configuration#setAutoCaptureBreadcrumbs(boolean)}
+     */
+    @Deprecated
+    public void setAutomaticallyCollectBreadcrumbs(boolean automaticallyCollectBreadcrumbs) {
+        this.autoCaptureBreadcrumbs = automaticallyCollectBreadcrumbs;
+    }
+
+    /**
      * Returns whether automatic breadcrumb capture or common application events is enabled.
      * @return true if automatic capture is enabled, otherwise false.
      */
-    public boolean isAutomaticallyCollectingBreadcrumbs() {
-        return automaticallyCollectBreadcrumbs;
+    public boolean getAutoCaptureBreadcrumbs() {
+        return autoCaptureBreadcrumbs;
     }
 
     /**
@@ -568,11 +584,11 @@ public class Configuration extends Observable implements Observer {
      * such as activity lifecycle events, and system intents.
      * To disable this behavior, set this property to false.
      *
-     * @param automaticallyCollectBreadcrumbs whether breadcrumbs should be automatically captured
+     * @param autoCaptureBreadcrumbs whether breadcrumbs should be automatically captured
      *                                        or not
      */
-    public void setAutomaticallyCollectBreadcrumbs(boolean automaticallyCollectBreadcrumbs) {
-        this.automaticallyCollectBreadcrumbs = automaticallyCollectBreadcrumbs;
+    public void setAutoCaptureBreadcrumbs(boolean autoCaptureBreadcrumbs) {
+        this.autoCaptureBreadcrumbs = autoCaptureBreadcrumbs;
     }
 
     /**

@@ -30,7 +30,7 @@ public class BeforeRecordBreadcrumbsTest {
     @Before
     public void setUp() throws Exception {
         Configuration configuration = new Configuration("api-key");
-        configuration.setAutomaticallyCollectBreadcrumbs(false);
+        configuration.setAutoCaptureBreadcrumbs(false);
         client = generateClient();
         assertEquals(0, client.breadcrumbs.store.size());
     }

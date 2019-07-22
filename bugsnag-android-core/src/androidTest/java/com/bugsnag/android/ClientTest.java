@@ -256,7 +256,7 @@ public class ClientTest {
     @Test
     public void testClearBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setAutomaticallyCollectBreadcrumbs(false);
+        config.setAutoCaptureBreadcrumbs(false);
         client = generateClient(config);
         assertEquals(0, client.breadcrumbs.store.size());
 
