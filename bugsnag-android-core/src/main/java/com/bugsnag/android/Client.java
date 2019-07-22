@@ -455,14 +455,9 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set which exception classes should be ignored (not sent) by Bugsnag.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param ignoreClasses a list of exception classes to ignore
+     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
      */
+    @Deprecated
     public void setIgnoreClasses(@Nullable String... ignoreClasses) {
         config.setIgnoreClasses(ignoreClasses);
     }

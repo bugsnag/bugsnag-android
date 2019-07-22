@@ -78,6 +78,7 @@ public class ClientConfigTest {
         assertEquals("gh905", config.getBuildUUID());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetIgnoreClasses() throws Exception {
         client.setIgnoreClasses("RuntimeException", "Foo");

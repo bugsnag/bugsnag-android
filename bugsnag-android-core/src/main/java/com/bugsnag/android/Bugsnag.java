@@ -163,14 +163,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Set which exception classes should be ignored (not sent) by Bugsnag.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param ignoreClasses a list of exception classes to ignore
+     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
      */
+    @Deprecated
     public static void setIgnoreClasses(@Nullable final String... ignoreClasses) {
         getClient().setIgnoreClasses(ignoreClasses);
     }
