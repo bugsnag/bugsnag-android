@@ -23,7 +23,7 @@ class DefaultDelivery implements Delivery {
     @Override
     public void deliver(@NonNull SessionTrackingPayload payload,
                         @NonNull Configuration config) throws DeliveryFailureException {
-        String endpoint = config.getSessionEndpoint();
+        String endpoint = config.getEndpoints().getSessions();
         int status = deliver(endpoint, payload, config.getSessionApiHeaders());
 
         if (status != 202) {
@@ -36,7 +36,7 @@ class DefaultDelivery implements Delivery {
     @Override
     public void deliver(@NonNull Report report,
                         @NonNull Configuration config) throws DeliveryFailureException {
-        String endpoint = config.getEndpoint();
+        String endpoint = config.getEndpoints().getNotify();
         int status = deliver(endpoint, report, config.getErrorApiHeaders());
 
         if (status / 100 != 2) {

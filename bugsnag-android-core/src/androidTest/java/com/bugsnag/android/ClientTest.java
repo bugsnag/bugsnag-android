@@ -187,8 +187,8 @@ public class ClientTest {
         assertEquals(config.getBuildUUID(), protoConfig.getBuildUUID());
         assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
         assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
-        assertEquals(config.getEndpoint(), protoConfig.getEndpoint());
-        assertEquals(config.getSessionEndpoint(), protoConfig.getSessionEndpoint());
+        assertEquals(config.getEndpoints().getNotify(), protoConfig.getEndpoints().getNotify());
+        assertEquals(config.getEndpoints().getSessions(), protoConfig.getEndpoints().getSessions());
         assertEquals(config.getSendThreads(), protoConfig.getSendThreads());
         assertEquals(config.getEnableExceptionHandler(), protoConfig.getEnableExceptionHandler());
         assertEquals(config.getPersistUserBetweenSessions(),
@@ -223,8 +223,8 @@ public class ClientTest {
         assertEquals(buildUuid, protoConfig.getBuildUUID());
         assertEquals(appVersion, protoConfig.getAppVersion());
         assertEquals(releaseStage, protoConfig.getReleaseStage());
-        assertEquals(endpoint, protoConfig.getEndpoint());
-        assertEquals(sessionEndpoint, protoConfig.getSessionEndpoint());
+        assertEquals(endpoint, protoConfig.getEndpoints().getNotify());
+        assertEquals(sessionEndpoint, protoConfig.getEndpoints().getSessions());
         assertEquals(false, protoConfig.getSendThreads());
         assertEquals(false, protoConfig.getEnableExceptionHandler());
         assertEquals(true, protoConfig.getPersistUserBetweenSessions());

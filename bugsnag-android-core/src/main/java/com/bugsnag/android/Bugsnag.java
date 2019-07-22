@@ -119,14 +119,7 @@ public final class Bugsnag {
     }
 
     /**
-     * Set the endpoint to send data to. By default we'll send reports to
-     * the standard https://notify.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send report to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     * instead.
+     * @deprecated use {@link Configuration#setEndpoints(Endpoints)}
      */
     @Deprecated
     public static void setEndpoint(@NonNull final String endpoint) {
