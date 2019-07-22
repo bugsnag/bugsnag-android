@@ -356,6 +356,7 @@ public class NativeInterface {
     /**
      * Set the client report app version
      */
+    @Deprecated
     public static void setAppVersion(@NonNull final String version) {
         getClient().setAppVersion(version);
     }

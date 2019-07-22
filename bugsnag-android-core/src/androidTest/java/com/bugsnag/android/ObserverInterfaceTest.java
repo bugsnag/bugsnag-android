@@ -193,7 +193,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClientSetAppVersionSendsMessage() {
-        client.setAppVersion("300.0.1x");
+        client.getConfig().setAppVersion("300.0.1x");
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_APP_VERSION, String.class);
         assertEquals("300.0.1x", value);

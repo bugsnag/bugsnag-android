@@ -380,11 +380,10 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set the application version sent to Bugsnag. By default we'll pull this
-     * from your AndroidManifest.xml
-     *
      * @param appVersion the app version to send
+     * @deprecated use {@link Configuration#setAppVersion(String)} instead
      */
+    @Deprecated
     public void setAppVersion(@NonNull String appVersion) {
         config.setAppVersion(appVersion);
     }

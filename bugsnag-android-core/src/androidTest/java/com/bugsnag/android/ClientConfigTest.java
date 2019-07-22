@@ -50,6 +50,7 @@ public class ClientConfigTest {
         assertEquals(true, config.getAutoCaptureSessions());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetAppVersion() throws Exception {
         client.setAppVersion("5.6.7");
