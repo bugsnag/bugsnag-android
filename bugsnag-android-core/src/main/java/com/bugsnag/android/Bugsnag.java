@@ -133,13 +133,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Set the buildUUID to your own value. This is used to identify proguard
-     * mapping files in the case that you publish multiple different apps with
-     * the same appId and versionCode. The default value is read from the
-     * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
-     *
-     * @param buildUuid the buildUuid.
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
      */
+    @Deprecated
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public static void setBuildUUID(@Nullable final String buildUuid) {
         getClient().setBuildUUID(buildUuid);

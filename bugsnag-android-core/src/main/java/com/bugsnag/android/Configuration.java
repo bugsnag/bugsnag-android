@@ -237,13 +237,30 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
+     */
+    @Deprecated
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    @Nullable
+    public String getBuildUUID() {
+        return getBuildUuid();
+    }
+
+    /**
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
+     */
+    @Deprecated
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public void setBuildUUID(@Nullable String buildUuid) {
+        setBuildUuid(buildUuid);
+    }
+
+    /**
      * Get the buildUUID.
      *
      * @return build UUID
      */
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    @Nullable
-    public String getBuildUUID() {
+    public String getBuildUuid() {
         return buildUuid;
     }
 
@@ -255,12 +272,11 @@ public class Configuration extends Observable implements Observer {
      *
      * @param buildUuid the buildUUID.
      */
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(@Nullable String buildUuid) {
+    public void setBuildUuid(String buildUuid) {
         this.buildUuid = buildUuid;
         setChanged();
         notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
+            NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
     }
 
     /**

@@ -73,6 +73,7 @@ public class ClientConfigTest {
         assertEquals("http://example.com/bugsnag", config.getEndpoint());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetBuildUuid() throws Exception {
         client.setBuildUUID("gh905");

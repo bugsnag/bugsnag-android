@@ -184,7 +184,7 @@ public class ClientTest {
         ConfigFactory.populateConfigFromManifest(protoConfig, data);
 
         assertEquals(config.getApiKey(), protoConfig.getApiKey());
-        assertEquals(config.getBuildUUID(), protoConfig.getBuildUUID());
+        assertEquals(config.getBuildUuid(), protoConfig.getBuildUuid());
         assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
         assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
         assertEquals(config.getEndpoint(), protoConfig.getEndpoint());
@@ -220,7 +220,7 @@ public class ClientTest {
 
         Configuration protoConfig = new Configuration("api-key");
         ConfigFactory.populateConfigFromManifest(protoConfig, data);
-        assertEquals(buildUuid, protoConfig.getBuildUUID());
+        assertEquals(buildUuid, protoConfig.getBuildUuid());
         assertEquals(appVersion, protoConfig.getAppVersion());
         assertEquals(releaseStage, protoConfig.getReleaseStage());
         assertEquals(endpoint, protoConfig.getEndpoint());

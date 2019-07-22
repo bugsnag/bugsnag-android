@@ -176,6 +176,7 @@ public class ObserverInterfaceTest {
         assertNull(msg);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testClientSetBuildUUIDSendsMessage() {
         client.setBuildUUID("234423-a");
@@ -186,7 +187,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testConfigSetBuildUUIDSendsMessage() {
-        client.getConfig().setBuildUUID("234423-a");
+        client.getConfig().setBuildUuid("234423-a");
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_BUILD_UUID, String.class);
         assertEquals("234423-a", value);

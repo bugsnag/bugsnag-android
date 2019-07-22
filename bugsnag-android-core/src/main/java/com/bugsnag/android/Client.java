@@ -176,7 +176,7 @@ public class Client extends Observable implements Observer {
 
         // populate from manifest (in the case where the constructor was called directly by the
         // User or no UUID was supplied)
-        if (config.getBuildUUID() == null) {
+        if (config.getBuildUuid() == null) {
             String buildUuid = null;
             try {
                 PackageManager packageManager = appContext.getPackageManager();
@@ -188,7 +188,7 @@ public class Client extends Observable implements Observer {
                 Logger.warn("Bugsnag is unable to read build UUID from manifest.");
             }
             if (buildUuid != null) {
-                config.setBuildUUID(buildUuid);
+                config.setBuildUuid(buildUuid);
             }
         }
 
@@ -424,13 +424,9 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set the buildUUID to your own value. This is used to identify proguard
-     * mapping files in the case that you publish multiple different apps with
-     * the same appId and versionCode. The default value is read from the
-     * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
-     *
-     * @param buildUuid the buildUuid.
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
      */
+    @Deprecated
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setBuildUUID(@Nullable final String buildUuid) {
         config.setBuildUUID(buildUuid);
