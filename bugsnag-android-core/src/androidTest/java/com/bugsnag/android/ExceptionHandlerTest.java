@@ -40,14 +40,7 @@ public class ExceptionHandlerTest {
         client.close();
     }
 
-    @Test
-    public void testEnableDisable() {
-        assertTrue(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
-
-        client.disableExceptionHandler();
-        assertFalse(Thread.getDefaultUncaughtExceptionHandler() instanceof ExceptionHandler);
-    }
-
+    @SuppressWarnings("deprecation")
     @Test
     public void testMultipleClients() {
         Client clientTwo = new Client(context, "client-two");

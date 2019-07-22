@@ -63,7 +63,7 @@ class ConfigFactory {
 
         // Build a configuration object
         Configuration newConfig = new Configuration(apiKey);
-        newConfig.setEnableExceptionHandler(enableExceptionHandler);
+        newConfig.setAutoNotify(enableExceptionHandler);
 
         if (loadFromManifest) {
             try {
@@ -113,8 +113,9 @@ class ConfigFactory {
             config.setAutoCaptureSessions(data.getBoolean(MF_AUTO_CAPTURE_SESSIONS));
         }
 
-        config.setEnableExceptionHandler(
-            data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
+        if (data.containsKey(MF_ENABLE_EXCEPTION_HANDLER)) {
+            config.setAutoNotify(data.getBoolean(MF_ENABLE_EXCEPTION_HANDLER, true));
+        }
     }
 
 }

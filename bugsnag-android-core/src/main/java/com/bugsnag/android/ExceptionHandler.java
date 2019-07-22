@@ -19,6 +19,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     final Map<Client, Boolean> clientMap = new WeakHashMap<>();
 
+    /**
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
+     */
+    @Deprecated
     static void enable(@NonNull Client client) {
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
 
@@ -35,6 +39,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         bugsnagHandler.clientMap.put(client, true);
     }
 
+    /**
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
+     */
+    @Deprecated
     static void disable(@NonNull Client client) {
         // Find the Bugsnag ExceptionHandler
         UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -60,6 +68,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
         // Notify any subscribed clients of the uncaught exception
         for (Client client : clientMap.keySet()) {
+            if (!client.getConfig().getAutoNotify()) {
+                continue;
+            }
+
             MetaData metaData = new MetaData();
             String violationDesc = null;
 

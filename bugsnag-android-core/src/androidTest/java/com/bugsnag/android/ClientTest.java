@@ -190,7 +190,7 @@ public class ClientTest {
         assertEquals(config.getEndpoint(), protoConfig.getEndpoint());
         assertEquals(config.getSessionEndpoint(), protoConfig.getSessionEndpoint());
         assertEquals(config.getSendThreads(), protoConfig.getSendThreads());
-        assertEquals(config.getEnableExceptionHandler(), protoConfig.getEnableExceptionHandler());
+        assertEquals(config.getAutoNotify(), protoConfig.getAutoNotify());
         assertEquals(config.getPersistUserBetweenSessions(),
             protoConfig.getPersistUserBetweenSessions());
         assertEquals(false, protoConfig.getDetectAnrs());
@@ -226,7 +226,7 @@ public class ClientTest {
         assertEquals(endpoint, protoConfig.getEndpoint());
         assertEquals(sessionEndpoint, protoConfig.getSessionEndpoint());
         assertEquals(false, protoConfig.getSendThreads());
-        assertEquals(false, protoConfig.getEnableExceptionHandler());
+        assertEquals(false, protoConfig.getAutoNotify());
         assertEquals(true, protoConfig.getPersistUserBetweenSessions());
         assertEquals(true, protoConfig.getAutoCaptureSessions());
         assertEquals(true, protoConfig.getDetectAnrs());

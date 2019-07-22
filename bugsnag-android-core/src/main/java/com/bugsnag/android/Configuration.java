@@ -51,6 +51,7 @@ public class Configuration extends Observable implements Observer {
     private boolean detectAnrs = false;
     private boolean detectNdkCrashes;
     private long anrThresholdMs = 5000;
+    private boolean autoNotify = true;
 
     @NonNull
     private MetaData metaData;
@@ -390,6 +391,24 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * Gets whether Bugsnag should automatically capture and report unhandled errors.
+     * By default, this value is true.
+     */
+    public boolean getAutoNotify() {
+        return autoNotify;
+    }
+
+    /**
+     * Sets whether Bugsnag should automatically capture and report unhandled errors.
+     * By default, this value is true.
+     *
+     * @param autoNotify - whether unhandled errors should be reported automatically
+     */
+    public void setAutoNotify(boolean autoNotify) {
+        this.autoNotify = autoNotify;
+    }
+
+    /**
      * Get whether to send thread-state with report.
      *
      * @return send threads
@@ -409,21 +428,20 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * Get whether or not Bugsnag should automatically handle uncaught exceptions
-     *
-     * @return should Bugsnag automatically handle uncaught exceptions
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
+    @Deprecated
     public boolean getEnableExceptionHandler() {
         return enableExceptionHandler;
     }
 
     /**
-     * Set whether or not Bugsnag should automatically handle uncaught exceptions
-     *
-     * @param enableExceptionHandler should Bugsnag automatically handle uncaught exceptions
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
+    @Deprecated
     public void setEnableExceptionHandler(boolean enableExceptionHandler) {
         this.enableExceptionHandler = enableExceptionHandler;
+        setAutoNotify(enableExceptionHandler);
     }
 
     /**

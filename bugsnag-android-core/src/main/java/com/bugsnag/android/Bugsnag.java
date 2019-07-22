@@ -49,13 +49,10 @@ public final class Bugsnag {
     }
 
     /**
-     * Initialize the static Bugsnag client
-     *
-     * @param androidContext         an Android context, usually <code>this</code>
-     * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
-     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
     @NonNull
+    @Deprecated
     public static Client init(@NonNull Context androidContext,
                               @Nullable String apiKey,
                               boolean enableExceptionHandler) {
@@ -641,16 +638,17 @@ public final class Bugsnag {
     }
 
     /**
-     * Enable automatic reporting of unhandled exceptions.
-     * By default, this is automatically enabled in the constructor.
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
+    @Deprecated
     public static void enableExceptionHandler() {
         getClient().enableExceptionHandler();
     }
 
     /**
-     * Disable automatic reporting of unhandled exceptions.
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
+    @Deprecated
     public static void disableExceptionHandler() {
         getClient().disableExceptionHandler();
     }
