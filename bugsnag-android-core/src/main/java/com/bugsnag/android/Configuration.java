@@ -702,10 +702,7 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * @return the threshold at which ANRs are detected, in ms
-     * @see #setAnrThresholdMs(long)
-     *
-     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
+     * @deprecated this method is obsolete and will be removed in a future release
      */
     @Deprecated
     public long getAnrThresholdMs() {
@@ -713,21 +710,7 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * Sets the time in milliseconds at which an
-     * <a href="https://developer.android.com/topic/performance/vitals/anr">ANR</a> is detected
-     * by Bugsnag. By default, Bugsnag will record an ANR whenever the main thread has been blocked
-     * for 5000 milliseconds or longer.
-     * <p/>
-     * If you wish to enable ANR detection, you should set the {@link #setDetectAnrs(boolean)}
-     * property to true.
-     * <p/>
-     * Attempting to set this property to any value below 1000ms will result in the anrThresholdMs
-     * being set as 1000ms.
-     *
-     * @param anrThresholdMs the threshold in ms at which ANRs should be detected
-     * @see #setDetectAnrs(boolean)
-     *
-     * @deprecated This option has been superseded by the ANR threshold of the underlying OS
+     * @deprecated this method is obsolete and will be removed in a future release
      */
     @Deprecated
     public void setAnrThresholdMs(long anrThresholdMs) {
