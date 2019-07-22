@@ -461,17 +461,7 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set which packages should be considered part of your application.
-     * Bugsnag uses this to help with error grouping, and stacktrace display.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setProjectPackages("com.example.myapp");
-     * <p/>
-     * By default, we'll mark the current package name as part of you app.
-     *
-     * @param projectPackages a list of package names
-     * @deprecated use {{@link Configuration#setProjectPackages(String[])}} instead
+     * @deprecated use {@link Configuration#setProjectPackages(String[])} instead
      */
     @Deprecated
     public void setProjectPackages(@Nullable String... projectPackages) {

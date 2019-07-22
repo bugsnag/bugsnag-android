@@ -170,17 +170,7 @@ public final class Bugsnag {
     }
 
     /**
-     * Set which packages should be considered part of your application.
-     * Bugsnag uses this to help with error grouping, and stacktrace display.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setProjectPackages("com.example.myapp");
-     * <p>
-     * By default, we'll mark the current package name as part of you app.
-     *
-     * @param projectPackages a list of package names
-     * @deprecated use {{@link Configuration#setProjectPackages(String[])}} instead
+     * @deprecated use {@link Configuration#setProjectPackages(String[])} instead
      */
     @Deprecated
     public static void setProjectPackages(@Nullable final String... projectPackages) {
