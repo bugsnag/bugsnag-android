@@ -514,15 +514,12 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set whether to send thread-state with report.
-     * By default, this will be true.
-     *
-     * @param sendThreads should we send thread-state with report?
+     * @deprecated use {@link Configuration#setSendThreads(boolean)}
      */
+    @Deprecated
     public void setSendThreads(boolean sendThreads) {
         config.setSendThreads(sendThreads);
     }
-
 
     /**
      * @deprecated use {@link Configuration#setAutoCaptureSessions(boolean)}

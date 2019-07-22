@@ -402,7 +402,7 @@ public class Configuration extends Observable implements Observer {
      * Set whether to send thread-state with report.
      * By default, this will be true.
      *
-     * @param sendThreads should we send thread-state with report?
+     * @param sendThreads whether thread traces should be sent with reports
      */
     public void setSendThreads(boolean sendThreads) {
         this.sendThreads = sendThreads;

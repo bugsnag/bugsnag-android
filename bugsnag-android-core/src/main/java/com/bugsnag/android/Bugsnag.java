@@ -223,11 +223,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Set whether to send thread-state with report.
-     * By default, this will be true.
-     *
-     * @param sendThreads should we send thread-state with report?
+     * @deprecated use {@link Configuration#setSendThreads(boolean)}
      */
+    @Deprecated
     public static void setSendThreads(final boolean sendThreads) {
         getClient().setSendThreads(sendThreads);
     }

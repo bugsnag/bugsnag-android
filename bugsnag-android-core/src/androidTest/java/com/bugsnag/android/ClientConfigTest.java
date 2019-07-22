@@ -90,6 +90,7 @@ public class ClientConfigTest {
         assertArrayEquals(new String[]{"beta", "prod"}, config.getNotifyReleaseStages());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetSendThreads() throws Exception {
         client.setSendThreads(false);
