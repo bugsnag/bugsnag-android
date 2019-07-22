@@ -146,18 +146,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Set which keys should be filtered when sending metaData to Bugsnag.
-     * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metaData you send to Bugsnag.
-     * Any keys in metaData which contain these strings will be marked as
-     * [FILTERED] when send to Bugsnag.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setFilters("password", "credit_card");
-     *
-     * @param filters a list of keys to filter from metaData
+     * @deprecated use {@link Configuration#setFilters(String[])}
      */
+    @Deprecated
     public static void setFilters(@Nullable final String... filters) {
         getClient().setFilters(filters);
     }
