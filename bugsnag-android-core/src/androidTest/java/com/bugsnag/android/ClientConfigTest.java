@@ -44,6 +44,7 @@ public class ClientConfigTest {
         assertEquals("beta", config.getReleaseStage());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetAutoCaptureSessions() throws Exception {
         client.setAutoCaptureSessions(true);
