@@ -85,6 +85,7 @@ public class ClientConfigTest {
         assertArrayEquals(new String[]{"RuntimeException", "Foo"}, config.getIgnoreClasses());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetNotifyReleaseStages() throws Exception {
         client.setNotifyReleaseStages("beta", "prod");

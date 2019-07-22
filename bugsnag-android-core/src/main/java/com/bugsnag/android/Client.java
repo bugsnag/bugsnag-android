@@ -453,16 +453,9 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set for which releaseStages errors should be sent to Bugsnag.
-     * Use this to stop errors from development builds being sent.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setNotifyReleaseStages("production");
-     *
-     * @param notifyReleaseStages a list of releaseStages to notify for
-     * @see #setReleaseStage
+     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
      */
+    @Deprecated
     public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
         config.setNotifyReleaseStages(notifyReleaseStages);
     }

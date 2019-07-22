@@ -162,16 +162,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Set for which releaseStages errors should be sent to Bugsnag.
-     * Use this to stop errors from development builds being sent.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setNotifyReleaseStages("production");
-     *
-     * @param notifyReleaseStages a list of releaseStages to notify for
-     * @see #setReleaseStage
+     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
      */
+    @Deprecated
     public static void setNotifyReleaseStages(@Nullable final String... notifyReleaseStages) {
         getClient().setNotifyReleaseStages(notifyReleaseStages);
     }

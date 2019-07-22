@@ -385,8 +385,9 @@ public class NativeInterface {
     }
 
     /**
-     * Set which release stages notify
+     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
      */
+    @Deprecated
     public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }
