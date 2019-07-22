@@ -129,6 +129,7 @@ public class ObserverInterfaceTest {
         assertEquals("bar", metadataItem.get(1));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testClientSetReleaseStageSendsMessage() {
         client.setReleaseStage("prod-2");

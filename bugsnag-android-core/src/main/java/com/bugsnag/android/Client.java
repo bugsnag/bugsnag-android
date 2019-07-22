@@ -469,13 +469,9 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set the current "release stage" of your application.
-     * By default, we'll set this to "development" for debug builds and
-     * "production" for non-debug builds.
-     *
-     * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages
+     * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
+    @Deprecated
     public void setReleaseStage(@Nullable String releaseStage) {
         config.setReleaseStage(releaseStage);
         Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));

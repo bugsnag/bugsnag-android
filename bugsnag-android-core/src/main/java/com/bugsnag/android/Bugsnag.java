@@ -178,15 +178,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Set the current "release stage" of your application.
-     * By default, we'll set this to "development" for debug builds and
-     * "production" for non-debug builds.
-     * <p>
-     * If the release stage is set to "production", logging will automatically be disabled.
-     *
-     * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages {@link #setLoggingEnabled(boolean)}
+     * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
+    @Deprecated
     public static void setReleaseStage(@Nullable final String releaseStage) {
         getClient().setReleaseStage(releaseStage);
     }

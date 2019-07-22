@@ -300,8 +300,9 @@ public class NativeInterface {
     }
 
     /**
-     * Set the client report release stage
+     * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
+    @Deprecated
     public static void setReleaseStage(@Nullable final String stage) {
         getClient().setReleaseStage(stage);
     }

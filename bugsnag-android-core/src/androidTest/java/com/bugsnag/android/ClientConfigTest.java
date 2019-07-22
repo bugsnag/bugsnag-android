@@ -38,6 +38,7 @@ public class ClientConfigTest {
         client.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetReleaseStage() throws Exception {
         client.setReleaseStage("beta");
