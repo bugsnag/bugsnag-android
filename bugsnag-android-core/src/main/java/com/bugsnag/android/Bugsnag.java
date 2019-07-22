@@ -608,14 +608,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
-     *
-     * @param enabled true if logging is enabled
+     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
      */
+    @Deprecated
     public static void setLoggingEnabled(boolean enabled) {
         getClient().setLoggingEnabled(enabled);
     }

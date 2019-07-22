@@ -50,6 +50,7 @@ public class Configuration extends Observable implements Observer {
 
     private boolean detectAnrs = false;
     private boolean detectNdkCrashes;
+    private boolean loggingEnabled;
     private long anrThresholdMs = 5000;
 
     @NonNull
@@ -84,6 +85,8 @@ public class Configuration extends Observable implements Observer {
         } catch (Throwable exc) {
             detectNdkCrashes = false;
         }
+
+        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
     }
 
     /**
@@ -260,6 +263,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return build UUID
      */
+    @Nullable
     public String getBuildUuid() {
         return buildUuid;
     }
@@ -272,7 +276,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param buildUuid the buildUUID.
      */
-    public void setBuildUuid(String buildUuid) {
+    public void setBuildUuid(@Nullable String buildUuid) {
         this.buildUuid = buildUuid;
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -400,6 +404,8 @@ public class Configuration extends Observable implements Observer {
      */
     public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;
+        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+
         setChanged();
         notifyObservers(new NativeInterface.Message(
                     NativeInterface.MessageType.UPDATE_RELEASE_STAGE, releaseStage));
@@ -746,6 +752,26 @@ public class Configuration extends Observable implements Observer {
      */
     @Deprecated
     public void setAnrThresholdMs(long anrThresholdMs) {
+    }
+
+    /**
+     * @return true if SDK logging is enabled
+     */
+    public boolean isLoggingEnabled() {
+        return loggingEnabled;
+    }
+
+    /**
+     * Sets whether the SDK should write logs. In production apps, it is recommended that this
+     * should be set to false.
+     * <p>
+     * Logging is enabled by default unless the release stage is set to 'production', in which case
+     * it will be disabled.
+     *
+     * @param loggingEnabled true if logging is enabled
+     */
+    public void setLoggingEnabled(boolean loggingEnabled) {
+        this.loggingEnabled = loggingEnabled;
     }
 
     /**

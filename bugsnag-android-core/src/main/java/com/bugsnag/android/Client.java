@@ -220,9 +220,7 @@ public class Client extends Observable implements Observer {
         }
         connectivity.registerForNetworkChanges();
 
-        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
-            appData.guessReleaseStage());
-        Logger.setEnabled(isNotProduction);
+        Logger.setEnabled(config.isLoggingEnabled());
 
         config.addObserver(this);
         breadcrumbs.addObserver(this);
@@ -470,7 +468,6 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void setReleaseStage(@Nullable String releaseStage) {
         config.setReleaseStage(releaseStage);
-        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
 
     /**
@@ -1393,16 +1390,11 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
-     *
-     * @param loggingEnabled true if logging is enabled
+     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
      */
+    @Deprecated
     public void setLoggingEnabled(boolean loggingEnabled) {
-        Logger.setEnabled(loggingEnabled);
+        config.setLoggingEnabled(loggingEnabled);
     }
 
     /**
