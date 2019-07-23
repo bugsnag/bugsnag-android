@@ -172,7 +172,10 @@ class ErrorStore extends FileStore<Error> {
         } catch (Exception exception) {
             if (delegate != null) {
                 Error minimalError = generateErrorFromFilename(errorFile.getName());
-                delegate.onErrorReadFailure(minimalError);
+
+                if (minimalError != null) {
+                    delegate.onErrorReadFailure(minimalError);
+                }
             }
             deleteStoredFiles(Collections.singleton(errorFile));
         }
