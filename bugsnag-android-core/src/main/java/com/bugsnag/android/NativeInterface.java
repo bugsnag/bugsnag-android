@@ -314,7 +314,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getSessionEndpoint() {
-        return getClient().getConfig().getSessionEndpoint();
+        return getClient().getConfig().getEndpoints().getSessions();
     }
 
     /**
@@ -322,7 +322,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getEndpoint() {
-        return getClient().getConfig().getEndpoint();
+        return getClient().getConfig().getEndpoints().getNotify();
     }
 
     /**
