@@ -21,7 +21,8 @@ class DeliveryCompat implements Delivery {
                         @NonNull Configuration config) throws DeliveryFailureException {
         if (sessionTrackingApiClient != null) {
             try {
-                sessionTrackingApiClient.postSessionTrackingPayload(config.getSessionEndpoint(),
+                String sessions = config.getEndpoints().getSessions();
+                sessionTrackingApiClient.postSessionTrackingPayload(sessions,
                     payload, config.getSessionApiHeaders());
             } catch (Throwable throwable) {
                 handleException(throwable);
@@ -34,7 +35,7 @@ class DeliveryCompat implements Delivery {
                         @NonNull Configuration config) throws DeliveryFailureException {
         if (errorReportApiClient != null) {
             try {
-                errorReportApiClient.postReport(config.getEndpoint(),
+                errorReportApiClient.postReport(config.getEndpoints().getNotify(),
                     report, config.getErrorApiHeaders());
             } catch (Throwable throwable) {
                 handleException(throwable);
