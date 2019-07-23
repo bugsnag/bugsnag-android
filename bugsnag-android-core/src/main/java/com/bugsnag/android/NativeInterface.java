@@ -162,11 +162,6 @@ public class NativeInterface {
         NativeInterface.client = client;
     }
 
-    @Deprecated
-    public static void configureClientObservers(@NonNull Client client) {
-        setClient(client);
-    }
-
     @Nullable
     public static String getContext() {
         return getClient().getContext();
