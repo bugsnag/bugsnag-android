@@ -19,13 +19,13 @@ internal class CorruptedOldReportScenario(config: Configuration,
         // create an empty (invalid) file with an old name
         files.forEach {
             val dir = File(it.parent)
-            it.writeText("")
+            it.writeText("{\"exceptions\":[{\"stacktrace\":[")
             it.renameTo(File(dir, "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json"))
         }
     }
 
     override fun run() {
         super.run()
-        Bugsnag.notify(java.lang.RuntimeException("Test Report"))
+        Bugsnag.notify(generateException())
     }
 }
