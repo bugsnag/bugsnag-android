@@ -42,7 +42,6 @@ public class Configuration extends Observable implements Observer {
     private String[] projectPackages;
     private String releaseStage;
     private boolean sendThreads = true;
-    private boolean enableExceptionHandler = true;
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
     private boolean autoCaptureSessions = true;
@@ -432,7 +431,7 @@ public class Configuration extends Observable implements Observer {
      */
     @Deprecated
     public boolean getEnableExceptionHandler() {
-        return enableExceptionHandler;
+        return getAutoNotify();
     }
 
     /**
@@ -440,7 +439,6 @@ public class Configuration extends Observable implements Observer {
      */
     @Deprecated
     public void setEnableExceptionHandler(boolean enableExceptionHandler) {
-        this.enableExceptionHandler = enableExceptionHandler;
         setAutoNotify(enableExceptionHandler);
     }
 
