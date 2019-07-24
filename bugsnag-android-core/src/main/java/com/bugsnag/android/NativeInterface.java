@@ -162,11 +162,6 @@ public class NativeInterface {
         NativeInterface.client = client;
     }
 
-    @Deprecated
-    public static void configureClientObservers(@NonNull Client client) {
-        setClient(client);
-    }
-
     @Nullable
     public static String getContext() {
         return getClient().getContext();
@@ -300,8 +295,9 @@ public class NativeInterface {
     }
 
     /**
-     * Set the client report release stage
+     * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
+    @Deprecated
     public static void setReleaseStage(@Nullable final String stage) {
         getClient().setReleaseStage(stage);
     }
@@ -319,7 +315,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getSessionEndpoint() {
-        return getClient().getConfig().getSessionEndpoint();
+        return getClient().getConfig().getEndpoints().getSessions();
     }
 
     /**
@@ -327,7 +323,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getEndpoint() {
-        return getClient().getConfig().getEndpoint();
+        return getClient().getConfig().getEndpoints().getNotify();
     }
 
     /**
@@ -335,7 +331,8 @@ public class NativeInterface {
      */
     @SuppressWarnings("deprecation")
     public static void setSessionEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setSessionEndpoint(endpoint);
+        Configuration config = getClient().getConfig();
+        config.setEndpoints(config.getEndpoint(), endpoint);
     }
 
     /**
@@ -343,7 +340,8 @@ public class NativeInterface {
      */
     @SuppressWarnings("deprecation")
     public static void setEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setEndpoint(endpoint);
+        Configuration config = getClient().getConfig();
+        config.setEndpoints(endpoint, config.getSessionEndpoint());
     }
 
     /**
@@ -356,6 +354,7 @@ public class NativeInterface {
     /**
      * Set the client report app version
      */
+    @Deprecated
     public static void setAppVersion(@NonNull final String version) {
         getClient().setAppVersion(version);
     }
@@ -384,8 +383,9 @@ public class NativeInterface {
     }
 
     /**
-     * Set which release stages notify
+     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
      */
+    @Deprecated
     public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }

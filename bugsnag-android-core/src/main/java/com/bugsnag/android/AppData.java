@@ -74,7 +74,7 @@ class AppData {
     Map<String, Object> getAppData() {
         Map<String, Object> map = getAppDataSummary();
         map.put("id", packageName);
-        map.put("buildUUID", config.getBuildUUID());
+        map.put("buildUUID", config.getBuildUuid());
         map.put("duration", getDurationMs());
         map.put("durationInForeground", calculateDurationInForeground());
         map.put("inForeground", sessionTracker.isInForeground());

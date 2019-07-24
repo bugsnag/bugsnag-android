@@ -33,68 +33,10 @@ public class ConfigurationTest {
     public void testEndpoints() {
         String notify = "https://notify.myexample.com";
         String sessions = "https://sessions.myexample.com";
-        config.setEndpoints(notify, sessions);
+        config.setEndpoints(new Endpoints(notify, sessions));
 
-        assertEquals(notify, config.getEndpoint());
-        assertEquals(sessions, config.getSessionEndpoint());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNullNotifyEndpoint() {
-        //noinspection ConstantConditions
-        config.setEndpoints(null, "http://example.com");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testEmptyNotifyEndpoint() {
-        config.setEndpoints("", "http://example.com");
-    }
-
-    @Test
-    public void testInvalidSessionEndpoint() {
-        //noinspection ConstantConditions
-        config.setEndpoints("http://example.com", null);
-        assertFalse(config.getAutoCaptureSessions());
-        assertNull(config.getSessionEndpoint());
-
-        config.setEndpoints("http://example.com", "");
-        assertFalse(config.getAutoCaptureSessions());
-        assertNull(config.getSessionEndpoint());
-
-        config.setEndpoints("http://example.com", "http://sessions.example.com");
-        assertFalse(config.getAutoCaptureSessions());
-        assertEquals("http://sessions.example.com", config.getSessionEndpoint());
-    }
-
-    @Test
-    public void testAutoCaptureOverride() {
-        config.setAutoCaptureSessions(false);
-        config.setEndpoints("http://example.com", "http://example.com");
-        assertFalse(config.getAutoCaptureSessions());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEndpoint() {
-        // Default endpoints
-        assertEquals("https://notify.bugsnag.com", config.getEndpoint());
-
-        // Setting an endpoint
-        String endpoint = "http://localhost:8000";
-        config.setEndpoint(endpoint);
-        assertEquals(endpoint, config.getEndpoint());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSessionEndpoint() {
-        // Default endpoints
-        assertEquals("https://sessions.bugsnag.com", config.getSessionEndpoint());
-
-        // Setting an endpoint
-        String endpoint = "http://localhost:8000";
-        config.setSessionEndpoint(endpoint);
-        assertEquals(endpoint, config.getSessionEndpoint());
+        assertEquals(notify, config.getEndpoints().getNotify());
+        assertEquals(sessions, config.getEndpoints().getSessions());
     }
 
     @Test
@@ -125,25 +67,6 @@ public class ConfigurationTest {
         // Should ignore when added to ignoreClasses
         config.setIgnoreClasses(new String[]{className});
         assertTrue(config.shouldIgnoreClass(className));
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testInProject() {
-        // Shouldn't be inProject if projectPackages hasn't been set
-        assertFalse(config.inProject("com.bugsnag.android.Example"));
-
-        // Should be inProject if class in projectPackages
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
-        assertTrue(config.inProject("com.bugsnag.android.Example"));
-
-        // Shouldn't be inProject if class not in projectPackages
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
-        assertFalse(config.inProject("java.io.IOException"));
-
-        // Should be inProject if class is in projectPackages with null element
-        config.setProjectPackages(new String[]{null, "java.io.IOException"});
-        assertTrue(config.inProject("java.io.IOException"));
     }
 
     @Test
@@ -224,7 +147,7 @@ public class ConfigurationTest {
         Delivery delivery = BugsnagTestUtils.generateDelivery();
         configuration.setDelivery(delivery);
 
-        assertFalse(configuration.getDelivery() instanceof DeliveryCompat);
+        assertFalse(configuration.getDelivery() instanceof DefaultDelivery);
         assertEquals(delivery, configuration.getDelivery());
     }
 

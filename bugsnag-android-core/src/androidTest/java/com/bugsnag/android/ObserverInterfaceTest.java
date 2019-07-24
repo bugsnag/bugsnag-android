@@ -129,6 +129,7 @@ public class ObserverInterfaceTest {
         assertEquals("bar", metadataItem.get(1));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testClientSetReleaseStageSendsMessage() {
         client.setReleaseStage("prod-2");
@@ -175,6 +176,7 @@ public class ObserverInterfaceTest {
         assertNull(msg);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testClientSetBuildUUIDSendsMessage() {
         client.setBuildUUID("234423-a");
@@ -185,7 +187,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testConfigSetBuildUUIDSendsMessage() {
-        client.getConfig().setBuildUUID("234423-a");
+        client.getConfig().setBuildUuid("234423-a");
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_BUILD_UUID, String.class);
         assertEquals("234423-a", value);
@@ -193,7 +195,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClientSetAppVersionSendsMessage() {
-        client.setAppVersion("300.0.1x");
+        client.getConfig().setAppVersion("300.0.1x");
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_APP_VERSION, String.class);
         assertEquals("300.0.1x", value);

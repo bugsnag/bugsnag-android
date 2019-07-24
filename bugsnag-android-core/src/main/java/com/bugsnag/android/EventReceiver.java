@@ -53,7 +53,7 @@ public class EventReceiver extends BroadcastReceiver {
             BreadcrumbType type =
                 actions.containsKey(fullAction) ? actions.get(fullAction) : BreadcrumbType.LOG;
 
-            if (client.getConfig().isAutomaticallyCollectingBreadcrumbs()) {
+            if (client.getConfig().getAutoCaptureBreadcrumbs()) {
                 client.leaveBreadcrumb(shortAction, type, meta);
             }
 

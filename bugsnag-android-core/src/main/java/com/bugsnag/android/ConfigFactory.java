@@ -88,7 +88,7 @@ class ConfigFactory {
      */
     static void populateConfigFromManifest(@NonNull Configuration config,
                                            @NonNull Bundle data) {
-        config.setBuildUUID(data.getString(MF_BUILD_UUID));
+        config.setBuildUuid(data.getString(MF_BUILD_UUID));
         config.setAppVersion(data.getString(MF_APP_VERSION));
         config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
 
@@ -96,7 +96,7 @@ class ConfigFactory {
             String endpoint = data.getString(MF_ENDPOINT);
             String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);
             //noinspection ConstantConditions (pass in null/empty as this function will warn)
-            config.setEndpoints(endpoint, sessionEndpoint);
+            config.setEndpoints(new Endpoints(endpoint, sessionEndpoint));
         }
 
         config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));

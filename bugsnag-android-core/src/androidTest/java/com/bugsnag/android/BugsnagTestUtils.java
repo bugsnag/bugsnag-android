@@ -77,33 +77,6 @@ final class BugsnagTestUtils {
         return new SessionStore(generateConfiguration(), InstrumentationRegistry.getContext());
     }
 
-    @SuppressWarnings("deprecation")
-    @NonNull
-    static SessionTrackingApiClient generateSessionTrackingApiClient() {
-        return new SessionTrackingApiClient() {
-            @Override
-            public void postSessionTrackingPayload(@NonNull String urlString,
-                                                   @NonNull SessionTrackingPayload payload,
-                                                   @NonNull Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        };
-    }
-
-    @SuppressWarnings("deprecation")
-    static ErrorReportApiClient generateErrorReportApiClient() { // no-op
-        return new ErrorReportApiClient() {
-            @Override
-            public void postReport(@NonNull String urlString,
-                                   @NonNull Report report,
-                                   @NonNull Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        };
-    }
-
     public static Delivery generateDelivery() {
         return new Delivery() {
             @Override
