@@ -28,4 +28,6 @@ COPY scripts/ scripts/
 
 RUN scripts/install-ndk.sh
 
+ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
+
 RUN ./gradlew

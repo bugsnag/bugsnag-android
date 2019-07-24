@@ -76,14 +76,14 @@ steps:
 
   - wait
 
-  - label: ':android: Android 5 end-to-end tests'
+  - label: ':android: Android 9 end-to-end tests'
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v2.6.0:
         run: android-maze-runner
     env:
-      DEVICE_TYPE: "ANDROID_5"
+      DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
@@ -96,6 +96,20 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]'
       NDK_VERSION: "r16b"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - block: "Trigger full test suite"
+
+  - label: ':android: Android 5 end-to-end tests'
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v2.6.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_5"
+      APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
@@ -131,18 +145,6 @@ steps:
         run: android-maze-runner
     env:
       DEVICE_TYPE: "ANDROID_8"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Android 9 end-to-end tests'
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v2.6.0:
-        run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
