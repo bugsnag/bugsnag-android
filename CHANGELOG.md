@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.17.1 (2019-07-24)
 
 ### Bug fixes
 * Fix NPE causing crash when reporting a minimal error
