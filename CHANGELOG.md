@@ -35,6 +35,8 @@ the use of any API supplied by bugsnag-android.
 [#501](https://github.com/bugsnag/bugsnag-android/pull/501)
 * Send minimal error report if cached file is corrupted/empty
 [#500](https://github.com/bugsnag/bugsnag-android/pull/500)
+* Remove deprecated interfaces from API 
+[#514](https://github.com/bugsnag/bugsnag-android/pull/514)
 
 ### Bug fixes
 
