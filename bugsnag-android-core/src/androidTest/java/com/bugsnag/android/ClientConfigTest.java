@@ -38,18 +38,21 @@ public class ClientConfigTest {
         client.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetReleaseStage() throws Exception {
         client.setReleaseStage("beta");
         assertEquals("beta", config.getReleaseStage());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetAutoCaptureSessions() throws Exception {
         client.setAutoCaptureSessions(true);
         assertEquals(true, config.getAutoCaptureSessions());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetAppVersion() throws Exception {
         client.setAppVersion("5.6.7");
@@ -63,24 +66,28 @@ public class ClientConfigTest {
         assertEquals("JunitTest", config.getContext());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetBuildUuid() throws Exception {
         client.setBuildUUID("gh905");
-        assertEquals("gh905", config.getBuildUUID());
+        assertEquals("gh905", config.getBuildUuid());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetIgnoreClasses() throws Exception {
         client.setIgnoreClasses("RuntimeException", "Foo");
         assertArrayEquals(new String[]{"RuntimeException", "Foo"}, config.getIgnoreClasses());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetNotifyReleaseStages() throws Exception {
         client.setNotifyReleaseStages("beta", "prod");
         assertArrayEquals(new String[]{"beta", "prod"}, config.getNotifyReleaseStages());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSetSendThreads() throws Exception {
         client.setSendThreads(false);

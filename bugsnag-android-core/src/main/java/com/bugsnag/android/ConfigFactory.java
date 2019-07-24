@@ -88,7 +88,7 @@ class ConfigFactory {
      */
     static void populateConfigFromManifest(@NonNull Configuration config,
                                            @NonNull Bundle data) {
-        config.setBuildUUID(data.getString(MF_BUILD_UUID));
+        config.setBuildUuid(data.getString(MF_BUILD_UUID));
         config.setAppVersion(data.getString(MF_APP_VERSION));
         config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
 

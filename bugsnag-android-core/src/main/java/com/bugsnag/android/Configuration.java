@@ -43,10 +43,12 @@ public class Configuration extends Observable implements Observer {
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
     private boolean autoCaptureSessions = true;
-    private boolean automaticallyCollectBreadcrumbs = true;
+    private boolean autoCaptureBreadcrumbs = true;
 
     private boolean detectAnrs = false;
     private boolean detectNdkCrashes;
+    private boolean loggingEnabled;
+    private long anrThresholdMs = 5000;
 
     @NonNull
     private MetaData metaData;
@@ -81,6 +83,8 @@ public class Configuration extends Observable implements Observer {
         } catch (Throwable exc) {
             detectNdkCrashes = false;
         }
+
+        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
     }
 
     /**
@@ -201,13 +205,31 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
+     */
+    @Deprecated
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    @Nullable
+    public String getBuildUUID() {
+        return getBuildUuid();
+    }
+
+    /**
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
+     */
+    @Deprecated
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public void setBuildUUID(@Nullable String buildUuid) {
+        setBuildUuid(buildUuid);
+    }
+
+    /**
      * Get the buildUUID.
      *
      * @return build UUID
      */
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     @Nullable
-    public String getBuildUUID() {
+    public String getBuildUuid() {
         return buildUuid;
     }
 
@@ -219,12 +241,11 @@ public class Configuration extends Observable implements Observer {
      *
      * @param buildUuid the buildUUID.
      */
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(@Nullable String buildUuid) {
+    public void setBuildUuid(@Nullable String buildUuid) {
         this.buildUuid = buildUuid;
         setChanged();
         notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
+            NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
     }
 
     /**
@@ -348,6 +369,8 @@ public class Configuration extends Observable implements Observer {
      */
     public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;
+        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+
         setChanged();
         notifyObservers(new NativeInterface.Message(
                     NativeInterface.MessageType.UPDATE_RELEASE_STAGE, releaseStage));
@@ -366,7 +389,7 @@ public class Configuration extends Observable implements Observer {
      * Set whether to send thread-state with report.
      * By default, this will be true.
      *
-     * @param sendThreads should we send thread-state with report?
+     * @param sendThreads whether thread traces should be sent with reports
      */
     public void setSendThreads(boolean sendThreads) {
         this.sendThreads = sendThreads;
@@ -509,11 +532,27 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
+     * @deprecated use {@link Configuration#getAutoCaptureBreadcrumbs()}
+     */
+    @Deprecated
+    public boolean isAutomaticallyCollectingBreadcrumbs() {
+        return autoCaptureBreadcrumbs;
+    }
+
+    /**
+     * @deprecated use {@link Configuration#setAutoCaptureBreadcrumbs(boolean)}
+     */
+    @Deprecated
+    public void setAutomaticallyCollectBreadcrumbs(boolean automaticallyCollectBreadcrumbs) {
+        this.autoCaptureBreadcrumbs = automaticallyCollectBreadcrumbs;
+    }
+
+    /**
      * Returns whether automatic breadcrumb capture or common application events is enabled.
      * @return true if automatic capture is enabled, otherwise false.
      */
-    public boolean isAutomaticallyCollectingBreadcrumbs() {
-        return automaticallyCollectBreadcrumbs;
+    public boolean getAutoCaptureBreadcrumbs() {
+        return autoCaptureBreadcrumbs;
     }
 
     /**
@@ -521,11 +560,11 @@ public class Configuration extends Observable implements Observer {
      * such as activity lifecycle events, and system intents.
      * To disable this behavior, set this property to false.
      *
-     * @param automaticallyCollectBreadcrumbs whether breadcrumbs should be automatically captured
+     * @param autoCaptureBreadcrumbs whether breadcrumbs should be automatically captured
      *                                        or not
      */
-    public void setAutomaticallyCollectBreadcrumbs(boolean automaticallyCollectBreadcrumbs) {
-        this.automaticallyCollectBreadcrumbs = automaticallyCollectBreadcrumbs;
+    public void setAutoCaptureBreadcrumbs(boolean autoCaptureBreadcrumbs) {
+        this.autoCaptureBreadcrumbs = autoCaptureBreadcrumbs;
     }
 
     /**
@@ -652,6 +691,26 @@ public class Configuration extends Observable implements Observer {
      */
     public void setDetectNdkCrashes(boolean detectNdkCrashes) {
         this.detectNdkCrashes = detectNdkCrashes;
+    }
+
+    /**
+     * @return true if SDK logging is enabled
+     */
+    public boolean isLoggingEnabled() {
+        return loggingEnabled;
+    }
+
+    /**
+     * Sets whether the SDK should write logs. In production apps, it is recommended that this
+     * should be set to false.
+     * <p>
+     * Logging is enabled by default unless the release stage is set to 'production', in which case
+     * it will be disabled.
+     *
+     * @param loggingEnabled true if logging is enabled
+     */
+    public void setLoggingEnabled(boolean loggingEnabled) {
+        this.loggingEnabled = loggingEnabled;
     }
 
     /**

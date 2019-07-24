@@ -176,7 +176,7 @@ public class Client extends Observable implements Observer {
 
         // populate from manifest (in the case where the constructor was called directly by the
         // User or no UUID was supplied)
-        if (config.getBuildUUID() == null) {
+        if (config.getBuildUuid() == null) {
             String buildUuid = null;
             try {
                 PackageManager packageManager = appContext.getPackageManager();
@@ -188,7 +188,7 @@ public class Client extends Observable implements Observer {
                 Logger.warn("Bugsnag is unable to read build UUID from manifest.");
             }
             if (buildUuid != null) {
-                config.setBuildUUID(buildUuid);
+                config.setBuildUuid(buildUuid);
             }
         }
 
@@ -220,9 +220,7 @@ public class Client extends Observable implements Observer {
         }
         connectivity.registerForNetworkChanges();
 
-        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
-            appData.guessReleaseStage());
-        Logger.setEnabled(isNotProduction);
+        Logger.setEnabled(config.isLoggingEnabled());
 
         config.addObserver(this);
         breadcrumbs.addObserver(this);
@@ -380,11 +378,10 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set the application version sent to Bugsnag. By default we'll pull this
-     * from your AndroidManifest.xml
-     *
      * @param appVersion the app version to send
+     * @deprecated use {@link Configuration#setAppVersion(String)} instead
      */
+    @Deprecated
     public void setAppVersion(@NonNull String appVersion) {
         config.setAppVersion(appVersion);
     }
@@ -410,96 +407,58 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set the buildUUID to your own value. This is used to identify proguard
-     * mapping files in the case that you publish multiple different apps with
-     * the same appId and versionCode. The default value is read from the
-     * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
-     *
-     * @param buildUuid the buildUuid.
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
      */
+    @Deprecated
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setBuildUUID(@Nullable final String buildUuid) {
         config.setBuildUUID(buildUuid);
     }
 
-
     /**
-     * Set which keys should be filtered when sending metaData to Bugsnag.
-     * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metaData you send to Bugsnag.
-     * Any keys in metaData which contain these strings will be marked as
-     * [FILTERED] when send to Bugsnag.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setFilters("password", "credit_card");
-     *
-     * @param filters a list of keys to filter from metaData
+     * @deprecated use {@link Configuration#setFilters(String[])}
      */
+    @Deprecated
     public void setFilters(@Nullable String... filters) {
         config.setFilters(filters);
     }
 
     /**
-     * Set which exception classes should be ignored (not sent) by Bugsnag.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param ignoreClasses a list of exception classes to ignore
+     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
      */
+    @Deprecated
     public void setIgnoreClasses(@Nullable String... ignoreClasses) {
         config.setIgnoreClasses(ignoreClasses);
     }
 
     /**
-     * Set for which releaseStages errors should be sent to Bugsnag.
-     * Use this to stop errors from development builds being sent.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setNotifyReleaseStages("production");
-     *
-     * @param notifyReleaseStages a list of releaseStages to notify for
-     * @see #setReleaseStage
+     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
      */
+    @Deprecated
     public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
         config.setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
-     * Set the current "release stage" of your application.
-     * By default, we'll set this to "development" for debug builds and
-     * "production" for non-debug builds.
-     *
-     * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages
+     * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
+    @Deprecated
     public void setReleaseStage(@Nullable String releaseStage) {
         config.setReleaseStage(releaseStage);
-        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
     }
 
     /**
-     * Set whether to send thread-state with report.
-     * By default, this will be true.
-     *
-     * @param sendThreads should we send thread-state with report?
+     * @deprecated use {@link Configuration#setSendThreads(boolean)}
      */
+    @Deprecated
     public void setSendThreads(boolean sendThreads) {
         config.setSendThreads(sendThreads);
     }
 
-
     /**
-     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
-     * the app enters the foreground.
-     * <p>
-     * By default this behavior is disabled.
-     *
-     * @param autoCapture whether sessions should be captured automatically
+     * @deprecated use {@link Configuration#setAutoCaptureSessions(boolean)}
      */
+    @Deprecated
     public void setAutoCaptureSessions(boolean autoCapture) {
         config.setAutoCaptureSessions(autoCapture);
 
@@ -1179,16 +1138,11 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
-     *
-     * @param loggingEnabled true if logging is enabled
+     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
      */
+    @Deprecated
     public void setLoggingEnabled(boolean loggingEnabled) {
-        Logger.setEnabled(loggingEnabled);
+        config.setLoggingEnabled(loggingEnabled);
     }
 
     /**
@@ -1201,10 +1155,9 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Retrieves the time at which the client was launched
-     *
-     * @return the ms since the java epoch
+     * @deprecated this method is obsolete and will be removed in a future release
      */
+    @Deprecated
     public long getLaunchTimeMs() {
         return AppData.getDurationMs();
     }

@@ -295,8 +295,9 @@ public class NativeInterface {
     }
 
     /**
-     * Set the client report release stage
+     * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
+    @Deprecated
     public static void setReleaseStage(@Nullable final String stage) {
         getClient().setReleaseStage(stage);
     }
@@ -353,6 +354,7 @@ public class NativeInterface {
     /**
      * Set the client report app version
      */
+    @Deprecated
     public static void setAppVersion(@NonNull final String version) {
         getClient().setAppVersion(version);
     }
@@ -381,8 +383,9 @@ public class NativeInterface {
     }
 
     /**
-     * Set which release stages notify
+     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
      */
+    @Deprecated
     public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }

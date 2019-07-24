@@ -89,11 +89,10 @@ public final class Bugsnag {
     }
 
     /**
-     * Set the application version sent to Bugsnag. By default we'll pull this
-     * from your AndroidManifest.xml
-     *
      * @param appVersion the app version to send
+     * @deprecated use {@link Configuration#setAppVersion(String)} instead
      */
+    @Deprecated
     public static void setAppVersion(@NonNull final String appVersion) {
         getClient().setAppVersion(appVersion);
     }
@@ -119,95 +118,58 @@ public final class Bugsnag {
     }
 
     /**
-     * Set the buildUUID to your own value. This is used to identify proguard
-     * mapping files in the case that you publish multiple different apps with
-     * the same appId and versionCode. The default value is read from the
-     * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
-     *
-     * @param buildUuid the buildUuid.
+     * @deprecated use {@link Configuration#setBuildUuid(String)}
      */
+    @Deprecated
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public static void setBuildUUID(@Nullable final String buildUuid) {
         getClient().setBuildUUID(buildUuid);
     }
 
     /**
-     * Set which keys should be filtered when sending metaData to Bugsnag.
-     * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metaData you send to Bugsnag.
-     * Any keys in metaData which contain these strings will be marked as
-     * [FILTERED] when send to Bugsnag.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setFilters("password", "credit_card");
-     *
-     * @param filters a list of keys to filter from metaData
+     * @deprecated use {@link Configuration#setFilters(String[])}
      */
+    @Deprecated
     public static void setFilters(@Nullable final String... filters) {
         getClient().setFilters(filters);
     }
 
     /**
-     * Set which exception classes should be ignored (not sent) by Bugsnag.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param ignoreClasses a list of exception classes to ignore
+     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
      */
+    @Deprecated
     public static void setIgnoreClasses(@Nullable final String... ignoreClasses) {
         getClient().setIgnoreClasses(ignoreClasses);
     }
 
     /**
-     * Set for which releaseStages errors should be sent to Bugsnag.
-     * Use this to stop errors from development builds being sent.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setNotifyReleaseStages("production");
-     *
-     * @param notifyReleaseStages a list of releaseStages to notify for
-     * @see #setReleaseStage
+     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
      */
+    @Deprecated
     public static void setNotifyReleaseStages(@Nullable final String... notifyReleaseStages) {
         getClient().setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
-     * Set the current "release stage" of your application.
-     * By default, we'll set this to "development" for debug builds and
-     * "production" for non-debug builds.
-     * <p>
-     * If the release stage is set to "production", logging will automatically be disabled.
-     *
-     * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages {@link #setLoggingEnabled(boolean)}
+     * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
+    @Deprecated
     public static void setReleaseStage(@Nullable final String releaseStage) {
         getClient().setReleaseStage(releaseStage);
     }
 
     /**
-     * Set whether to send thread-state with report.
-     * By default, this will be true.
-     *
-     * @param sendThreads should we send thread-state with report?
+     * @deprecated use {@link Configuration#setSendThreads(boolean)}
      */
+    @Deprecated
     public static void setSendThreads(final boolean sendThreads) {
         getClient().setSendThreads(sendThreads);
     }
 
     /**
-     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
-     * the app enters the foreground.
-     * <p>
-     * By default this behavior is disabled.
-     *
-     * @param autoCapture whether sessions should be captured automatically
+     * @deprecated use {@link Configuration#setAutoCaptureSessions(boolean)}
      */
+    @Deprecated
     public static void setAutoCaptureSessions(boolean autoCapture) {
         getClient().setAutoCaptureSessions(autoCapture);
     }
@@ -470,14 +432,9 @@ public final class Bugsnag {
     }
 
     /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
-     *
-     * @param enabled true if logging is enabled
+     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
      */
+    @Deprecated
     public static void setLoggingEnabled(boolean enabled) {
         getClient().setLoggingEnabled(enabled);
     }

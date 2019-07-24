@@ -171,7 +171,7 @@ public class ClientTest {
         ConfigFactory.populateConfigFromManifest(protoConfig, data);
 
         assertEquals(config.getApiKey(), protoConfig.getApiKey());
-        assertEquals(config.getBuildUUID(), protoConfig.getBuildUUID());
+        assertEquals(config.getBuildUuid(), protoConfig.getBuildUuid());
         assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
         assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
         assertEquals(config.getEndpoints().getNotify(), protoConfig.getEndpoints().getNotify());
@@ -207,7 +207,7 @@ public class ClientTest {
 
         Configuration protoConfig = new Configuration("api-key");
         ConfigFactory.populateConfigFromManifest(protoConfig, data);
-        assertEquals(buildUuid, protoConfig.getBuildUUID());
+        assertEquals(buildUuid, protoConfig.getBuildUuid());
         assertEquals(appVersion, protoConfig.getAppVersion());
         assertEquals(releaseStage, protoConfig.getReleaseStage());
         assertEquals(endpoint, protoConfig.getEndpoints().getNotify());
@@ -242,7 +242,7 @@ public class ClientTest {
     @Test
     public void testClearBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setAutomaticallyCollectBreadcrumbs(false);
+        config.setAutoCaptureBreadcrumbs(false);
         client = generateClient(config);
         assertEquals(0, client.breadcrumbs.store.size());
 
