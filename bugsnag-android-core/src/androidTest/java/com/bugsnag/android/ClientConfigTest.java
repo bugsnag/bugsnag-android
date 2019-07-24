@@ -68,16 +68,9 @@ public class ClientConfigTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSetEndpoint() throws Exception {
-        client.setEndpoint("http://example.com/bugsnag");
-        assertEquals("http://example.com/bugsnag", config.getEndpoint());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
     public void testSetBuildUuid() throws Exception {
         client.setBuildUUID("gh905");
-        assertEquals("gh905", config.getBuildUUID());
+        assertEquals("gh905", config.getBuildUuid());
     }
 
     @SuppressWarnings("deprecation")
@@ -99,11 +92,6 @@ public class ClientConfigTest {
     public void testSetSendThreads() throws Exception {
         client.setSendThreads(false);
         assertFalse(config.getSendThreads());
-    }
-
-    @Test
-    public void testDefaultClientDelivery() {
-        assertFalse(client.config.getDelivery() instanceof DeliveryCompat);
     }
 
     @Test

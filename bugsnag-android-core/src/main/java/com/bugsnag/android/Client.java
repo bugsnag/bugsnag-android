@@ -152,7 +152,7 @@ public class Client extends Observable implements Observer {
 
         // Set sensible defaults if project packages not already set
         if (config.getProjectPackages() == null) {
-            setProjectPackages(appContext.getPackageName());
+            configuration.setProjectPackages(new String[]{appContext.getPackageName()});
         }
 
         String deviceId = deviceData.getId();
@@ -407,21 +407,6 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Set the endpoint to send data to. By default we'll send reports to
-     * the standard https://notify.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send report to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     * instead.
-     */
-    @Deprecated
-    public void setEndpoint(@NonNull String endpoint) {
-        config.setEndpoint(endpoint);
-    }
-
-    /**
      * @deprecated use {@link Configuration#setBuildUuid(String)}
      */
     @Deprecated
@@ -452,14 +437,6 @@ public class Client extends Observable implements Observer {
     @Deprecated
     public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
         config.setNotifyReleaseStages(notifyReleaseStages);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setProjectPackages(String[])} instead
-     */
-    @Deprecated
-    public void setProjectPackages(@Nullable String... projectPackages) {
-        config.setProjectPackages(projectPackages);
     }
 
     /**
@@ -597,38 +574,6 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    DeliveryCompat getAndSetDeliveryCompat() {
-        Delivery current = config.getDelivery();
-
-        if (current instanceof DeliveryCompat) {
-            return (DeliveryCompat)current;
-        } else {
-            DeliveryCompat compat = new DeliveryCompat();
-            config.setDelivery(compat);
-            return compat;
-        }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Deprecated
-    void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
-        if (errorReportApiClient == null) {
-            throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
-        }
-        DeliveryCompat compat = getAndSetDeliveryCompat();
-        compat.errorReportApiClient = errorReportApiClient;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Deprecated
-    void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
-        if (apiClient == null) {
-            throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");
-        }
-        DeliveryCompat compat = getAndSetDeliveryCompat();
-        compat.sessionTrackingApiClient = apiClient;
-    }
-
     /**
      * Add a "before notify" callback, to execute code before sending
      * reports to Bugsnag.
@@ -737,97 +682,6 @@ public class Client extends Observable implements Observer {
             Thread.currentThread(), false)
             .severity(severity)
             .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull Throwable exception,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .metaData(metaData)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull Throwable exception, @NonNull Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .metaData(metaData)
-            .severity(severity)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull String name, @NonNull String message,
-                       @NonNull StackTraceElement[] stacktrace, @NonNull Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull String name,
-                       @NonNull String message,
-                       @Nullable String context,
-                       @NonNull StackTraceElement[] stacktrace,
-                       @NonNull Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        error.setContext(context);
         notify(error, !BLOCKING);
     }
 
@@ -998,99 +852,6 @@ public class Client extends Observable implements Observer {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .metaData(metaData)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .metaData(metaData)
-            .severity(severity)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull String name,
-                               @NonNull String message,
-                               @NonNull StackTraceElement[] stacktrace,
-                               @NonNull Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull String name,
-                               @NonNull String message,
-                               @Nullable String context,
-                               @NonNull StackTraceElement[] stacktrace,
-                               @NonNull Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        error.setContext(context);
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
      * @param severity  the severity of the error, one of Severity.ERROR,
      *                  Severity.WARNING or Severity.INFO
      */
@@ -1218,19 +979,6 @@ public class Client extends Observable implements Observer {
         if (runBeforeBreadcrumbTasks(crumb)) {
             breadcrumbs.add(crumb);
         }
-    }
-
-    /**
-     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
-     * By default, we'll keep and send the 20 most recent breadcrumb log
-     * messages.
-     *
-     * @param numBreadcrumbs number of breadcrumb log messages to send
-     * @deprecated use {@link Configuration#setMaxBreadcrumbs(int)} instead
-     */
-    @Deprecated
-    public void setMaxBreadcrumbs(int numBreadcrumbs) {
-        config.setMaxBreadcrumbs(numBreadcrumbs);
     }
 
     /**

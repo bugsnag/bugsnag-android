@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -33,8 +32,6 @@ public class Configuration extends Observable implements Observer {
     private String buildUuid;
     private String appVersion;
     private String context;
-    private volatile String endpoint = "https://notify.bugsnag.com";
-    private volatile String sessionEndpoint = "https://sessions.bugsnag.com";
 
     private String[] ignoreClasses;
     @Nullable
@@ -65,6 +62,7 @@ public class Configuration extends Observable implements Observer {
     private String notifierType;
 
     private Delivery delivery;
+    private Endpoints endpoints = new Endpoints();
     private int maxBreadcrumbs = DEFAULT_MAX_SIZE;
 
     /**
@@ -157,86 +155,53 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * Get the endpoint to send data
-     *
-     * @return Endpoint
+     * @deprecated use {@link Configuration#getEndpoints()}
      */
+    @Deprecated
     @NonNull
     public String getEndpoint() {
-        return endpoint;
+        return endpoints.getNotify();
     }
 
     /**
-     * Set the endpoint to send data to. By default we'll send reports to
-     * the standard https://notify.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send report to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
+     * @deprecated use {@link Configuration#setEndpoints(Endpoints)}
      */
     @Deprecated
-    public void setEndpoint(@NonNull String endpoint) {
-        this.endpoint = endpoint;
+    public void setEndpoints(@NonNull String notify, @NonNull String sessions) {
+        setEndpoints(new Endpoints(notify, sessions));
     }
 
     /**
      * Set the endpoints to send data to. By default we'll send error reports to
      * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
-     * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoint.
+     * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.
      *
-     * Please note that it is recommended that you set both endpoints. If the notify endpoint is
-     * missing, an exception will be thrown. If the session endpoint is missing, a warning will be
-     * logged and sessions will not be sent automatically.
-     *
-     * @param notify the notify endpoint
-     * @param sessions the sessions endpoint
-     *
-     * @throws IllegalArgumentException if the notify endpoint is empty or null
+     * @param endpoints the notify and sessions endpoint
      */
-    public void setEndpoints(@NonNull String notify, @NonNull String sessions)
-        throws IllegalArgumentException {
-
-        if (TextUtils.isEmpty(notify)) {
-            throw new IllegalArgumentException("Notify endpoint cannot be empty or null.");
-        } else {
-            this.endpoint = notify;
-        }
-
-        boolean invalidSessionsEndpoint = TextUtils.isEmpty(sessions);
-
-        if (invalidSessionsEndpoint) {
-            Logger.warn("The session tracking endpoint has not been set. "
-                + "Session tracking is disabled");
-            this.sessionEndpoint = null;
-            this.autoCaptureSessions = false;
-        } else {
-            this.sessionEndpoint = sessions;
-        }
+    public void setEndpoints(@NonNull Endpoints endpoints) {
+        this.endpoints = endpoints;
     }
 
     /**
-     * Gets the Session Tracking API endpoint
+     * Retrieves the endpoints to send data to. By default we'll send error reports to
+     * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
+     * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.
      *
-     * @return the endpoint
+     * @return the notify and sessions endpoint
      */
     @NonNull
-    public String getSessionEndpoint() {
-        return sessionEndpoint;
+    public Endpoints getEndpoints() {
+        return endpoints;
     }
 
+
     /**
-     * Set the endpoint to send Session Tracking data to. By default we'll send reports to
-     * the standard https://sessions.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send session data to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
+     * @deprecated use {@link Configuration#getEndpoints()}
      */
     @Deprecated
-    public void setSessionEndpoint(@NonNull String endpoint) {
-        this.sessionEndpoint = endpoint;
+    @NonNull
+    public String getSessionEndpoint() {
+        return endpoints.getSessions();
     }
 
     /**
@@ -446,17 +411,6 @@ public class Configuration extends Observable implements Observer {
      */
     public void setEnableExceptionHandler(boolean enableExceptionHandler) {
         this.enableExceptionHandler = enableExceptionHandler;
-    }
-
-    /**
-     * Get whether or not User sessions are captured automatically.
-     *
-     * @return true if sessions are captured automatically
-     * @deprecated use {@link #getAutoCaptureSessions()}
-     */
-    @Deprecated
-    public boolean shouldAutoCaptureSessions() {
-        return getAutoCaptureSessions();
     }
 
     /**
@@ -740,21 +694,6 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * @deprecated this method is obsolete and will be removed in a future release
-     */
-    @Deprecated
-    public long getAnrThresholdMs() {
-        return anrThresholdMs;
-    }
-
-    /**
-     * @deprecated this method is obsolete and will be removed in a future release
-     */
-    @Deprecated
-    public void setAnrThresholdMs(long anrThresholdMs) {
-    }
-
-    /**
      * @return true if SDK logging is enabled
      */
     public boolean isLoggingEnabled() {
@@ -879,17 +818,6 @@ public class Configuration extends Observable implements Observer {
         if (!beforeRecordBreadcrumbTasks.contains(beforeRecordBreadcrumb)) {
             beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
         }
-    }
-
-    /**
-     * Checks if the given class name should be marked as in the project or not
-     *
-     * @param className the class to check
-     * @return true if the class should be considered in the project else false
-     */
-    @Deprecated
-    protected boolean inProject(@NonNull String className) {
-        return Stacktrace.inProject(className, projectPackages);
     }
 
     /**

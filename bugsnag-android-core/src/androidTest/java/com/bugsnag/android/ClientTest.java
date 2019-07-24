@@ -93,19 +93,6 @@ public class ClientTest {
         client.notify(new RuntimeException("Testing"));
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testConfig() {
-        config.setEndpoint("new-endpoint");
-
-        client = new Client(context, config);
-        client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
-        client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
-
-        // Notify should not crash
-        client.notify(new RuntimeException("Testing"));
-    }
-
     @Test
     public void testRestoreUserFromPrefs() {
         setUserPrefs();
@@ -187,8 +174,8 @@ public class ClientTest {
         assertEquals(config.getBuildUuid(), protoConfig.getBuildUuid());
         assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
         assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
-        assertEquals(config.getEndpoint(), protoConfig.getEndpoint());
-        assertEquals(config.getSessionEndpoint(), protoConfig.getSessionEndpoint());
+        assertEquals(config.getEndpoints().getNotify(), protoConfig.getEndpoints().getNotify());
+        assertEquals(config.getEndpoints().getSessions(), protoConfig.getEndpoints().getSessions());
         assertEquals(config.getSendThreads(), protoConfig.getSendThreads());
         assertEquals(config.getEnableExceptionHandler(), protoConfig.getEnableExceptionHandler());
         assertEquals(config.getPersistUserBetweenSessions(),
@@ -223,8 +210,8 @@ public class ClientTest {
         assertEquals(buildUuid, protoConfig.getBuildUuid());
         assertEquals(appVersion, protoConfig.getAppVersion());
         assertEquals(releaseStage, protoConfig.getReleaseStage());
-        assertEquals(endpoint, protoConfig.getEndpoint());
-        assertEquals(sessionEndpoint, protoConfig.getSessionEndpoint());
+        assertEquals(endpoint, protoConfig.getEndpoints().getNotify());
+        assertEquals(sessionEndpoint, protoConfig.getEndpoints().getSessions());
         assertEquals(false, protoConfig.getSendThreads());
         assertEquals(false, protoConfig.getEnableExceptionHandler());
         assertEquals(true, protoConfig.getPersistUserBetweenSessions());
@@ -238,10 +225,9 @@ public class ClientTest {
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
         config.setAutomaticallyCollectBreadcrumbs(false);
+        config.setMaxBreadcrumbs(1);
         client = generateClient(config);
         assertEquals(0, client.breadcrumbs.store.size());
-
-        client.setMaxBreadcrumbs(1);
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
@@ -281,12 +267,6 @@ public class ClientTest {
 
         client.clearTab("drink");
         assertTrue(client.getMetaData().getTab("drink").isEmpty());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test(expected = IllegalArgumentException.class)
-    public void testApiClientNullValidation() {
-        generateClient().setSessionTrackingApiClient(null);
     }
 
     @Test

@@ -73,11 +73,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     @VisibleForTesting
     Session startNewSession(@NonNull Date date, @Nullable User user,
                                       boolean autoCaptured) {
-        if (configuration.getSessionEndpoint() == null) {
-            Logger.warn("The session tracking endpoint has not been set. "
-                + "Session tracking is disabled");
-            return null;
-        }
         Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);
         currentSession.set(session);
         trackSessionIfNeeded(session);
@@ -167,7 +162,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             notifySessionStartObserver(session);
 
             try {
-                final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
                     @Override
                     public void run() {

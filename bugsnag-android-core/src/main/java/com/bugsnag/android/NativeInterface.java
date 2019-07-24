@@ -162,11 +162,6 @@ public class NativeInterface {
         NativeInterface.client = client;
     }
 
-    @Deprecated
-    public static void configureClientObservers(@NonNull Client client) {
-        setClient(client);
-    }
-
     @Nullable
     public static String getContext() {
         return getClient().getContext();
@@ -320,7 +315,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getSessionEndpoint() {
-        return getClient().getConfig().getSessionEndpoint();
+        return getClient().getConfig().getEndpoints().getSessions();
     }
 
     /**
@@ -328,7 +323,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getEndpoint() {
-        return getClient().getConfig().getEndpoint();
+        return getClient().getConfig().getEndpoints().getNotify();
     }
 
     /**
@@ -336,7 +331,8 @@ public class NativeInterface {
      */
     @SuppressWarnings("deprecation")
     public static void setSessionEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setSessionEndpoint(endpoint);
+        Configuration config = getClient().getConfig();
+        config.setEndpoints(config.getEndpoint(), endpoint);
     }
 
     /**
@@ -344,7 +340,8 @@ public class NativeInterface {
      */
     @SuppressWarnings("deprecation")
     public static void setEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setEndpoint(endpoint);
+        Configuration config = getClient().getConfig();
+        config.setEndpoints(endpoint, config.getSessionEndpoint());
     }
 
     /**

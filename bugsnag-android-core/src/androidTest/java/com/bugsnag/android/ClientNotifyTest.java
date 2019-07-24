@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 
 import android.support.annotation.NonNull;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,9 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -27,12 +26,12 @@ public class ClientNotifyTest {
      *
      * @throws Exception if initialisation failed
      */
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        client = BugsnagTestUtils.generateClient();
+        Configuration config = BugsnagTestUtils.generateConfiguration();
         apiClient = new FakeClient();
-        client.setErrorReportApiClient(apiClient);
+        config.setDelivery(apiClient);
+        client = new Client(InstrumentationRegistry.getContext(), config);
     }
 
     @After
@@ -83,28 +82,21 @@ public class ClientNotifyTest {
         assertEquals("Message", error.getExceptionMessage());
     }
 
-    @SuppressWarnings("deprecation")
-    static class FakeClient implements ErrorReportApiClient {
+    static class FakeClient implements Delivery {
 
         CountDownLatch latch = new CountDownLatch(1);
         Report report;
 
         @Override
-        public void postReport(@NonNull String urlString,
-                               @NonNull Report report,
-                               @NonNull Map<String, String> headers)
-            throws NetworkException, BadResponseException {
-            try {
-                Thread.sleep(10); // simulate async request
-            } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
-            }
+        public void deliver(@NonNull Report report,
+                            @NonNull Configuration config) throws DeliveryFailureException {
             this.report = report;
             latch.countDown();
         }
 
-        void awaitReport() throws InterruptedException {
-            latch.await(2000, TimeUnit.MILLISECONDS);
+        @Override
+        public void deliver(@NonNull SessionTrackingPayload payload,
+                            @NonNull Configuration config) throws DeliveryFailureException {
         }
     }
 

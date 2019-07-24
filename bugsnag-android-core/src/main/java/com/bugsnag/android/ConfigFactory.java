@@ -96,7 +96,7 @@ class ConfigFactory {
             String endpoint = data.getString(MF_ENDPOINT);
             String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);
             //noinspection ConstantConditions (pass in null/empty as this function will warn)
-            config.setEndpoints(endpoint, sessionEndpoint);
+            config.setEndpoints(new Endpoints(endpoint, sessionEndpoint));
         }
 
         config.setSendThreads(data.getBoolean(MF_SEND_THREADS, true));
