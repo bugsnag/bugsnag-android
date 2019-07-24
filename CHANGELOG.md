@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.17.1 (2019-07-24)
+
+### Bug fixes
+* Fix NPE causing crash when reporting a minimal error
+  [#534](https://github.com/bugsnag/bugsnag-android/pull/534)
+
 ## 4.17.0 (2019-07-17)
 
 This release modularizes `bugsnag-android` into 3 separate artifacts: for JVM (Core), NDK, and ANR error
