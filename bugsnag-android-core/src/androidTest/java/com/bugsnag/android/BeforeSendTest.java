@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
+
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +32,19 @@ public class BeforeSendTest {
         result = "";
         config = new Configuration("key");
         config.setDelivery(new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
-            @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
                 lastReport = report;
+                return DeliveryStatus.DELIVERED;
+            }
+
+            @NotNull
+            @Override
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
             }
         });
         client = new Client(InstrumentationRegistry.getContext(), config);

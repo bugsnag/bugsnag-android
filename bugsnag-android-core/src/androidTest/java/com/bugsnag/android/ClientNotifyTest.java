@@ -7,6 +7,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,16 +88,20 @@ public class ClientNotifyTest {
         CountDownLatch latch = new CountDownLatch(1);
         Report report;
 
+        @NotNull
         @Override
-        public void deliver(@NonNull Report report,
-                            @NonNull Configuration config) throws DeliveryFailureException {
-            this.report = report;
-            latch.countDown();
+        public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                      @NotNull DeliveryParams deliveryParams) {
+            return DeliveryStatus.DELIVERED;
         }
 
+        @NotNull
         @Override
-        public void deliver(@NonNull SessionTrackingPayload payload,
-                            @NonNull Configuration config) throws DeliveryFailureException {
+        public DeliveryStatus deliver(@NotNull Report report,
+                                      @NotNull DeliveryParams deliveryParams) {
+            this.report = report;
+            latch.countDown();
+            return DeliveryStatus.DELIVERED;
         }
     }
 

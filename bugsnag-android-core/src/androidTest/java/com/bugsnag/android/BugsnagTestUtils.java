@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,16 +80,17 @@ final class BugsnagTestUtils {
 
     public static Delivery generateDelivery() {
         return new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
+            public DeliveryStatus deliver(@NotNull Report report, @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
 
+            @NotNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload, @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
         };
     }
 }
