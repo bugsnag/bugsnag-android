@@ -96,12 +96,9 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Initialize a Bugsnag client
-     *
-     * @param androidContext         an Android context, usually <code>this</code>
-     * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
-     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
+    @Deprecated
     public Client(@NonNull Context androidContext,
                   @Nullable String apiKey,
                   boolean enableExceptionHandler) {
@@ -115,6 +112,7 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
+    @SuppressWarnings("deprecation")
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
@@ -202,9 +200,7 @@ public class Client extends Observable implements Observer {
         });
 
         // Install a default exception handler with this client
-        if (config.getEnableExceptionHandler()) {
-            enableExceptionHandler();
-        }
+        ExceptionHandler.enable(this);
 
         // register a receiver for automatic breadcrumbs
 
@@ -989,16 +985,17 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Enable automatic reporting of unhandled exceptions.
-     * By default, this is automatically enabled in the constructor.
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
+    @Deprecated
     public void enableExceptionHandler() {
         ExceptionHandler.enable(this);
     }
 
     /**
-     * Disable automatic reporting of unhandled exceptions.
+     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
      */
+    @Deprecated
     public void disableExceptionHandler() {
         ExceptionHandler.disable(this);
     }

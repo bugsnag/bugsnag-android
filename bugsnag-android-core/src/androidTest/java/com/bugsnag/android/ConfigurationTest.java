@@ -10,6 +10,8 @@ import static org.junit.Assert.assertTrue;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -152,5 +154,21 @@ public class ConfigurationTest {
     @Test(expected = IllegalArgumentException.class)
     public void testSetNullDelivery() {
         config.setDelivery(null);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testAutoNotifyAlias() {
+        assertTrue(config.getAutoNotify());
+        config.setEnableExceptionHandler(false);
+        assertFalse(config.getAutoNotify());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testEnableExceptionHandlerAlias() {
+        assertTrue(config.getEnableExceptionHandler());
+        config.setAutoNotify(false);
+        assertFalse(config.getEnableExceptionHandler());
     }
 }

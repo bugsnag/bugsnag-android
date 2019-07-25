@@ -40,8 +40,8 @@ public class ObserverInterfaceTest {
     public void setUp() throws Exception {
         config = new Configuration("some-api-key");
         config.setDelivery(BugsnagTestUtils.generateDelivery());
+        config.setAutoNotify(false);
         client = new Client(InstrumentationRegistry.getContext(), config);
-        client.disableExceptionHandler();
         observer = new BugsnagTestObserver();
         client.addObserver(observer);
     }
