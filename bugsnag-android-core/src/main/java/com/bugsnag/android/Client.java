@@ -239,7 +239,8 @@ public class Client extends Observable implements Observer {
             }
         };
         try {
-            orientationListener.enable();
+            if (config.isCapturingDeviceOrientation())
+                orientationListener.enable();
         } catch (IllegalStateException ex) {
             Logger.warn("Failed to set up orientation tracking: " + ex);
         }

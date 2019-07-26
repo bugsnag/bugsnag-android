@@ -47,6 +47,7 @@ public class Configuration extends Observable implements Observer {
     private long launchCrashThresholdMs = 5 * 1000;
     private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
+    private boolean captureDeviceOrientation = true;
 
     private boolean detectAnrs = false;
     private boolean detectNdkCrashes;
@@ -573,6 +574,24 @@ public class Configuration extends Observable implements Observer {
      */
     public void setAutomaticallyCollectBreadcrumbs(boolean automaticallyCollectBreadcrumbs) {
         this.automaticallyCollectBreadcrumbs = automaticallyCollectBreadcrumbs;
+    }
+
+    /**
+     * Returns whether capturing the device orientation is enabled.
+     * @return true if orientation capturing is enabled, otherwise false.
+     */
+    public boolean isCapturingDeviceOrientation() {
+        return captureDeviceOrientation;
+    }
+
+    /**
+     * By default, the device orientation is captured.
+     * To disable this behavior, set this property to false.
+     *
+     * @param captureDeviceOrientation whether the device orientation should be captured or not
+     */
+    public void setCaptureDeviceOrientation(boolean captureDeviceOrientation) {
+        this.captureDeviceOrientation = captureDeviceOrientation;
     }
 
     /**
