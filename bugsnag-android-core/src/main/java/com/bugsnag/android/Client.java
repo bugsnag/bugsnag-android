@@ -44,9 +44,6 @@ public class Client extends Observable implements Observer {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
-    private static final String USER_ID_KEY = "user.id";
-    private static final String USER_NAME_KEY = "user.name";
-    private static final String USER_EMAIL_KEY = "user.email";
 
     @NonNull
     protected final Configuration config;
@@ -62,7 +59,7 @@ public class Client extends Observable implements Observer {
     final Breadcrumbs breadcrumbs;
 
     @NonNull
-    private final User user = new User();
+    private User user;
 
     @NonNull
     protected final ErrorStore errorStore;
@@ -75,6 +72,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
+    private UserRepository userRepository;
 
     /**
      * Initialize a Bugsnag client
@@ -143,7 +141,11 @@ public class Client extends Observable implements Observer {
 
         appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
         Resources resources = appContext.getResources();
-        deviceData = new DeviceData(connectivity, this.appContext, resources, sharedPrefs);
+
+        userRepository = new UserRepository(sharedPrefs, config.getPersistUserBetweenSessions());
+        setUserInternal(userRepository.load());
+
+        deviceData = new DeviceData(connectivity, this.appContext, resources, user.installId);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);
@@ -151,17 +153,6 @@ public class Client extends Observable implements Observer {
         // Set sensible defaults if project packages not already set
         if (config.getProjectPackages() == null) {
             configuration.setProjectPackages(new String[]{appContext.getPackageName()});
-        }
-
-        String deviceId = deviceData.getId();
-
-        if (config.getPersistUserBetweenSessions()) {
-            // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceId));
-            user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
-            user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
-        } else {
-            user.setId(deviceId);
         }
 
         if (appContext instanceof Application) {
@@ -221,7 +212,6 @@ public class Client extends Observable implements Observer {
         config.addObserver(this);
         breadcrumbs.addObserver(this);
         sessionTracker.addObserver(this);
-        user.addObserver(this);
 
         final Client client = this;
         orientationListener = new OrientationEventListener(appContext) {
@@ -463,6 +453,11 @@ public class Client extends Observable implements Observer {
         }
     }
 
+    private void setUserInternal(User user) {
+        this.user = user;
+        user.addObserver(this);
+    }
+
     /**
      * Set details of the user currently using your application.
      * You can search for this information in your Bugsnag dashboard.
@@ -517,14 +512,7 @@ public class Client extends Observable implements Observer {
         user.setId(getStringFromMap("id", deviceData.getDeviceData()));
         user.setEmail(null);
         user.setName(null);
-
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit()
-            .remove(USER_ID_KEY)
-            .remove(USER_EMAIL_KEY)
-            .remove(USER_NAME_KEY)
-            .apply();
+        userRepository.save(user);
     }
 
     /**
@@ -536,10 +524,7 @@ public class Client extends Observable implements Observer {
      */
     public void setUserId(@Nullable String id) {
         user.setId(id);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_ID_KEY, id);
-        }
+        userRepository.save(user);
     }
 
     /**
@@ -550,10 +535,7 @@ public class Client extends Observable implements Observer {
      */
     public void setUserEmail(@Nullable String email) {
         user.setEmail(email);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_EMAIL_KEY, email);
-        }
+        userRepository.save(user);
     }
 
     /**
@@ -564,10 +546,7 @@ public class Client extends Observable implements Observer {
      */
     public void setUserName(@Nullable String name) {
         user.setName(name);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_NAME_KEY, name);
-        }
+        userRepository.save(user);
     }
 
     /**
