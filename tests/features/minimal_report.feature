@@ -23,3 +23,11 @@ Scenario: Minimal error report for an Unhandled Exception with a corrupted file
     And the event "unhandled" is true
     And the event "incomplete" is true
     And the event "severityReason.type" equals "unhandledException"
+
+Scenario: Minimal error report with old filename
+    When I run "MinimalUnhandledExceptionScenario" and relaunch the app
+    And I run "CorruptedOldReportScenario"
+    And I wait to receive a request
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the event "unhandled" is false
+    And the event "incomplete" is false
