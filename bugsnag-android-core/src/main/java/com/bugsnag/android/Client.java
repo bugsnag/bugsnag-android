@@ -571,18 +571,18 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Add a "before notify" callback, to execute code before sending
-     * reports to Bugsnag.
-     * <p/>
+     * Add a "before notify" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
+     * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "Before
      * notify" callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     * <p/>
+     * <p>
      * For example:
-     * <p/>
-     * client.beforeNotify(new BeforeNotify() {
+     * <p>
+     * Bugsnag.addBeforeNotify(new BeforeNotify() {
      * public boolean run(Error error) {
      * error.setSeverity(Severity.INFO);
      * return true;
@@ -592,8 +592,40 @@ public class Client extends Observable implements Observer {
      * @param beforeNotify a callback to run before sending errors to Bugsnag
      * @see BeforeNotify
      */
+    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
+        config.addBeforeNotify(beforeNotify);
+    }
+
+    /**
+     * Add a "before send" callback, to execute code before sending a
+     * report to Bugsnag.
+     * <p>
+     * You can use this to add or modify information attached to an error
+     * before it is sent to your dashboard. You can also return
+     * <code>false</code> from any callback to prevent delivery.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.addBeforeSend(new BeforeSend() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
+     *
+     * @param beforeSend a callback to run before sending errors to Bugsnag
+     * @see BeforeSend
+     */
+    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
+        config.addBeforeSend(beforeSend);
+    }
+
+    /**
+     * @deprecated use {@link #addBeforeNotify(BeforeNotify)}
+     */
+    @Deprecated
     public void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        config.beforeNotify(beforeNotify);
+        config.addBeforeNotify(beforeNotify);
     }
 
     /**

@@ -103,7 +103,7 @@ public class ClientTest {
 
         final User user = new User();
 
-        client.beforeNotify(new BeforeNotify() {
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 // Pull out the user information

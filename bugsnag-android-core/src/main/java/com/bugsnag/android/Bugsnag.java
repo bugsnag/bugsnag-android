@@ -228,8 +228,8 @@ public final class Bugsnag {
     }
 
     /**
-     * Add a "before notify" callback, to execute code before sending
-     * reports to Bugsnag.
+     * Add a "before notify" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
@@ -239,7 +239,7 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeNotify(new BeforeNotify() {
+     * Bugsnag.addBeforeNotify(new BeforeNotify() {
      * public boolean run(Error error) {
      * error.setSeverity(Severity.INFO);
      * return true;
@@ -247,10 +247,43 @@ public final class Bugsnag {
      * })
      *
      * @param beforeNotify a callback to run before sending errors to Bugsnag
+     * <p/>
      * @see BeforeNotify
      */
-    public static void beforeNotify(@NonNull final BeforeNotify beforeNotify) {
-        getClient().beforeNotify(beforeNotify);
+    public static void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
+        getClient().addBeforeNotify(beforeNotify);
+    }
+
+    /**
+     * Add a "before send" callback, to execute code before sending a
+     * report to Bugsnag.
+     * <p>
+     * You can use this to add or modify information attached to an error
+     * before it is sent to your dashboard. You can also return
+     * <code>false</code> from any callback to prevent delivery.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.addBeforeSend(new BeforeSend() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
+     *
+     * @param beforeSend a callback to run before sending errors to Bugsnag
+     * @see BeforeSend
+     */
+    public static void addBeforeSend(@NonNull BeforeSend beforeSend) {
+        getClient().addBeforeSend(beforeSend);
+    }
+
+    /**
+     * @deprecated use {@link #addBeforeNotify(BeforeNotify)}
+     */
+    @Deprecated
+    public static void beforeNotify(@NonNull BeforeNotify beforeNotify) {
+        getClient().addBeforeNotify(beforeNotify);
     }
 
     /**
