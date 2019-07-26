@@ -164,62 +164,6 @@ public class ClientTest {
         assertFalse(sharedPref.contains("user.name"));
     }
 
-    @Test
-    public void testEmptyManifestConfig() {
-        Bundle data = new Bundle();
-        Configuration protoConfig = new Configuration("api-key");
-        ConfigFactory.populateConfigFromManifest(protoConfig, data);
-
-        assertEquals(config.getApiKey(), protoConfig.getApiKey());
-        assertEquals(config.getBuildUuid(), protoConfig.getBuildUuid());
-        assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
-        assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
-        assertEquals(config.getEndpoints().getNotify(), protoConfig.getEndpoints().getNotify());
-        assertEquals(config.getEndpoints().getSessions(), protoConfig.getEndpoints().getSessions());
-        assertEquals(config.getSendThreads(), protoConfig.getSendThreads());
-        assertEquals(config.getAutoNotify(), protoConfig.getAutoNotify());
-        assertEquals(config.getPersistUserBetweenSessions(),
-            protoConfig.getPersistUserBetweenSessions());
-        assertEquals(false, protoConfig.getDetectAnrs());
-        assertEquals(false, protoConfig.getDetectNdkCrashes());
-    }
-
-    @Test
-    public void testFullManifestConfig() {
-        String buildUuid = "123";
-        String appVersion = "v1.0";
-        String releaseStage = "debug";
-        String endpoint = "http://example.com";
-        String sessionEndpoint = "http://session-example.com";
-
-        Bundle data = new Bundle();
-        data.putString("com.bugsnag.android.BUILD_UUID", buildUuid);
-        data.putString("com.bugsnag.android.APP_VERSION", appVersion);
-        data.putString("com.bugsnag.android.RELEASE_STAGE", releaseStage);
-        data.putString("com.bugsnag.android.SESSIONS_ENDPOINT", sessionEndpoint);
-        data.putString("com.bugsnag.android.ENDPOINT", endpoint);
-        data.putBoolean("com.bugsnag.android.SEND_THREADS", false);
-        data.putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false);
-        data.putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true);
-        data.putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", true);
-        data.putBoolean("com.bugsnag.android.DETECT_ANRS", true);
-        data.putBoolean("com.bugsnag.android.DETECT_NDK_CRASHES", true);
-
-        Configuration protoConfig = new Configuration("api-key");
-        ConfigFactory.populateConfigFromManifest(protoConfig, data);
-        assertEquals(buildUuid, protoConfig.getBuildUuid());
-        assertEquals(appVersion, protoConfig.getAppVersion());
-        assertEquals(releaseStage, protoConfig.getReleaseStage());
-        assertEquals(endpoint, protoConfig.getEndpoints().getNotify());
-        assertEquals(sessionEndpoint, protoConfig.getEndpoints().getSessions());
-        assertEquals(false, protoConfig.getSendThreads());
-        assertEquals(false, protoConfig.getAutoNotify());
-        assertEquals(true, protoConfig.getPersistUserBetweenSessions());
-        assertEquals(true, protoConfig.getAutoCaptureSessions());
-        assertEquals(true, protoConfig.getDetectAnrs());
-        assertEquals(true, protoConfig.getDetectNdkCrashes());
-    }
-
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {

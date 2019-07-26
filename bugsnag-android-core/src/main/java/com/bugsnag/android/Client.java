@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
+import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
@@ -92,7 +92,7 @@ public class Client extends Observable implements Observer {
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
     public Client(@NonNull Context androidContext, @Nullable String apiKey) {
-        this(androidContext, apiKey, true);
+        this(androidContext, new Configuration(apiKey));
     }
 
     /**
@@ -102,8 +102,7 @@ public class Client extends Observable implements Observer {
     public Client(@NonNull Context androidContext,
                   @Nullable String apiKey,
                   boolean enableExceptionHandler) {
-        this(androidContext,
-            ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
+        this(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
@@ -181,7 +180,7 @@ public class Client extends Observable implements Observer {
                 String packageName = appContext.getPackageName();
                 ApplicationInfo ai =
                     packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                buildUuid = ai.metaData.getString(MF_BUILD_UUID);
+                buildUuid = ai.metaData.getString(BUILD_UUID);
             } catch (Exception ignore) {
                 Logger.warn("Bugsnag is unable to read build UUID from manifest.");
             }

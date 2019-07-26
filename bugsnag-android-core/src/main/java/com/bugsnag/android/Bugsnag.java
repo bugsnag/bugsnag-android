@@ -56,9 +56,7 @@ public final class Bugsnag {
     public static Client init(@NonNull Context androidContext,
                               @Nullable String apiKey,
                               boolean enableExceptionHandler) {
-        Configuration config
-            = ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler);
-        return init(androidContext, config);
+        return init(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
