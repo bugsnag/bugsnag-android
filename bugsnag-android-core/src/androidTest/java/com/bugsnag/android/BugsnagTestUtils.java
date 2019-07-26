@@ -82,13 +82,15 @@ final class BugsnagTestUtils {
         return new Delivery() {
             @NotNull
             @Override
-            public DeliveryStatus deliver(@NotNull Report report, @NotNull DeliveryParams deliveryParams) {
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }
 
             @NotNull
             @Override
-            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload, @NotNull DeliveryParams deliveryParams) {
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }
         };

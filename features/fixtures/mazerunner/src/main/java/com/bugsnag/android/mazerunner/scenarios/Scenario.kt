@@ -24,12 +24,12 @@ abstract internal class Scenario(
     protected fun disableSessionDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
-                throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
+            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+                return baseDelivery.deliver(report, deliveryParams)
             }
 
-            override fun deliver(report: Report, config: Configuration) {
-                baseDelivery.deliver(report, config)
+            override fun deliver(payload: SessionTrackingPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                return DeliveryStatus.UNDELIVERED
             }
         }
     }
@@ -40,35 +40,24 @@ abstract internal class Scenario(
     protected fun disableReportDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
-                baseDelivery.deliver(payload, config)
+            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+                return DeliveryStatus.UNDELIVERED
             }
 
-            override fun deliver(report: Report, config: Configuration) {
-                throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
+            override fun deliver(payload: SessionTrackingPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                return baseDelivery.deliver(payload, deliveryParams)
             }
         }
-
-    }
-
-    /**
-     * Sets a NOP implementation for the Error Tracking API and the Session Tracking API,
-     * preventing delivery
-     */
-    @Deprecated("Disable via config instead, using the new delivery API")
-    protected fun disableAllDelivery() {
-        disableSessionDelivery()
-        disableReportDelivery()
     }
 
     protected fun disableAllDelivery(config: Configuration) {
         config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
-                throw DeliveryFailureException("Error Delivery NOP", RuntimeException("NOP"))
+            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+                return DeliveryStatus.UNDELIVERED
             }
 
-            override fun deliver(report: Report, config: Configuration) {
-                throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
+            override fun deliver(payload: SessionTrackingPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                return DeliveryStatus.UNDELIVERED
             }
         }
     }

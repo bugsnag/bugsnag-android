@@ -20,47 +20,46 @@ internal fun flushErrorStoreOnLaunch(client: Client) {
 /**
  * Creates a delivery API client with a 500ms delay, emulating poor network connectivity
  */
-internal fun createSlowDelivery(context: Context): Delivery {
-    val delivery = DefaultDelivery(null)
+internal fun createSlowDelivery(config: Configuration): Delivery {
+    val delivery = createDefaultDelivery()
 
     return object : Delivery {
-        override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
+        override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
             Thread.sleep(500)
-            delivery.deliver(payload, config)
+            return delivery.deliver(report, deliveryParams)
         }
 
-        override fun deliver(report: Report, config: Configuration) {
+        override fun deliver(payload: SessionTrackingPayload, deliveryParams: DeliveryParams): DeliveryStatus {
             Thread.sleep(500)
-            delivery.deliver(report, config)
+            return delivery.deliver(payload, deliveryParams)
         }
     }
 }
 
-internal fun createDefaultDelivery(context: Context): DefaultDelivery {
-    return DefaultDelivery(null)
-}
+internal fun createCustomHeaderDelivery(config: Configuration): Delivery {
+    val delivery = createDefaultDelivery()
 
-internal fun createCustomHeaderDelivery(context: Context): Delivery {
     return object : Delivery {
-        val delivery: DefaultDelivery = createDefaultDelivery(context)
-
-        override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
-            deliver(config.sessionEndpoint, payload, config.sessionApiHeaders)
+        override fun deliver(payload: SessionTrackingPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+            return delivery.deliver(payload, mutateDeliveryParams(deliveryParams))
         }
 
-        override fun deliver(report: Report, config: Configuration) {
-            deliver(config.endpoint, report, config.errorApiHeaders)
+        override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+            return delivery.deliver(report, mutateDeliveryParams(deliveryParams))
         }
 
-        fun deliver(endpoint: String,
-                    streamable: JsonStream.Streamable,
-                    headers: MutableMap<String, String>) {
-            headers["Custom-Client"] = "Hello World"
-            delivery.deliver(endpoint, streamable, headers)
+        fun mutateDeliveryParams(params: DeliveryParams): DeliveryParams {
+            val map = params.headers.toMutableMap()
+            map["Custom-Client"] = "Hello World"
+            return DeliveryParams(params.endpoint, map.toMap())
         }
     }
 }
 
+internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
+    val clz = java.lang.Class.forName("com.bugsnag.android.DefaultDelivery")
+    return clz.constructors[0].newInstance(null) as Delivery
+}
 
 internal fun writeErrorToStore(client: Client) {
     val error = Error.Builder(Configuration("api-key"), RuntimeException(), null,
