@@ -66,7 +66,7 @@ public final class Breadcrumb implements JsonStream.Streamable {
 
     @NonNull
     public Map<String, String> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
+        return metadata;
     }
 
     @NonNull
