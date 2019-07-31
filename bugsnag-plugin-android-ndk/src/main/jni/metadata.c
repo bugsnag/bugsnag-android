@@ -193,7 +193,7 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                             jni_cache->arraylist_get, (jint)i);
     jstring _value =
         (*env)->CallObjectMethod(env, metadata, jni_cache->map_get, _key);
-    if (_value == NULL) {
+    if (_key == NULL || _value == NULL) {
       (*env)->DeleteLocalRef(env, _key);
       (*env)->DeleteLocalRef(env, _value);
     } else {
