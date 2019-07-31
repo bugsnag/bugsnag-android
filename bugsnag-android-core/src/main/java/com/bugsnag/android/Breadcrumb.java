@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,10 +41,7 @@ public final class Breadcrumb implements JsonStream.Streamable {
     Breadcrumb(@NonNull String name,
                @NonNull BreadcrumbType type,
                @NonNull Map<String, String> metadata) {
-        this.timestamp = DateUtils.toIso8601(new Date());
-        this.type = type;
-        this.metadata = metadata;
-        this.name = name;
+        this(name, type, new Date(), metadata);
     }
 
     Breadcrumb(@NonNull String name,
@@ -52,8 +50,8 @@ public final class Breadcrumb implements JsonStream.Streamable {
                @NonNull Map<String, String> metadata) {
         this.timestamp = DateUtils.toIso8601(captureDate);
         this.type = type;
-        this.metadata = metadata;
         this.name = name;
+        this.metadata = new HashMap<>(metadata);
     }
 
     @NonNull
@@ -68,7 +66,7 @@ public final class Breadcrumb implements JsonStream.Streamable {
 
     @NonNull
     public Map<String, String> getMetadata() {
-        return metadata;
+        return Collections.unmodifiableMap(metadata);
     }
 
     @NonNull
