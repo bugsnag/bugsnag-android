@@ -178,6 +178,10 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                  jobject metadata) {
+  if (metadata == NULL) {
+    return;
+  }
+
   bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
   int size = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
   jobject keyset =
