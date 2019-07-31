@@ -183,14 +183,14 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
   }
 
   bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
-  int mapSize = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
+  int map_size = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
   jobject keyset =
       (*env)->CallObjectMethod(env, metadata, jni_cache->map_key_set);
   jobject keylist = (*env)->NewObject(
       env, jni_cache->arraylist, jni_cache->arraylist_init_with_obj, keyset);
   size_t metadataSize = sizeof(crumb->metadata) / sizeof(bsg_char_metadata_pair);
 
-  for (int i = 0; i < mapSize && i < metadataSize; i++) {
+  for (int i = 0; i < map_size && i < metadataSize; i++) {
     jstring _key = (*env)->CallObjectMethod(env, keylist,
                                             jni_cache->arraylist_get, (jint)i);
     jstring _value =
