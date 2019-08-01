@@ -237,7 +237,7 @@ public final class Bugsnag {
      * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
      * the app enters the foreground.
      * <p>
-     * By default this behavior is disabled.
+     * By default this behavior is enabled.
      *
      * @param autoCapture whether sessions should be captured automatically
      */
