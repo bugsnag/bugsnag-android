@@ -29,6 +29,10 @@ internal class ManifestConfigLoader {
         // app/project packages
         private const val APP_VERSION = "$BUGSNAG_NS.APP_VERSION"
         private const val RELEASE_STAGE = "$BUGSNAG_NS.RELEASE_STAGE"
+        private const val NOTIFY_RELEASE_STAGES = "$BUGSNAG_NS.NOTIFY_RELEASE_STAGES"
+        private const val IGNORE_CLASSES = "$BUGSNAG_NS.IGNORE_CLASSES"
+        private const val PROJECT_PACKAGES = "$BUGSNAG_NS.PROJECT_PACKAGES"
+        private const val FILTERS = "$BUGSNAG_NS.FILTERS"
 
         // misc
         private const val MAX_BREADCRUMBS = "$BUGSNAG_NS.MAX_BREADCRUMBS"
@@ -103,6 +107,19 @@ internal class ManifestConfigLoader {
         with(config) {
             releaseStage = data.getString(RELEASE_STAGE, config.releaseStage)
             appVersion = data.getString(APP_VERSION, config.appVersion)
+            notifyReleaseStages = getStrArray(data, NOTIFY_RELEASE_STAGES, notifyReleaseStages)
+            ignoreClasses = getStrArray(data, IGNORE_CLASSES, ignoreClasses)
+            projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)
+            filters = getStrArray(data, FILTERS, filters)
+        }
+    }
+
+    private fun getStrArray(data: Bundle, key: String, default: Array<String>?): Array<String>? {
+        val delimitedStr = data.getString(key)
+
+        return when (val ary = delimitedStr?.split(",")) {
+            null -> default
+            else -> ary.toTypedArray()
         }
     }
 

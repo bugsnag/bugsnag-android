@@ -6,7 +6,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Test
 
 class ManifestConfigLoaderTest {
@@ -77,6 +76,10 @@ class ManifestConfigLoaderTest {
             // app/project packages
             putString("com.bugsnag.android.APP_VERSION", "5.23.7")
             putString("com.bugsnag.android.RELEASE_STAGE", "beta")
+            putString("com.bugsnag.android.NOTIFY_RELEASE_STAGES", "beta,production,staging")
+            putString("com.bugsnag.android.IGNORE_CLASSES", "com.bugsnag.FooKt,org.example.String")
+            putString("com.bugsnag.android.PROJECT_PACKAGES", "com.bugsnag,com.example")
+            putString("com.bugsnag.android.FILTERS", "password,auth,foo")
 
             // misc
             putInt("com.bugsnag.android.MAX_BREADCRUMBS", 50)
@@ -105,6 +108,10 @@ class ManifestConfigLoaderTest {
             // app/project packages
             assertEquals("5.23.7", appVersion)
             assertEquals("beta", releaseStage)
+            assertArrayEquals(arrayOf("beta", "production", "staging"), notifyReleaseStages)
+            assertArrayEquals(arrayOf("com.bugsnag.FooKt", "org.example.String"), ignoreClasses)
+            assertArrayEquals(arrayOf("com.bugsnag", "com.example"), projectPackages)
+            assertArrayEquals(arrayOf("password", "auth", "foo"), filters)
 
             // misc
             assertEquals(maxBreadcrumbs, 50)
