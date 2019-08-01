@@ -1,9 +1,18 @@
+require 'json'
 When("I run {string}") do |event_type|
   steps %Q{
     Given the element "scenarioText" is present
     When I send the keys "#{event_type}" to the element "scenarioText"
     And I click the element "startScenarioButton"
   }
+end
+
+When("I look at the requests") do
+  Server.stored_requests.each_with_index do |request, ind|
+    File.open("/app/maze-output/request_#{ind}", "w") do |file|
+      file.puts(JSON.pretty_generate(request))
+    end
+  end
 end
 
 When("I run {string} and relaunch the app") do |event_type|
