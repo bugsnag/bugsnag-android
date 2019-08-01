@@ -758,14 +758,6 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * @deprecated use {@link #addBeforeSend}
-     */
-    @Deprecated
-    public void beforeSend(@NonNull BeforeSend beforeSend) {
-        addBeforeSend(beforeSend);
-    }
-
-    /**
      * Checks if the given release stage should be notified or not
      *
      * @param releaseStage the release stage to check
@@ -847,14 +839,6 @@ public class Configuration extends Observable implements Observer {
         if (!beforeSendTasks.contains(beforeSend)) {
             beforeSendTasks.add(beforeSend);
         }
-    }
-
-    /**
-     * @deprecated use {@link #addBeforeNotify(BeforeNotify)}
-     */
-    @Deprecated
-    protected void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        addBeforeNotify(beforeNotify);
     }
 
     /**

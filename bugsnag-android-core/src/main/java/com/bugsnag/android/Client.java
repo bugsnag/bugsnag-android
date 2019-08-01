@@ -621,14 +621,6 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * @deprecated use {@link #addBeforeNotify(BeforeNotify)}
-     */
-    @Deprecated
-    public void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        config.addBeforeNotify(beforeNotify);
-    }
-
-    /**
      * Add a "before breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
      * <p>

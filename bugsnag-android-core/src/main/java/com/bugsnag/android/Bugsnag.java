@@ -279,14 +279,6 @@ public final class Bugsnag {
     }
 
     /**
-     * @deprecated use {@link #addBeforeNotify(BeforeNotify)}
-     */
-    @Deprecated
-    public static void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        getClient().addBeforeNotify(beforeNotify);
-    }
-
-    /**
      * Add a "before breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
      * <p>

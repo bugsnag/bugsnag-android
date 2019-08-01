@@ -21,7 +21,7 @@ public class NativeBeforeSendScenario extends Scenario {
     public NativeBeforeSendScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
-        config.beforeSend(new BeforeSend() {
+        config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {
                 report.getError().setContext("!important");
