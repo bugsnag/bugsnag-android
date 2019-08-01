@@ -178,18 +178,24 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                  jobject metadata) {
+  if (metadata == NULL) {
+    return;
+  }
+
   bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
-  int size = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
+  int map_size = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
   jobject keyset =
       (*env)->CallObjectMethod(env, metadata, jni_cache->map_key_set);
   jobject keylist = (*env)->NewObject(
       env, jni_cache->arraylist, jni_cache->arraylist_init_with_obj, keyset);
-  for (int i = 0; i < size && i < sizeof(crumb->metadata); i++) {
+  size_t metadata_size = sizeof(crumb->metadata) / sizeof(bsg_char_metadata_pair);
+
+  for (int i = 0; i < map_size && i < metadata_size; i++) {
     jstring _key = (*env)->CallObjectMethod(env, keylist,
                                             jni_cache->arraylist_get, (jint)i);
     jstring _value =
         (*env)->CallObjectMethod(env, metadata, jni_cache->map_get, _key);
-    if (_value == NULL) {
+    if (_key == NULL || _value == NULL) {
       (*env)->DeleteLocalRef(env, _key);
       (*env)->DeleteLocalRef(env, _value);
     } else {
