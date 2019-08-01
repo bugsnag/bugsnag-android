@@ -228,14 +228,6 @@ public class MetaDataTest {
         assertArrayEquals(new String[]{"password"}, metaData.getFilters());
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testFilterOverride() throws Exception {
-        MetaData metaData = client.getMetaData();
-        client.setFilters("test", "another");
-        assertArrayEquals(new String[]{"test", "another"}, metaData.getFilters());
-    }
-
     @Test
     public void testFilterMetadataOverride() throws Exception {
         MetaData data = new MetaData();
