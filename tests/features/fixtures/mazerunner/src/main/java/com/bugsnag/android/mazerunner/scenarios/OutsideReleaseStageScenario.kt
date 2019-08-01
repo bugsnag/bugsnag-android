@@ -10,10 +10,13 @@ import com.bugsnag.android.Configuration
  */
 internal class OutsideReleaseStageScenario(config: Configuration,
                                            context: Context) : Scenario(config, context) {
+    init {
+        config.setReleaseStage("prod")
+        config.setNotifyReleaseStages(arrayOf("dev"))
+    }
+
     override fun run() {
         super.run()
-        Bugsnag.setReleaseStage("prod")
-        Bugsnag.setNotifyReleaseStages("dev")
         Bugsnag.notify(RuntimeException("OutsideReleaseStageScenario"))
     }
 

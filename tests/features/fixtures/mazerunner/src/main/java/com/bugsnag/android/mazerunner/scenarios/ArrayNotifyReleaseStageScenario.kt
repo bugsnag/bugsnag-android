@@ -9,10 +9,13 @@ import com.bugsnag.android.Configuration
  */
 internal class ArrayNotifyReleaseStageScenario(config: Configuration,
                                                context: Context) : Scenario(config, context) {
+    init {
+        config.setReleaseStage("prod")
+        config.setNotifyReleaseStages(arrayOf("dev", "prod"))
+    }
+
     override fun run() {
         super.run()
-        Bugsnag.setReleaseStage("prod")
-        Bugsnag.setNotifyReleaseStages("dev", "prod")
         Bugsnag.notify(generateException())
     }
 

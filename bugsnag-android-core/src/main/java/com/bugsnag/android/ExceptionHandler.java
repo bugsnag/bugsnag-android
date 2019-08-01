@@ -20,6 +20,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     ExceptionHandler(Client client) {
         this.client = client;
         this.originalHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
     @Override
