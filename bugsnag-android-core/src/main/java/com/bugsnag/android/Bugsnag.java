@@ -34,7 +34,8 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext) {
-        return init(androidContext, null, true);
+        String apiKey = null;
+        return init(androidContext, apiKey);
     }
 
     /**
@@ -45,19 +46,8 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
-        return init(androidContext, apiKey, true);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @NonNull
-    @Deprecated
-    public static Client init(@NonNull Context androidContext,
-                              @Nullable String apiKey,
-                              boolean enableExceptionHandler) {
         Configuration config
-            = ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler);
+            = ConfigFactory.createNewConfiguration(androidContext, apiKey, true);
         return init(androidContext, config);
     }
 
@@ -86,15 +76,6 @@ public final class Bugsnag {
     }
 
     /**
-     * @param appVersion the app version to send
-     * @deprecated use {@link Configuration#setAppVersion(String)} instead
-     */
-    @Deprecated
-    public static void setAppVersion(@NonNull final String appVersion) {
-        getClient().setAppVersion(appVersion);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -112,63 +93,6 @@ public final class Bugsnag {
      */
     public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setBuildUuid(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public static void setBuildUUID(@Nullable final String buildUuid) {
-        getClient().setBuildUUID(buildUuid);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setFilters(String[])}
-     */
-    @Deprecated
-    public static void setFilters(@Nullable final String... filters) {
-        getClient().setFilters(filters);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
-     */
-    @Deprecated
-    public static void setIgnoreClasses(@Nullable final String... ignoreClasses) {
-        getClient().setIgnoreClasses(ignoreClasses);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
-     */
-    @Deprecated
-    public static void setNotifyReleaseStages(@Nullable final String... notifyReleaseStages) {
-        getClient().setNotifyReleaseStages(notifyReleaseStages);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setReleaseStage(String)}
-     */
-    @Deprecated
-    public static void setReleaseStage(@Nullable final String releaseStage) {
-        getClient().setReleaseStage(releaseStage);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setSendThreads(boolean)}
-     */
-    @Deprecated
-    public static void setSendThreads(final boolean sendThreads) {
-        getClient().setSendThreads(sendThreads);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoCaptureSessions(boolean)}
-     */
-    @Deprecated
-    public static void setAutoCaptureSessions(boolean autoCapture) {
-        getClient().setAutoCaptureSessions(autoCapture);
     }
 
     /**
@@ -411,30 +335,6 @@ public final class Bugsnag {
      */
     public static void clearBreadcrumbs() {
         getClient().clearBreadcrumbs();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public static void enableExceptionHandler() {
-        getClient().enableExceptionHandler();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public static void disableExceptionHandler() {
-        getClient().disableExceptionHandler();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
-     */
-    @Deprecated
-    public static void setLoggingEnabled(boolean enabled) {
-        getClient().setLoggingEnabled(enabled);
     }
 
     /**

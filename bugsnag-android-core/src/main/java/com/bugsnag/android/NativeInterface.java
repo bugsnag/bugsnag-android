@@ -295,14 +295,6 @@ public class NativeInterface {
     }
 
     /**
-     * @deprecated use {@link Configuration#setReleaseStage(String)}
-     */
-    @Deprecated
-    public static void setReleaseStage(@Nullable final String stage) {
-        getClient().setReleaseStage(stage);
-    }
-
-    /**
      * Return the client report release stage
      */
     @Nullable
@@ -327,36 +319,10 @@ public class NativeInterface {
     }
 
     /**
-     * Set the client session endpoint
-     */
-    @SuppressWarnings("deprecation")
-    public static void setSessionEndpoint(@NonNull final String endpoint) {
-        Configuration config = getClient().getConfig();
-        config.setEndpoints(config.getEndpoint(), endpoint);
-    }
-
-    /**
-     * Set the client report endpoint
-     */
-    @SuppressWarnings("deprecation")
-    public static void setEndpoint(@NonNull final String endpoint) {
-        Configuration config = getClient().getConfig();
-        config.setEndpoints(endpoint, config.getSessionEndpoint());
-    }
-
-    /**
      * Set the client report context
      */
     public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
-    }
-
-    /**
-     * Set the client report app version
-     */
-    @Deprecated
-    public static void setAppVersion(@NonNull final String version) {
-        getClient().setAppVersion(version);
     }
 
     /**
@@ -380,14 +346,6 @@ public class NativeInterface {
     @Nullable
     public static String[] getNotifyReleaseStages() {
         return getClient().getConfig().getNotifyReleaseStages();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
-     */
-    @Deprecated
-    public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
-        getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
