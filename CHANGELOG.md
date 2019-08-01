@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+* Fix potential segfaults when adding breadcrumb with NDK
+  [#546](https://github.com/bugsnag/bugsnag-android/pull/546)
+
 ## 4.17.1 (2019-07-24)
 
 ### Bug fixes
