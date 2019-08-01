@@ -25,3 +25,12 @@ Scenario: Minimal error report for an Unhandled Exception with a corrupted file
     And the event "unhandled" is true
     And the event "incomplete" is true
     And the event "severityReason.type" equals "unhandledException"
+
+Scenario: Minimal error report with old filename
+    When I run "MinimalUnhandledExceptionScenario"
+    And I set environment variable "EVENT_TYPE" to "CorruptedOldReportScenario"
+    And I relaunch the app
+    Then I should receive 1 request
+    And the request is valid for the error reporting API
+    And the event "unhandled" is false
+    And the event "incomplete" is false
