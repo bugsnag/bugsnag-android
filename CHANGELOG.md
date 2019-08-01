@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.17.2 (2019-08-01)
 
 ### Bug fixes
 * Fix potential segfaults when adding breadcrumb with NDK
