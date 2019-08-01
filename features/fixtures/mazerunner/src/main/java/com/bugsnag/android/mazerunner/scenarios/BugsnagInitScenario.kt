@@ -24,7 +24,6 @@ internal class BugsnagInitScenario(
         IntRange(1, 25).forEach {
             callables.add(Callable { Bugsnag.init(context) })
             callables.add(Callable { Bugsnag.init(context, config.apiKey) })
-            callables.add(Callable { Bugsnag.init(context, config.apiKey, false) })
             callables.add(Callable { Bugsnag.init(context, Configuration(config.apiKey)) })
         }
 

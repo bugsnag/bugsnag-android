@@ -208,7 +208,7 @@ public class Client extends Observable implements Observer {
         }
         connectivity.registerForNetworkChanges();
 
-        Logger.setEnabled(config.isLoggingEnabled());
+        Logger.setEnabled(config.getLoggingEnabled());
 
         config.addObserver(this);
         breadcrumbs.addObserver(this);

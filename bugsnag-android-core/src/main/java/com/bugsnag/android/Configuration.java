@@ -634,7 +634,7 @@ public class Configuration extends Observable implements Observer {
     /**
      * @return true if SDK logging is enabled
      */
-    public boolean isLoggingEnabled() {
+    public boolean getLoggingEnabled() {
         return loggingEnabled;
     }
 
