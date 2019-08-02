@@ -143,6 +143,7 @@ public class ClientTest {
 
         // Check that the user was not stored in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
+        assertNotNull(sharedPref.getString("install.iud", null));
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -159,6 +160,7 @@ public class ClientTest {
 
         // Check that there is no user information in the prefs anymore
         SharedPreferences sharedPref = getSharedPrefs(context);
+        assertNotNull(sharedPref.getString("install.iud", null));
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));

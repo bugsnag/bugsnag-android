@@ -31,7 +31,7 @@ public class DeviceDataTest {
         Context context = InstrumentationRegistry.getContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
-        DeviceData deviceData = new DeviceData(connectivity, context, resources, prefs);
+        DeviceData deviceData = new DeviceData(connectivity, context, resources, "123");
         this.deviceData = deviceData.getDeviceData();
     }
 
