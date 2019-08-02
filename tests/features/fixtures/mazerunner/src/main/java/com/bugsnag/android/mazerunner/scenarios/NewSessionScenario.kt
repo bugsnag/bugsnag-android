@@ -22,15 +22,19 @@ internal class NewSessionScenario(config: Configuration,
         Handler(thread.looper).post {
             // send 1st exception which should include session info
             client.startSession()
+            Thread.sleep(100)
             flushAllSessions()
+            Thread.sleep(100)
             client.notifyBlocking(generateException())
-
+            Thread.sleep(100)
             // stop tracking the existing session
             client.stopSession()
-
+            Thread.sleep(100)
             // send 2nd exception which should contain new session info
             client.startSession()
+            Thread.sleep(100)
             flushAllSessions()
+            Thread.sleep(100)
             client.notifyBlocking(generateException())
         }
     }

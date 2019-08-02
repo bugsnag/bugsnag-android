@@ -21,12 +21,17 @@ internal class StoppedSessionScenario(config: Configuration,
         Handler(thread.looper).post {
             // send 1st exception which should include session info
             client.startSession()
+            Thread.sleep(100)
             flushAllSessions()
+            Thread.sleep(100)
             client.notifyBlocking(generateException())
+            Thread.sleep(100)
 
             // send 2nd exception which should not include session info
             client.stopSession()
+            Thread.sleep(100)
             flushAllSessions()
+            Thread.sleep(100)
             client.notifyBlocking(generateException())
         }
     }
