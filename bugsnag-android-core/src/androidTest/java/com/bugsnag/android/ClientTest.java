@@ -103,7 +103,7 @@ public class ClientTest {
 
         final User user = new User();
 
-        client.beforeNotify(new BeforeNotify() {
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 // Pull out the user information
@@ -222,11 +222,10 @@ public class ClientTest {
         assertEquals(true, protoConfig.getDetectNdkCrashes());
     }
 
-    @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setAutomaticallyCollectBreadcrumbs(false);
+        config.setAutoCaptureBreadcrumbs(false);
         config.setMaxBreadcrumbs(1);
         client = generateClient(config);
         assertEquals(0, client.breadcrumbs.store.size());

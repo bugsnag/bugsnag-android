@@ -157,19 +157,4 @@ public class ConfigurationTest {
         config.setDelivery(null);
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testAutoNotifyAlias() {
-        assertTrue(config.getAutoNotify());
-        config.setEnableExceptionHandler(false);
-        assertFalse(config.getAutoNotify());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEnableExceptionHandlerAlias() {
-        assertTrue(config.getEnableExceptionHandler());
-        config.setAutoNotify(false);
-        assertFalse(config.getEnableExceptionHandler());
-    }
 }

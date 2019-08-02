@@ -1,8 +1,6 @@
 package com.bugsnag.android;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -38,46 +36,11 @@ public class ClientConfigTest {
         client.close();
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetReleaseStage() throws Exception {
-        client.setReleaseStage("beta");
-        assertEquals("beta", config.getReleaseStage());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetAutoCaptureSessions() throws Exception {
-        client.setAutoCaptureSessions(true);
-        assertEquals(true, config.getAutoCaptureSessions());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetAppVersion() throws Exception {
-        client.setAppVersion("5.6.7");
-        assertEquals("5.6.7", config.getAppVersion());
-    }
-
     @Test
     public void testSetContext() throws Exception {
         client.setContext("JunitTest");
         assertEquals("JunitTest", client.getContext());
         assertEquals("JunitTest", config.getContext());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetBuildUuid() throws Exception {
-        client.setBuildUUID("gh905");
-        assertEquals("gh905", config.getBuildUuid());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetSendThreads() throws Exception {
-        client.setSendThreads(false);
-        assertFalse(config.getSendThreads());
     }
 
     @Test

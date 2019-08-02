@@ -80,7 +80,8 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      */
     public Client(@NonNull Context androidContext) {
-        this(androidContext, null, true);
+        this(androidContext,
+                ConfigFactory.createNewConfiguration(androidContext, null, true));
     }
 
     /**
@@ -90,18 +91,8 @@ public class Client extends Observable implements Observer {
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
     public Client(@NonNull Context androidContext, @Nullable String apiKey) {
-        this(androidContext, apiKey, true);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public Client(@NonNull Context androidContext,
-                  @Nullable String apiKey,
-                  boolean enableExceptionHandler) {
         this(androidContext,
-            ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
+                ConfigFactory.createNewConfiguration(androidContext, apiKey, true));
     }
 
     /**
@@ -110,7 +101,6 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
-    @SuppressWarnings("deprecation")
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
@@ -191,7 +181,9 @@ public class Client extends Observable implements Observer {
         });
 
         // Install a default exception handler with this client
-        ExceptionHandler.enable(this);
+        if (config.getAutoNotify()) {
+            new ExceptionHandler(this);
+        }
 
         // register a receiver for automatic breadcrumbs
 
@@ -207,7 +199,7 @@ public class Client extends Observable implements Observer {
         }
         connectivity.registerForNetworkChanges();
 
-        Logger.setEnabled(config.isLoggingEnabled());
+        Logger.setEnabled(config.getLoggingEnabled());
 
         config.addObserver(this);
         breadcrumbs.addObserver(this);
@@ -364,15 +356,6 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * @param appVersion the app version to send
-     * @deprecated use {@link Configuration#setAppVersion(String)} instead
-     */
-    @Deprecated
-    public void setAppVersion(@NonNull String appVersion) {
-        config.setAppVersion(appVersion);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -390,48 +373,6 @@ public class Client extends Observable implements Observer {
      */
     public void setContext(@Nullable String context) {
         config.setContext(context);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setBuildUuid(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(@Nullable final String buildUuid) {
-        config.setBuildUUID(buildUuid);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setReleaseStage(String)}
-     */
-    @Deprecated
-    public void setReleaseStage(@Nullable String releaseStage) {
-        config.setReleaseStage(releaseStage);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setSendThreads(boolean)}
-     */
-    @Deprecated
-    public void setSendThreads(boolean sendThreads) {
-        config.setSendThreads(sendThreads);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoCaptureSessions(boolean)}
-     */
-    @Deprecated
-    public void setAutoCaptureSessions(boolean autoCapture) {
-        config.setAutoCaptureSessions(autoCapture);
-
-        if (autoCapture) { // track any existing sessions
-            sessionTracker.onAutoCaptureEnabled();
-        }
-    }
-
-    private void setUserInternal(User user) {
-        this.user = user;
-        user.addObserver(this);
     }
 
     /**
@@ -481,6 +422,11 @@ public class Client extends Observable implements Observer {
         return deviceData;
     }
 
+    private void setUserInternal(User user) {
+        this.user = user;
+        user.addObserver(this);
+    }
+
     /**
      * Removes the current user data and sets it back to defaults
      */
@@ -526,18 +472,18 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Add a "before notify" callback, to execute code before sending
-     * reports to Bugsnag.
-     * <p/>
+     * Add a "before notify" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
+     * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "Before
      * notify" callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     * <p/>
+     * <p>
      * For example:
-     * <p/>
-     * client.beforeNotify(new BeforeNotify() {
+     * <p>
+     * Bugsnag.addBeforeNotify(new BeforeNotify() {
      * public boolean run(Error error) {
      * error.setSeverity(Severity.INFO);
      * return true;
@@ -547,8 +493,32 @@ public class Client extends Observable implements Observer {
      * @param beforeNotify a callback to run before sending errors to Bugsnag
      * @see BeforeNotify
      */
-    public void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        config.beforeNotify(beforeNotify);
+    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
+        config.addBeforeNotify(beforeNotify);
+    }
+
+    /**
+     * Add a "before send" callback, to execute code before sending a
+     * report to Bugsnag.
+     * <p>
+     * You can use this to add or modify information attached to an error
+     * before it is sent to your dashboard. You can also return
+     * <code>false</code> from any callback to prevent delivery.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.addBeforeSend(new BeforeSend() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
+     *
+     * @param beforeSend a callback to run before sending errors to Bugsnag
+     * @see BeforeSend
+     */
+    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
+        config.addBeforeSend(beforeSend);
     }
 
     /**
@@ -939,22 +909,6 @@ public class Client extends Observable implements Observer {
         breadcrumbs.clear();
     }
 
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public void enableExceptionHandler() {
-        ExceptionHandler.enable(this);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public void disableExceptionHandler() {
-        ExceptionHandler.disable(this);
-    }
-
     void deliver(@NonNull Report report, @NonNull Error error) {
         if (!runBeforeSendTasks(report)) {
             Logger.info("Skipping notification - beforeSend task returned false");
@@ -1090,28 +1044,12 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
-     */
-    @Deprecated
-    public void setLoggingEnabled(boolean loggingEnabled) {
-        config.setLoggingEnabled(loggingEnabled);
-    }
-
-    /**
      * Returns the configuration used to initialise the client
      * @return the config
      */
     @NonNull
     public Configuration getConfig() {
         return config;
-    }
-
-    /**
-     * @deprecated this method is obsolete and will be removed in a future release
-     */
-    @Deprecated
-    public long getLaunchTimeMs() {
-        return AppData.getDurationMs();
     }
 
     void setBinaryArch(String binaryArch) {

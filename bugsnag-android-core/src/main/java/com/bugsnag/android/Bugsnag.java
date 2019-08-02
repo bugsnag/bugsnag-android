@@ -34,7 +34,8 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext) {
-        return init(androidContext, null, true);
+        String apiKey = null;
+        return init(androidContext, apiKey);
     }
 
     /**
@@ -45,19 +46,8 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
-        return init(androidContext, apiKey, true);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @NonNull
-    @Deprecated
-    public static Client init(@NonNull Context androidContext,
-                              @Nullable String apiKey,
-                              boolean enableExceptionHandler) {
         Configuration config
-            = ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler);
+            = ConfigFactory.createNewConfiguration(androidContext, apiKey, true);
         return init(androidContext, config);
     }
 
@@ -86,15 +76,6 @@ public final class Bugsnag {
     }
 
     /**
-     * @param appVersion the app version to send
-     * @deprecated use {@link Configuration#setAppVersion(String)} instead
-     */
-    @Deprecated
-    public static void setAppVersion(@NonNull final String appVersion) {
-        getClient().setAppVersion(appVersion);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -112,39 +93,6 @@ public final class Bugsnag {
      */
     public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setBuildUuid(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public static void setBuildUUID(@Nullable final String buildUuid) {
-        getClient().setBuildUUID(buildUuid);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setReleaseStage(String)}
-     */
-    @Deprecated
-    public static void setReleaseStage(@Nullable final String releaseStage) {
-        getClient().setReleaseStage(releaseStage);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setSendThreads(boolean)}
-     */
-    @Deprecated
-    public static void setSendThreads(final boolean sendThreads) {
-        getClient().setSendThreads(sendThreads);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoCaptureSessions(boolean)}
-     */
-    @Deprecated
-    public static void setAutoCaptureSessions(boolean autoCapture) {
-        getClient().setAutoCaptureSessions(autoCapture);
     }
 
     /**
@@ -204,8 +152,8 @@ public final class Bugsnag {
     }
 
     /**
-     * Add a "before notify" callback, to execute code before sending
-     * reports to Bugsnag.
+     * Add a "before notify" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
@@ -215,7 +163,7 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeNotify(new BeforeNotify() {
+     * Bugsnag.addBeforeNotify(new BeforeNotify() {
      * public boolean run(Error error) {
      * error.setSeverity(Severity.INFO);
      * return true;
@@ -223,10 +171,35 @@ public final class Bugsnag {
      * })
      *
      * @param beforeNotify a callback to run before sending errors to Bugsnag
+     * <p/>
      * @see BeforeNotify
      */
-    public static void beforeNotify(@NonNull final BeforeNotify beforeNotify) {
-        getClient().beforeNotify(beforeNotify);
+    public static void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
+        getClient().addBeforeNotify(beforeNotify);
+    }
+
+    /**
+     * Add a "before send" callback, to execute code before sending a
+     * report to Bugsnag.
+     * <p>
+     * You can use this to add or modify information attached to an error
+     * before it is sent to your dashboard. You can also return
+     * <code>false</code> from any callback to prevent delivery.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.addBeforeSend(new BeforeSend() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
+     *
+     * @param beforeSend a callback to run before sending errors to Bugsnag
+     * @see BeforeSend
+     */
+    public static void addBeforeSend(@NonNull BeforeSend beforeSend) {
+        getClient().addBeforeSend(beforeSend);
     }
 
     /**
@@ -387,30 +360,6 @@ public final class Bugsnag {
      */
     public static void clearBreadcrumbs() {
         getClient().clearBreadcrumbs();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public static void enableExceptionHandler() {
-        getClient().enableExceptionHandler();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public static void disableExceptionHandler() {
-        getClient().disableExceptionHandler();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
-     */
-    @Deprecated
-    public static void setLoggingEnabled(boolean enabled) {
-        getClient().setLoggingEnabled(enabled);
     }
 
     /**

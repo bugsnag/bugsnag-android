@@ -12,11 +12,11 @@ internal class DisableAutoNotifyScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
+        config.autoNotify = false
     }
 
     override fun run() {
         super.run()
-        Bugsnag.disableExceptionHandler()
         throw RuntimeException("Should never appear")
     }
 

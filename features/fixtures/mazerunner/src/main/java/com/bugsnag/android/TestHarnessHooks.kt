@@ -45,11 +45,11 @@ internal fun createCustomHeaderDelivery(context: Context): Delivery {
         val delivery: DefaultDelivery = createDefaultDelivery(context)
 
         override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
-            deliver(config.sessionEndpoint, payload, config.sessionApiHeaders)
+            deliver(config.endpoints.sessions, payload, config.sessionApiHeaders)
         }
 
         override fun deliver(report: Report, config: Configuration) {
-            deliver(config.endpoint, report, config.errorApiHeaders)
+            deliver(config.endpoints.notify, report, config.errorApiHeaders)
         }
 
         fun deliver(endpoint: String,

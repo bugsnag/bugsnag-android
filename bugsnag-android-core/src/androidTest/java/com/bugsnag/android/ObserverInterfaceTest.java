@@ -129,15 +129,6 @@ public class ObserverInterfaceTest {
         assertEquals("bar", metadataItem.get(1));
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testClientSetReleaseStageSendsMessage() {
-        client.setReleaseStage("prod-2");
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, String.class);
-        assertEquals("prod-2", value);
-    }
-
     @Test
     public void testConfigSetReleaseStageSendsMessage() {
         client.getConfig().setReleaseStage("prod-2");
@@ -174,15 +165,6 @@ public class ObserverInterfaceTest {
         client.stopSession();
         Object msg = findMessageInQueue(NativeInterface.MessageType.STOP_SESSION, null);
         assertNull(msg);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testClientSetBuildUUIDSendsMessage() {
-        client.setBuildUUID("234423-a");
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_BUILD_UUID, String.class);
-        assertEquals("234423-a", value);
     }
 
     @Test
