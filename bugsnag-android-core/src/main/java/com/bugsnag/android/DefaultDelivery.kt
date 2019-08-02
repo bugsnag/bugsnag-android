@@ -12,13 +12,13 @@ internal class DefaultDelivery(private val connectivity: Connectivity?) : Delive
     override fun deliver(payload: SessionTrackingPayload,
                          deliveryParams: DeliveryParams): DeliveryStatus {
         val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
-        Logger.warn("Session API request finished with status $status")
+        Logger.info("Session API request finished with status $status")
         return status
     }
 
     override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
         val status = deliver(deliveryParams.endpoint, report, deliveryParams.headers)
-        Logger.warn("Error API request finished with status $status")
+        Logger.info("Error API request finished with status $status")
         return status
     }
 
