@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -98,32 +99,32 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         return tab;
     }
 
-    void setFilters(String... filters) {
-        jsonStreamer.filters = filters;
+    void setFilters(Collection<String> filters) {
+        jsonStreamer.filters.clear();
+        jsonStreamer.filters.addAll(filters);
     }
 
-    String[] getFilters() {
+    Set<String> getFilters() {
         return jsonStreamer.filters;
     }
 
     @NonNull
     static MetaData merge(@NonNull MetaData... metaDataList) {
         List<Map<String, Object>> stores = new ArrayList<>();
-        List<String> filters = new ArrayList<>();
+        Collection<String> filters = new HashSet<>();
         for (MetaData metaData : metaDataList) {
             if (metaData != null) {
                 stores.add(metaData.store);
 
                 if (metaData.jsonStreamer.filters != null) {
-                    filters.addAll(Arrays.asList(metaData.jsonStreamer.filters));
+                    filters.addAll(metaData.jsonStreamer.filters);
                 }
             }
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         MetaData newMeta = new MetaData(mergeMaps(stores.toArray(new Map[0])));
-        newMeta.setFilters(filters.toArray(new String[0]));
-
+        newMeta.setFilters(filters);
         return newMeta;
     }
 

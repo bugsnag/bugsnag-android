@@ -6,14 +6,21 @@ import android.support.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 class ObjectJsonStreamer {
 
     private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
-    String[] filters = {"password"};
+    Set<String> filters;
+
+    public ObjectJsonStreamer() {
+        this.filters = new HashSet<>();
+        this.filters.add("password");
+    }
 
     // Write complex/nested values to a JsonStreamer
     void objectToStream(@Nullable Object obj,

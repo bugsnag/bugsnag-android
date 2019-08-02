@@ -106,7 +106,7 @@ class ErrorReader {
             Error error = new Error(config, exceptions.getException(), handledState, severity,
                                     session, threadState);
             error.getExceptions().setExceptionType(exceptions.getExceptionType());
-            error.setProjectPackages(projectPackages.toArray(new String[]{}));
+            error.setProjectPackages(projectPackages);
             error.setUser(user);
             error.setContext(context);
             error.setGroupingHash(groupingHash);

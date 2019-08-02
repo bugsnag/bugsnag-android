@@ -7,12 +7,15 @@ import android.support.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -33,10 +36,10 @@ public class Configuration extends Observable implements Observer {
     private String appVersion;
     private String context;
 
-    private String[] ignoreClasses;
-    @Nullable
-    private String[] notifyReleaseStages = null;
-    private String[] projectPackages;
+    private final Set<String> ignoreClasses = new HashSet<>();
+    private final Set<String> notifyReleaseStages = new HashSet<>();
+    private final Set<String> projectPackages = new HashSet<>();
+
     private String releaseStage;
     private boolean sendThreads = true;
     private boolean persistUserBetweenSessions = false;
@@ -253,9 +256,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Filters
      */
-    @Nullable
-    public String[] getFilters() {
-        return metaData.getFilters();
+    @NonNull
+    public Collection<String> getFilters() {
+        return Collections.unmodifiableSet(metaData.getFilters());
     }
 
     /**
@@ -271,7 +274,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param filters a list of keys to filter from metaData
      */
-    public void setFilters(@Nullable String[] filters) {
+    public void setFilters(@NonNull Collection<String> filters) {
         this.metaData.setFilters(filters);
     }
 
@@ -280,9 +283,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Ignore classes
      */
-    @Nullable
-    public String[] getIgnoreClasses() {
-        return ignoreClasses;
+    @NonNull
+    public Collection<String> getIgnoreClasses() {
+        return Collections.unmodifiableSet(ignoreClasses);
     }
 
     /**
@@ -294,8 +297,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @param ignoreClasses a list of exception classes to ignore
      */
-    public void setIgnoreClasses(@Nullable String[] ignoreClasses) {
-        this.ignoreClasses = ignoreClasses;
+    public void setIgnoreClasses(@NonNull Collection<String> ignoreClasses) {
+        this.ignoreClasses.clear();
+        this.ignoreClasses.addAll(ignoreClasses);
     }
 
     /**
@@ -303,9 +307,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Notify release stages
      */
-    @Nullable
-    public String[] getNotifyReleaseStages() {
-        return notifyReleaseStages;
+    @NonNull
+    public Collection<String> getNotifyReleaseStages() {
+        return Collections.unmodifiableSet(notifyReleaseStages);
     }
 
     /**
@@ -319,8 +323,9 @@ public class Configuration extends Observable implements Observer {
      * @param notifyReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
-        this.notifyReleaseStages = notifyReleaseStages;
+    public void setNotifyReleaseStages(@NonNull Collection<String> notifyReleaseStages) {
+        this.notifyReleaseStages.clear();
+        this.notifyReleaseStages.addAll(notifyReleaseStages);
     }
 
     /**
@@ -328,9 +333,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return packages
      */
-    @Nullable
-    public String[] getProjectPackages() {
-        return projectPackages;
+    @NonNull
+    public Collection<String> getProjectPackages() {
+        return Collections.unmodifiableSet(projectPackages);
     }
 
     /**
@@ -345,8 +350,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @param projectPackages a list of package names
      */
-    public void setProjectPackages(@Nullable String[] projectPackages) {
-        this.projectPackages = projectPackages;
+    public void setProjectPackages(@NonNull Collection<String> projectPackages) {
+        this.projectPackages.clear();
+        this.projectPackages.addAll(projectPackages);
     }
 
     /**
@@ -791,12 +797,7 @@ public class Configuration extends Observable implements Observer {
      * @return true if the release state should be notified else false
      */
     protected boolean shouldNotifyForReleaseStage(@Nullable String releaseStage) {
-        if (this.notifyReleaseStages == null) {
-            return true;
-        }
-
-        List<String> stages = Arrays.asList(this.notifyReleaseStages);
-        return stages.contains(releaseStage);
+        return notifyReleaseStages.isEmpty() || notifyReleaseStages.contains(releaseStage);
     }
 
     /**
@@ -806,12 +807,7 @@ public class Configuration extends Observable implements Observer {
      * @return true if the exception class should be ignored else false
      */
     protected boolean shouldIgnoreClass(@Nullable String className) {
-        if (this.ignoreClasses == null) {
-            return false;
-        }
-
-        List<String> classes = Arrays.asList(this.ignoreClasses);
-        return classes.contains(className);
+        return !this.ignoreClasses.isEmpty() && ignoreClasses.contains(className);
     }
 
     /**

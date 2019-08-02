@@ -124,30 +124,6 @@ public final class Bugsnag {
     }
 
     /**
-     * @deprecated use {@link Configuration#setFilters(String[])}
-     */
-    @Deprecated
-    public static void setFilters(@Nullable final String... filters) {
-        getClient().setFilters(filters);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
-     */
-    @Deprecated
-    public static void setIgnoreClasses(@Nullable final String... ignoreClasses) {
-        getClient().setIgnoreClasses(ignoreClasses);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
-     */
-    @Deprecated
-    public static void setNotifyReleaseStages(@Nullable final String... notifyReleaseStages) {
-        getClient().setNotifyReleaseStages(notifyReleaseStages);
-    }
-
-    /**
      * @deprecated use {@link Configuration#setReleaseStage(String)}
      */
     @Deprecated

@@ -151,8 +151,8 @@ public class Client extends Observable implements Observer {
         breadcrumbs = new Breadcrumbs(configuration);
 
         // Set sensible defaults if project packages not already set
-        if (config.getProjectPackages() == null) {
-            configuration.setProjectPackages(new String[]{appContext.getPackageName()});
+        if (config.getProjectPackages().isEmpty()) {
+            configuration.setProjectPackages(Collections.singleton(appContext.getPackageName()));
         }
 
         if (appContext instanceof Application) {
@@ -399,30 +399,6 @@ public class Client extends Observable implements Observer {
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setBuildUUID(@Nullable final String buildUuid) {
         config.setBuildUUID(buildUuid);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setFilters(String[])}
-     */
-    @Deprecated
-    public void setFilters(@Nullable String... filters) {
-        config.setFilters(filters);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
-     */
-    @Deprecated
-    public void setIgnoreClasses(@Nullable String... ignoreClasses) {
-        config.setIgnoreClasses(ignoreClasses);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
-     */
-    @Deprecated
-    public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
-        config.setNotifyReleaseStages(notifyReleaseStages);
     }
 
     /**
