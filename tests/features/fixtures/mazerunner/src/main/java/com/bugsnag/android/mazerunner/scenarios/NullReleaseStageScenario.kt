@@ -9,10 +9,13 @@ import com.bugsnag.android.Configuration
  */
 internal class NullReleaseStageScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
+    init {
+        config.setReleaseStage(null)
+        config.setNotifyReleaseStages(arrayOf("prod"))
+    }
+
     override fun run() {
         super.run()
-        Bugsnag.setReleaseStage(null)
-        Bugsnag.setNotifyReleaseStages("prod")
         Bugsnag.notify(generateException())
     }
 

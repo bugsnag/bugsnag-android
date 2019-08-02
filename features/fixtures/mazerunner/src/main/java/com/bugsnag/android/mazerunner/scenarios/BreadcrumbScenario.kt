@@ -13,7 +13,7 @@ internal class BreadcrumbScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
-        config.setAutomaticallyCollectBreadcrumbs(false)
+        config.setAutoCaptureBreadcrumbs(false)
     }
 
     override fun run() {
