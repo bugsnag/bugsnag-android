@@ -397,7 +397,7 @@ public class ErrorTest {
         Context context = InstrumentationRegistry.getContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
-        DeviceData data = new DeviceData(connectivity, context, resources, prefs);
+        DeviceData data = new DeviceData(connectivity, context, resources, "123");
 
         Map<String, Object> deviceData = data.getDeviceData();
         error.setDeviceData(deviceData);
