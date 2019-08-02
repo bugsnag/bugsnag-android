@@ -93,7 +93,7 @@ public class NullMetadataTest {
 
     @Test
     public void testNotify() throws Exception {
-        client.beforeNotify(new BeforeNotify() {
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 validateDefaultMetadata(error.getMetaData());

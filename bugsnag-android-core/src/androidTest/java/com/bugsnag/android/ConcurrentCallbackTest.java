@@ -34,7 +34,7 @@ public class ConcurrentCallbackTest {
     @Test
     public void testClientNotifyModification() throws Exception {
         final Collection<BeforeNotify> beforeNotifyTasks = client.config.getBeforeNotifyTasks();
-        client.beforeNotify(new BeforeNotify() {
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 beforeNotifyTasks.add(new BeforeNotifySkeleton());
@@ -42,7 +42,7 @@ public class ConcurrentCallbackTest {
                 return true;
             }
         });
-        client.beforeNotify(new BeforeNotifySkeleton());
+        client.addBeforeNotify(new BeforeNotifySkeleton());
         client.notify(new RuntimeException());
     }
 
