@@ -3,7 +3,6 @@ Feature: Stopping and resuming sessions
 Scenario: When a session is stopped the error has no session information
     When I run "StoppedSessionScenario"
     Then I wait to receive 3 requests
-    #And I look at the requests
     And the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And I discard the oldest request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

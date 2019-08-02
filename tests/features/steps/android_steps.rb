@@ -7,14 +7,6 @@ When("I run {string}") do |event_type|
   }
 end
 
-When("I look at the requests") do
-  Server.stored_requests.each_with_index do |request, ind|
-    File.open("/app/maze-output/request_#{ind}", "w") do |file|
-      file.puts(JSON.pretty_generate(request))
-    end
-  end
-end
-
 When("I run {string} and relaunch the app") do |event_type|
   steps %Q{
     When I run "#{event_type}"
