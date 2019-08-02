@@ -4,6 +4,7 @@ import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
+import java.net.HttpURLConnection.*
 import java.net.URL
 import java.nio.charset.Charset
 
@@ -70,9 +71,13 @@ internal class DefaultDelivery(private val connectivity: Connectivity?) : Delive
     }
 
     internal fun getDeliveryStatus(responseCode: Int): DeliveryStatus {
+        val unrecoverableCodes = IntRange(HTTP_BAD_REQUEST, 499).filter {
+            it !=  HTTP_CLIENT_TIMEOUT && it != 429
+        }
+
         return when (responseCode) {
-            in 200..299 -> DeliveryStatus.DELIVERED
-            in 400..499 -> DeliveryStatus.FAILURE
+            in HTTP_OK..299 -> DeliveryStatus.DELIVERED
+            in unrecoverableCodes -> DeliveryStatus.FAILURE
             else -> DeliveryStatus.UNDELIVERED
         }
     }
