@@ -25,6 +25,8 @@ steps:
           cache-from:
             - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -38,6 +40,8 @@ steps:
           cache-from:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -51,6 +55,8 @@ steps:
           cache-from:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
