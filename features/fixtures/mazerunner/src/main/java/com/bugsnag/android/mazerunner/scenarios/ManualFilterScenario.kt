@@ -11,11 +11,11 @@ internal class ManualFilterScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
+        config.setFilters(listOf("foo"))
     }
 
     override fun run() {
         super.run()
-        Bugsnag.setFilters("foo")
         Bugsnag.addToTab("user", "foo", "hunter2")
         Bugsnag.addToTab("custom", "foo", "hunter2")
         Bugsnag.addToTab("custom", "bar", "hunter2")

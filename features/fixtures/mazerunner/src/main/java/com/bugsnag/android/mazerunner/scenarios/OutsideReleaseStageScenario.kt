@@ -12,12 +12,12 @@ internal class OutsideReleaseStageScenario(config: Configuration,
                                            context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
+        config.setNotifyReleaseStages(listOf("dev"))
     }
 
     override fun run() {
         super.run()
         Bugsnag.setReleaseStage("prod")
-        Bugsnag.setNotifyReleaseStages("dev")
         Bugsnag.notify(RuntimeException("OutsideReleaseStageScenario"))
     }
 

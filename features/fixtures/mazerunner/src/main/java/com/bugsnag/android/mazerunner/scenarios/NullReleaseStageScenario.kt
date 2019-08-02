@@ -11,12 +11,12 @@ internal class NullReleaseStageScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
+        config.setNotifyReleaseStages(listOf("prod"))
     }
 
     override fun run() {
         super.run()
         Bugsnag.setReleaseStage(null)
-        Bugsnag.setNotifyReleaseStages("prod")
         Bugsnag.notify(generateException())
     }
 
