@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <Blacklist></Blacklist>
+  <Whitelist>
+    <ID>EmptyFunctionBlock:Scenario.kt$Scenario${}</ID>
+    <ID>TooManyFunctions:Scenario.kt$Scenario : ActivityLifecycleCallbacks</ID>
+    <ID>WildcardImport:Scenario.kt$import com.bugsnag.android.*</ID>
+  </Whitelist>
+</SmellBaseline>

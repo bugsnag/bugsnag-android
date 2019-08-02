@@ -1,0 +1,4 @@
+include(
+        ":mazerunner-scenarios"
+)
+project(":mazerunner-scenarios").projectDir = new File("../../../mazerunner-scenarios")

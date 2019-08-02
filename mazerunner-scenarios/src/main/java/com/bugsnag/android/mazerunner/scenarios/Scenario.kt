@@ -1,15 +1,15 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import com.bugsnag.android.*
+
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.content.Context
 
-import com.bugsnag.android.*
-
-abstract internal class Scenario(
-    protected val config: Configuration,
-    protected val context: Context
+abstract class Scenario(
+    val config: Configuration,
+    val context: Context
 ): Application.ActivityLifecycleCallbacks {
 
     var eventMetaData: String? = null
@@ -21,7 +21,7 @@ abstract internal class Scenario(
     /**
      * Sets a NOP implementation for the Session Tracking API, preventing delivery
      */
-    protected fun disableSessionDelivery() {
+    fun disableSessionDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
             override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
@@ -37,7 +37,7 @@ abstract internal class Scenario(
     /**
      * Sets a NOP implementation for the Error Tracking API, preventing delivery
      */
-    protected fun disableReportDelivery() {
+    fun disableReportDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
             override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
@@ -56,12 +56,12 @@ abstract internal class Scenario(
      * preventing delivery
      */
     @Deprecated("Disable via config instead, using the new delivery API")
-    protected fun disableAllDelivery() {
+    fun disableAllDelivery() {
         disableSessionDelivery()
         disableReportDelivery()
     }
 
-    protected fun disableAllDelivery(config: Configuration) {
+    fun disableAllDelivery(config: Configuration) {
         config.delivery = object: Delivery {
             override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
                 throw DeliveryFailureException("Error Delivery NOP", RuntimeException("NOP"))
@@ -76,12 +76,12 @@ abstract internal class Scenario(
     /**
      * Returns a throwable with the message as the current classname
      */
-    protected fun generateException(): Throwable = RuntimeException(javaClass.simpleName)
+    fun generateException(): Throwable = RuntimeException(javaClass.simpleName)
 
 
     /* Activity lifecycle callback overrides */
 
-    protected fun registerActivityLifecycleCallbacks() {
+    fun registerActivityLifecycleCallbacks() {
         (context.applicationContext as Application).registerActivityLifecycleCallbacks(this)
     }
 
