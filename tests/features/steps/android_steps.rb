@@ -1,4 +1,3 @@
-require 'json'
 When("I run {string}") do |event_type|
   steps %Q{
     Given the element "scenarioText" is present
