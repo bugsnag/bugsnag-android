@@ -75,20 +75,6 @@ public class ClientConfigTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSetIgnoreClasses() throws Exception {
-        client.setIgnoreClasses("RuntimeException", "Foo");
-        assertArrayEquals(new String[]{"RuntimeException", "Foo"}, config.getIgnoreClasses());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetNotifyReleaseStages() throws Exception {
-        client.setNotifyReleaseStages("beta", "prod");
-        assertArrayEquals(new String[]{"beta", "prod"}, config.getNotifyReleaseStages());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
     public void testSetSendThreads() throws Exception {
         client.setSendThreads(false);
         assertFalse(config.getSendThreads());

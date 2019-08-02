@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @FlakyTest(detail = "Checks a stacktrace's line number, so fails when lines are added/deleted.")
@@ -39,12 +41,12 @@ public class StacktraceTest {
 
     @Test
     public void testBasicException() throws JSONException, IOException {
-        String[] projectPackages = config.getProjectPackages();
+        Collection<String> projectPackages = config.getProjectPackages();
         Stacktrace stacktrace = new Stacktrace(exception.getStackTrace(), projectPackages);
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
         JSONObject firstFrame = (JSONObject) stacktraceJson.get(0);
-        assertEquals(37, firstFrame.get("lineNumber"));
+        assertEquals(39, firstFrame.get("lineNumber"));
         assertEquals("com.bugsnag.android.StacktraceTest.setUp", firstFrame.get("method"));
         assertEquals("StacktraceTest.java", firstFrame.get("file"));
         assertFalse(firstFrame.has("inProject"));
@@ -52,9 +54,9 @@ public class StacktraceTest {
 
     @Test
     public void testInProject() throws JSONException, IOException {
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
+        config.setProjectPackages(Collections.singleton("com.bugsnag.android"));
 
-        String[] projectPackages = config.getProjectPackages();
+        Collection<String> projectPackages = config.getProjectPackages();
         Stacktrace stacktrace = new Stacktrace(exception.getStackTrace(), projectPackages);
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 

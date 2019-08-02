@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -45,16 +46,16 @@ public class ConfigurationTest {
         assertTrue(config.shouldNotifyForReleaseStage("development"));
 
         // Shouldn't notify if notifyReleaseStages is set and releaseStage is null
-        config.setNotifyReleaseStages(new String[]{"example"});
+        config.setNotifyReleaseStages(Collections.singleton("example"));
         assertFalse(config.shouldNotifyForReleaseStage(null));
 
         // Shouldn't notify if releaseStage not in notifyReleaseStages
         String releaseStage = "production";
-        config.setNotifyReleaseStages(new String[]{releaseStage});
+        config.setNotifyReleaseStages(Collections.singleton(releaseStage));
         assertFalse(config.shouldNotifyForReleaseStage("not-production"));
 
         // Should notify if releaseStage in notifyReleaseStages
-        config.setNotifyReleaseStages(new String[]{releaseStage});
+        config.setNotifyReleaseStages(Collections.singleton(releaseStage));
         assertTrue(config.shouldNotifyForReleaseStage(releaseStage));
     }
 
@@ -65,7 +66,7 @@ public class ConfigurationTest {
         assertFalse(config.shouldIgnoreClass(className));
 
         // Should ignore when added to ignoreClasses
-        config.setIgnoreClasses(new String[]{className});
+        config.setIgnoreClasses(Collections.singleton(className));
         assertTrue(config.shouldIgnoreClass(className));
     }
 
@@ -112,20 +113,20 @@ public class ConfigurationTest {
 
     @Test
     public void testOverrideFilters() throws Exception {
-        config.setFilters(new String[]{"Foo"});
-        assertArrayEquals(new String[]{"Foo"}, config.getFilters());
+        config.setFilters(Collections.singleton("Foo"));
+        assertEquals(Collections.singleton("Foo"), config.getFilters());
     }
 
     @Test
     public void testOverrideIgnoreClasses() throws Exception {
-        config.setIgnoreClasses(new String[]{"Bar"});
-        assertArrayEquals(new String[]{"Bar"}, config.getIgnoreClasses());
+        config.setIgnoreClasses(Collections.singleton("Bar"));
+        assertEquals(Collections.singleton("Bar"), config.getIgnoreClasses());
     }
 
     @Test
     public void testOverrideNotifyReleaseStages() throws Exception {
-        config.setNotifyReleaseStages(new String[]{"Test"});
-        assertArrayEquals(new String[]{"Test"}, config.getNotifyReleaseStages());
+        config.setNotifyReleaseStages(Collections.singleton("Test"));
+        assertEquals(Collections.singleton("Test"), config.getNotifyReleaseStages());
     }
 
     @Test
