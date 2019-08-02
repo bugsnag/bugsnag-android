@@ -12,11 +12,11 @@ internal class IgnoredExceptionScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
+        config.setIgnoreClasses(arrayOf("java.lang.RuntimeException"))
     }
 
     override fun run() {
         super.run()
-        Bugsnag.setIgnoreClasses("java.lang.RuntimeException")
         throw RuntimeException("Should never appear")
     }
 

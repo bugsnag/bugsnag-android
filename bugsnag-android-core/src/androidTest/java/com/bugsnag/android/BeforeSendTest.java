@@ -58,21 +58,21 @@ public class BeforeSendTest {
 
     @Test
     public void testCallbackOrderPreserved() {
-        config.beforeSend(new BeforeSend() {
+        config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(@NonNull Report report) {
                 result = result + "a";
                 return true;
             }
         });
-        config.beforeSend(new BeforeSend() {
+        config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(@NonNull Report report) {
                 result = result + "b";
                 return true;
             }
         });
-        config.beforeSend(new BeforeSend() {
+        config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(@NonNull Report report) {
                 result = result + "c";
@@ -86,14 +86,14 @@ public class BeforeSendTest {
 
     @Test
     public void testCancelReport() {
-        config.beforeSend(new BeforeSend() {
+        config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(@NonNull Report report) {
                 result = result + "a";
                 return true;
             }
         });
-        config.beforeSend(new BeforeSend() {
+        config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(@NonNull Report report) {
                 result = result + "b";
@@ -107,7 +107,7 @@ public class BeforeSendTest {
 
     @Test
     public void testAlterReport() {
-        config.beforeSend(new BeforeSend() {
+        config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(@NonNull Report report) {
                 report.getError().setGroupingHash("123");
