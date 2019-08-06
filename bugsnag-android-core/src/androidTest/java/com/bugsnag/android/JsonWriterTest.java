@@ -3,11 +3,9 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import android.support.test.filters.MediumTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.MediumTest;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -30,7 +28,6 @@ import java.math.BigInteger;
  * limitations under the License.
  */
 
-@RunWith(AndroidJUnit4.class)
 @MediumTest
 public final class JsonWriterTest {
 

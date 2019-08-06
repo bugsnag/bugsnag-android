@@ -10,7 +10,7 @@
   <application android:label="Bugsnag Android Tests"></application>
 
   <instrumentation
-    android:name="android.support.test.runner.AndroidJUnitRunner"
+    android:name="androidx.test.runner.AndroidJUnitRunner"
     android:targetPackage="com.bugsnag.android">
     <meta-data
       android:name="listener"

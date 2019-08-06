@@ -5,7 +5,7 @@ import android.content.Context;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Bugsnag;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.lang.reflect.Array;
 

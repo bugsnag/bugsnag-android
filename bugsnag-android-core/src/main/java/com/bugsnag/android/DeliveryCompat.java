@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * A compatibility implementation of {@link Delivery} which wraps {@link ErrorReportApiClient} and

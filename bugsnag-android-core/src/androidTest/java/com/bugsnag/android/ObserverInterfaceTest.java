@@ -1,18 +1,15 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +18,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 @SuppressWarnings("unchecked")
 public class ObserverInterfaceTest {
@@ -40,7 +35,7 @@ public class ObserverInterfaceTest {
     public void setUp() throws Exception {
         config = new Configuration("some-api-key");
         config.setDelivery(BugsnagTestUtils.generateDelivery());
-        client = new Client(InstrumentationRegistry.getContext(), config);
+        client = new Client(ApplicationProvider.getApplicationContext(), config);
         client.disableExceptionHandler();
         observer = new BugsnagTestObserver();
         client.addObserver(observer);
