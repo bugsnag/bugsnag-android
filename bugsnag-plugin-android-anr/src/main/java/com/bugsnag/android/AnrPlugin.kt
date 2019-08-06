@@ -4,7 +4,13 @@ import java.nio.ByteBuffer
 
 internal class AnrPlugin : BugsnagPlugin {
 
+    companion object {
+        private const val INFO_POLL_THRESHOLD_MS: Long = 2500
+    }
+
     private external fun installAnrDetection(sentinelBuffer: ByteBuffer)
+
+    val collector = AnrDetailsCollector()
 
     override fun initialisePlugin(client: Client) {
         System.loadLibrary("bugsnag-plugin-android-anr")
@@ -16,12 +22,45 @@ internal class AnrPlugin : BugsnagPlugin {
     }
 
     private fun handleAnr(thread: Thread, client: Client) {
+        // generate a full report as soon as possible, then wait for extra process error info
         val errMsg = "Application did not respond to UI input"
         val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
+        val error = Error.Builder(client.config, exc, client.sessionTracker, thread, true)
+            .severity(Severity.ERROR)
+            .severityReasonType(HandledState.REASON_ANR)
+            .build()
 
-        client.cacheAndNotify(
-            exc, Severity.ERROR, MetaData(),
-            HandledState.REASON_ANR, null, thread
-        )
+        // wait for the ANR dialog to show, reporting once the information is available
+        collectAnrErrorDetails(client, error)
     }
+
+    private fun collectAnrErrorDetails(client: Client, error: Error) {
+        // TODO add timeouts, and better way of posting async runnable
+
+        Async.run(object : Runnable {
+            override fun run() {
+                try {
+                    Thread.sleep(INFO_POLL_THRESHOLD_MS)
+                    val anrDetails = collector.collectAnrDetails(client.appContext)
+
+                    if (anrDetails == null) {
+                        Logger.warn("Looping in attempt to capture ANR details")
+                        Async.run(this)
+                    } else {
+                        Logger.warn("Captured ANR details: $anrDetails")
+
+                        // TODO determine how to populate error report
+                        val metaData = error.metaData
+                        metaData.addToTab("ANR", "Message", anrDetails.shortMsg)
+                        metaData.addToTab("ANR", "Component", anrDetails.tag)
+                        metaData.addToTab("ANR", "Details", anrDetails.longMsg)
+
+                        client.notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null)
+                    }
+                } catch (exc: InterruptedException) {
+                }
+            }
+        })
+    }
+
 }
