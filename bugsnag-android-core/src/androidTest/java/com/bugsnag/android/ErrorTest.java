@@ -79,16 +79,6 @@ public class ErrorTest {
     }
 
     @Test
-    public void testGetExceptionName() {
-        assertEquals("java.lang.RuntimeException", error.getExceptionName());
-    }
-
-    @Test
-    public void testGetExceptionMessage() {
-        assertEquals("Example message", error.getExceptionMessage());
-    }
-
-    @Test
     public void testBasicSerialization() throws JSONException, IOException {
         error.setAppData(client.getAppData().getAppData());
 

@@ -6,8 +6,6 @@ import android.content.Context
 import android.os.Process
 import android.support.annotation.VisibleForTesting
 
-// TODO unit tests
-
 internal class AnrDetailsCollector {
 
     fun collectAnrDetails(ctx: Context): ProcessErrorStateInfo? {
@@ -23,7 +21,16 @@ internal class AnrDetailsCollector {
      */
     @VisibleForTesting
     internal fun captureProcessErrorState(am: ActivityManager, pid: Int): ProcessErrorStateInfo? {
-        val processes = am.processesInErrorState ?: emptyList()
-        return processes.firstOrNull { it.pid == pid }
+        return try {
+            val processes = am.processesInErrorState ?: emptyList()
+            processes.firstOrNull { it.pid == pid }
+        } catch (exc: RuntimeException) {
+            null
+        }
+    }
+
+    internal fun mutateError(error: Error, anrState: ProcessErrorStateInfo) {
+        // TODO truncate these values?
+        error.exceptionMessage = anrState.shortMsg
     }
 }

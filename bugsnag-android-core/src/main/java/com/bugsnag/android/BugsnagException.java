@@ -12,7 +12,8 @@ public class BugsnagException extends Throwable {
     /**
      * The name of the exception (used instead of the exception class)
      */
-    private final String name;
+    private String name;
+    private String message;
 
     private String type;
 
@@ -27,9 +28,22 @@ public class BugsnagException extends Throwable {
                             @NonNull String message,
                             @NonNull StackTraceElement[] frames) {
         super(message);
-
-        super.setStackTrace(frames);
+        setStackTrace(frames);
         this.name = name;
+    }
+
+    BugsnagException(@NonNull Throwable exc) {
+        super(exc.getMessage());
+
+        if (exc instanceof BugsnagException) {
+            this.message = ((BugsnagException) exc).getMessage();
+            this.name = ((BugsnagException) exc).getName();
+            this.type = ((BugsnagException) exc).getType();
+        } else {
+            this.name = exc.getClass().getName();
+        }
+        setStackTrace(exc.getStackTrace());
+        initCause(exc.getCause());
     }
 
     /**
@@ -40,11 +54,25 @@ public class BugsnagException extends Throwable {
         return name;
     }
 
+    public void setName(@NonNull String name) {
+        this.name = name;
+    }
+
+    @NonNull
+    public String getMessage() {
+        return message != null ? message : super.getMessage();
+    }
+
+    public void setMessage(@NonNull String message) {
+        this.message = message;
+    }
+
+    @NonNull
     String getType() {
         return type;
     }
 
-    void setType(String type) {
+    void setType(@NonNull String type) {
         this.type = type;
     }
 }

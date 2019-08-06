@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 internal class AnrPlugin : BugsnagPlugin {
 
     companion object {
-        private const val INFO_POLL_THRESHOLD_MS: Long = 2500
+        private const val INFO_POLL_THRESHOLD_MS: Long = 1000
     }
 
     private external fun installAnrDetection(sentinelBuffer: ByteBuffer)
@@ -30,7 +30,8 @@ internal class AnrPlugin : BugsnagPlugin {
             .severityReasonType(HandledState.REASON_ANR)
             .build()
 
-        // wait for the ANR dialog to show, reporting once the information is available
+        // wait and poll for error info to be collected. this occurs just before the ANR dialog
+        // is displayed
         collectAnrErrorDetails(client, error)
     }
 
@@ -47,14 +48,7 @@ internal class AnrPlugin : BugsnagPlugin {
                         Logger.warn("Looping in attempt to capture ANR details")
                         Async.run(this)
                     } else {
-                        Logger.warn("Captured ANR details: $anrDetails")
-
-                        // TODO determine how to populate error report
-                        val metaData = error.metaData
-                        metaData.addToTab("ANR", "Message", anrDetails.shortMsg)
-                        metaData.addToTab("ANR", "Component", anrDetails.tag)
-                        metaData.addToTab("ANR", "Details", anrDetails.longMsg)
-
+                        collector.mutateError(error, anrDetails)
                         client.notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null)
                     }
                 } catch (exc: InterruptedException) {

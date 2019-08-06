@@ -31,7 +31,8 @@ public class ExceptionsTest {
 
     @Test
     public void testBasicException() throws JSONException, IOException {
-        Exceptions exceptions = new Exceptions(config, new RuntimeException("oops"));
+        RuntimeException oops = new RuntimeException("oops");
+        Exceptions exceptions = new Exceptions(config, new BugsnagException(oops));
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
 
         assertEquals(1, exceptionsJson.length());
@@ -45,7 +46,7 @@ public class ExceptionsTest {
     @Test
     public void testCauseException() throws JSONException, IOException {
         Throwable ex = new RuntimeException("oops", new Exception("cause"));
-        Exceptions exceptions = new Exceptions(config, ex);
+        Exceptions exceptions = new Exceptions(config, new BugsnagException(ex));
         JSONArray exceptionsJson = streamableToJsonArray(exceptions);
 
         assertEquals(2, exceptionsJson.length());
@@ -68,7 +69,7 @@ public class ExceptionsTest {
         Error error = new Error.Builder(config, "RuntimeException",
             "Example message", frames, BugsnagTestUtils.generateSessionTracker(),
             Thread.currentThread()).build();
-        Exceptions exceptions = new Exceptions(config, error.getException());
+        Exceptions exceptions = new Exceptions(config, new BugsnagException(error.getException()));
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);
         assertEquals("RuntimeException", exceptionJson.get("errorClass"));
@@ -78,20 +79,5 @@ public class ExceptionsTest {
         assertEquals("Class.method", stackframeJson.get("method"));
         assertEquals("Class.java", stackframeJson.get("file"));
         assertEquals(123, stackframeJson.get("lineNumber"));
-    }
-
-    @Test
-    public void testCustomExceptionSerialization() throws JSONException, IOException {
-        Exceptions exceptions = new Exceptions(config, new CustomException("Failed serialization"));
-
-        JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);
-        assertEquals("CustomizedException", exceptionJson.get("errorClass"));
-        assertEquals("Failed serialization", exceptionJson.get("message"));
-
-        JSONObject stackframeJson = exceptionJson.getJSONArray("stacktrace").getJSONObject(0);
-        assertEquals("MyFile.run", stackframeJson.get("method"));
-        assertEquals("MyFile.java", stackframeJson.get("file"));
-        assertEquals(408, stackframeJson.get("lineNumber"));
-        assertEquals(18, stackframeJson.get("offset"));
     }
 }
