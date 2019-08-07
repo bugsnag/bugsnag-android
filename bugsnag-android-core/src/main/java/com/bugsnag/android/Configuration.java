@@ -651,13 +651,22 @@ public class Configuration extends Observable implements Observer {
         this.loggingEnabled = loggingEnabled;
     }
 
+
+    DeliveryParams getErrorApiDeliveryParams() {
+        return new DeliveryParams(getEndpoints().getNotify(), getErrorApiHeaders());
+    }
+
+    DeliveryParams getSessionApiDeliveryParams() {
+        return new DeliveryParams(getEndpoints().getSessions(), getSessionApiHeaders());
+    }
+
     /**
      * Supplies the headers which must be used in any request sent to the Error Reporting API.
      *
      * @return the HTTP headers
      */
     @NonNull
-    public Map<String, String> getErrorApiHeaders() {
+    Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
@@ -671,7 +680,7 @@ public class Configuration extends Observable implements Observer {
      * @return the HTTP headers
      */
     @NonNull
-    public Map<String, String> getSessionApiHeaders() {
+    Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);
