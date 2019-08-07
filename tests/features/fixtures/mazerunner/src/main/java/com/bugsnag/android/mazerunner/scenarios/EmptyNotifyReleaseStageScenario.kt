@@ -5,13 +5,13 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 /**
- * Attempts to send a handled exception to Bugsnag, when the notifyReleaseStages is null.
+ * Attempts to send a handled exception to Bugsnag, when the notifyReleaseStages is empty.
  */
-internal class NullNotifyReleaseStageScenario(config: Configuration,
-                                              context: Context) : Scenario(config, context) {
+internal class EmptyNotifyReleaseStageScenario(config: Configuration,
+                                               context: Context) : Scenario(config, context) {
     init {
         config.setReleaseStage("prod")
-        config.setNotifyReleaseStages(null)
+        config.setNotifyReleaseStages(emptyList())
     }
 
     override fun run() {
