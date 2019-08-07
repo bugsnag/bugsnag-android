@@ -62,9 +62,7 @@ internal class ManifestConfigLoader {
     @VisibleForTesting
     internal fun load(data: Bundle): Configuration {
         val apiKey = data.getString(API_KEY)
-
-        // suppress - null is checked explicitly in Configuration constructor
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+            ?: throw IllegalArgumentException("You must provide a Bugsnag API key")
         val config = Configuration(apiKey)
 
         loadDetectionConfig(config, data)
