@@ -3,10 +3,24 @@ package com.bugsnag.android
 import android.app.ActivityManager
 import android.app.ActivityManager.ProcessErrorStateInfo
 import android.content.Context
+import android.os.Handler
+import android.os.HandlerThread
 import android.os.Process
 import android.support.annotation.VisibleForTesting
+import java.util.concurrent.atomic.AtomicInteger
 
 internal class AnrDetailsCollector {
+
+    companion object {
+        private const val INFO_POLL_THRESHOLD_MS: Long = 1000
+        private const val MAX_ATTEMPTS: Int = 30
+    }
+
+    private val handlerThread = HandlerThread("bugsnag-anr-collector")
+
+    init {
+        handlerThread.start()
+    }
 
     fun collectAnrDetails(ctx: Context): ProcessErrorStateInfo? {
         val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -30,7 +44,30 @@ internal class AnrDetailsCollector {
     }
 
     internal fun mutateError(error: Error, anrState: ProcessErrorStateInfo) {
-        // TODO truncate these values?
-        error.exceptionMessage = anrState.shortMsg
+        val msg = anrState.shortMsg
+        error.exceptionMessage = when {
+            msg.startsWith("ANR") -> msg.replaceFirst("ANR", "")
+            else -> msg
+        }
+    }
+
+    internal fun collectAnrErrorDetails(client: Client, error: Error) {
+        val handler = Handler(handlerThread.looper)
+        val attempts = AtomicInteger()
+
+        handler.post(object : Runnable {
+            override fun run() {
+                val anrDetails = collectAnrDetails(client.appContext)
+
+                if (anrDetails == null) {
+                    if (attempts.getAndIncrement() < MAX_ATTEMPTS) {
+                        handler.postDelayed(this, INFO_POLL_THRESHOLD_MS)
+                    }
+                } else {
+                    mutateError(error, anrDetails)
+                    client.notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null)
+                }
+            }
+        })
     }
 }

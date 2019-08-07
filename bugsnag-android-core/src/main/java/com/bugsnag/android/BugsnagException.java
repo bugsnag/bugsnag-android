@@ -54,15 +54,28 @@ public class BugsnagException extends Throwable {
         return name;
     }
 
+    /**
+     * Sets the name of the error displayed in the bugsnag dashboard
+     *
+     * @param name the new name
+     */
     public void setName(@NonNull String name) {
         this.name = name;
     }
 
+    /**
+     * @return The error message, which is the exception message by default
+     */
     @NonNull
     public String getMessage() {
         return message != null ? message : super.getMessage();
     }
 
+    /**
+     * Sets the message of the error displayed in the bugsnag dashboard
+     *
+     * @param message the new message
+     */
     public void setMessage(@NonNull String message) {
         this.message = message;
     }
