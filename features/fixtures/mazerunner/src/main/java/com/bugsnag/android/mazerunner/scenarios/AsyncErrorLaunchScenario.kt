@@ -11,7 +11,7 @@ internal class AsyncErrorLaunchScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
 
     init {
-        config.delivery = createSlowDelivery(context)
+        config.delivery = createSlowDelivery(config)
         config.setAutoCaptureSessions(false)
     }
 

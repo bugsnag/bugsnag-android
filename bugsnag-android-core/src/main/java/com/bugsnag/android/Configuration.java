@@ -170,23 +170,6 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * @deprecated use {@link Configuration#getEndpoints()}
-     */
-    @Deprecated
-    @NonNull
-    public String getEndpoint() {
-        return endpoints.getNotify();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setEndpoints(Endpoints)}
-     */
-    @Deprecated
-    public void setEndpoints(@NonNull String notify, @NonNull String sessions) {
-        setEndpoints(new Endpoints(notify, sessions));
-    }
-
-    /**
      * Set the endpoints to send data to. By default we'll send error reports to
      * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
      * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.
@@ -207,35 +190,6 @@ public class Configuration extends Observable implements Observer {
     @NonNull
     public Endpoints getEndpoints() {
         return endpoints;
-    }
-
-
-    /**
-     * @deprecated use {@link Configuration#getEndpoints()}
-     */
-    @Deprecated
-    @NonNull
-    public String getSessionEndpoint() {
-        return endpoints.getSessions();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setBuildUuid(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    @Nullable
-    public String getBuildUUID() {
-        return getBuildUuid();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setBuildUuid(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(@Nullable String buildUuid) {
-        setBuildUuid(buildUuid);
     }
 
     /**
@@ -429,22 +383,6 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public boolean getEnableExceptionHandler() {
-        return getAutoNotify();
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public void setEnableExceptionHandler(boolean enableExceptionHandler) {
-        setAutoNotify(enableExceptionHandler);
-    }
-
-    /**
      * Get whether or not User sessions are captured automatically.
      *
      * @return true if sessions are captured automatically
@@ -560,22 +498,6 @@ public class Configuration extends Observable implements Observer {
         } else {
             this.launchCrashThresholdMs = launchCrashThresholdMs;
         }
-    }
-
-    /**
-     * @deprecated use {@link Configuration#getAutoCaptureBreadcrumbs()}
-     */
-    @Deprecated
-    public boolean isAutomaticallyCollectingBreadcrumbs() {
-        return autoCaptureBreadcrumbs;
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoCaptureBreadcrumbs(boolean)}
-     */
-    @Deprecated
-    public void setAutomaticallyCollectBreadcrumbs(boolean automaticallyCollectBreadcrumbs) {
-        this.autoCaptureBreadcrumbs = automaticallyCollectBreadcrumbs;
     }
 
     /**
@@ -727,7 +649,7 @@ public class Configuration extends Observable implements Observer {
     /**
      * @return true if SDK logging is enabled
      */
-    public boolean isLoggingEnabled() {
+    public boolean getLoggingEnabled() {
         return loggingEnabled;
     }
 
@@ -744,13 +666,22 @@ public class Configuration extends Observable implements Observer {
         this.loggingEnabled = loggingEnabled;
     }
 
+
+    DeliveryParams getErrorApiDeliveryParams() {
+        return new DeliveryParams(getEndpoints().getNotify(), getErrorApiHeaders());
+    }
+
+    DeliveryParams getSessionApiDeliveryParams() {
+        return new DeliveryParams(getEndpoints().getSessions(), getSessionApiHeaders());
+    }
+
     /**
      * Supplies the headers which must be used in any request sent to the Error Reporting API.
      *
      * @return the HTTP headers
      */
     @NonNull
-    public Map<String, String> getErrorApiHeaders() {
+    Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
@@ -764,39 +695,12 @@ public class Configuration extends Observable implements Observer {
      * @return the HTTP headers
      */
     @NonNull
-    public Map<String, String> getSessionApiHeaders() {
+    Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);
         map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
         return map;
-    }
-
-    /**
-     * Add a callback to modify or cancel a report immediately before
-     * it is delivered to Bugsnag.
-     *
-     * Unlike {@link BeforeNotify} callbacks, "before send" callbacks are not
-     * necessarily run in the same app session as when the report was generated,
-     * as the application may have terminated before delivery or networking
-     * conditions prevented delivering the report until a later date.
-     * <p>
-     * Example usage:
-     * <pre>
-     * config.beforeSend((Report report) -&gt; {
-     *   Error error = report.getError();
-     *   error.setContext(getImportantField(error));
-     *   return true;
-     * });
-     * </pre>
-     * @param beforeSend a callback to run before delivering errors to Bugsnag
-     * @see BeforeSend
-     * @see Report
-     */
-    public void beforeSend(@NonNull BeforeSend beforeSend) {
-        if (!beforeSendTasks.contains(beforeSend)) {
-            beforeSendTasks.add(beforeSend);
-        }
     }
 
     /**
@@ -830,13 +734,56 @@ public class Configuration extends Observable implements Observer {
     }
 
     /**
-     * Adds a new before notify task
+     * Add a "before notify" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
+     * <p>
+     * You can use this to add or modify information attached to an error
+     * before it is sent to your dashboard. You can also return
+     * <code>false</code> from any callback to prevent delivery. "Before
+     * notify" callbacks do not run before reports generated in the event
+     * of immediate app termination from crashes in C/C++ code.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
      *
-     * @param beforeNotify the new before notify task
+     * @param beforeNotify a callback to run before sending errors to Bugsnag
+     * @see BeforeNotify
      */
-    protected void beforeNotify(@NonNull BeforeNotify beforeNotify) {
+    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
         if (!beforeNotifyTasks.contains(beforeNotify)) {
             beforeNotifyTasks.add(beforeNotify);
+        }
+    }
+
+    /**
+     * Add a "before send" callback, to execute code before sending a
+     * report to Bugsnag.
+     * <p>
+     * You can use this to add or modify information attached to an error
+     * before it is sent to your dashboard. You can also return
+     * <code>false</code> from any callback to prevent delivery.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.addBeforeSend(new BeforeSend() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
+     *
+     * @param beforeSend a callback to run before sending errors to Bugsnag
+     * @see BeforeSend
+     */
+    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
+        if (!beforeSendTasks.contains(beforeSend)) {
+            beforeSendTasks.add(beforeSend);
         }
     }
 

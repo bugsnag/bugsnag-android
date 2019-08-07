@@ -44,9 +44,6 @@ public class Client extends Observable implements Observer {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
-    private static final String USER_ID_KEY = "user.id";
-    private static final String USER_NAME_KEY = "user.name";
-    private static final String USER_EMAIL_KEY = "user.email";
 
     @NonNull
     protected final Configuration config;
@@ -62,7 +59,7 @@ public class Client extends Observable implements Observer {
     final Breadcrumbs breadcrumbs;
 
     @NonNull
-    private final User user = new User();
+    private User user;
 
     @NonNull
     protected final ErrorStore errorStore;
@@ -75,6 +72,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
+    private UserRepository userRepository;
 
     /**
      * Initialize a Bugsnag client
@@ -82,7 +80,7 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      */
     public Client(@NonNull Context androidContext) {
-        this(androidContext, null, true);
+        this(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
@@ -91,18 +89,8 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
-    public Client(@NonNull Context androidContext, @Nullable String apiKey) {
+    public Client(@NonNull Context androidContext, @NonNull String apiKey) {
         this(androidContext, new Configuration(apiKey));
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public Client(@NonNull Context androidContext,
-                  @Nullable String apiKey,
-                  boolean enableExceptionHandler) {
-        this(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
@@ -111,7 +99,6 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
-    @SuppressWarnings("deprecation")
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
@@ -142,7 +129,11 @@ public class Client extends Observable implements Observer {
 
         appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
         Resources resources = appContext.getResources();
-        deviceData = new DeviceData(connectivity, this.appContext, resources, sharedPrefs);
+
+        userRepository = new UserRepository(sharedPrefs, config.getPersistUserBetweenSessions());
+        setUserInternal(userRepository.load());
+
+        deviceData = new DeviceData(connectivity, this.appContext, resources, user.installId);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);
@@ -150,17 +141,6 @@ public class Client extends Observable implements Observer {
         // Set sensible defaults if project packages not already set
         if (config.getProjectPackages() == null) {
             configuration.setProjectPackages(new String[]{appContext.getPackageName()});
-        }
-
-        String deviceId = deviceData.getId();
-
-        if (config.getPersistUserBetweenSessions()) {
-            // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceId));
-            user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
-            user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
-        } else {
-            user.setId(deviceId);
         }
 
         if (appContext instanceof Application) {
@@ -199,7 +179,9 @@ public class Client extends Observable implements Observer {
         });
 
         // Install a default exception handler with this client
-        ExceptionHandler.enable(this);
+        if (config.getAutoNotify()) {
+            new ExceptionHandler(this);
+        }
 
         // register a receiver for automatic breadcrumbs
 
@@ -215,12 +197,11 @@ public class Client extends Observable implements Observer {
         }
         connectivity.registerForNetworkChanges();
 
-        Logger.setEnabled(config.isLoggingEnabled());
+        Logger.setEnabled(config.getLoggingEnabled());
 
         config.addObserver(this);
         breadcrumbs.addObserver(this);
         sessionTracker.addObserver(this);
-        user.addObserver(this);
 
         final Client client = this;
         orientationListener = new OrientationEventListener(appContext) {
@@ -373,15 +354,6 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * @param appVersion the app version to send
-     * @deprecated use {@link Configuration#setAppVersion(String)} instead
-     */
-    @Deprecated
-    public void setAppVersion(@NonNull String appVersion) {
-        config.setAppVersion(appVersion);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -399,67 +371,6 @@ public class Client extends Observable implements Observer {
      */
     public void setContext(@Nullable String context) {
         config.setContext(context);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setBuildUuid(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(@Nullable final String buildUuid) {
-        config.setBuildUUID(buildUuid);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setFilters(String[])}
-     */
-    @Deprecated
-    public void setFilters(@Nullable String... filters) {
-        config.setFilters(filters);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setIgnoreClasses(String[])}
-     */
-    @Deprecated
-    public void setIgnoreClasses(@Nullable String... ignoreClasses) {
-        config.setIgnoreClasses(ignoreClasses);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setNotifyReleaseStages(String[])}
-     */
-    @Deprecated
-    public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
-        config.setNotifyReleaseStages(notifyReleaseStages);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setReleaseStage(String)}
-     */
-    @Deprecated
-    public void setReleaseStage(@Nullable String releaseStage) {
-        config.setReleaseStage(releaseStage);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setSendThreads(boolean)}
-     */
-    @Deprecated
-    public void setSendThreads(boolean sendThreads) {
-        config.setSendThreads(sendThreads);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoCaptureSessions(boolean)}
-     */
-    @Deprecated
-    public void setAutoCaptureSessions(boolean autoCapture) {
-        config.setAutoCaptureSessions(autoCapture);
-
-        if (autoCapture) { // track any existing sessions
-            sessionTracker.onAutoCaptureEnabled();
-        }
     }
 
     /**
@@ -509,6 +420,11 @@ public class Client extends Observable implements Observer {
         return deviceData;
     }
 
+    private void setUserInternal(User user) {
+        this.user = user;
+        user.addObserver(this);
+    }
+
     /**
      * Removes the current user data and sets it back to defaults
      */
@@ -516,14 +432,7 @@ public class Client extends Observable implements Observer {
         user.setId(getStringFromMap("id", deviceData.getDeviceData()));
         user.setEmail(null);
         user.setName(null);
-
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit()
-            .remove(USER_ID_KEY)
-            .remove(USER_EMAIL_KEY)
-            .remove(USER_NAME_KEY)
-            .apply();
+        userRepository.save(user);
     }
 
     /**
@@ -535,10 +444,7 @@ public class Client extends Observable implements Observer {
      */
     public void setUserId(@Nullable String id) {
         user.setId(id);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_ID_KEY, id);
-        }
+        userRepository.save(user);
     }
 
     /**
@@ -549,10 +455,7 @@ public class Client extends Observable implements Observer {
      */
     public void setUserEmail(@Nullable String email) {
         user.setEmail(email);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_EMAIL_KEY, email);
-        }
+        userRepository.save(user);
     }
 
     /**
@@ -563,25 +466,22 @@ public class Client extends Observable implements Observer {
      */
     public void setUserName(@Nullable String name) {
         user.setName(name);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_NAME_KEY, name);
-        }
+        userRepository.save(user);
     }
 
     /**
-     * Add a "before notify" callback, to execute code before sending
-     * reports to Bugsnag.
-     * <p/>
+     * Add a "before notify" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
+     * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "Before
      * notify" callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     * <p/>
+     * <p>
      * For example:
-     * <p/>
-     * client.beforeNotify(new BeforeNotify() {
+     * <p>
+     * Bugsnag.addBeforeNotify(new BeforeNotify() {
      * public boolean run(Error error) {
      * error.setSeverity(Severity.INFO);
      * return true;
@@ -591,8 +491,32 @@ public class Client extends Observable implements Observer {
      * @param beforeNotify a callback to run before sending errors to Bugsnag
      * @see BeforeNotify
      */
-    public void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        config.beforeNotify(beforeNotify);
+    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
+        config.addBeforeNotify(beforeNotify);
+    }
+
+    /**
+     * Add a "before send" callback, to execute code before sending a
+     * report to Bugsnag.
+     * <p>
+     * You can use this to add or modify information attached to an error
+     * before it is sent to your dashboard. You can also return
+     * <code>false</code> from any callback to prevent delivery.
+     * <p>
+     * For example:
+     * <p>
+     * Bugsnag.addBeforeSend(new BeforeSend() {
+     * public boolean run(Error error) {
+     * error.setSeverity(Severity.INFO);
+     * return true;
+     * }
+     * })
+     *
+     * @param beforeSend a callback to run before sending errors to Bugsnag
+     * @see BeforeSend
+     */
+    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
+        config.addBeforeSend(beforeSend);
     }
 
     /**
@@ -983,40 +907,33 @@ public class Client extends Observable implements Observer {
         breadcrumbs.clear();
     }
 
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public void enableExceptionHandler() {
-        ExceptionHandler.enable(this);
-    }
-
-    /**
-     * @deprecated use {@link Configuration#setAutoNotify(boolean)} instead
-     */
-    @Deprecated
-    public void disableExceptionHandler() {
-        ExceptionHandler.disable(this);
-    }
-
     void deliver(@NonNull Report report, @NonNull Error error) {
         if (!runBeforeSendTasks(report)) {
             Logger.info("Skipping notification - beforeSend task returned false");
             return;
         }
-        try {
-            config.getDelivery().deliver(report, config);
-            Logger.info("Sent 1 new error to Bugsnag");
-            leaveErrorBreadcrumb(error);
-        } catch (DeliveryFailureException exception) {
-            if (!report.isCachingDisabled()) {
-                Logger.warn("Could not send error(s) to Bugsnag,"
-                    + " saving to disk to send later", exception);
-                errorStore.write(error);
+
+        DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
+        DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
+
+        switch (deliveryStatus) {
+            case DELIVERED:
+                Logger.info("Sent 1 new error to Bugsnag");
                 leaveErrorBreadcrumb(error);
-            }
-        } catch (Exception exception) {
-            Logger.warn("Problem sending error to Bugsnag", exception);
+                break;
+            case UNDELIVERED:
+                if (!report.isCachingDisabled()) {
+                    Logger.warn("Could not send error(s) to Bugsnag,"
+                            + " saving to disk to send later");
+                    errorStore.write(error);
+                    leaveErrorBreadcrumb(error);
+                }
+                break;
+            case FAILURE:
+                Logger.warn("Problem sending error to Bugsnag");
+                break;
+            default:
+                break;
         }
     }
 
@@ -1134,28 +1051,12 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * @deprecated use {@link Configuration#setLoggingEnabled(boolean)}
-     */
-    @Deprecated
-    public void setLoggingEnabled(boolean loggingEnabled) {
-        config.setLoggingEnabled(loggingEnabled);
-    }
-
-    /**
      * Returns the configuration used to initialise the client
      * @return the config
      */
     @NonNull
     public Configuration getConfig() {
         return config;
-    }
-
-    /**
-     * @deprecated this method is obsolete and will be removed in a future release
-     */
-    @Deprecated
-    public long getLaunchTimeMs() {
-        return AppData.getDurationMs();
     }
 
     void setBinaryArch(String binaryArch) {

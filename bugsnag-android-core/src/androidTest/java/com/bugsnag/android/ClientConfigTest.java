@@ -1,8 +1,6 @@
 package com.bugsnag.android;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,6 +8,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,27 +37,6 @@ public class ClientConfigTest {
         client.close();
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetReleaseStage() throws Exception {
-        client.setReleaseStage("beta");
-        assertEquals("beta", config.getReleaseStage());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetAutoCaptureSessions() throws Exception {
-        client.setAutoCaptureSessions(true);
-        assertEquals(true, config.getAutoCaptureSessions());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetAppVersion() throws Exception {
-        client.setAppVersion("5.6.7");
-        assertEquals("5.6.7", config.getAppVersion());
-    }
-
     @Test
     public void testSetContext() throws Exception {
         client.setContext("JunitTest");
@@ -66,49 +44,24 @@ public class ClientConfigTest {
         assertEquals("JunitTest", config.getContext());
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetBuildUuid() throws Exception {
-        client.setBuildUUID("gh905");
-        assertEquals("gh905", config.getBuildUuid());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetIgnoreClasses() throws Exception {
-        client.setIgnoreClasses("RuntimeException", "Foo");
-        assertArrayEquals(new String[]{"RuntimeException", "Foo"}, config.getIgnoreClasses());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetNotifyReleaseStages() throws Exception {
-        client.setNotifyReleaseStages("beta", "prod");
-        assertArrayEquals(new String[]{"beta", "prod"}, config.getNotifyReleaseStages());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSetSendThreads() throws Exception {
-        client.setSendThreads(false);
-        assertFalse(config.getSendThreads());
-    }
-
     @Test
     public void testCustomDeliveryOverride() {
         Context context = InstrumentationRegistry.getContext();
         config = BugsnagTestUtils.generateConfiguration();
         Delivery customDelivery = new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
 
+            @NotNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
         };
         config.setDelivery(customDelivery);
         client = new Client(context, config);

@@ -5,7 +5,6 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.createCustomHeaderDelivery
-import com.bugsnag.android.createDefaultDelivery
 
 /**
  * Sends a session which is cached on disk to Bugsnag, then sent on a separate launch,
@@ -17,7 +16,7 @@ internal class CustomClientSessionFlushScenario(config: Configuration,
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("eventMetaData")
             if ("online" == eventMetaData) {
-                config.delivery = createCustomHeaderDelivery(context)
+                config.delivery = createCustomHeaderDelivery(config)
             } else {
                 disableAllDelivery(config)
             }

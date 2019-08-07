@@ -12,7 +12,7 @@ internal class CustomClientErrorScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
 
     init {
-        config.delivery = createCustomHeaderDelivery(context)
+        config.delivery = createCustomHeaderDelivery(config)
         config.setAutoCaptureSessions(false)
     }
 

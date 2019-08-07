@@ -42,15 +42,12 @@ class DeviceData {
         "/su/bin"
     };
 
-    private static final String INSTALL_ID_KEY = "install.iud";
-
     private final boolean emulator;
     private final Context appContext;
     private final Connectivity connectivity;
     private final Resources resources;
-    private final SharedPreferences sharedPrefs;
+    private final String installId;
     private final DisplayMetrics displayMetrics;
-    private final String id;
     private final boolean rooted;
 
     @Nullable
@@ -69,11 +66,11 @@ class DeviceData {
     final String[] cpuAbi;
 
     DeviceData(Connectivity connectivity, Context appContext, Resources resources,
-               SharedPreferences sharedPreferences) {
+               String installId) {
         this.connectivity = connectivity;
         this.appContext = appContext;
         this.resources = resources;
-        this.sharedPrefs = sharedPreferences;
+        this.installId = installId;
 
         if (resources != null) {
             displayMetrics = resources.getDisplayMetrics();
@@ -87,7 +84,6 @@ class DeviceData {
         locale = getLocale();
         cpuAbi = getCpuAbi();
         emulator = isEmulator();
-        id = retrieveUniqueInstallId();
         rooted = isRooted();
     }
 
@@ -109,7 +105,7 @@ class DeviceData {
 
     Map<String, Object> getDeviceData() {
         Map<String, Object> map = getDeviceDataSummary();
-        map.put("id", id);
+        map.put("id", installId);
         map.put("freeMemory", calculateFreeMemory());
         map.put("totalMemory", calculateTotalMemory());
         map.put("freeDisk", calculateFreeDisk());
@@ -134,7 +130,7 @@ class DeviceData {
     }
 
     String getId() {
-        return id;
+        return installId;
     }
 
     /**
@@ -225,20 +221,6 @@ class DeviceData {
     @NonNull
     private String getLocale() {
         return Locale.getDefault().toString();
-    }
-
-    /**
-     * Get the unique id for the current app installation, creating a unique UUID if needed
-     */
-    @Nullable
-    private String retrieveUniqueInstallId() {
-        String installId = sharedPrefs.getString(INSTALL_ID_KEY, null);
-
-        if (installId == null) {
-            installId = UUID.randomUUID().toString();
-            sharedPrefs.edit().putString(INSTALL_ID_KEY, installId).apply();
-        }
-        return installId;
     }
 
     /**
