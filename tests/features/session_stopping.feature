@@ -35,7 +35,7 @@ Scenario: When a new session is started the error uses different session informa
     And the payload field "events.0.session.id" equals the stored value "first_new_session_id"
     And I discard the oldest request
     And the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
-    And the payload field "animals.0" is stored as the value "second_new_session_id"
+    And the payload field "sessions.0.id" is stored as the value "second_new_session_id"
     And I discard the oldest request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the payload field "events.0.session.id" equals the stored value "second_new_session_id"
