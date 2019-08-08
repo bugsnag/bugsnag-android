@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-public class Configuration extends Observable implements Observer {
+public class Configuration extends Observable implements Observer, BugsnagConfiguration {
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
@@ -136,6 +136,7 @@ public class Configuration extends Observable implements Observer {
      * @return Context
      */
     @Nullable
+    @Override
     public String getContext() {
         return context;
     }
@@ -147,6 +148,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param context set what was happening at the time of a crash
      */
+    @Override
     public void setContext(@Nullable String context) {
         this.context = context;
         setChanged();
@@ -394,6 +396,7 @@ public class Configuration extends Observable implements Observer {
      * @return meta data
      */
     @NonNull
+    @Override
     public MetaData getMetaData() {
         return metaData;
     }
@@ -403,6 +406,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param metaData meta data
      */
+    @Override
     public void setMetaData(@NonNull MetaData metaData) {
         this.metaData.deleteObserver(this);
         //noinspection ConstantConditions
@@ -740,6 +744,7 @@ public class Configuration extends Observable implements Observer {
      * @param beforeNotify a callback to run before sending errors to Bugsnag
      * @see BeforeNotify
      */
+    @Override
     public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
         if (!beforeNotifyTasks.contains(beforeNotify)) {
             beforeNotifyTasks.add(beforeNotify);
@@ -766,6 +771,7 @@ public class Configuration extends Observable implements Observer {
      * @param beforeSend a callback to run before sending errors to Bugsnag
      * @see BeforeSend
      */
+    @Override
     public void addBeforeSend(@NonNull BeforeSend beforeSend) {
         if (!beforeSendTasks.contains(beforeSend)) {
             beforeSendTasks.add(beforeSend);

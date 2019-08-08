@@ -1041,7 +1041,6 @@ public class Client extends Observable implements Observer {
                 Logger.warn("Receiver not registered");
             }
         }
-
         super.finalize();
     }
 
@@ -1057,7 +1056,11 @@ public class Client extends Observable implements Observer {
      * @return the config
      */
     @NonNull
-    public Configuration getConfig() {
+    public BugsnagConfiguration getConfiguration() {
+        return config;
+    }
+
+    Configuration getConfig() { // TODO replace with immutable config
         return config;
     }
 
