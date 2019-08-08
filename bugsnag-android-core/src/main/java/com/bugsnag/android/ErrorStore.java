@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,12 +37,18 @@ class ErrorStore extends FileStore<Error> {
         void onErrorReadFailure(Error minimalError);
     }
 
+    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
+    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
+    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
+
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
+    private final ImmutableConfig config;
+    private final Configuration mutableConfig;
     private final Delegate delegate;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
@@ -61,8 +69,11 @@ class ErrorStore extends FileStore<Error> {
         }
     };
 
-    ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+    ErrorStore(@NonNull ImmutableConfig config, @NonNull Configuration mutableConfig,
+               @NonNull Context appContext, Delegate delegate) {
+        super(appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+        this.config = config;
+        this.mutableConfig = mutableConfig;
         this.delegate = delegate;
     }
 
@@ -147,10 +158,10 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Error error = ErrorReader.readError(config, errorFile);
+            Error error = ErrorReader.readError(config, mutableConfig, errorFile);
             Report report = new Report(config.getApiKey(), error);
 
-            for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+            for (BeforeSend beforeSend : mutableConfig.getBeforeSendTasks()) {
                 try {
                     if (!beforeSend.run(report)) {
                         deleteStoredFiles(Collections.singleton(errorFile));
@@ -161,7 +172,7 @@ class ErrorStore extends FileStore<Error> {
                     Logger.warn("BeforeSend threw an Exception", ex);
                 }
             }
-            DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
+            DeliveryParams deliveryParams = config.errorApiDeliveryParams();
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
 
             switch (deliveryStatus) {
@@ -258,7 +269,8 @@ class ErrorStore extends FileStore<Error> {
                 errClass = encodedErr.substring(4);
             }
             BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
-            Error error = new Error(config, exc, handledState, severity, null, null);
+            Error error = new Error(config, exc, handledState, severity, null,
+                    null, mutableConfig.getMetaData());
             error.setIncomplete(true);
             return error;
         } catch (IndexOutOfBoundsException exc) {
@@ -298,5 +310,4 @@ class ErrorStore extends FileStore<Error> {
     boolean isStartupCrash(long durationMs) {
         return durationMs < config.getLaunchCrashThresholdMs();
     }
-
 }

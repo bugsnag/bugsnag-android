@@ -64,8 +64,18 @@ final class BugsnagTestUtils {
         return configuration;
     }
 
+    static ImmutableConfig generateImmutableConfig() {
+        return convert(generateConfiguration());
+    }
+
+
+    static ImmutableConfig convert(Configuration config) {
+        return ImmutableConfigKt.convertToImmutableConfig(config);
+    }
+
     static SessionTracker generateSessionTracker() {
-        return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient(),
+        Configuration config = generateConfiguration();
+        return new SessionTracker(convert(config), config, BugsnagTestUtils.generateClient(),
             generateSessionStore());
     }
 
@@ -75,7 +85,7 @@ final class BugsnagTestUtils {
 
     @NonNull
     static SessionStore generateSessionStore() {
-        return new SessionStore(generateConfiguration(), InstrumentationRegistry.getContext());
+        return new SessionStore(InstrumentationRegistry.getContext());
     }
 
     public static Delivery generateDelivery() {

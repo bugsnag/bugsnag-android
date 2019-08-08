@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +46,7 @@ public class AppDataTest {
 
         Context context = InstrumentationRegistry.getContext();
         PackageManager packageManager = context.getPackageManager();
-        Configuration config = new Configuration("api-key");
+        ImmutableConfig config = generateImmutableConfig();
         AppData obj = new AppData(context, packageManager, config, sessionTracker);
         this.appData = obj.getAppData();
     }

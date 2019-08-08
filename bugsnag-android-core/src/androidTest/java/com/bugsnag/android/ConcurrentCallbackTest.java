@@ -33,7 +33,8 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientNotifyModification() throws Exception {
-        final Collection<BeforeNotify> beforeNotifyTasks = client.config.getBeforeNotifyTasks();
+        Configuration config = (Configuration) client.getConfiguration();
+        final Collection<BeforeNotify> beforeNotifyTasks = config.getBeforeNotifyTasks();
         client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
@@ -48,8 +49,9 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientBreadcrumbModification() throws Exception {
+        Configuration config = (Configuration) client.getConfiguration();
         final Collection<BeforeRecordBreadcrumb> breadcrumbTasks =
-            client.config.getBeforeRecordBreadcrumbTasks();
+                config.getBeforeRecordBreadcrumbTasks();
 
         client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
             @Override

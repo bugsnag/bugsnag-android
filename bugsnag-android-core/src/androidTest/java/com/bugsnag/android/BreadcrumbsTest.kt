@@ -22,13 +22,11 @@ import java.util.Locale
 class BreadcrumbsTest {
 
     private lateinit var breadcrumbs: Breadcrumbs
-    private lateinit var config: Configuration
     private var client: Client? = null
 
     @Before
     fun setUp() {
-        config = generateConfiguration()
-        breadcrumbs = Breadcrumbs(config)
+        breadcrumbs = Breadcrumbs(32)
         client = generateClient()
     }
 
@@ -62,40 +60,19 @@ class BreadcrumbsTest {
     @Test
     @Throws(JSONException::class, IOException::class)
     fun testSizeLimitBeforeAdding() {
-        config.maxBreadcrumbs = 5
+        breadcrumbs = Breadcrumbs(5)
 
         for (k in 1..6) {
             breadcrumbs.add(Breadcrumb("$k"))
         }
 
         val json = streamableToJsonArray(breadcrumbs)
-        assertEquals(config.maxBreadcrumbs, json.length())
+        assertEquals(5, json.length())
 
         val firstCrumb = json.getJSONObject(0)
-        val lastCrumb = json.getJSONObject(config.maxBreadcrumbs - 1)
+        val lastCrumb = json.getJSONObject(4)
         assertEquals("2", firstCrumb.getJSONObject("metaData").get("message"))
         assertEquals("6", lastCrumb.getJSONObject("metaData").get("message"))
-    }
-
-    /**
-     * Verifies that setting the max limit removes the oldest breadcrumb if the limit is exceeded
-     */
-    @Test
-    fun testSizeLimitAfterAdding() {
-        val maxSize = 5
-
-        for (k in 1..7) {
-            breadcrumbs.add(Breadcrumb("$k"))
-        }
-
-        config.maxBreadcrumbs = maxSize
-        val json = streamableToJsonArray(breadcrumbs)
-        assertEquals(maxSize, json.length())
-
-        val firstCrumb = json.getJSONObject(0)
-        val lastCrumb = json.getJSONObject(maxSize - 1)
-        assertEquals("3", firstCrumb.getJSONObject("metaData").get("message"))
-        assertEquals("7", lastCrumb.getJSONObject("metaData").get("message"))
     }
 
     /**
@@ -103,10 +80,9 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeEmpty() {
+        breadcrumbs = Breadcrumbs(0)
         breadcrumbs.add(Breadcrumb("1"))
         breadcrumbs.add(Breadcrumb("2"))
-
-        config.maxBreadcrumbs = 0
         breadcrumbs.add(Breadcrumb("3"))
         assertEquals(0, streamableToJsonArray(breadcrumbs).length())
     }
@@ -116,9 +92,9 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeNegative() {
+        breadcrumbs = Breadcrumbs(-1)
         breadcrumbs.add(Breadcrumb("1"))
-        config.maxBreadcrumbs = -1
-        assertEquals(1, streamableToJsonArray(breadcrumbs).length())
+        assertEquals(0, streamableToJsonArray(breadcrumbs).length())
     }
 
     /**

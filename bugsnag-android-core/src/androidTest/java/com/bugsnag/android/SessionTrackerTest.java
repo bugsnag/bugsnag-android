@@ -23,6 +23,7 @@ public class SessionTrackerTest {
     private User user;
     private Configuration configuration;
     private Client client;
+    private ImmutableConfig immutableConfig;
 
     /**
      * Configures a session tracker that automatically captures sessions
@@ -31,11 +32,12 @@ public class SessionTrackerTest {
      */
     @Before
     public void setUp() throws Exception {
-        configuration = new Configuration("test");
+        configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
         client = generateClient();
-        sessionTracker
-            = new SessionTracker(configuration, client, generateSessionStore());
+        immutableConfig = BugsnagTestUtils.generateImmutableConfig();
+        sessionTracker = new SessionTracker(immutableConfig,
+                configuration, client, generateSessionStore());
         configuration.setAutoCaptureSessions(true);
         user = new User();
     }
@@ -126,7 +128,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testZeroSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, client,
+        sessionTracker = new SessionTracker(immutableConfig, configuration, client,
             0, generateSessionStore());
 
         long now = System.currentTimeMillis();
@@ -141,7 +143,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(configuration, client,
+        sessionTracker = new SessionTracker(immutableConfig, configuration, client,
             100, generateSessionStore());
 
         long now = System.currentTimeMillis();

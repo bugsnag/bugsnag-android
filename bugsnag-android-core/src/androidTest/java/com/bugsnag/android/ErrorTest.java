@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.convert;
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
@@ -33,7 +34,7 @@ import java.util.Map;
 @SmallTest
 public class ErrorTest {
 
-    private Configuration config;
+    private ImmutableConfig config;
     private Error error;
     private Client client;
 
@@ -44,10 +45,11 @@ public class ErrorTest {
      */
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("api-key");
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        this.config = convert(configuration);
         RuntimeException exception = new RuntimeException("Example message");
-        error = new Error.Builder(config, exception, generateSessionTracker(),
-            Thread.currentThread(), false).build();
+        error = new Error.Builder(this.config, exception, generateSessionTracker(),
+            Thread.currentThread(), false, new MetaData()).build();
         client = generateClient();
     }
 
@@ -63,18 +65,20 @@ public class ErrorTest {
 
     @Test
     public void testShouldIgnoreClass() {
+        Configuration config = BugsnagTestUtils.generateConfiguration();
         config.setIgnoreClasses(new String[]{"java.io.IOException"});
+        this.config = convert(config);
 
         // Shouldn't ignore classes not in ignoreClasses
         RuntimeException runtimeException = new RuntimeException("Test");
-        Error error = new Error.Builder(config,
-            runtimeException, generateSessionTracker(), Thread.currentThread(), false).build();
+        Error error = new Error.Builder(this.config, runtimeException, generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData()).build();
         assertFalse(error.shouldIgnoreClass());
 
         // Should ignore errors in ignoreClasses
         IOException ioException = new IOException("Test");
-        error = new Error.Builder(config,
-            ioException, generateSessionTracker(), Thread.currentThread(), false).build();
+        error = new Error.Builder(this.config, ioException, generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData()).build();
         assertTrue(error.shouldIgnoreClass());
     }
 
@@ -104,8 +108,8 @@ public class ErrorTest {
 
     @Test
     public void testHandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config,
-            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
+        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
 
@@ -122,8 +126,8 @@ public class ErrorTest {
 
     @Test
     public void testUnhandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config,
-            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
+        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_UNHANDLED_EXCEPTION)
             .severity(Severity.ERROR)
             .build();
@@ -141,8 +145,8 @@ public class ErrorTest {
 
     @Test
     public void testPromiseRejectionSerialisation() throws Exception {
-        Error err = new Error.Builder(config,
-            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
+        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_PROMISE_REJECTION)
             .severity(Severity.ERROR)
             .build();
@@ -160,8 +164,8 @@ public class ErrorTest {
 
     @Test
     public void testLogSerialisation() throws Exception {
-        Error err = new Error.Builder(config,
-            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
+        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_LOG)
             .severity(Severity.WARNING)
             .attributeValue("warning")
@@ -196,8 +200,8 @@ public class ErrorTest {
 
     @Test
     public void testStrictModeSerialisation() throws Exception {
-        Error err = new Error.Builder(config,
-            new RuntimeException(), generateSessionTracker(), Thread.currentThread(), false)
+        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_STRICT_MODE)
             .attributeValue("Test")
             .build();
@@ -263,8 +267,8 @@ public class ErrorTest {
     public void testSessionIncluded() throws Exception {
         SessionTracker sessionTracker = generateSessionTracker();
         final Session session = sessionTracker.startNewSession(new Date(), new User(), false);
-        Error err = new Error.Builder(config,
-            new RuntimeException(), sessionTracker, Thread.currentThread(), false).build();
+        Error err = new Error.Builder(config, new RuntimeException(), sessionTracker,
+                Thread.currentThread(), false, new MetaData()).build();
 
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
@@ -284,9 +288,8 @@ public class ErrorTest {
 
     @Test(expected = JSONException.class)
     public void testSessionExcluded() throws Exception {
-        Error err = new Error.Builder(config,
-            new RuntimeException(), generateSessionTracker(),
-            Thread.currentThread(), false).build();
+        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+            Thread.currentThread(), false, new MetaData()).build();
 
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
@@ -296,14 +299,12 @@ public class ErrorTest {
     @Test
     public void checkExceptionMessageNullity() throws Exception {
         String msg = "Foo";
-        Error err = new Error.Builder(config,
-            new RuntimeException(msg), generateSessionTracker(),
-            Thread.currentThread(), false).build();
+        Error err = new Error.Builder(config, new RuntimeException(msg), generateSessionTracker(),
+            Thread.currentThread(), false, new MetaData()).build();
         assertEquals(msg, err.getExceptionMessage());
 
-        err = new Error.Builder(config,
-            new RuntimeException(), generateSessionTracker(),
-            Thread.currentThread(), false).build();
+        err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+            Thread.currentThread(), false, new MetaData()).build();
         assertEquals("", err.getExceptionMessage());
     }
 
@@ -315,8 +316,13 @@ public class ErrorTest {
 
     @Test
     public void testSendThreadsDisabled() throws Exception {
-        config.setSendThreads(false);
-        JSONObject errorJson = streamableToJson(error);
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        configuration.setSendThreads(false);
+        Error err = new Error.Builder(convert(configuration), new RuntimeException(),
+                generateSessionTracker(), Thread.currentThread(),
+                false, new MetaData()).build();
+
+        JSONObject errorJson = streamableToJson(err);
         assertFalse(errorJson.has("threads"));
     }
 
@@ -324,8 +330,8 @@ public class ErrorTest {
     public void testBugsnagExceptionName() throws Exception {
         BugsnagException exception = new BugsnagException("Busgang", "exceptional",
             new StackTraceElement[]{});
-        Error err = new Error.Builder(config,
-            exception, generateSessionTracker(), Thread.currentThread(), false).build();
+        Error err = new Error.Builder(config, exception, generateSessionTracker(),
+                Thread.currentThread(), false, new MetaData()).build();
         assertEquals("Busgang", err.getExceptionName());
     }
 
@@ -368,10 +374,8 @@ public class ErrorTest {
 
     @Test
     public void testBuilderMetaData() {
-        Configuration config = new Configuration("api-key");
-        Error.Builder builder = new Error.Builder(config,
-            new RuntimeException("foo"), generateSessionTracker(),
-            Thread.currentThread(), false);
+        Error.Builder builder = new Error.Builder(config, new RuntimeException("foo"),
+                generateSessionTracker(), Thread.currentThread(), false, new MetaData());
 
         assertNotNull(builder.metaData(new MetaData()).build());
 
@@ -415,17 +419,39 @@ public class ErrorTest {
 
     @Test
     public void testBuilderNullSession() throws Throwable {
-        Configuration config = new Configuration("api-key");
+        Configuration config = BugsnagTestUtils.generateConfiguration();
         config.setAutoCaptureSessions(false);
         RuntimeException exception = new RuntimeException("foo");
 
         SessionTracker sessionTracker = generateSessionTracker();
         sessionTracker.startNewSession(new Date(), new User(), true);
-        error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false).build();
+        error = new Error.Builder(BugsnagTestUtils.convert(config), exception, sessionTracker,
+            Thread.currentThread(), false, new MetaData()).build();
 
         JSONObject errorJson = streamableToJson(error);
         assertFalse(errorJson.has("session"));
+    }
+
+    @Test
+    public void shouldIgnoreEmpty() {
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        configuration.setIgnoreClasses(new String[]{});
+
+        error = new Error.Builder(BugsnagTestUtils.convert(configuration), new RuntimeException(),
+                generateSessionTracker(), Thread.currentThread(), false,
+                new MetaData()).build();
+        assertFalse(error.shouldIgnoreClass());
+    }
+
+    @Test
+    public void shouldIgnoreMatches() {
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        configuration.setIgnoreClasses(new String[]{"java.io.IOException"});
+
+        error = new Error.Builder(BugsnagTestUtils.convert(configuration), new IOException(),
+                generateSessionTracker(), Thread.currentThread(), false,
+                new MetaData()).build();
+        assertTrue(error.shouldIgnoreClass());
     }
 
     private void validateEmptyAttributes(JSONObject severityReason) {

@@ -36,6 +36,8 @@ import java.util.TimeZone;
 public class ErrorReaderTest {
 
     private static Error error = null;
+    private static Configuration mutableConfig;
+    private static ImmutableConfig immutableConfig;
 
     /** Constructs an Error from a JSON file */
     @BeforeClass
@@ -54,7 +56,9 @@ public class ErrorReaderTest {
         } finally {
             output.close();
         }
-        error = ErrorReader.readError(new Configuration("key"), fixtureFile);
+        mutableConfig = new Configuration("key");
+        immutableConfig = BugsnagTestUtils.convert(mutableConfig);
+        error = ErrorReader.readError(immutableConfig, mutableConfig, fixtureFile);
     }
 
     @Test
@@ -72,7 +76,7 @@ public class ErrorReaderTest {
         } catch (Exception ex) {
             assertTrue("Failed to configure test", false);
         }
-        ErrorReader.readError(new Configuration("api-key"), fixtureFile);
+        ErrorReader.readError(immutableConfig, mutableConfig,  fixtureFile);
     }
 
     @Test(expected = IOException.class)
@@ -85,7 +89,7 @@ public class ErrorReaderTest {
         } catch (Exception ex) {
             assertTrue("Failed to configure test", false);
         }
-        ErrorReader.readError(new Configuration("api-key"), fixtureFile);
+        ErrorReader.readError(immutableConfig, mutableConfig, fixtureFile);
     }
 
     @Test

@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @FlakyTest(detail = "Checks a stacktrace's line number, so fails when lines are added/deleted.")
@@ -39,12 +41,12 @@ public class StacktraceTest {
 
     @Test
     public void testBasicException() throws JSONException, IOException {
-        String[] projectPackages = config.getProjectPackages();
+        List<String> projectPackages = Collections.<String>emptyList();
         Stacktrace stacktrace = new Stacktrace(exception.getStackTrace(), projectPackages);
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
         JSONObject firstFrame = (JSONObject) stacktraceJson.get(0);
-        assertEquals(37, firstFrame.get("lineNumber"));
+        assertEquals(39, firstFrame.get("lineNumber"));
         assertEquals("com.bugsnag.android.StacktraceTest.setUp", firstFrame.get("method"));
         assertEquals("StacktraceTest.java", firstFrame.get("file"));
         assertFalse(firstFrame.has("inProject"));
@@ -52,9 +54,7 @@ public class StacktraceTest {
 
     @Test
     public void testInProject() throws JSONException, IOException {
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
-
-        String[] projectPackages = config.getProjectPackages();
+        List<String> projectPackages = Collections.singletonList("com.bugsnag.android");
         Stacktrace stacktrace = new Stacktrace(exception.getStackTrace(), projectPackages);
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
@@ -72,7 +72,8 @@ public class StacktraceTest {
         }
 
         StackTraceElement[] ary = new StackTraceElement[elements.size()];
-        Stacktrace stacktrace = new Stacktrace(elements.toArray(ary), config.getProjectPackages());
+        Stacktrace stacktrace = new Stacktrace(elements.toArray(ary),
+                Collections.<String>emptyList());
         JSONArray jsonArray = streamableToJsonArray(stacktrace);
         assertEquals(200, jsonArray.length());
     }
@@ -80,8 +81,10 @@ public class StacktraceTest {
     @Test
     public void testClassNameResolution() throws JSONException, IOException {
         StackTraceElement[] stackTraceElements = {
-            new StackTraceElement("SomeClass", "someMethod", "someFile", 12)};
-        Stacktrace stacktrace = new Stacktrace(stackTraceElements, config.getProjectPackages());
+            new StackTraceElement("SomeClass", "someMethod",
+                    "someFile", 12)};
+        Stacktrace stacktrace = new Stacktrace(stackTraceElements,
+                Collections.<String>emptyList());
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
         JSONObject frame = (JSONObject) stacktraceJson.get(0);
@@ -90,7 +93,7 @@ public class StacktraceTest {
         StackTraceElement stackTraceElement = new StackTraceElement("",
             "someMethod", "someFile", 12);
         Stacktrace stacktrace1 = new Stacktrace(
-            new StackTraceElement[]{stackTraceElement}, config.getProjectPackages());
+            new StackTraceElement[]{stackTraceElement}, Collections.<String>emptyList());
         stacktraceJson = streamableToJsonArray(stacktrace1);
 
         frame = (JSONObject) stacktraceJson.get(0);

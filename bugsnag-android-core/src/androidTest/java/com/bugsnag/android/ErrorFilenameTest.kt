@@ -16,7 +16,8 @@ class SuperCaliFragilisticExpiAlidociousBeanFactoryException: RuntimeException()
 class ErrorFilenameTest {
 
     private lateinit var errorStore: ErrorStore
-    private val config = Configuration("api-key")
+
+    private val config = BugsnagTestUtils.generateImmutableConfig()
 
     /**
      * Generates a client and ensures that its errorStore has 0 files persisted
@@ -27,7 +28,9 @@ class ErrorFilenameTest {
     @Throws(Exception::class)
     fun setUp() {
         val context = InstrumentationRegistry.getContext()
-        errorStore = ErrorStore(config, context, null)
+        errorStore = ErrorStore(
+            config,
+            BugsnagTestUtils.generateConfiguration(), context, null)
     }
 
     @Test
@@ -149,7 +152,7 @@ class ErrorFilenameTest {
             unhandled -> HandledState.REASON_UNHANDLED_EXCEPTION
             else -> HandledState.REASON_HANDLED_EXCEPTION
         }
-        return Error.Builder(config, exc, sessionTracker, currentThread, unhandled)
+        return Error.Builder(config, exc, sessionTracker, currentThread, unhandled, MetaData())
             .severityReasonType(handledState)
             .severity(severity).build()
     }

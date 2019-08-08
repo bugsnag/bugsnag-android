@@ -23,7 +23,8 @@ class ErrorReader {
      *                     such as if the JSON syntax is invalid or a required
      *                     field is missing.
      */
-    static Error readError(@NonNull Configuration config, @NonNull File errorFile)
+    static Error readError(@NonNull ImmutableConfig config,
+                           @NonNull BugsnagConfiguration mutableConfig, @NonNull File errorFile)
             throws IOException {
         JsonReader reader = null;
 
@@ -104,9 +105,9 @@ class ErrorReader {
                                                          unhandled, severityReasonAttribute);
 
             Error error = new Error(config, exceptions.getException(), handledState, severity,
-                                    session, threadState);
+                                    session, threadState, mutableConfig.getMetaData());
             error.getExceptions().setExceptionType(exceptions.getExceptionType());
-            error.setProjectPackages(projectPackages.toArray(new String[]{}));
+            error.setProjectPackages(projectPackages);
             error.setUser(user);
             error.setContext(context);
             error.setGroupingHash(groupingHash);
@@ -125,9 +126,9 @@ class ErrorReader {
         }
     }
 
-    private static Breadcrumbs readBreadcrumbs(Configuration config, JsonReader reader)
+    private static Breadcrumbs readBreadcrumbs(ImmutableConfig config, JsonReader reader)
         throws IOException {
-        Breadcrumbs crumbs = new Breadcrumbs(config);
+        Breadcrumbs crumbs = new Breadcrumbs(config.getMaxBreadcrumbs());
         reader.beginArray();
         while (reader.hasNext()) {
             Breadcrumb breadcrumb = readBreadcrumb(reader);
@@ -183,7 +184,7 @@ class ErrorReader {
         }
     }
 
-    private static Exceptions readExceptions(Configuration config, JsonReader reader)
+    private static Exceptions readExceptions(ImmutableConfig config, JsonReader reader)
         throws IOException {
         reader.beginArray();
 
@@ -395,7 +396,7 @@ class ErrorReader {
         return user;
     }
 
-    private static ThreadState readThreadState(Configuration config, JsonReader reader)
+    private static ThreadState readThreadState(ImmutableConfig config, JsonReader reader)
         throws IOException {
         List<CachedThread> threads = new ArrayList<>();
         reader.beginArray();
@@ -410,7 +411,7 @@ class ErrorReader {
         return new ThreadState(threads.toArray(new CachedThread[0]));
     }
 
-    private static CachedThread readThread(Configuration config,
+    private static CachedThread readThread(ImmutableConfig config,
                                            JsonReader reader) throws IOException {
         long id = 0;
         String name = null;

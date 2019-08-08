@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -123,5 +124,23 @@ class ImmutableConfigTest {
             assertEquals(37, seed.maxBreadcrumbs)
             assertTrue(seed.persistUserBetweenSessions)
         }
+    }
+
+    @Test
+    fun verifyErrorApiHeaders() {
+        val config = convertToImmutableConfig(seed)
+        val headers = config.errorApiDeliveryParams().headers
+        assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
+        assertNotNull(headers["Bugsnag-Sent-At"])
+        assertNotNull(headers["Bugsnag-Payload-Version"])
+    }
+
+    @Test
+    fun verifySessionApiHeaders() {
+        val config = convertToImmutableConfig(seed)
+        val headers = config.sessionApiDeliveryParams().headers
+        assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
+        assertNotNull(headers["Bugsnag-Sent-At"])
+        assertNotNull(headers["Bugsnag-Payload-Version"])
     }
 }

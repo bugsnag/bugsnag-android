@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.support.test.filters.SmallTest
 import android.support.test.runner.AndroidJUnit4
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.json.JSONArray
 import org.json.JSONObject
@@ -14,7 +15,7 @@ import org.junit.runner.RunWith
 @SmallTest
 class ThreadStateTest {
 
-    private val configuration = Configuration("api-key")
+    private val configuration = generateImmutableConfig()
     private val threadState = ThreadState(configuration, Thread.currentThread(), Thread.getAllStackTraces(), null)
     private val json = streamableToJsonArray(threadState)
 

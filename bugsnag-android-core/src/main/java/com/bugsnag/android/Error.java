@@ -4,7 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,8 +43,9 @@ public class Error implements JsonStream.Streamable {
     private String context;
 
     @NonNull
-    final Configuration config;
-    private String[] projectPackages;
+    final ImmutableConfig config;
+    private Collection<String> projectPackages;
+    private final MetaData globalMetaData;
     private final Exceptions exceptions;
     private Breadcrumbs breadcrumbs;
     private final Throwable exception;
@@ -50,9 +54,9 @@ public class Error implements JsonStream.Streamable {
     private final ThreadState threadState;
     private boolean incomplete = false;
 
-    Error(@NonNull Configuration config, @NonNull Throwable exception,
+    Error(@NonNull ImmutableConfig config, @NonNull Throwable exception,
           HandledState handledState, @NonNull Severity severity,
-          Session session, ThreadState threadState) {
+          Session session, ThreadState threadState, MetaData globalMetaData) {
         this.threadState = threadState;
         this.config = config;
         this.exception = exception;
@@ -61,13 +65,14 @@ public class Error implements JsonStream.Streamable {
         this.session = session;
 
         projectPackages = config.getProjectPackages();
+        this.globalMetaData = globalMetaData;
         exceptions = new Exceptions(config, exception);
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         // Merge error metaData into global metadata and apply filters
-        MetaData mergedMetaData = MetaData.merge(config.getMetaData(), metaData);
+        MetaData mergedMetaData = MetaData.merge(globalMetaData, metaData);
 
         // Write error basics
         writer.beginObject();
@@ -377,7 +382,7 @@ public class Error implements JsonStream.Streamable {
     }
 
     boolean shouldIgnoreClass() {
-        return config.shouldIgnoreClass(getExceptionName());
+        return config.getIgnoreClasses().contains(getExceptionName());
     }
 
     @NonNull
@@ -393,11 +398,11 @@ public class Error implements JsonStream.Streamable {
         return session;
     }
 
-    String[] getProjectPackages() {
+    Collection<String> getProjectPackages() {
         return projectPackages;
     }
 
-    void setProjectPackages(String[] projectPackages) {
+    void setProjectPackages(Collection<String> projectPackages) {
         this.projectPackages = projectPackages;
         if (exceptions != null) {
             exceptions.setProjectPackages(projectPackages);
@@ -405,35 +410,38 @@ public class Error implements JsonStream.Streamable {
     }
 
     static class Builder {
-        private final Configuration config;
+        private final ImmutableConfig config;
         private final Throwable exception;
         private final SessionTracker sessionTracker;
         private final ThreadState threadState;
         private Severity severity = Severity.WARNING;
         private MetaData metaData;
+        private MetaData globalMetaData;
         private String attributeValue;
 
         @HandledState.SeverityReason
         private String severityReasonType;
 
-        Builder(@NonNull Configuration config,
+        Builder(@NonNull ImmutableConfig config,
                 @NonNull Throwable exception,
                 SessionTracker sessionTracker,
                 @NonNull Thread thread,
-                boolean unhandled) {
+                boolean unhandled,
+                MetaData globalMetaData) {
             Throwable exc = unhandled ? exception : null;
             this.threadState = new ThreadState(config, thread, Thread.getAllStackTraces(), exc);
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
             this.sessionTracker = sessionTracker;
+            this.globalMetaData = globalMetaData;
         }
 
-        Builder(@NonNull Configuration config, @NonNull String name,
+        Builder(@NonNull ImmutableConfig config, @NonNull String name,
                 @NonNull String message, @NonNull StackTraceElement[] frames,
-                SessionTracker sessionTracker, Thread thread) {
+                SessionTracker sessionTracker, Thread thread, MetaData globalMetaData) {
             this(config, new BugsnagException(name, message, frames), sessionTracker,
-                thread, false);
+                thread, false, globalMetaData);
         }
 
         Builder severityReasonType(@HandledState.SeverityReason String severityReasonType) {
@@ -462,7 +470,7 @@ public class Error implements JsonStream.Streamable {
             Session session = getSession(handledState);
 
             Error error = new Error(config, exception, handledState,
-                severity, session, threadState);
+                severity, session, threadState, globalMetaData);
 
             if (metaData != null) {
                 error.setMetaData(metaData);

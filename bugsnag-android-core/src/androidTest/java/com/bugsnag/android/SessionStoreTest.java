@@ -32,7 +32,7 @@ public class SessionStoreTest {
     public void setUp() throws Exception {
         Configuration config = new Configuration("api-key");
         Context context = InstrumentationRegistry.getContext();
-        SessionStore sessionStore = new SessionStore(config, context);
+        SessionStore sessionStore = new SessionStore(context);
         assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);

@@ -22,11 +22,11 @@ import java.io.IOException;
 @SmallTest
 public class ExceptionsTest {
 
-    private Configuration config;
+    private ImmutableConfig config;
 
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("api-key");
+        config = BugsnagTestUtils.generateImmutableConfig();
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ExceptionsTest {
         StackTraceElement[] frames = new StackTraceElement[]{element};
         Error error = new Error.Builder(config, "RuntimeException",
             "Example message", frames, BugsnagTestUtils.generateSessionTracker(),
-            Thread.currentThread()).build();
+            Thread.currentThread(), new MetaData()).build();
         Exceptions exceptions = new Exceptions(config, error.getException());
 
         JSONObject exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0);

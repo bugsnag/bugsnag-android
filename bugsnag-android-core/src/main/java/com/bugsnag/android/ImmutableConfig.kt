@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
-// TODO check whether these need to be null?
+import java.util.Date
+import java.util.HashMap
 
 internal data class ImmutableConfig(
     val apiKey: String,
@@ -10,9 +11,9 @@ internal data class ImmutableConfig(
     val autoCaptureSessions: Boolean,
     val autoCaptureBreadcrumbs: Boolean,
     val sendThreads: Boolean,
-    val ignoreClasses: List<String>,
-    val notifyReleaseStages: List<String>,
-    val projectPackages: List<String>,
+    val ignoreClasses: Collection<String>,
+    val notifyReleaseStages: Collection<String>,
+    val projectPackages: Collection<String>,
     val releaseStage: String?,
     val buildUuid: String?,
     val appVersion: String?,
@@ -24,7 +25,56 @@ internal data class ImmutableConfig(
     val launchCrashThresholdMs: Long,
     val loggingEnabled: Boolean,
     val maxBreadcrumbs: Int
-)
+) {
+
+    companion object {
+        private const val HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version"
+        private const val HEADER_API_KEY = "Bugsnag-Api-Key"
+        private const val HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At"
+    }
+
+    /**
+     * Checks if the given release stage should be notified or not
+     *
+     * @param releaseStage the release stage to check
+     * @return true if the release state should be notified else false
+     */
+    @JvmName("shouldNotifyForReleaseStage")
+    internal fun shouldNotifyForReleaseStage() = notifyReleaseStages.isEmpty() || notifyReleaseStages.contains(releaseStage)
+
+    @JvmName("errorApiDeliveryParams")
+    internal fun errorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
+
+    @JvmName("sessionApiDeliveryParams")
+    internal fun sessionApiDeliveryParams() = DeliveryParams(endpoints.sessions, sessionApiHeaders())
+
+    /**
+     * Supplies the headers which must be used in any request sent to the Error Reporting API.
+     *
+     * @return the HTTP headers
+     */
+    private fun errorApiHeaders(): Map<String, String> {
+        val map = HashMap<String, String>()
+        map[HEADER_API_PAYLOAD_VERSION] = "4.0"
+        map[HEADER_API_KEY] = apiKey
+        map[HEADER_BUGSNAG_SENT_AT] = DateUtils.toIso8601(Date())
+        return map
+    }
+
+    /**
+     * Supplies the headers which must be used in any request sent to the Session Tracking API.
+     *
+     * @return the HTTP headers
+     */
+    private fun sessionApiHeaders(): Map<String, String> {
+        val map = HashMap<String, String>()
+        map[HEADER_API_PAYLOAD_VERSION] = "1.0"
+        map[HEADER_API_KEY] = apiKey
+        map[HEADER_BUGSNAG_SENT_AT] = DateUtils.toIso8601(Date())
+        return map
+    }
+
+}
 
 internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
     return ImmutableConfig(

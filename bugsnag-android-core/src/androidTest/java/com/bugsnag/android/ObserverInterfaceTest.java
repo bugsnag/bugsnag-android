@@ -65,7 +65,7 @@ public class ObserverInterfaceTest {
     public void testUpdateMetadataFromConfigSendsMessage() {
         MetaData metadata = new MetaData(new HashMap<String, Object>());
         metadata.addToTab("foo", "bar", "baz");
-        client.getConfig().setMetaData(metadata);
+        client.getConfiguration().setMetaData(metadata);
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_METADATA, Map.class);
         assertEquals(metadata.store, value);
@@ -130,15 +130,6 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testConfigSetReleaseStageSendsMessage() {
-        client.getConfig().setReleaseStage("prod-2");
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, String.class);
-        assertEquals("prod-2", value);
-    }
-
-
-    @Test
     public void testNotifySendsMessage() {
         client.startSession();
         client.notify(new Exception("ruh roh"));
@@ -168,40 +159,8 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testConfigSetBuildUUIDSendsMessage() {
-        client.getConfig().setBuildUuid("234423-a");
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_BUILD_UUID, String.class);
-        assertEquals("234423-a", value);
-    }
-
-    @Test
-    public void testClientSetAppVersionSendsMessage() {
-        client.getConfig().setAppVersion("300.0.1x");
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_APP_VERSION, String.class);
-        assertEquals("300.0.1x", value);
-    }
-
-    @Test
-    public void testConfigSetAppVersionSendsMessage() {
-        client.getConfig().setAppVersion("300.0.1x");
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_APP_VERSION, String.class);
-        assertEquals("300.0.1x", value);
-    }
-
-    @Test
     public void testClientSetContextSendsMessage() {
         client.setContext("Pod Bay");
-        String context = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_CONTEXT, String.class);
-        assertEquals("Pod Bay", context);
-    }
-
-    @Test
-    public void testConfigSetContextSendsMessage() {
-        client.getConfig().setContext("Pod Bay");
         String context = (String)findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_CONTEXT, String.class);
         assertEquals("Pod Bay", context);

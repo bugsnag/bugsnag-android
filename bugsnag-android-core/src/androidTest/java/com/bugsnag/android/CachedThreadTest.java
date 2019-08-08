@@ -27,8 +27,8 @@ public class CachedThreadTest {
             new StackTraceElement("App", "launch", "App.java", 70),
         };
 
-        CachedThread thread = new CachedThread(new Configuration("key"), 24, "main-one", "ando",
-                                                true, stacktrace);
+        ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
+        CachedThread thread = new CachedThread(config, 24, "main-one", "ando", true, stacktrace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
@@ -56,8 +56,8 @@ public class CachedThreadTest {
             new StackTraceElement("App", "launch", "App.java", 70),
         };
 
-        CachedThread thread = new CachedThread(new Configuration("key"), 24, "main-one", "ando",
-                                                false, stacktrace);
+        ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
+        CachedThread thread = new CachedThread(config, 24, "main-one", "ando",false, stacktrace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));

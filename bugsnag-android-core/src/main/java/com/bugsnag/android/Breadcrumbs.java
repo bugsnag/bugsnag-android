@@ -13,10 +13,14 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
     private static final int MAX_PAYLOAD_SIZE = 4096;
     final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
 
-    private final Configuration configuration;
+    private final int maxBreadcrumbs;
 
-    Breadcrumbs(Configuration configuration) {
-        this.configuration = configuration;
+    Breadcrumbs(int maxBreadcrumbs) {
+        if (maxBreadcrumbs > 0) {
+            this.maxBreadcrumbs = maxBreadcrumbs;
+        } else {
+            this.maxBreadcrumbs = 0;
+        }
     }
 
     @Override
@@ -59,8 +63,6 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
     }
 
     private void pruneBreadcrumbs() {
-        int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
-
         // Remove oldest breadcrumbs until new max size reached
         while (store.size() > maxBreadcrumbs) {
             store.poll();

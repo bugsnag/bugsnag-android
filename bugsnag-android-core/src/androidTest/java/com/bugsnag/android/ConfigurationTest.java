@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collection;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
@@ -26,7 +27,7 @@ public class ConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("api-key");
+        config = BugsnagTestUtils.generateConfiguration();
     }
 
     @Test
@@ -42,31 +43,31 @@ public class ConfigurationTest {
     @Test
     public void testShouldNotify() {
         // Should notify if notifyReleaseStages is null
-        assertTrue(config.shouldNotifyForReleaseStage("development"));
+        ImmutableConfig immutableConfig;
+        immutableConfig = createConfigWithReleaseStages(config,
+                config.getNotifyReleaseStages(), "development");
+        assertTrue(immutableConfig.shouldNotifyForReleaseStage());
 
         // Shouldn't notify if notifyReleaseStages is set and releaseStage is null
-        config.setNotifyReleaseStages(new String[]{"example"});
-        assertFalse(config.shouldNotifyForReleaseStage(null));
+        immutableConfig = createConfigWithReleaseStages(config, new String[]{"example"}, null);
+        assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
         // Shouldn't notify if releaseStage not in notifyReleaseStages
-        String releaseStage = "production";
-        config.setNotifyReleaseStages(new String[]{releaseStage});
-        assertFalse(config.shouldNotifyForReleaseStage("not-production"));
+        String[] stages = {"production"};
+        immutableConfig = createConfigWithReleaseStages(config, stages, "not-production");
+        assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
         // Should notify if releaseStage in notifyReleaseStages
-        config.setNotifyReleaseStages(new String[]{releaseStage});
-        assertTrue(config.shouldNotifyForReleaseStage(releaseStage));
+        immutableConfig = createConfigWithReleaseStages(config, stages, "production");
+        assertTrue(immutableConfig.shouldNotifyForReleaseStage());
     }
 
-    @Test
-    public void testShouldIgnore() {
-        // Should not ignore by default
-        String className = "java.io.IOException";
-        assertFalse(config.shouldIgnoreClass(className));
-
-        // Should ignore when added to ignoreClasses
-        config.setIgnoreClasses(new String[]{className});
-        assertTrue(config.shouldIgnoreClass(className));
+    private ImmutableConfig createConfigWithReleaseStages(Configuration config,
+                                                          String[] releaseStages,
+                                                          String releaseStage) {
+        config.setNotifyReleaseStages(releaseStages);
+        config.setReleaseStage(releaseStage);
+        return BugsnagTestUtils.convert(config);
     }
 
     @Test
@@ -86,22 +87,6 @@ public class ConfigurationTest {
         assertTrue(config.getAutoCaptureSessions());
         config.setAutoCaptureSessions(false);
         assertFalse(config.getAutoCaptureSessions());
-    }
-
-    @Test
-    public void testErrorApiHeaders() throws Exception {
-        Map<String, String> headers = config.getErrorApiHeaders();
-        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
-        assertNotNull(headers.get("Bugsnag-Sent-At"));
-        assertNotNull(headers.get("Bugsnag-Payload-Version"));
-    }
-
-    @Test
-    public void testSessionApiHeaders() throws Exception {
-        Map<String, String> headers = config.getSessionApiHeaders();
-        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
-        assertNotNull(headers.get("Bugsnag-Sent-At"));
-        assertNotNull(headers.get("Bugsnag-Payload-Version"));
     }
 
     @Test
