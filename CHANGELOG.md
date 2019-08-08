@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Improve ANR error message information
+  [#553](https://github.com/bugsnag/bugsnag-android/pull/553)
+
 ## 4.17.2 (2019-08-01)
 
 ### Bug fixes
