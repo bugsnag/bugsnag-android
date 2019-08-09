@@ -55,8 +55,8 @@ class AnrDetailsCollectorTest {
     @Test
     fun differentPidReturnsNull() {
         Mockito.`when`(am.processesInErrorState).thenReturn(listOf(stateInfo))
-        val captureProcessErrorState = collector.captureProcessErrorState(am, PID_EXAMPLE)
-        assertEquals(stateInfo, captureProcessErrorState)
+        val captureProcessErrorState = collector.captureProcessErrorState(am, 0)
+        assertNull(captureProcessErrorState)
     }
 
     @Test
@@ -69,7 +69,8 @@ class AnrDetailsCollectorTest {
 
     @Test
     fun anrDetailsAltered() {
-        collector.mutateError(error, stateInfo)
+        collector.addErrorStateInfo(error, stateInfo)
         assertEquals(stateInfo.shortMsg, error.exceptionMessage)
+        assertEquals(stateInfo.longMsg, error.metaData.getTab("ANR")["CPU Info"])
     }
 }

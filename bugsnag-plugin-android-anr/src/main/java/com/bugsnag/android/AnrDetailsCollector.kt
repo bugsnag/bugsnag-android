@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger
 internal class AnrDetailsCollector {
 
     companion object {
-        private const val INFO_POLL_THRESHOLD_MS: Long = 1000
-        private const val MAX_ATTEMPTS: Int = 30
+        private const val INFO_POLL_THRESHOLD_MS: Long = 100
+        private const val MAX_ATTEMPTS: Int = 300
     }
 
     private val handlerThread = HandlerThread("bugsnag-anr-collector")
@@ -43,8 +43,9 @@ internal class AnrDetailsCollector {
         }
     }
 
-    internal fun mutateError(error: Error, anrState: ProcessErrorStateInfo) {
+    internal fun addErrorStateInfo(error: Error, anrState: ProcessErrorStateInfo) {
         val msg = anrState.shortMsg
+        error.metaData.addToTab("ANR", "CPU Info", anrState.longMsg)
         error.exceptionMessage = when {
             msg.startsWith("ANR") -> msg.replaceFirst("ANR", "")
             else -> msg
@@ -64,7 +65,7 @@ internal class AnrDetailsCollector {
                         handler.postDelayed(this, INFO_POLL_THRESHOLD_MS)
                     }
                 } else {
-                    mutateError(error, anrDetails)
+                    addErrorStateInfo(error, anrDetails)
                     client.notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null)
                 }
             }
