@@ -11,11 +11,11 @@ internal class UnhandledExceptionSessionScenario(config: Configuration,
                                                  context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
+        disableSessionDelivery(config)
     }
 
     override fun run() {
         super.run()
-        disableSessionDelivery()
         Bugsnag.startSession()
         throw generateException()
     }

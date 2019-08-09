@@ -21,9 +21,9 @@ abstract internal class Scenario(
     /**
      * Sets a NOP implementation for the Session Tracking API, preventing delivery
      */
-    protected fun disableSessionDelivery() {
-        val baseDelivery = Bugsnag.getClient().config.delivery
-        Bugsnag.getClient().config.delivery = object: Delivery {
+    protected fun disableSessionDelivery(config: Configuration) {
+        val baseDelivery = createDefaultDelivery()
+        config.delivery = object: Delivery {
             override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
                 return baseDelivery.deliver(report, deliveryParams)
             }
@@ -37,9 +37,9 @@ abstract internal class Scenario(
     /**
      * Sets a NOP implementation for the Error Tracking API, preventing delivery
      */
-    protected fun disableReportDelivery() {
-        val baseDelivery = Bugsnag.getClient().config.delivery
-        Bugsnag.getClient().config.delivery = object: Delivery {
+    protected fun disableReportDelivery(config: Configuration) {
+        val baseDelivery = createDefaultDelivery()
+        config.delivery = object: Delivery {
             override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED
             }

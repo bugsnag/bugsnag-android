@@ -9,9 +9,12 @@ import com.bugsnag.android.Configuration
  */
 internal class HandledExceptionSessionScenario(config: Configuration,
                                                context: Context) : Scenario(config, context) {
+    init {
+        disableSessionDelivery(config)
+    }
+
     override fun run() {
         super.run()
-        disableSessionDelivery()
         Bugsnag.startSession()
         Bugsnag.notify(generateException())
     }

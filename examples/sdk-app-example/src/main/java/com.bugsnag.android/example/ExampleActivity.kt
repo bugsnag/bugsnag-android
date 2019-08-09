@@ -39,12 +39,6 @@ class ExampleActivity : AppCompatActivity() {
     }
 
     private fun performAdditionalBugsnagSetup() {
-        // Execute some code before every bugsnag notification
-        Bugsnag.beforeNotify { error ->
-            println(String.format("In beforeNotify - %s", error.exceptionName))
-            true // if you do not wish to send this error, return false here.
-        }
-
         // Set the global user information
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
 
