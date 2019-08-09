@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
+import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
@@ -81,8 +81,7 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      */
     public Client(@NonNull Context androidContext) {
-        this(androidContext,
-                ConfigFactory.createNewConfiguration(androidContext, null, true));
+        this(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
@@ -91,9 +90,8 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
-    public Client(@NonNull Context androidContext, @Nullable String apiKey) {
-        this(androidContext,
-                ConfigFactory.createNewConfiguration(androidContext, apiKey, true));
+    public Client(@NonNull Context androidContext, @NonNull String apiKey) {
+        this(androidContext, new Configuration(apiKey));
     }
 
     /**
