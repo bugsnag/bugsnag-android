@@ -221,7 +221,7 @@ public class Client extends Observable implements Observer {
                 String name = appContext.getPackageName();
                 ApplicationInfo ai =
                         packageManager.getApplicationInfo(name, PackageManager.GET_META_DATA);
-                buildUuid = ai.metaData.getString(MF_BUILD_UUID);
+                buildUuid = ai.metaData.getString(BUILD_UUID);
             } catch (Exception ignore) {
                 Logger.warn("Bugsnag is unable to read build UUID from manifest.");
             }
