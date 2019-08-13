@@ -22,7 +22,7 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.compileSdkVersion
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
         ndk {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
@@ -45,8 +45,7 @@ project.afterEvaluate {
 dependencies {
     implementation "com.bugsnag:bugsnag-android:+"
 
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

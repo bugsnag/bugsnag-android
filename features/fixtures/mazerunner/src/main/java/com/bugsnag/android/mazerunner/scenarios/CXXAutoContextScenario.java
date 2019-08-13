@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.mazerunner.SecondActivity;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class CXXAutoContextScenario extends Scenario {
 

@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
-import android.support.test.InstrumentationRegistry
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.BugsnagTestUtils.mapToJson
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -26,7 +27,7 @@ class AppDataOverrideTest {
         config.appVersion = "1.2.3"
         config.releaseStage = "test-stage"
 
-        val context = InstrumentationRegistry.getContext()
+        val context = ApplicationProvider.getApplicationContext<Context>()
         val packageManager = context.packageManager
         val obj = AppData(context, packageManager, config, sessionTracker)
         this.appData = obj.appData

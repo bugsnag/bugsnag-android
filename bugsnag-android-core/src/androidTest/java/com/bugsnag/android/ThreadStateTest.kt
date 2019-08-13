@@ -1,16 +1,12 @@
 package com.bugsnag.android
 
-import android.support.test.filters.SmallTest
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Test
-import org.junit.runner.RunWith
 
-
-@RunWith(AndroidJUnit4::class)
 @SmallTest
 class ThreadStateTest {
 

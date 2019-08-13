@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Migrate dependencies to androidx
+  [#554](https://github.com/bugsnag/bugsnag-android/pull/554)
+
 ## 4.17.2 (2019-08-01)
 
 ### Bug fixes

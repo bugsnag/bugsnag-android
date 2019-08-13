@@ -2,8 +2,8 @@ package com.bugsnag.android;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Map;
 
@@ -237,7 +237,7 @@ public final class Bugsnag {
      * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
      * the app enters the foreground.
      * <p>
-     * By default this behavior is disabled.
+     * By default this behavior is enabled.
      *
      * @param autoCapture whether sessions should be captured automatically
      */

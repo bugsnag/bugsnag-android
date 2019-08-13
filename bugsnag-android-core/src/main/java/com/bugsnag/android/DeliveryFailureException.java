@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * This should be thrown if delivery of a request was not successful and you wish to try again
