@@ -5,6 +5,14 @@
 * Migrate dependencies to androidx
   [#554](https://github.com/bugsnag/bugsnag-android/pull/554)
 
+* Improve ANR error message information
+  [#553](https://github.com/bugsnag/bugsnag-android/pull/553)
+
+## 4.18.0-beta01 (2019-08-09)
+
+* Improve ANR error message information
+  [#553](https://github.com/bugsnag/bugsnag-android/pull/553)
+
 ## 4.17.2 (2019-08-01)
 
 ### Bug fixes

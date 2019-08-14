@@ -8,13 +8,13 @@ import java.io.IOException;
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
 class Exceptions implements JsonStream.Streamable {
-    private final Throwable exception;
+    private final BugsnagException exception;
     private String exceptionType;
     private String[] projectPackages;
 
-    Exceptions(Configuration config, Throwable exception) {
+    Exceptions(Configuration config, BugsnagException exception) {
         this.exception = exception;
-        exceptionType = Configuration.DEFAULT_EXCEPTION_TYPE;
+        exceptionType = exception.getType();
         projectPackages = config.getProjectPackages();
     }
 
@@ -39,7 +39,7 @@ class Exceptions implements JsonStream.Streamable {
         writer.endArray();
     }
 
-    Throwable getException() {
+    BugsnagException getException() {
         return exception;
     }
 

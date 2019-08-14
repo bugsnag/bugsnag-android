@@ -12,9 +12,10 @@ public class BugsnagException extends Throwable {
     /**
      * The name of the exception (used instead of the exception class)
      */
-    private final String name;
+    private String name;
+    private String message;
 
-    private String type;
+    private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
 
     /**
      * Constructor
@@ -27,9 +28,22 @@ public class BugsnagException extends Throwable {
                             @NonNull String message,
                             @NonNull StackTraceElement[] frames) {
         super(message);
-
-        super.setStackTrace(frames);
+        setStackTrace(frames);
         this.name = name;
+    }
+
+    BugsnagException(@NonNull Throwable exc) {
+        super(exc.getMessage());
+
+        if (exc instanceof BugsnagException) {
+            this.message = ((BugsnagException) exc).getMessage();
+            this.name = ((BugsnagException) exc).getName();
+            this.type = ((BugsnagException) exc).getType();
+        } else {
+            this.name = exc.getClass().getName();
+        }
+        setStackTrace(exc.getStackTrace());
+        initCause(exc.getCause());
     }
 
     /**
@@ -40,11 +54,38 @@ public class BugsnagException extends Throwable {
         return name;
     }
 
+    /**
+     * Sets the name of the error displayed in the bugsnag dashboard
+     *
+     * @param name the new name
+     */
+    public void setName(@NonNull String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return The error message, which is the exception message by default
+     */
+    @NonNull
+    public String getMessage() {
+        return message != null ? message : super.getMessage();
+    }
+
+    /**
+     * Sets the message of the error displayed in the bugsnag dashboard
+     *
+     * @param message the new message
+     */
+    public void setMessage(@NonNull String message) {
+        this.message = message;
+    }
+
+    @NonNull
     String getType() {
         return type;
     }
 
-    void setType(String type) {
+    void setType(@NonNull String type) {
         this.type = type;
     }
 }
