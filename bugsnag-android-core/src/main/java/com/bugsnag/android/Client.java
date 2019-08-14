@@ -12,10 +12,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -529,7 +529,7 @@ public class Client extends Observable implements Observer {
      * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
      * the app enters the foreground.
      * <p>
-     * By default this behavior is disabled.
+     * By default this behavior is enabled.
      *
      * @param autoCapture whether sessions should be captured automatically
      */

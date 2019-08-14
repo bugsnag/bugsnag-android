@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
-import android.support.test.InstrumentationRegistry
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -26,7 +27,7 @@ class ErrorFilenameTest {
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        val context = InstrumentationRegistry.getContext()
+        val context = ApplicationProvider.getApplicationContext<Context>()
         errorStore = ErrorStore(config, context, null)
     }
 

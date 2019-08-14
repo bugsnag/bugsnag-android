@@ -6,7 +6,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Process
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class AnrDetailsCollector {

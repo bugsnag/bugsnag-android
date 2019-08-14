@@ -1,7 +1,5 @@
 package com.bugsnag.android
 
-import android.support.test.filters.SmallTest
-import android.support.test.runner.AndroidJUnit4
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.json.JSONObject
@@ -9,10 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
-@SmallTest
 class ExceptionsTest {
 
     private lateinit var config: Configuration

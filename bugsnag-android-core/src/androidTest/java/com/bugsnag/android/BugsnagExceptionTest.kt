@@ -77,6 +77,4 @@ class BugsnagExceptionTest {
         val exc = json.get(0) as JSONObject
         return exc
     }
-
-    // TODO convert JavaScriptException to BugsnagException and create Stacktrace
 }

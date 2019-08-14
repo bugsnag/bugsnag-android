@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.

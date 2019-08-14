@@ -8,8 +8,9 @@ import static org.junit.Assert.fail;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
+
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -127,7 +128,7 @@ public class StrictModeTest {
      */
     private void violateStrictModePolicy() {
         try {
-            Context context = InstrumentationRegistry.getContext();
+            Context context = ApplicationProvider.getApplicationContext();
             new FileWriter(new File(context.getCacheDir(), "test")).write("test");
         } catch (IOException exception) {
             exception.printStackTrace();
