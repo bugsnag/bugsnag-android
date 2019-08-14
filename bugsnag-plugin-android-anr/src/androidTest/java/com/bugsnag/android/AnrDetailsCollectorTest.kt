@@ -71,6 +71,5 @@ class AnrDetailsCollectorTest {
     fun anrDetailsAltered() {
         collector.addErrorStateInfo(error, stateInfo)
         assertEquals(stateInfo.shortMsg, error.exceptionMessage)
-        assertEquals(stateInfo.longMsg, error.metaData.getTab("ANR")["CPU Info"])
     }
 }

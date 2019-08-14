@@ -45,7 +45,6 @@ internal class AnrDetailsCollector {
 
     internal fun addErrorStateInfo(error: Error, anrState: ProcessErrorStateInfo) {
         val msg = anrState.shortMsg
-        error.metaData.addToTab("ANR", "CPU Info", anrState.longMsg)
         error.exceptionMessage = when {
             msg.startsWith("ANR") -> msg.replaceFirst("ANR", "")
             else -> msg
