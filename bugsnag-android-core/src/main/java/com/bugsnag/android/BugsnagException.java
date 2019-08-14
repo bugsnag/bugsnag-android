@@ -15,7 +15,7 @@ public class BugsnagException extends Throwable {
     private String name;
     private String message;
 
-    private String type;
+    private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
 
     /**
      * Constructor

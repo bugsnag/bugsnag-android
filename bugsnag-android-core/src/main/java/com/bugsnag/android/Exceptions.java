@@ -14,7 +14,7 @@ class Exceptions implements JsonStream.Streamable {
 
     Exceptions(Configuration config, BugsnagException exception) {
         this.exception = exception;
-        exceptionType = Configuration.DEFAULT_EXCEPTION_TYPE;
+        exceptionType = exception.getType();
         projectPackages = config.getProjectPackages();
     }
 
