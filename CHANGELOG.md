@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.18.0 (2019-08-15)
 
 * Migrate dependencies to androidx
   [#554](https://github.com/bugsnag/bugsnag-android/pull/554)
