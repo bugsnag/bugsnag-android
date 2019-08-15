@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -100,8 +100,9 @@ public class MetaData extends Observable implements JsonStream.Streamable {
     }
 
     void setFilters(Collection<String> filters) {
+        Collection<String> data = new HashSet<>(filters);
         jsonStreamer.filters.clear();
-        jsonStreamer.filters.addAll(filters);
+        jsonStreamer.filters.addAll(data);
     }
 
     Set<String> getFilters() {

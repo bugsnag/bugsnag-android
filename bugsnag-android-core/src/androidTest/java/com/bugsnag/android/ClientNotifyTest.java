@@ -2,20 +2,17 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.concurrent.CountDownLatch;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ClientNotifyTest {
 
@@ -32,7 +29,7 @@ public class ClientNotifyTest {
         Configuration config = BugsnagTestUtils.generateConfiguration();
         apiClient = new FakeClient();
         config.setDelivery(apiClient);
-        client = new Client(InstrumentationRegistry.getContext(), config);
+        client = new Client(ApplicationProvider.getApplicationContext(), config);
     }
 
     @After

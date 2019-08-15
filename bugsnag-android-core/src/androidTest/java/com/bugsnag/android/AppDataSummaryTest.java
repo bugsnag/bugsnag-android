@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +34,7 @@ public class AppDataSummaryTest {
      */
     @Before
     public void setUp() throws Exception {
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         PackageManager packageManager = context.getPackageManager();
         Configuration config = new Configuration("api-key");
         AppData obj = new AppData(context, packageManager, config, sessionTracker);

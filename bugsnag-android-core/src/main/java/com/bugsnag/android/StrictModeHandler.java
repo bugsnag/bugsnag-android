@@ -1,8 +1,8 @@
 package com.bugsnag.android;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import androidx.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Locale;

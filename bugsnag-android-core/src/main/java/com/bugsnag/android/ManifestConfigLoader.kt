@@ -3,7 +3,8 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.annotation.VisibleForTesting
+
+import androidx.annotation.VisibleForTesting
 
 internal class ManifestConfigLoader {
 
@@ -112,12 +113,13 @@ internal class ManifestConfigLoader {
         }
     }
 
-    private fun getStrArray(data: Bundle, key: String, default: Array<String>?): Array<String>? {
+    private fun getStrArray(data: Bundle, key: String,
+                            default: Collection<String>): Collection<String> {
         val delimitedStr = data.getString(key)
 
         return when (val ary = delimitedStr?.split(",")) {
             null -> default
-            else -> ary.toTypedArray()
+            else -> ary.toSet()
         }
     }
 

@@ -4,18 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class BeforeSendTest {
 
@@ -47,7 +44,7 @@ public class BeforeSendTest {
                 return DeliveryStatus.DELIVERED;
             }
         });
-        client = new Client(InstrumentationRegistry.getContext(), config);
+        client = new Client(ApplicationProvider.getApplicationContext(), config);
     }
 
     @After

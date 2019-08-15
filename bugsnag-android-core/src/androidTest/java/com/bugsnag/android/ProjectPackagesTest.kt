@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
-import android.support.test.InstrumentationRegistry
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -14,7 +15,7 @@ class ProjectPackagesTest {
         val configuration = Configuration("api-key")
         assertTrue(configuration.projectPackages.isEmpty())
 
-        val client = Client(InstrumentationRegistry.getContext(), configuration)
+        val client = Client(ApplicationProvider.getApplicationContext<Context>(), configuration)
         assertEquals(setOf("com.bugsnag.android.core.test"), client.config.projectPackages)
         client.close()
     }
@@ -22,8 +23,9 @@ class ProjectPackagesTest {
     @Test
     fun testProjectPackagesOverride() {
         val configuration = Configuration("api-key")
-        configuration.projectPackages = listOf("com.foo.example")
-        val client = Client(InstrumentationRegistry.getContext(), configuration)
+        configuration.projectPackages = setOf("com.foo.example")
+        val client = Client(ApplicationProvider.getApplicationContext<Context>(), configuration)
         assertEquals(setOf("com.foo.example"), client.config.projectPackages)
+        client.close()
     }
 }

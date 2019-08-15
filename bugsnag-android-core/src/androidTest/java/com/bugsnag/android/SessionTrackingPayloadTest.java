@@ -9,7 +9,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,7 +42,7 @@ public class SessionTrackingPayloadTest {
      */
     @Before
     public void setUp() throws Exception {
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         Configuration config = new Configuration("api-key");
         sessionStore = new SessionStore(config, context);
 
@@ -111,7 +112,7 @@ public class SessionTrackingPayloadTest {
     @Test
     public void testAutoCapturedOverride() throws Exception {
         session = new Session("id", new Date(), null, false);
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         payload = generatePayloadFromSession(context, session);
         assertFalse(session.isAutoCaptured());
         session.setAutoCaptured(true);

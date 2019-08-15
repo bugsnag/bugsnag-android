@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bugsnag.android.Configuration;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class CXXSigtrapScenario extends Scenario {
 

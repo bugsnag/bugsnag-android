@@ -7,7 +7,7 @@ import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.TestHarnessHooksKt;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class CXXStopSessionScenario extends Scenario {
     static {
