@@ -11,7 +11,8 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.test.InstrumentationRegistry;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +45,7 @@ public class AppDataTest {
         when(sessionTracker.isInForeground()).thenReturn(true);
         when(sessionTracker.getDurationInForegroundMs(anyLong())).thenReturn(500L);
 
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         PackageManager packageManager = context.getPackageManager();
         ImmutableConfig config = generateImmutableConfig();
         AppData obj = new AppData(context, packageManager, config, sessionTracker);

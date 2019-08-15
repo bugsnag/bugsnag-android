@@ -7,19 +7,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
 
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ConfigurationTest {
 
@@ -49,11 +46,12 @@ public class ConfigurationTest {
         assertTrue(immutableConfig.shouldNotifyForReleaseStage());
 
         // Shouldn't notify if notifyReleaseStages is set and releaseStage is null
-        immutableConfig = createConfigWithReleaseStages(config, new String[]{"example"}, null);
+        Set<String> example = Collections.singleton("example");
+        immutableConfig = createConfigWithReleaseStages(config, example, null);
         assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
         // Shouldn't notify if releaseStage not in notifyReleaseStages
-        String[] stages = {"production"};
+        Set<String> stages = Collections.singleton("production");
         immutableConfig = createConfigWithReleaseStages(config, stages, "not-production");
         assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
@@ -63,7 +61,7 @@ public class ConfigurationTest {
     }
 
     private ImmutableConfig createConfigWithReleaseStages(Configuration config,
-                                                          String[] releaseStages,
+                                                          Collection<String> releaseStages,
                                                           String releaseStage) {
         config.setNotifyReleaseStages(releaseStages);
         config.setReleaseStage(releaseStage);
@@ -97,20 +95,20 @@ public class ConfigurationTest {
 
     @Test
     public void testOverrideFilters() throws Exception {
-        config.setFilters(new String[]{"Foo"});
-        assertArrayEquals(new String[]{"Foo"}, config.getFilters());
+        config.setFilters(Collections.singleton("Foo"));
+        assertEquals(Collections.singleton("Foo"), config.getFilters());
     }
 
     @Test
     public void testOverrideIgnoreClasses() throws Exception {
-        config.setIgnoreClasses(new String[]{"Bar"});
-        assertArrayEquals(new String[]{"Bar"}, config.getIgnoreClasses());
+        config.setIgnoreClasses(Collections.singleton("Bar"));
+        assertEquals(Collections.singleton("Bar"), config.getIgnoreClasses());
     }
 
     @Test
     public void testOverrideNotifyReleaseStages() throws Exception {
-        config.setNotifyReleaseStages(new String[]{"Test"});
-        assertArrayEquals(new String[]{"Test"}, config.getNotifyReleaseStages());
+        config.setNotifyReleaseStages(Collections.singleton("Test"));
+        assertEquals(Collections.singleton("Test"), config.getNotifyReleaseStages());
     }
 
     @Test

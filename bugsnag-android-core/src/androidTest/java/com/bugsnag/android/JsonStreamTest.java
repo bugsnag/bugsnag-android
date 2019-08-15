@@ -1,27 +1,20 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class JsonStreamTest {
 
@@ -38,7 +31,7 @@ public class JsonStreamTest {
     public void setUp() throws Exception {
         writer = new StringWriter();
         stream = new JsonStream(writer);
-        File cacheDir = InstrumentationRegistry.getContext().getCacheDir();
+        File cacheDir = ApplicationProvider.getApplicationContext().getCacheDir();
         file = new File(cacheDir, "whoops");
         file.delete();
     }

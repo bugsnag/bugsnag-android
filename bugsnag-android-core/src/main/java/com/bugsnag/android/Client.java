@@ -12,10 +12,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -208,8 +208,8 @@ public class Client extends Observable implements Observer {
         }
 
         // Set sensible defaults if project packages not already set
-        if (configuration.getProjectPackages() == null) {
-            configuration.setProjectPackages(new String[]{appContext.getPackageName()});
+        if (configuration.getProjectPackages().isEmpty()) {
+            configuration.setProjectPackages(Collections.singleton(appContext.getPackageName()));
         }
 
         // populate from manifest (in the case where the constructor was called directly by the

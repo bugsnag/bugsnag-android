@@ -43,10 +43,10 @@ class ManifestConfigLoaderTest {
             // app/project packages
             assertNull(appVersion)
             assertNull(releaseStage)
-            assertNull(notifyReleaseStages)
-            assertNull(ignoreClasses)
-            assertNull(projectPackages)
-            assertArrayEquals(arrayOf("password"), filters)
+            assertEquals(emptySet<String>(), notifyReleaseStages)
+            assertEquals(emptySet<String>(), ignoreClasses)
+            assertEquals(emptySet<String>(), projectPackages)
+            assertEquals(setOf("password"), filters)
 
             // misc
             assertEquals(maxBreadcrumbs, 32)
@@ -108,10 +108,10 @@ class ManifestConfigLoaderTest {
             // app/project packages
             assertEquals("5.23.7", appVersion)
             assertEquals("beta", releaseStage)
-            assertArrayEquals(arrayOf("beta", "production", "staging"), notifyReleaseStages)
-            assertArrayEquals(arrayOf("com.bugsnag.FooKt", "org.example.String"), ignoreClasses)
-            assertArrayEquals(arrayOf("com.bugsnag", "com.example"), projectPackages)
-            assertArrayEquals(arrayOf("password", "auth", "foo"), filters)
+            assertEquals(setOf("beta", "production", "staging"), notifyReleaseStages)
+            assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), ignoreClasses)
+            assertEquals(setOf("com.bugsnag", "com.example"), projectPackages)
+            assertEquals(setOf("password", "auth", "foo"), filters)
 
             // misc
             assertEquals(maxBreadcrumbs, 50)

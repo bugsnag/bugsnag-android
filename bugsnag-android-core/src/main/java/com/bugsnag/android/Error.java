@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,18 +48,23 @@ public class Error implements JsonStream.Streamable {
     private final MetaData globalMetaData;
     private final Exceptions exceptions;
     private Breadcrumbs breadcrumbs;
-    private final Throwable exception;
+    private final BugsnagException exception;
     private final HandledState handledState;
     private final Session session;
     private final ThreadState threadState;
     private boolean incomplete = false;
 
-    Error(@NonNull ImmutableConfig config, @NonNull Throwable exception,
+    Error(@NonNull ImmutableConfig config, @NonNull Throwable exc,
           HandledState handledState, @NonNull Severity severity,
           Session session, ThreadState threadState, MetaData globalMetaData) {
         this.threadState = threadState;
         this.config = config;
-        this.exception = exception;
+
+        if (exc instanceof BugsnagException) {
+            this.exception = (BugsnagException) exc;
+        } else {
+            this.exception = new BugsnagException(exc);
+        }
         this.handledState = handledState;
         this.severity = severity;
         this.session = session;
@@ -316,11 +321,14 @@ public class Error implements JsonStream.Streamable {
      */
     @NonNull
     public String getExceptionName() {
-        if (exception instanceof BugsnagException) {
-            return ((BugsnagException) exception).getName();
-        } else {
-            return exception.getClass().getName();
-        }
+        return exception.getName();
+    }
+
+    /**
+     * Sets the class name from the exception contained in this Error report.
+     */
+    public void setExceptionName(@NonNull String exceptionName) {
+        exception.setName(exceptionName);
     }
 
     /**
@@ -328,8 +336,15 @@ public class Error implements JsonStream.Streamable {
      */
     @NonNull
     public String getExceptionMessage() {
-        String localizedMessage = exception.getLocalizedMessage();
-        return localizedMessage != null ? localizedMessage : "";
+        String msg = exception.getMessage();
+        return msg != null ? msg : "";
+    }
+
+    /**
+     * Sets the message from the exception contained in this Error report.
+     */
+    public void setExceptionMessage(@NonNull String exceptionMessage) {
+        exception.setMessage(exceptionMessage);
     }
 
     /**

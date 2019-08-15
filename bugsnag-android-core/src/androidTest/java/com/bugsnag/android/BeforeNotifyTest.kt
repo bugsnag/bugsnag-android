@@ -2,14 +2,11 @@ package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
 
-import android.support.test.filters.SmallTest
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.bugsnag.android.BugsnagTestUtils.generateSessionTracker
 
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 @SmallTest
 class BeforeNotifyTest {
 

@@ -14,9 +14,9 @@ import static org.junit.Assert.fail;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,13 +24,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ErrorTest {
 
@@ -66,7 +65,7 @@ public class ErrorTest {
     @Test
     public void testShouldIgnoreClass() {
         Configuration config = BugsnagTestUtils.generateConfiguration();
-        config.setIgnoreClasses(new String[]{"java.io.IOException"});
+        config.setIgnoreClasses(Collections.singleton("java.io.IOException"));
         this.config = convert(config);
 
         // Shouldn't ignore classes not in ignoreClasses
@@ -80,16 +79,6 @@ public class ErrorTest {
         error = new Error.Builder(this.config, ioException, generateSessionTracker(),
                 Thread.currentThread(), false, new MetaData()).build();
         assertTrue(error.shouldIgnoreClass());
-    }
-
-    @Test
-    public void testGetExceptionName() {
-        assertEquals("java.lang.RuntimeException", error.getExceptionName());
-    }
-
-    @Test
-    public void testGetExceptionMessage() {
-        assertEquals("Example message", error.getExceptionMessage());
     }
 
     @Test
@@ -398,7 +387,7 @@ public class ErrorTest {
     @Test
     public void testSetDeviceId() throws Throwable {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
         DeviceData data = new DeviceData(connectivity, context, resources, "123");
@@ -435,7 +424,7 @@ public class ErrorTest {
     @Test
     public void shouldIgnoreEmpty() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setIgnoreClasses(new String[]{});
+        configuration.setIgnoreClasses(Collections.<String>emptyList());
 
         error = new Error.Builder(BugsnagTestUtils.convert(configuration), new RuntimeException(),
                 generateSessionTracker(), Thread.currentThread(), false,
@@ -446,7 +435,7 @@ public class ErrorTest {
     @Test
     public void shouldIgnoreMatches() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setIgnoreClasses(new String[]{"java.io.IOException"});
+        configuration.setIgnoreClasses(Collections.singleton("java.io.IOException"));
 
         error = new Error.Builder(BugsnagTestUtils.convert(configuration), new IOException(),
                 generateSessionTracker(), Thread.currentThread(), false,

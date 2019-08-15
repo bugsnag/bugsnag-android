@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.bugsnag.android.core">
+    package="com.bugsnag.android.core">
 
-  <!-- Required: Used to deliver Bugsnag crash reports -->
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Required: Used to deliver Bugsnag crash reports -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <application>
+        <uses-library
+            android:name="android.test.runner"
+            android:required="false" />
+    </application>
 </manifest>

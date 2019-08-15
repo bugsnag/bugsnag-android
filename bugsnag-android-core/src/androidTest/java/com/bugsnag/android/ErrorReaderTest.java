@@ -9,15 +9,13 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ErrorReaderTest {
 

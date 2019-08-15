@@ -11,20 +11,17 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.Collection;
 import java.util.Map;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ClientTest {
 
@@ -42,7 +39,7 @@ public class ClientTest {
      */
     @Before
     public void setUp() throws Exception {
-        context = InstrumentationRegistry.getContext();
+        context = ApplicationProvider.getApplicationContext();
         clearSharedPrefs();
         config = new Configuration("api-key");
     }

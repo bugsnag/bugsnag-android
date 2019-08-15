@@ -5,14 +5,11 @@ import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
+import androidx.annotation.NonNull;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Map;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs

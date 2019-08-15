@@ -12,7 +12,7 @@ internal class IgnoredExceptionScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
-        config.setIgnoreClasses(arrayOf("java.lang.RuntimeException"))
+        config.setIgnoreClasses(listOf("java.lang.RuntimeException"))
     }
 
     override fun run() {

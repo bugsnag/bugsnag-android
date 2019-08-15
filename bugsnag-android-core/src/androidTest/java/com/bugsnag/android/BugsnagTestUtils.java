@@ -2,8 +2,8 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -47,7 +47,7 @@ final class BugsnagTestUtils {
 
     static Client generateClient(Configuration config) {
         config.setDelivery(generateDelivery());
-        return new Client(InstrumentationRegistry.getTargetContext(), config);
+        return new Client(ApplicationProvider.getApplicationContext(), config);
     }
 
     static Client generateClient() {
@@ -80,12 +80,13 @@ final class BugsnagTestUtils {
     }
 
     static Connectivity generateConnectivity() {
-        return new ConnectivityCompat(InstrumentationRegistry.getContext(), null);
+        return new ConnectivityCompat(ApplicationProvider.getApplicationContext(), null);
     }
 
     @NonNull
     static SessionStore generateSessionStore() {
-        return new SessionStore(InstrumentationRegistry.getContext());
+        Context applicationContext = ApplicationProvider.getApplicationContext();
+        return new SessionStore(applicationContext);
     }
 
     public static Delivery generateDelivery() {

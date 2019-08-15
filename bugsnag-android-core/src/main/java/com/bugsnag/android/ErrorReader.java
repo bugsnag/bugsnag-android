@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
 import android.util.JsonReader;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.FileReader;

@@ -72,9 +72,9 @@ class ImmutableConfigTest {
         seed.detectNdkCrashes = true
         seed.sendThreads = false
 
-        seed.ignoreClasses = arrayOf("foo")
-        seed.notifyReleaseStages = arrayOf("bar")
-        seed.projectPackages = arrayOf("com.example")
+        seed.ignoreClasses = setOf("foo")
+        seed.notifyReleaseStages = setOf("bar")
+        seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
 
         seed.appVersion = "1.2.3"
@@ -101,9 +101,9 @@ class ImmutableConfigTest {
             assertFalse(sendThreads)
 
             // release stages
-            assertEquals(listOf("foo"), ignoreClasses)
-            assertEquals(listOf("bar"), notifyReleaseStages)
-            assertEquals(listOf("com.example"), projectPackages)
+            assertEquals(setOf("foo"), ignoreClasses)
+            assertEquals(setOf("bar"), notifyReleaseStages)
+            assertEquals(setOf("com.example"), projectPackages)
             assertEquals("wham", releaseStage)
 
             // identifiers

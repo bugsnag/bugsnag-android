@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Add a "before breadcrumb" callback, to execute code before every
