@@ -6,7 +6,7 @@ import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Report;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 
 public class NativeNotifyBeforeSendScenario extends Scenario {

@@ -6,6 +6,8 @@ internal class AnrPlugin : BugsnagPlugin {
 
     private external fun installAnrDetection(sentinelBuffer: ByteBuffer)
 
+    private val collector = AnrDetailsCollector()
+
     override fun initialisePlugin(client: Client) {
         System.loadLibrary("bugsnag-plugin-android-anr")
         val delegate: (Thread) -> Unit = { handleAnr(it, client) }
@@ -16,12 +18,16 @@ internal class AnrPlugin : BugsnagPlugin {
     }
 
     private fun handleAnr(thread: Thread, client: Client) {
+        // generate a full report as soon as possible, then wait for extra process error info
         val errMsg = "Application did not respond to UI input"
         val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
+        val error = Error.Builder(client.config, exc, client.sessionTracker, thread, true)
+            .severity(Severity.ERROR)
+            .severityReasonType(HandledState.REASON_ANR)
+            .build()
 
-        client.cacheAndNotify(
-            exc, Severity.ERROR, MetaData(),
-            HandledState.REASON_ANR, null, thread
-        )
+        // wait and poll for error info to be collected. this occurs just before the ANR dialog
+        // is displayed
+        collector.collectAnrErrorDetails(client, error)
     }
 }

@@ -2,20 +2,17 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 
-import android.support.annotation.NonNull;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.filters.SmallTest;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * Ensures that BeforeNotify is only called once,
  * and that the callbacks are called in insertion order.
  */
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class UniqueBeforeNotifyTest {
 

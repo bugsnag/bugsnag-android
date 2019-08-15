@@ -7,7 +7,7 @@ import android.os.Handler;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
     static {

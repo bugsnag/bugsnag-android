@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +28,7 @@ public class DeviceDataTest {
     @Before
     public void setUp() throws Exception {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
         DeviceData deviceData = new DeviceData(connectivity, context, resources, prefs);

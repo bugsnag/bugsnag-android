@@ -3,21 +3,18 @@ package com.bugsnag.android
 import com.bugsnag.android.BreadcrumbType.MANUAL
 import org.junit.Assert.assertEquals
 
-import android.support.test.filters.SmallTest
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.bugsnag.android.BugsnagTestUtils.*
 
 import org.json.JSONException
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
 import java.io.IOException
 import java.util.HashMap
 import java.util.Locale
 
-@RunWith(AndroidJUnit4::class)
 @SmallTest
 class BreadcrumbsTest {
 

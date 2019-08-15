@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
