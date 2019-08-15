@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -161,24 +161,39 @@ class ErrorStore extends FileStore<Error> {
                     Logger.warn("BeforeSend threw an Exception", ex);
                 }
             }
-            config.getDelivery().deliver(report, config);
+            DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
+            DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
 
-            deleteStoredFiles(Collections.singleton(errorFile));
-            Logger.info("Deleting sent error file " + errorFile.getName());
-        } catch (DeliveryFailureException exception) {
-            cancelQueuedFiles(Collections.singleton(errorFile));
-            Logger.warn("Could not send previously saved error(s)"
-                + " to Bugsnag, will try again later", exception);
-        } catch (Exception exception) {
-            if (delegate != null) {
-                Error minimalError = generateErrorFromFilename(errorFile.getName());
-
-                if (minimalError != null) {
-                    delegate.onErrorReadFailure(minimalError);
-                }
+            switch (deliveryStatus) {
+                case DELIVERED:
+                    deleteStoredFiles(Collections.singleton(errorFile));
+                    Logger.info("Deleting sent error file " + errorFile.getName());
+                    break;
+                case UNDELIVERED:
+                    cancelQueuedFiles(Collections.singleton(errorFile));
+                    Logger.warn("Could not send previously saved error(s)"
+                            + " to Bugsnag, will try again later");
+                    break;
+                case FAILURE:
+                    handleErrorFlushFailure(errorFile);
+                    break;
+                default:
+                    break;
             }
-            deleteStoredFiles(Collections.singleton(errorFile));
+        } catch (Exception exception) {
+            handleErrorFlushFailure(errorFile);
         }
+    }
+
+    private void handleErrorFlushFailure(File errorFile) {
+        if (delegate != null) {
+            Error minimalError = generateErrorFromFilename(errorFile.getName());
+
+            if (minimalError != null) {
+                delegate.onErrorReadFailure(minimalError);
+            }
+        }
+        deleteStoredFiles(Collections.singleton(errorFile));
     }
 
     boolean isLaunchCrashReport(File file) {

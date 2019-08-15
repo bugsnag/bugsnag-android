@@ -3,7 +3,7 @@ package com.bugsnag.android.example
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -39,12 +39,6 @@ class ExampleActivity : AppCompatActivity() {
     }
 
     private fun performAdditionalBugsnagSetup() {
-        // Execute some code before every bugsnag notification
-        Bugsnag.beforeNotify { error ->
-            println(String.format("In beforeNotify - %s", error.exceptionName))
-            true // if you do not wish to send this error, return false here.
-        }
-
         // Set the global user information
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
 

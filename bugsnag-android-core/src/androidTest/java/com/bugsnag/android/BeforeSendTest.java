@@ -4,16 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
+
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class BeforeSendTest {
 
@@ -30,19 +29,22 @@ public class BeforeSendTest {
         result = "";
         config = new Configuration("key");
         config.setDelivery(new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
-            @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
                 lastReport = report;
+                return DeliveryStatus.DELIVERED;
+            }
+
+            @NotNull
+            @Override
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
             }
         });
-        client = new Client(InstrumentationRegistry.getContext(), config);
+        client = new Client(ApplicationProvider.getApplicationContext(), config);
     }
 
     @After

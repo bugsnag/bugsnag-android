@@ -2,8 +2,8 @@ package com.bugsnag.android;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Map;
 
@@ -34,8 +34,7 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext) {
-        String apiKey = null;
-        return init(androidContext, apiKey);
+        return init(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
@@ -45,10 +44,8 @@ public final class Bugsnag {
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
     @NonNull
-    public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
-        Configuration config
-            = ConfigFactory.createNewConfiguration(androidContext, apiKey, true);
-        return init(androidContext, config);
+    public static Client init(@NonNull Context androidContext, @NonNull String apiKey) {
+        return init(androidContext, new Configuration(apiKey));
     }
 
     /**

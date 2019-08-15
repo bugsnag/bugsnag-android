@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * A callback to be run before every report sent to Bugsnag.

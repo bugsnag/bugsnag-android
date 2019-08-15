@@ -2,9 +2,10 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +47,7 @@ final class BugsnagTestUtils {
 
     static Client generateClient(Configuration config) {
         config.setDelivery(generateDelivery());
-        return new Client(InstrumentationRegistry.getTargetContext(), config);
+        return new Client(ApplicationProvider.getApplicationContext(), config);
     }
 
     static Client generateClient() {
@@ -69,26 +70,30 @@ final class BugsnagTestUtils {
     }
 
     static Connectivity generateConnectivity() {
-        return new ConnectivityCompat(InstrumentationRegistry.getContext(), null);
+        return new ConnectivityCompat(ApplicationProvider.getApplicationContext(), null);
     }
 
     @NonNull
     static SessionStore generateSessionStore() {
-        return new SessionStore(generateConfiguration(), InstrumentationRegistry.getContext());
+        Context applicationContext = ApplicationProvider.getApplicationContext();
+        return new SessionStore(generateConfiguration(), applicationContext);
     }
 
     public static Delivery generateDelivery() {
         return new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
 
+            @NotNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
         };
     }
 }

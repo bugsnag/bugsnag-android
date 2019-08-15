@@ -1,13 +1,11 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.filters.SmallTest;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.Collection;
 
@@ -15,7 +13,6 @@ import java.util.Collection;
  * Ensures that if a callback is added or removed during iteration, a
  * {@link java.util.ConcurrentModificationException} is not thrown
  */
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ConcurrentCallbackTest {
 

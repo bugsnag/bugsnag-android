@@ -1,20 +1,22 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
 class Exceptions implements JsonStream.Streamable {
-    private final Throwable exception;
-    private String exceptionType;
-    private String[] projectPackages;
 
-    Exceptions(Configuration config, Throwable exception) {
+    private final BugsnagException exception;
+    private String exceptionType;
+    private Collection<String> projectPackages;
+
+    Exceptions(Configuration config, BugsnagException exception) {
         this.exception = exception;
-        exceptionType = Configuration.DEFAULT_EXCEPTION_TYPE;
+        exceptionType = exception.getType();
         projectPackages = config.getProjectPackages();
     }
 
@@ -39,7 +41,7 @@ class Exceptions implements JsonStream.Streamable {
         writer.endArray();
     }
 
-    Throwable getException() {
+    BugsnagException getException() {
         return exception;
     }
 
@@ -51,11 +53,11 @@ class Exceptions implements JsonStream.Streamable {
         exceptionType = type;
     }
 
-    String[] getProjectPackages() {
+    Collection<String> getProjectPackages() {
         return projectPackages;
     }
 
-    void setProjectPackages(String[] projectPackages) {
+    void setProjectPackages(Collection<String> projectPackages) {
         this.projectPackages = projectPackages;
     }
 

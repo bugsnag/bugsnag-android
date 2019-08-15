@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
+import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
@@ -12,10 +12,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -80,8 +80,7 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      */
     public Client(@NonNull Context androidContext) {
-        this(androidContext,
-                ConfigFactory.createNewConfiguration(androidContext, null, true));
+        this(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
@@ -90,9 +89,8 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
-    public Client(@NonNull Context androidContext, @Nullable String apiKey) {
-        this(androidContext,
-                ConfigFactory.createNewConfiguration(androidContext, apiKey, true));
+    public Client(@NonNull Context androidContext, @NonNull String apiKey) {
+        this(androidContext, new Configuration(apiKey));
     }
 
     /**
@@ -141,8 +139,8 @@ public class Client extends Observable implements Observer {
         breadcrumbs = new Breadcrumbs(configuration);
 
         // Set sensible defaults if project packages not already set
-        if (config.getProjectPackages() == null) {
-            configuration.setProjectPackages(new String[]{appContext.getPackageName()});
+        if (config.getProjectPackages().isEmpty()) {
+            configuration.setProjectPackages(Collections.singleton(appContext.getPackageName()));
         }
 
         if (appContext instanceof Application) {
@@ -162,7 +160,7 @@ public class Client extends Observable implements Observer {
                 String packageName = appContext.getPackageName();
                 ApplicationInfo ai =
                     packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                buildUuid = ai.metaData.getString(MF_BUILD_UUID);
+                buildUuid = ai.metaData.getString(BUILD_UUID);
             } catch (Exception ignore) {
                 Logger.warn("Bugsnag is unable to read build UUID from manifest.");
             }
@@ -914,19 +912,28 @@ public class Client extends Observable implements Observer {
             Logger.info("Skipping notification - beforeSend task returned false");
             return;
         }
-        try {
-            config.getDelivery().deliver(report, config);
-            Logger.info("Sent 1 new error to Bugsnag");
-            leaveErrorBreadcrumb(error);
-        } catch (DeliveryFailureException exception) {
-            if (!report.isCachingDisabled()) {
-                Logger.warn("Could not send error(s) to Bugsnag,"
-                    + " saving to disk to send later", exception);
-                errorStore.write(error);
+
+        DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
+        DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
+
+        switch (deliveryStatus) {
+            case DELIVERED:
+                Logger.info("Sent 1 new error to Bugsnag");
                 leaveErrorBreadcrumb(error);
-            }
-        } catch (Exception exception) {
-            Logger.warn("Problem sending error to Bugsnag", exception);
+                break;
+            case UNDELIVERED:
+                if (!report.isCachingDisabled()) {
+                    Logger.warn("Could not send error(s) to Bugsnag,"
+                            + " saving to disk to send later");
+                    errorStore.write(error);
+                    leaveErrorBreadcrumb(error);
+                }
+                break;
+            case FAILURE:
+                Logger.warn("Problem sending error to Bugsnag");
+                break;
+            default:
+                break;
         }
     }
 

@@ -1,18 +1,22 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -33,10 +37,10 @@ public class Configuration extends Observable implements Observer {
     private String appVersion;
     private String context;
 
-    private String[] ignoreClasses;
-    @Nullable
-    private String[] notifyReleaseStages = null;
-    private String[] projectPackages;
+    private final Set<String> ignoreClasses = new HashSet<>();
+    private final Set<String> notifyReleaseStages = new HashSet<>();
+    private final Set<String> projectPackages = new HashSet<>();
+
     private String releaseStage;
     private boolean sendThreads = true;
     private boolean persistUserBetweenSessions = false;
@@ -66,11 +70,14 @@ public class Configuration extends Observable implements Observer {
     private int maxBreadcrumbs = DEFAULT_MAX_SIZE;
 
     /**
-     * Construct a new Bugsnag configuration object
+     * Construct a new Bugsnag configuration object with the supplied API key
      *
      * @param apiKey The API key to send reports to
      */
     public Configuration(@NonNull String apiKey) {
+        if (TextUtils.isEmpty(apiKey)) {
+            throw new IllegalArgumentException("You must provide a Bugsnag API key");
+        }
         this.apiKey = apiKey;
         this.metaData = new MetaData();
         this.metaData.addObserver(this);
@@ -85,6 +92,17 @@ public class Configuration extends Observable implements Observer {
         }
 
         loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+    }
+
+    /**
+     * Constructs a new Bugsnag Configuration object by looking for meta-data elements in
+     * the AndroidManifest.xml
+     *
+     * @return a new Configuration object
+     */
+    @NonNull
+    public static Configuration loadConfig(@NonNull Context ctx) {
+        return new ManifestConfigLoader().load(ctx);
     }
 
     /**
@@ -207,9 +225,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Filters
      */
-    @Nullable
-    public String[] getFilters() {
-        return metaData.getFilters();
+    @NonNull
+    public Collection<String> getFilters() {
+        return Collections.unmodifiableSet(metaData.getFilters());
     }
 
     /**
@@ -225,7 +243,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param filters a list of keys to filter from metaData
      */
-    public void setFilters(@Nullable String[] filters) {
+    public void setFilters(@NonNull Collection<String> filters) {
         this.metaData.setFilters(filters);
     }
 
@@ -234,9 +252,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Ignore classes
      */
-    @Nullable
-    public String[] getIgnoreClasses() {
-        return ignoreClasses;
+    @NonNull
+    public Collection<String> getIgnoreClasses() {
+        return Collections.unmodifiableSet(ignoreClasses);
     }
 
     /**
@@ -248,8 +266,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @param ignoreClasses a list of exception classes to ignore
      */
-    public void setIgnoreClasses(@Nullable String[] ignoreClasses) {
-        this.ignoreClasses = ignoreClasses;
+    public void setIgnoreClasses(@NonNull Collection<String> ignoreClasses) {
+        this.ignoreClasses.clear();
+        this.ignoreClasses.addAll(ignoreClasses);
     }
 
     /**
@@ -257,9 +276,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Notify release stages
      */
-    @Nullable
-    public String[] getNotifyReleaseStages() {
-        return notifyReleaseStages;
+    @NonNull
+    public Collection<String> getNotifyReleaseStages() {
+        return Collections.unmodifiableSet(notifyReleaseStages);
     }
 
     /**
@@ -273,8 +292,9 @@ public class Configuration extends Observable implements Observer {
      * @param notifyReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
-        this.notifyReleaseStages = notifyReleaseStages;
+    public void setNotifyReleaseStages(@NonNull Collection<String> notifyReleaseStages) {
+        this.notifyReleaseStages.clear();
+        this.notifyReleaseStages.addAll(notifyReleaseStages);
     }
 
     /**
@@ -282,9 +302,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @return packages
      */
-    @Nullable
-    public String[] getProjectPackages() {
-        return projectPackages;
+    @NonNull
+    public Collection<String> getProjectPackages() {
+        return Collections.unmodifiableSet(projectPackages);
     }
 
     /**
@@ -299,8 +319,9 @@ public class Configuration extends Observable implements Observer {
      *
      * @param projectPackages a list of package names
      */
-    public void setProjectPackages(@Nullable String[] projectPackages) {
-        this.projectPackages = projectPackages;
+    public void setProjectPackages(@NonNull Collection<String> projectPackages) {
+        this.projectPackages.clear();
+        this.projectPackages.addAll(projectPackages);
     }
 
     /**
@@ -380,7 +401,7 @@ public class Configuration extends Observable implements Observer {
      * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
      * the app enters the foreground.
      * <p>
-     * By default this behavior is disabled.
+     * By default this behavior is enabled.
      *
      * @param autoCapture whether sessions should be captured automatically
      */
@@ -651,13 +672,22 @@ public class Configuration extends Observable implements Observer {
         this.loggingEnabled = loggingEnabled;
     }
 
+
+    DeliveryParams getErrorApiDeliveryParams() {
+        return new DeliveryParams(getEndpoints().getNotify(), getErrorApiHeaders());
+    }
+
+    DeliveryParams getSessionApiDeliveryParams() {
+        return new DeliveryParams(getEndpoints().getSessions(), getSessionApiHeaders());
+    }
+
     /**
      * Supplies the headers which must be used in any request sent to the Error Reporting API.
      *
      * @return the HTTP headers
      */
     @NonNull
-    public Map<String, String> getErrorApiHeaders() {
+    Map<String, String> getErrorApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
         map.put(HEADER_API_KEY, apiKey);
@@ -671,7 +701,7 @@ public class Configuration extends Observable implements Observer {
      * @return the HTTP headers
      */
     @NonNull
-    public Map<String, String> getSessionApiHeaders() {
+    Map<String, String> getSessionApiHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
         map.put(HEADER_API_KEY, apiKey);
@@ -686,12 +716,7 @@ public class Configuration extends Observable implements Observer {
      * @return true if the release state should be notified else false
      */
     protected boolean shouldNotifyForReleaseStage(@Nullable String releaseStage) {
-        if (this.notifyReleaseStages == null) {
-            return true;
-        }
-
-        List<String> stages = Arrays.asList(this.notifyReleaseStages);
-        return stages.contains(releaseStage);
+        return notifyReleaseStages.isEmpty() || notifyReleaseStages.contains(releaseStage);
     }
 
     /**
@@ -701,12 +726,7 @@ public class Configuration extends Observable implements Observer {
      * @return true if the exception class should be ignored else false
      */
     protected boolean shouldIgnoreClass(@Nullable String className) {
-        if (this.ignoreClasses == null) {
-            return false;
-        }
-
-        List<String> classes = Arrays.asList(this.ignoreClasses);
-        return classes.contains(className);
+        return !this.ignoreClasses.isEmpty() && ignoreClasses.contains(className);
     }
 
     /**

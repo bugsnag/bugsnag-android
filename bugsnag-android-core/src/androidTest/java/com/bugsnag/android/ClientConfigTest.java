@@ -3,17 +3,15 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ClientConfigTest {
 
@@ -26,7 +24,7 @@ public class ClientConfigTest {
      */
     @Before
     public void setUp() throws Exception {
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         config = new Configuration("api-key");
         client = new Client(context, config);
     }
@@ -45,19 +43,22 @@ public class ClientConfigTest {
 
     @Test
     public void testCustomDeliveryOverride() {
-        Context context = InstrumentationRegistry.getContext();
+        Context context = ApplicationProvider.getApplicationContext();
         config = BugsnagTestUtils.generateConfiguration();
         Delivery customDelivery = new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
 
+            @NotNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
         };
         config.setDelivery(customDelivery);
         client = new Client(context, config);

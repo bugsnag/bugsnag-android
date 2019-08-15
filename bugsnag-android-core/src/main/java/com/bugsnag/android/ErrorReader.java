@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import android.support.annotation.NonNull;
 import android.util.JsonReader;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.FileReader;
@@ -106,7 +106,7 @@ class ErrorReader {
             Error error = new Error(config, exceptions.getException(), handledState, severity,
                                     session, threadState);
             error.getExceptions().setExceptionType(exceptions.getExceptionType());
-            error.setProjectPackages(projectPackages.toArray(new String[]{}));
+            error.setProjectPackages(projectPackages);
             error.setUser(user);
             error.setContext(context);
             error.setGroupingHash(groupingHash);

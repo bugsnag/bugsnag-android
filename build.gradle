@@ -55,7 +55,7 @@ private void configureAndroidProject(Project proj) {
     lintOptions.baseline new File(proj.projectDir, "lint-baseline.xml")
 
     def defaultConfig = proj.android.defaultConfig
-    defaultConfig.testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+    defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     defaultConfig.consumerProguardFiles = ["proguard-rules.pro"]
 
     proj.android.testOptions.unitTests.all {
@@ -72,9 +72,9 @@ ext {
     // Note minSdkVersion must be >=21 for 64 bit architectures
     compileSdkVersion = 28
     minSdkVersion = 14
-    supportLibVersion = "28.0.0"
-    supportTestVersion = "0.5"
-    espressoVersion = "2.2.2"
+    supportLibVersion = "1.1.0"
+    supportTestVersion = "1.2.0"
+    espressoVersion = "3.1.0"
     junitVersion = "4.12"
     mockitoVersion = "2.28.2"
     bugsnagPluginVersion = "3.3.0"

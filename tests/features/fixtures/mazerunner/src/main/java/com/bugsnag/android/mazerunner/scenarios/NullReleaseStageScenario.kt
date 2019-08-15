@@ -11,7 +11,7 @@ internal class NullReleaseStageScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
         config.setReleaseStage(null)
-        config.setNotifyReleaseStages(arrayOf("prod"))
+        config.setNotifyReleaseStages(listOf("prod"))
     }
 
     override fun run() {

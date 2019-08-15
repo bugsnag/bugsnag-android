@@ -2,19 +2,17 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.concurrent.CountDownLatch;
 
-@RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ClientNotifyTest {
 
@@ -31,7 +29,7 @@ public class ClientNotifyTest {
         Configuration config = BugsnagTestUtils.generateConfiguration();
         apiClient = new FakeClient();
         config.setDelivery(apiClient);
-        client = new Client(InstrumentationRegistry.getContext(), config);
+        client = new Client(ApplicationProvider.getApplicationContext(), config);
     }
 
     @After
@@ -87,16 +85,20 @@ public class ClientNotifyTest {
         CountDownLatch latch = new CountDownLatch(1);
         Report report;
 
+        @NotNull
         @Override
-        public void deliver(@NonNull Report report,
-                            @NonNull Configuration config) throws DeliveryFailureException {
-            this.report = report;
-            latch.countDown();
+        public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                      @NotNull DeliveryParams deliveryParams) {
+            return DeliveryStatus.DELIVERED;
         }
 
+        @NotNull
         @Override
-        public void deliver(@NonNull SessionTrackingPayload payload,
-                            @NonNull Configuration config) throws DeliveryFailureException {
+        public DeliveryStatus deliver(@NotNull Report report,
+                                      @NotNull DeliveryParams deliveryParams) {
+            this.report = report;
+            latch.countDown();
+            return DeliveryStatus.DELIVERED;
         }
     }
 

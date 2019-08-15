@@ -10,7 +10,7 @@ import com.bugsnag.android.Configuration
 internal class ManualFilterScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
     init {
-        config.setFilters(arrayOf("foo"))
+        config.setFilters(listOf("foo"))
     }
 
     override fun run() {

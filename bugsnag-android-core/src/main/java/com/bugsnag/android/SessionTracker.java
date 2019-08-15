@@ -5,9 +5,11 @@ import static com.bugsnag.android.MapUtils.getStringFromMap;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
@@ -177,12 +179,23 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 mutator.beforeSendSession(payload);
                             }
 
-                            configuration.getDelivery().deliver(payload, configuration);
-                        } catch (DeliveryFailureException exception) { // store for later sending
-                            Logger.warn("Storing session payload for future delivery", exception);
-                            sessionStore.write(session);
+                            DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+
+                            switch (deliveryStatus) {
+                                case DELIVERED:
+                                    break;
+                                case UNDELIVERED:
+                                    Logger.warn("Storing session payload for future delivery");
+                                    sessionStore.write(session);
+                                    break;
+                                case FAILURE:
+                                    Logger.warn("Dropping invalid session tracking payload");
+                                    break;
+                                default:
+                                    break;
+                            }
                         } catch (Exception exception) {
-                            Logger.warn("Dropping invalid session tracking payload", exception);
+                            Logger.warn("Session tracking payload failed", exception);
                         }
                     }
                 });
@@ -261,23 +274,35 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                         new SessionTrackingPayload(null, storedFiles,
                             client.appData, client.deviceData);
 
-                    //FUTURE:SM Reduce duplication here and above
-                    try {
-                        configuration.getDelivery().deliver(payload, configuration);
-                        sessionStore.deleteStoredFiles(storedFiles);
-                    } catch (DeliveryFailureException exception) {
-                        sessionStore.cancelQueuedFiles(storedFiles);
-                        Logger.warn("Leaving session payload for future delivery", exception);
-                    } catch (Exception exception) {
-                        // drop bad data
-                        Logger.warn("Deleting invalid session tracking payload", exception);
-                        sessionStore.deleteStoredFiles(storedFiles);
+                    DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+
+                    switch (deliveryStatus) {
+                        case DELIVERED:
+                            sessionStore.deleteStoredFiles(storedFiles);
+                            break;
+                        case UNDELIVERED:
+                            sessionStore.cancelQueuedFiles(storedFiles);
+                            Logger.warn("Leaving session payload for future delivery");
+                            break;
+                        case FAILURE:
+                            // drop bad data
+                            Logger.warn("Deleting invalid session tracking payload");
+                            sessionStore.deleteStoredFiles(storedFiles);
+                            break;
+                        default:
+                            break;
                     }
                 }
             } finally {
                 flushingRequest.release(1);
             }
         }
+    }
+
+    DeliveryStatus deliverSessionPayload(SessionTrackingPayload payload) {
+        DeliveryParams params = configuration.getSessionApiDeliveryParams();
+        Delivery delivery = configuration.getDelivery();
+        return delivery.deliver(payload, params);
     }
 
     @Override
