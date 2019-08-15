@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ public class ErrorTest {
 
     @Test
     public void testShouldIgnoreClass() {
-        config.setIgnoreClasses(new String[]{"java.io.IOException"});
+        config.setIgnoreClasses(Collections.singleton("java.io.IOException"));
 
         // Shouldn't ignore classes not in ignoreClasses
         RuntimeException runtimeException = new RuntimeException("Test");

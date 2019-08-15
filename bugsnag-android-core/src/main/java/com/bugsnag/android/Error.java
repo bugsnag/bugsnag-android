@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class Error implements JsonStream.Streamable {
 
     @NonNull
     final Configuration config;
-    private String[] projectPackages;
+    private Collection<String> projectPackages;
     private final Exceptions exceptions;
     private Breadcrumbs breadcrumbs;
     private final Throwable exception;
@@ -393,11 +394,11 @@ public class Error implements JsonStream.Streamable {
         return session;
     }
 
-    String[] getProjectPackages() {
+    Collection<String> getProjectPackages() {
         return projectPackages;
     }
 
-    void setProjectPackages(String[] projectPackages) {
+    void setProjectPackages(Collection<String> projectPackages) {
         this.projectPackages = projectPackages;
         if (exceptions != null) {
             exceptions.setProjectPackages(projectPackages);

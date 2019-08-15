@@ -9,12 +9,12 @@ Scenario: Exception not reported when release stage null
     When I run "NullReleaseStageScenario"
     Then I should receive no requests
 
-Scenario: Exception reported when release stages null
-    When I run "NullNotifyReleaseStageScenario"
-    Then I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+Scenario: Exception reported when release stages empty
+    When I run "EmptyNotifyReleaseStageScenario"
+    Then I should receive a request
+    And the request is a valid for the error reporting API
     And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "NullNotifyReleaseStageScenario"
+    And the exception "message" equals "EmptyNotifyReleaseStageScenario"
 
 Scenario: Exception reported when inside release stage
     When I run "InsideReleaseStageScenario"

@@ -11,7 +11,7 @@ internal class InsideReleaseStageScenario(config: Configuration,
                                           context: Context) : Scenario(config, context) {
     init {
         config.setReleaseStage("prod")
-        config.setNotifyReleaseStages(arrayOf("prod"))
+        config.setNotifyReleaseStages(listOf("prod"))
     }
 
     override fun run() {

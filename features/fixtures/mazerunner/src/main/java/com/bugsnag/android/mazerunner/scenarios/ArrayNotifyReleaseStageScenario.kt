@@ -12,7 +12,7 @@ internal class ArrayNotifyReleaseStageScenario(config: Configuration,
     init {
         config.setAutoCaptureSessions(false)
         config.setReleaseStage("prod")
-        config.setNotifyReleaseStages(arrayOf("dev", "prod"))
+        config.setNotifyReleaseStages(listOf("dev", "prod"))
     }
 
     override fun run() {

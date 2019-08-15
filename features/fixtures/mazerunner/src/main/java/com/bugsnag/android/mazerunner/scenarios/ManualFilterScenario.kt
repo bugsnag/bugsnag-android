@@ -11,7 +11,7 @@ internal class ManualFilterScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
-        config.setFilters(arrayOf("foo"))
+        config.setFilters(listOf("foo"))
     }
 
     override fun run() {

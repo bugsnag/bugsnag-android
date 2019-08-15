@@ -139,8 +139,8 @@ public class Client extends Observable implements Observer {
         breadcrumbs = new Breadcrumbs(configuration);
 
         // Set sensible defaults if project packages not already set
-        if (config.getProjectPackages() == null) {
-            configuration.setProjectPackages(new String[]{appContext.getPackageName()});
+        if (config.getProjectPackages().isEmpty()) {
+            configuration.setProjectPackages(Collections.singleton(appContext.getPackageName()));
         }
 
         if (appContext instanceof Application) {
