@@ -24,6 +24,7 @@ COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
 COPY bugsnag-android-core/ bugsnag-android-core/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
 COPY examples/ examples/
+COPY mazerunner-scenarios/ mazerunner-scenarios/
 COPY scripts/ scripts/
 
 RUN scripts/install-ndk.sh

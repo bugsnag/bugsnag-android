@@ -1,9 +1,9 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
+
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 
@@ -14,6 +14,7 @@ public class HandledExceptionJavaScenario extends Scenario {
 
     public HandledExceptionJavaScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoCaptureSessions(false);
     }
 
     @Override

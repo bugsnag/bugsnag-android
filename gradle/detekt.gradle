@@ -1,6 +1,7 @@
 detekt {
     input = files("src/androidTest", "src/main/java", "src/test")
     filters = ".*/resources/.*,.*/build/.*"
+    baseline = file("detekt-baseline.xml")
 
     reports {
         html {

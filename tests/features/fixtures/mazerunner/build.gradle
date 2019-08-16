@@ -73,6 +73,7 @@ android {
 
 dependencies {
     implementation "com.bugsnag:bugsnag-android:+"
+    implementation project(":mazerunner-scenarios")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"
 }
