@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,7 +38,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final long timeoutMs;
 
     final ImmutableConfig configuration;
-    final Configuration mutableConfig;
+    final Configuration clientState;
     final Client client;
     final SessionStore sessionStore;
 
@@ -53,15 +51,15 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
 
-    SessionTracker(ImmutableConfig configuration, Configuration mutableConfig,
+    SessionTracker(ImmutableConfig configuration, Configuration clientState,
                    Client client, SessionStore sessionStore) {
-        this(configuration, mutableConfig, client, DEFAULT_TIMEOUT_MS, sessionStore);
+        this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore);
     }
 
-    SessionTracker(ImmutableConfig configuration, Configuration mutableConfig,
+    SessionTracker(ImmutableConfig configuration, Configuration clientState,
                    Client client, long timeoutMs, SessionStore sessionStore) {
         this.configuration = configuration;
-        this.mutableConfig = mutableConfig;
+        this.clientState = clientState;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
@@ -182,7 +180,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 client.appData, client.deviceData);
 
                         try {
-                            for (BeforeSendSession mutator : mutableConfig.getSessionCallbacks()) {
+                            for (BeforeSendSession mutator : clientState.getSessionCallbacks()) {
                                 mutator.beforeSendSession(payload);
                             }
 

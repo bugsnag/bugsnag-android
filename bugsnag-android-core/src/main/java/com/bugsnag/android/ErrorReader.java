@@ -24,7 +24,7 @@ class ErrorReader {
      *                     field is missing.
      */
     static Error readError(@NonNull ImmutableConfig config,
-                           @NonNull BugsnagConfiguration mutableConfig, @NonNull File errorFile)
+                           @NonNull BugsnagConfiguration clientState, @NonNull File errorFile)
             throws IOException {
         JsonReader reader = null;
 
@@ -105,7 +105,7 @@ class ErrorReader {
                                                          unhandled, severityReasonAttribute);
 
             Error error = new Error(config, exceptions.getException(), handledState, severity,
-                                    session, threadState, mutableConfig.getMetaData());
+                                    session, threadState, clientState.getMetaData());
             error.getExceptions().setExceptionType(exceptions.getExceptionType());
             error.setProjectPackages(projectPackages);
             error.setUser(user);

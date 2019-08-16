@@ -45,7 +45,7 @@ public class Client extends Observable implements Observer {
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
-    final Configuration mutableConfig;
+    final Configuration clientState;
     final ImmutableConfig immutableConfig;
 
     final Context appContext;
@@ -116,11 +116,11 @@ public class Client extends Observable implements Observer {
 
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
-        mutableConfig = configuration;
+        clientState = configuration;
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
         sessionStore = new SessionStore(appContext);
-        sessionTracker = new SessionTracker(immutableConfig, mutableConfig, this, sessionStore);
+        sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore);
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
@@ -148,7 +148,7 @@ public class Client extends Observable implements Observer {
         }
 
         // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(immutableConfig, mutableConfig,
+        errorStore = new ErrorStore(immutableConfig, clientState,
                 appContext, new ErrorStore.Delegate() {
                     @Override
                     public void onErrorReadFailure(Error error) {
@@ -257,7 +257,7 @@ public class Client extends Observable implements Observer {
     void sendNativeSetupNotification() {
         setChanged();
         ArrayList<Object> messageArgs = new ArrayList<>();
-        messageArgs.add(mutableConfig);
+        messageArgs.add(clientState);
 
         super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
         try {
@@ -367,7 +367,7 @@ public class Client extends Observable implements Observer {
      * @return Context
      */
     @Nullable public String getContext() {
-        return mutableConfig.getContext();
+        return clientState.getContext();
     }
 
     /**
@@ -378,7 +378,7 @@ public class Client extends Observable implements Observer {
      * @param context set what was happening at the time of a crash
      */
     public void setContext(@Nullable String context) {
-        mutableConfig.setContext(context);
+        clientState.setContext(context);
     }
 
     /**
@@ -500,7 +500,7 @@ public class Client extends Observable implements Observer {
      * @see BeforeNotify
      */
     public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        mutableConfig.addBeforeNotify(beforeNotify);
+        clientState.addBeforeNotify(beforeNotify);
     }
 
     /**
@@ -524,7 +524,7 @@ public class Client extends Observable implements Observer {
      * @see BeforeSend
      */
     public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        mutableConfig.addBeforeSend(beforeSend);
+        clientState.addBeforeSend(beforeSend);
     }
 
     /**
@@ -546,7 +546,7 @@ public class Client extends Observable implements Observer {
      * @see BeforeRecordBreadcrumb
      */
     public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        mutableConfig.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+        clientState.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
     }
 
     /**
@@ -556,7 +556,7 @@ public class Client extends Observable implements Observer {
      */
     public void notify(@NonNull Throwable exception) {
         Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, mutableConfig.getMetaData())
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, !BLOCKING);
@@ -571,7 +571,7 @@ public class Client extends Observable implements Observer {
      */
     public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
         Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, mutableConfig.getMetaData())
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -591,7 +591,7 @@ public class Client extends Observable implements Observer {
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable Callback callback) {
         Error error = new Error.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), mutableConfig.getMetaData())
+            sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -606,7 +606,7 @@ public class Client extends Observable implements Observer {
      */
     public void notify(@NonNull Throwable exception, @NonNull Severity severity) {
         Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, mutableConfig.getMetaData())
+            Thread.currentThread(), false, clientState.getMetaData())
             .severity(severity)
             .build();
         notify(error, !BLOCKING);
@@ -649,7 +649,7 @@ public class Client extends Observable implements Observer {
 
         // Attach default context from active activity
         if (TextUtils.isEmpty(error.getContext())) {
-            String context = mutableConfig.getContext();
+            String context = clientState.getContext();
             error.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
@@ -730,7 +730,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception) {
         Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, mutableConfig.getMetaData())
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, BLOCKING);
@@ -745,7 +745,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception, @Nullable Callback callback) {
         Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, mutableConfig.getMetaData())
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -765,7 +765,7 @@ public class Client extends Observable implements Observer {
                                @NonNull StackTraceElement[] stacktrace,
                                @Nullable Callback callback) {
         Error error = new Error.Builder(immutableConfig, name, message,
-            stacktrace, sessionTracker, Thread.currentThread(), mutableConfig.getMetaData())
+            stacktrace, sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -780,7 +780,7 @@ public class Client extends Observable implements Observer {
      */
     public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity) {
         Error error = new Error.Builder(immutableConfig, exception,
-            sessionTracker, Thread.currentThread(), false, mutableConfig.getMetaData())
+            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
             .severity(severity)
             .build();
         notify(error, BLOCKING);
@@ -809,7 +809,7 @@ public class Client extends Observable implements Observer {
 
         @SuppressWarnings("WrongConstant")
         Error error = new Error.Builder(immutableConfig, exception,
-            sessionTracker, Thread.currentThread(), false, mutableConfig.getMetaData())
+            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
             .severity(Severity.fromString(severity))
             .severityReasonType(severityReason)
             .attributeValue(logLevel)
@@ -846,7 +846,7 @@ public class Client extends Observable implements Observer {
      * @param value the contents of the diagnostic information
      */
     public void addToTab(@NonNull String tab, @NonNull String key, @Nullable Object value) {
-        mutableConfig.getMetaData().addToTab(tab, key, value);
+        clientState.getMetaData().addToTab(tab, key, value);
     }
 
     /**
@@ -855,7 +855,7 @@ public class Client extends Observable implements Observer {
      * @param tabName the dashboard tab to remove diagnostic data from
      */
     public void clearTab(@NonNull String tabName) {
-        mutableConfig.getMetaData().clearTab(tabName);
+        clientState.getMetaData().clearTab(tabName);
     }
 
     /**
@@ -864,7 +864,7 @@ public class Client extends Observable implements Observer {
      * @see MetaData
      */
     @NonNull public MetaData getMetaData() {
-        return mutableConfig.getMetaData();
+        return clientState.getMetaData();
     }
 
     /**
@@ -873,7 +873,7 @@ public class Client extends Observable implements Observer {
      * @see MetaData
      */
     public void setMetaData(@NonNull MetaData metaData) {
-        mutableConfig.setMetaData(metaData);
+        clientState.setMetaData(metaData);
     }
 
     /**
@@ -951,7 +951,7 @@ public class Client extends Observable implements Observer {
                         @HandledState.SeverityReason String severityReason,
                         @Nullable String attributeValue, Thread thread) {
         Error error = new Error.Builder(immutableConfig, exception,
-            sessionTracker, thread, true, mutableConfig.getMetaData())
+            sessionTracker, thread, true, clientState.getMetaData())
             .severity(severity)
             .metaData(metaData)
             .severityReasonType(severityReason)
@@ -962,7 +962,7 @@ public class Client extends Observable implements Observer {
     }
 
     private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : mutableConfig.getBeforeSendTasks()) {
+        for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
             try {
                 if (!beforeSend.run(report)) {
                     return false;
@@ -985,7 +985,7 @@ public class Client extends Observable implements Observer {
     }
 
     private boolean runBeforeNotifyTasks(Error error) {
-        for (BeforeNotify beforeNotify : mutableConfig.getBeforeNotifyTasks()) {
+        for (BeforeNotify beforeNotify : clientState.getBeforeNotifyTasks()) {
             try {
                 if (!beforeNotify.run(error)) {
                     return false;
@@ -1000,7 +1000,7 @@ public class Client extends Observable implements Observer {
     }
 
     private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<BeforeRecordBreadcrumb> tasks = mutableConfig.getBeforeRecordBreadcrumbTasks();
+        Collection<BeforeRecordBreadcrumb> tasks = clientState.getBeforeRecordBreadcrumbTasks();
         for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : tasks) {
             try {
                 if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
@@ -1060,7 +1060,7 @@ public class Client extends Observable implements Observer {
      */
     @NonNull
     public BugsnagConfiguration getConfiguration() {
-        return mutableConfig;
+        return clientState;
     }
 
     ImmutableConfig getConfig() {

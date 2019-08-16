@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,7 +46,7 @@ class ErrorStore extends FileStore<Error> {
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
     private final ImmutableConfig config;
-    private final Configuration mutableConfig;
+    private final Configuration clientState;
     private final Delegate delegate;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
@@ -69,11 +67,11 @@ class ErrorStore extends FileStore<Error> {
         }
     };
 
-    ErrorStore(@NonNull ImmutableConfig config, @NonNull Configuration mutableConfig,
+    ErrorStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
                @NonNull Context appContext, Delegate delegate) {
         super(appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
         this.config = config;
-        this.mutableConfig = mutableConfig;
+        this.clientState = clientState;
         this.delegate = delegate;
     }
 
@@ -158,10 +156,10 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Error error = ErrorReader.readError(config, mutableConfig, errorFile);
+            Error error = ErrorReader.readError(config, clientState, errorFile);
             Report report = new Report(config.getApiKey(), error);
 
-            for (BeforeSend beforeSend : mutableConfig.getBeforeSendTasks()) {
+            for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
                 try {
                     if (!beforeSend.run(report)) {
                         deleteStoredFiles(Collections.singleton(errorFile));
@@ -270,7 +268,7 @@ class ErrorStore extends FileStore<Error> {
             }
             BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
             Error error = new Error(config, exc, handledState, severity, null,
-                    null, mutableConfig.getMetaData());
+                    null, clientState.getMetaData());
             error.setIncomplete(true);
             return error;
         } catch (IndexOutOfBoundsException exc) {
