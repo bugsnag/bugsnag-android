@@ -7,7 +7,7 @@ import android.content.Context
 
 import com.bugsnag.android.*
 
-abstract internal class Scenario(
+abstract class Scenario(
     protected val config: Configuration,
     protected val context: Context
 ): Application.ActivityLifecycleCallbacks {
@@ -60,6 +60,11 @@ abstract internal class Scenario(
                 return DeliveryStatus.UNDELIVERED
             }
         }
+    }
+
+    internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
+        val clz = java.lang.Class.forName("com.bugsnag.android.DefaultDelivery")
+        return clz.constructors[0].newInstance(null) as Delivery
     }
 
     /**
