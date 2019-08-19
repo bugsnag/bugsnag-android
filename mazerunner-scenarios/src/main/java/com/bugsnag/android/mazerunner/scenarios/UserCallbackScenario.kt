@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
@@ -9,12 +10,16 @@ import com.bugsnag.android.Configuration
  */
 internal class UserCallbackScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
+    init {
+        config.autoCaptureSessions = false
+    }
+
     override fun run() {
         super.run()
         Bugsnag.setUser("abc", "user@example.com", "Jake")
-        Bugsnag.notify(generateException(), {
-            it.error?.setUser("Agent Pink", "bob@example.com", "Zebedee")
-        })
+        Bugsnag.notify(generateException()) {
+            it.error.setUser("Agent Pink", "bob@example.com", "Zebedee")
+        }
     }
 
 }
