@@ -918,6 +918,12 @@ public class Client extends Observable implements Observer {
 
             // Attach breadcrumbs to the error
             error.setBreadcrumbs(breadcrumbs);
+
+            // Attach default context from active activity
+            if (TextUtils.isEmpty(error.getContext())) {
+                String context = config.getContext();
+                error.setContext(context != null ? context : appData.getActiveScreenClass());
+            }
         } else { // only add minimal information
             error.setAppData(appData.getAppDataSummary());
             error.setDeviceData(deviceData.getDeviceDataSummary());
@@ -925,12 +931,6 @@ public class Client extends Observable implements Observer {
 
         // Attach user info to the error
         error.setUser(user);
-
-        // Attach default context from active activity
-        if (TextUtils.isEmpty(error.getContext())) {
-            String context = config.getContext();
-            error.setContext(context != null ? context : appData.getActiveScreenClass());
-        }
 
         // Run beforeNotify tasks, don't notify if any return true
         if (!runBeforeNotifyTasks(error)) {
@@ -945,7 +945,7 @@ public class Client extends Observable implements Observer {
             callback.beforeNotify(report);
         }
 
-        if (error.getSession() != null) {
+        if (!error.isIncomplete() && error.getSession() != null) {
             setChanged();
 
             if (error.getHandledState().isUnhandled()) {
