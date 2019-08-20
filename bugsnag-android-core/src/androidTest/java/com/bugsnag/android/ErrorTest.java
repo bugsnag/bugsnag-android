@@ -17,6 +17,7 @@ import android.content.res.Resources;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
@@ -88,6 +89,7 @@ public class ErrorTest {
         assertNotNull(errorJson.get("threads"));
         assertNotNull(errorJson.get("exceptions"));
         assertNotNull(errorJson.get("app"));
+        assertFalse(errorJson.has("failureReason"));
     }
 
     @Test
@@ -414,6 +416,16 @@ public class ErrorTest {
 
         JSONObject errorJson = streamableToJson(error);
         assertFalse(errorJson.has("session"));
+    }
+
+    @Test
+    public void testFailureReason() throws JSONException, IOException {
+        error.addFailureReason("Something went wrong");
+        error.addFailureReason("Whoops!");
+        JSONObject json = streamableToJson(error);
+        JSONArray failureReason = json.getJSONArray("failureReason");
+        assertEquals("Something went wrong", failureReason.get(0));
+        assertEquals("Whoops!", failureReason.get(1));
     }
 
     private void validateEmptyAttributes(JSONObject severityReason) {

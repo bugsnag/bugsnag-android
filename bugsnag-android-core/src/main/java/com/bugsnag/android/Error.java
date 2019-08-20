@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +40,8 @@ public class Error implements JsonStream.Streamable {
 
     @Nullable
     private String context;
+
+    private List<String> failureReasons = new ArrayList<>();
 
     @NonNull
     final Configuration config;
@@ -106,6 +110,15 @@ public class Error implements JsonStream.Streamable {
 
         if (config.getSendThreads()) {
             writer.name("threads").value(threadState);
+        }
+
+        if (!failureReasons.isEmpty()) {
+            writer.name("failureReason").beginArray();
+
+            for (String reason : failureReasons) {
+                writer.value(reason);
+            }
+            writer.endArray();
         }
 
         if (session != null) {
@@ -417,6 +430,10 @@ public class Error implements JsonStream.Streamable {
         if (exceptions != null) {
             exceptions.setProjectPackages(projectPackages);
         }
+    }
+
+    void addFailureReason(String failureReason) {
+        failureReasons.add(failureReason);
     }
 
     static class Builder {

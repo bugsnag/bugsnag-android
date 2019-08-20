@@ -174,6 +174,8 @@ class ErrorStore extends FileStore<Error> {
                 Error minimalError = generateErrorFromFilename(errorFile.getName());
 
                 if (minimalError != null) {
+                    minimalError.addFailureReason(exception.getMessage());
+                    minimalError.addFailureReason("File length: " + errorFile.length());
                     delegate.onErrorReadFailure(minimalError);
                 }
             }
