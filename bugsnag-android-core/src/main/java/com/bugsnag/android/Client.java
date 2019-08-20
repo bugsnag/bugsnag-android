@@ -906,17 +906,22 @@ public class Client extends Observable implements Observer {
         }
 
         // Capture the state of the app and device and attach diagnostics to the error
-        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
-        error.setDeviceData(errorDeviceData);
-        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
 
+        if (!error.isIncomplete()) {
+            Map<String, Object> errorDeviceData = deviceData.getDeviceData();
+            error.setDeviceData(errorDeviceData);
+            error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
 
-        // add additional info that belongs in metadata
-        error.setAppData(errorAppData);
-        error.getMetaData().store.put("app", appData.getAppDataMetaData());
+            // add additional info that belongs in metadata
+            error.setAppData(errorAppData);
+            error.getMetaData().store.put("app", appData.getAppDataMetaData());
 
-        // Attach breadcrumbs to the error
-        error.setBreadcrumbs(breadcrumbs);
+            // Attach breadcrumbs to the error
+            error.setBreadcrumbs(breadcrumbs);
+        } else { // only add minimal information
+            error.setAppData(appData.getAppDataSummary());
+            error.setDeviceData(deviceData.getDeviceDataSummary());
+        }
 
         // Attach user info to the error
         error.setUser(user);

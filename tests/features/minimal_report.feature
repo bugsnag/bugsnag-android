@@ -10,6 +10,7 @@ Scenario: Minimal error report for a Handled Exception with an empty file
     And the event "severity" equals "warning"
     And the event "unhandled" is false
     And the event "incomplete" is true
+    And the event "breadcrumbs" is null
     And the event "severityReason.type" equals "handledException"
 
 Scenario: Minimal error report for an Unhandled Exception with a corrupted file
@@ -22,6 +23,7 @@ Scenario: Minimal error report for an Unhandled Exception with a corrupted file
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And the event "incomplete" is true
+    And the event "breadcrumbs" is null
     And the event "severityReason.type" equals "unhandledException"
 
 Scenario: Minimal error report with old filename
