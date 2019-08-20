@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Reduce information collected in minimal error report
+  [#564](https://github.com/bugsnag/bugsnag-android/pull/564)
+
 ## 4.18.0 (2019-08-15)
 
 * Migrate dependencies to androidx
