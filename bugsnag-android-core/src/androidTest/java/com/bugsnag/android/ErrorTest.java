@@ -89,7 +89,7 @@ public class ErrorTest {
         assertNotNull(errorJson.get("threads"));
         assertNotNull(errorJson.get("exceptions"));
         assertNotNull(errorJson.get("app"));
-        assertFalse(errorJson.has("failureReasons"));
+        assertFalse(errorJson.has("notifierFailureDetails"));
     }
 
     @Test
@@ -419,11 +419,11 @@ public class ErrorTest {
     }
 
     @Test
-    public void testFailureReason() throws JSONException, IOException {
-        error.addFailureReason("Something went wrong");
-        error.addFailureReason("Whoops!");
+    public void testNotifierFailureDetails() throws JSONException, IOException {
+        error.addNotifierFailureDetail("Something went wrong");
+        error.addNotifierFailureDetail("Whoops!");
         JSONObject json = streamableToJson(error);
-        JSONArray failureReason = json.getJSONArray("failureReasons");
+        JSONArray failureReason = json.getJSONArray("notifierFailureDetails");
         assertEquals("Something went wrong", failureReason.get(0));
         assertEquals("Whoops!", failureReason.get(1));
     }

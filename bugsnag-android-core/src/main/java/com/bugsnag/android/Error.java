@@ -41,7 +41,7 @@ public class Error implements JsonStream.Streamable {
     @Nullable
     private String context;
 
-    private List<String> failureReasons = new ArrayList<>();
+    private List<String> notifierFailureDetails = new ArrayList<>();
 
     @NonNull
     final Configuration config;
@@ -112,10 +112,10 @@ public class Error implements JsonStream.Streamable {
             writer.name("threads").value(threadState);
         }
 
-        if (!failureReasons.isEmpty()) {
-            writer.name("failureReasons").beginArray();
+        if (!notifierFailureDetails.isEmpty()) {
+            writer.name("notifierFailureDetails").beginArray();
 
-            for (String reason : failureReasons) {
+            for (String reason : notifierFailureDetails) {
                 writer.value(reason);
             }
             writer.endArray();
@@ -432,8 +432,8 @@ public class Error implements JsonStream.Streamable {
         }
     }
 
-    void addFailureReason(String failureReason) {
-        failureReasons.add(failureReason);
+    void addNotifierFailureDetail(String failureDetails) {
+        notifierFailureDetails.add(failureDetails);
     }
 
     static class Builder {

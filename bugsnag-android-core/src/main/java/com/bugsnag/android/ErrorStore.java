@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -188,8 +187,8 @@ class ErrorStore extends FileStore<Error> {
 
             if (minimalError != null) {
                 delegate.onErrorReadFailure(minimalError);
-                minimalError.addFailureReason(exc.getMessage());
-                minimalError.addFailureReason("File length: " + errorFile.length());
+                minimalError.addNotifierFailureDetail(exc.getMessage());
+                minimalError.addNotifierFailureDetail("File length: " + errorFile.length());
             }
             return minimalError;
         }
