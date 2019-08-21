@@ -3,6 +3,7 @@
 ## TBD
 
 * Reduce information collected in minimal error report
+* Add failureReason array to enable diagnostics in error reports
   [#564](https://github.com/bugsnag/bugsnag-android/pull/564)
 
 ## 4.18.0 (2019-08-15)
