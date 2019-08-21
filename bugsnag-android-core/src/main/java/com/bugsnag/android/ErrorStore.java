@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -149,23 +150,20 @@ class ErrorStore extends FileStore<Error> {
     private void flushErrorReport(File errorFile) {
         try {
             Error error = readErrorFromFile(errorFile);
+            Report report = new Report(config.getApiKey(), error);
 
-            if (error != null) {
-                Report report = new Report(config.getApiKey(), error);
-
-                for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
-                    try {
-                        if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(errorFile));
-                            Logger.info("Deleting cancelled error file " + errorFile.getName());
-                            return;
-                        }
-                    } catch (Throwable ex) {
-                        Logger.warn("BeforeSend threw an Exception", ex);
+            for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+                try {
+                    if (!beforeSend.run(report)) {
+                        deleteStoredFiles(Collections.singleton(errorFile));
+                        Logger.info("Deleting cancelled error file " + errorFile.getName());
+                        return;
                     }
+                } catch (Throwable ex) {
+                    Logger.warn("BeforeSend threw an Exception", ex);
                 }
-                config.getDelivery().deliver(report, config);
             }
+            config.getDelivery().deliver(report, config);
 
             deleteStoredFiles(Collections.singleton(errorFile));
             Logger.info("Deleting sent error file " + errorFile.getName());
@@ -174,25 +172,40 @@ class ErrorStore extends FileStore<Error> {
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
-            deleteStoredFiles(Collections.singleton(errorFile));
+            handleFlushFailure(errorFile, exception);
         }
     }
 
-    @Nullable
+    private void handleFlushFailure(File errorFile, Exception exception) {
+        Error error = generateMinimalErr(errorFile, exception);
+        error.addNotifierFailureDetail("flushErrorReport() failed");
+
+        try {
+            Report report = new Report(config.getApiKey(), error);
+            config.getDelivery().deliver(report, config);
+        } catch (Exception ignored) {
+            Logger.warn("Could not send previously saved error to bugsnag", exception);
+        }
+        deleteStoredFiles(Collections.singleton(errorFile));
+    }
+
+    @NonNull
     private Error readErrorFromFile(File errorFile) {
         try {
             return ErrorReader.readError(config, errorFile);
         } catch (Exception exc) {
-            Error minimalError = generateErrorFromFilename(errorFile.getName());
-
-            if (minimalError != null) {
-                delegate.onErrorReadFailure(minimalError);
-                minimalError.addNotifierFailureDetail(exc.getMessage());
-                minimalError.addNotifierFailureDetail(errorFile.getName());
-                minimalError.addNotifierFailureDetail("File length: " + errorFile.length());
-            }
-            return minimalError;
+            return generateMinimalErr(errorFile, exc);
         }
+    }
+
+    @NonNull
+    private Error generateMinimalErr(File errorFile, Exception exc) {
+        Error minimalError = generateErrorFromFilename(errorFile.getName());
+        delegate.onErrorReadFailure(minimalError);
+        minimalError.addNotifierFailureDetail(exc.getMessage());
+        minimalError.addNotifierFailureDetail(errorFile.getName());
+        minimalError.addNotifierFailureDetail("File length: " + errorFile.length());
+        return minimalError;
     }
 
     boolean isLaunchCrashReport(File file) {
@@ -232,38 +245,53 @@ class ErrorStore extends FileStore<Error> {
      * @param filename the filename
      * @return the minimal error, or null if the filename does not match the expected pattern.
      */
+    @NonNull
     Error generateErrorFromFilename(String filename) {
+        String errClass = "";
+        HandledState handledState
+                = HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION);
+        Severity severity = Severity.ERROR;
+        String encodedErr = retrieveEncodedErrInfo(filename);
+
+        // parse info from error
+        if (encodedErr != null && encodedErr.length() >= 4) {
+            char sevChar = encodedErr.charAt(0);
+
+            Severity val = Severity.fromChar(sevChar);
+
+            if (val != null) {
+                severity = val;
+            }
+
+            boolean handled = encodedErr.charAt(2) == 'h';
+            handledState = HandledState.newInstance(handled ? HandledState.REASON_HANDLED_EXCEPTION
+                    : HandledState.REASON_UNHANDLED_EXCEPTION);
+
+            errClass = encodedErr.substring(4);
+        }
+
+        BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
+        Error error = new Error(config, exc, handledState, severity, null, null);
+        error.setIncomplete(true);
+        return error;
+    }
+
+    @Nullable
+    private String retrieveEncodedErrInfo(@Nullable String filename) {
         if (filename == null) {
             return null;
         }
+        int errorInfoStart = filename.indexOf('_') + 1;
 
-        try {
-            int errorInfoStart = filename.indexOf('_') + 1;
+        if (errorInfoStart > 0) {
             int errorInfoEnd = filename.indexOf('_', errorInfoStart);
-            String encodedErr = filename.substring(errorInfoStart, errorInfoEnd);
 
-            char sevChar = encodedErr.charAt(0);
-            Severity severity = Severity.fromChar(sevChar);
-            severity = severity == null ? Severity.ERROR : severity;
-
-            boolean unhandled = encodedErr.charAt(2) == 'u';
-            HandledState handledState = HandledState.newInstance(unhandled
-                ? HandledState.REASON_UNHANDLED_EXCEPTION : HandledState.REASON_HANDLED_EXCEPTION);
-
-            // default if error has no name
-            String errClass = "";
-
-            if (encodedErr.length() >= 4) {
-                errClass = encodedErr.substring(4);
+            if (errorInfoEnd > -1
+                    && !filename.substring(errorInfoEnd).startsWith("_startupcrash")) {
+                return filename.substring(errorInfoStart, errorInfoEnd);
             }
-            BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
-            Error error = new Error(config, exc, handledState, severity, null, null);
-            error.setIncomplete(true);
-            return error;
-        } catch (IndexOutOfBoundsException exc) {
-            // simplifies above implementation by avoiding need for several length checks.
-            return null;
         }
+        return null;
     }
 
     @NonNull

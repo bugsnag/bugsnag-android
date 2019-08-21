@@ -55,11 +55,13 @@ class ErrorFilenameTest {
 
     @Test
     fun testErrorFromInvalidFilename() {
-        val invalids = arrayOf(
-            null, "", "test.txt", "i-h.foo",
-            "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json"
-        )
-        invalids.forEach { assertNull(errorStore.generateErrorFromFilename(it)) }
+        val invalids = arrayOf(null, "", "test.txt", "i-h.foo")
+        invalids.forEach {
+            val err = errorStore.generateErrorFromFilename(it)
+            assertTrue(err.handledState.isUnhandled)
+            assertEquals(Severity.ERROR, err.severity)
+            assertEquals("", err.exceptionName)
+         }
     }
 
     @Test
@@ -92,6 +94,37 @@ class ErrorFilenameTest {
         assertNotNull(err)
         assertFalse(err.handledState.isUnhandled)
         assertEquals(Severity.INFO, err.severity)
+        assertEquals("", err.exceptionName)
+    }
+
+    @Test
+    fun testErrorWithoutSeverityFromFilename() {
+        val filename = "1504500000000_i-u-java.lang.IllegalStateException_" +
+                "683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json"
+        val err = errorStore.generateErrorFromFilename(filename)
+        assertNotNull(err)
+        assertTrue(err.handledState.isUnhandled)
+        assertEquals(Severity.INFO, err.severity)
+        assertEquals("java.lang.IllegalStateException", err.exceptionName)
+    }
+
+    @Test
+    fun testErrorFromOldFilename() {
+        val filename = "1504500000000_683c6b92-b325-4987-80ad-77086509ca1e.json"
+        val err = errorStore.generateErrorFromFilename(filename)
+        assertNotNull(err)
+        assertTrue(err.handledState.isUnhandled)
+        assertEquals(Severity.ERROR, err.severity)
+        assertEquals("", err.exceptionName)
+    }
+
+    @Test
+    fun testErrorFromOldStartupCrashFilename() {
+        val filename = "1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json"
+        val err = errorStore.generateErrorFromFilename(filename)
+        assertNotNull(err)
+        assertTrue(err.handledState.isUnhandled)
+        assertEquals(Severity.ERROR, err.severity)
         assertEquals("", err.exceptionName)
     }
 
