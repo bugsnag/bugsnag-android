@@ -21,7 +21,7 @@ internal class NewSessionScenario(config: Configuration,
         val thread = HandlerThread("HandlerThread")
         thread.start()
 
-        Handler(thread.looper).post {
+        Handler(thread.looper).post(Runnable {
             // send 1st exception which should include session info
             client.startSession()
             client.notifyBlocking(generateException())
@@ -32,6 +32,6 @@ internal class NewSessionScenario(config: Configuration,
             // send 2nd exception which should contain new session info
             client.startSession()
             client.notifyBlocking(generateException())
-        }
+        })
     }
 }

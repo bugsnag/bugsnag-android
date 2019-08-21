@@ -3,7 +3,8 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.app.Activity
 import android.content.Context
 import android.os.Handler
-import com.bugsnag.android.*
+
+import com.bugsnag.android.Configuration
 
 /**
  * Generates an uncaught exception, catches it, and persists it to disc, preventing any delivery.
@@ -22,8 +23,9 @@ import com.bugsnag.android.*
 internal class StartupCrashFlushScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
     init {
+        config.setAutoCaptureSessions(false)
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
             if ("CrashOfflineWithDelay" == eventMetaData || "CrashOfflineAtStartup" == eventMetaData) {
                 // Part 2 - Persist a startup crash to disk
                 disableAllDelivery(config)
@@ -34,7 +36,7 @@ internal class StartupCrashFlushScenario(config: Configuration,
     override fun run() {
         super.run()
         if ("CrashOfflineWithDelay" == eventMetaData) {
-            Handler().postDelayed({
+            Handler().postDelayed(Runnable {
             	throw RuntimeException("Regular crash")
 			}, 6000)
         } else if ("CrashOfflineAtStartup" == eventMetaData) {

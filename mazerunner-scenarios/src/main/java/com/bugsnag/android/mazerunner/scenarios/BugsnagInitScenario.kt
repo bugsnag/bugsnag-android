@@ -12,8 +12,17 @@ internal class BugsnagInitScenario(
     config: Configuration,
     context: Context
 ) : Scenario(config, context) {
+
+    companion object {
+        private const val POOL_SIZE = 8
+    }
+
+    init {
+        config.setAutoCaptureSessions(false)
+    }
+
     override fun run() {
-        val threadPool = Executors.newFixedThreadPool(8)
+        val threadPool = Executors.newFixedThreadPool(POOL_SIZE)
         val callables = mutableListOf<Callable<Client?>>()
 
         IntRange(1, 25).forEach {

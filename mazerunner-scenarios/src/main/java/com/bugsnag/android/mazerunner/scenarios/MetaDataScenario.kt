@@ -16,7 +16,7 @@ internal class MetaDataScenario(config: Configuration,
     override fun run() {
         super.run()
         Bugsnag.notify(RuntimeException("MetaDataScenario"), {
-            it.error?.addToTab("Custom", "foo", "Hello World!")
+            it.error.addToTab("Custom", "foo", "Hello World!")
         })
     }
 
