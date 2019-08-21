@@ -2,8 +2,10 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -147,21 +149,24 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Error error = ErrorReader.readError(config, errorFile);
-            Report report = new Report(config.getApiKey(), error);
+            Error error = readErrorFromFile(errorFile);
 
-            for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
-                try {
-                    if (!beforeSend.run(report)) {
-                        deleteStoredFiles(Collections.singleton(errorFile));
-                        Logger.info("Deleting cancelled error file " + errorFile.getName());
-                        return;
+            if (error != null) {
+                Report report = new Report(config.getApiKey(), error);
+
+                for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+                    try {
+                        if (!beforeSend.run(report)) {
+                            deleteStoredFiles(Collections.singleton(errorFile));
+                            Logger.info("Deleting cancelled error file " + errorFile.getName());
+                            return;
+                        }
+                    } catch (Throwable ex) {
+                        Logger.warn("BeforeSend threw an Exception", ex);
                     }
-                } catch (Throwable ex) {
-                    Logger.warn("BeforeSend threw an Exception", ex);
                 }
+                config.getDelivery().deliver(report, config);
             }
-            config.getDelivery().deliver(report, config);
 
             deleteStoredFiles(Collections.singleton(errorFile));
             Logger.info("Deleting sent error file " + errorFile.getName());
@@ -170,14 +175,21 @@ class ErrorStore extends FileStore<Error> {
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
-            if (delegate != null) {
-                Error minimalError = generateErrorFromFilename(errorFile.getName());
-
-                if (minimalError != null) {
-                    delegate.onErrorReadFailure(minimalError);
-                }
-            }
             deleteStoredFiles(Collections.singleton(errorFile));
+        }
+    }
+
+    @Nullable
+    private Error readErrorFromFile(File errorFile) {
+        try {
+            return ErrorReader.readError(config, errorFile);
+        } catch (Exception exc) {
+            Error minimalError = generateErrorFromFilename(errorFile.getName());
+
+            if (minimalError != null) {
+                delegate.onErrorReadFailure(minimalError);
+            }
+            return minimalError;
         }
     }
 

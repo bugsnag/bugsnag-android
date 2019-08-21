@@ -196,8 +196,9 @@ public class Client extends Observable implements Observer {
         errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
             @Override
             public void onErrorReadFailure(Error error) {
-                // send a minimal error to bugsnag with no cache
-                Client.this.notify(error, DeliveryStyle.NO_CACHE, null);
+                // add minimal error information
+                error.setAppData(appData.getAppDataSummary());
+                error.setDeviceData(deviceData.getDeviceDataSummary());
             }
         });
 
@@ -906,27 +907,21 @@ public class Client extends Observable implements Observer {
         }
 
         // Capture the state of the app and device and attach diagnostics to the error
+        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
+        error.setDeviceData(errorDeviceData);
+        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
 
-        if (!error.isIncomplete()) {
-            Map<String, Object> errorDeviceData = deviceData.getDeviceData();
-            error.setDeviceData(errorDeviceData);
-            error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
+        // add additional info that belongs in metadata
+        error.setAppData(errorAppData);
+        error.getMetaData().store.put("app", appData.getAppDataMetaData());
 
-            // add additional info that belongs in metadata
-            error.setAppData(errorAppData);
-            error.getMetaData().store.put("app", appData.getAppDataMetaData());
+        // Attach breadcrumbs to the error
+        error.setBreadcrumbs(breadcrumbs);
 
-            // Attach breadcrumbs to the error
-            error.setBreadcrumbs(breadcrumbs);
-
-            // Attach default context from active activity
-            if (TextUtils.isEmpty(error.getContext())) {
-                String context = config.getContext();
-                error.setContext(context != null ? context : appData.getActiveScreenClass());
-            }
-        } else { // only add minimal information
-            error.setAppData(appData.getAppDataSummary());
-            error.setDeviceData(deviceData.getDeviceDataSummary());
+        // Attach default context from active activity
+        if (TextUtils.isEmpty(error.getContext())) {
+            String context = config.getContext();
+            error.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
         // Attach user info to the error
@@ -960,10 +955,6 @@ public class Client extends Observable implements Observer {
         switch (style) {
             case SAME_THREAD:
                 deliver(report, error);
-                break;
-            case NO_CACHE:
-                report.setCachingDisabled(true);
-                deliverReportAsync(error, report);
                 break;
             case ASYNC:
                 deliverReportAsync(error, report);
