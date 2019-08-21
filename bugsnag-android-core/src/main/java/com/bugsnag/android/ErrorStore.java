@@ -188,6 +188,7 @@ class ErrorStore extends FileStore<Error> {
             if (minimalError != null) {
                 delegate.onErrorReadFailure(minimalError);
                 minimalError.addNotifierFailureDetail(exc.getMessage());
+                minimalError.addNotifierFailureDetail(errorFile.getName());
                 minimalError.addNotifierFailureDetail("File length: " + errorFile.length());
             }
             return minimalError;
