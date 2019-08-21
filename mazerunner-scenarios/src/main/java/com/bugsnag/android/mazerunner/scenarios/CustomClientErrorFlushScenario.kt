@@ -17,7 +17,7 @@ internal class CustomClientErrorFlushScenario(config: Configuration,
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
             if ("online" == eventMetaData) {
-                config.delivery = createCustomHeaderDelivery(config)
+                config.delivery = createCustomHeaderDelivery()
             } else {
                 disableAllDelivery(config)
             }

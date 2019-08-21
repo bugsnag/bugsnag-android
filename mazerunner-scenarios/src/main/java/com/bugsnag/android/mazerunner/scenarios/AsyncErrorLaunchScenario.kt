@@ -5,20 +5,21 @@ import com.bugsnag.android.*
 
 /**
  * Tests that only 1 request is sent in the case where stored reports are concurrently flushed,
- * in the case that two connectivity changes occur in quick succession.
+ * in the case that a connectivity change occurs after launch.
  */
-internal class AsyncErrorDoubleFlushScenario(config: Configuration,
-                                             context: Context) : Scenario(config, context) {
+internal class AsyncErrorLaunchScenario(config: Configuration,
+                                        context: Context) : Scenario(config, context) {
 
     init {
-        config.delivery = createSlowDelivery(config)
+        config.delivery = createSlowDelivery()
+        config.setAutoCaptureSessions(false)
     }
 
     override fun run() {
         super.run()
 
         writeErrorToStore(Bugsnag.getClient())
-        flushErrorStoreAsync(Bugsnag.getClient())
+        flushErrorStoreOnLaunch(Bugsnag.getClient())
         flushErrorStoreAsync(Bugsnag.getClient())
     }
 

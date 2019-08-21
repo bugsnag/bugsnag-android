@@ -20,7 +20,7 @@ internal fun flushErrorStoreOnLaunch(client: Client) {
 /**
  * Creates a delivery API client with a 500ms delay, emulating poor network connectivity
  */
-internal fun createSlowDelivery(config: Configuration): Delivery {
+internal fun createSlowDelivery(): Delivery {
     val delivery = createDefaultDelivery()
 
     return object : Delivery {
@@ -36,7 +36,7 @@ internal fun createSlowDelivery(config: Configuration): Delivery {
     }
 }
 
-internal fun createCustomHeaderDelivery(config: Configuration): Delivery {
+internal fun createCustomHeaderDelivery(): Delivery {
     val delivery = createDefaultDelivery()
 
     return object : Delivery {
