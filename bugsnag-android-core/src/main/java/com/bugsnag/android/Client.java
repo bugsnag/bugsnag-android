@@ -50,7 +50,6 @@ public class Client extends Observable implements Observer {
     private static final String USER_EMAIL_KEY = "user.email";
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
-    static final String INTERNAL_NOTIFIER_TAB = "Notifier";
 
     @NonNull
     protected final Configuration config;
@@ -992,8 +991,9 @@ public class Client extends Observable implements Observer {
         error.setDeviceData(deviceData.getDeviceDataSummary());
 
         MetaData metaData = error.getMetaData();
-        metaData.addToTab(INTERNAL_NOTIFIER_TAB, "name", Notifier.getInstance().getName());
-        metaData.addToTab(INTERNAL_NOTIFIER_TAB, "version", Notifier.getInstance().getVersion());
+        Notifier notifier = Notifier.getInstance();
+        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "name", notifier.getName());
+        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "version", notifier.getVersion());
         metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "apiKey", config.getApiKey());
 
         Object packageName = appData.getAppData().get("packageName");
