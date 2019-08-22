@@ -2,8 +2,8 @@
 
 ## TBD
 
-* Buffer IO when reading cached error reports
-  [#565](https://github.com/bugsnag/bugsnag-android/pull/565)
+* Report internal SDK errors to bugsnag
+  [#570](https://github.com/bugsnag/bugsnag-android/pull/570)
 
 ## 4.18.0 (2019-08-15)
 
