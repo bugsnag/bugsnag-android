@@ -53,6 +53,7 @@ private void configureAndroidProject(Project proj) {
     lintOptions.warningsAsErrors = true
     lintOptions.checkAllWarnings = true
     lintOptions.baseline new File(proj.projectDir, "lint-baseline.xml")
+    lintOptions.disable 'GradleDependency'
 
     def defaultConfig = proj.android.defaultConfig
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
