@@ -2,15 +2,12 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 
-import androidx.test.filters.MediumTest;
-
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-@MediumTest
 public class JsonWriterBugsnagTest {
 
     @Test(expected = IOException.class)
