@@ -202,6 +202,7 @@ public class Client extends Observable implements Observer {
                 // send a minimal error to bugsnag with no cache
                 Thread thread = Thread.currentThread();
                 Error err = new Error.Builder(config, exc, null, thread, true).build();
+                err.setContext("Crash Report Deserialization");
 
                 MetaData metaData = err.getMetaData();
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
@@ -1000,26 +1001,30 @@ public class Client extends Observable implements Observer {
         metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
 
         final Report report = new Report(null, error);
-        Async.run(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Delivery delivery = config.getDelivery();
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Delivery delivery = config.getDelivery();
 
-                    // can only modify headers if DefaultDelivery is in use
-                    if (delivery instanceof DefaultDelivery) {
-                        Map<String, String> headers = config.getErrorApiHeaders();
-                        headers.put("Bugsnag-Internal-Error", "true");
-                        headers.remove(Configuration.HEADER_API_KEY);
-                        DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
-                        defaultDelivery.deliver(config.getEndpoint(), report, headers);
+                        // can only modify headers if DefaultDelivery is in use
+                        if (delivery instanceof DefaultDelivery) {
+                            Map<String, String> headers = config.getErrorApiHeaders();
+                            headers.put("Bugsnag-Internal-Error", "true");
+                            headers.remove(Configuration.HEADER_API_KEY);
+                            DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
+                            defaultDelivery.deliver(config.getEndpoint(), report, headers);
+                        }
+
+                    } catch (Exception exception) {
+                        Logger.warn("Failed to report minimal error to Bugsnag", exception);
                     }
-
-                } catch (Exception exception) {
-                    Logger.warn("Failed to report minimal error to Bugsnag", exception);
                 }
-            }
-        });
+            });
+        } catch (RejectedExecutionException ignored) {
+            // drop internal report
+        }
     }
 
     private void deliverReportAsync(@NonNull Error error, Report report) {
