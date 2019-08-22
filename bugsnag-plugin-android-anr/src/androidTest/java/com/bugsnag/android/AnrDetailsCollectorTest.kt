@@ -28,15 +28,16 @@ class AnrDetailsCollectorTest {
     fun setUp() {
         stateInfo.pid = PID_EXAMPLE
         stateInfo.tag = "com.bugsnag.android.example/.ExampleActivity"
-        stateInfo.shortMsg = "ANR Input dispatching timed out"
+        stateInfo.shortMsg = "Input dispatching timed out"
         stateInfo.longMsg = "ANR in com.bugsnag.android.example"
 
         error = Error.Builder(
-            Configuration("f"),
+            BugsnagTestUtils.generateImmutableConfig(),
             RuntimeException(),
             null,
             Thread.currentThread(),
-            true
+            true,
+            MetaData()
         ).build()
     }
 

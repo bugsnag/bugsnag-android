@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -346,8 +347,8 @@ public class NativeInterface {
      * Return which release stages notify
      */
     @Nullable
-    public static String[] getNotifyReleaseStages() {
-        return getClient().getConfig().getNotifyReleaseStages().toArray(new String[]{});
+    public static Collection<String> getNotifyReleaseStages() {
+        return getClient().getConfig().getNotifyReleaseStages();
     }
 
     /**
@@ -374,7 +375,7 @@ public class NativeInterface {
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
-            || client.getConfig().shouldNotifyForReleaseStage(releaseStage)) {
+            || client.getConfig().shouldNotifyForReleaseStage()) {
             client.getErrorStore().enqueueContentForDelivery(payload);
             client.getErrorStore().flushAsync();
         }

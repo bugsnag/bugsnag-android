@@ -10,7 +10,7 @@ import org.junit.Test
 @SmallTest
 class BeforeNotifyTest {
 
-    private val config = Configuration("api-key")
+    private val config = BugsnagTestUtils.generateImmutableConfig()
 
     @Test
     fun testRunModifiesError() {
@@ -22,7 +22,7 @@ class BeforeNotifyTest {
         }
 
         val error = Error.Builder(config, RuntimeException("Test"), generateSessionTracker(),
-            Thread.currentThread(), false).build()
+            Thread.currentThread(), false, MetaData()).build()
         beforeNotify.run(error)
         assertEquals(context, error.context)
     }

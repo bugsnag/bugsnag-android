@@ -1,15 +1,15 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import com.bugsnag.android.*
-
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.content.Context
 
+import com.bugsnag.android.*
+
 abstract class Scenario(
-    val config: Configuration,
-    val context: Context
+    protected val config: Configuration,
+    protected val context: Context
 ): Application.ActivityLifecycleCallbacks {
 
     var eventMetaData: String? = null
@@ -21,9 +21,9 @@ abstract class Scenario(
     /**
      * Sets a NOP implementation for the Session Tracking API, preventing delivery
      */
-    fun disableSessionDelivery() {
-        val baseDelivery = Bugsnag.getClient().config.delivery
-        Bugsnag.getClient().config.delivery = object: Delivery {
+    protected fun disableSessionDelivery(config: Configuration) {
+        val baseDelivery = createDefaultDelivery()
+        config.delivery = object: Delivery {
             override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
                 return baseDelivery.deliver(report, deliveryParams)
             }
@@ -37,9 +37,9 @@ abstract class Scenario(
     /**
      * Sets a NOP implementation for the Error Tracking API, preventing delivery
      */
-    fun disableReportDelivery() {
-        val baseDelivery = Bugsnag.getClient().config.delivery
-        Bugsnag.getClient().config.delivery = object: Delivery {
+    protected fun disableReportDelivery(config: Configuration) {
+        val baseDelivery = createDefaultDelivery()
+        config.delivery = object: Delivery {
             override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED
             }
@@ -50,7 +50,7 @@ abstract class Scenario(
         }
     }
 
-    fun disableAllDelivery(config: Configuration) {
+    protected fun disableAllDelivery(config: Configuration) {
         config.delivery = object: Delivery {
             override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED
@@ -62,15 +62,20 @@ abstract class Scenario(
         }
     }
 
+    internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
+        val clz = java.lang.Class.forName("com.bugsnag.android.DefaultDelivery")
+        return clz.constructors[0].newInstance(null) as Delivery
+    }
+
     /**
      * Returns a throwable with the message as the current classname
      */
-    fun generateException(): Throwable = RuntimeException(javaClass.simpleName)
+    protected fun generateException(): Throwable = RuntimeException(javaClass.simpleName)
 
 
     /* Activity lifecycle callback overrides */
 
-    fun registerActivityLifecycleCallbacks() {
+    protected fun registerActivityLifecycleCallbacks() {
         (context.applicationContext as Application).registerActivityLifecycleCallbacks(this)
     }
 

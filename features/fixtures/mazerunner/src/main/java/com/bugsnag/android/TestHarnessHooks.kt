@@ -62,7 +62,7 @@ internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDel
 }
 
 internal fun writeErrorToStore(client: Client) {
-    val error = Error.Builder(Configuration("api-key"), RuntimeException(), null,
-        Thread.currentThread(), false).build()
+    val error = Error.Builder(client.getConfig(), RuntimeException(), null,
+        Thread.currentThread(), false, MetaData()).build()
     client.errorStore.write(error)
 }

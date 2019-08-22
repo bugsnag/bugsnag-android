@@ -46,6 +46,7 @@ class RxErrorTest {
         val fileContents = javaClass.classLoader!!.getResource("rx_error.json")!!.readText()
         val fixtureFile = File.createTempFile("rx_error", ".json")
         fixtureFile.writeText(fileContents)
-        return ErrorReader.readError(Configuration("key"), fixtureFile)
+        return ErrorReader.readError(BugsnagTestUtils.generateImmutableConfig(),
+            BugsnagTestUtils.generateConfiguration(), fixtureFile)
     }
 }

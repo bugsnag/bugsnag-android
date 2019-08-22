@@ -22,8 +22,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @ThreadSafe
 abstract class FileStore<T extends JsonStream.Streamable> {
 
-    @NonNull
-    protected final Configuration config;
     @Nullable
     final String storeDirectory;
     private final int maxStoreCount;
@@ -32,9 +30,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     final Lock lock = new ReentrantLock();
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
 
-    FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
+    FileStore(@NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
-        this.config = config;
         this.maxStoreCount = maxStoreCount;
         this.comparator = comparator;
 

@@ -23,11 +23,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-public class Configuration extends Observable implements Observer {
+public class Configuration extends Observable implements Observer, BugsnagConfiguration {
 
-    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
-    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
-    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
     private static final int DEFAULT_MAX_SIZE = 32;
     static final String DEFAULT_EXCEPTION_TYPE = "android";
 
@@ -143,9 +140,6 @@ public class Configuration extends Observable implements Observer {
      */
     public void setAppVersion(@NonNull String appVersion) {
         this.appVersion = appVersion;
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_APP_VERSION, appVersion));
     }
 
     /**
@@ -154,6 +148,7 @@ public class Configuration extends Observable implements Observer {
      * @return Context
      */
     @Nullable
+    @Override
     public String getContext() {
         return context;
     }
@@ -165,11 +160,12 @@ public class Configuration extends Observable implements Observer {
      *
      * @param context set what was happening at the time of a crash
      */
+    @Override
     public void setContext(@Nullable String context) {
         this.context = context;
         setChanged();
         notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_CONTEXT, context));
+                NativeInterface.MessageType.UPDATE_CONTEXT, context));
     }
 
     /**
@@ -215,9 +211,6 @@ public class Configuration extends Observable implements Observer {
      */
     public void setBuildUuid(@Nullable String buildUuid) {
         this.buildUuid = buildUuid;
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-            NativeInterface.MessageType.UPDATE_BUILD_UUID, buildUuid));
     }
 
     /**
@@ -345,10 +338,6 @@ public class Configuration extends Observable implements Observer {
     public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;
         loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
-
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_RELEASE_STAGE, releaseStage));
     }
 
     /**
@@ -415,6 +404,7 @@ public class Configuration extends Observable implements Observer {
      * @return meta data
      */
     @NonNull
+    @Override
     public MetaData getMetaData() {
         return metaData;
     }
@@ -424,6 +414,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param metaData meta data
      */
+    @Override
     public void setMetaData(@NonNull MetaData metaData) {
         this.metaData.deleteObserver(this);
         //noinspection ConstantConditions
@@ -672,63 +663,6 @@ public class Configuration extends Observable implements Observer {
         this.loggingEnabled = loggingEnabled;
     }
 
-
-    DeliveryParams getErrorApiDeliveryParams() {
-        return new DeliveryParams(getEndpoints().getNotify(), getErrorApiHeaders());
-    }
-
-    DeliveryParams getSessionApiDeliveryParams() {
-        return new DeliveryParams(getEndpoints().getSessions(), getSessionApiHeaders());
-    }
-
-    /**
-     * Supplies the headers which must be used in any request sent to the Error Reporting API.
-     *
-     * @return the HTTP headers
-     */
-    @NonNull
-    Map<String, String> getErrorApiHeaders() {
-        Map<String, String> map = new HashMap<>();
-        map.put(HEADER_API_PAYLOAD_VERSION, "4.0");
-        map.put(HEADER_API_KEY, apiKey);
-        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
-        return map;
-    }
-
-    /**
-     * Supplies the headers which must be used in any request sent to the Session Tracking API.
-     *
-     * @return the HTTP headers
-     */
-    @NonNull
-    Map<String, String> getSessionApiHeaders() {
-        Map<String, String> map = new HashMap<>();
-        map.put(HEADER_API_PAYLOAD_VERSION, "1.0");
-        map.put(HEADER_API_KEY, apiKey);
-        map.put(HEADER_BUGSNAG_SENT_AT, DateUtils.toIso8601(new Date()));
-        return map;
-    }
-
-    /**
-     * Checks if the given release stage should be notified or not
-     *
-     * @param releaseStage the release stage to check
-     * @return true if the release state should be notified else false
-     */
-    protected boolean shouldNotifyForReleaseStage(@Nullable String releaseStage) {
-        return notifyReleaseStages.isEmpty() || notifyReleaseStages.contains(releaseStage);
-    }
-
-    /**
-     * Checks if the given exception class should be ignored or not
-     *
-     * @param className the exception class to check
-     * @return true if the exception class should be ignored else false
-     */
-    protected boolean shouldIgnoreClass(@Nullable String className) {
-        return !this.ignoreClasses.isEmpty() && ignoreClasses.contains(className);
-    }
-
     /**
      * Add a "before notify" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
@@ -751,6 +685,7 @@ public class Configuration extends Observable implements Observer {
      * @param beforeNotify a callback to run before sending errors to Bugsnag
      * @see BeforeNotify
      */
+    @Override
     public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
         if (!beforeNotifyTasks.contains(beforeNotify)) {
             beforeNotifyTasks.add(beforeNotify);
@@ -777,6 +712,7 @@ public class Configuration extends Observable implements Observer {
      * @param beforeSend a callback to run before sending errors to Bugsnag
      * @see BeforeSend
      */
+    @Override
     public void addBeforeSend(@NonNull BeforeSend beforeSend) {
         if (!beforeSendTasks.contains(beforeSend)) {
             beforeSendTasks.add(beforeSend);

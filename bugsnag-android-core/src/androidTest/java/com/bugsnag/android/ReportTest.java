@@ -25,11 +25,11 @@ public class ReportTest {
      */
     @Before
     public void setUp() throws Exception {
-        Configuration config = new Configuration("example-api-key");
+        ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Something broke");
         Error error = new Error.Builder(config, exception,
             BugsnagTestUtils.generateSessionTracker(),
-            Thread.currentThread(), false).build();
+            Thread.currentThread(), false, new MetaData()).build();
         report = new Report("api-key", error);
     }
 

@@ -17,7 +17,7 @@ class ThreadState implements JsonStream.Streamable {
 
     private final CachedThread[] cachedThreads;
 
-    public ThreadState(@NonNull Configuration config,
+    public ThreadState(@NonNull ImmutableConfig config,
                        @NonNull Thread currentThread,
                        @NonNull Map<Thread, StackTraceElement[]> stackTraces,
                        @Nullable Throwable exc) {

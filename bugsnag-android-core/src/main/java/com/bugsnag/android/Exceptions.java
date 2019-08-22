@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
@@ -14,7 +15,7 @@ class Exceptions implements JsonStream.Streamable {
     private String exceptionType;
     private Collection<String> projectPackages;
 
-    Exceptions(Configuration config, BugsnagException exception) {
+    Exceptions(ImmutableConfig config, BugsnagException exception) {
         this.exception = exception;
         exceptionType = exception.getType();
         projectPackages = config.getProjectPackages();

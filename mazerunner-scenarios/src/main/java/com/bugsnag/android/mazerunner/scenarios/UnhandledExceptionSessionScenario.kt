@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
@@ -9,9 +10,13 @@ import com.bugsnag.android.Configuration
  */
 internal class UnhandledExceptionSessionScenario(config: Configuration,
                                                  context: Context) : Scenario(config, context) {
+    init {
+        config.autoCaptureSessions = false
+        disableSessionDelivery(config)
+    }
+
     override fun run() {
         super.run()
-        disableSessionDelivery()
         Bugsnag.startSession()
         throw generateException()
     }

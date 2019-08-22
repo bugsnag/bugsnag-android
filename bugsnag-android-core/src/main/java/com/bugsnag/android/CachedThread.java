@@ -13,9 +13,9 @@ class CachedThread implements JsonStream.Streamable {
     private final String type;
     private final boolean isErrorReportingThread;
     private final StackTraceElement[] frames;
-    private final Configuration config;
+    private final ImmutableConfig config;
 
-    CachedThread(Configuration config, long id, String name, String type,
+    CachedThread(ImmutableConfig config, long id, String name, String type,
                  boolean isErrorReportingThread, StackTraceElement[] frames) {
         this.id = id;
         this.config = config;

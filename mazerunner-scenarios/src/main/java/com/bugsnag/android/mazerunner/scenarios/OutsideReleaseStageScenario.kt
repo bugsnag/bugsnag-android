@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
@@ -11,9 +12,9 @@ import com.bugsnag.android.Configuration
 internal class OutsideReleaseStageScenario(config: Configuration,
                                            context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
-        config.setReleaseStage("prod")
-        config.setNotifyReleaseStages(listOf("dev"))
+        config.autoCaptureSessions = false
+        config.releaseStage = "prod"
+        config.notifyReleaseStages = listOf("dev")
     }
 
     override fun run() {

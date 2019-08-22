@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
@@ -10,11 +11,11 @@ import org.junit.Test
 
 class ExceptionsTest {
 
-    private lateinit var config: Configuration
+    private lateinit var config: ImmutableConfig
 
     @Before
     fun setUp() {
-        config = generateConfiguration()
+        config = generateImmutableConfig()
     }
 
     @Test
@@ -57,7 +58,7 @@ class ExceptionsTest {
         val error = Error.Builder(
             config, "RuntimeException",
             "Example message", frames, BugsnagTestUtils.generateSessionTracker(),
-            Thread.currentThread()
+            Thread.currentThread(), MetaData()
         ).build()
         val exceptions = Exceptions(config, BugsnagException(error.exception))
 

@@ -43,8 +43,7 @@ public class SessionTrackingPayloadTest {
     @Before
     public void setUp() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        Configuration config = new Configuration("api-key");
-        sessionStore = new SessionStore(config, context);
+        sessionStore = new SessionStore(context);
 
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);

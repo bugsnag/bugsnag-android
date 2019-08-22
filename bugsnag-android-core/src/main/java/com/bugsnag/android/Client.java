@@ -45,8 +45,9 @@ public class Client extends Observable implements Observer {
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
-    @NonNull
-    protected final Configuration config;
+    final Configuration clientState;
+    final ImmutableConfig immutableConfig;
+
     final Context appContext;
 
     @NonNull
@@ -102,8 +103,6 @@ public class Client extends Observable implements Observer {
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-        config = configuration;
-        sessionStore = new SessionStore(config, appContext);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
             @Override
@@ -115,33 +114,30 @@ public class Client extends Observable implements Observer {
             }
         });
 
-        //noinspection ConstantConditions
-        if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(connectivity));
-        }
+        // set sensible defaults for delivery/project packages etc if not set
+        sanitiseConfiguration(configuration);
+        clientState = configuration;
+        immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
-        sessionTracker =
-            new SessionTracker(configuration, this, sessionStore);
+        sessionStore = new SessionStore(appContext);
+        sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore);
         eventReceiver = new EventReceiver(this);
 
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
+        appData = new AppData(appContext, appContext.getPackageManager(),
+                immutableConfig, sessionTracker);
         Resources resources = appContext.getResources();
 
-        userRepository = new UserRepository(sharedPrefs, config.getPersistUserBetweenSessions());
+        userRepository = new UserRepository(sharedPrefs,
+                immutableConfig.getPersistUserBetweenSessions());
         setUserInternal(userRepository.load());
 
-        deviceData = new DeviceData(connectivity, this.appContext, resources, user.installId);
+        deviceData = new DeviceData(connectivity, appContext, resources, user.installId);
 
         // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs(configuration);
-
-        // Set sensible defaults if project packages not already set
-        if (config.getProjectPackages().isEmpty()) {
-            configuration.setProjectPackages(Collections.singleton(appContext.getPackageName()));
-        }
+        breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs());
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -151,35 +147,18 @@ public class Client extends Observable implements Observer {
                 + "breadcrumbs on API Levels below 14.");
         }
 
-        // populate from manifest (in the case where the constructor was called directly by the
-        // User or no UUID was supplied)
-        if (config.getBuildUuid() == null) {
-            String buildUuid = null;
-            try {
-                PackageManager packageManager = appContext.getPackageManager();
-                String packageName = appContext.getPackageName();
-                ApplicationInfo ai =
-                    packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                buildUuid = ai.metaData.getString(BUILD_UUID);
-            } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read build UUID from manifest.");
-            }
-            if (buildUuid != null) {
-                config.setBuildUuid(buildUuid);
-            }
-        }
-
         // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
-            @Override
-            public void onErrorReadFailure(Error error) {
-                // send a minimal error to bugsnag with no cache
-                Client.this.notify(error, DeliveryStyle.NO_CACHE, null);
-            }
-        });
+        errorStore = new ErrorStore(immutableConfig, clientState,
+                appContext, new ErrorStore.Delegate() {
+                    @Override
+                    public void onErrorReadFailure(Error error) {
+                        // send a minimal error to bugsnag with no cache
+                        Client.this.notify(error, DeliveryStyle.NO_CACHE, null);
+                    }
+                });
 
         // Install a default exception handler with this client
-        if (config.getAutoNotify()) {
+        if (immutableConfig.getAutoNotify()) {
             new ExceptionHandler(this);
         }
 
@@ -197,9 +176,9 @@ public class Client extends Observable implements Observer {
         }
         connectivity.registerForNetworkChanges();
 
-        Logger.setEnabled(config.getLoggingEnabled());
+        Logger.setEnabled(immutableConfig.getLoggingEnabled());
 
-        config.addObserver(this);
+        configuration.addObserver(this);
         breadcrumbs.addObserver(this);
         sessionTracker.addObserver(this);
 
@@ -223,11 +202,40 @@ public class Client extends Observable implements Observer {
         loadPlugins();
     }
 
+    private void sanitiseConfiguration(@NonNull Configuration configuration) {
+        if (configuration.getDelivery() == null) {
+            configuration.setDelivery(new DefaultDelivery(connectivity));
+        }
+
+        // Set sensible defaults if project packages not already set
+        if (configuration.getProjectPackages().isEmpty()) {
+            configuration.setProjectPackages(Collections.singleton(appContext.getPackageName()));
+        }
+
+        // populate from manifest (in the case where the constructor was called directly by the
+        // User or no UUID was supplied)
+        if (configuration.getBuildUuid() == null) {
+            String buildUuid = null;
+            try {
+                PackageManager packageManager = appContext.getPackageManager();
+                String name = appContext.getPackageName();
+                ApplicationInfo ai =
+                        packageManager.getApplicationInfo(name, PackageManager.GET_META_DATA);
+                buildUuid = ai.metaData.getString(BUILD_UUID);
+            } catch (Exception ignore) {
+                Logger.warn("Bugsnag is unable to read build UUID from manifest.");
+            }
+            if (buildUuid != null) {
+                configuration.setBuildUuid(buildUuid);
+            }
+        }
+    }
+
     private void loadPlugins() {
         NativeInterface.setClient(this);
         BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
 
-        if (config.getDetectNdkCrashes()) {
+        if (immutableConfig.getDetectNdkCrashes()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
             } catch (ClassNotFoundException exc) {
@@ -235,7 +243,7 @@ public class Client extends Observable implements Observer {
                     + "NDK errors will not be captured.");
             }
         }
-        if (config.getDetectAnrs()) {
+        if (immutableConfig.getDetectAnrs()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
             } catch (ClassNotFoundException exc) {
@@ -249,7 +257,7 @@ public class Client extends Observable implements Observer {
     void sendNativeSetupNotification() {
         setChanged();
         ArrayList<Object> messageArgs = new ArrayList<>();
-        messageArgs.add(config);
+        messageArgs.add(clientState);
 
         super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
         try {
@@ -359,7 +367,7 @@ public class Client extends Observable implements Observer {
      * @return Context
      */
     @Nullable public String getContext() {
-        return config.getContext();
+        return clientState.getContext();
     }
 
     /**
@@ -370,7 +378,7 @@ public class Client extends Observable implements Observer {
      * @param context set what was happening at the time of a crash
      */
     public void setContext(@Nullable String context) {
-        config.setContext(context);
+        clientState.setContext(context);
     }
 
     /**
@@ -492,7 +500,7 @@ public class Client extends Observable implements Observer {
      * @see BeforeNotify
      */
     public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        config.addBeforeNotify(beforeNotify);
+        clientState.addBeforeNotify(beforeNotify);
     }
 
     /**
@@ -516,7 +524,7 @@ public class Client extends Observable implements Observer {
      * @see BeforeSend
      */
     public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        config.addBeforeSend(beforeSend);
+        clientState.addBeforeSend(beforeSend);
     }
 
     /**
@@ -538,7 +546,7 @@ public class Client extends Observable implements Observer {
      * @see BeforeRecordBreadcrumb
      */
     public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        config.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+        clientState.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
     }
 
     /**
@@ -547,8 +555,8 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
+        Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, !BLOCKING);
@@ -562,8 +570,8 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
+        Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -582,8 +590,8 @@ public class Client extends Observable implements Observer {
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace,
-            sessionTracker, Thread.currentThread())
+        Error error = new Error.Builder(immutableConfig, name, message, stacktrace,
+            sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.ASYNC, callback);
@@ -597,8 +605,8 @@ public class Client extends Observable implements Observer {
      *                  Severity.WARNING or Severity.INFO
      */
     public void notify(@NonNull Throwable exception, @NonNull Severity severity) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
+        Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
+            Thread.currentThread(), false, clientState.getMetaData())
             .severity(severity)
             .build();
         notify(error, !BLOCKING);
@@ -617,13 +625,7 @@ public class Client extends Observable implements Observer {
             return;
         }
 
-        // generate new object each time, as this can be mutated by end-users
-        Map<String, Object> errorAppData = appData.getAppData();
-
-        // Don't notify unless releaseStage is in notifyReleaseStages
-        String releaseStage = getStringFromMap("releaseStage", errorAppData);
-
-        if (!config.shouldNotifyForReleaseStage(releaseStage)) {
+        if (!immutableConfig.shouldNotifyForReleaseStage()) {
             return;
         }
 
@@ -634,6 +636,8 @@ public class Client extends Observable implements Observer {
 
 
         // add additional info that belongs in metadata
+        // generate new object each time, as this can be mutated by end-users
+        Map<String, Object> errorAppData = appData.getAppData();
         error.setAppData(errorAppData);
         error.getMetaData().store.put("app", appData.getAppDataMetaData());
 
@@ -645,7 +649,7 @@ public class Client extends Observable implements Observer {
 
         // Attach default context from active activity
         if (TextUtils.isEmpty(error.getContext())) {
-            String context = config.getContext();
+            String context = clientState.getContext();
             error.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
@@ -656,7 +660,7 @@ public class Client extends Observable implements Observer {
         }
 
         // Build the report
-        Report report = new Report(config.getApiKey(), error);
+        Report report = new Report(immutableConfig.getApiKey(), error);
 
         if (callback != null) {
             callback.beforeNotify(report);
@@ -725,8 +729,8 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notifyBlocking(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
+        Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, BLOCKING);
@@ -740,8 +744,8 @@ public class Client extends Observable implements Observer {
      *                  additional modification
      */
     public void notifyBlocking(@NonNull Throwable exception, @Nullable Callback callback) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
+        Error error = new Error.Builder(immutableConfig, exception, sessionTracker,
+            Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -760,8 +764,8 @@ public class Client extends Observable implements Observer {
                                @NonNull String message,
                                @NonNull StackTraceElement[] stacktrace,
                                @Nullable Callback callback) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
+        Error error = new Error.Builder(immutableConfig, name, message,
+            stacktrace, sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notify(error, DeliveryStyle.SAME_THREAD, callback);
@@ -775,8 +779,8 @@ public class Client extends Observable implements Observer {
      *                  Severity.WARNING or Severity.INFO
      */
     public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity) {
-        Error error = new Error.Builder(config, exception,
-            sessionTracker, Thread.currentThread(), false)
+        Error error = new Error.Builder(immutableConfig, exception,
+            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
             .severity(severity)
             .build();
         notify(error, BLOCKING);
@@ -804,8 +808,8 @@ public class Client extends Observable implements Observer {
         Logger.info(msg);
 
         @SuppressWarnings("WrongConstant")
-        Error error = new Error.Builder(config, exception,
-            sessionTracker, Thread.currentThread(), false)
+        Error error = new Error.Builder(immutableConfig, exception,
+            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
             .severity(Severity.fromString(severity))
             .severityReasonType(severityReason)
             .attributeValue(logLevel)
@@ -842,7 +846,7 @@ public class Client extends Observable implements Observer {
      * @param value the contents of the diagnostic information
      */
     public void addToTab(@NonNull String tab, @NonNull String key, @Nullable Object value) {
-        config.getMetaData().addToTab(tab, key, value);
+        clientState.getMetaData().addToTab(tab, key, value);
     }
 
     /**
@@ -851,7 +855,7 @@ public class Client extends Observable implements Observer {
      * @param tabName the dashboard tab to remove diagnostic data from
      */
     public void clearTab(@NonNull String tabName) {
-        config.getMetaData().clearTab(tabName);
+        clientState.getMetaData().clearTab(tabName);
     }
 
     /**
@@ -860,7 +864,7 @@ public class Client extends Observable implements Observer {
      * @see MetaData
      */
     @NonNull public MetaData getMetaData() {
-        return config.getMetaData();
+        return clientState.getMetaData();
     }
 
     /**
@@ -869,7 +873,7 @@ public class Client extends Observable implements Observer {
      * @see MetaData
      */
     public void setMetaData(@NonNull MetaData metaData) {
-        config.setMetaData(metaData);
+        clientState.setMetaData(metaData);
     }
 
     /**
@@ -913,8 +917,9 @@ public class Client extends Observable implements Observer {
             return;
         }
 
-        DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
-        DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
+        DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
+        Delivery delivery = immutableConfig.getDelivery();
+        DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
 
         switch (deliveryStatus) {
             case DELIVERED:
@@ -945,8 +950,8 @@ public class Client extends Observable implements Observer {
     void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData,
                         @HandledState.SeverityReason String severityReason,
                         @Nullable String attributeValue, Thread thread) {
-        Error error = new Error.Builder(config, exception,
-            sessionTracker, thread, true)
+        Error error = new Error.Builder(immutableConfig, exception,
+            sessionTracker, thread, true, clientState.getMetaData())
             .severity(severity)
             .metaData(metaData)
             .severityReasonType(severityReason)
@@ -957,7 +962,7 @@ public class Client extends Observable implements Observer {
     }
 
     private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
+        for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
             try {
                 if (!beforeSend.run(report)) {
                     return false;
@@ -980,7 +985,7 @@ public class Client extends Observable implements Observer {
     }
 
     private boolean runBeforeNotifyTasks(Error error) {
-        for (BeforeNotify beforeNotify : config.getBeforeNotifyTasks()) {
+        for (BeforeNotify beforeNotify : clientState.getBeforeNotifyTasks()) {
             try {
                 if (!beforeNotify.run(error)) {
                     return false;
@@ -995,7 +1000,7 @@ public class Client extends Observable implements Observer {
     }
 
     private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<BeforeRecordBreadcrumb> tasks = config.getBeforeRecordBreadcrumbTasks();
+        Collection<BeforeRecordBreadcrumb> tasks = clientState.getBeforeRecordBreadcrumbTasks();
         for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : tasks) {
             try {
                 if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
@@ -1039,7 +1044,6 @@ public class Client extends Observable implements Observer {
                 Logger.warn("Receiver not registered");
             }
         }
-
         super.finalize();
     }
 
@@ -1055,8 +1059,12 @@ public class Client extends Observable implements Observer {
      * @return the config
      */
     @NonNull
-    public Configuration getConfig() {
-        return config;
+    public BugsnagConfiguration getConfiguration() {
+        return clientState;
+    }
+
+    ImmutableConfig getConfig() {
+        return immutableConfig;
     }
 
     void setBinaryArch(String binaryArch) {
