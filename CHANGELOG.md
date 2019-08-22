@@ -1,10 +1,5 @@
 # Changelog
 
-## TBD
-
-* Buffer IO when reading cached error reports
-  [#565](https://github.com/bugsnag/bugsnag-android/pull/565)
-
 ## 4.18.0 (2019-08-15)
 
 * Migrate dependencies to androidx
