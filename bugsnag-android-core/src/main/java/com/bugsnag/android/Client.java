@@ -993,8 +993,8 @@ public class Client extends Observable implements Observer {
 
         MetaData metaData = error.getMetaData();
         Notifier notifier = Notifier.getInstance();
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "name", notifier.getName());
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "version", notifier.getVersion());
+        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
+        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
         metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "apiKey", config.getApiKey());
 
         Object packageName = appData.getAppData().get("packageName");
