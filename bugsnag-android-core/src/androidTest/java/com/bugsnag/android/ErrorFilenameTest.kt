@@ -5,8 +5,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -51,48 +49,6 @@ class ErrorFilenameTest {
             SuperCaliFragilisticExpiAlidociousBeanFactoryException())
         val filename = errorStore.calculateFilenameForError(err)
         assertEquals("i-h-com.bugsnag.android.SuperCaliFragilistic", filename)
-    }
-
-    @Test
-    fun testErrorFromInvalidFilename() {
-        val invalids = arrayOf(
-            null, "", "test.txt", "i-h.foo",
-            "1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json"
-        )
-        invalids.forEach { assertNull(errorStore.generateErrorFromFilename(it)) }
-    }
-
-    @Test
-    fun testUnhandledErrorFromFilename() {
-        val filename = "1504255147933_e-u-java.lang.RuntimeException_" +
-            "683c6b92-b325-4987-80ad-77086509ca1e.json"
-        val err = errorStore.generateErrorFromFilename(filename)
-        assertNotNull(err)
-        assertTrue(err.handledState.isUnhandled)
-        assertEquals(Severity.ERROR, err.severity)
-        assertEquals("java.lang.RuntimeException", err.exceptionName)
-    }
-
-    @Test
-    fun testHandledErrorFromFilename() {
-        val filename = "1504500000000_i-h-java.lang.IllegalStateException_" +
-            "683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json"
-        val err = errorStore.generateErrorFromFilename(filename)
-        assertNotNull(err)
-        assertFalse(err.handledState.isUnhandled)
-        assertEquals(Severity.INFO, err.severity)
-        assertEquals("java.lang.IllegalStateException", err.exceptionName)
-    }
-
-    @Test
-    fun testErrorWithoutClassFromFilename() {
-        val filename = "1504500000000_i-h-_" +
-            "683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json"
-        val err = errorStore.generateErrorFromFilename(filename)
-        assertNotNull(err)
-        assertFalse(err.handledState.isUnhandled)
-        assertEquals(Severity.INFO, err.severity)
-        assertEquals("", err.exceptionName)
     }
 
     @Test

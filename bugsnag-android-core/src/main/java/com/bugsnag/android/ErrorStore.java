@@ -27,12 +27,12 @@ class ErrorStore extends FileStore<Error> {
     interface Delegate {
 
         /**
-         * Invoked when a cached error report cannot be read, and a minimal error is
-         * read from the information encoded in the filename instead.
+         * Invoked when a cached error report cannot be read.
          *
-         * @param minimalError the minimal error, if encoded in the filename
+         * @param exception the error encountered reading/delivering the file
+         * @param errorFile file which could not be read
          */
-        void onErrorReadFailure(Error minimalError);
+        void onErrorReadFailure(Exception exception, File errorFile);
     }
 
     private static final String STARTUP_CRASH = "_startupcrash";
@@ -171,11 +171,7 @@ class ErrorStore extends FileStore<Error> {
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
             if (delegate != null) {
-                Error minimalError = generateErrorFromFilename(errorFile.getName());
-
-                if (minimalError != null) {
-                    delegate.onErrorReadFailure(minimalError);
-                }
+                delegate.onErrorReadFailure(exception, errorFile);
             }
             deleteStoredFiles(Collections.singleton(errorFile));
         }
@@ -205,51 +201,6 @@ class ErrorStore extends FileStore<Error> {
             errClass = errClass.substring(0, MAX_ERR_CLASS_LEN);
         }
         return String.format("%s-%s-%s", severity, handled, errClass);
-    }
-
-    /**
-     * Generates minimal error information from a filename, if the report was incomplete/corrupted.
-     * This allows bugsnag to send the severity, handled state, and error class as a minimal
-     * report.
-     *
-     * Error information is encoded in the filename for recent notifier versions
-     * as "$severity-$handled-$errorClass", and is not present in legacy versions
-     *
-     * @param filename the filename
-     * @return the minimal error, or null if the filename does not match the expected pattern.
-     */
-    Error generateErrorFromFilename(String filename) {
-        if (filename == null) {
-            return null;
-        }
-
-        try {
-            int errorInfoStart = filename.indexOf('_') + 1;
-            int errorInfoEnd = filename.indexOf('_', errorInfoStart);
-            String encodedErr = filename.substring(errorInfoStart, errorInfoEnd);
-
-            char sevChar = encodedErr.charAt(0);
-            Severity severity = Severity.fromChar(sevChar);
-            severity = severity == null ? Severity.ERROR : severity;
-
-            boolean unhandled = encodedErr.charAt(2) == 'u';
-            HandledState handledState = HandledState.newInstance(unhandled
-                ? HandledState.REASON_UNHANDLED_EXCEPTION : HandledState.REASON_HANDLED_EXCEPTION);
-
-            // default if error has no name
-            String errClass = "";
-
-            if (encodedErr.length() >= 4) {
-                errClass = encodedErr.substring(4);
-            }
-            BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
-            Error error = new Error(config, exc, handledState, severity, null, null);
-            error.setIncomplete(true);
-            return error;
-        } catch (IndexOutOfBoundsException exc) {
-            // simplifies above implementation by avoiding need for several length checks.
-            return null;
-        }
     }
 
     @NonNull

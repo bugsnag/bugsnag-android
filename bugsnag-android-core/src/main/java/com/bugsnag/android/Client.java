@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,6 +48,9 @@ public class Client extends Observable implements Observer {
     private static final String USER_ID_KEY = "user.id";
     private static final String USER_NAME_KEY = "user.name";
     private static final String USER_EMAIL_KEY = "user.email";
+
+    static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
+    static final String INTERNAL_NOTIFIER_TAB = "Notifier";
 
     @NonNull
     protected final Configuration config;
@@ -195,9 +199,15 @@ public class Client extends Observable implements Observer {
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
             @Override
-            public void onErrorReadFailure(Error error) {
+            public void onErrorReadFailure(Exception exc, File errorFile) {
                 // send a minimal error to bugsnag with no cache
-                Client.this.notify(error, DeliveryStyle.NO_CACHE, null);
+                Thread thread = Thread.currentThread();
+                Error err = new Error.Builder(config, exc, null, thread, true).build();
+
+                MetaData metaData = err.getMetaData();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
+                Client.this.reportInternalBugsnagError(err);
             }
         });
 
@@ -970,6 +980,46 @@ public class Client extends Observable implements Observer {
             default:
                 break;
         }
+    }
+
+    /**
+     * Reports an error that occurred within the notifier to bugsnag. A lean error report will be
+     * generated and sent asynchronously with no callbacks, retry attempts, or writing to disk.
+     * This is intended for internal use only, and reports will not be visible to end-users.
+     */
+    void reportInternalBugsnagError(@NonNull Error error) {
+        error.setAppData(appData.getAppDataSummary());
+        error.setDeviceData(deviceData.getDeviceDataSummary());
+
+        MetaData metaData = error.getMetaData();
+        metaData.addToTab(INTERNAL_NOTIFIER_TAB, "name", Notifier.getInstance().getName());
+        metaData.addToTab(INTERNAL_NOTIFIER_TAB, "version", Notifier.getInstance().getVersion());
+        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "apiKey", config.getApiKey());
+
+        Object packageName = appData.getAppData().get("packageName");
+        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
+
+        final Report report = new Report(null, error);
+        Async.run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Delivery delivery = config.getDelivery();
+
+                    // can only modify headers if DefaultDelivery is in use
+                    if (delivery instanceof DefaultDelivery) {
+                        Map<String, String> headers = config.getErrorApiHeaders();
+                        headers.put("Bugsnag-Internal-Error", "true");
+                        headers.remove(Configuration.HEADER_API_KEY);
+                        DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
+                        defaultDelivery.deliver(config.getEndpoint(), report, headers);
+                    }
+
+                } catch (Exception exception) {
+                    Logger.warn("Failed to report minimal error to Bugsnag", exception);
+                }
+            }
+        });
     }
 
     private void deliverReportAsync(@NonNull Error error, Report report) {
