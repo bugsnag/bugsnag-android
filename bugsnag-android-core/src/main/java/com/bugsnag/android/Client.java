@@ -199,7 +199,7 @@ public class Client extends Observable implements Observer {
         errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
             @Override
             public void onErrorReadFailure(Exception exc, File errorFile) {
-                // send a minimal error to bugsnag with no cache
+                // send an internal error to bugsnag with no cache
                 Thread thread = Thread.currentThread();
                 Error err = new Error.Builder(config, exc, null, thread, true).build();
                 err.setContext("Crash Report Deserialization");
@@ -1018,7 +1018,7 @@ public class Client extends Observable implements Observer {
                         }
 
                     } catch (Exception exception) {
-                        Logger.warn("Failed to report minimal error to Bugsnag", exception);
+                        Logger.warn("Failed to report internal error to Bugsnag", exception);
                     }
                 }
             });
