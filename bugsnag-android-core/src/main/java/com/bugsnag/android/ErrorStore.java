@@ -22,8 +22,6 @@ import java.util.concurrent.Semaphore;
 @ThreadSafe
 class ErrorStore extends FileStore<Error> {
 
-    private static final int MAX_ERR_CLASS_LEN = 40;
-
     interface Delegate {
 
         /**
@@ -192,26 +190,13 @@ class ErrorStore extends FileStore<Error> {
         return launchCrashes;
     }
 
-    String calculateFilenameForError(Error error) {
-        char handled = error.getHandledState().isUnhandled() ? 'u' : 'h';
-        char severity = error.getSeverity().getName().charAt(0);
-        String errClass = error.getExceptionName();
-
-        if (errClass.length() > MAX_ERR_CLASS_LEN) {
-            errClass = errClass.substring(0, MAX_ERR_CLASS_LEN);
-        }
-        return String.format("%s-%s-%s", severity, handled, errClass);
-    }
-
     @NonNull
     @Override
     String getFilename(Object object) {
         String suffix = "";
-        String encodedInfo;
 
         if (object instanceof Error) {
             Error error = (Error) object;
-            encodedInfo = calculateFilenameForError(error);
 
             Map<String, Object> appData = error.getAppData();
             if (appData instanceof Map) {
@@ -222,13 +207,12 @@ class ErrorStore extends FileStore<Error> {
                 }
             }
         } else {
-            encodedInfo = ""; // don't encode for NDK errors, as they are always 'e-u'
             suffix = "not-jvm";
         }
         String uuid = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();
-        return String.format(Locale.US, "%s%d_%s_%s%s.json",
-            storeDirectory, timestamp, encodedInfo, uuid, suffix);
+        return String.format(Locale.US, "%s%d_%s%s.json",
+            storeDirectory, timestamp, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {
