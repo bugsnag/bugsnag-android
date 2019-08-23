@@ -42,53 +42,6 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, throwable, generateSessionTracker(),
-            Thread.currentThread(), false).build();
-        validateDefaultMetadata(error.getMetaData());
-    }
-
-    @Test
-    public void testSecondErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, "RuntimeException",
-            "Something broke", new StackTraceElement[]{},
-            generateSessionTracker(), Thread.currentThread()).build();
-        validateDefaultMetadata(error.getMetaData());
-    }
-
-    @Test
-    public void testErrorSetMetadataRef() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            generateSessionTracker(),
-            Thread.currentThread(), false).build();
-        MetaData metaData = new MetaData();
-        metaData.addToTab(TAB_KEY, "test", "data");
-        error.setMetaData(metaData);
-        assertNotNull(metaData.getTab(TAB_KEY));
-    }
-
-    @Test
-    public void testErrorSetNullMetadata() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            generateSessionTracker(),
-            Thread.currentThread(), false).build();
-        error.setMetaData(null);
-        validateDefaultMetadata(error.getMetaData());
-    }
-
-    @Test
-    public void testConfigDefaultMetadata() throws Exception {
-        validateDefaultMetadata(config.getMetaData());
-    }
-
-    @Test
-    public void testConfigSetMetadataRef() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
-        validateDefaultMetadata(configuration.getMetaData());
-    }
-
-    @Test
     public void testNotify() throws Exception {
         client.beforeNotify(new BeforeNotify() {
             @Override
