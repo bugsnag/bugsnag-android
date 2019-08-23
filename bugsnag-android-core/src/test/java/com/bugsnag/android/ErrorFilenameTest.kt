@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -10,11 +9,18 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 
 class SuperCaliFragilisticExpiAlidociousBeanFactoryException: RuntimeException()
 
+@RunWith(MockitoJUnitRunner::class)
 class ErrorFilenameTest {
+
+    @Mock
+    lateinit var context: Context
 
     private lateinit var errorStore: ErrorStore
     private val config = Configuration("api-key")
@@ -27,7 +33,6 @@ class ErrorFilenameTest {
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
         errorStore = ErrorStore(config, context, null)
     }
 
@@ -144,13 +149,12 @@ class ErrorFilenameTest {
 
     private fun generateError(unhandled: Boolean, severity: Severity, exc: Throwable): Error {
         val currentThread = Thread.currentThread()
-        val sessionTracker = BugsnagTestUtils.generateSessionTracker()
 
         val handledState = when {
             unhandled -> HandledState.REASON_UNHANDLED_EXCEPTION
             else -> HandledState.REASON_HANDLED_EXCEPTION
         }
-        return Error.Builder(config, exc, sessionTracker, currentThread, unhandled)
+        return Error.Builder(config, exc, null, currentThread, unhandled)
             .severityReasonType(handledState)
             .severity(severity).build()
     }
