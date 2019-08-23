@@ -194,13 +194,13 @@ public class Configuration extends Observable implements Observer {
     public void setEndpoints(@NonNull String notify, @NonNull String sessions)
         throws IllegalArgumentException {
 
-        if (TextUtils.isEmpty(notify)) {
+        if (Intrinsics.isEmpty(notify)) {
             throw new IllegalArgumentException("Notify endpoint cannot be empty or null.");
         } else {
             this.endpoint = notify;
         }
 
-        boolean invalidSessionsEndpoint = TextUtils.isEmpty(sessions);
+        boolean invalidSessionsEndpoint = Intrinsics.isEmpty(sessions);
 
         if (invalidSessionsEndpoint) {
             Logger.warn("The session tracking endpoint has not been set. "
