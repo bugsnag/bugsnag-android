@@ -7,6 +7,16 @@
 * Catch throwables when invoking methods on system services
   [#623](https://github.com/bugsnag/bugsnag-android/pull/623)
 
+* Fix abort() in native code when storing breadcrumbs with null values in
+  metadata
+  [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
+* Fix potential segfaults when adding breadcrumb with NDK
+  [#546](https://github.com/bugsnag/bugsnag-android/pull/546)
+* Convert metadata to map when notifying the NDK observer
+  [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
+* Prevent overwrite of signal mask when installing ANR handler
+  [#520](https://github.com/bugsnag/bugsnag-android/pull/520)
+
 ## 4.21.1 (2019-10-15)
 
 * Fix a packaging issue on Maven Central in v4.21.0
