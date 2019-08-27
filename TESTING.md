@@ -15,10 +15,11 @@ Commands can be run on the entire project, or on an individual module:
 
 ## Running Tests Locally
 
-Running the test suite requires a connected android device or emulator.
+Running the full test suite requires a connected android device or emulator. JVM tests can be run
+in isolation by only running the `check` task.
 
 ```shell
-./gradlew connectedCheck
+./gradlew check connectedCheck
 ```
 
 ## End-to-end tests
