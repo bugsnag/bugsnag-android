@@ -1,0 +1,8 @@
+// license checking
+license {
+    header rootProject.file('LICENSE')
+    ignoreFailures true
+}
+downloadLicenses {
+    dependencyConfiguration = "compile"
+}

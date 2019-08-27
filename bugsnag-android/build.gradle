@@ -1,3 +1,7 @@
+plugins {
+    id "com.github.hierynomus.license"
+}
+
 apply plugin: "com.android.library"
 
 android {
@@ -12,3 +16,4 @@ dependencies {
 }
 
 apply from: "../gradle/release.gradle"
+apply from: "../gradle/license-check.gradle"

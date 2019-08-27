@@ -1,3 +1,6 @@
+plugins {
+    id "com.github.hierynomus.license"
+}
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 apply plugin: "io.gitlab.arturbosch.detekt"
@@ -22,3 +25,4 @@ apply from: "../gradle/dependencies.gradle"
 apply from: "../gradle/release.gradle"
 apply from: "../gradle/detekt.gradle"
 apply from: "../gradle/checkstyle.gradle"
+apply from: "../gradle/license-check.gradle"

@@ -21,6 +21,10 @@ buildscript {
         classpath "com.bugsnag:bugsnag-android-gradle-plugin:4.5.2"
     }
 }
+plugins {
+    id "com.github.hierynomus.license" version "0.15.0"
+}
+
 allprojects {
     repositories {
         google()
@@ -53,6 +57,7 @@ private void configureAndroidProject(Project proj) {
     lintOptions.warningsAsErrors = true
     lintOptions.checkAllWarnings = true
     lintOptions.baseline new File(proj.projectDir, "lint-baseline.xml")
+    lintOptions.disable "GradleDependency", "NewerVersionAvailable"
 
     def defaultConfig = proj.android.defaultConfig
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

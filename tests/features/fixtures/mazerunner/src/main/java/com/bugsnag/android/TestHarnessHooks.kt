@@ -66,3 +66,10 @@ internal fun writeErrorToStore(client: Client) {
         Thread.currentThread(), false, MetaData()).build()
     client.errorStore.write(error)
 }
+
+internal fun sendInternalReport(exc: Throwable, config: Configuration, client: Client) {
+    val thread = Thread.currentThread()
+    val err = Error.Builder(client.getConfig(), exc, null, thread, true, MetaData()).build()
+    err.getMetaData().addToTab("BugsnagDiagnostics", "custom-data", "FooBar")
+    client.reportInternalBugsnagError(err)
+}
