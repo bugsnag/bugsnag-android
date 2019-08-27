@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fix potential null pointer exception if `setMetaData` is called with a null
+  value
+
 ## 4.19.0 (2019-08-27)
 
 * Report internal SDK errors to bugsnag
