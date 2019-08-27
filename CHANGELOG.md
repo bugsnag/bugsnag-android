@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.19.0 (2019-08-27)
 
 * Report internal SDK errors to bugsnag
   [#570](https://github.com/bugsnag/bugsnag-android/pull/570)
