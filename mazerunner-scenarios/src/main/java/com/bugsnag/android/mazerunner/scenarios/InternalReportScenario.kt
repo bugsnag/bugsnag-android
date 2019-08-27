@@ -3,13 +3,12 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import java.io.File
 
 /**
  * Sends a handled exception to Bugsnag, which does not include session data.
  */
-internal class MinimalHandledExceptionScenario(config: Configuration,
-                                               context: Context) : Scenario(config, context) {
+internal class InternalReportScenario(config: Configuration,
+                                      context: Context) : Scenario(config, context) {
 
     init {
         config.setAutoCaptureSessions(false)

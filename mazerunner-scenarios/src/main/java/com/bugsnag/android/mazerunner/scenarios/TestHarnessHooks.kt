@@ -1,7 +1,5 @@
 package com.bugsnag.android
 
-import android.content.Context
-
 /**
  * Accesses the session tracker and flushes all stored sessions
  */
@@ -57,7 +55,7 @@ internal fun createCustomHeaderDelivery(): Delivery {
 }
 
 internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
-    val clz = java.lang.Class.forName("com.bugsnag.android.DefaultDelivery")
+    val clz = Class.forName("com.bugsnag.android.DefaultDelivery")
     return clz.constructors[0].newInstance(null) as Delivery
 }
 

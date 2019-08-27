@@ -22,17 +22,15 @@ import java.util.concurrent.Semaphore;
 @ThreadSafe
 class ErrorStore extends FileStore<Error> {
 
-    private static final int MAX_ERR_CLASS_LEN = 40;
-
     interface Delegate {
 
         /**
-         * Invoked when a cached error report cannot be read, and a minimal error is
-         * read from the information encoded in the filename instead.
+         * Invoked when a cached error report cannot be read.
          *
-         * @param minimalError the minimal error, if encoded in the filename
+         * @param exception the error encountered reading/delivering the file
+         * @param errorFile file which could not be read
          */
-        void onErrorReadFailure(Error minimalError);
+        void onErrorReadFailure(Exception exception, File errorFile);
     }
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
@@ -184,23 +182,20 @@ class ErrorStore extends FileStore<Error> {
                             + " to Bugsnag, will try again later");
                     break;
                 case FAILURE:
-                    handleErrorFlushFailure(errorFile);
+                    Exception exc = new RuntimeException("Failed to deliver report");
+                    handleErrorFlushFailure(exc, errorFile);
                     break;
                 default:
                     break;
             }
         } catch (Exception exception) {
-            handleErrorFlushFailure(errorFile);
+            handleErrorFlushFailure(exception, errorFile);
         }
     }
 
-    private void handleErrorFlushFailure(File errorFile) {
+    private void handleErrorFlushFailure(Exception exc, File errorFile) {
         if (delegate != null) {
-            Error minimalError = generateErrorFromFilename(errorFile.getName());
-
-            if (minimalError != null) {
-                delegate.onErrorReadFailure(minimalError);
-            }
+            delegate.onErrorReadFailure(exc, errorFile);
         }
         deleteStoredFiles(Collections.singleton(errorFile));
     }
@@ -220,72 +215,13 @@ class ErrorStore extends FileStore<Error> {
         return launchCrashes;
     }
 
-    String calculateFilenameForError(Error error) {
-        char handled = error.getHandledState().isUnhandled() ? 'u' : 'h';
-        char severity = error.getSeverity().getName().charAt(0);
-        String errClass = error.getExceptionName();
-
-        if (errClass.length() > MAX_ERR_CLASS_LEN) {
-            errClass = errClass.substring(0, MAX_ERR_CLASS_LEN);
-        }
-        return String.format("%s-%s-%s", severity, handled, errClass);
-    }
-
-    /**
-     * Generates minimal error information from a filename, if the report was incomplete/corrupted.
-     * This allows bugsnag to send the severity, handled state, and error class as a minimal
-     * report.
-     *
-     * Error information is encoded in the filename for recent notifier versions
-     * as "$severity-$handled-$errorClass", and is not present in legacy versions
-     *
-     * @param filename the filename
-     * @return the minimal error, or null if the filename does not match the expected pattern.
-     */
-    Error generateErrorFromFilename(String filename) {
-        if (filename == null) {
-            return null;
-        }
-
-        try {
-            int errorInfoStart = filename.indexOf('_') + 1;
-            int errorInfoEnd = filename.indexOf('_', errorInfoStart);
-            String encodedErr = filename.substring(errorInfoStart, errorInfoEnd);
-
-            char sevChar = encodedErr.charAt(0);
-            Severity severity = Severity.fromChar(sevChar);
-            severity = severity == null ? Severity.ERROR : severity;
-
-            boolean unhandled = encodedErr.charAt(2) == 'u';
-            HandledState handledState = HandledState.newInstance(unhandled
-                ? HandledState.REASON_UNHANDLED_EXCEPTION : HandledState.REASON_HANDLED_EXCEPTION);
-
-            // default if error has no name
-            String errClass = "";
-
-            if (encodedErr.length() >= 4) {
-                errClass = encodedErr.substring(4);
-            }
-            BugsnagException exc = new BugsnagException(errClass, "", new StackTraceElement[]{});
-            Error error = new Error(config, exc, handledState, severity, null,
-                    null, clientState.getMetaData());
-            error.setIncomplete(true);
-            return error;
-        } catch (IndexOutOfBoundsException exc) {
-            // simplifies above implementation by avoiding need for several length checks.
-            return null;
-        }
-    }
-
     @NonNull
     @Override
     String getFilename(Object object) {
         String suffix = "";
-        String encodedInfo;
 
         if (object instanceof Error) {
             Error error = (Error) object;
-            encodedInfo = calculateFilenameForError(error);
 
             Map<String, Object> appData = error.getAppData();
             if (appData instanceof Map) {
@@ -296,13 +232,12 @@ class ErrorStore extends FileStore<Error> {
                 }
             }
         } else {
-            encodedInfo = ""; // don't encode for NDK errors, as they are always 'e-u'
             suffix = "not-jvm";
         }
         String uuid = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();
-        return String.format(Locale.US, "%s%d_%s_%s%s.json",
-            storeDirectory, timestamp, encodedInfo, uuid, suffix);
+        return String.format(Locale.US, "%s%d_%s%s.json",
+            storeDirectory, timestamp, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {
