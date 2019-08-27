@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.15.x
+
+* Fix abort() in native code when storing breadcrumbs with null values in
+  metadata
+  [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
+* Fix potential segfaults when adding breadcrumb with NDK
+  [#546](https://github.com/bugsnag/bugsnag-android/pull/546)
+* Convert metadata to map when notifying the NDK observer
+  [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
+* Prevent overwrite of signal mask when installing ANR handler
+  [#520](https://github.com/bugsnag/bugsnag-android/pull/520)
+
 ## 4.15.0 (2019-06-10)
 
 `bugsnag-android` now supports detecting and reporting C/C++ crashes without a separate library (previously `bugsnag-android-ndk` was required for native error reporting).
