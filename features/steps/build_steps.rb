@@ -181,6 +181,9 @@ Then("the stacktrace in request {int} contains native frame information") do |re
   stack.each_with_index do |frame, index|
     assert_not_nil(frame['method'], "The method of frame #{index} is nil")
     assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
+    assert_not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
+    assert_not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
+    assert_not_nil(frame['loadAddress'], "The loadAddress of frame #{index} is nil")
   end
 end
 
