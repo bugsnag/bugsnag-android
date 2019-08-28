@@ -41,8 +41,4 @@ COPY config/ config/
 RUN sed --in-place="" --expression="s/'armeabi',//" bugsnag-plugin-android-anr/build.gradle \
     bugsnag-plugin-android-ndk/build.gradle examples/sdk-app-example/build.gradle
 
-CMD ./gradlew lint checkstyle detekt test && \
-    cppcheck --enable=warning,performance bugsnag-plugin-android-anr/src/main/jni && \
-    cppcheck --enable=warning,performance bugsnag-plugin-android-ndk/src/main/jni -i \
-    bugsnag-plugin-android-ndk/src/main/jni/deps -i bugsnag-plugin-android-ndk/src/main/jni/external
 

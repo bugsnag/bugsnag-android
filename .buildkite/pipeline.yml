@@ -16,21 +16,21 @@ steps:
 
   - wait
 
-  - label: ':docker: Build Android linter image'
+  - label: ':docker: Build Android jvm test image'
     timeout_in_minutes: 40
     plugins:
       - docker-compose#v2.6.0:
           build:
-            - android-linter
+            - android-jvm
           cache-from:
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - label: ':docker: Build Android instrumentation image'
     timeout_in_minutes: 40
@@ -76,7 +76,15 @@ steps:
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
-          run: android-linter
+          run: android-jvm
+    command: 'scripts/run-linter.sh'
+
+  - label: ':android: JVM tests'
+    timeout_in_minutes: 30
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-jvm
+    command: './gradlew test'
 
   - label: ':android: Build fixture APK'
     timeout_in_minutes: 30
