@@ -14,6 +14,10 @@ import com.bugsnag.android.flushAllSessions
 internal class NewSessionScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
 
+    companion object {
+        private const val SLEEP_MS: Long = 100
+    }
+
     init {
         config.autoCaptureSessions = false
     }
@@ -24,30 +28,30 @@ internal class NewSessionScenario(config: Configuration,
         val thread = HandlerThread("HandlerThread")
         thread.start()
 
-        Handler(thread.looper).post {
+        Handler(thread.looper).post(Runnable {
             // send 1st exception which should include session info
             client.startSession()
-            Log.d("Bugsnag - NewSessionScenario", "First session started")
-            Thread.sleep(100)
+            Log.d("Bugsnag - New", "First session started")
+            Thread.sleep(SLEEP_MS)
             flushAllSessions()
-            Log.d("Bugsnag - NewSessionScenario", "First session flushed")
-            Thread.sleep(100)
+            Log.d("Bugsnag - New", "First session flushed")
+            Thread.sleep(SLEEP_MS)
             client.notifyBlocking(generateException())
-            Log.d("Bugsnag - NewSessionScenario", "First exception notified")
-            Thread.sleep(100)
+            Log.d("Bugsnag - New", "First exception notified")
+            Thread.sleep(SLEEP_MS)
             // stop tracking the existing session
             client.stopSession()
-            Log.d("Bugsnag - NewSessionScenario", "First session stopped")
-            Thread.sleep(100)
+            Log.d("Bugsnag - New", "First session stopped")
+            Thread.sleep(SLEEP_MS)
             // send 2nd exception which should contain new session info
             client.startSession()
-            Log.d("Bugsnag - NewSessionScenario", "Second session started")
-            Thread.sleep(100)
+            Log.d("Bugsnag - New", "Second session started")
+            Thread.sleep(SLEEP_MS)
             flushAllSessions()
-            Log.d("Bugsnag - NewSessionScenario", "Second session flushed")
-            Thread.sleep(100)
+            Log.d("Bugsnag - New", "Second session flushed")
+            Thread.sleep(SLEEP_MS)
             client.notifyBlocking(generateException())
-            Log.d("Bugsnag - NewSessionScenario", "Second exception notified")
-        }
+            Log.d("Bugsnag - New", "Second exception notified")
+        })
     }
 }

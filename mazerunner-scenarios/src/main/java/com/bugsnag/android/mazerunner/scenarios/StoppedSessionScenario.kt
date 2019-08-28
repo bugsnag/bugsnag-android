@@ -14,6 +14,10 @@ import android.util.Log
 internal class StoppedSessionScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
 
+    companion object {
+        private const val SLEEP_MS: Long = 100
+    }
+
     init {
         config.autoCaptureSessions = false
     }
@@ -24,27 +28,27 @@ internal class StoppedSessionScenario(config: Configuration,
         val thread = HandlerThread("HandlerThread")
         thread.start()
 
-        Handler(thread.looper).post {
+        Handler(thread.looper).post(Runnable {
             // send 1st exception which should include session info
             client.startSession()
-            Log.d("Bugsnag - StoppedSessionScenario", "First session started")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Stopped", "First session started")
+            Thread.sleep(SLEEP_MS)
             flushAllSessions()
-            Log.d("Bugsnag - StoppedSessionScenario", "First session flushed")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Stopped", "First session flushed")
+            Thread.sleep(SLEEP_MS)
             client.notifyBlocking(generateException())
-            Log.d("Bugsnag - StoppedSessionScenario", "First exception sent")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Stopped", "First exception sent")
+            Thread.sleep(SLEEP_MS)
 
             // send 2nd exception which should not include session info
             client.stopSession()
-            Log.d("Bugsnag - StoppedSessionScenario", "First session stopped")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Stopped", "First session stopped")
+            Thread.sleep(SLEEP_MS)
             flushAllSessions()
-            Log.d("Bugsnag - StoppedSessionScenario", "First session flushed (again)")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Stopped", "First session flushed (again)")
+            Thread.sleep(SLEEP_MS)
             client.notifyBlocking(generateException())
-            Log.d("Bugsnag - StoppedSessionScenario", "Second exception sent")
-        }
+            Log.d("Bugsnag - Stopped", "Second exception sent")
+        })
     }
 }

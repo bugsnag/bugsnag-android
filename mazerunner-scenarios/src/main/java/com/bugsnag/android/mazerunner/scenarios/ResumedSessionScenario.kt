@@ -14,6 +14,10 @@ import android.util.Log
 internal class ResumedSessionScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
 
+    companion object {
+        private const val SLEEP_MS: Long = 100
+    }
+
     init {
         config.autoCaptureSessions = false
     }
@@ -24,27 +28,27 @@ internal class ResumedSessionScenario(config: Configuration,
         val thread = HandlerThread("HandlerThread")
         thread.start()
 
-        Handler(thread.looper).post {
+        Handler(thread.looper).post(Runnable {
             // send 1st exception
             client.startSession()
-            Log.d("Bugsnag - ResumedSessionScenario", "First session started")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Resumed", "First session started")
+            Thread.sleep(SLEEP_MS)
             flushAllSessions()
-            Log.d("Bugsnag - ResumedSessionScenario", "First session flushed")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Resumed", "First session flushed")
+            Thread.sleep(SLEEP_MS)
             client.notifyBlocking(generateException())
-            Log.d("Bugsnag - ResumedSessionScenario", "First exception sent")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Resumed", "First exception sent")
+            Thread.sleep(SLEEP_MS)
 
             // send 2nd exception after resuming a session
             client.stopSession()
-            Log.d("Bugsnag - ResumedSessionScenario", "First session stopped")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Resumed", "First session stopped")
+            Thread.sleep(SLEEP_MS)
             client.resumeSession()
-            Log.d("Bugsnag - ResumedSessionScenario", "First session resumed")
-            Thread.sleep(100)
+            Log.d("Bugsnag - Resumed", "First session resumed")
+            Thread.sleep(SLEEP_MS)
             client.notifyBlocking(generateException())
-            Log.d("Bugsnag - ResumedSessionScenario", "Second exception sent")
-        }
+            Log.d("Bugsnag - Resumed", "Second exception sent")
+        })
     }
 }
