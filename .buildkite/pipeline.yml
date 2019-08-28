@@ -77,7 +77,7 @@ steps:
     plugins:
       - docker-compose#v2.6.0:
           run: android-jvm
-    command: 'scripts/run-linter.sh'
+    command: './scripts/run-linter.sh'
 
   - label: ':android: JVM tests'
     timeout_in_minutes: 30
