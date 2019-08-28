@@ -2,12 +2,8 @@ package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
 
-import androidx.test.filters.SmallTest
-import com.bugsnag.android.BugsnagTestUtils.generateSessionTracker
-
 import org.junit.Test
 
-@SmallTest
 class BeforeNotifyTest {
 
     private val config = Configuration("api-key")
@@ -21,7 +17,7 @@ class BeforeNotifyTest {
             false
         }
 
-        val error = Error.Builder(config, RuntimeException("Test"), generateSessionTracker(),
+        val error = Error.Builder(config, RuntimeException("Test"), null,
             Thread.currentThread(), false).build()
         beforeNotify.run(error)
         assertEquals(context, error.context)

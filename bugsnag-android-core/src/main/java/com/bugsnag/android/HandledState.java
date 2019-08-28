@@ -47,11 +47,11 @@ public final class HandledState implements JsonStream.Streamable {
                                     @Nullable Severity severity,
                                     @Nullable String attributeValue) {
 
-        if (severityReasonType.equals(REASON_STRICT_MODE) && TextUtils.isEmpty(attributeValue)) {
+        if (severityReasonType.equals(REASON_STRICT_MODE) && Intrinsics.isEmpty(attributeValue)) {
             throw new IllegalArgumentException("No reason supplied for strictmode");
         }
         if (!(severityReasonType.equals(REASON_STRICT_MODE)
-            || severityReasonType.equals(REASON_LOG)) && !TextUtils.isEmpty(attributeValue)) {
+            || severityReasonType.equals(REASON_LOG)) && !Intrinsics.isEmpty(attributeValue)) {
             throw new IllegalArgumentException("attributeValue should not be supplied");
         }
 
