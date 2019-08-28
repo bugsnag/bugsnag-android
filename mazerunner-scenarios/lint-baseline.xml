@@ -1,26 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <issues format="5" by="lint 3.4.2" client="gradle" variant="all" version="3.4.2">
 
-    <issue
-        id="GradleDynamicVersion"
-        message="Avoid using + in version numbers; can lead to unpredictable and unrepeatable builds (com.bugsnag:bugsnag-android:+)"
-        errorLine1="    compileOnly &quot;com.bugsnag:bugsnag-android:+&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle"
-            line="35"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="NewerVersionAvailable"
-        message="A newer version of io.gitlab.arturbosch.detekt:detekt-gradle-plugin than 1.0.0-RC16 is available: 1.0.0.RC9"
-        errorLine1="        classpath &quot;io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC16&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle"
-            line="15"
-            column="9"/>
-    </issue>
-
 </issues>

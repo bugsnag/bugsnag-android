@@ -524,7 +524,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
      * @param notifierType the notifier type
      */
-    public void setNotifierType(@NonNull String notifierType) {
+    void setNotifierType(@NonNull String notifierType) {
         this.notifierType = notifierType;
     }
 
@@ -542,7 +542,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     @NonNull
-    public String getNotifierType() {
+    String getNotifierType() {
         return notifierType;
     }
 
