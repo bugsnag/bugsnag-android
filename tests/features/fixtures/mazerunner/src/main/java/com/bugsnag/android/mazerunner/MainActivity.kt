@@ -66,7 +66,7 @@ class MainActivity : Activity() {
         Log.d("Bugsnag", "Received test case, executing " + eventType)
         Log.d("Bugsnag", "Received metadata: " + eventMetaData)
 
-        this.intent.putExtra("eventMetaData", eventMetaData)
+        this.intent.putExtra("EVENT_METADATA", eventMetaData)
         val testCase = factory.testCaseForName(eventType, configuration, this)
 
         return testCase

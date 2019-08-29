@@ -4,14 +4,16 @@ import android.content.Context
 import android.content.Intent
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.flushAllSessions
-import com.bugsnag.android.mazerunner.SecondActivity
 
 /**
  * Sends a manual session payload to Bugsnag.
  */
 internal class AutoSessionScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
+
+    init {
+        config.autoCaptureSessions = true
+    }
 
     override fun run() {
         super.run()

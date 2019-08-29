@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.flushAllSessions
 import com.bugsnag.android.mazerunner.SecondActivity
 
 /**
