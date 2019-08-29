@@ -1,7 +1,9 @@
 package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -12,7 +14,10 @@ import java.io.IOException;
  */
 public class Report implements JsonStream.Streamable {
 
-    @NonNull
+    @Nullable
+    private final File errorFile;
+
+    @Nullable
     private final Error error;
 
     @NonNull
@@ -24,6 +29,14 @@ public class Report implements JsonStream.Streamable {
 
     Report(@NonNull String apiKey, @NonNull Error error) {
         this.error = error;
+        this.errorFile = null;
+        this.notifier = Notifier.getInstance();
+        this.apiKey = apiKey;
+    }
+
+    Report(@NonNull String apiKey, @Nullable File errorFile) {
+        this.error = null;
+        this.errorFile = errorFile;
         this.notifier = Notifier.getInstance();
         this.apiKey = apiKey;
     }
@@ -43,7 +56,13 @@ public class Report implements JsonStream.Streamable {
         writer.name("events").beginArray();
 
         // Write in-memory event
-        writer.value(error);
+        if (error != null) {
+            writer.value(error);
+        } else if (errorFile != null) { // Write on-disk event
+            writer.value(errorFile);
+        } else {
+            Logger.warn("Expected error or errorFile, found empty payload instead");
+        }
 
         // End events array
         writer.endArray();
