@@ -2,6 +2,9 @@ package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Used to store information about an exception that was not provided with an exception object
  */
@@ -14,6 +17,7 @@ public class BugsnagException extends Throwable {
      */
     private String name;
     private String message;
+    private List<Map<String, Object>> customStackframes;
 
     private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
 
@@ -44,6 +48,14 @@ public class BugsnagException extends Throwable {
         }
         setStackTrace(exc.getStackTrace());
         initCause(exc.getCause());
+    }
+
+    BugsnagException(@NonNull String name,
+                     @NonNull String message,
+                     @NonNull List<Map<String, Object>> customStackframes) {
+        super(message);
+        this.name = name;
+        this.customStackframes = customStackframes;
     }
 
     /**
