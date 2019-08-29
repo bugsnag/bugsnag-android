@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import java.util.Map;
  * Used to store information about an exception that was not provided with an exception object
  */
 @ThreadSafe
-public class BugsnagException extends Throwable {
+public class BugsnagException extends Throwable implements JsonStream.Streamable {
 
     private static final long serialVersionUID = 5068182621179433346L;
     /**
@@ -17,9 +18,11 @@ public class BugsnagException extends Throwable {
      */
     private String name;
     private String message;
-    private List<Map<String, Object>> customStackframes;
+    List<Map<String, Object>> customStackframes;
 
     private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
+
+    private JsonStream.Streamable streamable;
 
     /**
      * Constructor
@@ -39,6 +42,10 @@ public class BugsnagException extends Throwable {
     BugsnagException(@NonNull Throwable exc) {
         super(exc.getMessage());
 
+        if (exc instanceof JsonStream.Streamable) {
+            this.streamable = (JsonStream.Streamable) exc;
+        }
+
         if (exc instanceof BugsnagException) {
             this.message = ((BugsnagException) exc).getMessage();
             this.name = ((BugsnagException) exc).getName();
@@ -54,6 +61,7 @@ public class BugsnagException extends Throwable {
                      @NonNull String message,
                      @NonNull List<Map<String, Object>> customStackframes) {
         super(message);
+        setStackTrace(new StackTraceElement[]{});
         this.name = name;
         this.customStackframes = customStackframes;
     }
@@ -99,5 +107,76 @@ public class BugsnagException extends Throwable {
 
     void setType(@NonNull String type) {
         this.type = type;
+    }
+
+
+
+// TODO test below
+
+
+    @Override
+    public void toStream(@NonNull JsonStream stream) throws IOException {
+        stream.beginArray();
+        if (streamable != null) {
+            streamable.toStream(stream);
+        } else {
+
+            // Unwrap any "cause" exceptions
+            Throwable currentEx = this;
+            while (currentEx != null) {
+                serializeException(stream, currentEx);
+                currentEx = currentEx.getCause();
+            }
+        }
+        stream.endArray();
+    }
+
+    private void serializeException(@NonNull JsonStream writer,
+                                    Throwable currentEx) throws IOException {
+        if (currentEx instanceof BugsnagException) {
+            List<Map<String, Object>> frames = ((BugsnagException) currentEx).customStackframes;
+
+            if (frames != null) {
+                String exceptionName = getExceptionName(currentEx);
+                String localizedMessage = currentEx.getLocalizedMessage();
+                Stacktrace stacktrace = new Stacktrace(frames);
+                exceptionToStream(writer, exceptionName, localizedMessage, stacktrace);
+            } else {
+                writeThrowable(writer, currentEx);
+            }
+        } else if (currentEx instanceof JsonStream.Streamable) {
+            ((JsonStream.Streamable) currentEx).toStream(writer);
+        } else {
+            writeThrowable(writer, currentEx);
+        }
+    }
+
+    private void writeThrowable(@NonNull JsonStream writer, Throwable currentEx) throws IOException {
+        String exceptionName = getExceptionName(currentEx);
+        String localizedMessage = currentEx.getLocalizedMessage();
+        Stacktrace stacktrace = new Stacktrace(currentEx.getStackTrace(), new String[]{}); // FIXME pass in projectPackages here
+        exceptionToStream(writer, exceptionName, localizedMessage, stacktrace);
+    }
+    /**
+     * Get the class name from the exception contained in this Error report.
+     */
+    private String getExceptionName(@NonNull Throwable throwable) {
+        if (throwable instanceof BugsnagException) {
+            return ((BugsnagException) throwable).getName();
+        } else {
+            return throwable.getClass().getName();
+        }
+    }
+
+    private void exceptionToStream(@NonNull JsonStream writer,
+                                   String name,
+                                   String message,
+                                   Stacktrace stacktrace) throws IOException {
+        writer.beginObject();
+        writer.name("errorClass").value(name);
+        writer.name("message").value(message);
+        writer.name("type").value(type);
+        writer.name("stacktrace").value(stacktrace);
+        writer.endObject();
     }
 }

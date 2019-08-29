@@ -71,10 +71,56 @@ class BugsnagExceptionTest {
         assertTrue(stacktrace.length() > 0)
     }
 
+    @Test
+    fun customStreamableSerialization() {
+        val bugsnagException = BugsnagException(StreamableException())
+        val exc = jsonObjectFromException(bugsnagException)
+        assertEquals("Bar", exc.get("Foo"))
+    }
+
+    @Test
+    fun customStackFramesSerialization() {
+        val bugsnagException = BugsnagException("nom", "msg", listOf(mapOf(Pair("Foo", "Bar"))))
+        val exc = jsonObjectFromException(bugsnagException)
+        assertEquals("nom", exc.get("errorClass"))
+        assertEquals("msg", exc.get("message"))
+        assertEquals("android", exc.get("type"))
+
+        val stacktrace = exc.getJSONArray("stacktrace")
+        assertEquals("Bar", stacktrace.getJSONObject(0)["Foo"])
+    }
+
+    @Test
+    fun nonAndroidStacktraceIgnored() {
+        val bugsnagException = BugsnagException("nom", "msg", listOf(mapOf(Pair("Foo", "Bar"))))
+        assertTrue(bugsnagException.stackTrace.isEmpty())
+    }
+
+    @Test
+    fun nonAndroidMessageAndName() {
+        val bugsnagException = BugsnagException("nom", "msg", listOf(mapOf(Pair("Foo", "Bar"))))
+        assertEquals("nom", bugsnagException.name)
+        assertEquals("msg", bugsnagException.message)
+
+        bugsnagException.name = "Foo"
+        bugsnagException.setMessage("Bar")
+        assertEquals("Foo", bugsnagException.name)
+        assertEquals("Bar", bugsnagException.message)
+    }
+
     private fun jsonObjectFromException(bugsnagException: BugsnagException): JSONObject {
         val exceptions = Exceptions(config, bugsnagException)
         val json = streamableToJsonArray(exceptions)
         val exc = json.get(0) as JSONObject
         return exc
+    }
+}
+
+class StreamableException: Throwable(), JsonStream.Streamable {
+    override fun toStream(stream: JsonStream) {
+        stream.beginObject()
+        stream.name("Foo")
+        stream.value("Bar")
+        stream.endObject()
     }
 }
