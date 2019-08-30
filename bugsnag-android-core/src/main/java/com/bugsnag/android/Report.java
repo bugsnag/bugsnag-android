@@ -28,14 +28,15 @@ public class Report implements JsonStream.Streamable {
     private transient boolean cachingDisabled;
 
     Report(@NonNull String apiKey, @NonNull Error error) {
-        this.error = error;
-        this.errorFile = null;
-        this.notifier = Notifier.getInstance();
-        this.apiKey = apiKey;
+        this(apiKey, null, error);
     }
 
     Report(@NonNull String apiKey, @Nullable File errorFile) {
-        this.error = null;
+        this(apiKey, errorFile, null);
+    }
+
+    private Report(@NonNull String apiKey, @Nullable File errorFile, @Nullable Error error) {
+        this.error = error;
         this.errorFile = errorFile;
         this.notifier = Notifier.getInstance();
         this.apiKey = apiKey;

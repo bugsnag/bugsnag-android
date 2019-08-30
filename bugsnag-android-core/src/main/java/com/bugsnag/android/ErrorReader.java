@@ -257,16 +257,17 @@ class ErrorReader {
             String key = reader.nextName();
             Object val = null;
 
-            try {
-                val = reader.nextString();
-            } catch (IllegalStateException exc) {
-                try {
+            switch (reader.peek()) {
+                case STRING:
+                    val = reader.nextString();
+                    break;
+                case NUMBER:
                     val = reader.nextInt();
-                } catch (IllegalStateException ignored) {
+                    break;
+                default:
                     reader.skipValue();
-                }
+                    break;
             }
-
             if (val != null) {
                 map.put(key, val);
             }

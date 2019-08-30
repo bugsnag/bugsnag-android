@@ -9,7 +9,8 @@ import java.util.Map;
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
-class Exceptions implements JsonStream.Streamable { // TODO delete redundant class
+class Exceptions implements JsonStream.Streamable {
+
     private final BugsnagException exception;
     private String exceptionType;
     private String[] projectPackages;
@@ -22,6 +23,7 @@ class Exceptions implements JsonStream.Streamable { // TODO delete redundant cla
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
+        exception.setProjectPackages(projectPackages);
         exception.toStream(writer);
     }
 

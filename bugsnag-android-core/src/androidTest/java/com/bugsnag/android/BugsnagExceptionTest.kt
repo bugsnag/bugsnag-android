@@ -74,8 +74,8 @@ class BugsnagExceptionTest {
     @Test
     fun customStreamableSerialization() {
         val bugsnagException = BugsnagException(StreamableException())
-        val exc = jsonObjectFromException(bugsnagException)
-        assertEquals("Bar", exc.get("Foo"))
+        val exc = streamableToJsonArray(bugsnagException)
+        assertEquals("Bar", exc.getJSONObject(0)["Foo"])
     }
 
     @Test
@@ -111,16 +111,18 @@ class BugsnagExceptionTest {
     private fun jsonObjectFromException(bugsnagException: BugsnagException): JSONObject {
         val exceptions = Exceptions(config, bugsnagException)
         val json = streamableToJsonArray(exceptions)
-        val exc = json.get(0) as JSONObject
+        val exc = json.getJSONObject(0)
         return exc
     }
 }
 
 class StreamableException: Throwable(), JsonStream.Streamable {
     override fun toStream(stream: JsonStream) {
+        stream.beginArray()
         stream.beginObject()
         stream.name("Foo")
         stream.value("Bar")
         stream.endObject()
+        stream.endArray()
     }
 }

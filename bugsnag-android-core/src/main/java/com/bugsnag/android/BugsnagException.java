@@ -18,11 +18,12 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
      */
     private String name;
     private String message;
-    List<Map<String, Object>> customStackframes;
+    private final List<Map<String, Object>> customStackframes;
 
     private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
 
     private JsonStream.Streamable streamable;
+    private String[] projectPackages;
 
     /**
      * Constructor
@@ -37,24 +38,24 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
         super(message);
         setStackTrace(frames);
         this.name = name;
+        this.customStackframes = null;
     }
 
     BugsnagException(@NonNull Throwable exc) {
         super(exc.getMessage());
 
-        if (exc instanceof JsonStream.Streamable) {
-            this.streamable = (JsonStream.Streamable) exc;
-        }
-
         if (exc instanceof BugsnagException) {
             this.message = ((BugsnagException) exc).getMessage();
             this.name = ((BugsnagException) exc).getName();
             this.type = ((BugsnagException) exc).getType();
+        } else if (exc instanceof JsonStream.Streamable) {
+            this.streamable = (JsonStream.Streamable) exc;
         } else {
             this.name = exc.getClass().getName();
         }
         setStackTrace(exc.getStackTrace());
         initCause(exc.getCause());
+        this.customStackframes = null;
     }
 
     BugsnagException(@NonNull String name,
@@ -109,26 +110,26 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
         this.type = type;
     }
 
-
-
-// TODO test below
-
-
     @Override
     public void toStream(@NonNull JsonStream stream) throws IOException {
-        stream.beginArray();
+
+        // the class has been passed a custom exception such as JavaScriptException in React Native
+        // if this value is not null. These classes currently handle their own serialization
+        // so we delegate to them
         if (streamable != null) {
             streamable.toStream(stream);
         } else {
+            // iterate through the exceptions and serialise an array, starting with the current
+            // throwable and continuing until the cause is null
+            stream.beginArray();
 
-            // Unwrap any "cause" exceptions
             Throwable currentEx = this;
             while (currentEx != null) {
                 serializeException(stream, currentEx);
                 currentEx = currentEx.getCause();
             }
+            stream.endArray();
         }
-        stream.endArray();
     }
 
     private void serializeException(@NonNull JsonStream writer,
@@ -136,6 +137,9 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
         if (currentEx instanceof BugsnagException) {
             List<Map<String, Object>> frames = ((BugsnagException) currentEx).customStackframes;
 
+            // if customStackFrames is set on BugsnagException we are reading a cached file
+            // which may contain additional fields, such as columnNumber/loadAddress etc.
+            // in this case we should construct the StackTrace with the arbitrary map supplied.
             if (frames != null) {
                 String exceptionName = getExceptionName(currentEx);
                 String localizedMessage = currentEx.getLocalizedMessage();
@@ -151,12 +155,14 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
         }
     }
 
-    private void writeThrowable(@NonNull JsonStream writer, Throwable currentEx) throws IOException {
+    private void writeThrowable(@NonNull JsonStream writer,
+                                Throwable currentEx) throws IOException {
         String exceptionName = getExceptionName(currentEx);
         String localizedMessage = currentEx.getLocalizedMessage();
-        Stacktrace stacktrace = new Stacktrace(currentEx.getStackTrace(), new String[]{}); // FIXME pass in projectPackages here
+        Stacktrace stacktrace = new Stacktrace(currentEx.getStackTrace(), this.projectPackages);
         exceptionToStream(writer, exceptionName, localizedMessage, stacktrace);
     }
+
     /**
      * Get the class name from the exception contained in this Error report.
      */
@@ -178,5 +184,9 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
         writer.name("type").value(type);
         writer.name("stacktrace").value(stacktrace);
         writer.endObject();
+    }
+
+    void setProjectPackages(String[] projectPackages) {
+        this.projectPackages = projectPackages;
     }
 }
