@@ -112,78 +112,30 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
 
     @Override
     public void toStream(@NonNull JsonStream stream) throws IOException {
-
         // the class has been passed a custom exception such as JavaScriptException in React Native
         // if this value is not null. These classes currently handle their own serialization
         // so we delegate to them
         if (streamable != null) {
             streamable.toStream(stream);
         } else {
-            // iterate through the exceptions and serialise an array, starting with the current
-            // throwable and continuing until the cause is null
-            stream.beginArray();
-
-            Throwable currentEx = this;
-            while (currentEx != null) {
-                serializeException(stream, currentEx);
-                currentEx = currentEx.getCause();
-            }
-            stream.endArray();
-        }
-    }
-
-    private void serializeException(@NonNull JsonStream writer,
-                                    Throwable currentEx) throws IOException {
-        if (currentEx instanceof BugsnagException) {
-            List<Map<String, Object>> frames = ((BugsnagException) currentEx).customStackframes;
-
+            List<Map<String, Object>> frames = customStackframes;
+            Stacktrace stacktrace;
             // if customStackFrames is set on BugsnagException we are reading a cached file
             // which may contain additional fields, such as columnNumber/loadAddress etc.
             // in this case we should construct the StackTrace with the arbitrary map supplied.
             if (frames != null) {
-                String exceptionName = getExceptionName(currentEx);
-                String localizedMessage = currentEx.getLocalizedMessage();
-                Stacktrace stacktrace = new Stacktrace(frames);
-                exceptionToStream(writer, exceptionName, localizedMessage, stacktrace);
+                stacktrace = new Stacktrace(frames);
             } else {
-                writeThrowable(writer, currentEx);
+                stacktrace = new Stacktrace(getStackTrace(), this.projectPackages);
             }
-        } else if (currentEx instanceof JsonStream.Streamable) {
-            ((JsonStream.Streamable) currentEx).toStream(writer);
-        } else {
-            writeThrowable(writer, currentEx);
+
+            stream.beginObject();
+            stream.name("errorClass").value(getName());
+            stream.name("message").value(getLocalizedMessage());
+            stream.name("type").value(type);
+            stream.name("stacktrace").value(stacktrace);
+            stream.endObject();
         }
-    }
-
-    private void writeThrowable(@NonNull JsonStream writer,
-                                Throwable currentEx) throws IOException {
-        String exceptionName = getExceptionName(currentEx);
-        String localizedMessage = currentEx.getLocalizedMessage();
-        Stacktrace stacktrace = new Stacktrace(currentEx.getStackTrace(), this.projectPackages);
-        exceptionToStream(writer, exceptionName, localizedMessage, stacktrace);
-    }
-
-    /**
-     * Get the class name from the exception contained in this Error report.
-     */
-    private String getExceptionName(@NonNull Throwable throwable) {
-        if (throwable instanceof BugsnagException) {
-            return ((BugsnagException) throwable).getName();
-        } else {
-            return throwable.getClass().getName();
-        }
-    }
-
-    private void exceptionToStream(@NonNull JsonStream writer,
-                                   String name,
-                                   String message,
-                                   Stacktrace stacktrace) throws IOException {
-        writer.beginObject();
-        writer.name("errorClass").value(name);
-        writer.name("message").value(message);
-        writer.name("type").value(type);
-        writer.name("stacktrace").value(stacktrace);
-        writer.endObject();
     }
 
     void setProjectPackages(String[] projectPackages) {
