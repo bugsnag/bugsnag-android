@@ -261,7 +261,7 @@ class ErrorReader {
                         map.put(key, reader.nextString());
                         break;
                     case NUMBER:
-                        map.put(key, reader.nextInt());
+                        map.put(key, reader.nextLong());
                         break;
                     default:
                         reader.skipValue();

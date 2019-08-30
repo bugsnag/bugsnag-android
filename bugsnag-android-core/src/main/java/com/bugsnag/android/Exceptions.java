@@ -52,6 +52,7 @@ class Exceptions implements JsonStream.Streamable {
 
     void setExceptionType(@NonNull String type) {
         exceptionType = type;
+        exception.setType(exceptionType);
     }
 
     String[] getProjectPackages() {
@@ -60,6 +61,7 @@ class Exceptions implements JsonStream.Streamable {
 
     void setProjectPackages(String[] projectPackages) {
         this.projectPackages = projectPackages;
+        exception.setProjectPackages(projectPackages);
     }
 
     private void exceptionToStream(@NonNull JsonStream writer,
