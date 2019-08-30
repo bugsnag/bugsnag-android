@@ -26,7 +26,7 @@ class Stacktrace implements JsonStream.Streamable {
     }
 
     Stacktrace(List<Map<String, Object>> frames) {
-        if (frames.size() >= STACKTRACE_TRIM_LENGTH) { // TODO test boundaries
+        if (frames.size() >= STACKTRACE_TRIM_LENGTH) {
             this.trace = frames.subList(0, STACKTRACE_TRIM_LENGTH);
         } else {
             this.trace = frames;
