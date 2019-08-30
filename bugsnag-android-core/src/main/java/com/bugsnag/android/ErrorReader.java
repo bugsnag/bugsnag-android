@@ -253,24 +253,23 @@ class ErrorReader {
         Map<String, Object> map = new HashMap<>();
         reader.beginObject();
 
-        while (reader.hasNext()) {
-            String key = reader.nextName();
-            Object val = null;
-
-            switch (reader.peek()) {
-                case STRING:
-                    val = reader.nextString();
-                    break;
-                case NUMBER:
-                    val = reader.nextInt();
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
+        try {
+            while (reader.hasNext()) {
+                String key = reader.nextName();
+                switch (reader.peek()) {
+                    case STRING:
+                        map.put(key, reader.nextString());
+                        break;
+                    case NUMBER:
+                        map.put(key, reader.nextInt());
+                        break;
+                    default:
+                        reader.skipValue();
+                        break;
+                }
             }
-            if (val != null) {
-                map.put(key, val);
-            }
+        } catch (IllegalStateException exc) {
+            Logger.warn("Failed to read stackframe", exc);
         }
         reader.endObject();
         return map;
