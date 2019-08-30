@@ -50,6 +50,7 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
             this.type = ((BugsnagException) exc).getType();
         } else if (exc instanceof JsonStream.Streamable) {
             this.streamable = (JsonStream.Streamable) exc;
+            this.name = "";
         } else {
             this.name = exc.getClass().getName();
         }
