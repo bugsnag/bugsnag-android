@@ -18,7 +18,6 @@ Feature: Run callbacks before reports delivered
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
         And the exception "errorClass" equals "java.lang.RuntimeException"
         And the exception "message" equals "Ruh-roh"
         And the event "context" equals "UNSET"
