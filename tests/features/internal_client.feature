@@ -29,9 +29,9 @@ Feature: Communicating events between notifiers
 
     Scenario: Report a handled event through internalNotify() while offline
         When I configure the app to run in the "offline" state
-        And I run "CachedHandledInternalNotifyScenario"
+        And I run "CachedHandledInternalNotifyScenario" and relaunch the app
         And I configure the app to run in the "online" state
-        And I relaunch the app
+        And I run "CachedHandledInternalNotifyScenario"
         And I wait to receive a request
         And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the event "unhandled" is false
