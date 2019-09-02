@@ -1,7 +1,9 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
 import com.bugsnag.android.Configuration;
+
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 public class DetectNdkEnabledScenario extends Scenario {
@@ -14,6 +16,8 @@ public class DetectNdkEnabledScenario extends Scenario {
 
     public native void crash();
 
+    /**
+     */
     public DetectNdkEnabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);

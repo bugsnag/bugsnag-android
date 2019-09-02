@@ -1,13 +1,11 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-
 import com.bugsnag.android.Configuration;
 
-import androidx.annotation.NonNull;
-
-import android.content.Intent;
+import android.content.Context;
 import android.os.Handler;
+
+import androidx.annotation.NonNull;
 
 import java.lang.Runnable;
 
