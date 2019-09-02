@@ -29,17 +29,16 @@ public class CXXSessionInfoCrashScenario extends Scenario {
     public void run() {
         super.run();
         String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
+        if (metadata == null || !metadata.equals("non-crashy")) {
+            Bugsnag.startSession();
+            Bugsnag.notify(new Exception("For the first"));
+            Bugsnag.notify(new Exception("For the second"));
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    crash(3837);
+                }
+            }, 8000);
         }
-        Bugsnag.startSession();
-        Bugsnag.notify(new Exception("For the first"));
-        Bugsnag.notify(new Exception("For the second"));
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                crash(3837);
-            }
-        }, 8000);
     }
 }

@@ -83,6 +83,7 @@ Feature: Native API
 
     Scenario: Starting a session, notifying, followed by a C crash
         When I run "CXXSessionInfoCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSessionInfoCrashScenario"
         And I wait to receive 4 requests
         And I discard the oldest request
