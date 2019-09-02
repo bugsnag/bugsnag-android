@@ -1,9 +1,8 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Configuration;
 
 import android.content.Context;
-
-import com.bugsnag.android.Configuration;
 
 import androidx.annotation.NonNull;
 

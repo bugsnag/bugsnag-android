@@ -1,8 +1,8 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-
 import com.bugsnag.android.Configuration;
+
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 
@@ -14,7 +14,7 @@ public class CXXStackoverflowScenario extends Scenario {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash(int counter, String longText);
+    public native void crash(int counter, @NonNull String longText);
 
     public CXXStackoverflowScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);

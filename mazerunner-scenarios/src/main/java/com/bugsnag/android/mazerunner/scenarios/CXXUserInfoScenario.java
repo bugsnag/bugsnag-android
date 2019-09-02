@@ -1,11 +1,10 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-
 import com.bugsnag.android.Configuration;
 
-import androidx.annotation.NonNull;
+import android.content.Context;
 
+import androidx.annotation.NonNull;
 
 public class CXXUserInfoScenario extends Scenario {
     static {
