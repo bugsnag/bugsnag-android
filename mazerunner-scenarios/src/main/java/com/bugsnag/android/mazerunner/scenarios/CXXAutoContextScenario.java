@@ -30,7 +30,7 @@ public class CXXAutoContextScenario extends Scenario {
         super.run();
         Context context = getContext();
         registerActivityLifecycleCallbacks();
-        context.startActivity(new Intent(context, SecondActivity.class));
+        context.startActivity(new Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"));
     }
 
     @Override

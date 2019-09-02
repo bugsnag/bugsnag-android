@@ -18,7 +18,7 @@ internal class SessionSetAutoCaptureScenario(config: Configuration,
 
     override fun run() {
         super.run()
-        context.startActivity(Intent(context, SecondActivity::class.java))
+        context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }
 
 }

@@ -21,7 +21,7 @@ internal class AutoContextScenario(config: Configuration,
     override fun run() {
         super.run()
         registerActivityLifecycleCallbacks()
-        context.startActivity(Intent(context, SecondActivity::class.java))
+        context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }
 
     override fun onActivityStarted(activity: Activity) {
