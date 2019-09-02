@@ -45,8 +45,7 @@ android {
 
 dependencies {
     try {
-        compileOnly project(":bugsnag-android")//"com.bugsnag:bugsnag-android:+"
-        implementation "com.bugsnag:bugsnag-android:+"
+        compileOnly project(":bugsnag-android")
     } catch (Throwable exc) {
         implementation "com.bugsnag:bugsnag-android:+"
         project.logger.lifecycle("Ignoring unfound dependency as running from mazerunner")

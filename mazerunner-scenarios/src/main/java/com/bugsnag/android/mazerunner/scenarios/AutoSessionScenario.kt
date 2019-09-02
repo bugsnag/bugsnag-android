@@ -1,10 +1,10 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import android.content.Context
-import android.content.Intent
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.SecondActivity
+
+import android.content.Context
+import android.content.Intent
 
 /**
  * Sends a manual session payload to Bugsnag.
@@ -16,7 +16,7 @@ internal class AutoSessionScenario(config: Configuration,
         config.setAutoCaptureSessions(true)
         Bugsnag.init(context, config)
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
-        context.startActivity(Intent(context, SecondActivity::class.java))
+        context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }
 
 }

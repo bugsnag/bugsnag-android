@@ -1,12 +1,10 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Configuration;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-
-import com.bugsnag.android.Configuration;
-import com.bugsnag.android.mazerunner.SecondActivity;
 
 import androidx.annotation.NonNull;
 
@@ -34,7 +32,7 @@ public class CXXAutoContextScenario extends Scenario {
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
+    public void onActivityStarted(@NonNull Activity activity) {
         activate();
     }
 }
