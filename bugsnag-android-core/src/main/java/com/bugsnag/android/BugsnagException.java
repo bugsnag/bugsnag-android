@@ -44,11 +44,7 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
     BugsnagException(@NonNull Throwable exc) {
         super(exc.getMessage());
 
-        if (exc instanceof BugsnagException) {
-            this.message = ((BugsnagException) exc).getMessage();
-            this.name = ((BugsnagException) exc).getName();
-            this.type = ((BugsnagException) exc).getType();
-        } else if (exc instanceof JsonStream.Streamable) {
+        if (exc instanceof JsonStream.Streamable) {
             this.streamable = (JsonStream.Streamable) exc;
             this.name = "";
         } else {
