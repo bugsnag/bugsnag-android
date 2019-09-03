@@ -7,7 +7,6 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -31,7 +30,7 @@ import java.util.Date;
 import java.util.Map;
 
 @SmallTest
-public class ErrorTest {
+public class ErrorSerializationTest {
 
     private ImmutableConfig config;
     private Error error;
@@ -60,25 +59,6 @@ public class ErrorTest {
         if (client != null) {
             client.close();
         }
-    }
-
-    @Test
-    public void testShouldIgnoreClass() {
-        Configuration config = BugsnagTestUtils.generateConfiguration();
-        config.setIgnoreClasses(Collections.singleton("java.io.IOException"));
-        this.config = convert(config);
-
-        // Shouldn't ignore classes not in ignoreClasses
-        RuntimeException runtimeException = new RuntimeException("Test");
-        Error error = new Error.Builder(this.config, runtimeException, generateSessionTracker(),
-                Thread.currentThread(), false, new MetaData()).build();
-        assertFalse(error.shouldIgnoreClass());
-
-        // Should ignore errors in ignoreClasses
-        IOException ioException = new IOException("Test");
-        error = new Error.Builder(this.config, ioException, generateSessionTracker(),
-                Thread.currentThread(), false, new MetaData()).build();
-        assertTrue(error.shouldIgnoreClass());
     }
 
     @Test
@@ -286,24 +266,6 @@ public class ErrorTest {
     }
 
     @Test
-    public void checkExceptionMessageNullity() throws Exception {
-        String msg = "Foo";
-        Error err = new Error.Builder(config, new RuntimeException(msg), generateSessionTracker(),
-            Thread.currentThread(), false, new MetaData()).build();
-        assertEquals(msg, err.getExceptionMessage());
-
-        err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
-            Thread.currentThread(), false, new MetaData()).build();
-        assertEquals("", err.getExceptionMessage());
-    }
-
-    @Test
-    public void testNullSeverity() throws Exception {
-        error.setSeverity(null);
-        assertEquals(Severity.WARNING, error.getSeverity());
-    }
-
-    @Test
     public void testSendThreadsDisabled() throws Exception {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setSendThreads(false);
@@ -313,75 +275,6 @@ public class ErrorTest {
 
         JSONObject errorJson = streamableToJson(err);
         assertFalse(errorJson.has("threads"));
-    }
-
-    @Test
-    public void testBugsnagExceptionName() throws Exception {
-        BugsnagException exception = new BugsnagException("Busgang", "exceptional",
-            new StackTraceElement[]{});
-        Error err = new Error.Builder(config, exception, generateSessionTracker(),
-                Thread.currentThread(), false, new MetaData()).build();
-        assertEquals("Busgang", err.getExceptionName());
-    }
-
-    @Test
-    public void testNullContext() throws Exception {
-        error.setContext(null);
-        error.setAppData(null);
-        assertNull(error.getContext());
-    }
-
-    @Test
-    public void testSetUser() throws Exception {
-        String firstId = "123";
-        String firstEmail = "fake@example.com";
-        String firstName = "Bob Swaggins";
-        error.setUser(firstId, firstEmail, firstName);
-
-        assertEquals(firstId, error.getUser().getId());
-        assertEquals(firstEmail, error.getUser().getEmail());
-        assertEquals(firstName, error.getUser().getName());
-
-        String userId = "foo";
-        error.setUserId(userId);
-        assertEquals(userId, error.getUser().getId());
-        assertEquals(firstEmail, error.getUser().getEmail());
-        assertEquals(firstName, error.getUser().getName());
-
-        String userEmail = "another@example.com";
-        error.setUserEmail(userEmail);
-        assertEquals(userId, error.getUser().getId());
-        assertEquals(userEmail, error.getUser().getEmail());
-        assertEquals(firstName, error.getUser().getName());
-
-        String userName = "Isaac";
-        error.setUserName(userName);
-        assertEquals(userId, error.getUser().getId());
-        assertEquals(userEmail, error.getUser().getEmail());
-        assertEquals(userName, error.getUser().getName());
-    }
-
-    @Test
-    public void testBuilderMetaData() {
-        Error.Builder builder = new Error.Builder(config, new RuntimeException("foo"),
-                generateSessionTracker(), Thread.currentThread(), false, new MetaData());
-
-        assertNotNull(builder.metaData(new MetaData()).build());
-
-        MetaData metaData = new MetaData();
-        metaData.addToTab("foo", "bar", true);
-
-        Error error = builder.metaData(metaData).build();
-        assertEquals(1, error.getMetaData().getTab("foo").size());
-    }
-
-    @Test
-    public void testErrorMetaData() {
-        error.addToTab("rocks", "geode", "a shiny mineral");
-        assertNotNull(error.getMetaData().getTab("rocks"));
-
-        error.clearTab("rocks");
-        assertTrue(error.getMetaData().getTab("rocks").isEmpty());
     }
 
     @Test

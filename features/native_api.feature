@@ -4,7 +4,7 @@ Feature: Native API
         When I run "CXXUserInfoScenario"
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "Connection lost"
         And the exception "message" equals "No antenna detected"
         And the event "severity" equals "info"
@@ -20,7 +20,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
         And the event "user.name" equals "Strulyegha  Ghaumon  Rabelban  Snefkal  Angengtai  Samperris  D"
@@ -32,7 +32,7 @@ Feature: Native API
         When I run "CXXNotifyScenario"
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the event "severity" equals "error"
         And the event "context" equals "MainActivity"
         And the exception "errorClass" equals "Vitamin C deficiency"
@@ -43,7 +43,7 @@ Feature: Native API
         When I run "CXXAutoContextScenario"
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the event "severity" equals "info"
         And the event "context" equals "SecondActivity"
         And the exception "errorClass" equals "Hello hello"
@@ -56,7 +56,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the event "severity" equals "error"
         And the event "context" equals "Everest"
         And the exception "errorClass" equals "SIGILL"
@@ -66,7 +66,7 @@ Feature: Native API
         When I run "CXXBreadcrumbScenario"
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the event "severity" equals "info"
         And the exception "errorClass" equals "Bean temperature loss"
         And the exception "message" equals "100% more microwave required"
@@ -78,7 +78,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the event has a "request" breadcrumb named "Substandard nacho error"
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
@@ -91,7 +91,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive 4 requests
-        And the payload in request 3 contains a completed native report
+        And the payload in request 3 contains a completed handled native report
         And the event in request 3 contains session info
         And the payload field "events.0.session.events.unhandled" equals 1 for request 3
         And the payload field "events.0.session.events.handled" equals 2 for request 3
@@ -101,7 +101,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
         And the event has a "log" breadcrumb named "Warm beer detected"
@@ -112,7 +112,7 @@ Feature: Native API
         When I run "CXXJavaBreadcrumbNativeNotifyScenario"
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "Failed instantiation"
         And the exception "message" equals "Could not allocate"
         And the event "severity" equals "error"
@@ -125,7 +125,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
         And the event has a "manual" breadcrumb with message "Bridge connector activated"
@@ -136,7 +136,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "java.lang.ArrayIndexOutOfBoundsException"
         And the exception "message" equals "length=2; index=2"
         And the event has a "log" breadcrumb named "Lack of cheese detected"
@@ -147,7 +147,7 @@ Feature: Native API
         When I run "CXXNativeBreadcrumbJavaNotifyScenario"
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "java.lang.Exception"
         And the exception "message" equals "Did not like"
         And the event "severity" equals "warning"
@@ -159,7 +159,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "SIGILL"
         And the event "app.version" equals "22.312.749.78.300.810.24.167.32"
         And the event "context" equals "ObservableSessionInitializerStringParserStringSessionProxyGloba"
@@ -169,7 +169,7 @@ Feature: Native API
         When I run "CXXCustomMetadataNativeNotifyScenario"
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "Twitter Overdose"
         And the exception "message" equals "Turn off the internet and go outside"
         And the event "severity" equals "info"
@@ -183,7 +183,7 @@ Feature: Native API
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "SIGILL"
         And the event "severity" equals "error"
         And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They wer"

@@ -3,11 +3,8 @@ package com.bugsnag.android;
 import static com.bugsnag.android.EventReceiver.shortenActionNameIfNeeded;
 import static org.junit.Assert.assertEquals;
 
-import androidx.test.filters.SmallTest;
-
 import org.junit.Test;
 
-@SmallTest
 public class EventReceiverTest {
 
     @Test

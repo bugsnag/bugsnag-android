@@ -155,15 +155,31 @@ Then("the report contains the required fields") do
   step("the report in request 0 contains the required fields")
 end
 
-Then("the request payload contains a completed native report") do
-  step("the payload in request 0 contains a completed native report")
+Then("the request payload contains a completed handled native report") do
+  step("the payload in request 0 contains a completed handled native report")
 end
 
-Then("the payload in request {int} contains a completed native report") do |index|
+Then("the request payload contains a completed unhandled native report") do
+  step("the payload in request 0 contains a completed unhandled native report")
+end
+
+Then("the payload in request {int} contains a completed handled native report") do |index|
   steps %Q{
     And the report in request #{index} contains the required fields
     And the stacktrace in request #{index} contains native frame information
   }
+end
+
+Then("the payload in request {int} contains a completed unhandled native report") do |request_index|
+  steps %Q{
+    And the payload in request #{request_index} contains a completed handled native report
+  }
+  stack = read_key_path(find_request(request_index)[:body], "events.0.exceptions.0.stacktrace")
+    stack.each_with_index do |frame, index|
+      assert_not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
+      assert_not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
+      assert_not_nil(frame['loadAddress'], "The loadAddress of frame #{index} is nil")
+    end
 end
 
 Then("the event in request {int} contains session info") do |index|

@@ -138,11 +138,24 @@ Then("the report contains the required fields") do
   }
 end
 
-Then("the request payload contains a completed native report") do
+Then("the request payload contains a completed handled native report") do
   steps %Q{
-    And the report contains the required fields
-    And the stacktrace contains native frame information
+      And the report contains the required fields
+      And the stacktrace contains native frame information
   }
+end
+
+Then("the request payload contains a completed unhandled native report") do
+  steps %Q{
+      And the report contains the required fields
+      And the stacktrace contains native frame information
+  }
+  stack = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+    stack.each_with_index do |frame, index|
+      assert_not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
+      assert_not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
+      assert_not_nil(frame['loadAddress'], "The loadAddress of frame #{index} is nil")
+    end
 end
 
 Then("the event contains session info") do

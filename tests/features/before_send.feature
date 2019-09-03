@@ -4,7 +4,7 @@ Feature: Run callbacks before reports delivered
         When I run "NativeBeforeSendScenario" and relaunch the app
         And I configure Bugsnag for "NativeBeforeSendScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the event "context" equals "!important"
@@ -16,7 +16,6 @@ Feature: Run callbacks before reports delivered
         When I run "BeforeSendScenario" and relaunch the app
         And I configure Bugsnag for "BeforeSendScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
         And the exception "errorClass" equals "java.lang.RuntimeException"
         And the exception "message" equals "Ruh-roh"
         And the event "context" equals "UNSET"
