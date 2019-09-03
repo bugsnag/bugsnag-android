@@ -78,6 +78,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
+    private FileStore.Delegate delegate;
 
     /**
      * Initialize a Bugsnag client
@@ -122,7 +123,23 @@ public class Client extends Observable implements Observer {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
-        sessionStore = new SessionStore(config, appContext);
+
+        delegate = new FileStore.Delegate() {
+            @Override
+            public void onErrorIOFailure(Exception exc, File errorFile, String context) {
+                // send an internal error to bugsnag with no cache
+                Thread thread = Thread.currentThread();
+                Error err = new Error.Builder(config, exc, null, thread, true).build();
+                err.setContext(context);
+
+                MetaData metaData = err.getMetaData();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
+                Client.this.reportInternalBugsnagError(err);
+            }
+        };
+
+        sessionStore = new SessionStore(config, appContext, delegate);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
             @Override
@@ -194,22 +211,7 @@ public class Client extends Observable implements Observer {
                 config.setBuildUUID(buildUuid);
             }
         }
-
-        // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
-            @Override
-            public void onErrorReadFailure(Exception exc, File errorFile) {
-                // send an internal error to bugsnag with no cache
-                Thread thread = Thread.currentThread();
-                Error err = new Error.Builder(config, exc, null, thread, true).build();
-                err.setContext("Crash Report Deserialization");
-
-                MetaData metaData = err.getMetaData();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
-                Client.this.reportInternalBugsnagError(err);
-            }
-        });
+        errorStore = new ErrorStore(config, appContext, delegate);
 
         // Install a default exception handler with this client
         if (config.getEnableExceptionHandler()) {
