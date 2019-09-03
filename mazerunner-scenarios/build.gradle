@@ -43,9 +43,12 @@ android {
     }
 }
 
+boolean isRunningMazerunner = true
+
 dependencies {
     try {
         compileOnly project(":bugsnag-android")
+        isRunningMazerunner = false
     } catch (Throwable exc) {
         implementation "com.bugsnag:bugsnag-android:+"
         project.logger.lifecycle("Ignoring unfound dependency as running from mazerunner")
@@ -54,3 +57,31 @@ dependencies {
 
 apply from: "../gradle/detekt.gradle"
 apply from: "../gradle/checkstyle.gradle"
+
+// copy the SO files from the NDK module to the mazerunner module directory, so that
+// we can link against a local copy when assembling the whole repository to check
+// the scenarios compile
+
+task extractBugsnagLibs(type: Copy) {
+    if (isRunningMazerunner) { // extracted from the m2
+        return
+    }
+    from zipTree("${project.rootDir}/bugsnag-plugin-android-ndk/build/outputs/aar/bugsnag-plugin-android-ndk-release.aar")
+    into "${project}/build/intermediates/bugsnag-libs"
+    include "**"
+}
+
+project.afterEvaluate {
+    def cleanTasks = project.tasks.findAll {
+        it.name.startsWith("externalNative") && it.name.contains("Clean")
+    }
+    def buildTasks = project.tasks.findAll {
+        it.name.startsWith("externalNative") && it.name.contains("Build") && !it.name.contains("Clean")
+    }
+
+    buildTasks.forEach {
+        extractBugsnagLibs.mustRunAfter(cleanTasks)
+        it.dependsOn extractBugsnagLibs
+        it.doFirst { extractBugsnagLibs }
+    }
+}
