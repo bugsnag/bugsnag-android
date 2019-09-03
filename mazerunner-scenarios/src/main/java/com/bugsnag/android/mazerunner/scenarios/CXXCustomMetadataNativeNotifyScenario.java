@@ -1,13 +1,11 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Bugsnag;
+import com.bugsnag.android.Configuration;
+
 import android.content.Context;
 
-import com.bugsnag.android.Configuration;
-import com.bugsnag.android.Bugsnag;
-
 import androidx.annotation.NonNull;
-
-import java.lang.reflect.Array;
 
 public class CXXCustomMetadataNativeNotifyScenario extends Scenario {
     static {
@@ -18,7 +16,8 @@ public class CXXCustomMetadataNativeNotifyScenario extends Scenario {
 
     public native void activate();
 
-    public CXXCustomMetadataNativeNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXCustomMetadataNativeNotifyScenario(@NonNull Configuration config,
+                                                 @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }

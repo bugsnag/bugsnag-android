@@ -1,13 +1,11 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.BeforeSend;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Report;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-
 
 public class NativeNotifyBeforeSendScenario extends Scenario {
 
@@ -18,7 +16,10 @@ public class NativeNotifyBeforeSendScenario extends Scenario {
 
     public native void activate();
 
-    public NativeNotifyBeforeSendScenario(@NonNull Configuration config, @NonNull Context context) {
+    /**
+     */
+    public NativeNotifyBeforeSendScenario(@NonNull Configuration config,
+                                          @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
         config.addBeforeSend(new BeforeSend() {
