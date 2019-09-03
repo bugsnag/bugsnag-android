@@ -5,6 +5,9 @@
 * Report internal errors when serialization fails
   [#581](https://github.com/bugsnag/bugsnag-android/pull/581)
 
+* Buffer io when reading from cached error file
+  [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
+
 ## 4.19.1 (2019-09-03)
 
 ### Bug fixes
