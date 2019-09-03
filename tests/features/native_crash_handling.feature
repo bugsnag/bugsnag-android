@@ -4,7 +4,7 @@ Feature: Native crash reporting
         When I run "CXXNullPointerScenario" and relaunch the app
         And I configure Bugsnag for "CXXNullPointerScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -30,7 +30,7 @@ Feature: Native crash reporting
         When I run "CXXStackoverflowScenario" and relaunch the app
         And I configure Bugsnag for "CXXStackoverflowScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception reflects a signal was raised
         And the exception "type" equals "c"
         And the event "severity" equals "error"
@@ -40,7 +40,7 @@ Feature: Native crash reporting
         When I run "CXXTrapScenario" and relaunch the app
         And I configure Bugsnag for "CXXTrapScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -85,7 +85,7 @@ Feature: Native crash reporting
         When I run "CXXAbortScenario" and relaunch the app
         And I configure Bugsnag for "CXXAbortScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals one of:
             | SIGABRT |
             | SIGSEGV |
@@ -100,7 +100,7 @@ Feature: Native crash reporting
         When I run "CXXSigillScenario" and relaunch the app
         And I configure Bugsnag for "CXXSigillScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGILL"
         And the exception "message" equals one of:
             | Illegal instruction   |
@@ -113,7 +113,7 @@ Feature: Native crash reporting
         When I run "CXXSigsegvScenario" and relaunch the app
         And I configure Bugsnag for "CXXSigsegvScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
@@ -124,7 +124,7 @@ Feature: Native crash reporting
         When I run "CXXSigabrtScenario" and relaunch the app
         And I configure Bugsnag for "CXXSigabrtScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGABRT"
         And the exception "message" equals "Abort program"
         And the exception "type" equals "c"
@@ -135,7 +135,7 @@ Feature: Native crash reporting
         When I run "CXXSigbusScenario" and relaunch the app
         And I configure Bugsnag for "CXXSigbusScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGBUS"
         And the exception "message" equals "Bus error (bad memory access)"
         And the exception "type" equals "c"
@@ -146,7 +146,7 @@ Feature: Native crash reporting
         When I run "CXXSigfpeScenario" and relaunch the app
         And I configure Bugsnag for "CXXSigfpeScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGFPE"
         And the exception "message" equals "Floating-point exception"
         And the exception "type" equals "c"
@@ -157,7 +157,7 @@ Feature: Native crash reporting
         When I run "CXXSigtrapScenario" and relaunch the app
         And I configure Bugsnag for "CXXSigtrapScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGTRAP"
         And the exception "message" equals "Trace/breakpoint trap"
         And the exception "type" equals "c"
@@ -178,7 +178,7 @@ Feature: Native crash reporting
         When I run "CXXExternalStackElementScenario" and relaunch the app
         And I configure Bugsnag for "CXXExternalStackElementScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the exception "errorClass" equals one of:
@@ -196,7 +196,7 @@ Feature: Native crash reporting
         When I run "CXXExceptionScenario" and relaunch the app
         And I configure Bugsnag for "CXXExceptionScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the exception "errorClass" equals "PSt13runtime_error"
@@ -210,7 +210,7 @@ Feature: Native crash reporting
         When I run "CXXThrowSomethingScenario" and relaunch the app
         And I configure Bugsnag for "CXXThrowSomethingScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the exception "errorClass" equals "i"

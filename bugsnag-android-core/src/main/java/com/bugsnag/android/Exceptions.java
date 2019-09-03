@@ -3,11 +3,14 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Unwrap and serialize exception information and any "cause" exceptions.
  */
 class Exceptions implements JsonStream.Streamable {
+
     private final BugsnagException exception;
     private String exceptionType;
     private String[] projectPackages;
@@ -28,7 +31,7 @@ class Exceptions implements JsonStream.Streamable {
             if (currentEx instanceof JsonStream.Streamable) {
                 ((JsonStream.Streamable) currentEx).toStream(writer);
             } else {
-                String exceptionName = getExceptionName(currentEx);
+                String exceptionName = currentEx.getClass().getName();
                 String localizedMessage = currentEx.getLocalizedMessage();
                 StackTraceElement[] stackTrace = currentEx.getStackTrace();
                 exceptionToStream(writer, exceptionName, localizedMessage, stackTrace);
@@ -49,6 +52,7 @@ class Exceptions implements JsonStream.Streamable {
 
     void setExceptionType(@NonNull String type) {
         exceptionType = type;
+        exception.setType(exceptionType);
     }
 
     String[] getProjectPackages() {
@@ -57,17 +61,7 @@ class Exceptions implements JsonStream.Streamable {
 
     void setProjectPackages(String[] projectPackages) {
         this.projectPackages = projectPackages;
-    }
-
-    /**
-     * Get the class name from the exception contained in this Error report.
-     */
-    private String getExceptionName(@NonNull Throwable throwable) {
-        if (throwable instanceof BugsnagException) {
-            return ((BugsnagException) throwable).getName();
-        } else {
-            return throwable.getClass().getName();
-        }
+        exception.setProjectPackages(projectPackages);
     }
 
     private void exceptionToStream(@NonNull JsonStream writer,

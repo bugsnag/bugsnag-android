@@ -16,7 +16,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @FlakyTest(detail = "Checks a stacktrace's line number, so fails when lines are added/deleted.")
 @SmallTest
@@ -41,7 +43,7 @@ public class StacktraceTest {
         JSONArray stacktraceJson = streamableToJsonArray(stacktrace);
 
         JSONObject firstFrame = (JSONObject) stacktraceJson.get(0);
-        assertEquals(34, firstFrame.get("lineNumber"));
+        assertEquals(36, firstFrame.get("lineNumber"));
         assertEquals("com.bugsnag.android.StacktraceTest.setUp", firstFrame.get("method"));
         assertEquals("StacktraceTest.java", firstFrame.get("file"));
         assertFalse(firstFrame.has("inProject"));
@@ -72,6 +74,23 @@ public class StacktraceTest {
         Stacktrace stacktrace = new Stacktrace(elements.toArray(ary), config.getProjectPackages());
         JSONArray jsonArray = streamableToJsonArray(stacktrace);
         assertEquals(200, jsonArray.length());
+        assertEquals(0, jsonArray.getJSONObject(0).getInt("lineNumber"));
+        assertEquals(199, jsonArray.getJSONObject(199).getInt("lineNumber"));
+    }
+
+    @Test
+    public void testStacktraceTrimmingListCtor() throws Throwable {
+        List<Map<String, Object>> elements = new ArrayList<>();
+
+        for (int k = 0; k < 1000; k++) {
+            elements.add(Collections.singletonMap("Foo", (Object) k));
+        }
+
+        Stacktrace stacktrace = new Stacktrace(elements);
+        JSONArray jsonArray = streamableToJsonArray(stacktrace);
+        assertEquals(200, jsonArray.length());
+        assertEquals(0, jsonArray.getJSONObject(0).getInt("Foo"));
+        assertEquals(199, jsonArray.getJSONObject(199).getInt("Foo"));
     }
 
     @Test
