@@ -82,7 +82,7 @@ class ErrorReader {
                         severityReasonValues = readSeverityReason(reader);
                         break;
                     case "threads":
-                        threadState = readThreadState(config, reader);
+                        threadState = readThreadState(reader);
                         break;
                     case "unhandled":
                         unhandled = reader.nextBoolean();
@@ -212,7 +212,8 @@ class ErrorReader {
         String errorClass = null;
         String message = null;
         String type = Configuration.DEFAULT_EXCEPTION_TYPE;
-        StackTraceElement[] frames = new StackTraceElement[]{};
+        List<Map<String, Object>> frames = new ArrayList<>();
+
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 case "errorClass":
@@ -239,40 +240,40 @@ class ErrorReader {
     }
 
 
-    private static StackTraceElement[] readStackFrames(JsonReader reader) throws IOException {
-        ArrayList<StackTraceElement> frames = new ArrayList<>();
+    private static List<Map<String, Object>> readStackFrames(JsonReader reader) throws IOException {
+        List<Map<String, Object>> frames = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
             frames.add(readStackFrame(reader));
         }
         reader.endArray();
-        return frames.toArray(new StackTraceElement[0]);
+        return frames;
     }
 
-    private static StackTraceElement readStackFrame(JsonReader reader) throws IOException {
-        String method = null;
-        String file = null;
-        int lineNumber = 0;
+    private static Map<String, Object> readStackFrame(JsonReader reader) throws IOException {
+        Map<String, Object> map = new HashMap<>();
         reader.beginObject();
-        while (reader.hasNext()) {
-            switch (reader.nextName()) {
-                case "method":
-                    method = reader.nextString();
-                    break;
-                case "file":
-                    file = reader.nextString();
-                    break;
-                case "lineNumber":
-                    lineNumber = reader.nextInt();
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
 
+        try {
+            while (reader.hasNext()) {
+                String key = reader.nextName();
+                switch (reader.peek()) {
+                    case STRING:
+                        map.put(key, reader.nextString());
+                        break;
+                    case NUMBER:
+                        map.put(key, reader.nextLong());
+                        break;
+                    default:
+                        reader.skipValue();
+                        break;
+                }
             }
+        } catch (IllegalStateException exc) {
+            Logger.warn("Failed to read stackframe", exc);
         }
         reader.endObject();
-        return new StackTraceElement("", method, file, lineNumber);
+        return map;
     }
 
     /**
@@ -396,12 +397,12 @@ class ErrorReader {
         return user;
     }
 
-    private static ThreadState readThreadState(Configuration config, JsonReader reader)
+    private static ThreadState readThreadState(JsonReader reader)
         throws IOException {
         List<CachedThread> threads = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            CachedThread cachedThread = readThread(config, reader);
+            CachedThread cachedThread = readThread(reader);
 
             if (cachedThread != null) {
                 threads.add(cachedThread);
@@ -411,13 +412,12 @@ class ErrorReader {
         return new ThreadState(threads.toArray(new CachedThread[0]));
     }
 
-    private static CachedThread readThread(Configuration config,
-                                           JsonReader reader) throws IOException {
+    private static CachedThread readThread(JsonReader reader) throws IOException {
         long id = 0;
         String name = null;
         String type = null;
         boolean errorReportingThread = false;
-        StackTraceElement[] frames = null;
+        List<Map<String, Object>> frames = null;
         reader.beginObject();
         while (reader.hasNext()) {
             switch (reader.nextName()) {
@@ -443,7 +443,7 @@ class ErrorReader {
         }
         reader.endObject();
         if (type != null && frames != null) {
-            return new CachedThread(config, id, name, type, errorReportingThread, frames);
+            return new CachedThread(id, name, type, errorReportingThread, frames);
         } else {
             return null;
         }

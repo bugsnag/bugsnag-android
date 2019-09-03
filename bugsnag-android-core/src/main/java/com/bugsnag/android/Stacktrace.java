@@ -1,11 +1,15 @@
 package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Serialize an exception stacktrace and mark frames as "in-project"
@@ -15,41 +19,69 @@ class Stacktrace implements JsonStream.Streamable {
 
     private static final int STACKTRACE_TRIM_LENGTH = 200;
 
-    private final List<String> projectPackages;
-    final StackTraceElement[] stacktrace;
+    private final List<Map<String, Object>> trace;
 
     Stacktrace(StackTraceElement[] stacktrace, String[] projectPackages) {
-        this.stacktrace = stacktrace;
-        this.projectPackages = sanitiseProjectPackages(projectPackages);
+        this.trace = serializeStacktrace(stacktrace, sanitiseProjectPackages(projectPackages));
+    }
+
+    Stacktrace(List<Map<String, Object>> frames) {
+        if (frames.size() >= STACKTRACE_TRIM_LENGTH) {
+            this.trace = frames.subList(0, STACKTRACE_TRIM_LENGTH);
+        } else {
+            this.trace = frames;
+        }
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginArray();
+        for (Map<String, Object> element : trace) {
+            writer.value(element);
+        }
+        writer.endArray();
+    }
 
-        for (int k = 0; k < stacktrace.length && k < STACKTRACE_TRIM_LENGTH; k++) {
-            StackTraceElement el = stacktrace[k];
-            try {
-                writer.beginObject();
-                if (el.getClassName().length() > 0) {
-                    writer.name("method").value(el.getClassName() + "." + el.getMethodName());
-                } else {
-                    writer.name("method").value(el.getMethodName());
-                }
-                writer.name("file").value(el.getFileName() == null ? "Unknown" : el.getFileName());
-                writer.name("lineNumber").value(el.getLineNumber());
+    private List<Map<String, Object>> serializeStacktrace(StackTraceElement[] trace,
+                                                          List<String> projectPackages) {
+        List<Map<String, Object>> list = new ArrayList<>();
 
-                if (inProject(el.getClassName(), projectPackages)) {
-                    writer.name("inProject").value(true);
-                }
+        for (int k = 0; k < trace.length && k < STACKTRACE_TRIM_LENGTH; k++) {
+            StackTraceElement el = trace[k];
+            Map<String, Object> frame = serializeStackframe(el, projectPackages);
 
-                writer.endObject();
-            } catch (Exception lineEx) {
-                Logger.warn("Failed to serialize stacktrace", lineEx);
+            if (frame != null) {
+                list.add(frame);
             }
         }
+        return list;
+    }
 
-        writer.endArray();
+    @Nullable
+    private Map<String, Object> serializeStackframe(StackTraceElement el,
+                                                    List<String> projectPackages) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            String methodName;
+            if (el.getClassName().length() > 0) {
+                methodName = el.getClassName() + "." + el.getMethodName();
+            } else {
+                methodName =  el.getMethodName();
+            }
+            map.put("method", methodName);
+
+            String filename = el.getFileName() == null ? "Unknown" : el.getFileName();
+            map.put("file", filename);
+            map.put("lineNumber", el.getLineNumber());
+
+            if (inProject(el.getClassName(), projectPackages)) {
+                map.put("inProject", true);
+            }
+            return map;
+        } catch (Exception lineEx) {
+            Logger.warn("Failed to serialize stacktrace", lineEx);
+            return null;
+        }
     }
 
     private static List<String> sanitiseProjectPackages(String[] projectPackages) {

@@ -6,13 +6,15 @@ import com.bugsnag.android.Configuration
 import java.io.File
 
 /**
- * Verifies that if a report is empty, minimal information is still sent to bugsnag.
+ * Verifies that if a report is empty and a beforeSend callback is set,
+ * minimal information is still sent to bugsnag.
  */
 internal class EmptyReportScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
 
     init {
         config.setAutoCaptureSessions(false)
+        config.beforeSend { true }
         val files = File(context.cacheDir, "bugsnag-errors").listFiles()
         files.forEach { it.writeText("") }
     }

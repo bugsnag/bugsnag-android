@@ -4,6 +4,16 @@
 * Buffer io when reading from cached error file
   [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
 
+## 4.19.1 (2019-09-03)
+
+### Bug fixes
+
+* Fix deserialization of custom stackframe fields in cached error reports
+  [#576](https://github.com/bugsnag/bugsnag-android/pull/576)
+
+* Fix potential null pointer exception if `setMetaData` is called with a null
+  value
+
 ## 4.19.0 (2019-08-27)
 
 * Report internal SDK errors to bugsnag
