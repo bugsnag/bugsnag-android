@@ -133,6 +133,12 @@ public class Client extends Observable implements Observer {
                 err.setContext(context);
 
                 MetaData metaData = err.getMetaData();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
+
+                long usableSpace = appContext.getCacheDir().getUsableSpace();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
                 Client.this.reportInternalBugsnagError(err);
