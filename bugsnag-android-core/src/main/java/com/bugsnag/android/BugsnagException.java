@@ -2,11 +2,15 @@ package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Used to store information about an exception that was not provided with an exception object
  */
 @ThreadSafe
-public class BugsnagException extends Throwable {
+public class BugsnagException extends Throwable implements JsonStream.Streamable {
 
     private static final long serialVersionUID = 5068182621179433346L;
     /**
@@ -14,8 +18,12 @@ public class BugsnagException extends Throwable {
      */
     private String name;
     private String message;
+    private final List<Map<String, Object>> customStackframes;
 
     private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
+
+    private JsonStream.Streamable streamable;
+    private String[] projectPackages;
 
     /**
      * Constructor
@@ -30,20 +38,30 @@ public class BugsnagException extends Throwable {
         super(message);
         setStackTrace(frames);
         this.name = name;
+        this.customStackframes = null;
     }
 
     BugsnagException(@NonNull Throwable exc) {
         super(exc.getMessage());
 
-        if (exc instanceof BugsnagException) {
-            this.message = ((BugsnagException) exc).getMessage();
-            this.name = ((BugsnagException) exc).getName();
-            this.type = ((BugsnagException) exc).getType();
+        if (exc instanceof JsonStream.Streamable) {
+            this.streamable = (JsonStream.Streamable) exc;
+            this.name = "";
         } else {
             this.name = exc.getClass().getName();
         }
         setStackTrace(exc.getStackTrace());
         initCause(exc.getCause());
+        this.customStackframes = null;
+    }
+
+    BugsnagException(@NonNull String name,
+                     @NonNull String message,
+                     @NonNull List<Map<String, Object>> customStackframes) {
+        super(message);
+        setStackTrace(new StackTraceElement[]{});
+        this.name = name;
+        this.customStackframes = customStackframes;
     }
 
     /**
@@ -87,5 +105,37 @@ public class BugsnagException extends Throwable {
 
     void setType(@NonNull String type) {
         this.type = type;
+    }
+
+    @Override
+    public void toStream(@NonNull JsonStream stream) throws IOException {
+        // the class has been passed a custom exception such as JavaScriptException in React Native
+        // if this value is not null. These classes currently handle their own serialization
+        // so we delegate to them
+        if (streamable != null) {
+            streamable.toStream(stream);
+        } else {
+            List<Map<String, Object>> frames = customStackframes;
+            Stacktrace stacktrace;
+            // if customStackFrames is set on BugsnagException we are reading a cached file
+            // which may contain additional fields, such as columnNumber/loadAddress etc.
+            // in this case we should construct the StackTrace with the arbitrary map supplied.
+            if (frames != null) {
+                stacktrace = new Stacktrace(frames);
+            } else {
+                stacktrace = new Stacktrace(getStackTrace(), this.projectPackages);
+            }
+
+            stream.beginObject();
+            stream.name("errorClass").value(getName());
+            stream.name("message").value(getLocalizedMessage());
+            stream.name("type").value(type);
+            stream.name("stacktrace").value(stacktrace);
+            stream.endObject();
+        }
+    }
+
+    void setProjectPackages(String[] projectPackages) {
+        this.projectPackages = projectPackages;
     }
 }
