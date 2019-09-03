@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Report internal errors when serialization fails
+  [#581](https://github.com/bugsnag/bugsnag-android/pull/581)
+
 ## 4.19.1 (2019-09-03)
 
 ### Bug fixes

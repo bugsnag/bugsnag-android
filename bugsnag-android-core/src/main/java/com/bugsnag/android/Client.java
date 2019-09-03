@@ -5,6 +5,7 @@ import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -137,6 +138,7 @@ public class Client extends Observable implements Observer {
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
 
+                @SuppressLint("UsableSpace") // requires API 26
                 long usableSpace = appContext.getCacheDir().getUsableSpace();
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
