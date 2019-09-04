@@ -368,6 +368,15 @@ public class NativeInterface {
     }
 
     /**
+     * Remove a tab of app-wide diagnostic information
+     *
+     * @param tab the dashboard tab to remove diagnostic data from
+     */
+    public static void clearTab(@NonNull final String tab) {
+        getClient().clearTab(tab);
+    }
+
+    /**
      * Return the client report app version
      */
     @NonNull
