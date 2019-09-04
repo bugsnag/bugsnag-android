@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -127,16 +128,18 @@ public class ConfigurationTest {
         Configuration configuration = new Configuration("api-key");
         assertNull(configuration.getDelivery());
         Delivery delivery = new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config) throws DeliveryFailureException {
-
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return null;
             }
 
+            @NotNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config) throws DeliveryFailureException {
-
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return null;
             }
         };
         configuration.setDelivery(delivery);

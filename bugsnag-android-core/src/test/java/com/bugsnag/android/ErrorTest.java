@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class ErrorTest {
 
-    private Configuration config;
+    private ImmutableConfig config;
     private Error error;
 
     /**
@@ -23,27 +23,10 @@ public class ErrorTest {
      */
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("api-key");
+        config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Example message");
         error = new Error.Builder(config, exception, null,
-            Thread.currentThread(), false).build();
-    }
-
-    @Test
-    public void testShouldIgnoreClass() {
-        config.setIgnoreClasses(new String[]{"java.io.IOException"});
-
-        // Shouldn't ignore classes not in ignoreClasses
-        RuntimeException runtimeException = new RuntimeException("Test");
-        Error error = new Error.Builder(config,
-            runtimeException, null, Thread.currentThread(), false).build();
-        assertFalse(error.shouldIgnoreClass());
-
-        // Should ignore errors in ignoreClasses
-        IOException ioException = new IOException("Test");
-        error = new Error.Builder(config,
-            ioException, null, Thread.currentThread(), false).build();
-        assertTrue(error.shouldIgnoreClass());
+            Thread.currentThread(), false, new MetaData()).build();
     }
 
     @Test
@@ -51,12 +34,12 @@ public class ErrorTest {
         String msg = "Foo";
         Error err = new Error.Builder(config,
             new RuntimeException(msg), null,
-            Thread.currentThread(), false).build();
+            Thread.currentThread(), false, new MetaData()).build();
         assertEquals(msg, err.getExceptionMessage());
 
         err = new Error.Builder(config,
             new RuntimeException(), null,
-            Thread.currentThread(), false).build();
+            Thread.currentThread(), false, new MetaData()).build();
         assertEquals("", err.getExceptionMessage());
     }
 
@@ -71,7 +54,7 @@ public class ErrorTest {
         BugsnagException exception = new BugsnagException("Busgang", "exceptional",
             new StackTraceElement[]{});
         Error err = new Error.Builder(config,
-            exception, null, Thread.currentThread(), false).build();
+            exception, null, Thread.currentThread(), false, new MetaData()).build();
         assertEquals("Busgang", err.getExceptionName());
     }
 
@@ -114,10 +97,9 @@ public class ErrorTest {
 
     @Test
     public void testBuilderMetaData() {
-        Configuration config = new Configuration("api-key");
         Error.Builder builder = new Error.Builder(config,
             new RuntimeException("foo"), null,
-            Thread.currentThread(), false);
+            Thread.currentThread(), false, new MetaData());
 
         assertNotNull(builder.metaData(new MetaData()).build());
 

@@ -1,12 +1,14 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+
 import org.junit.Assert.assertEquals
 
 import org.junit.Test
 
 class BeforeNotifyTest {
 
-    private val config = BugsnagTestUtils.generateImmutableConfig()
+    private val config = generateImmutableConfig()
 
     @Test
     fun testRunModifiesError() {

@@ -13,12 +13,10 @@ import java.util.Locale
 class BreadcrumbsTest {
 
     private lateinit var breadcrumbs: Breadcrumbs
-    private lateinit var config: Configuration
 
     @Before
     fun setUp() {
-        config = Configuration("api-key")
-        breadcrumbs = Breadcrumbs(config)
+        breadcrumbs = Breadcrumbs(20)
     }
 
     /**
@@ -46,14 +44,13 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSizeLimitBeforeAdding() {
-        config.maxBreadcrumbs = 5
+        breadcrumbs = Breadcrumbs(5)
 
         for (k in 1..6) {
             breadcrumbs.add(Breadcrumb("$k"))
         }
 
         val crumbs = breadcrumbs.store.toList()
-        assertEquals(config.maxBreadcrumbs, crumbs.size)
         assertEquals("2", crumbs.first().metadata["message"])
         assertEquals("6", crumbs.last().metadata["message"])
     }
@@ -63,7 +60,7 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeEmpty() {
-        config.maxBreadcrumbs = 0
+        breadcrumbs = Breadcrumbs(0)
         breadcrumbs.add(Breadcrumb("1"))
         breadcrumbs.add(Breadcrumb("2"))
         assertTrue(breadcrumbs.store.isEmpty())
@@ -74,9 +71,9 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeNegative() {
-        config.maxBreadcrumbs = -1
+        breadcrumbs = Breadcrumbs(-1)
         breadcrumbs.add(Breadcrumb("1"))
-        assertEquals(1, breadcrumbs.store.size)
+        assertEquals(0, breadcrumbs.store.size)
     }
 
     /**
@@ -116,6 +113,7 @@ class BreadcrumbsTest {
      */
     @Test
     fun testMaxBreadcrumbAccessors() {
+        val config = Configuration("api-key")
         assertEquals(32, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = 50

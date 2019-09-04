@@ -4,9 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 final class BugsnagTestUtils {
 
-    private BugsnagTestUtils() {
-    }
-
     static Configuration generateConfiguration() {
         Configuration configuration = new Configuration("test");
         configuration.setDelivery(generateDelivery());
