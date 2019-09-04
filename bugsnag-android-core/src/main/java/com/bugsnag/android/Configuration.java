@@ -428,7 +428,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         }
         this.setChanged();
         this.notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_METADATA, metaData.store));
+                    NativeInterface.MessageType.UPDATE_METADATA, this.metaData.store));
         this.metaData.addObserver(this);
     }
 

@@ -7,8 +7,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.filters.SmallTest;
+import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +18,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-@SmallTest
 public class ConfigurationTest {
 
     private Configuration config;
@@ -127,7 +127,21 @@ public class ConfigurationTest {
     public void testSetDelivery() {
         Configuration configuration = new Configuration("api-key");
         assertNull(configuration.getDelivery());
-        Delivery delivery = BugsnagTestUtils.generateDelivery();
+        Delivery delivery = new Delivery() {
+            @NotNull
+            @Override
+            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return null;
+            }
+        };
         configuration.setDelivery(delivery);
 
         assertFalse(configuration.getDelivery() instanceof DefaultDelivery);

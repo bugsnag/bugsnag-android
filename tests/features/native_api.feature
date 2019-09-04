@@ -3,7 +3,7 @@ Feature: Native API
     Scenario: Adding user information in C followed by notifying in C
         When I run "CXXUserInfoScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the exception "errorClass" equals "Connection lost"
         And the exception "message" equals "No antenna detected"
         And the event "severity" equals "info"
@@ -18,7 +18,7 @@ Feature: Native API
         And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -31,7 +31,7 @@ Feature: Native API
     Scenario: Notifying in C
         When I run "CXXNotifyScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the event "severity" equals "error"
         And the exception "errorClass" equals "Vitamin C deficiency"
         And the exception "message" equals "9 out of 10 adults do not get their 5-a-day"
@@ -40,7 +40,7 @@ Feature: Native API
     Scenario: Changing intents followed by notifying in C
         When I run "CXXAutoContextScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the event "severity" equals "info"
         And the event "context" equals "SecondActivity"
         And the exception "errorClass" equals "Hello hello"
@@ -51,7 +51,7 @@ Feature: Native API
         When I run "CXXUpdateContextCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXUpdateContextCrashScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the event "severity" equals "error"
         And the event "context" equals "Everest"
         And the exception "errorClass" equals one of:
@@ -62,7 +62,7 @@ Feature: Native API
     Scenario: Leaving a breadcrumb followed by notifying in C
         When I run "CXXBreadcrumbScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the event "severity" equals "info"
         And the exception "errorClass" equals "Bean temperature loss"
         And the exception "message" equals "100% more microwave required"
@@ -73,7 +73,7 @@ Feature: Native API
         When I run "CXXNativeBreadcrumbNativeCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXNativeBreadcrumbNativeCrashScenario"
         And I wait to receive a request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the event has a "request" breadcrumb named "Substandard nacho error"
         And the exception "errorClass" equals one of:
           | SIGILL |
@@ -89,7 +89,7 @@ Feature: Native API
         And I discard the oldest request
         And I discard the oldest request
         And I discard the oldest request
-        Then the request payload contains a completed native report
+        Then the request payload contains a completed handled native report
         And the event contains session info
         And the payload field "events.0.session.events.unhandled" equals 1
         And the payload field "events.0.session.events.handled" equals 2
@@ -98,7 +98,7 @@ Feature: Native API
         When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario" and relaunch the app
         And I configure Bugsnag for "CXXJavaBreadcrumbNativeBreadcrumbScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -110,7 +110,7 @@ Feature: Native API
     Scenario: Leaving breadcrumbs in Java and followed by notifying in C
         When I run "CXXJavaBreadcrumbNativeNotifyScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "Failed instantiation"
         And the exception "message" equals "Could not allocate"
         And the event "severity" equals "error"
@@ -122,7 +122,7 @@ Feature: Native API
         When I run "CXXJavaBreadcrumbNativeCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXJavaBreadcrumbNativeCrashScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -134,7 +134,7 @@ Feature: Native API
         When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXNativeBreadcrumbJavaCrashScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "java.lang.ArrayIndexOutOfBoundsException"
         And the exception "message" equals "length=2; index=2"
         And the event has a "log" breadcrumb named "Lack of cheese detected"
@@ -144,7 +144,7 @@ Feature: Native API
     Scenario: Leaving breadcrumbs in C followed by notifying in Java
         When I run "CXXNativeBreadcrumbJavaNotifyScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "java.lang.Exception"
         And the exception "message" equals "Did not like"
         And the event "severity" equals "warning"
@@ -155,7 +155,7 @@ Feature: Native API
         When I run "CXXExtraordinaryLongStringScenario" and relaunch the app
         And I configure Bugsnag for "CXXExtraordinaryLongStringScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -166,7 +166,7 @@ Feature: Native API
     Scenario: Add custom metadata followed by notifying in C
         When I run "CXXCustomMetadataNativeNotifyScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals "Twitter Overdose"
         And the exception "message" equals "Turn off the internet and go outside"
         And the event "severity" equals "info"
@@ -179,7 +179,7 @@ Feature: Native API
         When I run "CXXCustomMetadataNativeCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXCustomMetadataNativeCrashScenario"
         And I wait to receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |

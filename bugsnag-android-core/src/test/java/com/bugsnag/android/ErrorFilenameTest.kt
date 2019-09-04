@@ -1,16 +1,22 @@
 package com.bugsnag.android
 
 import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 
+@RunWith(MockitoJUnitRunner::class)
 class ErrorFilenameTest {
+
+    @Mock
+    lateinit var context: Context
 
     private lateinit var errorStore: ErrorStore
 
@@ -22,12 +28,8 @@ class ErrorFilenameTest {
      * @throws Exception if initialisation failed
      */
     @Before
-    @Throws(Exception::class)
     fun setUp() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        errorStore = ErrorStore(
-            config,
-            BugsnagTestUtils.generateConfiguration(), context, null)
+        errorStore = ErrorStore(config, BugsnagTestUtils.generateConfiguration(), context, null)
     }
 
     @Test

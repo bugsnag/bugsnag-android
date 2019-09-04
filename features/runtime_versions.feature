@@ -12,7 +12,7 @@ Scenario: Runtime versions included in NDK error
     And I configure the app to run in the "non-crashy" state
     And I relaunch the app
     Then I should receive a request
-    And the request payload contains a completed native report
+    And the request payload contains a completed unhandled native report
     And the payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null
 
