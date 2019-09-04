@@ -7,6 +7,9 @@
 * Catch throwables when invoking methods on system services
   [#623](https://github.com/bugsnag/bugsnag-android/pull/623)
 
+* Fix crash when calling `NativeInterface.clearTab()` (from an integration
+  library)
+  [#582](https://github.com/bugsnag/bugsnag-android/pull/582)
 * Fix abort() in native code when storing breadcrumbs with null values in
   metadata
   [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
