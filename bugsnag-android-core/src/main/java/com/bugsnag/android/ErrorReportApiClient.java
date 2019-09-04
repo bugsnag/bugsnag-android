@@ -13,7 +13,6 @@ import java.util.Map;
  */
 @SuppressWarnings("WeakerAccess")
 @Deprecated
-@ThreadSafe
 public interface ErrorReportApiClient {
 
     /**

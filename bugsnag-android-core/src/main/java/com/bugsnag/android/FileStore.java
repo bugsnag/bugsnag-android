@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-@ThreadSafe
 abstract class FileStore<T extends JsonStream.Streamable> {
 
     @NonNull

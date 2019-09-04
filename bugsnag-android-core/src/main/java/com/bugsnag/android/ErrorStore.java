@@ -19,7 +19,6 @@ import java.util.concurrent.Semaphore;
  * Store and flush Error reports which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-@ThreadSafe
 class ErrorStore extends FileStore<Error> {
 
     interface Delegate {

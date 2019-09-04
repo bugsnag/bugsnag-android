@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * Used to store information about an exception that was not provided with an exception object
  */
-@ThreadSafe
 public class BugsnagException extends Throwable implements JsonStream.Streamable {
 
     private static final long serialVersionUID = 5068182621179433346L;

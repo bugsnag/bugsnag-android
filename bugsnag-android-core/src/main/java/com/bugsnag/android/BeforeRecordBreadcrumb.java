@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
  * }
  * })
  */
-@ThreadSafe
 public interface BeforeRecordBreadcrumb {
 
     /**

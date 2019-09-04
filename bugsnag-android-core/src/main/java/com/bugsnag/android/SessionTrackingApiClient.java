@@ -12,7 +12,6 @@ import java.util.Map;
  * @deprecated use {@link Delivery} to send sessions
  */
 @Deprecated
-@ThreadSafe
 public interface SessionTrackingApiClient {
 
     /**

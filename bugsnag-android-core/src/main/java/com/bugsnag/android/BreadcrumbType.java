@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 /**
  * Recognized types of breadcrumbs
  */
-@ThreadSafe
 public enum BreadcrumbType {
     /**
      * An error was sent to Bugsnag (internal use only)

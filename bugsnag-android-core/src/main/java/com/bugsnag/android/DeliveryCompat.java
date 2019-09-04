@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
  * {@link SessionTrackingApiClient}. This class allows for backwards compatibility for users still
  * utilising the old API, and should be removed in the next major version.
  */
-@ThreadSafe
 class DeliveryCompat implements Delivery {
 
     // ignore deprecation of legacy clients
