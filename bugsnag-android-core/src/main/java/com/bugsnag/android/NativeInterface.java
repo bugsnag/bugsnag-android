@@ -486,8 +486,7 @@ public class NativeInterface {
                                                            unhandledCount, handledCount);
     }
 
-    /**
-     * Deliver a report, serialized as an event JSON payload.
+    /** Deliver a report, serialized as an event JSON payload.
      *
      * @param releaseStageBytes The release stage in which the event was
      *                          captured. Used to determine whether the report
@@ -503,8 +502,8 @@ public class NativeInterface {
         }
         String payload = new String(payloadBytes, UTF8Charset);
         String releaseStage = releaseStageBytes == null
-                ? null
-                : new String(releaseStageBytes, UTF8Charset);
+            ? null
+            : new String(releaseStageBytes, UTF8Charset);
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
