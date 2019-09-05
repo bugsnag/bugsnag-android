@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -411,15 +412,24 @@ public class NativeInterface {
                                                            unhandledCount, handledCount);
     }
 
-    /**
-     * Deliver a report, serialized as an event JSON payload.
+    /** Deliver a report, serialized as an event JSON payload.
      *
-     * @param releaseStage The release stage in which the event was captured. Used to determin
-     *                     whether the report should be discarded, based on configured release
-     *                     stages
+     * @param releaseStageBytes The release stage in which the event was
+     *                          captured. Used to determine whether the report
+     *                          should be discarded, based on configured release 
+     *                          stages
+     * @param payloadBytes The raw JSON payload of the event
      */
     @SuppressWarnings("unused")
-    public static void deliverReport(@Nullable String releaseStage, @NonNull String payload) {
+    public static void deliverReport(@Nullable byte[] releaseStageBytes, 
+                                     @NonNull byte[] payloadBytes) {
+        if (payloadBytes == null) {
+            return;
+        }
+        String payload = new String(payloadBytes, UTF8Charset);
+        String releaseStage = releaseStageBytes == null
+            ? null
+            : new String(releaseStageBytes, UTF8Charset);
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
