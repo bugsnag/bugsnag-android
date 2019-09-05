@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -273,7 +274,6 @@ public class NativeBridge implements Observer {
                     }
                 }
             }
-
             addBreadcrumb(crumb.getName(), crumb.getType().toString(),
                 crumb.getTimestamp(), metadata);
         } else {
@@ -289,7 +289,6 @@ public class NativeBridge implements Observer {
                 && values.get(METADATA_KEY) instanceof String) {
                 String section = makeSafe((String)values.get(METADATA_SECTION));
                 String key = makeSafe((String)values.get(METADATA_KEY));
-
                 if (values.get(METADATA_VALUE) instanceof String) {
                     addMetadataString(section, key,
                         makeSafe((String) values.get(METADATA_VALUE)));
