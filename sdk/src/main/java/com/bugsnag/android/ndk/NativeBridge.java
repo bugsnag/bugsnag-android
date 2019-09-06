@@ -468,7 +468,7 @@ public class NativeBridge implements Observer {
     }
 
     private void handleUpdateMetadata(Object arg) {
-        if (arg instanceof MetaData) {
+        if (arg instanceof Map) {
             updateMetadata(arg);
         } else {
             warn("UPDATE_METADATA object is invalid: " + arg);
