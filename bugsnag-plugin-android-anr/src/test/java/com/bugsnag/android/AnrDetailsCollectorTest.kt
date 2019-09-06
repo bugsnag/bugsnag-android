@@ -71,6 +71,6 @@ class AnrDetailsCollectorTest {
     @Test
     fun anrDetailsAltered() {
         collector.addErrorStateInfo(error, stateInfo)
-        assertEquals(stateInfo.shortMsg, error.exceptionMessage)
+        assertEquals(stateInfo.shortMsg.replace("ANR", ""), error.exceptionMessage)
     }
 }

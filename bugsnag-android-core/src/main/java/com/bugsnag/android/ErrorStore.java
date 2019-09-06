@@ -154,20 +154,27 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Error error = ErrorReader.readError(config, clientState, errorFile);
-            Report report = new Report(config.getApiKey(), error);
+            Report report;
 
-            for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-                try {
-                    if (!beforeSend.run(report)) {
-                        deleteStoredFiles(Collections.singleton(errorFile));
-                        Logger.info("Deleting cancelled error file " + errorFile.getName());
-                        return;
+            if (clientState.getBeforeSendTasks().isEmpty()) {
+                report = new Report(config.getApiKey(), errorFile);
+            } else {
+                Error error = ErrorReader.readError(config, clientState, errorFile);
+                report = new Report(config.getApiKey(), error);
+
+                for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
+                    try {
+                        if (!beforeSend.run(report)) {
+                            deleteStoredFiles(Collections.singleton(errorFile));
+                            Logger.info("Deleting cancelled error file " + errorFile.getName());
+                            return;
+                        }
+                    } catch (Throwable ex) {
+                        Logger.warn("BeforeSend threw an Exception", ex);
                     }
-                } catch (Throwable ex) {
-                    Logger.warn("BeforeSend threw an Exception", ex);
                 }
             }
+
             DeliveryParams deliveryParams = config.errorApiDeliveryParams();
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
 

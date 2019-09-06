@@ -12,7 +12,7 @@ Scenario: Runtime versions included in NDK error
     And I run "CXXNullPointerScenario" and relaunch the app
     And I configure Bugsnag for "CXXNullPointerScenario"
     Then I wait to receive a request
-    And the request payload contains a completed native report
+    And the request payload contains a completed unhandled native report
     And the payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null
 

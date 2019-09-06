@@ -1,16 +1,14 @@
 package com.bugsnag.android
 
-import org.junit.Assert.assertEquals
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 
-import androidx.test.filters.SmallTest
-import com.bugsnag.android.BugsnagTestUtils.generateSessionTracker
+import org.junit.Assert.assertEquals
 
 import org.junit.Test
 
-@SmallTest
 class BeforeNotifyTest {
 
-    private val config = BugsnagTestUtils.generateImmutableConfig()
+    private val config = generateImmutableConfig()
 
     @Test
     fun testRunModifiesError() {
@@ -21,7 +19,7 @@ class BeforeNotifyTest {
             false
         }
 
-        val error = Error.Builder(config, RuntimeException("Test"), generateSessionTracker(),
+        val error = Error.Builder(config, RuntimeException("Test"), null,
             Thread.currentThread(), false, MetaData()).build()
         beforeNotify.run(error)
         assertEquals(context, error.context)

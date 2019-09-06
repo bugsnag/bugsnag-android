@@ -1,18 +1,10 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 
-import androidx.test.filters.SmallTest;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-
-@SmallTest
 public class UserTest {
 
     private User user;
@@ -45,15 +37,6 @@ public class UserTest {
         assertEquals("4fd", user.getId());
         assertEquals("jane", user.getName());
         assertEquals("jane@example.com", user.getEmail());
-    }
-
-    @Test
-    public void testJsonSerialisation() throws JSONException, IOException {
-        JSONObject userJson = streamableToJson(user);
-        assertEquals(3, userJson.length());
-        assertEquals("123", userJson.get("id"));
-        assertEquals("bob smith", userJson.get("name"));
-        assertEquals("bob@example.com", userJson.get("email"));
     }
 
 }

@@ -62,7 +62,8 @@ class ExceptionsTest {
         ).build()
         val exceptions = Exceptions(config, BugsnagException(error.exception))
 
-        val exceptionJson = streamableToJsonArray(exceptions).getJSONObject(0)
+        val json = streamableToJsonArray(exceptions)
+        val exceptionJson = json.getJSONObject(0)
         assertEquals("RuntimeException", exceptionJson.get("errorClass"))
         assertEquals("Example message", exceptionJson.get("message"))
 

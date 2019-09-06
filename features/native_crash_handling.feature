@@ -5,7 +5,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGILL"
         And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
@@ -30,7 +30,7 @@ Feature: Native crash reporting
         And I relaunch the app
         And I wait a bit
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception reflects a signal was raised
         And the exception "type" equals "c"
         And the event "severity" equals "error"
@@ -41,7 +41,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGILL"
         And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
@@ -86,7 +86,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGFPE"
         And the exception "message" equals "Floating-point exception"
         And the exception "type" equals "c"
@@ -98,7 +98,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals one of:
             | SIGABRT |
             | SIGSEGV |
@@ -114,7 +114,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGILL"
         And the exception "message" equals "Illegal instruction"
         And the exception "type" equals "c"
@@ -126,7 +126,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
@@ -138,7 +138,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGABRT"
         And the exception "message" equals "Abort program"
         And the exception "type" equals "c"
@@ -150,7 +150,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGBUS"
         And the exception "message" equals "Bus error (bad memory access)"
         And the exception "type" equals "c"
@@ -162,7 +162,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGFPE"
         And the exception "message" equals "Floating-point exception"
         And the exception "type" equals "c"
@@ -174,7 +174,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGTRAP"
         And the exception "message" equals "Trace/breakpoint trap"
         And the exception "type" equals "c"
@@ -197,7 +197,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the exception "errorClass" equals one of:
@@ -216,7 +216,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the exception "errorClass" equals "PSt13runtime_error"
@@ -231,7 +231,7 @@ Feature: Native crash reporting
         And I configure the app to run in the "non-crashy" state
         And I relaunch the app
         Then I should receive a request
-        And the request payload contains a completed native report
+        And the request payload contains a completed unhandled native report
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the exception "errorClass" equals "i"

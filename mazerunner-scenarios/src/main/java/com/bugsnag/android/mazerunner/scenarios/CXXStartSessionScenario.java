@@ -2,6 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
+import com.bugsnag.android.TestHarnessHooksKt;
 
 import android.content.Context;
 import android.os.Handler;
@@ -31,13 +32,13 @@ public class CXXStartSessionScenario extends Scenario {
 
         if (metadata == null || !metadata.equals("non-crashy")) {
             Bugsnag.getClient().startSession();
-
+            TestHarnessHooksKt.flushAllSessions();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     crash(0);
                 }
-            }, 8000);
+            }, 500);
         }
     }
 }

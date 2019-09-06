@@ -71,10 +71,58 @@ class BugsnagExceptionTest {
         assertTrue(stacktrace.length() > 0)
     }
 
+    @Test
+    fun customStreamableSerialization() {
+        val bugsnagException = BugsnagException(StreamableException())
+        val exc = streamableToJsonArray(bugsnagException)
+        assertEquals("Bar", exc.getJSONObject(0)["Foo"])
+    }
+
+    @Test
+    fun customStackFramesSerialization() {
+        val bugsnagException = BugsnagException("nom", "msg", listOf(mapOf(Pair("Foo", "Bar"))))
+        val exc = jsonObjectFromException(bugsnagException)
+        assertEquals("nom", exc.get("errorClass"))
+        assertEquals("msg", exc.get("message"))
+        assertEquals("android", exc.get("type"))
+
+        val stacktrace = exc.getJSONArray("stacktrace")
+        assertEquals("Bar", stacktrace.getJSONObject(0)["Foo"])
+    }
+
+    @Test
+    fun nonAndroidStacktraceIgnored() {
+        val bugsnagException = BugsnagException("nom", "msg", listOf(mapOf(Pair("Foo", "Bar"))))
+        assertTrue(bugsnagException.stackTrace.isEmpty())
+    }
+
+    @Test
+    fun nonAndroidMessageAndName() {
+        val bugsnagException = BugsnagException("nom", "msg", listOf(mapOf(Pair("Foo", "Bar"))))
+        assertEquals("nom", bugsnagException.name)
+        assertEquals("msg", bugsnagException.message)
+
+        bugsnagException.name = "Foo"
+        bugsnagException.setMessage("Bar")
+        assertEquals("Foo", bugsnagException.name)
+        assertEquals("Bar", bugsnagException.message)
+    }
+
     private fun jsonObjectFromException(bugsnagException: BugsnagException): JSONObject {
         val exceptions = Exceptions(config, bugsnagException)
         val json = streamableToJsonArray(exceptions)
-        val exc = json.get(0) as JSONObject
+        val exc = json.getJSONObject(0)
         return exc
+    }
+}
+
+class StreamableException: Throwable(), JsonStream.Streamable {
+    override fun toStream(stream: JsonStream) {
+        stream.beginArray()
+        stream.beginObject()
+        stream.name("Foo")
+        stream.value("Bar")
+        stream.endObject()
+        stream.endArray()
     }
 }
