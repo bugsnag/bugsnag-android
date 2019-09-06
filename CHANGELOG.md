@@ -14,6 +14,9 @@
   [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
 * Prevent overwrite of signal mask when installing ANR handler
   [#520](https://github.com/bugsnag/bugsnag-android/pull/520)
+* Fix possible null pointer exception when creating a breadcrumb without
+  metadata
+  [#585](https://github.com/bugsnag/bugsnag-android/pull/585)
 
 ## 4.15.0 (2019-06-10)
 
