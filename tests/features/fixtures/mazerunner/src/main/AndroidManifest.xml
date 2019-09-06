@@ -11,7 +11,12 @@
 
             </intent-filter>
         </activity>
-        <activity android:name=".SecondActivity"/>
+        <activity android:name=".SecondActivity">
+            <intent-filter>
+                <action android:name="com.bugsnag.android.mazerunner.UPDATE_CONTEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <meta-data android:name="com.bugsnag.android.API_KEY" android:value="ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"/>
     </application>
 
