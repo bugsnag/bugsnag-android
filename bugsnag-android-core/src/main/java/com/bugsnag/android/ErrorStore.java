@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ import java.util.concurrent.Semaphore;
  */
 @ThreadSafe
 class ErrorStore extends FileStore<Error> {
+
+    private static final int JDK_DEFAULT_BUFFER_BYTES = 8 * 1024;
 
     interface Delegate {
 
@@ -106,6 +109,25 @@ class ErrorStore extends FileStore<Error> {
         }
 
         flushAsync(); // flush any remaining errors async that weren't delivered
+    }
+
+    /**
+     * Calculates the buffer size that should be used for writing this error. We wish to increase
+     * the buffer size if the Throwable is not an OutOfMemoryError as this will write the report
+     * to disk sooner.
+     *
+     * @param error the error report
+     * @return the buffer size to use
+     */
+    private int calculateBufferSize(Error error) {
+        boolean oom = error.getException().getCause() instanceof OutOfMemoryError;
+        return oom ? JDK_DEFAULT_BUFFER_BYTES : DEFAULT_BUFFER_BYTES;
+    }
+
+    @Nullable
+    @Override
+    protected String write(@NonNull JsonStream.Streamable streamable) {
+        return write(streamable, calculateBufferSize((Error) streamable));
     }
 
     /**

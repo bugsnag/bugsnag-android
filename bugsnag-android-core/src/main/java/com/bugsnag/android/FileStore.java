@@ -22,6 +22,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @ThreadSafe
 abstract class FileStore<T extends JsonStream.Streamable> {
 
+    protected static final int DEFAULT_BUFFER_BYTES = 65536;
+
     @NonNull
     protected final Configuration config;
     @Nullable
@@ -65,7 +67,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         Writer out = null;
         try {
             FileOutputStream fos = new FileOutputStream(filename);
-            out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+            out = new BufferedWriter(osw, FileStore.DEFAULT_BUFFER_BYTES);
             out.write(content);
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
@@ -85,6 +88,11 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     @Nullable
     String write(@NonNull JsonStream.Streamable streamable) {
+        return write(streamable, DEFAULT_BUFFER_BYTES);
+    }
+
+    @Nullable
+    protected String write(@NonNull JsonStream.Streamable streamable, int bufferSize) {
         if (storeDirectory == null) {
             return null;
         }
@@ -96,7 +104,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         try {
             FileOutputStream fos = new FileOutputStream(filename);
-            Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+            Writer out = new BufferedWriter(osw, bufferSize);
             stream = new JsonStream(out);
             stream.value(streamable);
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
