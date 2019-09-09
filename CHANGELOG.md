@@ -1,6 +1,10 @@
 # Changelog
 
 ## TBD
+
+* Record StorageManager cache behaviour in internal error reports
+  [#588](https://github.com/bugsnag/bugsnag-android/pull/588)
+
 * Buffer io when reading from cached error file
   [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
 
