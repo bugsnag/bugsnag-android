@@ -1,6 +1,10 @@
 # Changelog
 
 ## TBD
+
+* Increase buffer size when writing cached reports to disk
+  [#587](https://github.com/bugsnag/bugsnag-android/pull/587)
+
 * Buffer io when reading from cached error file
   [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
 
