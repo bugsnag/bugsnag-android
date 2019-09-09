@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.util.Comparator;
@@ -34,7 +35,7 @@ class SessionStore extends FileStore<Session> {
     };
 
     SessionStore(@NonNull Configuration config, @NonNull Context appContext,
-                 @NonNull Delegate delegate) {
+                 @Nullable Delegate delegate) {
         super(config, appContext, "/bugsnag-sessions/",
             128, SESSION_COMPARATOR, delegate);
     }

@@ -138,7 +138,7 @@ public class Client extends Observable implements Observer {
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
 
-                @SuppressLint("UsableSpace") // requires API 26
+                @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
                 long usableSpace = appContext.getCacheDir().getUsableSpace();
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
@@ -147,7 +147,7 @@ public class Client extends Observable implements Observer {
             }
         };
 
-        sessionStore = new SessionStore(config, appContext, delegate);
+        sessionStore = new SessionStore(config, appContext, null);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
             @Override
