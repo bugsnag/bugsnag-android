@@ -12,6 +12,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
+import android.os.storage.StorageManager;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
@@ -21,6 +23,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,6 +81,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
+    final StorageManager storageManager;
 
     /**
      * Initialize a Bugsnag client
@@ -123,6 +127,7 @@ public class Client extends Observable implements Observer {
         appContext = androidContext.getApplicationContext();
         config = configuration;
         sessionStore = new SessionStore(config, appContext);
+        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
             @Override
@@ -207,6 +212,7 @@ public class Client extends Observable implements Observer {
                 MetaData metaData = err.getMetaData();
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
+                recordStorageCacheBehavior(metaData);
                 Client.this.reportInternalBugsnagError(err);
             }
         });
@@ -257,6 +263,21 @@ public class Client extends Observable implements Observer {
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();
+    }
+
+    void recordStorageCacheBehavior(MetaData metaData) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            File cacheDir = appContext.getCacheDir();
+
+            try {
+                boolean tombstone = storageManager.isCacheBehaviorTombstone(cacheDir);
+                boolean group = storageManager.isCacheBehaviorGroup(cacheDir);
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
+            } catch (IOException exc) {
+                Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
+            }
+        }
     }
 
     private void loadPlugins() {
