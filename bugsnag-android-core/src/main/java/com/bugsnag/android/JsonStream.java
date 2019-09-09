@@ -77,10 +77,9 @@ public class JsonStream extends JsonWriter {
             FileInputStream fis = new FileInputStream(file);
             input = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
             IOUtils.copy(input, out);
+            out.flush();
         } finally {
             IOUtils.closeQuietly(input);
         }
-
-        out.flush();
     }
 }
