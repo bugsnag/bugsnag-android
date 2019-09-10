@@ -1,6 +1,10 @@
 # Changelog
 
 ## TBD
+
+* Alter device.freeDisk to collect usable space in data directory
+  [#589](https://github.com/bugsnag/bugsnag-android/pull/589)
+
 * Buffer io when reading from cached error file
   [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
 
