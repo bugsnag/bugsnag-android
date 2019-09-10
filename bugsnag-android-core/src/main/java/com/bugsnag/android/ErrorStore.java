@@ -219,7 +219,7 @@ class ErrorStore extends FileStore<Error> {
         String uuid = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();
         return String.format(Locale.US, "%s%d_%s%s.json",
-            storeDirectory, timestamp, uuid, suffix);
+                storeDirectory, timestamp, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {

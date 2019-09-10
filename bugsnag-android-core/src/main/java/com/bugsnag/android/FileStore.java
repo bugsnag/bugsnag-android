@@ -24,35 +24,35 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     @NonNull
     protected final Configuration config;
-    @Nullable
-    final String storeDirectory;
     private final int maxStoreCount;
     private final Comparator<File> comparator;
 
     final Lock lock = new ReentrantLock();
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
 
+    @NonNull
+    private final File cacheDir;
+
+    @Nullable
+    File storeDirectory;
+
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
         this.config = config;
         this.maxStoreCount = maxStoreCount;
         this.comparator = comparator;
+        this.cacheDir = appContext.getCacheDir();
 
-        String path;
         try {
-            path = appContext.getCacheDir().getAbsolutePath() + folder;
-
-            File outFile = new File(path);
-            outFile.mkdirs();
-            if (!outFile.exists()) {
+            storeDirectory = new File(cacheDir, folder);
+            storeDirectory.mkdirs();
+            if (!storeDirectory.exists()) {
+                storeDirectory = null;
                 Logger.warn("Could not prepare file storage directory");
-                path = null;
             }
         } catch (Exception exception) {
             Logger.warn("Could not prepare file storage directory", exception);
-            path = null;
         }
-        this.storeDirectory = path;
     }
 
     void enqueueContentForDelivery(String content) {
@@ -113,9 +113,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     void discardOldestFileIfNeeded() {
         // Limit number of saved errors to prevent disk space issues
-        File exceptionDir = new File(storeDirectory);
-        if (exceptionDir.isDirectory()) {
-            File[] files = exceptionDir.listFiles();
+        if (storeDirectory != null && storeDirectory.isDirectory()) {
+            File[] files = storeDirectory.listFiles();
 
             if (files != null && files.length >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
@@ -142,17 +141,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         try {
             List<File> files = new ArrayList<>();
 
-            if (storeDirectory != null) {
-                File dir = new File(storeDirectory);
+            if (storeDirectory != null && storeDirectory.exists() && storeDirectory.isDirectory()) {
+                File[] values = storeDirectory.listFiles();
 
-                if (dir.exists() && dir.isDirectory()) {
-                    File[] values = dir.listFiles();
-
-                    if (values != null) {
-                        for (File value : values) {
-                            if (value.isFile() && !queuedFiles.contains(value)) {
-                                files.add(value);
-                            }
+                if (values != null) {
+                    for (File value : values) {
+                        if (value.isFile() && !queuedFiles.contains(value)) {
+                            files.add(value);
                         }
                     }
                 }
