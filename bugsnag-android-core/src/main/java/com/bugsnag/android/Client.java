@@ -268,10 +268,11 @@ public class Client extends Observable implements Observer {
     void recordStorageCacheBehavior(MetaData metaData) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             File cacheDir = appContext.getCacheDir();
+            File errDir = new File(cacheDir, "bugsnag-errors");
 
             try {
-                boolean tombstone = storageManager.isCacheBehaviorTombstone(cacheDir);
-                boolean group = storageManager.isCacheBehaviorGroup(cacheDir);
+                boolean tombstone = storageManager.isCacheBehaviorTombstone(errDir);
+                boolean group = storageManager.isCacheBehaviorGroup(errDir);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
             } catch (IOException exc) {
