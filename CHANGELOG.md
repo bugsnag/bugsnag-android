@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Delete tombstoned files left in cache directory
+  [#591](https://github.com/bugsnag/bugsnag-android/pull/591)
+
 ## 4.19.1 (2019-09-03)
 
 ### Bug fixes
