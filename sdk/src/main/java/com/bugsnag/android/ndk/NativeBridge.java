@@ -42,6 +42,14 @@ public class NativeBridge implements Observer {
                                       int apiLevel, boolean is32bit,
                                       @Nullable ByteBuffer anrSentinel);
 
+    public static native void enableAnrReporting(@Nullable ByteBuffer anrSentinel);
+
+    public static native void disableAnrReporting();
+
+    public static native void enableCrashReporting();
+
+    public static native void disableCrashReporting();
+
     public static native void deliverReportAtPath(@NonNull String filePath);
 
     public static native void addBreadcrumb(@NonNull String name, @NonNull String type,
@@ -122,6 +130,18 @@ public class NativeBridge implements Observer {
         switch (message.type) {
             case INSTALL:
                 handleInstallMessage(arg);
+                break;
+            case ENABLE_ANR_REPORTING:
+                handleEnableAnrMessage(arg);
+                break;
+            case DISABLE_ANR_REPORTING:
+                disableAnrReporting();
+                break;
+            case ENABLE_NATIVE_CRASH_REPORTING:
+                enableCrashReporting();
+                break;
+            case DISABLE_NATIVE_CRASH_REPORTING:
+                disableCrashReporting();
                 break;
             case DELIVER_PENDING:
                 deliverPendingReports();
@@ -269,6 +289,12 @@ public class NativeBridge implements Observer {
             }
         }
         return is32bit;
+    }
+
+    private void handleEnableAnrMessage(Object arg) {
+        if (arg instanceof ByteBuffer) {
+            enableAnrReporting((ByteBuffer)arg);
+        }
     }
 
     private void handleAddBreadcrumb(Object arg) {

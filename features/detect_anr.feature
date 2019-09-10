@@ -29,3 +29,11 @@ Scenario: Sleeping the main thread with pending touch events
     And I tap the screen
     And I tap the screen
     Then I should receive 0 requests
+
+@anr
+Scenario: Sleeping the main thread with pending touch events after disabling ANR reporting
+    When I run "AppNotRespondingLaterDisabledScenario"
+    And I tap the screen
+    And I tap the screen
+    And I tap the screen
+    Then I should receive 0 requests
