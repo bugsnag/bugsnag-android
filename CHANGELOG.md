@@ -2,7 +2,7 @@
 
 ## TBD
 
-* Delete tombstoned files left in cache directory
+* Delete tombstoned files left in cache directory, preventing an erroneous source of minimal error reports
   [#591](https://github.com/bugsnag/bugsnag-android/pull/591)
 
 ## 4.19.1 (2019-09-03)
