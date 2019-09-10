@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
  *
  * @see Delivery
  */
-@ThreadSafe
 public class DeliveryFailureException extends Exception {
     private static final long serialVersionUID = 1501477209400426470L;
 
