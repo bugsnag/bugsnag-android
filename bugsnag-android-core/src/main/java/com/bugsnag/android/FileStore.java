@@ -59,9 +59,10 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         if (storeDirectory == null) {
             return;
         }
+        lock.lock();
         String filename = getFilename(content);
         discardOldestFileIfNeeded();
-        lock.lock();
+
         Writer out = null;
         try {
             FileOutputStream fos = new FileOutputStream(filename);
@@ -88,11 +89,11 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         if (storeDirectory == null) {
             return null;
         }
+        lock.lock();
         discardOldestFileIfNeeded();
         String filename = getFilename(streamable);
 
         JsonStream stream = null;
-        lock.lock();
 
         try {
             FileOutputStream fos = new FileOutputStream(filename);
