@@ -35,14 +35,14 @@ class SessionStore extends FileStore<Session> {
 
     SessionStore(@NonNull Configuration config, @NonNull Context appContext) {
         super(config, appContext, "/bugsnag-sessions/",
-            128, SESSION_COMPARATOR);
+            64, SESSION_COMPARATOR);
     }
 
     @NonNull
     @Override
     String getFilename(Object object) {
         return String.format(Locale.US, "%s%s%d.json",
-                storeDirectory, UUID.randomUUID().toString(), System.currentTimeMillis());
+            storeDirectory, UUID.randomUUID().toString(), System.currentTimeMillis());
     }
 
 }

@@ -73,7 +73,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             out.write(content);
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
-                    filename), exception);
+                filename), exception);
         } finally {
             try {
                 if (out != null) {
@@ -81,7 +81,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 }
             } catch (Exception exception) {
                 Logger.warn(String.format("Failed to close unsent payload writer (%s) ",
-                        filename), exception);
+                    filename), exception);
             }
             lock.unlock();
         }
@@ -107,7 +107,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             return filename;
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
-                    filename), exception);
+                filename), exception);
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();
@@ -123,11 +123,11 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             if (files != null) {
                 int fileCount = files.length;
 
-                @SuppressLint("UsableSpace")
+                @SuppressLint("UsableSpace") // storagemanager API only available in API 26+
                 long usableSpace = storeDirectory.getUsableSpace();
                 boolean isLowSpace = usableSpace <= LOW_SPACE_BYTE_THRESHOLD && usableSpace != 0L;
 
-                // if low on space, delete up to 64 files from cache
+                // if low on space, delete oldest half of files from store
                 int deletionThreshold = isLowSpace ? maxStoreCount / 2 : maxStoreCount;
 
                 if (fileCount >= deletionThreshold) {

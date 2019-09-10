@@ -60,7 +60,7 @@ class ErrorStore extends FileStore<Error> {
     };
 
     ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+        super(config, appContext, "/bugsnag-errors/", 64, ERROR_REPORT_COMPARATOR);
         this.delegate = delegate;
     }
 
@@ -219,7 +219,7 @@ class ErrorStore extends FileStore<Error> {
         String uuid = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();
         return String.format(Locale.US, "%s%d_%s%s.json",
-                storeDirectory, timestamp, uuid, suffix);
+            storeDirectory, timestamp, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {
