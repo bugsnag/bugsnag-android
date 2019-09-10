@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @ThreadSafe
 abstract class FileStore<T extends JsonStream.Streamable> {
+
+    private static final int LOW_SPACE_BYTE_THRESHOLD = 10485760; // 10Mb
 
     @NonNull
     protected final Configuration config;
@@ -61,7 +64,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         }
         lock.lock();
         String filename = getFilename(content);
-        discardOldestFileIfNeeded();
+        discardOldFilesIfNeeded();
 
         Writer out = null;
         try {
@@ -70,7 +73,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             out.write(content);
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
-                filename), exception);
+                    filename), exception);
         } finally {
             try {
                 if (out != null) {
@@ -78,7 +81,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 }
             } catch (Exception exception) {
                 Logger.warn(String.format("Failed to close unsent payload writer (%s) ",
-                    filename), exception);
+                        filename), exception);
             }
             lock.unlock();
         }
@@ -90,7 +93,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             return null;
         }
         lock.lock();
-        discardOldestFileIfNeeded();
+        discardOldFilesIfNeeded();
         String filename = getFilename(streamable);
 
         JsonStream stream = null;
@@ -104,7 +107,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             return filename;
         } catch (Exception exception) {
             Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
-                filename), exception);
+                    filename), exception);
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();
@@ -112,22 +115,33 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         return null;
     }
 
-    void discardOldestFileIfNeeded() {
+    private void discardOldFilesIfNeeded() {
         // Limit number of saved errors to prevent disk space issues
         if (storeDirectory != null && storeDirectory.isDirectory()) {
             File[] files = storeDirectory.listFiles();
 
-            if (files != null && files.length >= maxStoreCount) {
-                // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files, comparator);
+            if (files != null) {
+                int fileCount = files.length;
 
-                for (int k = 0; k < files.length && files.length >= maxStoreCount; k++) {
-                    File oldestFile = files[k];
+                @SuppressLint("UsableSpace")
+                long usableSpace = storeDirectory.getUsableSpace();
+                boolean isLowSpace = usableSpace <= LOW_SPACE_BYTE_THRESHOLD && usableSpace != 0L;
 
-                    if (!queuedFiles.contains(oldestFile)) {
-                        Logger.warn(String.format("Discarding oldest error as stored "
-                            + "error limit reached (%s)", oldestFile.getPath()));
-                        deleteStoredFiles(Collections.singleton(oldestFile));
+                // if low on space, delete up to 64 files from cache
+                int deletionThreshold = isLowSpace ? maxStoreCount / 2 : maxStoreCount;
+
+                if (fileCount >= deletionThreshold) {
+                    // Sort files then delete the first one (oldest timestamp)
+                    Arrays.sort(files, comparator);
+
+                    for (int k = 0; k < fileCount && fileCount >= deletionThreshold; k++) {
+                        File oldestFile = files[k];
+
+                        if (!queuedFiles.contains(oldestFile)) {
+                            Logger.warn(String.format("Discarding oldest error as stored "
+                                    + "error limit reached (%s)", oldestFile.getPath()));
+                            deleteStoredFiles(Collections.singleton(oldestFile));
+                        }
                     }
                 }
             }
