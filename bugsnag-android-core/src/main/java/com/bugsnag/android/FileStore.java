@@ -156,7 +156,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     private boolean isTombstone(File file) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
-                return file.length() == 0 && storageManager.isCacheBehaviorTombstone(cacheDir);
+                File storeDir = new File(storeDirectory);
+                return file.length() == 0 && storageManager.isCacheBehaviorTombstone(storeDir);
             } catch (IOException exc) {
                 return false;
             }
