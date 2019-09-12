@@ -1,8 +1,6 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.storage.StorageManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,7 +8,6 @@ import androidx.annotation.Nullable;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -35,20 +32,16 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     final Lock lock = new ReentrantLock();
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
-    private final StorageManager storageManager;
-    private File cacheDir;
 
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator) {
         this.config = config;
         this.maxStoreCount = maxStoreCount;
         this.comparator = comparator;
-        this.storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         String path;
         try {
-            cacheDir = appContext.getCacheDir();
-            path = cacheDir.getAbsolutePath() + folder;
+            path = appContext.getCacheDir().getAbsolutePath() + folder;
 
             File outFile = new File(path);
             outFile.mkdirs();
@@ -145,27 +138,6 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     @NonNull
     abstract String getFilename(Object object);
 
-    /**
-     * Determines whether a given file is a tombstone. Tombstones were added on API 26 - a
-     * zero-length file is left behind rather than deleting the file from the cache dir entirely.
-     *
-     * See https://developer.android.com/reference/android/os/storage/StorageManager.html
-     * @param file the cached file
-     * @return true if the file is a tombstone
-     */
-    private boolean isTombstone(File file) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                File storeDir = new File(storeDirectory);
-                return file.length() == 0 && storageManager.isCacheBehaviorTombstone(storeDir);
-            } catch (IOException exc) {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
     List<File> findStoredFiles() {
         lock.lock();
         try {
@@ -179,8 +151,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
                     if (values != null) {
                         for (File value : values) {
-                            // delete any tombstoned files, as they contain no useful info
-                            if (isTombstone(value)) {
+                            // delete any tombstoned/empty files, as they contain no useful info
+                            if (value.length() == 0) {
                                 if (!value.delete()) {
                                     value.deleteOnExit();
                                 }
