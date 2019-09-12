@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Prevent internal error reporting of FileNotFoundException during Delivery
+  [#594](https://github.com/bugsnag/bugsnag-android/pull/594)
+
 ## 4.19.1 (2019-09-03)
 
 ### Bug fixes
