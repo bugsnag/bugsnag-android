@@ -2,7 +2,10 @@
 
 ## TBD
 
-* Alter device.freeDisk to collect usable space in data directory
+### Bug fixes
+
+* Alter value collected for device.freeDisk to collect usable space in internal storage,
+ rather than total space in internal/external storage
   [#589](https://github.com/bugsnag/bugsnag-android/pull/589)
 
 * Buffer io when reading from cached error file
