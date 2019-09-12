@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -174,7 +175,7 @@ class ErrorStore extends FileStore<Error> {
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
-            if (delegate != null) {
+            if (delegate != null && !(exception instanceof FileNotFoundException)) {
                 delegate.onErrorReadFailure(exception, errorFile);
             }
             deleteStoredFiles(Collections.singleton(errorFile));
