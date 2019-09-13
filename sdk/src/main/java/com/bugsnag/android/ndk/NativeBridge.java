@@ -38,7 +38,6 @@ public class NativeBridge implements Observer {
     private static final String LOG_TAG = "BugsnagNDK:NativeBridge";
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
-    private ByteBuffer byteBuffer;
 
     public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
                                       int apiLevel, boolean is32bit,
@@ -298,8 +297,7 @@ public class NativeBridge implements Observer {
 
     private void handleEnableAnrMessage(Object arg) {
         if (arg instanceof ByteBuffer) {
-            byteBuffer = (ByteBuffer) arg;
-            enableAnrReporting(byteBuffer);
+            enableAnrReporting((ByteBuffer) arg);
         }
     }
 
@@ -426,9 +424,7 @@ public class NativeBridge implements Observer {
                 if (config.getDetectNdkCrashes()) {
                     enableCrashReporting();
                 }
-                if (config.getDetectAnrs() && byteBuffer != null) {
-                    enableAnrReporting(byteBuffer);
-                }
+                // TODO enable ANRs in future when supported in Unity
             } else {
                 disableCrashReporting();
                 disableAnrReporting();

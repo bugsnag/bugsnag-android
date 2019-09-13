@@ -7,7 +7,7 @@ import com.bugsnag.android.Configuration;
 
 import android.support.annotation.NonNull;
 
-public class CXXTrapLaterDisabledScenario extends Scenario {
+public class CXXThrowSomethingReenabledScenario extends Scenario {
 
     static {
         System.loadLibrary("bugsnag-ndk");
@@ -15,9 +15,9 @@ public class CXXTrapLaterDisabledScenario extends Scenario {
         System.loadLibrary("entrypoint");
     }
 
-    public native void crash();
+    public native void crash(int num);
 
-    public CXXTrapLaterDisabledScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXThrowSomethingReenabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }
@@ -30,6 +30,7 @@ public class CXXTrapLaterDisabledScenario extends Scenario {
             return;
         }
         Bugsnag.getClient().getConfig().setNotifyReleaseStages(new String[]{"fee-fi-fo-fum"});
-        crash();
+        Bugsnag.getClient().getConfig().setNotifyReleaseStages(new String[]{"production"});
+        crash(23);
     }
 }
