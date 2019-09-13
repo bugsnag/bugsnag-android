@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -143,9 +144,9 @@ public class ObserverInterfaceTest {
     @Test
     public void settingNotifyReleaseStageSendsMessage() {
         client.getConfig().setNotifyReleaseStages(new String[]{"prod-2", "dev-4"});
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, List.class);
-        assertEquals(Arrays.asList("prod-2", "dev-4"), value);
+        Configuration value = (Configuration) findMessageInQueue(
+                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, Configuration.class);
+        assertArrayEquals(new String[]{"prod-2", "dev-4"}, value.getNotifyReleaseStages());
     }
 
     @Test

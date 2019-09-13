@@ -328,9 +328,8 @@ public class Configuration extends Observable implements Observer {
     public void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         this.notifyReleaseStages = notifyReleaseStages;
         setChanged();
-        List<String> value = Arrays.asList(notifyReleaseStages);
         notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, value));
+                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, this));
     }
 
     /**
@@ -789,7 +788,7 @@ public class Configuration extends Observable implements Observer {
      * @param releaseStage the release stage to check
      * @return true if the release state should be notified else false
      */
-    protected boolean shouldNotifyForReleaseStage(@Nullable String releaseStage) {
+    public boolean shouldNotifyForReleaseStage(@Nullable String releaseStage) {
         if (this.notifyReleaseStages == null) {
             return true;
         }
