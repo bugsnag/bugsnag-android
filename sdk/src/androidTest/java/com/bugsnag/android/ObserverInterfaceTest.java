@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +140,13 @@ public class ObserverInterfaceTest {
         assertEquals("prod-2", value);
     }
 
+    @Test
+    public void settingNotifyReleaseStageSendsMessage() {
+        client.getConfig().setNotifyReleaseStages(new String[]{"prod-2", "dev-4"});
+        Object value = findMessageInQueue(
+                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, List.class);
+        assertEquals(Arrays.asList("prod-2", "dev-4"), value);
+    }
 
     @Test
     public void testNotifySendsMessage() {
