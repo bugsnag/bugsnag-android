@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ public class NativeBridge implements Observer {
     private static final String LOG_TAG = "BugsnagNDK:NativeBridge";
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
+    private ByteBuffer byteBuffer;
 
     public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
                                       int apiLevel, boolean is32bit);
@@ -193,6 +195,9 @@ public class NativeBridge implements Observer {
             case UPDATE_RELEASE_STAGE:
                 handleReleaseStageChange(arg);
                 break;
+            case UPDATE_NOTIFY_RELEASE_STAGES:
+                handleNotifyReleaseStagesChange(arg);
+                break;
             case UPDATE_USER_ID:
                 handleUserIdChange(arg);
                 break;
@@ -285,7 +290,8 @@ public class NativeBridge implements Observer {
 
     private void handleEnableAnrMessage(Object arg) {
         if (arg instanceof ByteBuffer) {
-            enableAnrReporting((ByteBuffer)arg);
+            byteBuffer = (ByteBuffer) arg;
+            enableAnrReporting(byteBuffer);
         }
     }
 
@@ -401,6 +407,26 @@ public class NativeBridge implements Observer {
             updateReleaseStage(makeSafe((String)arg));
         } else {
             warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
+        }
+    }
+
+    private void handleNotifyReleaseStagesChange(Object arg) {
+        if (arg instanceof Configuration) {
+            Configuration config = (Configuration) arg;
+
+            if (config.shouldNotifyForReleaseStage(config.getReleaseStage())) {
+                if (config.getDetectNdkCrashes()) {
+                    enableCrashReporting();
+                }
+                if (config.getDetectAnrs() && byteBuffer != null) {
+                    enableAnrReporting(byteBuffer);
+                }
+            } else {
+                disableCrashReporting();
+                disableAnrReporting();
+            }
+        } else {
+            warn("UPDATE_NOTIFY_RELEASE_STAGES object is invalid: " + arg);
         }
     }
 
