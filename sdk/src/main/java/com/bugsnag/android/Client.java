@@ -1301,7 +1301,7 @@ public class Client extends Observable implements Observer {
     /**
      * Enable automatic reporting of ANRs.
      */
-    public void enableAnrReporting() {
+    void enableAnrReporting() {
         getConfig().setDetectAnrs(true);
         setChanged();
         if (anrMonitor == null) {
@@ -1315,7 +1315,7 @@ public class Client extends Observable implements Observer {
     /**
      * Disable automatic reporting of ANRs.
      */
-    public void disableAnrReporting() {
+    void disableAnrReporting() {
         getConfig().setDetectAnrs(false);
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -1325,7 +1325,7 @@ public class Client extends Observable implements Observer {
     /**
      * Enable automatic reporting of C/C++ crashes.
      */
-    public void enableNdkCrashReporting() {
+    void enableNdkCrashReporting() {
         getConfig().setDetectNdkCrashes(true);
         setChanged();
         notifyObservers(new NativeInterface.Message(
@@ -1335,7 +1335,7 @@ public class Client extends Observable implements Observer {
     /**
      * Disable automatic reporting of C/C++ crashes.
      */
-    public void disableNdkCrashReporting() {
+    void disableNdkCrashReporting() {
         getConfig().setDetectNdkCrashes(false);
         setChanged();
         notifyObservers(new NativeInterface.Message(
