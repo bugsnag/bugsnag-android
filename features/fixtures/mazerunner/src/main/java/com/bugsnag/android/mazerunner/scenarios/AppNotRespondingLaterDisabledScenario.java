@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.bugsnag.android.NativeInterface;
+import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
 import androidx.annotation.NonNull;
@@ -19,7 +19,7 @@ public class AppNotRespondingLaterDisabledScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        NativeInterface.disableAnrReporting();
+        Bugsnag.getClient().getConfig().setNotifyReleaseStages(new String[]{"fee-fi-fo-fum"});
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {
             @Override
