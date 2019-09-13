@@ -130,6 +130,11 @@ public class NativeInterface {
          */
         UPDATE_RELEASE_STAGE,
         /**
+         * Set a new value for `app.notifyReleaseStages`. The message object should be
+         * the Configuration object
+         */
+        UPDATE_NOTIFY_RELEASE_STAGES,
+        /**
          * Set a new value for user email. The message object is a string
          */
         UPDATE_USER_EMAIL,
