@@ -134,7 +134,7 @@ public class NativeInterface {
         UPDATE_RELEASE_STAGE,
         /**
          * Set a new value for `app.notifyReleaseStages`. The message object should be
-         * the new release stages
+         * the Configuration object
          */
         UPDATE_NOTIFY_RELEASE_STAGES,
         /**
