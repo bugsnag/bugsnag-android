@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.bugsnag.android.NativeInterface;
+import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
 import android.support.annotation.NonNull;
 
-public class AppNotRespondingLaterDisabledScenario extends Scenario {
+public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
 
-    public AppNotRespondingLaterDisabledScenario(@NonNull Configuration config, @NonNull Context context) {
+    public AppNotRespondingOutsideReleaseStagesScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoCaptureSessions(false);
     }
@@ -19,7 +19,7 @@ public class AppNotRespondingLaterDisabledScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        NativeInterface.disableAnrReporting();
+        Bugsnag.setNotifyReleaseStages(new String[]{"fee-fi-fo-fum"});
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {
             @Override
