@@ -408,8 +408,11 @@ public class NativeBridge implements Observer {
     }
 
     private void handleReleaseStageChange(Object arg) {
-        if (arg instanceof String) {
-            updateReleaseStage(makeSafe((String)arg));
+        if (arg instanceof Configuration) {
+            Configuration config = (Configuration) arg;
+            String releaseStage = config.getReleaseStage();
+            updateReleaseStage(makeSafe(releaseStage));
+            enableOrDisableReportingIfNeeded(config);
         } else {
             warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
         }
@@ -417,19 +420,21 @@ public class NativeBridge implements Observer {
 
     private void handleNotifyReleaseStagesChange(Object arg) {
         if (arg instanceof Configuration) {
-            Configuration config = (Configuration) arg;
-
-            if (config.shouldNotifyForReleaseStage(config.getReleaseStage())) {
-                if (config.getDetectNdkCrashes()) {
-                    enableCrashReporting();
-                }
-                // TODO enable ANRs in future when supported in Unity
-            } else {
-                disableCrashReporting();
-                disableAnrReporting();
-            }
+            enableOrDisableReportingIfNeeded((Configuration) arg);
         } else {
             warn("UPDATE_NOTIFY_RELEASE_STAGES object is invalid: " + arg);
+        }
+    }
+
+    private void enableOrDisableReportingIfNeeded(Configuration config) {
+        if (config.shouldNotifyForReleaseStage(config.getReleaseStage())) {
+            if (config.getDetectNdkCrashes()) {
+                enableCrashReporting();
+            }
+            // TODO enable ANRs in future when supported in Unity
+        } else {
+            disableCrashReporting();
+            disableAnrReporting();
         }
     }
 
