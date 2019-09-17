@@ -21,24 +21,12 @@ import java.util.concurrent.Semaphore;
  */
 class ErrorStore extends FileStore<Error> {
 
-    interface Delegate {
-
-        /**
-         * Invoked when a cached error report cannot be read.
-         *
-         * @param exception the error encountered reading/delivering the file
-         * @param errorFile file which could not be read
-         */
-        void onErrorReadFailure(Exception exception, File errorFile);
-    }
-
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
-    private final Delegate delegate;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -59,8 +47,7 @@ class ErrorStore extends FileStore<Error> {
     };
 
     ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
-        this.delegate = delegate;
+        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR, delegate);
     }
 
     void flushOnLaunch() {
@@ -175,7 +162,7 @@ class ErrorStore extends FileStore<Error> {
                 + " to Bugsnag, will try again later", exception);
         } catch (Exception exception) {
             if (delegate != null) {
-                delegate.onErrorReadFailure(exception, errorFile);
+                delegate.onErrorIOFailure(exception, errorFile, "Crash Report Deserialization");
             }
             deleteStoredFiles(Collections.singleton(errorFile));
         }
