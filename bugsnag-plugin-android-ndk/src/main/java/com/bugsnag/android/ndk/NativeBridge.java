@@ -11,7 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
@@ -262,8 +265,17 @@ public class NativeBridge implements Observer {
     private void handleAddBreadcrumb(Object arg) {
         if (arg instanceof Breadcrumb) {
             Breadcrumb crumb = (Breadcrumb) arg;
+            Map<String, String> metadata = new HashMap<>();
+            if (crumb.getMetadata() != null) {
+                for (Map.Entry<String, String> entry : crumb.getMetadata().entrySet()) {
+                    if (entry.getValue() != null) {
+                        metadata.put(makeSafe(entry.getKey()), makeSafe(entry.getValue()));
+                    }
+                }
+            }
+
             addBreadcrumb(crumb.getName(), crumb.getType().toString(),
-                crumb.getTimestamp(), crumb.getMetadata());
+                crumb.getTimestamp(), metadata);
         } else {
             warn("Attempted to add non-breadcrumb: " + arg);
         }
@@ -275,25 +287,27 @@ public class NativeBridge implements Observer {
             List<Object> values = (List<Object>) arg;
             if (values.size() == 3 && values.get(METADATA_SECTION) instanceof String
                 && values.get(METADATA_KEY) instanceof String) {
+                String section = makeSafe((String)values.get(METADATA_SECTION));
+                String key = makeSafe((String)values.get(METADATA_KEY));
+
                 if (values.get(METADATA_VALUE) instanceof String) {
-                    addMetadataString((String) values.get(METADATA_SECTION),
-                        (String) values.get(METADATA_KEY),
-                        (String) values.get(METADATA_VALUE));
+                    addMetadataString(section, key,
+                        makeSafe((String) values.get(METADATA_VALUE)));
                     return;
                 } else if (values.get(METADATA_VALUE) instanceof Boolean) {
-                    addMetadataBoolean((String) values.get(METADATA_SECTION),
-                        (String) values.get(METADATA_KEY),
+                    addMetadataBoolean(section, key,
                         (Boolean) values.get(METADATA_VALUE));
                     return;
                 } else if (values.get(METADATA_VALUE) instanceof Number) {
-                    addMetadataDouble((String) values.get(METADATA_SECTION),
-                        (String) values.get(METADATA_KEY),
+                    addMetadataDouble(section, key,
                         ((Number) values.get(METADATA_VALUE)).doubleValue());
                     return;
                 }
-            } else if (values.size() == 2) {
-                removeMetadata((String)values.get(METADATA_SECTION),
-                    (String)values.get(METADATA_KEY));
+            } else if (values.size() == 2 && values.get(METADATA_SECTION) instanceof String
+                    && values.get(METADATA_KEY) instanceof String) {
+                String section = makeSafe((String)values.get(METADATA_SECTION));
+                String key = makeSafe((String)values.get(METADATA_KEY));
+                removeMetadata(section, key);
                 return;
             }
         }
@@ -303,7 +317,7 @@ public class NativeBridge implements Observer {
 
     private void handleClearMetadataTab(Object arg) {
         if (arg instanceof String) {
-            clearMetadataTab((String)arg);
+            clearMetadataTab(makeSafe((String)arg));
         } else {
             warn("CLEAR_METADATA_TAB object is invalid: " + arg);
         }
@@ -311,7 +325,7 @@ public class NativeBridge implements Observer {
 
     private void handleAppVersionChange(Object arg) {
         if (arg instanceof String) {
-            updateAppVersion((String)arg);
+            updateAppVersion(makeSafe((String)arg));
         } else {
             warn("UPDATE_APP_VERSION object is invalid: " + arg);
         }
@@ -322,8 +336,8 @@ public class NativeBridge implements Observer {
             @SuppressWarnings("unchecked")
             List<String> metadata = (List<String>)arg;
             if (metadata.size() == 2) {
-                removeMetadata(metadata.get(METADATA_SECTION),
-                    metadata.get(METADATA_KEY));
+                removeMetadata(makeSafe(metadata.get(METADATA_SECTION)),
+                    makeSafe(metadata.get(METADATA_KEY)));
                 return;
             }
         }
@@ -359,7 +373,7 @@ public class NativeBridge implements Observer {
 
     private void handleReleaseStageChange(Object arg) {
         if (arg instanceof String) {
-            updateReleaseStage((String)arg);
+            updateReleaseStage(makeSafe((String)arg));
         } else {
             warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
         }
@@ -380,7 +394,7 @@ public class NativeBridge implements Observer {
             @SuppressWarnings("unchecked")
             List<Object> metadata = (List<Object>)arg;
             if (metadata.size() == 2) {
-                updateInForeground((boolean) metadata.get(0), (String) metadata.get(1));
+                updateInForeground((boolean) metadata.get(0), makeSafe((String) metadata.get(1)));
                 return;
             }
         }
@@ -392,7 +406,7 @@ public class NativeBridge implements Observer {
         if (arg == null) {
             updateUserId("");
         } else if (arg instanceof String) {
-            updateUserId((String)arg);
+            updateUserId(makeSafe((String)arg));
         } else {
             warn("UPDATE_USER_ID object is invalid: " + arg);
         }
@@ -402,7 +416,7 @@ public class NativeBridge implements Observer {
         if (arg == null) {
             updateUserName("");
         } else if (arg instanceof String) {
-            updateUserName((String)arg);
+            updateUserName(makeSafe((String)arg));
         } else {
             warn("UPDATE_USER_NAME object is invalid: " + arg);
         }
@@ -412,7 +426,7 @@ public class NativeBridge implements Observer {
         if (arg == null) {
             updateUserEmail("");
         } else if (arg instanceof String) {
-            updateUserEmail((String)arg);
+            updateUserEmail(makeSafe((String)arg));
         } else {
             warn("UPDATE_USER_EMAIL object is invalid: " + arg);
         }
@@ -422,7 +436,7 @@ public class NativeBridge implements Observer {
         if (arg == null) {
             updateBuildUUID("");
         } else if (arg instanceof String) {
-            updateBuildUUID((String)arg);
+            updateBuildUUID(makeSafe((String)arg));
         } else {
             warn("UPDATE_BUILD_UUID object is invalid: " + arg);
         }
@@ -432,7 +446,7 @@ public class NativeBridge implements Observer {
         if (arg == null) {
             updateContext("");
         } else if (arg instanceof String) {
-            updateContext((String)arg);
+            updateContext(makeSafe((String)arg));
         } else {
             warn("UPDATE_CONTEXT object is invalid: " + arg);
         }
@@ -452,6 +466,17 @@ public class NativeBridge implements Observer {
         } else {
             warn("UPDATE_METADATA object is invalid: " + arg);
         }
+    }
+
+    /**
+     * Ensure the string is safe to be passed to native layer by forcing the encoding
+     * to UTF-8.
+     */
+    private String makeSafe(String text) {
+        // The Android platform default charset is always UTF-8
+        return text == null
+                ? null
+                : new String(text.getBytes(Charset.defaultCharset()));
     }
 
     private void warn(String message) {

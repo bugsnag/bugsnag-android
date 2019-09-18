@@ -11,6 +11,11 @@
 * Buffer io when reading from cached error file
   [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
 
+* Fix possible crash when recording reports and breadcrumbs containing values
+  using different text encodings or UTF-8 control characters, followed by a
+  C/C++ crash.
+  [#584](https://github.com/bugsnag/bugsnag-android/pull/584)
+
 ## 4.19.1 (2019-09-03)
 
 ### Bug fixes
