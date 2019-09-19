@@ -70,7 +70,7 @@ jbyteArray bsg_byte_ary_from_string(JNIEnv *env, char *text) {
 }
 
 void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
-  (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text, 0);
+  (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text, JNI_COMMIT);
 }
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
