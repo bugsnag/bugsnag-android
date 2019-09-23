@@ -62,6 +62,9 @@ jfieldID bsg_parse_jseverity(JNIEnv *env, bsg_severity_t severity,
 }
 
 jbyteArray bsg_byte_ary_from_string(JNIEnv *env, char *text) {
+  if (text == NULL) {
+    return NULL;
+  }
   size_t text_length = bsg_strlen(text);
   jbyteArray jtext = (*env)->NewByteArray(env, text_length);
   (*env)->SetByteArrayRegion(env, jtext, 0, text_length, (jbyte *)text);
@@ -70,7 +73,9 @@ jbyteArray bsg_byte_ary_from_string(JNIEnv *env, char *text) {
 }
 
 void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
-  (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text, JNI_COMMIT);
+  if (array != NULL) {
+    (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text, JNI_COMMIT);
+  }
 }
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
