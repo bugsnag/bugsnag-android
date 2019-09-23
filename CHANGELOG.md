@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Prevent SIGSEGV when passing NULL to bugsnag_set_user_env
+  [#599](https://github.com/bugsnag/bugsnag-android/pull/599)
+
 * Alter value collected for device.freeDisk to collect usable space in internal storage,
  rather than total space in internal/external storage
   [#589](https://github.com/bugsnag/bugsnag-android/pull/589)
