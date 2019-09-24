@@ -262,7 +262,7 @@ class ErrorReader {
                         map.put(key, reader.nextString());
                         break;
                     case NUMBER:
-                        map.put(key, reader.nextLong());
+                        map.put(key, deserializeNumber(reader));
                         break;
                     default:
                         reader.skipValue();
@@ -487,19 +487,24 @@ class ErrorReader {
             case BOOLEAN:
                 return (T)(Boolean) reader.nextBoolean();
             case NUMBER:
-                try {
-                    return (T)(Integer) reader.nextInt();
-                } catch (NumberFormatException ex) {
-                    try {
-                        return (T)(Long) reader.nextLong();
-                    } catch (NumberFormatException ex2) {
-                        return (T)(Double) reader.nextDouble();
-                    }
-                }
+                return deserializeNumber(reader);
             case BEGIN_ARRAY:
                 return (T) jsonArrayToList(reader);
             default:
                 return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T deserializeNumber(JsonReader reader) throws IOException {
+        try {
+            return (T)(Integer) reader.nextInt();
+        } catch (NumberFormatException ex) {
+            try {
+                return (T)(Long) reader.nextLong();
+            } catch (NumberFormatException ex2) {
+                return (T)(Double) reader.nextDouble();
+            }
         }
     }
 }
