@@ -1,6 +1,9 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import java.io.File
@@ -13,12 +16,24 @@ internal class InternalReportScenario(config: Configuration,
 
     init {
         config.setAutoCaptureSessions(false)
-        disableAllDelivery(config)
+        config.beforeSend { true }
+
+        if (context is Activity) {
+            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            if (eventMetaData != "non-crashy") {
+                disableAllDelivery(config)
+            } else {
+                val files = File(context.cacheDir, "bugsnag-errors").listFiles()
+                files.forEach { it.writeText("{[]}") }
+            }
+        }
     }
 
     override fun run() {
         super.run()
-        Bugsnag.notify(java.lang.RuntimeException("Whoops"))
-    }
 
+        if (eventMetaData != "non-crashy") {
+            Bugsnag.notify(java.lang.RuntimeException("Whoops"))
+        }
+    }
 }
