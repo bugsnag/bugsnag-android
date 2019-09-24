@@ -23,6 +23,9 @@ static bsg_environment *bsg_global_env;
 void bsg_handle_cpp_terminate();
 
 bool bsg_handler_install_cpp(bsg_environment *env) {
+  if (bsg_global_env != NULL) {
+    return true; // already installed
+  }
   static pthread_mutex_t bsg_cpp_handler_config = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_lock(&bsg_cpp_handler_config);
   bsg_global_terminate_previous = std::set_terminate(bsg_handle_cpp_terminate);
