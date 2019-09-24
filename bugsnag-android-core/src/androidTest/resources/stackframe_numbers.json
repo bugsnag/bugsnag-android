@@ -132,19 +132,19 @@
   "groupingHash": "400-b",
   "threads": [
     {
-      "id": 1,
+      "id": 11236722452451234,
       "name": "main",
       "type": "android",
       "stacktrace": [
         {
           "method": "dalvik.system.VMStack.getThreadStackTrace",
           "file": "VMStack.java",
-          "lineNumber": -2
+          "lineNumber": 160923409125093
         },
         {
           "method": "java.lang.Thread.getStackTrace",
           "file": "Thread.java",
-          "lineNumber": 1566
+          "lineNumber": 1566.5
         },
         {
           "method": "com.bugsnag.android.ThreadState.<init>",
