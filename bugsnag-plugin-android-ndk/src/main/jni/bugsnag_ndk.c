@@ -110,7 +110,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)report->app.release_stage, JNI_COMMIT);
       (*env)->DeleteLocalRef(env, jpayload);
       (*env)->DeleteLocalRef(env, jstage);
-      free(payload);
     } else {
       BUGSNAG_LOG("Failed to serialize report as JSON: %s", report_path);
     }
