@@ -14,7 +14,7 @@ Scenario: Send a report about an error triggered within the notifier
     And the event "device.osName" equals "android"
     And the event "metaData.BugsnagDiagnostics.cacheTombstone" is false
     And the event "metaData.BugsnagDiagnostics.filename" is not null
-    And the event "metaData.BugsnagDiagnostics.notifierName" is not null
+    And the event "metaData.BugsnagDiagnostics.notifierName" equals "Android Bugsnag Notifier"
     And the event "metaData.BugsnagDiagnostics.apiKey" equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
     And the event "metaData.BugsnagDiagnostics.cacheGroup" is false
     And the event "metaData.BugsnagDiagnostics.packageName" equals "com.bugsnag.android.mazerunner"
