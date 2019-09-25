@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
  * before it is delivered to your dashboard. You can also return
  * <code>false</code> from any callback to halt execution.
  */
-@ThreadSafe
 public interface BeforeSend {
     /**
      * Runs the callback. If the callback returns

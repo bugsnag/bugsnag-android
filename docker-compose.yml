@@ -16,10 +16,10 @@ services:
       APP_LOCATION:
       NDK_VERSION:
 
-  android-linter:
+  android-jvm:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.android-linter
+      dockerfile: dockerfiles/Dockerfile.android-jvm
 
   android-builder:
     build:

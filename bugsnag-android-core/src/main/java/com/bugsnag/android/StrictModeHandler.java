@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@ThreadSafe
 class StrictModeHandler {
 
     // Byte 1: Thread-policy (needs to be synced with StrictMode constants)

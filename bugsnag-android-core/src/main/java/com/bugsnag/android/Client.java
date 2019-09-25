@@ -5,6 +5,7 @@ import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -126,7 +127,7 @@ public class Client extends Observable implements Observer {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
-        sessionStore = new SessionStore(config, appContext);
+        sessionStore = new SessionStore(config, appContext, null);
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
@@ -203,13 +204,20 @@ public class Client extends Observable implements Observer {
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
             @Override
-            public void onErrorReadFailure(Exception exc, File errorFile) {
+            public void onErrorIOFailure(Exception exc, File errorFile, String context) {
                 // send an internal error to bugsnag with no cache
                 Thread thread = Thread.currentThread();
                 Error err = new Error.Builder(config, exc, null, thread, true).build();
-                err.setContext("Crash Report Deserialization");
+                err.setContext(context);
 
                 MetaData metaData = err.getMetaData();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
+
+                @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
+                        long usableSpace = appContext.getCacheDir().getUsableSpace();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
                 recordStorageCacheBehavior(metaData);

@@ -1,10 +1,22 @@
 # Changelog
 
-## TBD
+## 4.20.0 (2019-09-25)
 
 * Record StorageManager cache behaviour in internal error reports
   [#588](https://github.com/bugsnag/bugsnag-android/pull/588)
-  
+
+* Delete empty files left in cache directory, preventing an erroneous source of minimal error reports
+  [#591](https://github.com/bugsnag/bugsnag-android/pull/591)
+
+* Report internal errors when serialization fails
+  [#581](https://github.com/bugsnag/bugsnag-android/pull/581)
+
+* Buffer IO when reading from cached error files, improving SDK performance
+  [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
+
+* Prevent internal error reporting of FileNotFoundException during Delivery
+  [#594](https://github.com/bugsnag/bugsnag-android/pull/594)
+
 ### Bug fixes
 
 * flushOnLaunch() does not cancel previous requests if they timeout, leading to potential duplicate reports

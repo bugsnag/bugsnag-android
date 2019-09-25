@@ -7,14 +7,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.filters.SmallTest;
+import androidx.annotation.NonNull;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
 
-@SmallTest
 public class ConfigurationTest {
 
     private Configuration config;
@@ -216,7 +215,19 @@ public class ConfigurationTest {
     public void testSetDelivery() {
         Configuration configuration = new Configuration("api-key");
         assertNull(configuration.getDelivery());
-        Delivery delivery = BugsnagTestUtils.generateDelivery();
+        Delivery delivery = new Delivery() {
+            @Override
+            public void deliver(@NonNull SessionTrackingPayload payload,
+                                @NonNull Configuration config) throws DeliveryFailureException {
+
+            }
+
+            @Override
+            public void deliver(@NonNull Report report,
+                                @NonNull Configuration config) throws DeliveryFailureException {
+
+            }
+        };
         configuration.setDelivery(delivery);
 
         assertFalse(configuration.getDelivery() instanceof DeliveryCompat);

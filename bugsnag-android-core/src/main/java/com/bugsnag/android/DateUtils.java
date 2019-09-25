@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-@ThreadSafe
 class DateUtils {
     // SimpleDateFormat isn't thread safe, cache one instance per thread as needed.
     private static final ThreadLocal<DateFormat> iso8601Holder = new ThreadLocal<DateFormat>() {

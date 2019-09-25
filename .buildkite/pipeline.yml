@@ -16,21 +16,21 @@ steps:
 
   - wait
 
-  - label: ':docker: Build Android linter image'
+  - label: ':docker: Build Android jvm test image'
     timeout_in_minutes: 40
     plugins:
       - docker-compose#v2.6.0:
           build:
-            - android-linter
+            - android-jvm
           cache-from:
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-linter:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - label: ':docker: Build Android instrumentation image'
     timeout_in_minutes: 40
@@ -76,7 +76,15 @@ steps:
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
-          run: android-linter
+          run: android-jvm
+    command: 'bash ./scripts/run-linter.sh'
+
+  - label: ':android: JVM tests'
+    timeout_in_minutes: 30
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-jvm
+    command: './gradlew test'
 
   - label: ':android: Build fixture APK'
     timeout_in_minutes: 30
@@ -99,30 +107,6 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: "r16b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: "r16b"
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
@@ -189,6 +173,30 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
+    timeout_in_minutes: 60
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
+      NDK_VERSION: "r16b"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
+    timeout_in_minutes: 60
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      NDK_VERSION: "r16b"
     concurrency: 5
     concurrency_group: 'browserstack-app'
 

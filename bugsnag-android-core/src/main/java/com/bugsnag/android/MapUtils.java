@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 
 import java.util.Map;
 
-@ThreadSafe
 final class MapUtils {
 
     @Nullable
