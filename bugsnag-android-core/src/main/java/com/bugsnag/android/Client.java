@@ -259,7 +259,7 @@ public class Client extends Observable implements Observer {
         loadPlugins();
     }
 
-    private void loadPlugins() {
+    private void loadPlugins() { // FIXME need to rethink this interface
         NativeInterface.setClient(this);
         BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
 

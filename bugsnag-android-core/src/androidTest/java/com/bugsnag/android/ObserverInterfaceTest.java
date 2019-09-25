@@ -129,16 +129,16 @@ public class ObserverInterfaceTest {
     public void testClientSetReleaseStageSendsMessage() {
         client.setReleaseStage("prod-2");
         Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, String.class);
-        assertEquals("prod-2", value);
+                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, Configuration.class);
+        assertEquals(client.getConfig(), value);
     }
 
     @Test
     public void testConfigSetReleaseStageSendsMessage() {
         client.getConfig().setReleaseStage("prod-2");
         Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, String.class);
-        assertEquals("prod-2", value);
+                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, Configuration.class);
+        assertEquals(client.getConfig(), value);
     }
 
     @Test

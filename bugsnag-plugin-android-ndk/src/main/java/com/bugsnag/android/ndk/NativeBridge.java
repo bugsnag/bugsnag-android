@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -388,8 +389,11 @@ public class NativeBridge implements Observer {
     }
 
     private void handleReleaseStageChange(Object arg) {
-        if (arg instanceof String) {
-            updateReleaseStage((String)arg);
+        if (arg instanceof Configuration) {
+            Configuration config = (Configuration) arg;
+            String releaseStage = config.getReleaseStage();
+            updateReleaseStage(makeSafe(releaseStage));
+            enableOrDisableReportingIfNeeded(config);
         } else {
             warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
         }
@@ -397,19 +401,21 @@ public class NativeBridge implements Observer {
 
     private void handleNotifyReleaseStagesChange(Object arg) {
         if (arg instanceof Configuration) {
-            Configuration config = (Configuration) arg;
-
-            if (config.shouldNotifyForReleaseStage(config.getReleaseStage())) {
-                if (config.getDetectNdkCrashes()) {
-                    enableCrashReporting();
-                }
-                // TODO enable ANRs in future when supported in Unity
-            } else {
-                disableCrashReporting();
-                disableAnrReporting();
-            }
+            enableOrDisableReportingIfNeeded((Configuration) arg);
         } else {
             warn("UPDATE_NOTIFY_RELEASE_STAGES object is invalid: " + arg);
+        }
+    }
+
+    private void enableOrDisableReportingIfNeeded(Configuration config) {
+        if (config.shouldNotifyForReleaseStage(config.getReleaseStage())) {
+            if (config.getDetectNdkCrashes()) {
+                enableCrashReporting();
+            }
+            // TODO enable ANRs in future when supported in Unity
+        } else {
+            disableCrashReporting();
+            disableAnrReporting();
         }
     }
 
@@ -500,6 +506,17 @@ public class NativeBridge implements Observer {
         } else {
             warn("UPDATE_METADATA object is invalid: " + arg);
         }
+    }
+
+    /**
+     * Ensure the string is safe to be passed to native layer by forcing the encoding
+     * to UTF-8.
+     */
+    private String makeSafe(String text) {
+        // The Android platform default charset is always UTF-8
+        return text == null
+                ? null
+                : new String(text.getBytes(Charset.defaultCharset()));
     }
 
     private void warn(String message) {
