@@ -56,6 +56,10 @@ class ErrorStore extends FileStore<Error> {
             List<File> storedFiles = findStoredFiles();
             final List<File> crashReports = findLaunchCrashReports(storedFiles);
 
+            // cancel non-launch crash reports
+            storedFiles.removeAll(crashReports);
+            cancelQueuedFiles(storedFiles);
+
             if (!crashReports.isEmpty()) {
 
                 // Block the main thread for a 2 second interval as the app may crash very soon.
@@ -89,7 +93,6 @@ class ErrorStore extends FileStore<Error> {
                 }
                 Logger.info("Continuing with Bugsnag initialisation");
             }
-            cancelQueuedFiles(storedFiles); // cancel all previously found files
         }
 
         flushAsync(); // flush any remaining errors async that weren't delivered

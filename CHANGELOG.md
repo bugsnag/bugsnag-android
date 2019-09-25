@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Record StorageManager cache behaviour in internal error reports
+  [#588](https://github.com/bugsnag/bugsnag-android/pull/588)
+
 * Delete empty files left in cache directory, preventing an erroneous source of minimal error reports
   [#591](https://github.com/bugsnag/bugsnag-android/pull/591)
 
@@ -13,6 +16,18 @@
 
 * Prevent internal error reporting of FileNotFoundException during Delivery
   [#594](https://github.com/bugsnag/bugsnag-android/pull/594)
+
+### Bug fixes
+
+* flushOnLaunch() does not cancel previous requests if they timeout, leading to potential duplicate reports
+  [#593](https://github.com/bugsnag/bugsnag-android/pull/593)
+
+* Alter value collected for device.freeDisk to collect usable space in internal storage,
+ rather than total space in internal/external storage
+  [#589](https://github.com/bugsnag/bugsnag-android/pull/589)
+
+* Buffer io when reading from cached error file
+  [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
 
 ## 4.19.1 (2019-09-03)
 

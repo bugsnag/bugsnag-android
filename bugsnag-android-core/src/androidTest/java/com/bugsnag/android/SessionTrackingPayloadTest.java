@@ -51,7 +51,7 @@ public class SessionTrackingPayloadTest {
         FileUtils.clearFilesInDir(storageDir);
         session = generateSession();
         client = generateClient();
-        payload = generatePayloadFromSession(context, generateSession());
+        payload = generatePayloadFromSession(context, session);
         rootNode = streamableToJson(payload);
     }
 
