@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -166,7 +167,12 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
                     if (values != null) {
                         for (File value : values) {
-                            if (value.isFile() && !queuedFiles.contains(value)) {
+                            // delete any tombstoned/empty files, as they contain no useful info
+                            if (value.length() == 0) {
+                                if (!value.delete()) {
+                                    value.deleteOnExit();
+                                }
+                            } else if (value.isFile() && !queuedFiles.contains(value)) {
                                 files.add(value);
                             }
                         }

@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Delete empty files left in cache directory, preventing an erroneous source of minimal error reports
+  [#591](https://github.com/bugsnag/bugsnag-android/pull/591)
+
 * Report internal errors when serialization fails
   [#581](https://github.com/bugsnag/bugsnag-android/pull/581)
 
