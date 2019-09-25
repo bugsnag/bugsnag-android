@@ -16,6 +16,18 @@ Before('@skip_android_9') do |scenario|
   skip_this_scenario("Skipping scenario") if bs_device == 'ANDROID_9'
 end
 
+Before('@skip_below_android_9') do |scenario|
+  skip_this_scenario("Skipping scenario") if bs_device != 'ANDROID_9'
+end
+
+Before('@skip_below_android_8') do |scenario|
+  skip_this_scenario("Skipping scenario") if bs_device != 'ANDROID_8' && bs_device != 'ANDROID_9'
+end
+
+Before('@skip_above_android_7') do |scenario|
+  skip_this_scenario("Skipping scenario") if bs_device == 'ANDROID_8' || bs_device == 'ANDROID_9'
+end
+
 AfterConfiguration do |config|
   AppAutomateDriver.new(bs_username, bs_access_key, bs_local_id, bs_device, app_location)
   $driver.start_driver

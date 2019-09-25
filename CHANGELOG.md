@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Record StorageManager cache behaviour in internal error reports
+  [#588](https://github.com/bugsnag/bugsnag-android/pull/588)
+  
 ### Bug fixes
 
 * flushOnLaunch() does not cancel previous requests if they timeout, leading to potential duplicate reports
