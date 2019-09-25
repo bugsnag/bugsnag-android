@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 4.20.0 (2019-09-25)
 
 * Record StorageManager cache behaviour in internal error reports
   [#588](https://github.com/bugsnag/bugsnag-android/pull/588)
