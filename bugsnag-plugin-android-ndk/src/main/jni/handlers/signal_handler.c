@@ -63,6 +63,9 @@ static const char bsg_native_signal_msgs[BSG_HANDLED_SIGNAL_COUNT + 1][60] = {
     "Segmentation violation (invalid memory reference)"};
 
 bool bsg_handler_install_signal(bsg_environment *env) {
+  if (bsg_global_env != NULL) {
+    return true; // already installed
+  }
   static pthread_mutex_t bsg_signal_handler_config = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_lock(&bsg_signal_handler_config);
   if (!bsg_configure_signal_stack()) {

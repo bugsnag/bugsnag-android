@@ -4,6 +4,15 @@
 
 * Record StorageManager cache behaviour in internal error reports
   [#588](https://github.com/bugsnag/bugsnag-android/pull/588)
+  
+### Bug fixes
+
+* flushOnLaunch() does not cancel previous requests if they timeout, leading to potential duplicate reports
+  [#593](https://github.com/bugsnag/bugsnag-android/pull/593)
+
+* Alter value collected for device.freeDisk to collect usable space in internal storage,
+ rather than total space in internal/external storage
+  [#589](https://github.com/bugsnag/bugsnag-android/pull/589)
 
 * Buffer io when reading from cached error file
   [#573](https://github.com/bugsnag/bugsnag-android/pull/573)

@@ -34,10 +34,13 @@ When("I relaunch the app") do
   $driver.launch_app
 end
 
-When("I swipe the screen") do
-  touch_action = Appium::TouchAction.new
-  touch_action.swipe(:start_x => 50, :start_y => 150, :end_x => 50, :end_y => 500)
-  touch_action.perform
+When("I tap the screen {int} times") do |count|
+  for i in 1..count do
+    touch_action = Appium::TouchAction.new
+    touch_action.tap({:x => 500, :y => 300})
+    touch_action.perform
+    sleep(1)
+  end
 end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
