@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-@ThreadSafe
 class DeviceData {
 
     private static final String[] ROOT_INDICATORS = new String[]{

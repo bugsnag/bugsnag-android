@@ -110,30 +110,6 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: "r16b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: "r16b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
   - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
     timeout_in_minutes: 60
     plugins:
@@ -197,6 +173,30 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
+    timeout_in_minutes: 60
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
+      NDK_VERSION: "r16b"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
+    timeout_in_minutes: 60
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-instrumentation-tests
+    env:
+      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
+      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      NDK_VERSION: "r16b"
     concurrency: 5
     concurrency_group: 'browserstack-app'
 

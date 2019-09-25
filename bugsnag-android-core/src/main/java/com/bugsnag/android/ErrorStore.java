@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,19 +20,7 @@ import java.util.concurrent.Semaphore;
  * Store and flush Error reports which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-@ThreadSafe
 class ErrorStore extends FileStore<Error> {
-
-    interface Delegate {
-
-        /**
-         * Invoked when a cached error report cannot be read.
-         *
-         * @param exception the error encountered reading/delivering the file
-         * @param errorFile file which could not be read
-         */
-        void onErrorReadFailure(Exception exception, File errorFile);
-    }
 
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
@@ -39,7 +28,6 @@ class ErrorStore extends FileStore<Error> {
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
-    private final Delegate delegate;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -60,8 +48,7 @@ class ErrorStore extends FileStore<Error> {
     };
 
     ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
-        this.delegate = delegate;
+        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR, delegate);
     }
 
     void flushOnLaunch() {
@@ -174,9 +161,11 @@ class ErrorStore extends FileStore<Error> {
             cancelQueuedFiles(Collections.singleton(errorFile));
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
+        } catch (FileNotFoundException exc) {
+            Logger.warn("Ignoring empty file - oldest report on disk was deleted", exc);
         } catch (Exception exception) {
             if (delegate != null) {
-                delegate.onErrorReadFailure(exception, errorFile);
+                delegate.onErrorIOFailure(exception, errorFile, "Crash Report Deserialization");
             }
             deleteStoredFiles(Collections.singleton(errorFile));
         }

@@ -5,6 +5,15 @@
 * Delete empty files left in cache directory, preventing an erroneous source of minimal error reports
   [#591](https://github.com/bugsnag/bugsnag-android/pull/591)
 
+* Report internal errors when serialization fails
+  [#581](https://github.com/bugsnag/bugsnag-android/pull/581)
+
+* Buffer IO when reading from cached error files, improving SDK performance
+  [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
+
+* Prevent internal error reporting of FileNotFoundException during Delivery
+  [#594](https://github.com/bugsnag/bugsnag-android/pull/594)
+
 ## 4.19.1 (2019-09-03)
 
 ### Bug fixes
