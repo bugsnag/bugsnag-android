@@ -1347,6 +1347,51 @@ public class Client extends Observable implements Observer {
     }
 
     /**
+     * Enable automatic reporting of ANRs.
+     */
+    void enableAnrReporting() { // FIXME
+        getConfig().setDetectAnrs(true);
+        setChanged();
+//        if (anrMonitor == null) {
+//             Initialize ANR monitor
+//            enableAnrDetection();
+//        }
+//        notifyObservers(new NativeInterface.Message(
+//        NativeInterface.MessageType.ENABLE_ANR_REPORTING, anrMonitor.getSentinelBuffer()));
+    }
+
+    /**
+     * Disable automatic reporting of ANRs.
+     */
+    void disableAnrReporting() {
+        getConfig().setDetectAnrs(false);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.DISABLE_ANR_REPORTING, null));
+    }
+
+    /**
+     * Enable automatic reporting of C/C++ crashes.
+     */
+    void enableNdkCrashReporting() {
+        getConfig().setDetectNdkCrashes(true);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.ENABLE_NATIVE_CRASH_REPORTING, null));
+    }
+
+    /**
+     * Disable automatic reporting of C/C++ crashes.
+     */
+    void disableNdkCrashReporting() {
+        getConfig().setDetectNdkCrashes(false);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.DISABLE_NATIVE_CRASH_REPORTING, null));
+    }
+
+
+    /**
      * Enable automatic reporting of unhandled exceptions.
      * By default, this is automatically enabled in the constructor.
      */
