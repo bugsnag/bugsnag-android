@@ -11,7 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-@ThreadSafe
 class IOUtils {
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
     private static final int EOF = -1;

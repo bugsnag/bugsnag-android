@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -19,8 +20,19 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-@ThreadSafe
 abstract class FileStore<T extends JsonStream.Streamable> {
+
+    interface Delegate {
+
+        /**
+         * Invoked when an error report is not (de)serialized correctly
+         *
+         * @param exception the error encountered reading/delivering the file
+         * @param errorFile file which could not be (de)serialized correctly
+         * @param context the context used to group the exception
+         */
+        void onErrorIOFailure(Exception exception, File errorFile, String context);
+    }
 
     @NonNull
     protected final Configuration config;
@@ -31,12 +43,15 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     final Lock lock = new ReentrantLock();
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
+    protected final ErrorStore.Delegate delegate;
+
 
     FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
-              int maxStoreCount, Comparator<File> comparator) {
+              int maxStoreCount, Comparator<File> comparator, Delegate delegate) {
         this.config = config;
         this.maxStoreCount = maxStoreCount;
         this.comparator = comparator;
+        this.delegate = delegate;
 
         String path;
         try {
@@ -67,9 +82,10 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             FileOutputStream fos = new FileOutputStream(filename);
             out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             out.write(content);
-        } catch (Exception exception) {
-            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
-                filename), exception);
+        } catch (Exception exc) {
+            if (delegate != null) {
+                delegate.onErrorIOFailure(exc, new File(filename), "NDK Crash report copy");
+            }
         } finally {
             try {
                 if (out != null) {
@@ -101,9 +117,10 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             stream.value(streamable);
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
-        } catch (Exception exception) {
-            Logger.warn(String.format("Couldn't save unsent payload to disk (%s) ",
-                filename), exception);
+        } catch (Exception exc) {
+            if (delegate != null) {
+                delegate.onErrorIOFailure(exc, new File(filename), "Crash report serialization");
+            }
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();
@@ -150,7 +167,12 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
                     if (values != null) {
                         for (File value : values) {
-                            if (value.isFile() && !queuedFiles.contains(value)) {
+                            // delete any tombstoned/empty files, as they contain no useful info
+                            if (value.length() == 0) {
+                                if (!value.delete()) {
+                                    value.deleteOnExit();
+                                }
+                            } else if (value.isFile() && !queuedFiles.contains(value)) {
                                 files.add(value);
                             }
                         }

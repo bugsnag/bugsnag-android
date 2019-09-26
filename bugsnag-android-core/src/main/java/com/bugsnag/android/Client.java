@@ -5,6 +5,7 @@ import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -12,6 +13,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
+import android.os.storage.StorageManager;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
@@ -21,6 +24,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,6 +82,7 @@ public class Client extends Observable implements Observer {
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
+    final StorageManager storageManager;
 
     /**
      * Initialize a Bugsnag client
@@ -122,7 +127,8 @@ public class Client extends Observable implements Observer {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
-        sessionStore = new SessionStore(config, appContext);
+        sessionStore = new SessionStore(config, appContext, null);
+        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
             @Override
@@ -198,15 +204,23 @@ public class Client extends Observable implements Observer {
         // Create the error store that is used in the exception handler
         errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
             @Override
-            public void onErrorReadFailure(Exception exc, File errorFile) {
+            public void onErrorIOFailure(Exception exc, File errorFile, String context) {
                 // send an internal error to bugsnag with no cache
                 Thread thread = Thread.currentThread();
                 Error err = new Error.Builder(config, exc, null, thread, true).build();
-                err.setContext("Crash Report Deserialization");
+                err.setContext(context);
 
                 MetaData metaData = err.getMetaData();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
+
+                @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
+                        long usableSpace = appContext.getCacheDir().getUsableSpace();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
+                recordStorageCacheBehavior(metaData);
                 Client.this.reportInternalBugsnagError(err);
             }
         });
@@ -257,6 +271,22 @@ public class Client extends Observable implements Observer {
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();
+    }
+
+    void recordStorageCacheBehavior(MetaData metaData) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            File cacheDir = appContext.getCacheDir();
+            File errDir = new File(cacheDir, "bugsnag-errors");
+
+            try {
+                boolean tombstone = storageManager.isCacheBehaviorTombstone(errDir);
+                boolean group = storageManager.isCacheBehaviorGroup(errDir);
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
+            } catch (IOException exc) {
+                Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
+            }
+        }
     }
 
     private void loadPlugins() { // FIXME need to rethink this interface
