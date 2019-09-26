@@ -7,16 +7,19 @@
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_AnrPlugin_installAnrDetection(
-    JNIEnv *env, jobject _this, jobject byteBuffer) {
-
-    if (byteBuffer != NULL) {
-        bsg_handler_install_anr((*env)->GetDirectBufferAddress(env, byteBuffer));
-        BUGSNAG_LOG("Initialization complete!");
-    } else {
-        BUGSNAG_LOG("Failed to initialise ANR detection due to null buffer");
+JNIEXPORT void JNICALL Java_com_bugsnag_android_AnrPlugin_enableAnrReporting(
+        JNIEnv *env, jobject _this, jobject anr_buffer) {
+    // only install if provided a buffer
+    if (!(*env)->IsSameObject(env, anr_buffer, NULL)) {
+        bsg_handler_install_anr((*env)->GetDirectBufferAddress(env, anr_buffer));
     }
 }
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_AnrPlugin_disableAnrReporting(
+        JNIEnv *env, jobject _this) {
+    bsg_handler_uninstall_anr();
+}
+
 
 #ifdef __cplusplus
 }

@@ -129,24 +129,24 @@ public class ObserverInterfaceTest {
     public void testClientSetReleaseStageSendsMessage() {
         client.setReleaseStage("prod-2");
         Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, Configuration.class);
-        assertEquals(client.getConfig(), value);
+                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, String.class);
+        assertEquals("prod-2", value);
     }
 
     @Test
     public void testConfigSetReleaseStageSendsMessage() {
         client.getConfig().setReleaseStage("prod-2");
         Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, Configuration.class);
-        assertEquals(client.getConfig(), value);
+                NativeInterface.MessageType.UPDATE_RELEASE_STAGE, String.class);
+        assertEquals("prod-2", value);
     }
 
     @Test
     public void settingNotifyReleaseStageSendsMessage() {
         client.getConfig().setNotifyReleaseStages(new String[]{"prod-2", "dev-4"});
-        Configuration value = (Configuration) findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, Configuration.class);
-        assertArrayEquals(new String[]{"prod-2", "dev-4"}, value.getNotifyReleaseStages());
+        String[] value = (String[]) findMessageInQueue(
+                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, String[].class);
+        assertArrayEquals(new String[]{"prod-2", "dev-4"}, value);
     }
 
     @Test

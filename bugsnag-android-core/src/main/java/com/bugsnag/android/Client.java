@@ -84,6 +84,12 @@ public class Client extends Observable implements Observer {
     private final Connectivity connectivity;
     final StorageManager storageManager;
 
+    @Nullable
+    private Class<?> ndkPluginClz;
+
+    @Nullable
+    private Class<?> anrPluginClz;
+
     /**
      * Initialize a Bugsnag client
      *
@@ -230,6 +236,20 @@ public class Client extends Observable implements Observer {
             enableExceptionHandler();
         }
 
+        try {
+            ndkPluginClz = Class.forName("com.bugsnag.android.NdkPlugin");
+        } catch (ClassNotFoundException exc) {
+            Logger.warn("bugsnag-plugin-android-ndk artefact not found on classpath, "
+                    + "NDK errors will not be captured.");
+        }
+
+        try {
+            anrPluginClz = Class.forName("com.bugsnag.android.AnrPlugin");
+        } catch (ClassNotFoundException exc) {
+            Logger.warn("bugsnag-plugin-android-anr artefact not found on classpath, "
+                    + "ANR errors will not be captured.");
+        }
+
         // register a receiver for automatic breadcrumbs
 
         try {
@@ -271,6 +291,11 @@ public class Client extends Observable implements Observer {
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();
+
+        // react to changes in config
+        ClientConfigObserver observer = new ClientConfigObserver(this, config);
+        config.addObserver(observer);
+        client.addObserver(observer);
     }
 
     void recordStorageCacheBehavior(MetaData metaData) {
@@ -289,27 +314,32 @@ public class Client extends Observable implements Observer {
         }
     }
 
-    private void loadPlugins() { // FIXME need to rethink this interface
+    private void loadPlugins() {
         NativeInterface.setClient(this);
-        BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
+        enableOrDisableNdkReporting();
+        enableOrDisableAnrReporting();
+    }
 
+    void enableOrDisableNdkReporting() {
+        if (ndkPluginClz == null) {
+            return;
+        }
         if (config.getDetectNdkCrashes()) {
-            try {
-                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
-            } catch (ClassNotFoundException exc) {
-                Logger.warn("bugsnag-plugin-android-ndk artefact not found on classpath, "
-                    + "NDK errors will not be captured.");
-            }
+            BugsnagPluginInterface.INSTANCE.loadPlugin(this, ndkPluginClz);
+        } else {
+            BugsnagPluginInterface.INSTANCE.unloadPlugin(ndkPluginClz);
+        }
+    }
+
+    void enableOrDisableAnrReporting() {
+        if (anrPluginClz == null) {
+            return;
         }
         if (config.getDetectAnrs()) {
-            try {
-                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
-            } catch (ClassNotFoundException exc) {
-                Logger.warn("bugsnag-plugin-android-anr artefact not found on classpath, "
-                    + "ANR errors will not be captured.");
-            }
+            BugsnagPluginInterface.INSTANCE.loadPlugin(this, anrPluginClz);
+        } else {
+            BugsnagPluginInterface.INSTANCE.unloadPlugin(anrPluginClz);
         }
-        pluginInterface.loadPlugins(this);
     }
 
     void sendNativeSetupNotification() {
@@ -1379,15 +1409,9 @@ public class Client extends Observable implements Observer {
     /**
      * Enable automatic reporting of ANRs.
      */
-    void enableAnrReporting() { // FIXME
+    void enableAnrReporting() {
         getConfig().setDetectAnrs(true);
-        setChanged();
-//        if (anrMonitor == null) {
-//             Initialize ANR monitor
-//            enableAnrDetection();
-//        }
-//        notifyObservers(new NativeInterface.Message(
-//        NativeInterface.MessageType.ENABLE_ANR_REPORTING, anrMonitor.getSentinelBuffer()));
+        enableOrDisableAnrReporting();
     }
 
     /**
@@ -1395,9 +1419,7 @@ public class Client extends Observable implements Observer {
      */
     void disableAnrReporting() {
         getConfig().setDetectAnrs(false);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.DISABLE_ANR_REPORTING, null));
+        enableOrDisableAnrReporting();
     }
 
     /**
@@ -1405,9 +1427,7 @@ public class Client extends Observable implements Observer {
      */
     void enableNdkCrashReporting() {
         getConfig().setDetectNdkCrashes(true);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.ENABLE_NATIVE_CRASH_REPORTING, null));
+        enableOrDisableNdkReporting();
     }
 
     /**
@@ -1415,11 +1435,8 @@ public class Client extends Observable implements Observer {
      */
     void disableNdkCrashReporting() {
         getConfig().setDetectNdkCrashes(false);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.DISABLE_NATIVE_CRASH_REPORTING, null));
+        enableOrDisableNdkReporting();
     }
-
 
     /**
      * Enable automatic reporting of unhandled exceptions.

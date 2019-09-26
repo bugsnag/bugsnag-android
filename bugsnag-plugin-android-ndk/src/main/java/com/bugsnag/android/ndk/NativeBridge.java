@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -35,14 +33,6 @@ public class NativeBridge implements Observer {
 
     public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
                                       int apiLevel, boolean is32bit);
-
-    public static native void enableAnrReporting(@Nullable ByteBuffer anrSentinel);
-
-    public static native void disableAnrReporting();
-
-    public static native void enableCrashReporting();
-
-    public static native void disableCrashReporting();
 
     public static native void deliverReportAtPath(@NonNull String filePath);
 
@@ -125,18 +115,6 @@ public class NativeBridge implements Observer {
             case INSTALL:
                 handleInstallMessage(arg);
                 break;
-            case ENABLE_ANR_REPORTING:
-                handleEnableAnrMessage(arg);
-                break;
-            case DISABLE_ANR_REPORTING:
-                disableAnrReporting();
-                break;
-            case ENABLE_NATIVE_CRASH_REPORTING:
-                enableCrashReporting();
-                break;
-            case DISABLE_NATIVE_CRASH_REPORTING:
-                disableCrashReporting();
-                break;
             case DELIVER_PENDING:
                 deliverPendingReports();
                 break;
@@ -190,9 +168,6 @@ public class NativeBridge implements Observer {
                 break;
             case UPDATE_RELEASE_STAGE:
                 handleReleaseStageChange(arg);
-                break;
-            case UPDATE_NOTIFY_RELEASE_STAGES:
-                handleNotifyReleaseStagesChange(arg);
                 break;
             case UPDATE_USER_ID:
                 handleUserIdChange(arg);
@@ -282,12 +257,6 @@ public class NativeBridge implements Observer {
             }
         }
         return is32bit;
-    }
-
-    private void handleEnableAnrMessage(Object arg) {
-        if (arg instanceof ByteBuffer) {
-            enableAnrReporting((ByteBuffer) arg);
-        }
     }
 
     private void handleAddBreadcrumb(Object arg) {
@@ -389,33 +358,10 @@ public class NativeBridge implements Observer {
     }
 
     private void handleReleaseStageChange(Object arg) {
-        if (arg instanceof Configuration) {
-            Configuration config = (Configuration) arg;
-            String releaseStage = config.getReleaseStage();
-            updateReleaseStage(makeSafe(releaseStage));
-            enableOrDisableReportingIfNeeded(config);
+        if (arg instanceof String) {
+            updateReleaseStage((String)arg);
         } else {
             warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
-        }
-    }
-
-    private void handleNotifyReleaseStagesChange(Object arg) {
-        if (arg instanceof Configuration) {
-            enableOrDisableReportingIfNeeded((Configuration) arg);
-        } else {
-            warn("UPDATE_NOTIFY_RELEASE_STAGES object is invalid: " + arg);
-        }
-    }
-
-    private void enableOrDisableReportingIfNeeded(Configuration config) {
-        if (config.shouldNotifyForReleaseStage(config.getReleaseStage())) {
-            if (config.getDetectNdkCrashes()) {
-                enableCrashReporting();
-            }
-            // TODO enable ANRs in future when supported in Unity
-        } else {
-            disableCrashReporting();
-            disableAnrReporting();
         }
     }
 
@@ -506,17 +452,6 @@ public class NativeBridge implements Observer {
         } else {
             warn("UPDATE_METADATA object is invalid: " + arg);
         }
-    }
-
-    /**
-     * Ensure the string is safe to be passed to native layer by forcing the encoding
-     * to UTF-8.
-     */
-    private String makeSafe(String text) {
-        // The Android platform default charset is always UTF-8
-        return text == null
-                ? null
-                : new String(text.getBytes(Charset.defaultCharset()));
     }
 
     private void warn(String message) {
