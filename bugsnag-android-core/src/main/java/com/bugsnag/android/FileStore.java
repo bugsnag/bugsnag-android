@@ -119,7 +119,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (FileNotFoundException exc) {
-            Logger.warn("Ignoring empty file - oldest report on disk was deleted", exc);
+            Logger.warn("Ignoring FileNotFoundException - unable to create file", exc);
         } catch (Exception exc) {
             if (delegate != null) {
                 delegate.onErrorIOFailure(exc, new File(filename), "Crash report serialization");
