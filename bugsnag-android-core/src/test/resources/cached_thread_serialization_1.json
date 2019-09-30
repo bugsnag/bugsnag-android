@@ -1,0 +1,1 @@
+{"id":24,"name":"main-one","type":"ando","stacktrace":[{"file":"librunner.so","method":"run_func","lineNumber":5038},{"file":"Runner.java","method":"Runner.runFunc","lineNumber":14},{"file":"App.java","method":"App.launch","lineNumber":70}]}
