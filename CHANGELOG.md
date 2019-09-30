@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Prevent internal error reporting of FileNotFoundException during serialization
+  [#605](https://github.com/bugsnag/bugsnag-android/pull/605)
+
 ## 4.20.0 (2019-09-25)
 
 * Record StorageManager cache behaviour in internal error reports
