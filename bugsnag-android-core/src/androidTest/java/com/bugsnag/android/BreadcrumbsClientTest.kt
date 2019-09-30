@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 @SmallTest
-class BreadcrumbsSerializationTest {
+class BreadcrumbsClientTest {
 
     private lateinit var breadcrumbs: Breadcrumbs
     private lateinit var config: Configuration
