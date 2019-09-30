@@ -6,14 +6,9 @@ import org.junit.Assert.assertEquals
 import androidx.test.filters.SmallTest
 import com.bugsnag.android.BugsnagTestUtils.*
 
-import org.json.JSONException
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
-import java.io.IOException
-import java.util.HashMap
-import java.util.Locale
 
 @SmallTest
 class BreadcrumbsSerializationTest {
@@ -32,22 +27,6 @@ class BreadcrumbsSerializationTest {
     @After
     fun tearDown() {
         client?.close()
-    }
-
-    /**
-     * Verifies that breadcrumb metadata is serialised
-     */
-    @Test
-    fun testPayloadType() {
-        val metadata = mapOf(Pair("direction", "left"))
-        breadcrumbs.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata))
-
-        val json = streamableToJsonArray(breadcrumbs)
-        val node = json.getJSONObject(0)
-        assertEquals("Rotated Menu", node.get("name"))
-        assertEquals("state", node.get("type"))
-        assertEquals("left", node.getJSONObject("metaData").get("direction"))
-        assertEquals(1, json.length())
     }
 
     /**
