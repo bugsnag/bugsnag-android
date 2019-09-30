@@ -1,0 +1,14 @@
+[
+  {
+    "errorClass": "RuntimeException",
+    "message": "Examplemessage",
+    "type": "android",
+    "stacktrace": [
+      {
+        "file": "Class.java",
+        "method": "Class.method",
+        "lineNumber": 123
+      }
+    ]
+  }
+]
