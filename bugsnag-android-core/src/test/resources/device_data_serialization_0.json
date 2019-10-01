@@ -1,0 +1,11 @@
+{
+  "cpuAbi": [
+    null,
+    null
+  ],
+  "jailbroken": false,
+  "runtimeVersions": {
+    "androidApiLevel": 0
+  },
+  "osName": "android"
+}

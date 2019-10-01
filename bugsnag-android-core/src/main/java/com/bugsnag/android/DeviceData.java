@@ -164,6 +164,9 @@ class DeviceData {
      */
     private boolean isEmulator() {
         String fingerprint = Build.FINGERPRINT;
+        if (fingerprint == null) {
+            return false;
+        }
         return fingerprint.startsWith("unknown")
             || fingerprint.contains("generic")
             || fingerprint.contains("vbox"); // genymotion
