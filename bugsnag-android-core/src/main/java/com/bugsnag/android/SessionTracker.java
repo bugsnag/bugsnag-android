@@ -176,7 +176,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
                         SessionTrackingPayload payload =
                             new SessionTrackingPayload(session, null,
-                                client.appData, client.deviceData);
+                                    client.appData.getAppDataSummary(),
+                                    client.deviceData.getDeviceDataSummary(),
+                                    Notifier.getInstance());
 
                         try {
                             for (BeforeSendSession mutator : configuration.getSessionCallbacks()) {
@@ -265,7 +267,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 if (!storedFiles.isEmpty()) {
                     SessionTrackingPayload payload =
                         new SessionTrackingPayload(null, storedFiles,
-                            client.appData, client.deviceData);
+                                client.appData.getAppDataSummary(),
+                                client.deviceData.getDeviceDataSummary(), Notifier.getInstance());
 
                     //FUTURE:SM Reduce duplication here and above
                     try {

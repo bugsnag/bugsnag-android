@@ -59,7 +59,8 @@ public class SessionTrackingPayloadTest {
                                                   Session session) throws Exception {
         appData = client.getAppData();
         deviceData = client.deviceData;
-        return new SessionTrackingPayload(session, null, appData, deviceData);
+        return new SessionTrackingPayload(session, null, appData.getAppDataSummary(),
+                deviceData.getDeviceDataSummary(), Notifier.getInstance());
     }
 
     /**
@@ -100,7 +101,8 @@ public class SessionTrackingPayloadTest {
         List<File> storedFiles = sessionStore.findStoredFiles();
 
         SessionTrackingPayload payload = new SessionTrackingPayload(null,
-            storedFiles, appData, deviceData);
+            storedFiles, appData.getAppDataSummary(),
+                deviceData.getDeviceDataSummary(), Notifier.getInstance());
         rootNode = streamableToJson(payload);
 
         assertNotNull(rootNode);

@@ -1,0 +1,16 @@
+{
+  "notifier": {
+    "name": "AndroidBugsnagNotifier",
+    "version": "9.9.9",
+    "url": "https://bugsnag.com"
+  },
+  "app": {},
+  "device": {},
+  "sessions": [
+    {
+      "id": "123",
+      "startedAt": "1970-01-01T00:00:00Z",
+      "user": {}
+    }
+  ]
+}
