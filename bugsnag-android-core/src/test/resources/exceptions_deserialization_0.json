@@ -1,0 +1,14 @@
+[
+  {
+    "errorClass": "Whoops",
+    "message": "error",
+    "type": "android",
+    "stacktrace": [
+      {
+        "file": "Foo.kt",
+        "method": "Foo.kt.bar",
+        "lineNumber": 55
+      }
+    ]
+  }
+]
