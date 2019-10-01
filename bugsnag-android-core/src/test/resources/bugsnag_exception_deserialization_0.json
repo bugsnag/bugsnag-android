@@ -1,0 +1,12 @@
+{
+  "errorClass": "MyClass",
+  "message": "Custom message",
+  "type": "android",
+  "stacktrace": [
+    {
+      "file": "Foo.kt",
+      "method": "Foo.bar",
+      "lineNumber": 1
+    }
+  ]
+}

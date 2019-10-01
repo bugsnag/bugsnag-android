@@ -21,7 +21,8 @@ internal fun verifyJsonMatches(map: Map<String, Any>, resourceName: String) {
 
 private fun validateJson(resourceName: String, json: String) {
     val whitespace = "\\s".toRegex()
-    val expectedJson = JsonParser().read(resourceName).replace(whitespace, "")
+    val rawJson = JsonParser().read(resourceName)
+    val expectedJson = rawJson.replace(whitespace, "")
     val generatedJson = json.replace(whitespace, "")
     Assert.assertEquals(expectedJson, generatedJson)
 }
