@@ -14,26 +14,9 @@ internal class ExceptionsSerializationTest {
         @Parameters
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
             val config = Configuration("api-key")
-
-            // basic exception
-            val oops = RuntimeException("oops")
-            val exceptions0 = Exceptions(config, BugsnagException(oops))
-
-            // cause exception
-            val ex = RuntimeException("oops", Exception("cause"))
-            val exceptions1 = Exceptions(config, BugsnagException(ex))
-
-            // named exception
-            val element = StackTraceElement("Class", "method", "Class.java", 123)
-            val frames = arrayOf(element)
-            val error = Error.Builder(
-                config, "RuntimeException",
-                "Example message", frames, null,
-                Thread.currentThread()
-            ).build()
-            val exceptions2 = Exceptions(config, BugsnagException(error.exception))
-
-            return generateTestCases("exceptions", exceptions0, exceptions1, exceptions2)
+            val frame = StackTraceElement("Foo.kt", "bar", "Foo.kt", 55)
+            val exceptions0 = Exceptions(config, BugsnagException("Whoops", "error", arrayOf(frame)))
+            return generateTestCases("exceptions", exceptions0)
         }
     }
 

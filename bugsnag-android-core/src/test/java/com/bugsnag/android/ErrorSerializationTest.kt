@@ -24,7 +24,7 @@ internal class ErrorSerializationTest {
                 "error",
                 Error(
                     config,
-                    RuntimeException("whoops"),
+                    BugsnagException("Whoops", "error", arrayOf(frame)),
                     handledState,
                     Severity.ERROR,
                     null,
