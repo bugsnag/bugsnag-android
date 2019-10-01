@@ -1,1 +1,8 @@
-[{"timestamp":"1970-01-01T00:00:00Z","name":"helloworld","type":"manual","metaData":{}}]
+[
+  {
+    "timestamp": "1970-01-01T00:00:00Z",
+    "name": "helloworld",
+    "type": "manual",
+    "metaData": {}
+  }
+]

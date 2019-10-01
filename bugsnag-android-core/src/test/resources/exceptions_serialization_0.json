@@ -1,133 +1,13 @@
 [
   {
-    "errorClass": "java.lang.RuntimeException",
-    "message": "oops",
+    "errorClass": "Whoops",
+    "message": "error",
     "type": "android",
     "stacktrace": [
       {
-        "file": "ExceptionsSerializationTest.kt",
-        "method": "com.bugsnag.android.ExceptionsSerializationTest$Companion.testCases",
-        "lineNumber": 19
-      },
-      {
-        "file": "ExceptionsSerializationTest.kt",
-        "method": "com.bugsnag.android.ExceptionsSerializationTest.testCases",
-        "lineNumber": -1
-      },
-      {
-        "file": "NativeMethodAccessorImpl.java",
-        "method": "sun.reflect.NativeMethodAccessorImpl.invoke0",
-        "lineNumber": -2
-      },
-      {
-        "file": "NativeMethodAccessorImpl.java",
-        "method": "sun.reflect.NativeMethodAccessorImpl.invoke",
-        "lineNumber": 62
-      },
-      {
-        "file": "DelegatingMethodAccessorImpl.java",
-        "method": "sun.reflect.DelegatingMethodAccessorImpl.invoke",
-        "lineNumber": 43
-      },
-      {
-        "file": "Method.java",
-        "method": "java.lang.reflect.Method.invoke",
-        "lineNumber": 498
-      },
-      {
-        "file": "FrameworkMethod.java",
-        "method": "org.junit.runners.model.FrameworkMethod$1.runReflectiveCall",
-        "lineNumber": 50
-      },
-      {
-        "file": "ReflectiveCallable.java",
-        "method": "org.junit.internal.runners.model.ReflectiveCallable.run",
-        "lineNumber": 12
-      },
-      {
-        "file": "FrameworkMethod.java",
-        "method": "org.junit.runners.model.FrameworkMethod.invokeExplosively",
-        "lineNumber": 47
-      },
-      {
-        "file": "Parameterized.java",
-        "method": "org.junit.runners.Parameterized.allParameters",
-        "lineNumber": 280
-      },
-      {
-        "file": "Parameterized.java",
-        "method": "org.junit.runners.Parameterized.<init>",
-        "lineNumber": 248
-      },
-      {
-        "file": "NativeConstructorAccessorImpl.java",
-        "method": "sun.reflect.NativeConstructorAccessorImpl.newInstance0",
-        "lineNumber": -2
-      },
-      {
-        "file": "NativeConstructorAccessorImpl.java",
-        "method": "sun.reflect.NativeConstructorAccessorImpl.newInstance",
-        "lineNumber": 62
-      },
-      {
-        "file": "DelegatingConstructorAccessorImpl.java",
-        "method": "sun.reflect.DelegatingConstructorAccessorImpl.newInstance",
-        "lineNumber": 45
-      },
-      {
-        "file": "Constructor.java",
-        "method": "java.lang.reflect.Constructor.newInstance",
-        "lineNumber": 423
-      },
-      {
-        "file": "AnnotatedBuilder.java",
-        "method": "org.junit.internal.builders.AnnotatedBuilder.buildRunner",
-        "lineNumber": 104
-      },
-      {
-        "file": "AnnotatedBuilder.java",
-        "method": "org.junit.internal.builders.AnnotatedBuilder.runnerForClass",
-        "lineNumber": 86
-      },
-      {
-        "file": "RunnerBuilder.java",
-        "method": "org.junit.runners.model.RunnerBuilder.safeRunnerForClass",
-        "lineNumber": 59
-      },
-      {
-        "file": "AllDefaultPossibilitiesBuilder.java",
-        "method": "org.junit.internal.builders.AllDefaultPossibilitiesBuilder.runnerForClass",
-        "lineNumber": 26
-      },
-      {
-        "file": "RunnerBuilder.java",
-        "method": "org.junit.runners.model.RunnerBuilder.safeRunnerForClass",
-        "lineNumber": 59
-      },
-      {
-        "file": "ClassRequest.java",
-        "method": "org.junit.internal.requests.ClassRequest.getRunner",
-        "lineNumber": 33
-      },
-      {
-        "file": "JUnit4IdeaTestRunner.java",
-        "method": "com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs",
-        "lineNumber": 49
-      },
-      {
-        "file": "IdeaTestRunner.java",
-        "method": "com.intellij.rt.execution.junit.IdeaTestRunner$Repeater.startRunnerWithArgs",
-        "lineNumber": 47
-      },
-      {
-        "file": "JUnitStarter.java",
-        "method": "com.intellij.rt.execution.junit.JUnitStarter.prepareStreamsAndStart",
-        "lineNumber": 242
-      },
-      {
-        "file": "JUnitStarter.java",
-        "method": "com.intellij.rt.execution.junit.JUnitStarter.main",
-        "lineNumber": 70
+        "file": "Foo.kt",
+        "method": "Foo.kt.bar",
+        "lineNumber": 55
       }
     ]
   }
