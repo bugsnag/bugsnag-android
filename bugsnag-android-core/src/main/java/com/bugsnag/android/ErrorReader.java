@@ -70,7 +70,7 @@ class ErrorReader {
                         groupingHash = reader.nextString();
                         break;
                     case "metaData":
-                        metaData = new MetaData(jsonObjectToMap(reader));
+                        metaData = readMetaData(reader);
                         break;
                     case "session":
                         session = readSession(reader);
@@ -124,6 +124,11 @@ class ErrorReader {
                 } catch (Exception ex) { /* nothing to do here if this fails */ }
             }
         }
+    }
+
+    @VisibleForTesting
+    static MetaData readMetaData(JsonReader reader) throws IOException {
+        return new MetaData(jsonObjectToMap(reader));
     }
 
     @VisibleForTesting
