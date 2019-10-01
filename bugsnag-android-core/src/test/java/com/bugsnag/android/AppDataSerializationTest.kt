@@ -22,7 +22,7 @@ internal class AppDataSerializationTest {
             val config = Configuration("api-key")
             val appData = AppData(context, pm, config, null)
 
-            return generateTestCases(
+            return generateSerializationTestCases(
                 "app_data", appData.appDataSummary
             )
         }

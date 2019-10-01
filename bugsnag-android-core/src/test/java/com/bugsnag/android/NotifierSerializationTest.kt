@@ -15,7 +15,7 @@ internal class NotifierSerializationTest {
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
             val notifier = Notifier.getInstance()
             notifier.version = "9.9.9"
-            return generateTestCases("notifier", notifier)
+            return generateSerializationTestCases("notifier", notifier)
         }
     }
 

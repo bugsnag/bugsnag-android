@@ -20,7 +20,7 @@ internal class ErrorSerializationTest {
             val cachedThread = CachedThread(config, 1, "my-thread", "android", true, arrayOf(frame))
             val threadState = ThreadState(arrayOf(cachedThread))
 
-            return generateTestCases(
+            return generateSerializationTestCases(
                 "error",
                 Error(
                     config,

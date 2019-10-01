@@ -31,11 +31,25 @@ private fun validateJson(resourceName: String, json: String) {
  * The expected JSON file for each element should match the naming format
  * '$filename_serialization_$index.json'
  */
-internal fun <T> generateTestCases(
+internal fun <T> generateSerializationTestCases(
     filename: String,
     vararg elements: T
 ): Collection<Pair<T, String>> {
     return elements.mapIndexed { index, obj ->
         Pair(obj, "${filename}_serialization_$index.json")
+    }
+}
+
+/**
+ * Generates parameterised test cases from a variable number of [JsonStream.Streamable] elements.
+ * The expected JSON file for each element should match the naming format
+ * '$filename_deserialization_$index.json'
+ */
+internal fun <T> generateDeserializationTestCases(
+    filename: String,
+    vararg elements: T
+): Collection<Pair<T, String>> {
+    return elements.mapIndexed { index, obj ->
+        Pair(obj, "${filename}_deserialization_$index.json")
     }
 }

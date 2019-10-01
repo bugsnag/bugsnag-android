@@ -12,7 +12,7 @@ internal class SeveritySerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateTestCases(
+        fun testCases() = generateSerializationTestCases(
             "severity",
             Severity.ERROR,
             Severity.WARNING,

@@ -18,7 +18,7 @@ internal class SessionTrackingPayloadSerializationTest {
             val notifier = Notifier.getInstance()
             notifier.version = "9.9.9"
 
-            return generateTestCases(
+            return generateSerializationTestCases(
                 "session_tracking_payload",
                 SessionTrackingPayload(
                     session,

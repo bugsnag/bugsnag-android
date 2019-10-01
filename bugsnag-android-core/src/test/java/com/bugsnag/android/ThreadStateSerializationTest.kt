@@ -16,7 +16,7 @@ internal class ThreadStateSerializationTest {
             val config = Configuration("api-key")
             val frame = StackTraceElement("Foo.kt", "bar", "Foo.kt", 55)
             val cachedThread = CachedThread(config, 1, "my-thread", "android", true, arrayOf(frame))
-            return generateTestCases("thread_state", ThreadState(arrayOf(cachedThread)))
+            return generateSerializationTestCases("thread_state", ThreadState(arrayOf(cachedThread)))
         }
     }
 

@@ -12,7 +12,7 @@ internal class StacktraceSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateTestCases("stacktrace", Stacktrace(arrayOf(), arrayOf()))
+        fun testCases() = generateSerializationTestCases("stacktrace", Stacktrace(arrayOf(), arrayOf()))
     }
 
     @Parameter

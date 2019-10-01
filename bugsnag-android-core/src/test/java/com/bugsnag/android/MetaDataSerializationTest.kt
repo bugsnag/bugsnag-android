@@ -12,7 +12,7 @@ internal class MetaDataSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateTestCases(
+        fun testCases() = generateSerializationTestCases(
             "meta_data",
             MetaData()
         )

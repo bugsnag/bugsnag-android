@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +25,7 @@ internal class DeviceDataSerializationTest {
             Mockito.`when`(editor.putString(Mockito.anyString(), Mockito.anyString())).thenReturn(editor)
 
             val deviceData = DeviceData(null, context, res, prefs)
-            return generateTestCases("device_data", deviceData.deviceDataSummary)
+            return generateSerializationTestCases("device_data", deviceData.deviceDataSummary)
         }
     }
 

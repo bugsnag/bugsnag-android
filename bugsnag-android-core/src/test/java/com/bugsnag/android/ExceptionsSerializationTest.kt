@@ -16,7 +16,7 @@ internal class ExceptionsSerializationTest {
             val config = Configuration("api-key")
             val frame = StackTraceElement("Foo.kt", "bar", "Foo.kt", 55)
             val exceptions0 = Exceptions(config, BugsnagException("Whoops", "error", arrayOf(frame)))
-            return generateTestCases("exceptions", exceptions0)
+            return generateSerializationTestCases("exceptions", exceptions0)
         }
     }
 

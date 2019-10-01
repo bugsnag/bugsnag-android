@@ -13,7 +13,7 @@ internal class BreadcrumbSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateTestCases(
+        fun testCases() = generateSerializationTestCases(
             "breadcrumb",
             Breadcrumb("hello world", BreadcrumbType.MANUAL, Date(0), mapOf())
         )

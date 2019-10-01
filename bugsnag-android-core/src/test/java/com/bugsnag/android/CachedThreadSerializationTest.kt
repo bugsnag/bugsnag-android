@@ -30,7 +30,7 @@ internal class CachedThreadSerializationTest {
             )
 
             val thread1 = CachedThread(config, 24, "main-one", "ando", false, stacktrace1)
-            return generateTestCases("cached_thread", thread, thread1)
+            return generateSerializationTestCases("cached_thread", thread, thread1)
         }
     }
 

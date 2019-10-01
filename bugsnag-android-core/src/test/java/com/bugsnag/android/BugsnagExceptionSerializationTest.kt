@@ -15,7 +15,7 @@ internal class BugsnagExceptionSerializationTest {
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
             val trace = arrayOf(StackTraceElement("Foo", "bar", "Foo.kt", 1))
             val exc = BugsnagException("MyClass", "Custom message", trace)
-            return generateTestCases("bugsnag_exception", exc)
+            return generateSerializationTestCases("bugsnag_exception", exc)
         }
     }
 
