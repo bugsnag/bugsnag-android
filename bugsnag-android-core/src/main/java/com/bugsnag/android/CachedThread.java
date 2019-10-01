@@ -49,4 +49,24 @@ class CachedThread implements JsonStream.Streamable {
         }
         writer.endObject();
     }
+
+    long getId() {
+        return id;
+    }
+
+    String getName() {
+        return name;
+    }
+
+    String getType() {
+        return type;
+    }
+
+    boolean isErrorReportingThread() {
+        return isErrorReportingThread;
+    }
+
+    Stacktrace getStacktrace() {
+        return stacktrace;
+    }
 }
