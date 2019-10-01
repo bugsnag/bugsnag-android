@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import android.util.JsonReader;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
@@ -515,10 +514,10 @@ class ErrorReader {
     static <T> T deserializeNumber(JsonReader reader) throws IOException {
         try {
             return (T)(Integer) reader.nextInt();
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException | IllegalStateException ex) {
             try {
                 return (T)(Long) reader.nextLong();
-            } catch (NumberFormatException ex2) {
+            } catch (NumberFormatException | IllegalStateException ex2) {
                 return (T)(Double) reader.nextDouble();
             }
         }
