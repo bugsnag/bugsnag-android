@@ -76,7 +76,7 @@ class ErrorReader {
                         session = readSession(reader);
                         break;
                     case "severity":
-                        severity = Severity.fromString(reader.nextString());
+                        severity = readSeverity(reader);
                         break;
                     case "severityReason":
                         severityReasonValues = readSeverityReason(reader);
@@ -124,6 +124,11 @@ class ErrorReader {
                 } catch (Exception ex) { /* nothing to do here if this fails */ }
             }
         }
+    }
+
+    @VisibleForTesting
+    static Severity readSeverity(JsonReader reader) throws IOException {
+        return Severity.fromString(reader.nextString());
     }
 
     @VisibleForTesting
