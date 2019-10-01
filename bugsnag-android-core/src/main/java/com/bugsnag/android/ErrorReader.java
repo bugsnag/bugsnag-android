@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.util.JsonReader;
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -126,7 +127,8 @@ class ErrorReader {
         }
     }
 
-    private static Breadcrumbs readBreadcrumbs(Configuration config, JsonReader reader)
+    @VisibleForTesting
+    static Breadcrumbs readBreadcrumbs(Configuration config, JsonReader reader)
         throws IOException {
         Breadcrumbs crumbs = new Breadcrumbs(config);
         reader.beginArray();
@@ -141,7 +143,8 @@ class ErrorReader {
         return crumbs;
     }
 
-    private static Breadcrumb readBreadcrumb(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static Breadcrumb readBreadcrumb(JsonReader reader) throws IOException {
         String name = null;
         String type = null;
         Map<String, String> metadata = new HashMap<>();
@@ -184,7 +187,8 @@ class ErrorReader {
         }
     }
 
-    private static Exceptions readExceptions(Configuration config, JsonReader reader)
+    @VisibleForTesting
+    static Exceptions readExceptions(Configuration config, JsonReader reader)
         throws IOException {
         reader.beginArray();
 
@@ -207,7 +211,8 @@ class ErrorReader {
         return ex;
     }
 
-    private static BugsnagException readException(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static BugsnagException readException(JsonReader reader) throws IOException {
         reader.beginObject();
         String errorClass = null;
         String message = null;
@@ -240,7 +245,8 @@ class ErrorReader {
     }
 
 
-    private static List<Map<String, Object>> readStackFrames(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static List<Map<String, Object>> readStackFrames(JsonReader reader) throws IOException {
         List<Map<String, Object>> frames = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
@@ -250,7 +256,8 @@ class ErrorReader {
         return frames;
     }
 
-    private static Map<String, Object> readStackFrame(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static Map<String, Object> readStackFrame(JsonReader reader) throws IOException {
         Map<String, Object> map = new HashMap<>();
         reader.beginObject();
 
@@ -287,7 +294,8 @@ class ErrorReader {
      * @return the values for severity reason and attribute value if any
      * @throws IOException if the report is missing severity reason
      */
-    private static ArrayList<String> readSeverityReason(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static ArrayList<String> readSeverityReason(JsonReader reader) throws IOException {
         reader.beginObject();
         String type = null;
         String attributeValue = null;
@@ -321,7 +329,8 @@ class ErrorReader {
         return values;
     }
 
-    private static Session readSession(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static Session readSession(JsonReader reader) throws IOException {
         String id = null;
         Date startedAt = null;
         int unhandled = 0;
@@ -373,7 +382,8 @@ class ErrorReader {
         throw new IOException("Session data missing required fields");
     }
 
-    private static User readUser(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static User readUser(JsonReader reader) throws IOException {
         User user = new User();
         reader.beginObject();
         while (reader.hasNext()) {
@@ -397,7 +407,8 @@ class ErrorReader {
         return user;
     }
 
-    private static ThreadState readThreadState(JsonReader reader)
+    @VisibleForTesting
+    static ThreadState readThreadState(JsonReader reader)
         throws IOException {
         List<CachedThread> threads = new ArrayList<>();
         reader.beginArray();
@@ -412,7 +423,8 @@ class ErrorReader {
         return new ThreadState(threads.toArray(new CachedThread[0]));
     }
 
-    private static CachedThread readThread(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static CachedThread readThread(JsonReader reader) throws IOException {
         long id = 0;
         String name = null;
         String type = null;
@@ -449,7 +461,8 @@ class ErrorReader {
         }
     }
 
-    private static Map<String, Object> jsonObjectToMap(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static Map<String, Object> jsonObjectToMap(JsonReader reader) throws IOException {
         Map<String, Object> data = new HashMap<>();
         reader.beginObject();
         while (reader.hasNext()) {
@@ -464,7 +477,8 @@ class ErrorReader {
         return data;
     }
 
-    private static <T> List<T> jsonArrayToList(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static <T> List<T> jsonArrayToList(JsonReader reader) throws IOException {
         List<T> objects = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
@@ -478,7 +492,8 @@ class ErrorReader {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T coerceSerializableFromJSON(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static <T> T coerceSerializableFromJSON(JsonReader reader) throws IOException {
         switch (reader.peek()) {
             case BEGIN_OBJECT:
                 return (T) jsonObjectToMap(reader);
@@ -496,7 +511,8 @@ class ErrorReader {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T deserializeNumber(JsonReader reader) throws IOException {
+    @VisibleForTesting
+    static <T> T deserializeNumber(JsonReader reader) throws IOException {
         try {
             return (T)(Integer) reader.nextInt();
         } catch (NumberFormatException ex) {
