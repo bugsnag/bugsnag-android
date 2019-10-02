@@ -52,7 +52,7 @@ class ErrorReader {
             while (reader.hasNext()) {
                 switch (reader.nextName()) {
                     case "app":
-                        appData = jsonObjectToMap(reader);
+                        appData = readAppData(reader);
                         break;
                     case "breadcrumbs":
                         crumbs = readBreadcrumbs(config, reader);
@@ -127,6 +127,11 @@ class ErrorReader {
                 } catch (Exception ex) { /* nothing to do here if this fails */ }
             }
         }
+    }
+
+    @VisibleForTesting
+    static Map<String, Object> readAppData(@NonNull JsonReader reader) throws IOException {
+        return jsonObjectToMap(reader);
     }
 
     @VisibleForTesting
