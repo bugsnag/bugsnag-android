@@ -61,7 +61,7 @@ class ErrorReader {
                         context = reader.nextString();
                         break;
                     case "device":
-                        deviceData = jsonObjectToMap(reader);
+                        deviceData = readDeviceData(reader);
                         break;
                     case "projectPackages":
                         projectPackages = jsonArrayToList(reader);
@@ -127,6 +127,11 @@ class ErrorReader {
                 } catch (Exception ex) { /* nothing to do here if this fails */ }
             }
         }
+    }
+
+    @VisibleForTesting
+    static Map<String, Object> readDeviceData(@NonNull JsonReader reader) throws IOException {
+        return jsonObjectToMap(reader);
     }
 
     @VisibleForTesting
