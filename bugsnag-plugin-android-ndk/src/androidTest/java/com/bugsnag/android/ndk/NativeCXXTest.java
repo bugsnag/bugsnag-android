@@ -2,6 +2,8 @@ package com.bugsnag.android.ndk;
 
 import org.junit.Test;
 
+import static com.bugsnag.android.ndk.VerifyUtilsKt.verifyNativeRun;
+
 public class NativeCXXTest {
 
     static {
@@ -13,8 +15,6 @@ public class NativeCXXTest {
 
     @Test
     public void testPassesNativeSuite() throws Exception {
-        if (run() != 0) {
-            throw new Exception("Check device logs for native test results");
-        }
+        verifyNativeRun(run());
     }
 }

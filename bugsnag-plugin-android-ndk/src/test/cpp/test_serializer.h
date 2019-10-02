@@ -1,0 +1,15 @@
+#include <greatest/greatest.h>
+#include <jni.h>
+
+#include <utils/serializer.h>
+#include <stdlib.h>
+#include <utils/migrate.h>
+
+typedef struct {
+    void *data_ptr;
+    char *expected_json;
+} test_case;
+
+enum greatest_test_res validate_serialized_json(const test_case *test_case,
+                                                JSON_Value *event_val);
+bsg_user * loadUserTestCase(jint num);
