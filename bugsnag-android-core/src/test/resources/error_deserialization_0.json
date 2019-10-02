@@ -1,0 +1,41 @@
+{
+  "metaData": {},
+  "severity": "error",
+  "severityReason": {
+    "type": "unhandledException"
+  },
+  "unhandled": true,
+  "incomplete": false,
+  "exceptions": [
+    {
+      "errorClass": "Whoops",
+      "message": "error",
+      "type": "android",
+      "stacktrace": [
+        {
+          "file": "Foo.kt",
+          "method": "Foo.kt.bar",
+          "lineNumber": 55
+        }
+      ]
+    }
+  ],
+  "user": {},
+  "app": {},
+  "device": {},
+  "threads": [
+    {
+      "id": 1,
+      "name": "my-thread",
+      "type": "android",
+      "stacktrace": [
+        {
+          "file": "Foo.kt",
+          "method": "Foo.kt.bar",
+          "lineNumber": 55
+        }
+      ],
+      "errorReportingThread": true
+    }
+  ]
+}

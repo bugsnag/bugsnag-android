@@ -26,8 +26,12 @@ class ErrorReader {
      */
     static Error readError(@NonNull Configuration config, @NonNull File errorFile)
             throws IOException {
-        JsonReader reader = null;
+        return readError(config, new JsonReader(new BufferedReader(new FileReader(errorFile))));
+    }
 
+    @VisibleForTesting
+    static Error readError(@NonNull Configuration config,
+                           @NonNull JsonReader reader) throws IOException {
         try {
             User user = null;
             Exceptions exceptions = null;
@@ -44,7 +48,6 @@ class ErrorReader {
             List<String> projectPackages = Collections.emptyList();
             boolean unhandled = false;
 
-            reader = new JsonReader(new BufferedReader(new FileReader(errorFile)));
             reader.beginObject();
             while (reader.hasNext()) {
                 switch (reader.nextName()) {
