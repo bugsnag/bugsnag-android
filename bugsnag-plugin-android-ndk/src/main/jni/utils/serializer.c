@@ -168,6 +168,191 @@ const char *bsg_severity_string(bsg_severity_t type) {
   }
 }
 
+void bsg_serialize_context(const bugsnag_report *report, JSON_Object *event) {
+  if (strlen(report->context) > 0) {
+    json_object_set_string(event, "context", report->context);
+  } else {
+    json_object_set_string(event, "context", report->app.active_screen);
+  }
+}
+
+void bsg_serialize_handled_state(const bugsnag_report *report, JSON_Object *event) {
+  // FUTURE(dm): severityReason/unhandled attributes are currently
+  // over-optimized for signal handling. in the future we may want to handle
+  // C++ exceptions, etc as well.
+  json_object_set_string(event, "severity", bsg_severity_string(report->severity));
+  json_object_dotset_boolean(event, "unhandled", true);
+  json_object_dotset_string(event, "severityReason.type", "signal");
+  json_object_dotset_string(event, "severityReason.attributes.signalType", report->exception.name);
+}
+
+void bsg_serialize_app(const bsg_app_info app, JSON_Object *event) {
+  json_object_dotset_string(event, "app.version", app.version);
+  json_object_dotset_string(event, "app.id", app.id);
+  json_object_dotset_string(event, "app.type", app.type);
+
+  json_object_dotset_string(event, "app.releaseStage", app.release_stage);
+  json_object_dotset_number(event, "app.versionCode", app.version_code);
+  if (strlen(app.build_uuid) > 0) {
+    json_object_dotset_string(event, "app.buildUUID", app.build_uuid);
+  }
+  json_object_dotset_string(event, "app.binaryArch", app.binaryArch);
+  json_object_dotset_number(event, "app.duration", app.duration);
+  json_object_dotset_number(event, "app.durationInForeground", app.duration_in_foreground);
+  json_object_dotset_boolean(event, "app.inForeground", app.in_foreground);
+}
+
+void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event) {
+  json_object_dotset_string(event, "metaData.app.packageName", app.package_name);
+  json_object_dotset_string(event, "metaData.app.versionName", app.version_name);
+  json_object_dotset_string(event, "metaData.app.activeScreen", app.active_screen);
+  json_object_dotset_string(event, "metaData.app.name", app.name);
+  json_object_dotset_boolean(event, "metaData.app.lowMemory", app.low_memory);
+}
+
+void bsg_serialize_device(const bsg_device_info device, JSON_Object *event) {
+  json_object_dotset_string(event, "device.osName", "android");
+  json_object_dotset_string(event, "device.id", device.id);
+  json_object_dotset_string(event, "device.osVersion", device.os_version);
+  json_object_dotset_string(event, "device.manufacturer", device.manufacturer);
+  json_object_dotset_string(event, "device.model", device.model);
+  json_object_dotset_string(event, "device.orientation", device.orientation);
+  json_object_dotset_number(event, "device.runtimeVersions.androidApiLevel", device.api_level);
+  json_object_dotset_string(event, "device.runtimeVersions.osBuild", device.os_build);
+
+  JSON_Value *abi_val = json_value_init_array();
+  JSON_Array *cpu_abis = json_value_get_array(abi_val);
+  json_object_dotset_value(event, "device.cpuAbi", abi_val);
+  for (int i = 0; i < device.cpu_abi_count; i++) {
+    json_array_append_string(cpu_abis, device.cpu_abi[i].value);
+  }
+
+  json_object_dotset_number(event, "device.totalMemory", device.total_memory);
+}
+
+void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event) {
+  json_object_dotset_string(event, "metaData.device.brand", device.brand);
+  json_object_dotset_boolean(event, "metaData.device.emulator", device.emulator);
+  json_object_dotset_boolean(event, "metaData.device.jailbroken", device.jailbroken);
+  json_object_dotset_string(event, "metaData.device.locale", device.locale);
+  json_object_dotset_string(event, "metaData.device.locationStatus", device.location_status);
+  json_object_dotset_string(event, "metaData.device.networkAccess", device.network_access);
+  json_object_dotset_number(event, "metaData.device.dpi", device.dpi);
+  json_object_dotset_number(event, "metaData.device.screenDensity", device.screen_density);
+  json_object_dotset_string(event, "metaData.device.screenResolution", device.screen_resolution);
+
+  char report_time[sizeof "2018-10-08T12:07:09Z"];
+  if (device.time > 0) {
+    strftime(report_time, sizeof report_time, "%FT%TZ", gmtime(&device.time));
+    json_object_dotset_string(event, "metaData.device.time", report_time);
+  }
+}
+
+void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event) {
+  for (int i = 0; i < metadata.value_count; i++) {
+    char *format = malloc(sizeof(char) * 256);
+    bsg_metadata_value value = metadata.values[i];
+
+    switch (value.type) {
+      case BSG_BOOL_VALUE:
+        sprintf(format, "metaData.%s.%s", value.section, value.name);
+            json_object_dotset_boolean(event, format, value.bool_value);
+            break;
+      case BSG_CHAR_VALUE:
+        sprintf(format, "metaData.%s.%s", value.section, value.name);
+            json_object_dotset_string(event, format, value.char_value);
+            break;
+      case BSG_NUMBER_VALUE:
+        sprintf(format, "metaData.%s.%s", value.section, value.name);
+            json_object_dotset_number(event, format, value.double_value);
+            break;
+      default:
+        break;
+    }
+    free(format);
+  }
+}
+
+void bsg_serialize_user(const bsg_user user, JSON_Object *event) {
+  if (strlen(user.name) > 0)
+    json_object_dotset_string(event, "user.name", user.name);
+  if (strlen(user.email) > 0)
+    json_object_dotset_string(event, "user.email", user.email);
+  if (strlen(user.id) > 0)
+    json_object_dotset_string(event, "user.id", user.id);
+}
+
+void bsg_serialize_session(bugsnag_report *report, JSON_Object *event) {
+  if (bugsnag_report_has_session(report)) {
+    json_object_dotset_string(event, "session.startedAt",
+                              report->session_start);
+    json_object_dotset_string(event, "session.id", report->session_id);
+    json_object_dotset_number(event, "session.events.handled",
+                              report->handled_events);
+    json_object_dotset_number(event, "session.events.unhandled", report->unhandled_events);
+  }
+}
+
+void bsg_serialize_exception(JSON_Object *exception, JSON_Array *stacktrace, const bsg_exception exc) {
+  json_object_set_string(exception, "errorClass", exc.name);
+  json_object_set_string(exception, "message", exc.message);
+  json_object_set_string(exception, "type", "c");
+  for (int findex = 0; findex < exc.frame_count; findex++) {
+    bsg_stackframe stackframe = exc.stacktrace[findex];
+    JSON_Value *frame_val = json_value_init_object();
+    JSON_Object *frame = json_value_get_object(frame_val);
+    json_object_set_number(frame, "frameAddress", stackframe.frame_address);
+    json_object_set_number(frame, "symbolAddress", stackframe.symbol_address);
+    json_object_set_number(frame, "loadAddress", stackframe.load_address);
+    json_object_set_number(frame, "lineNumber", stackframe.line_number);
+    if (strlen(stackframe.filename) > 0) {
+      json_object_set_string(frame, "file", stackframe.filename);
+    }
+    if (strlen(stackframe.method) == 0) {
+      char *frame_address = malloc(sizeof(char) * 32);
+      sprintf(frame_address, "0x%lx",
+              (unsigned long) stackframe.frame_address);
+      json_object_set_string(frame, "method", frame_address);
+      free(frame_address);
+    } else {
+      json_object_set_string(frame, "method", stackframe.method);
+    }
+
+    json_array_append_value(stacktrace, frame_val);
+  }
+}
+
+void bsg_serialize_breadcrumbs(const bugsnag_report *report, JSON_Array *crumbs) {
+  if (report->crumb_count > 0) {
+    int current_index = report->crumb_first_index;
+    while (json_array_get_count(crumbs) < report->crumb_count) {
+      JSON_Value *crumb_val = json_value_init_object();
+      JSON_Object *crumb = json_value_get_object(crumb_val);
+      json_array_append_value(crumbs, crumb_val);
+      bugsnag_breadcrumb breadcrumb = report->breadcrumbs[current_index];
+      json_object_set_string(crumb, "name", breadcrumb.name);
+      json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
+      json_object_set_string(crumb, "type",
+                             bsg_crumb_type_string(breadcrumb.type));
+
+      JSON_Value *meta_val = json_value_init_object();
+      JSON_Object *meta = json_value_get_object(meta_val);
+      json_object_set_value(crumb, "metaData", meta_val);
+      int metadata_index = 0;
+      while (strlen(breadcrumb.metadata[metadata_index].key) > 0) {
+        json_object_set_string(meta, breadcrumb.metadata[metadata_index].key,
+                               breadcrumb.metadata[metadata_index].value);
+        metadata_index++;
+      }
+
+      current_index++;
+      if (current_index == BUGSNAG_CRUMBS_MAX) {
+        current_index = 0;
+      }
+    }
+  }
+}
+
 char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
   JSON_Value *event_val = json_value_init_object();
   JSON_Object *event = json_value_get_object(event_val);
@@ -185,194 +370,17 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
   json_array_append_value(exceptions, ex_val);
   char *serialized_string = NULL;
   {
-    if (strlen(report->context) > 0) {
-      json_object_set_string(event, "context", report->context);
-    } else {
-      json_object_set_string(event, "context", report->app.active_screen);
-    }
-
-    json_object_set_string(event, "severity",
-                           bsg_severity_string(report->severity));
-    // FUTURE(dm): severityReason/unhandled attributes are currently
-    // over-optimized for signal handling. in the future we may want to handle
-    // C++ exceptions, etc as well.
-    json_object_dotset_boolean(event, "unhandled", true);
-    json_object_dotset_string(event, "severityReason.type", "signal");
-    json_object_dotset_string(event, "severityReason.attributes.signalType",
-                              report->exception.name);
-
-    json_object_dotset_string(event, "app.version", report->app.version);
-    json_object_dotset_string(event, "app.id", report->app.id);
-    json_object_dotset_string(event, "app.type", report->app.type);
-
-    json_object_dotset_string(event, "app.releaseStage",
-                              report->app.release_stage);
-    json_object_dotset_number(event, "app.versionCode",
-                              report->app.version_code);
-    if (strlen(report->app.build_uuid) > 0) {
-      json_object_dotset_string(event, "app.buildUUID", report->app.build_uuid);
-    }
-    json_object_dotset_string(event, "app.binaryArch",
-                              report->app.binaryArch);
-    json_object_dotset_number(event, "app.duration", report->app.duration);
-    json_object_dotset_number(event, "app.durationInForeground",
-                              report->app.duration_in_foreground);
-    json_object_dotset_boolean(event, "app.inForeground",
-                               report->app.in_foreground);
-    json_object_dotset_string(event, "metaData.app.packageName",
-                              report->app.package_name);
-    json_object_dotset_string(event, "metaData.app.versionName",
-                              report->app.version_name);
-    json_object_dotset_string(event, "metaData.app.activeScreen",
-                              report->app.active_screen);
-    json_object_dotset_string(event, "metaData.app.name", report->app.name);
-    json_object_dotset_boolean(event, "metaData.app.lowMemory",
-                               report->app.low_memory);
-
-    json_object_dotset_string(event, "device.osName", "android");
-    json_object_dotset_string(event, "device.id", report->device.id);
-    json_object_dotset_string(event, "device.osVersion",
-                              report->device.os_version);
-    json_object_dotset_string(event, "device.manufacturer",
-                              report->device.manufacturer);
-    json_object_dotset_string(event, "device.model", report->device.model);
-    json_object_dotset_string(event, "device.orientation",
-                              report->device.orientation);
-    json_object_dotset_number(event, "device.runtimeVersions.androidApiLevel",
-                              report->device.api_level);
-    json_object_dotset_string(event, "device.runtimeVersions.osBuild",
-                              report->device.os_build);
-
-    JSON_Value *abi_val = json_value_init_array();
-    JSON_Array *cpu_abis = json_value_get_array(abi_val);
-    json_object_dotset_value(event, "device.cpuAbi", abi_val);
-    for (int i = 0; i < report->device.cpu_abi_count; i++) {
-        json_array_append_string(cpu_abis, report->device.cpu_abi[i].value);
-    }
-
-    json_object_dotset_number(event, "device.totalMemory",
-                              report->device.total_memory);
-    json_object_dotset_string(event, "metaData.device.brand",
-                              report->device.brand);
-    json_object_dotset_boolean(event, "metaData.device.emulator",
-                               report->device.emulator);
-    json_object_dotset_boolean(event, "metaData.device.jailbroken",
-                               report->device.jailbroken);
-    json_object_dotset_string(event, "metaData.device.locale",
-                              report->device.locale);
-    json_object_dotset_string(event, "metaData.device.locationStatus",
-                              report->device.location_status);
-    json_object_dotset_string(event, "metaData.device.networkAccess",
-                              report->device.network_access);
-    json_object_dotset_number(event, "metaData.device.dpi", report->device.dpi);
-    json_object_dotset_number(event, "metaData.device.screenDensity",
-                              report->device.screen_density);
-    json_object_dotset_string(event, "metaData.device.screenResolution",
-                              report->device.screen_resolution);
-
-    char report_time[sizeof "2018-10-08T12:07:09Z"];
-    if (report->device.time > 0) {
-      strftime(report_time, sizeof report_time, "%FT%TZ",
-               gmtime(&report->device.time));
-      json_object_dotset_string(event, "metaData.device.time", report_time);
-    }
-
-    // Serialize custom metadata
-    {
-      for (int i = 0; i < report->metadata.value_count; i++) {
-        char *format = malloc(sizeof(char) * 256);
-        bsg_metadata_value value = report->metadata.values[i];
-
-        switch (value.type) {
-        case BSG_BOOL_VALUE:
-          sprintf(format, "metaData.%s.%s", value.section, value.name);
-          json_object_dotset_boolean(event, format, value.bool_value);
-          break;
-        case BSG_CHAR_VALUE:
-          sprintf(format, "metaData.%s.%s", value.section, value.name);
-          json_object_dotset_string(event, format, value.char_value);
-          break;
-        case BSG_NUMBER_VALUE:
-          sprintf(format, "metaData.%s.%s", value.section, value.name);
-          json_object_dotset_number(event, format, value.double_value);
-          break;
-        default:
-          break;
-        }
-        free(format);
-      }
-    }
-
-    if (strlen(report->user.name) > 0)
-      json_object_dotset_string(event, "user.name", report->user.name);
-    if (strlen(report->user.email) > 0)
-      json_object_dotset_string(event, "user.email", report->user.email);
-    if (strlen(report->user.id) > 0)
-      json_object_dotset_string(event, "user.id", report->user.id);
-
-    if (bugsnag_report_has_session(report)) {
-        json_object_dotset_string(event, "session.startedAt",
-                                  report->session_start);
-        json_object_dotset_string(event, "session.id", report->session_id);
-        json_object_dotset_number(event, "session.events.handled",
-                                  report->handled_events);
-        json_object_dotset_number(event, "session.events.unhandled", report->unhandled_events);
-    }
-
-    json_object_set_string(exception, "errorClass", report->exception.name);
-    json_object_set_string(exception, "message", report->exception.message);
-    json_object_set_string(exception, "type", "c");
-    for (int findex = 0; findex < report->exception.frame_count; findex++) {
-      bsg_stackframe stackframe = report->exception.stacktrace[findex];
-      JSON_Value *frame_val = json_value_init_object();
-      JSON_Object *frame = json_value_get_object(frame_val);
-      json_object_set_number(frame, "frameAddress", stackframe.frame_address);
-      json_object_set_number(frame, "symbolAddress", stackframe.symbol_address);
-      json_object_set_number(frame, "loadAddress", stackframe.load_address);
-      json_object_set_number(frame, "lineNumber", stackframe.line_number);
-      if (strlen(stackframe.filename) > 0) {
-        json_object_set_string(frame, "file", stackframe.filename);
-      }
-      if (strlen(stackframe.method) == 0) {
-        char *frame_address = malloc(sizeof(char) * 32);
-        sprintf(frame_address, "0x%lx",
-                (unsigned long)stackframe.frame_address);
-        json_object_set_string(frame, "method", frame_address);
-        free(frame_address);
-      } else {
-        json_object_set_string(frame, "method", stackframe.method);
-      }
-
-      json_array_append_value(stacktrace, frame_val);
-    }
-    if (report->crumb_count > 0) {
-      int current_index = report->crumb_first_index;
-      while (json_array_get_count(crumbs) < report->crumb_count) {
-        JSON_Value *crumb_val = json_value_init_object();
-        JSON_Object *crumb = json_value_get_object(crumb_val);
-        json_array_append_value(crumbs, crumb_val);
-        bugsnag_breadcrumb breadcrumb = report->breadcrumbs[current_index];
-        json_object_set_string(crumb, "name", breadcrumb.name);
-        json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
-        json_object_set_string(crumb, "type",
-                               bsg_crumb_type_string(breadcrumb.type));
-
-        JSON_Value *meta_val = json_value_init_object();
-        JSON_Object *meta = json_value_get_object(meta_val);
-        json_object_set_value(crumb, "metaData", meta_val);
-        int metadata_index = 0;
-        while (strlen(breadcrumb.metadata[metadata_index].key) > 0) {
-          json_object_set_string(meta, breadcrumb.metadata[metadata_index].key,
-                                 breadcrumb.metadata[metadata_index].value);
-          metadata_index++;
-        }
-
-        current_index++;
-        if (current_index == BUGSNAG_CRUMBS_MAX) {
-          current_index = 0;
-        }
-      }
-    }
+    bsg_serialize_context(report, event);
+    bsg_serialize_handled_state(report, event);
+    bsg_serialize_app(report->app, event);
+    bsg_serialize_app_metadata(report->app, event);
+    bsg_serialize_device(report->device, event);
+    bsg_serialize_device_metadata(report->device, event);
+    bsg_serialize_custom_metadata(report->metadata, event);
+    bsg_serialize_user(report->user, event);
+    bsg_serialize_session(report, event);
+    bsg_serialize_exception(exception, stacktrace, report->exception);
+    bsg_serialize_breadcrumbs(report, crumbs);
 
     serialized_string = json_serialize_to_string(event_val);
     json_value_free(event_val);
