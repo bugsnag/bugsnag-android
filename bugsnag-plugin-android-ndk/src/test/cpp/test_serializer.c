@@ -92,3 +92,10 @@ bugsnag_metadata * loadCustomMetaDataTestCase(jint num) {
     bugsnag_metadata *data = malloc(sizeof(bugsnag_metadata));
     return data;
 }
+
+bugsnag_report * loadContextTestCase(jint num) {
+    bugsnag_report *data = malloc(sizeof(bugsnag_report));
+    strcpy(data->context, "CustomContext");
+    strcpy(data->app.active_screen, "ExampleActivity");
+    return data;
+}

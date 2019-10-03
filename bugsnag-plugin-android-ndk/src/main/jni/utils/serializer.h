@@ -17,7 +17,7 @@ bool bsg_serialize_report_to_file(bsg_environment *env) __asyncsafe;
 
 bugsnag_report *bsg_deserialize_report_from_file(char *filepath);
 
-void bsg_serialize_context(const bugsnag_report *report, JSON_Object *event);
+void bsg_serialize_context(bugsnag_report *report, JSON_Object *event);
 void bsg_serialize_handled_state(const bugsnag_report *report, JSON_Object *event);
 void bsg_serialize_app(const bsg_app_info app, JSON_Object *event);
 void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event);
