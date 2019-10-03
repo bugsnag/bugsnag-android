@@ -299,27 +299,31 @@ void bsg_serialize_exception(JSON_Object *exception, JSON_Array *stacktrace, con
   json_object_set_string(exception, "type", "c");
   for (int findex = 0; findex < exc.frame_count; findex++) {
     bsg_stackframe stackframe = exc.stacktrace[findex];
-    JSON_Value *frame_val = json_value_init_object();
-    JSON_Object *frame = json_value_get_object(frame_val);
-    json_object_set_number(frame, "frameAddress", stackframe.frame_address);
-    json_object_set_number(frame, "symbolAddress", stackframe.symbol_address);
-    json_object_set_number(frame, "loadAddress", stackframe.load_address);
-    json_object_set_number(frame, "lineNumber", stackframe.line_number);
-    if (strlen(stackframe.filename) > 0) {
-      json_object_set_string(frame, "file", stackframe.filename);
-    }
-    if (strlen(stackframe.method) == 0) {
-      char *frame_address = malloc(sizeof(char) * 32);
-      sprintf(frame_address, "0x%lx",
-              (unsigned long) stackframe.frame_address);
-      json_object_set_string(frame, "method", frame_address);
-      free(frame_address);
-    } else {
-      json_object_set_string(frame, "method", stackframe.method);
-    }
-
-    json_array_append_value(stacktrace, frame_val);
+    bsg_serialize_stackframe(stacktrace, &stackframe);
   }
+}
+
+void bsg_serialize_stackframe(JSON_Array *stacktrace, bsg_stackframe *stackframe) {
+  JSON_Value *frame_val = json_value_init_object();
+  JSON_Object *frame = json_value_get_object(frame_val);
+  json_object_set_number(frame, "frameAddress", (*stackframe).frame_address);
+  json_object_set_number(frame, "symbolAddress", (*stackframe).symbol_address);
+  json_object_set_number(frame, "loadAddress", (*stackframe).load_address);
+  json_object_set_number(frame, "lineNumber", (*stackframe).line_number);
+  if (strlen((*stackframe).filename) > 0) {
+    json_object_set_string(frame, "file", (*stackframe).filename);
+  }
+  if (strlen((*stackframe).method) == 0) {
+    char *frame_address = malloc(sizeof(char) * 32);
+    sprintf(frame_address, "0x%lx",
+            (unsigned long) (*stackframe).frame_address);
+    json_object_set_string(frame, "method", frame_address);
+    free(frame_address);
+  } else {
+    json_object_set_string(frame, "method", (*stackframe).method);
+  }
+
+  json_array_append_value(stacktrace, frame_val);
 }
 
 void bsg_serialize_breadcrumbs(const bugsnag_report *report, JSON_Array *crumbs) {
