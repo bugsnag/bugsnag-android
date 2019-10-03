@@ -70,3 +70,20 @@ bsg_device_info * loadDeviceTestCase(jint num) {
     device->cpu_abi_count = 1;
     return device;
 }
+
+bsg_device_info * loadDeviceMetaDataTestCase(jint num) {
+    bsg_device_info *device = malloc(sizeof(bsg_device_info));
+    strcpy(device->brand, "Samsung");
+    strcpy(device->locale, "En");
+    strcpy(device->location_status, "cellular");
+    strcpy(device->network_access, "full");
+    strcpy(device->screen_resolution, "1024x768");
+    device->emulator = false;
+    device->jailbroken = false;
+    device->dpi = 320;
+    device->screen_density = 3.5;
+
+    struct tm time = { 0, 0, 0, 1, 12, 128 };
+    device->time = mktime(&time);
+    return device;
+}
