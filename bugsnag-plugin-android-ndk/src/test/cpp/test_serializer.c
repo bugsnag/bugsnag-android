@@ -125,3 +125,13 @@ bsg_stackframe * loadStackframeTestCase(jint num) {
     strcpy(data->method, "bar()");
     return data;
 }
+
+bsg_exception * loadExceptionTestCase(jint num) {
+    bsg_exception *data = malloc(sizeof(bsg_exception));
+    strcpy(data->name, "signal");
+    strcpy(data->message, "whoops something went wrong");
+    strcpy(data->type, "c");
+    data->frame_count = 1;
+    // TODO stacktrace
+    return data;
+}

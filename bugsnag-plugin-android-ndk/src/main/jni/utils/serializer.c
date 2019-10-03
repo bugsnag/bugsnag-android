@@ -293,7 +293,7 @@ void bsg_serialize_session(bugsnag_report *report, JSON_Object *event) {
   }
 }
 
-void bsg_serialize_exception(JSON_Object *exception, JSON_Array *stacktrace, const bsg_exception exc) {
+void bsg_serialize_exception(bsg_exception exc, JSON_Object *exception, JSON_Array *stacktrace) {
   json_object_set_string(exception, "errorClass", exc.name);
   json_object_set_string(exception, "message", exc.message);
   json_object_set_string(exception, "type", "c");
@@ -383,7 +383,7 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     bsg_serialize_custom_metadata(report->metadata, event);
     bsg_serialize_user(report->user, event);
     bsg_serialize_session(report, event);
-    bsg_serialize_exception(exception, stacktrace, report->exception);
+    bsg_serialize_exception(report->exception, exception, stacktrace);
     bsg_serialize_breadcrumbs(report, crumbs);
 
     serialized_string = json_serialize_to_string(event_val);

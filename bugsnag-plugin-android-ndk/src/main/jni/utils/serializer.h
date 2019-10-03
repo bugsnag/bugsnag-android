@@ -27,14 +27,10 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object 
 void bsg_serialize_user(const bsg_user user, JSON_Object *event);
 void bsg_serialize_session(bugsnag_report *report, JSON_Object *event);
 void bsg_serialize_stackframe(bsg_stackframe *stackframe, JSON_Array *stacktrace);
-void bsg_serialize_exception(JSON_Object *exception, JSON_Array *stacktrace, const bsg_exception exc);
+void bsg_serialize_exception(bsg_exception exc, JSON_Object *exception, JSON_Array *stacktrace);
 void bsg_serialize_breadcrumbs(const bugsnag_report *report, JSON_Array *crumbs);
 char *bsg_serialize_report_to_json_string(bugsnag_report *report);
-
-
-
 
 #ifdef __cplusplus
 }
 #endif
-

@@ -23,3 +23,4 @@ bugsnag_report * loadHandledStateTestCase(jint num);
 bugsnag_report * loadSessionTestCase(jint num);
 bugsnag_report * loadBreadcrumbsTestCase(jint num);
 bsg_stackframe * loadStackframeTestCase(jint num);
+bsg_exception * loadExceptionTestCase(jint num);
