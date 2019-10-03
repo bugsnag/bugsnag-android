@@ -1,8 +1,8 @@
 package com.bugsnag.android.ndk;
 
-import org.junit.Test;
-
 import static com.bugsnag.android.ndk.VerifyUtilsKt.verifyNativeRun;
+
+import org.junit.Test;
 
 public class NativeCXXTest {
 
