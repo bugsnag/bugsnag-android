@@ -99,3 +99,8 @@ bugsnag_report * loadContextTestCase(jint num) {
     strcpy(data->app.active_screen, "ExampleActivity");
     return data;
 }
+
+bugsnag_report * loadHandledStateTestCase(jint num) {
+    bugsnag_report *data = malloc(sizeof(bugsnag_report));
+    return data;
+}

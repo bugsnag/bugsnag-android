@@ -168,7 +168,7 @@ const char *bsg_severity_string(bsg_severity_t type) {
   }
 }
 
-void bsg_serialize_context(bugsnag_report *report, JSON_Object *event) {
+void bsg_serialize_context(const bugsnag_report *report, JSON_Object *event) {
   if (strlen(report->context) > 0) {
     json_object_set_string(event, "context", report->context);
   } else {

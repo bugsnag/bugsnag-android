@@ -19,3 +19,4 @@ bsg_device_info * loadDeviceTestCase(jint num);
 bsg_device_info * loadDeviceMetaDataTestCase(jint num);
 bugsnag_metadata * loadCustomMetaDataTestCase(jint num);
 bugsnag_report * loadContextTestCase(jint num);
+bugsnag_report * loadHandledStateTestCase(jint num);
