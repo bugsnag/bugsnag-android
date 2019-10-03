@@ -50,3 +50,27 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_UserSerializationTest_run(
     RUN_TEST1(test_user_serialization, test_case);
     GREATEST_MAIN_END();
 }
+
+TEST test_app_serialization(test_case *test_case) {
+    JSON_Value *event_val = json_value_init_object();
+    JSON_Object *event = json_value_get_object(event_val);
+    bsg_app_info *app = test_case->data_ptr;
+    bsg_serialize_app(*app, event);
+    free(app);
+    return validate_serialized_json(test_case, event_val);
+}
+
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppSerializationTest_run(
+        JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
+    int argc = 0;
+    char *argv[] = {};
+
+    test_case *test_case = malloc(sizeof(test_case));
+    test_case->data_ptr = loadAppTestCase(num);
+
+    char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
+    test_case->expected_json = str;
+    GREATEST_MAIN_BEGIN();
+    RUN_TEST1(test_app_serialization, test_case);
+    GREATEST_MAIN_END();
+}

@@ -28,3 +28,18 @@ bsg_user * loadUserTestCase(jint num) {
     }
     return user;
 }
+
+bsg_app_info * loadAppTestCase(jint num) {
+    bsg_app_info *app = malloc(sizeof(bsg_app_info));
+    strcpy(app->version, "22");
+    strcpy(app->id, "com.bugsnag.example");
+    strcpy(app->type, "android");
+    strcpy(app->release_stage, "prod");
+    app->version_code = 55;
+    strcpy(app->build_uuid, "1234-uuid");
+    strcpy(app->binaryArch, "x86");
+    app->duration = 6502;
+    app->duration_in_foreground = 6502;
+    app->in_foreground = true;
+    return app;
+}
