@@ -1,3 +1,4 @@
+#include <utils/string.h>
 #include "test_serializer.h"
 
 enum greatest_test_res validate_serialized_json(const test_case *test_case,
@@ -52,4 +53,20 @@ bsg_app_info * loadAppMetaDataTestCase(jint num) {
     strcpy(app->name, "PhotoSnap");
     app->low_memory = true;
     return app;
+}
+
+bsg_device_info * loadDeviceTestCase(jint num) {
+    bsg_device_info *device = malloc(sizeof(bsg_device_info));
+    strcpy(device->id, "f5gh7");
+    strcpy(device->os_version, "8.1");
+    strcpy(device->manufacturer, "Samsung");
+    strcpy(device->model, "S7");
+    strcpy(device->orientation, "portrait");
+    strcpy(device->os_build, "BullDog 5.2");
+    device->total_memory = 512340922;
+    device->api_level = 29;
+
+    bsg_strncpy_safe(device->cpu_abi[0].value, "x86", sizeof(device->cpu_abi[0].value));
+    device->cpu_abi_count = 1;
+    return device;
 }
