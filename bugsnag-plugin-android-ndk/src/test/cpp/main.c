@@ -141,3 +141,26 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetaDataSerializationTe
     RUN_TEST1(test_device_meta_data_serialization, test_case);
     GREATEST_MAIN_END();
 }
+
+TEST test_custom_meta_data_serialization(test_case *test_case) {
+    JSON_Value *event_val = json_value_init_object();
+    JSON_Object *event = json_value_get_object(event_val);
+    bugsnag_metadata *meta_data = test_case->data_ptr;
+    bsg_serialize_custom_metadata(*meta_data, event);
+    free(meta_data);
+    return validate_serialized_json(test_case, event_val);
+}
+
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetaDataSerializationTest_run(
+        JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
+    int argc = 0;
+    char *argv[] = {};
+    test_case *test_case = malloc(sizeof(test_case));
+    test_case->data_ptr = loadCustomMetaDataTestCase(num);
+
+    char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
+    test_case->expected_json = str;
+    GREATEST_MAIN_BEGIN();
+    RUN_TEST1(test_custom_meta_data_serialization, test_case);
+    GREATEST_MAIN_END();
+}

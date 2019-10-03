@@ -17,3 +17,4 @@ bsg_app_info * loadAppTestCase(jint num);
 bsg_app_info * loadAppMetaDataTestCase(jint num);
 bsg_device_info * loadDeviceTestCase(jint num);
 bsg_device_info * loadDeviceMetaDataTestCase(jint num);
+bugsnag_metadata * loadCustomMetaDataTestCase(jint num);

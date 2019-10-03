@@ -87,3 +87,8 @@ bsg_device_info * loadDeviceMetaDataTestCase(jint num) {
     device->time = mktime(&time);
     return device;
 }
+
+bugsnag_metadata * loadCustomMetaDataTestCase(jint num) {
+    bugsnag_metadata *data = malloc(sizeof(bugsnag_metadata));
+    return data;
+}
