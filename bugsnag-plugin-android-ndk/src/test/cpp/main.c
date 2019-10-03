@@ -256,3 +256,26 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_BreadcrumbsSerializationTest_
     RUN_TEST1(test_breadcrumbs_serialization, test_case);
     GREATEST_MAIN_END();
 }
+
+TEST test_stackframe_serialization(test_case *test_case) {
+    JSON_Value *event_val = json_value_init_array();
+    JSON_Array *event = json_value_get_array(event_val);
+    bsg_stackframe *frame = test_case->data_ptr;
+    bsg_serialize_stackframe(frame, event);
+    free(frame);
+    return validate_serialized_json(test_case, event_val);
+}
+
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_StackframeSerializationTest_run(
+        JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
+    int argc = 0;
+    char *argv[] = {};
+    test_case *test_case = malloc(sizeof(test_case));
+    test_case->data_ptr = loadStackframeTestCase(num);
+
+    char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
+    test_case->expected_json = str;
+    GREATEST_MAIN_BEGIN();
+    RUN_TEST1(test_stackframe_serialization, test_case);
+    GREATEST_MAIN_END();
+}

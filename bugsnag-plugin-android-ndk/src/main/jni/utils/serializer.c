@@ -299,11 +299,11 @@ void bsg_serialize_exception(JSON_Object *exception, JSON_Array *stacktrace, con
   json_object_set_string(exception, "type", "c");
   for (int findex = 0; findex < exc.frame_count; findex++) {
     bsg_stackframe stackframe = exc.stacktrace[findex];
-    bsg_serialize_stackframe(stacktrace, &stackframe);
+    bsg_serialize_stackframe(&stackframe, stacktrace);
   }
 }
 
-void bsg_serialize_stackframe(JSON_Array *stacktrace, bsg_stackframe *stackframe) {
+void bsg_serialize_stackframe(bsg_stackframe *stackframe, JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
   json_object_set_number(frame, "frameAddress", (*stackframe).frame_address);

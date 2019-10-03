@@ -114,3 +114,14 @@ bugsnag_report * loadBreadcrumbsTestCase(jint num) {
     bugsnag_report *data = malloc(sizeof(bugsnag_report));
     return data;
 }
+
+bsg_stackframe * loadStackframeTestCase(jint num) {
+    bsg_stackframe *data = malloc(sizeof(bsg_stackframe));
+    data->frame_address = 0x20000000;
+    data->symbol_address = 0x16000000;
+    data->load_address = 0x12000000;
+    data->line_number= 52;
+    strcpy(data->filename, "foo.c");
+    strcpy(data->method, "bar()");
+    return data;
+}
