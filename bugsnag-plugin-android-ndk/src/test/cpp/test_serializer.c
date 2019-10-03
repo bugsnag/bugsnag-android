@@ -43,3 +43,13 @@ bsg_app_info * loadAppTestCase(jint num) {
     app->in_foreground = true;
     return app;
 }
+
+bsg_app_info * loadAppMetaDataTestCase(jint num) {
+    bsg_app_info *app = malloc(sizeof(bsg_app_info));
+    strcpy(app->package_name, "com.bugsnag.example");
+    strcpy(app->version_name, "5.0");
+    strcpy(app->active_screen, "MainActivity");
+    strcpy(app->name, "PhotoSnap");
+    app->low_memory = true;
+    return app;
+}

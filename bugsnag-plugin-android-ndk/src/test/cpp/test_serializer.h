@@ -14,3 +14,4 @@ enum greatest_test_res validate_serialized_json(const test_case *test_case,
                                                 JSON_Value *event_val);
 bsg_user * loadUserTestCase(jint num);
 bsg_app_info * loadAppTestCase(jint num);
+bsg_app_info * loadAppMetaDataTestCase(jint num);
