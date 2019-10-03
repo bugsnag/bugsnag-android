@@ -104,3 +104,8 @@ bugsnag_report * loadHandledStateTestCase(jint num) {
     bugsnag_report *data = malloc(sizeof(bugsnag_report));
     return data;
 }
+
+bugsnag_report * loadSessionTestCase(jint num) {
+    bugsnag_report *data = malloc(sizeof(bugsnag_report));
+    return data;
+}
