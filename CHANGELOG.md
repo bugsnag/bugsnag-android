@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Allow overriding the versionCode via Configuration
+  [#610](https://github.com/bugsnag/bugsnag-android/pull/610)
+
 ## 4.20.0 (2019-09-25)
 
 * Record StorageManager cache behaviour in internal error reports
