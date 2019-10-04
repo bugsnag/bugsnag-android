@@ -21,7 +21,7 @@ Scenario: Sending internal error reports on API <26
     And the event "device.osName" equals "android"
     And the event "metaData.BugsnagDiagnostics.filename" is not null
     And the event "metaData.BugsnagDiagnostics.notifierName" equals "Android Bugsnag Notifier"
-    And the event "metaData.BugsnagDiagnostics.apiKey" equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
+    And the event "metaData.BugsnagDiagnostics.apiKey" equals "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
     And the event "metaData.BugsnagDiagnostics.packageName" equals "com.bugsnag.android.mazerunner"
     And the event "metaData.BugsnagDiagnostics.notifierVersion" is not null
     And the event "metaData.BugsnagDiagnostics.fileLength" equals 4
@@ -43,7 +43,7 @@ Scenario: Sending internal error reports on API >=26
     And the event "device.osName" equals "android"
     And the event "metaData.BugsnagDiagnostics.filename" is not null
     And the event "metaData.BugsnagDiagnostics.notifierName" equals "Android Bugsnag Notifier"
-    And the event "metaData.BugsnagDiagnostics.apiKey" equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
+    And the event "metaData.BugsnagDiagnostics.apiKey" equals "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
     And the event "metaData.BugsnagDiagnostics.packageName" equals "com.bugsnag.android.mazerunner"
     And the event "metaData.BugsnagDiagnostics.notifierVersion" is not null
     And the event "metaData.BugsnagDiagnostics.fileLength" equals 4
@@ -66,7 +66,7 @@ Scenario: Sending internal error reports with cache tombstone + groups enabled
     And the event "device.osName" equals "android"
     And the event "metaData.BugsnagDiagnostics.filename" is not null
     And the event "metaData.BugsnagDiagnostics.notifierName" equals "Android Bugsnag Notifier"
-    And the event "metaData.BugsnagDiagnostics.apiKey" equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
+    And the event "metaData.BugsnagDiagnostics.apiKey" equals "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
     And the event "metaData.BugsnagDiagnostics.packageName" equals "com.bugsnag.android.mazerunner"
     And the event "metaData.BugsnagDiagnostics.notifierVersion" is not null
     And the event "metaData.BugsnagDiagnostics.fileLength" equals 4

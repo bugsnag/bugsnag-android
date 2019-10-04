@@ -83,8 +83,18 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             out.write(content);
         } catch (Exception exc) {
+            File errorFile = new File(filename);
+
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, new File(filename), "NDK Crash report copy");
+                delegate.onErrorIOFailure(exc, errorFile, "NDK Crash report copy");
+            }
+
+            try {
+                if (!errorFile.delete()) {
+                    errorFile.deleteOnExit();
+                }
+            } catch (Exception ex) {
+                Logger.warn("Failed to delete partially written file", ex);
             }
         } finally {
             try {
@@ -118,8 +128,18 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (Exception exc) {
+            File errorFile = new File(filename);
+
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, new File(filename), "Crash report serialization");
+                delegate.onErrorIOFailure(exc, errorFile, "Crash report serialization");
+            }
+
+            try {
+                if (!errorFile.delete()) {
+                    errorFile.deleteOnExit();
+                }
+            } catch (Exception ex) {
+                Logger.warn("Failed to delete partially written file", ex);
             }
         } finally {
             IOUtils.closeQuietly(stream);
