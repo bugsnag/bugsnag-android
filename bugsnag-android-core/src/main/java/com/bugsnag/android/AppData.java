@@ -66,7 +66,7 @@ class AppData {
         map.put("type", calculateNotifierType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
-        map.put("versionCode", calculateVersionCode());
+        map.put("versionCode", config.getVersionCode().intValue());
         map.put("codeBundleId", config.getCodeBundleId());
         return map;
     }
@@ -128,20 +128,6 @@ class AppData {
             return notifierType;
         } else {
             return "android";
-        }
-    }
-
-    /**
-     * The version code of the running Android app, from android:versionCode
-     * in AndroidManifest.xml
-     */
-    @Nullable
-    @SuppressWarnings("deprecation")
-    private Integer calculateVersionCode() {
-        if (packageInfo != null) {
-            return packageInfo.versionCode;
-        } else {
-            return null;
         }
     }
 

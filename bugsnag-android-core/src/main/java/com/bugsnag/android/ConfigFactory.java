@@ -11,6 +11,7 @@ class ConfigFactory {
 
     private static final String BUGSNAG_NAMESPACE = "com.bugsnag.android";
     private static final String MF_APP_VERSION = BUGSNAG_NAMESPACE + ".APP_VERSION";
+    private static final String MF_VERSION_CODE = BUGSNAG_NAMESPACE + ".VERSION_CODE";
     private static final String MF_ENDPOINT = BUGSNAG_NAMESPACE + ".ENDPOINT";
     private static final String MF_SESSIONS_ENDPOINT = BUGSNAG_NAMESPACE + ".SESSIONS_ENDPOINT";
     private static final String MF_RELEASE_STAGE = BUGSNAG_NAMESPACE + ".RELEASE_STAGE";
@@ -92,6 +93,9 @@ class ConfigFactory {
         config.setAppVersion(data.getString(MF_APP_VERSION));
         config.setReleaseStage(data.getString(MF_RELEASE_STAGE));
 
+        if (data.containsKey(MF_VERSION_CODE)) {
+            config.setVersionCode(data.getInt(MF_VERSION_CODE));
+        }
         if (data.containsKey(MF_ENDPOINT)) {
             String endpoint = data.getString(MF_ENDPOINT);
             String sessionEndpoint = data.getString(MF_SESSIONS_ENDPOINT);

@@ -238,4 +238,12 @@ public class ConfigurationTest {
     public void testSetNullDelivery() {
         config.setDelivery(null);
     }
+
+    @Test
+    public void testVersionCode() {
+        Configuration configuration = new Configuration("api-key");
+        assertNull(configuration.getVersionCode()); // populated in client ctor if null
+        configuration.setVersionCode("577");
+        assertEquals("577", configuration.getVersionCode());
+    }
 }

@@ -32,6 +32,7 @@ public class Configuration extends Observable implements Observer {
     private final String apiKey;
     private String buildUuid;
     private String appVersion;
+    private Integer versionCode;
     private String context;
     private volatile String endpoint = "https://notify.bugsnag.com";
     private volatile String sessionEndpoint = "https://sessions.bugsnag.com";
@@ -127,6 +128,26 @@ public class Configuration extends Observable implements Observer {
         setChanged();
         notifyObservers(new NativeInterface.Message(
                     NativeInterface.MessageType.UPDATE_APP_VERSION, appVersion));
+    }
+
+    /**
+     * Gets the version code sent to Bugsnag.
+     *
+     * @return Version Code
+     */
+    @NonNull
+    public Integer getVersionCode() {
+        return versionCode;
+    }
+
+    /**
+     * Set the version code sent to Bugsnag. By default we'll pull this
+     * from your AndroidManifest.xml
+     *
+     * @param versionCode the version code to send
+     */
+    public void setVersionCode(@NonNull Integer versionCode) {
+        this.versionCode = versionCode;
     }
 
     /**
