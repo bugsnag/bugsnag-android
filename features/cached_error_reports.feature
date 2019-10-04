@@ -73,22 +73,8 @@ Scenario: Sending internal error reports with cache tombstone + groups enabled
     And the event "metaData.BugsnagDiagnostics.cacheGroup" is true
     And the event "metaData.BugsnagDiagnostics.cacheTombstone" is true
 
-#Scenario: If a file in the cache directory is deleted before a request completes, zero further requests should be made
-#    When I run "CrashHandlerScenario"
-#    Then I should receive 5 requests
-#
-#Scenario: If an exception is thrown when writing a custom Streamable to disk, it should send an internal error report if the type is not FileNotFoundException
-#    When I run "CrashHandlerScenario"
-#    Then I should receive 5 requests
-#
-#Scenario: If an exception is thrown when writing a custom Streamable to disk, it should send zero requests if the type is FileNotFoundException
-#    When I run "CrashHandlerScenario"
-#    Then I should receive 5 requests
-#
-#Scenario: If an exception is thrown when writing a custom Streamable to disk, the file should be deleted immediately
-#    When I run "CrashHandlerScenario"
-#    Then I should receive 5 requests
-#
-#Scenario: If an exception is thrown when writing an NDK report to disk, the file should be deleted immediately
-#    When I run "CrashHandlerScenario"
-#    Then I should receive 5 requests
+Scenario: If a file in the cache directory is deleted before a request completes, zero further requests should be made
+    When I run "DeletedReportScenario"
+    And I configure the app to run in the "non-crashy" state
+    And I relaunch the app
+    Then I should receive 0 requests
