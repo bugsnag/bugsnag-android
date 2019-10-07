@@ -66,7 +66,10 @@ class AppData {
         map.put("type", calculateNotifierType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
-        map.put("versionCode", config.getVersionCode().intValue());
+        Integer versionCode = config.getVersionCode();
+        if (versionCode != null) {
+            map.put("versionCode", versionCode.intValue());
+        }
         map.put("codeBundleId", config.getCodeBundleId());
         return map;
     }
