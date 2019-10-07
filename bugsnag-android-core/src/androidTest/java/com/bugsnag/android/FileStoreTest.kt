@@ -17,7 +17,7 @@ class FileStoreTest {
     @Test
     fun sendsInternalErrorReport() {
         val delegate = CustomDelegate()
-        val dir = File(appContext.dataDir, "custom-store")
+        val dir = File(appContext.filesDir, "custom-store")
         dir.mkdir()
 
         val store = CustomFileStore(config, appContext, dir.absolutePath, 1, null, delegate)
@@ -33,7 +33,7 @@ class FileStoreTest {
     @Test
     fun sendsInternalErrorReportNdk() {
         val delegate = CustomDelegate()
-        val dir = File(appContext.dataDir, "custom-store")
+        val dir = File(appContext.filesDir, "custom-store")
         dir.mkdir()
 
         val store = CustomFileStore(config, appContext, "", 1, null, delegate)
