@@ -125,6 +125,7 @@ steps:
   - block: "Trigger full test suite"
 
   - label: ':android: Android 5 end-to-end tests'
+    skip: Temporarily disabled due to flakiness with BrowserStack tunneling
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
