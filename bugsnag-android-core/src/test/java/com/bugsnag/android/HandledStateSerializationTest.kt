@@ -12,7 +12,7 @@ internal class HandledStateSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateTestCases(
+        fun testCases() = generateSerializationTestCases(
             "handled_state",
             HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         )

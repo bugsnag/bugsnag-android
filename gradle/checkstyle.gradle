@@ -8,6 +8,6 @@ task("checkstyle", type: Checkstyle) {
     configFile rootProject.file("config/checkstyle/checkstyle.xml")
     source  "src/"
     include "**/*.java"
-    exclude "**/external/**/*.java"
+    exclude "**/external/**/*.java", "**/JsonReaderTest.java"
     classpath = files()
 }

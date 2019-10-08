@@ -1,16 +1,18 @@
 package com.bugsnag.android
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
+import java.io.BufferedReader
+import java.io.StringReader
 
 @RunWith(Parameterized::class)
-internal class ErrorSerializationTest {
+internal class ErrorDeserializationTest {
 
     companion object {
-
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<Error, String>> {
@@ -20,7 +22,7 @@ internal class ErrorSerializationTest {
             val cachedThread = CachedThread(config, 1, "my-thread", "android", true, arrayOf(frame))
             val threadState = ThreadState(arrayOf(cachedThread))
 
-            return generateSerializationTestCases(
+            return generateDeserializationTestCases(
                 "error",
                 Error(
                     config,
@@ -38,5 +40,13 @@ internal class ErrorSerializationTest {
     lateinit var testCase: Pair<Error, String>
 
     @Test
-    fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+    fun testJsonDeserialisation() {
+        val reader = JsonParser().parse(testCase.second)
+        val err = ErrorReader.readError(Configuration("api-key"), reader)
+
+        val expected = testCase.first
+        assertEquals(expected.context, err.context)
+        assertEquals(expected.groupingHash, err.groupingHash)
+        assertEquals(expected.severity, err.severity)
+    }
 }

@@ -21,7 +21,8 @@ internal fun verifyJsonMatches(map: Map<String, Any>, resourceName: String) {
 
 private fun validateJson(resourceName: String, json: String) {
     val whitespace = "\\s".toRegex()
-    val expectedJson = JsonParser().read(resourceName).replace(whitespace, "")
+    val rawJson = JsonParser().read(resourceName)
+    val expectedJson = rawJson.replace(whitespace, "")
     val generatedJson = json.replace(whitespace, "")
     Assert.assertEquals(expectedJson, generatedJson)
 }
@@ -31,11 +32,25 @@ private fun validateJson(resourceName: String, json: String) {
  * The expected JSON file for each element should match the naming format
  * '$filename_serialization_$index.json'
  */
-internal fun <T> generateTestCases(
+internal fun <T> generateSerializationTestCases(
     filename: String,
     vararg elements: T
 ): Collection<Pair<T, String>> {
     return elements.mapIndexed { index, obj ->
         Pair(obj, "${filename}_serialization_$index.json")
+    }
+}
+
+/**
+ * Generates parameterised test cases from a variable number of [JsonStream.Streamable] elements.
+ * The expected JSON file for each element should match the naming format
+ * '$filename_deserialization_$index.json'
+ */
+internal fun <T> generateDeserializationTestCases(
+    filename: String,
+    vararg elements: T
+): Collection<Pair<T, String>> {
+    return elements.mapIndexed { index, obj ->
+        Pair(obj, "${filename}_deserialization_$index.json")
     }
 }

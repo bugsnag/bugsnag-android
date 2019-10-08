@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -7,12 +9,12 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-internal class ExceptionsSerializationTest {
+internal class ExceptionsDeserializationTest {
 
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
+        fun testCases(): Collection<Pair<Exceptions, String>> {
             val config = Configuration("api-key")
             val frame = StackTraceElement("Foo.kt", "bar", "Foo.kt", 55)
             val exceptions0 = Exceptions(config, BugsnagException("Whoops", "error", arrayOf(frame)))
@@ -24,5 +26,13 @@ internal class ExceptionsSerializationTest {
     lateinit var testCase: Pair<Exceptions, String>
 
     @Test
-    fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+    fun testJsonDeserialisation() {
+        val reader = JsonParser().parse(testCase.second)
+        val exc = ErrorReader.readExceptions(Configuration("api-key"), reader)
+
+        val expected = testCase.first
+        assertEquals(expected.exceptionType, exc.exceptionType)
+        assertArrayEquals(expected.projectPackages, exc.projectPackages)
+        assertEquals(expected.exception.name, exc.exception.name)
+    }
 }

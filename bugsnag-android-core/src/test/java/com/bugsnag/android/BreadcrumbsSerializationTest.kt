@@ -16,7 +16,7 @@ internal class BreadcrumbsSerializationTest {
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
             val breadcrumbs = Breadcrumbs(Configuration("api-key"))
             breadcrumbs.add(Breadcrumb("hello world", BreadcrumbType.MANUAL, Date(0), mapOf()))
-            return generateTestCases("breadcrumbs", breadcrumbs)
+            return generateSerializationTestCases("breadcrumbs", breadcrumbs)
         }
     }
 

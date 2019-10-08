@@ -14,7 +14,7 @@ internal class ReportSerializationTest {
         @Parameters
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
             Notifier.getInstance().version = "9.9.9"
-            return generateTestCases(
+            return generateSerializationTestCases(
                 "report",
                 Report("api-key", null)
             )

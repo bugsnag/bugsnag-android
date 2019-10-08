@@ -13,7 +13,7 @@ internal class SessionSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateTestCases(
+        fun testCases() = generateSerializationTestCases(
             "session",
             Session("123", Date(0), User(), 1, 0)
         )

@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "name": "my-thread",
+    "type": "android",
+    "stacktrace": [
+      {
+        "file": "Foo.kt",
+        "method": "Foo.kt.bar",
+        "lineNumber": 55
+      }
+    ],
+    "errorReportingThread": true
+  }
+]

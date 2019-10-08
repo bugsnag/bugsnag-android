@@ -71,4 +71,8 @@ class ThreadState implements JsonStream.Streamable {
         }
         writer.endArray();
     }
+
+    CachedThread[] getCachedThreads() {
+        return cachedThreads;
+    }
 }

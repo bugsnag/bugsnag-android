@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -7,12 +8,12 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-internal class SeveritySerializationTest {
+internal class SeverityDeserializationTest {
 
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateSerializationTestCases(
+            fun testCases() = generateDeserializationTestCases(
             "severity",
             Severity.ERROR,
             Severity.WARNING,
@@ -21,8 +22,12 @@ internal class SeveritySerializationTest {
     }
 
     @Parameter
-    lateinit var testCase: Pair<User, String>
+    lateinit var testCase: Pair<Severity, String>
 
     @Test
-    fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+    fun testJsonDeserialisation() {
+        val reader = JsonParser().parse(testCase.second)
+        val severity = ErrorReader.readSeverity(reader)
+        Assert.assertEquals(testCase.first, severity)
+    }
 }

@@ -16,9 +16,3 @@ apply from: "../gradle/release.gradle"
 apply from: "../gradle/detekt.gradle"
 apply from: "../gradle/checkstyle.gradle"
 apply from: "../gradle/license-check.gradle"
-
-dependencies {
-    // required to can run JSON serialization tests on the JVM, which is much quicker than
-    // relying on the version supplied by the Android Framework
-    testImplementation "com.google.code.gson:gson:2.8.5"
-}

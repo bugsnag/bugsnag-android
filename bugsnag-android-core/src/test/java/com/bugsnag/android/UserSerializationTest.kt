@@ -12,7 +12,7 @@ internal class UserSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateTestCases(
+        fun testCases() = generateSerializationTestCases(
             "user",
             User("123", "bob@example.com", "bob smith")
         )

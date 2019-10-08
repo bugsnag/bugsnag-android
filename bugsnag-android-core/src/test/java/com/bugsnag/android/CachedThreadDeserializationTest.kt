@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -7,12 +8,12 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-internal class CachedThreadSerializationTest {
+internal class CachedThreadDeserializationTest {
 
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
+        fun testCases(): Collection<Pair<CachedThread, String>> {
             val config = Configuration("key")
 
             val stacktrace = arrayOf(
@@ -22,15 +23,7 @@ internal class CachedThreadSerializationTest {
             )
 
             val thread = CachedThread(config, 24, "main-one", "ando", true, stacktrace)
-
-            val stacktrace1 = arrayOf(
-                StackTraceElement("", "run_func", "librunner.so", 5038),
-                StackTraceElement("Runner", "runFunc", "Runner.java", 14),
-                StackTraceElement("App", "launch", "App.java", 70)
-            )
-
-            val thread1 = CachedThread(config, 24, "main-one", "ando", false, stacktrace1)
-            return generateSerializationTestCases("cached_thread", thread, thread1)
+            return generateDeserializationTestCases("cached_thread", thread)
         }
     }
 
@@ -38,5 +31,14 @@ internal class CachedThreadSerializationTest {
     lateinit var testCase: Pair<CachedThread, String>
 
     @Test
-    fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+    fun testJsonDeserialisation() {
+        val reader = JsonParser().parse(testCase.second)
+        val cachedThread = ErrorReader.readThread(reader)
+
+        val expected = testCase.first
+        assertEquals(expected.id, cachedThread.id)
+        assertEquals(expected.isErrorReportingThread, cachedThread.isErrorReportingThread)
+        assertEquals(expected.name, cachedThread.name)
+        assertEquals(expected.type, cachedThread.type)
+    }
 }
