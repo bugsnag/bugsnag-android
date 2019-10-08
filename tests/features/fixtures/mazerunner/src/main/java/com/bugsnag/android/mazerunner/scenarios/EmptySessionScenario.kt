@@ -4,27 +4,31 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
+import android.os.HandlerThread
 import android.os.storage.StorageManager
+import android.util.Log
 
-import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.*
 import com.bugsnag.android.Configuration
 import java.io.File
 
-internal class EmptyReportScenario(config: Configuration,
-                                   context: Context) : Scenario(config, context) {
+internal class EmptySessionScenario(config: Configuration,
+                                    context: Context) : Scenario(config, context) {
 
     init {
         config.setAutoCaptureSessions(false)
         config.beforeSend { true }
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            val errDir = File(context.cacheDir, "bugsnag-errors")
+            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            val dir = File(context.cacheDir, "bugsnag-sessions")
 
             if (eventMetaData != "non-crashy") {
                 disableAllDelivery(config)
             } else {
-                val files = errDir.listFiles()
+                val files = dir.listFiles()
+                Log.d("Bugsnag", "Empty sessions: ${files}")
                 files.forEach { it.writeText("") }
             }
         }
@@ -34,7 +38,14 @@ internal class EmptyReportScenario(config: Configuration,
         super.run()
 
         if (eventMetaData != "non-crashy") {
-            Bugsnag.notify(java.lang.RuntimeException("Whoops"))
+            Bugsnag.startSession()
+        }
+
+        val thread = HandlerThread("HandlerThread")
+        thread.start()
+
+        Handler(thread.looper).post {
+            flushAllSessions()
         }
     }
 }

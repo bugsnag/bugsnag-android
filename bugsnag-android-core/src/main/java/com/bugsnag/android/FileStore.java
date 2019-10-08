@@ -84,9 +84,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             out.write(content);
         } catch (Exception exc) {
+            File errorFile = new File(filename);
+
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, new File(filename), "NDK Crash report copy");
+                delegate.onErrorIOFailure(exc, errorFile, "NDK Crash report copy");
             }
+
+            IOUtils.deleteFile(errorFile);
         } finally {
             try {
                 if (out != null) {
@@ -121,9 +125,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         } catch (FileNotFoundException exc) {
             Logger.warn("Ignoring FileNotFoundException - unable to create file", exc);
         } catch (Exception exc) {
+            File errorFile = new File(filename);
+
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, new File(filename), "Crash report serialization");
+                delegate.onErrorIOFailure(exc, errorFile, "Crash report serialization");
             }
+
+            IOUtils.deleteFile(errorFile);
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();

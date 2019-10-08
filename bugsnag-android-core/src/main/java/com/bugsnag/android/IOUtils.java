@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -46,5 +47,15 @@ class IOUtils {
         }
 
         return (int) count;
+    }
+
+    static void deleteFile(File file) {
+        try {
+            if (!file.delete()) {
+                file.deleteOnExit();
+            }
+        } catch (Exception ex) {
+            Logger.warn("Failed to delete file", ex);
+        }
     }
 }
