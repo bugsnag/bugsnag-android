@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -121,6 +122,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             stream.value(streamable);
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
+        } catch (FileNotFoundException exc) {
+            Logger.warn("Ignoring FileNotFoundException - unable to create file", exc);
         } catch (Exception exc) {
             File errorFile = new File(filename);
 

@@ -5,6 +5,9 @@
 * Delete cached error reports if an Exception is thrown during disk IO, preventing delivery of empty/partial reports on the next app launch.
   [#609](https://github.com/bugsnag/bugsnag-android/pull/609)
 
+* Prevent internal error reporting of FileNotFoundException during serialization
+  [#605](https://github.com/bugsnag/bugsnag-android/pull/605)
+
 ## 4.20.0 (2019-09-25)
 
 * Record StorageManager cache behaviour in internal error reports
