@@ -89,13 +89,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 delegate.onErrorIOFailure(exc, errorFile, "NDK Crash report copy");
             }
 
-            try {
-                if (!errorFile.delete()) {
-                    errorFile.deleteOnExit();
-                }
-            } catch (Exception ex) {
-                Logger.warn("Failed to delete partially written file", ex);
-            }
+            IOUtils.deleteFile(errorFile);
         } finally {
             try {
                 if (out != null) {
@@ -134,13 +128,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 delegate.onErrorIOFailure(exc, errorFile, "Crash report serialization");
             }
 
-            try {
-                if (!errorFile.delete()) {
-                    errorFile.deleteOnExit();
-                }
-            } catch (Exception ex) {
-                Logger.warn("Failed to delete partially written file", ex);
-            }
+            IOUtils.deleteFile(errorFile);
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();
