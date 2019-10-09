@@ -138,10 +138,16 @@ class AppData {
     @Nullable
     @SuppressWarnings("deprecation")
     private Integer calculateVersionCode() {
-        if (packageInfo != null) {
-            return packageInfo.versionCode;
+        Integer versionCode = config.getVersionCode();
+
+        if (versionCode != null) {
+            return versionCode;
         } else {
-            return null;
+            if (packageInfo != null) {
+                return packageInfo.versionCode;
+            } else {
+                return null;
+            }
         }
     }
 

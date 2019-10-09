@@ -181,6 +181,7 @@ public class ClientTest {
         ConfigFactory.populateConfigFromManifest(protoConfig, data);
 
         assertEquals(config.getApiKey(), protoConfig.getApiKey());
+        assertEquals(config.getVersionCode(), protoConfig.getVersionCode());
         assertEquals(config.getBuildUUID(), protoConfig.getBuildUUID());
         assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
         assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
@@ -198,6 +199,7 @@ public class ClientTest {
     public void testFullManifestConfig() {
         String buildUuid = "123";
         String appVersion = "v1.0";
+        Integer versionCode = 27;
         String releaseStage = "debug";
         String endpoint = "http://example.com";
         String sessionEndpoint = "http://session-example.com";
@@ -205,6 +207,7 @@ public class ClientTest {
         Bundle data = new Bundle();
         data.putString("com.bugsnag.android.BUILD_UUID", buildUuid);
         data.putString("com.bugsnag.android.APP_VERSION", appVersion);
+        data.putInt("com.bugsnag.android.VERSION_CODE", versionCode);
         data.putString("com.bugsnag.android.RELEASE_STAGE", releaseStage);
         data.putString("com.bugsnag.android.SESSIONS_ENDPOINT", sessionEndpoint);
         data.putString("com.bugsnag.android.ENDPOINT", endpoint);
@@ -219,6 +222,7 @@ public class ClientTest {
         ConfigFactory.populateConfigFromManifest(protoConfig, data);
         assertEquals(buildUuid, protoConfig.getBuildUUID());
         assertEquals(appVersion, protoConfig.getAppVersion());
+        assertEquals(versionCode, protoConfig.getVersionCode());
         assertEquals(releaseStage, protoConfig.getReleaseStage());
         assertEquals(endpoint, protoConfig.getEndpoint());
         assertEquals(sessionEndpoint, protoConfig.getSessionEndpoint());
