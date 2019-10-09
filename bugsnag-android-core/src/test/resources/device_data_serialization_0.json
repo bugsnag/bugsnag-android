@@ -1,11 +1,14 @@
 {
   "cpuAbi": [
-    null,
-    null
+    "armeabi-v7a"
   ],
+  "osVersion": "7.1",
   "jailbroken": false,
+  "model": "s7",
   "runtimeVersions": {
-    "androidApiLevel": 0
+    "osBuild": "bulldog",
+    "androidApiLevel": 24
   },
-  "osName": "android"
+  "osName": "android",
+  "manufacturer": "samsung"
 }

@@ -154,7 +154,8 @@ public class Client extends Observable implements Observer {
 
         appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
         Resources resources = appContext.getResources();
-        deviceData = new DeviceData(connectivity, this.appContext, resources, sharedPrefs);
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        deviceData = new DeviceData(connectivity, appContext, resources, sharedPrefs, buildInfo);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(configuration);

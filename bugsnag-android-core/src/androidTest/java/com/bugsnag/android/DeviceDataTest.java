@@ -31,7 +31,8 @@ public class DeviceDataTest {
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
-        DeviceData deviceData = new DeviceData(connectivity, context, resources, prefs);
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        DeviceData deviceData = new DeviceData(connectivity, context, resources, prefs, buildInfo);
         this.deviceData = deviceData.getDeviceData();
     }
 

@@ -8,18 +8,16 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Environment;
-import android.os.StatFs;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -52,6 +50,7 @@ class DeviceData {
     private final DisplayMetrics displayMetrics;
     private final String id;
     private final boolean rooted;
+    private final DeviceBuildInfo buildInfo;
 
     @Nullable
     final Float screenDensity;
@@ -69,11 +68,12 @@ class DeviceData {
     final String[] cpuAbi;
 
     DeviceData(Connectivity connectivity, Context appContext, Resources resources,
-               SharedPreferences sharedPreferences) {
+               SharedPreferences sharedPreferences, DeviceBuildInfo buildInfo) {
         this.connectivity = connectivity;
         this.appContext = appContext;
         this.resources = resources;
         this.sharedPrefs = sharedPreferences;
+        this.buildInfo = buildInfo;
 
         if (resources != null) {
             displayMetrics = resources.getDisplayMetrics();
@@ -93,16 +93,16 @@ class DeviceData {
 
     Map<String, Object> getDeviceDataSummary() {
         Map<String, Object> map = new HashMap<>();
-        map.put("manufacturer", Build.MANUFACTURER);
-        map.put("model", Build.MODEL);
+        map.put("manufacturer", buildInfo.getManufacturer());
+        map.put("model", buildInfo.getModel());
         map.put("jailbroken", rooted);
         map.put("osName", "android");
-        map.put("osVersion", Build.VERSION.RELEASE);
+        map.put("osVersion", buildInfo.getOsVersion());
         map.put("cpuAbi", cpuAbi);
 
         Map<String, Object> versions = new HashMap<>();
-        versions.put("androidApiLevel", Build.VERSION.SDK_INT);
-        versions.put("osBuild", Build.DISPLAY);
+        versions.put("androidApiLevel", buildInfo.getApiLevel());
+        versions.put("osBuild", buildInfo.getOsBuild());
         map.put("runtimeVersions", versions);
         return map;
     }
@@ -124,7 +124,7 @@ class DeviceData {
         map.put("locationStatus", getLocationStatus());
         map.put("networkAccess", getNetworkAccess());
         map.put("time", getTime());
-        map.put("brand", Build.BRAND);
+        map.put("brand", buildInfo.getBrand());
         map.put("locale", locale);
         map.put("screenDensity", screenDensity);
         map.put("dpi", dpi);
@@ -141,7 +141,7 @@ class DeviceData {
      * Check if the current Android device is rooted
      */
     private boolean isRooted() {
-        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys")) {
+        if (buildInfo.getTags().contains("test-keys")) {
             return true;
         }
 
@@ -163,10 +163,7 @@ class DeviceData {
      * @return true if the current device is an emulator
      */
     private boolean isEmulator() {
-        String fingerprint = Build.FINGERPRINT;
-        if (fingerprint == null) {
-            return false;
-        }
+        String fingerprint = buildInfo.getFingerprint();
         return fingerprint.startsWith("unknown")
             || fingerprint.contains("generic")
             || fingerprint.contains("vbox"); // genymotion
@@ -249,10 +246,7 @@ class DeviceData {
      */
     @NonNull
     private String[] getCpuAbi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return SupportedAbiWrapper.getSupportedAbis();
-        }
-        return Abi2Wrapper.getAbi1andAbi2();
+        return buildInfo.getCpuAbis();
     }
 
     /**
@@ -370,26 +364,5 @@ class DeviceData {
     @NonNull
     private String getTime() {
         return DateUtils.toIso8601(new Date());
-    }
-
-    /**
-     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
-     */
-    static class SupportedAbiWrapper {
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-        static String[] getSupportedAbis() {
-            return Build.SUPPORTED_ABIS;
-        }
-    }
-
-    /**
-     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
-     */
-    static class Abi2Wrapper {
-        @NonNull
-        @SuppressWarnings("deprecation") // new API already used elsewhere
-        static String[] getAbi1andAbi2() {
-            return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
-        }
     }
 }

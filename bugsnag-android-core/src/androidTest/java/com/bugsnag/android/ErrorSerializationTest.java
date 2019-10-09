@@ -275,7 +275,8 @@ public class ErrorSerializationTest {
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
-        DeviceData data = new DeviceData(connectivity, context, resources, prefs);
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        DeviceData data = new DeviceData(connectivity, context, resources, prefs, buildInfo);
 
         Map<String, Object> deviceData = data.getDeviceData();
         error.setDeviceData(deviceData);
