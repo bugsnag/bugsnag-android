@@ -11,7 +11,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
@@ -124,7 +123,6 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
-    @SuppressWarnings("deprecation") // ignore packageInfo.versionCode deprecation on API 28
     public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
@@ -200,18 +198,6 @@ public class Client extends Observable implements Observer {
             }
             if (buildUuid != null) {
                 config.setBuildUUID(buildUuid);
-            }
-        }
-
-        //noinspection ConstantConditions
-        if (config.getVersionCode() == null) {
-            try {
-                PackageManager packageManager = appContext.getPackageManager();
-                String packageName = appContext.getPackageName();
-                PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-                config.setVersionCode(packageInfo.versionCode);
-            } catch (PackageManager.NameNotFoundException exception) {
-                Logger.warn("Could not retrieve package/application information");
             }
         }
 

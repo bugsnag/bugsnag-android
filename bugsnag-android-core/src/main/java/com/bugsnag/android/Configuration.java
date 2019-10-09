@@ -135,7 +135,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @return Version Code
      */
-    @NonNull
+    @Nullable
     public Integer getVersionCode() {
         return versionCode;
     }
@@ -146,7 +146,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param versionCode the version code to send
      */
-    public void setVersionCode(@NonNull Integer versionCode) {
+    public void setVersionCode(@Nullable Integer versionCode) {
         this.versionCode = versionCode;
     }
 
