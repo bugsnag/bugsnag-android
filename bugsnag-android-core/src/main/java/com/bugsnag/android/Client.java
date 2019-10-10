@@ -215,9 +215,6 @@ public class Client extends Observable implements Observer {
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
 
-                @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
-                        long usableSpace = appContext.getCacheDir().getUsableSpace();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
                 metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
                 recordStorageCacheBehavior(metaData);
@@ -1018,8 +1015,15 @@ public class Client extends Observable implements Observer {
      * This is intended for internal use only, and reports will not be visible to end-users.
      */
     void reportInternalBugsnagError(@NonNull Error error) {
-        error.setAppData(appData.getAppDataSummary());
-        error.setDeviceData(deviceData.getDeviceDataSummary());
+        Map<String, Object> app = appData.getAppDataSummary();
+        app.put("duration", AppData.getDurationMs());
+        app.put("durationInForeground", appData.calculateDurationInForeground());
+        app.put("inForeground", sessionTracker.isInForeground());
+        error.setAppData(app);
+
+        Map<String, Object> device = deviceData.getDeviceDataSummary();
+        device.put("freeDisk", deviceData.calculateFreeDisk());
+        error.setDeviceData(device);
 
         MetaData metaData = error.getMetaData();
         Notifier notifier = Notifier.getInstance();
