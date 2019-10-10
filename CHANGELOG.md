@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Collect additional data in internal error reports
+  [#612](https://github.com/bugsnag/bugsnag-android/pull/612)
+
 * Allow overriding the versionCode via Configuration
   [#610](https://github.com/bugsnag/bugsnag-android/pull/610)
 
