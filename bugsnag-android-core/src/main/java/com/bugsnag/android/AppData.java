@@ -111,7 +111,7 @@ class AppData {
      *
      * @return the duration in ms
      */
-    private long calculateDurationInForeground() {
+    long calculateDurationInForeground() {
         long nowMs = System.currentTimeMillis();
         return sessionTracker.getDurationInForegroundMs(nowMs);
     }

@@ -256,7 +256,7 @@ class DeviceData {
      * Get the usable disk space on internal storage's data directory
      */
     @SuppressLint("UsableSpace")
-    private long calculateFreeDisk() {
+    long calculateFreeDisk() {
         // for this specific case we want the currently usable space, not
         // StorageManager#allocatableBytes() as the UsableSpace lint inspection suggests
         File dataDirectory = Environment.getDataDirectory();
