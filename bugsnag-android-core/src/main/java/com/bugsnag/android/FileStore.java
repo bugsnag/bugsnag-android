@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -83,9 +84,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             out.write(content);
         } catch (Exception exc) {
+            File errorFile = new File(filename);
+
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, new File(filename), "NDK Crash report copy");
+                delegate.onErrorIOFailure(exc, errorFile, "NDK Crash report copy");
             }
+
+            IOUtils.deleteFile(errorFile);
         } finally {
             try {
                 if (out != null) {
@@ -117,10 +122,16 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             stream.value(streamable);
             Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
+        } catch (FileNotFoundException exc) {
+            Logger.warn("Ignoring FileNotFoundException - unable to create file", exc);
         } catch (Exception exc) {
+            File errorFile = new File(filename);
+
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, new File(filename), "Crash report serialization");
+                delegate.onErrorIOFailure(exc, errorFile, "Crash report serialization");
             }
+
+            IOUtils.deleteFile(errorFile);
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();
