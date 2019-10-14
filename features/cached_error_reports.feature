@@ -18,6 +18,10 @@ Scenario: Sending internal error reports on API <26
     And the event "session" is null
     And the event "breadcrumbs" is null
     And the event "app.type" equals "android"
+    And the event "app.duration" is greater than 0
+    And the event "app.durationInForeground" is not null
+    And the event "app.inForeground" is true
+    And the event "device.freeDisk" is greater than 0
     And the event "device.osName" equals "android"
     And the event "metaData.BugsnagDiagnostics.filename" is not null
     And the event "metaData.BugsnagDiagnostics.notifierName" equals "Android Bugsnag Notifier"
@@ -40,6 +44,10 @@ Scenario: Sending internal error reports on API >=26
     And the event "session" is null
     And the event "breadcrumbs" is null
     And the event "app.type" equals "android"
+    And the event "app.duration" is greater than 0
+    And the event "app.durationInForeground" is not null
+    And the event "app.inForeground" is true
+    And the event "device.freeDisk" is greater than 0
     And the event "device.osName" equals "android"
     And the event "metaData.BugsnagDiagnostics.filename" is not null
     And the event "metaData.BugsnagDiagnostics.notifierName" equals "Android Bugsnag Notifier"
@@ -63,6 +71,10 @@ Scenario: Sending internal error reports with cache tombstone + groups enabled
     And the event "session" is null
     And the event "breadcrumbs" is null
     And the event "app.type" equals "android"
+    And the event "app.duration" is greater than 0
+    And the event "app.durationInForeground" is not null
+    And the event "app.inForeground" is true
+    And the event "device.freeDisk" is greater than 0
     And the event "device.osName" equals "android"
     And the event "metaData.BugsnagDiagnostics.filename" is not null
     And the event "metaData.BugsnagDiagnostics.notifierName" equals "Android Bugsnag Notifier"

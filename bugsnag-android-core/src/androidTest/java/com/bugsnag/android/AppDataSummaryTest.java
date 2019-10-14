@@ -37,6 +37,7 @@ public class AppDataSummaryTest {
         Context context = ApplicationProvider.getApplicationContext();
         PackageManager packageManager = context.getPackageManager();
         Configuration config = new Configuration("api-key");
+        config.setVersionCode(1);
         AppData obj = new AppData(context, packageManager, config, sessionTracker);
         this.appData = obj.getAppDataSummary();
     }

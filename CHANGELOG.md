@@ -1,6 +1,14 @@
 # Changelog
 
-## TBD
+## 4.21.0 (2019-10-14)
+
+* Collect additional data in internal error reports
+  [#612](https://github.com/bugsnag/bugsnag-android/pull/612)
+
+* Allow overriding the versionCode via Configuration
+  [#610](https://github.com/bugsnag/bugsnag-android/pull/610)
+
+### Bug fixes
 
 * Delete cached error reports if an Exception is thrown during disk IO, preventing delivery of empty/partial reports on the next app launch.
   [#609](https://github.com/bugsnag/bugsnag-android/pull/609)
