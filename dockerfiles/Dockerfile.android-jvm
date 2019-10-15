@@ -37,8 +37,3 @@ RUN apt-get install -y cppcheck
 
 COPY examples/sdk-app-example/ examples/sdk-app-example/
 COPY config/ config/
-
-RUN sed --in-place="" --expression="s/'armeabi',//" bugsnag-plugin-android-anr/build.gradle \
-    bugsnag-plugin-android-ndk/build.gradle examples/sdk-app-example/build.gradle
-
-

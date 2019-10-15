@@ -98,6 +98,15 @@ option:
 ./gradlew assembleRelease -PABI_FILTERS=x86,arm64-v8a
 ```
 
+To build for ARMv5 (`armeabi`):
+
+```shell
+./gradlew assembleRelease -PABI_FILTERS=armeabi
+```
+
+Note that `armeabi` has been removed in NDK r17 and requires the installation
+of an older NDK version.
+
 ## Testing
 
 Full details of how to build and run tests can be found in [the testing guide](`TESTING.md`)
