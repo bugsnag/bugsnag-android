@@ -2,7 +2,7 @@
 
 ## 4.21.1 (2019-10-15)
 
-* Fix a packaging issue on Maven Central in v4.20.0
+* Fix a packaging issue on Maven Central in v4.21.0
 
 ## 4.21.0 (2019-10-14)
 
