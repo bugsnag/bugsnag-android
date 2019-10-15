@@ -1,13 +1,9 @@
 package com.bugsnag.android;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -15,7 +11,6 @@ import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 public class ConfigurationTest {
@@ -153,4 +148,11 @@ public class ConfigurationTest {
         config.setDelivery(null);
     }
 
+    @Test
+    public void testVersionCode() {
+        Configuration configuration = new Configuration("api-key");
+        assertEquals(0, (int) configuration.getVersionCode()); // populated in client ctor if null
+        configuration.setVersionCode(577);
+        assertEquals(577, (int) configuration.getVersionCode());
+    }
 }

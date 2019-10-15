@@ -43,14 +43,14 @@ public class SessionTrackingPayloadTest {
     @Before
     public void setUp() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        sessionStore = new SessionStore(context);
+        sessionStore = new SessionStore(context, null);
 
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
         session = generateSession();
         client = generateClient();
-        payload = generatePayloadFromSession(context, generateSession());
+        payload = generatePayloadFromSession(context, session);
         rootNode = streamableToJson(payload);
     }
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -11,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-@ThreadSafe
 class IOUtils {
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
     private static final int EOF = -1;
@@ -47,5 +47,15 @@ class IOUtils {
         }
 
         return (int) count;
+    }
+
+    static void deleteFile(File file) {
+        try {
+            if (!file.delete()) {
+                file.deleteOnExit();
+            }
+        } catch (Exception ex) {
+            Logger.warn("Failed to delete file", ex);
+        }
     }
 }

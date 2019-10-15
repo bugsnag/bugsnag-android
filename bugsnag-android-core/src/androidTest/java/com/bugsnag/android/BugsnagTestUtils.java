@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,22 +85,22 @@ final class BugsnagTestUtils {
     @NonNull
     static SessionStore generateSessionStore() {
         Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(applicationContext);
+        return new SessionStore(applicationContext, null);
     }
 
     public static Delivery generateDelivery() {
         return new Delivery() {
-            @NotNull
+            @NonNull
             @Override
-            public DeliveryStatus deliver(@NotNull Report report,
-                                          @NotNull DeliveryParams deliveryParams) {
+            public DeliveryStatus deliver(@NonNull Report report,
+                                          @NonNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }
 
-            @NotNull
+            @NonNull
             @Override
-            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
-                                          @NotNull DeliveryParams deliveryParams) {
+            public DeliveryStatus deliver(@NonNull SessionTrackingPayload payload,
+                                          @NonNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }
         };

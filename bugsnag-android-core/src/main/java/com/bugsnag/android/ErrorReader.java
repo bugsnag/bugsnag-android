@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.util.JsonReader;
 import androidx.annotation.NonNull;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -44,7 +45,7 @@ class ErrorReader {
             List<String> projectPackages = Collections.emptyList();
             boolean unhandled = false;
 
-            reader = new JsonReader(new FileReader(errorFile));
+            reader = new JsonReader(new BufferedReader(new FileReader(errorFile)));
             reader.beginObject();
             while (reader.hasNext()) {
                 switch (reader.nextName()) {
@@ -262,7 +263,7 @@ class ErrorReader {
                         map.put(key, reader.nextString());
                         break;
                     case NUMBER:
-                        map.put(key, reader.nextLong());
+                        map.put(key, deserializeNumber(reader));
                         break;
                     default:
                         reader.skipValue();
@@ -487,19 +488,24 @@ class ErrorReader {
             case BOOLEAN:
                 return (T)(Boolean) reader.nextBoolean();
             case NUMBER:
-                try {
-                    return (T)(Integer) reader.nextInt();
-                } catch (NumberFormatException ex) {
-                    try {
-                        return (T)(Long) reader.nextLong();
-                    } catch (NumberFormatException ex2) {
-                        return (T)(Double) reader.nextDouble();
-                    }
-                }
+                return deserializeNumber(reader);
             case BEGIN_ARRAY:
                 return (T) jsonArrayToList(reader);
             default:
                 return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T deserializeNumber(JsonReader reader) throws IOException {
+        try {
+            return (T)(Integer) reader.nextInt();
+        } catch (NumberFormatException ex) {
+            try {
+                return (T)(Long) reader.nextLong();
+            } catch (NumberFormatException ex2) {
+                return (T)(Double) reader.nextDouble();
+            }
         }
     }
 }

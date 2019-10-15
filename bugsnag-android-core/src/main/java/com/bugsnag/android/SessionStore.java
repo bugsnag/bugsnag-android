@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.util.Comparator;
@@ -12,7 +13,6 @@ import java.util.UUID;
  * Store and flush Sessions which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-@ThreadSafe
 class SessionStore extends FileStore<Session> {
 
     static final Comparator<File> SESSION_COMPARATOR = new Comparator<File>() {
@@ -33,9 +33,8 @@ class SessionStore extends FileStore<Session> {
         }
     };
 
-    SessionStore(@NonNull Context appContext) {
-        super(appContext, "/bugsnag-sessions/",
-            128, SESSION_COMPARATOR);
+    SessionStore(@NonNull Context appContext, @Nullable Delegate delegate) {
+        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, delegate);
     }
 
     @NonNull

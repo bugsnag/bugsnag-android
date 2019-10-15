@@ -35,6 +35,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private final String apiKey;
     private String buildUuid;
     private String appVersion;
+    private Integer versionCode = 0;
     private String context;
 
     private final Set<String> ignoreClasses = new HashSet<>();
@@ -143,6 +144,26 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     public void setAppVersion(@NonNull String appVersion) {
         this.appVersion = appVersion;
+    }
+
+    /**
+     * Gets the version code sent to Bugsnag.
+     *
+     * @return Version Code
+     */
+    @Nullable
+    public Integer getVersionCode() {
+        return versionCode;
+    }
+
+    /**
+     * Set the version code sent to Bugsnag. By default we'll pull this
+     * from your AndroidManifest.xml
+     *
+     * @param versionCode the version code to send
+     */
+    public void setVersionCode(@Nullable Integer versionCode) {
+        this.versionCode = versionCode;
     }
 
     /**

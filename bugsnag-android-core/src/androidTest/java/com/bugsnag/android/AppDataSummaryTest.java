@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.convert;
+import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static org.junit.Assert.assertEquals;
@@ -37,8 +39,9 @@ public class AppDataSummaryTest {
     public void setUp() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
         PackageManager packageManager = context.getPackageManager();
-        ImmutableConfig config = generateImmutableConfig();
-        AppData obj = new AppData(context, packageManager, config, sessionTracker);
+        Configuration config = generateConfiguration();
+        config.setVersionCode(1);
+        AppData obj = new AppData(context, packageManager, convert(config), sessionTracker);
         this.appData = obj.getAppDataSummary();
     }
 

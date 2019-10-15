@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 /**
  * Used to inform the NDK library which type of data needs to be updated
  */
-@ThreadSafe
 public enum NotifyType {
     ALL(1),
     USER(2),

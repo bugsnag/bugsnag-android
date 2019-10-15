@@ -51,7 +51,7 @@ void generate_basic_report(bugsnag_report *report) {
 
 bugsnag_report_v1 *bsg_generate_report_v1(void) {
   bugsnag_report_v1 *report = calloc(1, sizeof(bugsnag_report_v1));
-  generate_basic_report(report);
+  generate_basic_report((bugsnag_report *) report);
   return report;
 }
 

@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
  * <code>false</code> from any callback to halt execution.
  * <p>"Before notify" callbacks do not run when a fatal C/C++ crash occurs.
  */
-@ThreadSafe
 public interface BeforeNotify {
     /**
      * Runs the "before notify" callback. If the callback returns

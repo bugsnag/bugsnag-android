@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-@ThreadSafe
 class DeviceData {
 
     private static final String[] ROOT_INDICATORS = new String[]{
@@ -235,25 +235,14 @@ class DeviceData {
     }
 
     /**
-     * Get the free disk space on the smallest disk
+     * Get the usable disk space on internal storage's data directory
      */
-    @Nullable
-    @SuppressWarnings("deprecation") // ignore blockSizeLong suggestions for now (requires API 18)
-    private Long calculateFreeDisk() {
-        try {
-            StatFs externalStat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-            long externalBytesAvailable =
-                (long) externalStat.getBlockSize() * (long) externalStat.getBlockCount();
-
-            StatFs internalStat = new StatFs(Environment.getDataDirectory().getPath());
-            long internalBytesAvailable =
-                (long) internalStat.getBlockSize() * (long) internalStat.getBlockCount();
-
-            return Math.min(internalBytesAvailable, externalBytesAvailable);
-        } catch (Exception exception) {
-            Logger.warn("Could not get freeDisk");
-        }
-        return null;
+    @SuppressLint("UsableSpace")
+    long calculateFreeDisk() {
+        // for this specific case we want the currently usable space, not
+        // StorageManager#allocatableBytes() as the UsableSpace lint inspection suggests
+        File dataDirectory = Environment.getDataDirectory();
+        return dataDirectory.getUsableSpace();
     }
 
     /**

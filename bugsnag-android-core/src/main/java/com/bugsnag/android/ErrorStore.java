@@ -19,23 +19,7 @@ import java.util.concurrent.Semaphore;
  * Store and flush Error reports which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-@ThreadSafe
 class ErrorStore extends FileStore<Error> {
-
-    interface Delegate {
-
-        /**
-         * Invoked when a cached error report cannot be read.
-         *
-         * @param exception the error encountered reading/delivering the file
-         * @param errorFile file which could not be read
-         */
-        void onErrorReadFailure(Exception exception, File errorFile);
-    }
-
-    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
-    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
-    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
 
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
@@ -67,7 +51,7 @@ class ErrorStore extends FileStore<Error> {
 
     ErrorStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
                @NonNull Context appContext, Delegate delegate) {
-        super(appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR);
+        super(appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR, delegate);
         this.config = config;
         this.clientState = clientState;
         this.delegate = delegate;
@@ -77,6 +61,10 @@ class ErrorStore extends FileStore<Error> {
         if (config.getLaunchCrashThresholdMs() != 0) {
             List<File> storedFiles = findStoredFiles();
             final List<File> crashReports = findLaunchCrashReports(storedFiles);
+
+            // cancel non-launch crash reports
+            storedFiles.removeAll(crashReports);
+            cancelQueuedFiles(storedFiles);
 
             if (!crashReports.isEmpty()) {
 
@@ -111,7 +99,6 @@ class ErrorStore extends FileStore<Error> {
                 }
                 Logger.info("Continuing with Bugsnag initialisation");
             }
-            cancelQueuedFiles(storedFiles); // cancel all previously found files
         }
 
         flushAsync(); // flush any remaining errors async that weren't delivered
@@ -202,7 +189,7 @@ class ErrorStore extends FileStore<Error> {
 
     private void handleErrorFlushFailure(Exception exc, File errorFile) {
         if (delegate != null) {
-            delegate.onErrorReadFailure(exc, errorFile);
+            delegate.onErrorIOFailure(exc, errorFile, "Crash Report Deserialization");
         }
         deleteStoredFiles(Collections.singleton(errorFile));
     }

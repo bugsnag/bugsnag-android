@@ -29,6 +29,7 @@ internal class ManifestConfigLoader {
 
         // app/project packages
         private const val APP_VERSION = "$BUGSNAG_NS.APP_VERSION"
+        private const val VERSION_CODE = "$BUGSNAG_NS.VERSION_CODE"
         private const val RELEASE_STAGE = "$BUGSNAG_NS.RELEASE_STAGE"
         private const val NOTIFY_RELEASE_STAGES = "$BUGSNAG_NS.NOTIFY_RELEASE_STAGES"
         private const val IGNORE_CLASSES = "$BUGSNAG_NS.IGNORE_CLASSES"
@@ -106,6 +107,10 @@ internal class ManifestConfigLoader {
         with(config) {
             releaseStage = data.getString(RELEASE_STAGE, config.releaseStage)
             appVersion = data.getString(APP_VERSION, config.appVersion)
+
+            if (data.containsKey(VERSION_CODE)) {
+                versionCode = data.getInt(VERSION_CODE)
+            }
             notifyReleaseStages = getStrArray(data, NOTIFY_RELEASE_STAGES, notifyReleaseStages)
             ignoreClasses = getStrArray(data, IGNORE_CLASSES, ignoreClasses)
             projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)

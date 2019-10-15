@@ -111,7 +111,7 @@ class AppData {
      *
      * @return the duration in ms
      */
-    private long calculateDurationInForeground() {
+    long calculateDurationInForeground() {
         long nowMs = System.currentTimeMillis();
         return sessionTracker.getDurationInForegroundMs(nowMs);
     }
@@ -135,14 +135,8 @@ class AppData {
      * The version code of the running Android app, from android:versionCode
      * in AndroidManifest.xml
      */
-    @Nullable
-    @SuppressWarnings("deprecation")
-    private Integer calculateVersionCode() {
-        if (packageInfo != null) {
-            return packageInfo.versionCode;
-        } else {
-            return null;
-        }
+    private int calculateVersionCode() {
+        return config.getVersionCode();
     }
 
     /**

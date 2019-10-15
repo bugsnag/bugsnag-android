@@ -42,6 +42,7 @@ class ManifestConfigLoaderTest {
 
             // app/project packages
             assertNull(appVersion)
+            assertEquals(0, versionCode)
             assertNull(releaseStage)
             assertEquals(emptySet<String>(), notifyReleaseStages)
             assertEquals(emptySet<String>(), ignoreClasses)
@@ -75,6 +76,7 @@ class ManifestConfigLoaderTest {
 
             // app/project packages
             putString("com.bugsnag.android.APP_VERSION", "5.23.7")
+            putInt("com.bugsnag.android.VERSION_CODE", 55)
             putString("com.bugsnag.android.RELEASE_STAGE", "beta")
             putString("com.bugsnag.android.NOTIFY_RELEASE_STAGES", "beta,production,staging")
             putString("com.bugsnag.android.IGNORE_CLASSES", "com.bugsnag.FooKt,org.example.String")
@@ -107,6 +109,7 @@ class ManifestConfigLoaderTest {
 
             // app/project packages
             assertEquals("5.23.7", appVersion)
+            assertEquals(55, versionCode)
             assertEquals("beta", releaseStage)
             assertEquals(setOf("beta", "production", "staging"), notifyReleaseStages)
             assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), ignoreClasses)

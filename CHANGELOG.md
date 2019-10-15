@@ -1,5 +1,50 @@
 # Changelog
 
+## 4.21.0 (2019-10-14)
+
+* Collect additional data in internal error reports
+  [#612](https://github.com/bugsnag/bugsnag-android/pull/612)
+
+* Allow overriding the versionCode via Configuration
+  [#610](https://github.com/bugsnag/bugsnag-android/pull/610)
+
+### Bug fixes
+
+* Delete cached error reports if an Exception is thrown during disk IO, preventing delivery of empty/partial reports on the next app launch.
+  [#609](https://github.com/bugsnag/bugsnag-android/pull/609)
+
+* Prevent internal error reporting of FileNotFoundException during serialization
+  [#605](https://github.com/bugsnag/bugsnag-android/pull/605)
+
+## 4.20.0 (2019-09-25)
+
+* Record StorageManager cache behaviour in internal error reports
+  [#588](https://github.com/bugsnag/bugsnag-android/pull/588)
+
+* Delete empty files left in cache directory, preventing an erroneous source of minimal error reports
+  [#591](https://github.com/bugsnag/bugsnag-android/pull/591)
+
+* Report internal errors when serialization fails
+  [#581](https://github.com/bugsnag/bugsnag-android/pull/581)
+
+* Buffer IO when reading from cached error files, improving SDK performance
+  [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
+
+* Prevent internal error reporting of FileNotFoundException during Delivery
+  [#594](https://github.com/bugsnag/bugsnag-android/pull/594)
+
+### Bug fixes
+
+* flushOnLaunch() does not cancel previous requests if they timeout, leading to potential duplicate reports
+  [#593](https://github.com/bugsnag/bugsnag-android/pull/593)
+
+* Alter value collected for device.freeDisk to collect usable space in internal storage,
+ rather than total space in internal/external storage
+  [#589](https://github.com/bugsnag/bugsnag-android/pull/589)
+
+* Buffer io when reading from cached error file
+  [#573](https://github.com/bugsnag/bugsnag-android/pull/573)
+
 ## 4.19.1 (2019-09-03)
 
 ### Bug fixes

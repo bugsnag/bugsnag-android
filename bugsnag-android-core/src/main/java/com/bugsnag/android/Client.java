@@ -5,13 +5,17 @@ import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
+import android.os.storage.StorageManager;
 import android.text.TextUtils;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
@@ -21,6 +25,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,6 +82,7 @@ public class Client extends Observable implements Observer {
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
     private UserRepository userRepository;
+    final StorageManager storageManager;
 
     /**
      * Initialize a Bugsnag client
@@ -106,6 +112,8 @@ public class Client extends Observable implements Observer {
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
+        sessionStore = new SessionStore(appContext, null);
+        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
             @Override
@@ -122,7 +130,6 @@ public class Client extends Observable implements Observer {
         clientState = configuration;
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
-        sessionStore = new SessionStore(appContext);
         sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore);
         eventReceiver = new EventReceiver(this);
 
@@ -151,24 +158,30 @@ public class Client extends Observable implements Observer {
         }
 
         // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(
-                immutableConfig, configuration, appContext, new ErrorStore.Delegate() {
-                    @Override
-                    public void onErrorReadFailure(Exception exc, File errorFile) {
-                        // send an internal error to bugsnag with no cache
-                        Thread thread = Thread.currentThread();
-                        Error err = new Error.Builder(immutableConfig, exc, null,
-                                thread, true, new MetaData()).build();
-                        err.setContext("Crash Report Deserialization");
+        FileStore.Delegate delegate = new ErrorStore.Delegate() {
+            @Override
+            public void onErrorIOFailure(Exception exc, File errorFile, String context) {
+                // send an internal error to bugsnag with no cache
+                Thread thread = Thread.currentThread();
+                Error err = new Error.Builder(immutableConfig, exc, null, thread,
+                        true, new MetaData()).build();
+                err.setContext(context);
 
-                        MetaData metaData = err.getMetaData();
-                        String fileName = errorFile.getName();
-                        long length = errorFile.length();
-                        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", fileName);
-                        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", length);
-                        Client.this.reportInternalBugsnagError(err);
-                    }
-                });
+                MetaData metaData = err.getMetaData();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
+
+                @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
+                        long usableSpace = appContext.getCacheDir().getUsableSpace();
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
+                recordStorageCacheBehavior(metaData);
+                Client.this.reportInternalBugsnagError(err);
+            }
+        };
+        errorStore = new ErrorStore(immutableConfig, clientState, appContext, delegate);
 
         // Install a default exception handler with this client
         if (immutableConfig.getAutoNotify()) {
@@ -215,14 +228,43 @@ public class Client extends Observable implements Observer {
         loadPlugins();
     }
 
+    void recordStorageCacheBehavior(MetaData metaData) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            File cacheDir = appContext.getCacheDir();
+            File errDir = new File(cacheDir, "bugsnag-errors");
+
+            try {
+                boolean tombstone = storageManager.isCacheBehaviorTombstone(errDir);
+                boolean group = storageManager.isCacheBehaviorGroup(errDir);
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
+                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
+            } catch (IOException exc) {
+                Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
     private void sanitiseConfiguration(@NonNull Configuration configuration) {
         if (configuration.getDelivery() == null) {
             configuration.setDelivery(new DefaultDelivery(connectivity));
         }
 
+        String packageName = appContext.getPackageName();
+
+        if (configuration.getVersionCode() == null || configuration.getVersionCode() == 0) {
+            try {
+                PackageManager packageManager = appContext.getPackageManager();
+                PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+                configuration.setVersionCode(packageInfo.versionCode);
+            } catch (Exception ignore) {
+                Logger.warn("Bugsnag is unable to read version code from manifest.");
+            }
+        }
+
         // Set sensible defaults if project packages not already set
         if (configuration.getProjectPackages().isEmpty()) {
-            configuration.setProjectPackages(Collections.singleton(appContext.getPackageName()));
+            configuration.setProjectPackages(Collections.singleton(packageName));
         }
 
         // populate from manifest (in the case where the constructor was called directly by the
@@ -231,9 +273,8 @@ public class Client extends Observable implements Observer {
             String buildUuid = null;
             try {
                 PackageManager packageManager = appContext.getPackageManager();
-                String name = appContext.getPackageName();
-                ApplicationInfo ai =
-                        packageManager.getApplicationInfo(name, PackageManager.GET_META_DATA);
+                ApplicationInfo ai = packageManager.getApplicationInfo(
+                        packageName, PackageManager.GET_META_DATA);
                 buildUuid = ai.metaData.getString(BUILD_UUID);
             } catch (Exception ignore) {
                 Logger.warn("Bugsnag is unable to read build UUID from manifest.");
@@ -717,8 +758,15 @@ public class Client extends Observable implements Observer {
      * This is intended for internal use only, and reports will not be visible to end-users.
      */
     void reportInternalBugsnagError(@NonNull Error error) {
-        error.setAppData(appData.getAppDataSummary());
-        error.setDeviceData(deviceData.getDeviceDataSummary());
+        Map<String, Object> app = appData.getAppDataSummary();
+        app.put("duration", AppData.getDurationMs());
+        app.put("durationInForeground", appData.calculateDurationInForeground());
+        app.put("inForeground", sessionTracker.isInForeground());
+        error.setAppData(app);
+
+        Map<String, Object> device = deviceData.getDeviceDataSummary();
+        device.put("freeDisk", deviceData.calculateFreeDisk());
+        error.setDeviceData(device);
 
         MetaData metaData = error.getMetaData();
         Notifier notifier = Notifier.getInstance();

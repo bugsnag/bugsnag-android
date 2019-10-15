@@ -28,9 +28,8 @@ public class SessionStoreTest {
      */
     @Before
     public void setUp() throws Exception {
-        Configuration config = new Configuration("api-key");
         Context context = ApplicationProvider.getApplicationContext();
-        SessionStore sessionStore = new SessionStore(context);
+        SessionStore sessionStore = new SessionStore(context, null);
         assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
