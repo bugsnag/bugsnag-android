@@ -31,7 +31,8 @@ public class NativeBridge implements Observer {
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
-    public static native void install(@NonNull String reportingDirectory, boolean autoDetectErrors,
+    public static native void install(@NonNull String reportingDirectory,
+                                      boolean autoDetectNdkCrashes,
                                       int apiLevel, boolean is32bit);
 
     public static native void deliverReportAtPath(@NonNull String filePath);
