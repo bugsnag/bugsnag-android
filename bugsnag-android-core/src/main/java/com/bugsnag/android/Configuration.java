@@ -79,7 +79,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         this.metaData.addObserver(this);
 
         try {
-            // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android or bugsnag-android-ndk
+            // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
+            // or bugsnag-android-ndk
             Class<?> clz = Class.forName("com.bugsnag.android.BuildConfig");
             Field field = clz.getDeclaredField("AUTO_AUTO_DETECT_NDK_CRASHES");
             autoDetectNdkCrashes = field.getBoolean(null);
