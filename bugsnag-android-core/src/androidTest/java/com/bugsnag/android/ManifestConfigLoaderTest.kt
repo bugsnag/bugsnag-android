@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.os.Bundle
-import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -44,7 +43,7 @@ class ManifestConfigLoaderTest {
             assertNull(appVersion)
             assertEquals(0, versionCode)
             assertNull(releaseStage)
-            assertEquals(emptySet<String>(), notifyReleaseStages)
+            assertEquals(emptySet<String>(), enabledReleaseStages)
             assertEquals(emptySet<String>(), ignoreClasses)
             assertEquals(emptySet<String>(), projectPackages)
             assertEquals(setOf("password"), filters)
@@ -111,7 +110,7 @@ class ManifestConfigLoaderTest {
             assertEquals("5.23.7", appVersion)
             assertEquals(55, versionCode)
             assertEquals("beta", releaseStage)
-            assertEquals(setOf("beta", "production", "staging"), notifyReleaseStages)
+            assertEquals(setOf("beta", "production", "staging"), enabledReleaseStages)
             assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), ignoreClasses)
             assertEquals(setOf("com.bugsnag", "com.example"), projectPackages)
             assertEquals(setOf("password", "auth", "foo"), filters)

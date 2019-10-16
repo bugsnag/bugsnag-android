@@ -111,7 +111,7 @@ internal class ManifestConfigLoader {
             if (data.containsKey(VERSION_CODE)) {
                 versionCode = data.getInt(VERSION_CODE)
             }
-            notifyReleaseStages = getStrArray(data, NOTIFY_RELEASE_STAGES, notifyReleaseStages)
+            enabledReleaseStages = getStrArray(data, NOTIFY_RELEASE_STAGES, enabledReleaseStages)
             ignoreClasses = getStrArray(data, IGNORE_CLASSES, ignoreClasses)
             projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)
             filters = getStrArray(data, FILTERS, filters)

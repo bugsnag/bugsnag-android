@@ -34,7 +34,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private String context;
 
     private final Set<String> ignoreClasses = new HashSet<>();
-    private final Set<String> notifyReleaseStages = new HashSet<>();
+    private final Set<String> enabledReleaseStages = new HashSet<>();
     private final Set<String> projectPackages = new HashSet<>();
 
     private String releaseStage;
@@ -286,11 +286,11 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     /**
      * Get for which releaseStages errors should be sent to Bugsnag.
      *
-     * @return Notify release stages
+     * @return Enabled release stages
      */
     @NonNull
-    public Collection<String> getNotifyReleaseStages() {
-        return Collections.unmodifiableSet(notifyReleaseStages);
+    public Collection<String> getEnabledReleaseStages() {
+        return Collections.unmodifiableSet(enabledReleaseStages);
     }
 
     /**
@@ -299,14 +299,14 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * <p/>
      * For example:
      * <p/>
-     * client.setNotifyReleaseStages("production");
+     * client.setEnabledReleaseStages("production");
      *
-     * @param notifyReleaseStages a list of releaseStages to notify for
+     * @param enabledReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public void setNotifyReleaseStages(@NonNull Collection<String> notifyReleaseStages) {
-        this.notifyReleaseStages.clear();
-        this.notifyReleaseStages.addAll(notifyReleaseStages);
+    public void setEnabledReleaseStages(@NonNull Collection<String> enabledReleaseStages) {
+        this.enabledReleaseStages.clear();
+        this.enabledReleaseStages.addAll(enabledReleaseStages);
     }
 
     /**
@@ -352,7 +352,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * "production" for non-debug builds.
      *
      * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages
+     * @see #setEnabledReleaseStages
      */
     public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;

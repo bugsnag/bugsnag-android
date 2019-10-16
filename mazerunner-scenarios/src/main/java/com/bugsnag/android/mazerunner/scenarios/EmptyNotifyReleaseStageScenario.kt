@@ -6,14 +6,14 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 /**
- * Attempts to send a handled exception to Bugsnag, when the notifyReleaseStages is empty.
+ * Attempts to send a handled exception to Bugsnag, when the enabledReleaseStages is empty.
  */
-internal class EmptyNotifyReleaseStageScenario(config: Configuration,
+internal class EmptyEnabledReleaseStageScenario(config: Configuration,
                                                context: Context) : Scenario(config, context) {
     init {
         config.autoCaptureSessions = false
         config.releaseStage = "prod"
-        config.notifyReleaseStages = emptyList()
+        config.enabledReleaseStages = emptyList()
     }
 
     override fun run() {

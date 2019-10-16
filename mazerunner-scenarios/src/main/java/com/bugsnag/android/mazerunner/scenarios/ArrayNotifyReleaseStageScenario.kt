@@ -6,14 +6,14 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 /**
- * Attempts to send a handled exception to Bugsnag, when the notifyReleaseStages is an array.
+ * Attempts to send a handled exception to Bugsnag, when the enabledReleaseStages is an array.
  */
-internal class ArrayNotifyReleaseStageScenario(config: Configuration,
+internal class ArrayEnabledReleaseStageScenario(config: Configuration,
                                                context: Context) : Scenario(config, context) {
     init {
         config.autoCaptureSessions = false
         config.releaseStage = "prod"
-        config.notifyReleaseStages = listOf("dev", "prod")
+        config.enabledReleaseStages = listOf("dev", "prod")
     }
 
     override fun run() {

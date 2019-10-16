@@ -40,7 +40,7 @@ class ImmutableConfigTest {
 
             // release stages
             assertTrue(ignoreClasses.isEmpty())
-            assertTrue(notifyReleaseStages.isEmpty())
+            assertTrue(enabledReleaseStages.isEmpty())
             assertTrue(projectPackages.isEmpty())
             assertEquals(seed.releaseStage, releaseStage)
 
@@ -73,7 +73,7 @@ class ImmutableConfigTest {
         seed.sendThreads = false
 
         seed.ignoreClasses = setOf("foo")
-        seed.notifyReleaseStages = setOf("bar")
+        seed.enabledReleaseStages = setOf("bar")
         seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
 
@@ -102,7 +102,7 @@ class ImmutableConfigTest {
 
             // release stages
             assertEquals(setOf("foo"), ignoreClasses)
-            assertEquals(setOf("bar"), notifyReleaseStages)
+            assertEquals(setOf("bar"), enabledReleaseStages)
             assertEquals(setOf("com.example"), projectPackages)
             assertEquals("wham", releaseStage)
 

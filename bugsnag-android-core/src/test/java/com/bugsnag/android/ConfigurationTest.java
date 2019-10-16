@@ -34,23 +34,23 @@ public class ConfigurationTest {
 
     @Test
     public void testShouldNotify() {
-        // Should notify if notifyReleaseStages is null
+        // Should notify if enabledReleaseStages is null
         ImmutableConfig immutableConfig;
         immutableConfig = createConfigWithReleaseStages(config,
-                config.getNotifyReleaseStages(), "development");
+                config.getEnabledReleaseStages(), "development");
         assertTrue(immutableConfig.shouldNotifyForReleaseStage());
 
-        // Shouldn't notify if notifyReleaseStages is set and releaseStage is null
+        // Shouldn't notify if enabledReleaseStages is set and releaseStage is null
         Set<String> example = Collections.singleton("example");
         immutableConfig = createConfigWithReleaseStages(config, example, null);
         assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
-        // Shouldn't notify if releaseStage not in notifyReleaseStages
+        // Shouldn't notify if releaseStage not in enabledReleaseStages
         Set<String> stages = Collections.singleton("production");
         immutableConfig = createConfigWithReleaseStages(config, stages, "not-production");
         assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
-        // Should notify if releaseStage in notifyReleaseStages
+        // Should notify if releaseStage in enabledReleaseStages
         immutableConfig = createConfigWithReleaseStages(config, stages, "production");
         assertTrue(immutableConfig.shouldNotifyForReleaseStage());
     }
@@ -58,7 +58,7 @@ public class ConfigurationTest {
     private ImmutableConfig createConfigWithReleaseStages(Configuration config,
                                                           Collection<String> releaseStages,
                                                           String releaseStage) {
-        config.setNotifyReleaseStages(releaseStages);
+        config.setEnabledReleaseStages(releaseStages);
         config.setReleaseStage(releaseStage);
         return BugsnagTestUtils.convert(config);
     }
@@ -101,9 +101,9 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testOverrideNotifyReleaseStages() throws Exception {
-        config.setNotifyReleaseStages(Collections.singleton("Test"));
-        assertEquals(Collections.singleton("Test"), config.getNotifyReleaseStages());
+    public void testOverrideEnabledReleaseStages() throws Exception {
+        config.setEnabledReleaseStages(Collections.singleton("Test"));
+        assertEquals(Collections.singleton("Test"), config.getEnabledReleaseStages());
     }
 
     @Test

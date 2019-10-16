@@ -12,7 +12,7 @@ internal data class ImmutableConfig(
     val autoCaptureBreadcrumbs: Boolean,
     val sendThreads: Boolean,
     val ignoreClasses: Collection<String>,
-    val notifyReleaseStages: Collection<String>,
+    val enabledReleaseStages: Collection<String>,
     val projectPackages: Collection<String>,
     val releaseStage: String?,
     val buildUuid: String?,
@@ -41,7 +41,7 @@ internal data class ImmutableConfig(
      * @return true if the release state should be notified else false
      */
     @JvmName("shouldNotifyForReleaseStage")
-    internal fun shouldNotifyForReleaseStage() = notifyReleaseStages.isEmpty() || notifyReleaseStages.contains(releaseStage)
+    internal fun shouldNotifyForReleaseStage() = enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
 
     @JvmName("errorApiDeliveryParams")
     internal fun errorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
@@ -87,7 +87,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         autoCaptureBreadcrumbs = config.autoCaptureBreadcrumbs,
         sendThreads = config.sendThreads,
         ignoreClasses = config.ignoreClasses.toSet(),
-        notifyReleaseStages = config.notifyReleaseStages.toSet(),
+        enabledReleaseStages = config.enabledReleaseStages.toSet(),
         projectPackages = config.projectPackages.toSet(),
         releaseStage = config.releaseStage,
         buildUuid = config.buildUuid,

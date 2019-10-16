@@ -13,7 +13,7 @@ internal class NullReleaseStageScenario(config: Configuration,
     init {
         config.autoCaptureSessions = false
         config.releaseStage = null
-        config.notifyReleaseStages = listOf("prod")
+        config.enabledReleaseStages = listOf("prod")
     }
 
     override fun run() {
