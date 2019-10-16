@@ -28,7 +28,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXStartSessionScenario_crash(JNIE
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXStopSessionScenario_crash(JNIEnv *env,
+Java_com_bugsnag_android_mazerunner_scenarios_CXXPausedSessionScenario_crash(JNIEnv *env,
                                                                            jobject instance,
                                                                            jint value) {
     int x = 22552;

@@ -159,7 +159,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
   (*env)->ReleaseStringUTFChars(env, start_date_, started_at);
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_stoppedSession(
+JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
     JNIEnv *env, jobject _this) {
     if (bsg_global_env == NULL) {
         return;

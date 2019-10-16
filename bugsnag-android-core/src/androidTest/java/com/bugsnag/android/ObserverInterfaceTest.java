@@ -146,10 +146,10 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testStopSessionSendsmessage() {
+    public void testPauseSessionSendsmessage() {
         client.startSession();
-        client.stopSession();
-        Object msg = findMessageInQueue(NativeInterface.MessageType.STOP_SESSION, null);
+        client.pauseSession();
+        Object msg = findMessageInQueue(NativeInterface.MessageType.PAUSE_SESSION, null);
         assertNull(msg);
     }
 

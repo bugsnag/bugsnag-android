@@ -9,7 +9,7 @@ import android.util.Log
 import com.bugsnag.android.flushAllSessions
 
 /**
- * Sends an exception after stopping the session
+ * Sends an exception after pausing the session
  */
 internal class NewSessionScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
@@ -40,8 +40,8 @@ internal class NewSessionScenario(config: Configuration,
             Log.d("Bugsnag - New", "First exception notified")
             Thread.sleep(SLEEP_MS)
             // stop tracking the existing session
-            client.stopSession()
-            Log.d("Bugsnag - New", "First session stopped")
+            client.pauseSession()
+            Log.d("Bugsnag - New", "First session paused")
             Thread.sleep(SLEEP_MS)
             // send 2nd exception which should contain new session info
             client.startSession()

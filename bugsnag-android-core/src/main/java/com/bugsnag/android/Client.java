@@ -353,7 +353,7 @@ public class Client extends Observable implements Observer {
      * when one doesn't already exist.
      *
      * @see #resumeSession()
-     * @see #stopSession()
+     * @see #pauseSession()
      * @see Configuration#setAutoCaptureSessions(boolean)
      */
     public void startSession() {
@@ -361,10 +361,10 @@ public class Client extends Observable implements Observer {
     }
 
     /**
-     * Stops tracking a session. You should disable automatic session tracking via
+     * Pauses tracking of a session. You should disable automatic session tracking via
      * {@link #setAutoCaptureSessions(boolean)} if you call this method.
      * <p/>
-     * You should call this at the appropriate time in your application when you wish to stop a
+     * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
      * Bugsnag but will not count towards your application's
      * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
@@ -375,13 +375,13 @@ public class Client extends Observable implements Observer {
      * @see #resumeSession()
      * @see Configuration#setAutoCaptureSessions(boolean)
      */
-    public final void stopSession() {
-        sessionTracker.stopSession();
+    public final void pauseSession() {
+        sessionTracker.pauseSession();
     }
 
     /**
-     * Resumes a session which has previously been stopped, or starts a new session if none exists.
-     * If a session has already been resumed or started and has not been stopped, calling this
+     * Resumes a session which has previously been paused, or starts a new session if none exists.
+     * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
      * {@link #setAutoCaptureSessions(boolean)} if you call this method.
      * <p/>
@@ -396,7 +396,7 @@ public class Client extends Observable implements Observer {
      * stability score</a>.
      *
      * @see #startSession()
-     * @see #stopSession()
+     * @see #pauseSession()
      * @see Configuration#setAutoCaptureSessions(boolean)
      *
      * @return true if a previous session was resumed, false if a new session was started.

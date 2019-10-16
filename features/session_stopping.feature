@@ -1,7 +1,7 @@
-Feature: Stopping and resuming sessions
+Feature: Pausing and resuming sessions
 
-Scenario: When a session is stopped the error has no session information
-    When I run "StoppedSessionScenario"
+Scenario: When a session is paused the error has no session information
+    When I run "PausedSessionScenario"
     Then I should receive 3 requests
     And the request 0 is valid for the session tracking API
     And the request 1 is valid for the error reporting API
