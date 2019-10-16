@@ -13,7 +13,6 @@ import java.util.Map;
 
 public final class Breadcrumb implements JsonStream.Streamable {
 
-    private static final int MAX_MESSAGE_LENGTH = 140;
     private static final String DEFAULT_NAME = "manual";
     private static final String MESSAGE_METAKEY = "message";
     private static final String TIMESTAMP_KEY = "timestamp";
@@ -34,8 +33,8 @@ public final class Breadcrumb implements JsonStream.Streamable {
     private final Map<String, String> metadata;
 
     Breadcrumb(@NonNull String message) {
-        this(DEFAULT_NAME, BreadcrumbType.MANUAL, Collections.singletonMap(MESSAGE_METAKEY,
-            message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH))));
+        this(DEFAULT_NAME, BreadcrumbType.MANUAL,
+                Collections.singletonMap(MESSAGE_METAKEY, message));
     }
 
     Breadcrumb(@NonNull String name,

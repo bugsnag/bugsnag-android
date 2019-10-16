@@ -26,17 +26,15 @@ class BreadcrumbsTest {
     fun testMessageTruncation() {
         breadcrumbs.add(Breadcrumb("Started app"))
         breadcrumbs.add(Breadcrumb("Clicked a button"))
-        breadcrumbs.add(Breadcrumb("Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
-            + " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
-            + "minim veniam, quis nostrud exercitation ullamco laboris nisi"
-            + " ut aliquip ex ea commodo consequat."))
-
+        val longStr = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
+                + " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
+                + "minim veniam, quis nostrud exercitation ullamco laboris nisi"
+                + " ut aliquip ex ea commodo consequat.")
+        breadcrumbs.add(Breadcrumb(longStr))
 
         val crumbs = breadcrumbs.store.toList()
         assertEquals(3, crumbs.size)
-        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do "
-            + "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
-            crumbs[2].metadata["message"])
+        assertEquals(longStr, crumbs[2].metadata["message"])
     }
 
     /**
