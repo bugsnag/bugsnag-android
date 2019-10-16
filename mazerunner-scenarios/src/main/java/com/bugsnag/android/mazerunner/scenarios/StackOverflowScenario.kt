@@ -9,7 +9,7 @@ import com.bugsnag.android.Configuration
 internal class StackOverflowScenario(config: Configuration,
                                      context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     override fun run() {

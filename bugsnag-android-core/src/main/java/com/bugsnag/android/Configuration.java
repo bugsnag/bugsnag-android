@@ -41,7 +41,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private boolean sendThreads = true;
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
-    private boolean autoCaptureSessions = true;
+    private boolean autoTrackSessions = true;
     private boolean autoCaptureBreadcrumbs = true;
 
     private boolean autoDetectAnrs = false;
@@ -401,8 +401,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @return true if sessions are captured automatically
      */
-    public boolean getAutoCaptureSessions() {
-        return autoCaptureSessions;
+    public boolean getAutoTrackSessions() {
+        return autoTrackSessions;
     }
 
     /**
@@ -413,8 +413,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param autoCapture whether sessions should be captured automatically
      */
-    public void setAutoCaptureSessions(boolean autoCapture) {
-        this.autoCaptureSessions = autoCapture;
+    public void setAutoTrackSessions(boolean autoCapture) {
+        this.autoTrackSessions = autoCapture;
     }
 
     /**

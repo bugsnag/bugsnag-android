@@ -11,7 +11,7 @@ import com.bugsnag.android.Configuration
 internal class UserEnabledScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
     }
 
     override fun run() {

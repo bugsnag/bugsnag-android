@@ -76,10 +76,10 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testAutoCaptureSessions() throws Exception {
-        assertTrue(config.getAutoCaptureSessions());
-        config.setAutoCaptureSessions(false);
-        assertFalse(config.getAutoCaptureSessions());
+    public void testAutoTrackSessions() throws Exception {
+        assertTrue(config.getAutoTrackSessions());
+        config.setAutoTrackSessions(false);
+        assertFalse(config.getAutoTrackSessions());
     }
 
     @Test

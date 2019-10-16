@@ -12,7 +12,7 @@ import com.bugsnag.android.Configuration
 internal class OutsideReleaseStageScenario(config: Configuration,
                                            context: Context) : Scenario(config, context) {
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
         config.releaseStage = "prod"
         config.enabledReleaseStages = listOf("dev")
     }

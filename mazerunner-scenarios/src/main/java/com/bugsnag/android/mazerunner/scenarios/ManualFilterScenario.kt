@@ -10,7 +10,7 @@ import com.bugsnag.android.Configuration
 internal class ManualFilterScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
         config.setFilters(listOf("foo"))
     }
 

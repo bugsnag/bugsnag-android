@@ -4,10 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -503,7 +501,7 @@ public class Error implements JsonStream.Streamable {
             if (currentSession == null) {
                 return null;
             }
-            if (config.getAutoCaptureSessions() || !currentSession.isAutoCaptured()) {
+            if (config.getAutoTrackSessions() || !currentSession.isAutoCaptured()) {
                 if (handledState.isUnhandled()) {
                     reportedSession = sessionTracker.incrementUnhandledAndCopy();
                 } else {

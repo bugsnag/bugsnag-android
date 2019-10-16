@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +37,7 @@ public class SessionTrackerTest {
         immutableConfig = BugsnagTestUtils.generateImmutableConfig();
         sessionTracker = new SessionTracker(immutableConfig,
                 configuration, client, generateSessionStore());
-        configuration.setAutoCaptureSessions(true);
+        configuration.setAutoTrackSessions(true);
         user = new User();
     }
 
@@ -64,13 +63,13 @@ public class SessionTrackerTest {
     @Test
     public void startSessionDisabled() throws Exception {
         assertNull(sessionTracker.getCurrentSession());
-        configuration.setAutoCaptureSessions(false);
+        configuration.setAutoTrackSessions(false);
 
         Date date = new Date();
         sessionTracker.startNewSession(date, user, true);
         assertNotNull(sessionTracker.getCurrentSession());
 
-        configuration.setAutoCaptureSessions(true);
+        configuration.setAutoTrackSessions(true);
         sessionTracker.startNewSession(date, user, false);
         assertNotNull(sessionTracker.getCurrentSession());
     }
@@ -173,7 +172,7 @@ public class SessionTrackerTest {
 
     @Test
     public void startSessionAutoCaptureDisabled() {
-        configuration.setAutoCaptureSessions(false);
+        configuration.setAutoTrackSessions(false);
         assertNull(sessionTracker.getCurrentSession());
         sessionTracker.startNewSession(new Date(), user, false);
         assertNotNull(sessionTracker.getCurrentSession());

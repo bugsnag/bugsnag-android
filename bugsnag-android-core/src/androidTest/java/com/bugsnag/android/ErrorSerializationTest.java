@@ -302,7 +302,7 @@ public class ErrorSerializationTest {
     @Test
     public void testBuilderNullSession() throws Throwable {
         Configuration config = BugsnagTestUtils.generateConfiguration();
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
         RuntimeException exception = new RuntimeException("foo");
 
         SessionTracker sessionTracker = generateSessionTracker();

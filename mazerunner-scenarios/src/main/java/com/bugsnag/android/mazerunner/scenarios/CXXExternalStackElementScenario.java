@@ -18,7 +18,7 @@ public class CXXExternalStackElementScenario extends Scenario {
     public CXXExternalStackElementScenario(@NonNull Configuration config,
                                            @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override

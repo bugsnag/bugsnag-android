@@ -20,7 +20,7 @@ public class AutoDetectNdkEnabledScenario extends Scenario {
      */
     public AutoDetectNdkEnabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
         config.setAutoDetectNdkCrashes(true);
     }
 

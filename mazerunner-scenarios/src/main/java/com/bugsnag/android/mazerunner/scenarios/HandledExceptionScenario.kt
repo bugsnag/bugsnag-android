@@ -11,7 +11,7 @@ import android.content.Context
 internal class HandledExceptionScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     override fun run() {

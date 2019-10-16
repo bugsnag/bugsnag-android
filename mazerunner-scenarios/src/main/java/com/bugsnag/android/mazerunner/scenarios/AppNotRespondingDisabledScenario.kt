@@ -12,7 +12,7 @@ import android.content.Context
 internal class AppNotRespondingDisabledScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
         config.autoDetectAnrs = false
     }
 

@@ -87,7 +87,7 @@ internal class ManifestConfigLoader {
             autoNotify = data.getBoolean(AUTO_NOTIFY, autoNotify)
             autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
             autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
-            autoCaptureSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoCaptureSessions)
+            autoTrackSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoTrackSessions)
             autoCaptureBreadcrumbs =
                 data.getBoolean(AUTO_CAPTURE_BREADCRUMBS, autoCaptureBreadcrumbs)
             sendThreads = data.getBoolean(SEND_THREADS, sendThreads)

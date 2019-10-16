@@ -18,7 +18,7 @@ public class CachedHandledInternalNotifyScenario extends Scenario {
     public CachedHandledInternalNotifyScenario(@NonNull Configuration config, 
                                                @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
         Activity activity = (Activity)context;
         String state = activity.getIntent().getStringExtra("EVENT_METADATA");
         shouldTestOfflineCaching = state != null && state.equals("offline");
