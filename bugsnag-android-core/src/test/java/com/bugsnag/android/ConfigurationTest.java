@@ -107,9 +107,9 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testOverrideNotifierType() throws Exception {
-        config.setNotifierType("React Native");
-        assertEquals("React Native", config.getNotifierType());
+    public void testOverrideAppType() throws Exception {
+        config.setAppType("React Native");
+        assertEquals("React Native", config.getAppType());
     }
 
     @Test

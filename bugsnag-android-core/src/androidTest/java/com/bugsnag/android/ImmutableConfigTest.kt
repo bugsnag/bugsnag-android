@@ -48,7 +48,7 @@ class ImmutableConfigTest {
             assertEquals(seed.appVersion, appVersion)
             assertEquals(seed.buildUuid, buildUuid)
             assertEquals(seed.codeBundleId, codeBundleId)
-            assertEquals(seed.notifierType, notifierType)
+            assertEquals(seed.appType, appType)
 
             // network config
             assertEquals(seed.delivery, delivery)
@@ -80,7 +80,7 @@ class ImmutableConfigTest {
         seed.appVersion = "1.2.3"
         seed.buildUuid = "f7ab"
         seed.codeBundleId = "codebundle123"
-        seed.notifierType = "custom"
+        seed.appType = "custom"
 
         seed.endpoints = Endpoints("http://example.com:1234", "http://example.com:1235")
         seed.launchCrashThresholdMs = 7000
@@ -110,7 +110,7 @@ class ImmutableConfigTest {
             assertEquals("1.2.3", seed.appVersion)
             assertEquals("f7ab", seed.buildUuid)
             assertEquals("codebundle123", seed.codeBundleId)
-            assertEquals("custom", seed.notifierType)
+            assertEquals("custom", seed.appType)
 
             // network config
             assertEquals(

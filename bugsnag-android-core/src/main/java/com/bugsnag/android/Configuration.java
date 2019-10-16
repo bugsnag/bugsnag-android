@@ -6,14 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -64,7 +59,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
 
     private String codeBundleId;
-    private String notifierType;
+    private String appType = "android";
 
     private Delivery delivery;
     private Endpoints endpoints = new Endpoints();
@@ -543,10 +538,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     /**
      * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
-     * @param notifierType the notifier type
+     * @param appType the notifier type
      */
-    void setNotifierType(@NonNull String notifierType) {
-        this.notifierType = notifierType;
+    public void setAppType(@NonNull String appType) {
+        this.appType = appType;
     }
 
     /**
@@ -563,8 +558,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     @NonNull
-    String getNotifierType() {
-        return notifierType;
+    public String getAppType() {
+        return appType;
     }
 
     /**
