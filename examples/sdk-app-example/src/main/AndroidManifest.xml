@@ -35,7 +35,7 @@
       android:value="YOUR-API-KEY-HERE" />
 
     <meta-data
-      android:name="com.bugsnag.android.DETECT_ANRS"
+      android:name="com.bugsnag.android.AUTO_DETECT_ANRS"
       android:value="true" />
 
     <meta-data

@@ -6,7 +6,7 @@ import java.util.HashMap
 internal data class ImmutableConfig(
     val apiKey: String,
     val autoNotify: Boolean,
-    val detectAnrs: Boolean,
+    val autoDetectAnrs: Boolean,
     val detectNdkCrashes: Boolean,
     val autoCaptureSessions: Boolean,
     val autoCaptureBreadcrumbs: Boolean,
@@ -81,7 +81,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
     return ImmutableConfig(
         apiKey = config.apiKey,
         autoNotify = config.autoNotify,
-        detectAnrs = config.detectAnrs,
+        autoDetectAnrs = config.autoDetectAnrs,
         detectNdkCrashes = config.detectNdkCrashes,
         autoCaptureSessions = config.autoCaptureSessions,
         autoCaptureBreadcrumbs = config.autoCaptureBreadcrumbs,

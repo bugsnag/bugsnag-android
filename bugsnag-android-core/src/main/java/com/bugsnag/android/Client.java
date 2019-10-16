@@ -297,7 +297,7 @@ public class Client extends Observable implements Observer {
                     + "NDK errors will not be captured.");
             }
         }
-        if (immutableConfig.getDetectAnrs()) {
+        if (immutableConfig.getAutoDetectAnrs()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
             } catch (ClassNotFoundException exc) {

@@ -13,7 +13,7 @@ internal class AppNotRespondingDisabledNdkScenario(config: Configuration,
                                                    context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
-        config.detectAnrs = true
+        config.autoDetectAnrs = true
         config.detectNdkCrashes = false
     }
 

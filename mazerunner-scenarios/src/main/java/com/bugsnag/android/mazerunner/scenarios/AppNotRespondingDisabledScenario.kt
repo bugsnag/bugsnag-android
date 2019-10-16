@@ -13,7 +13,7 @@ internal class AppNotRespondingDisabledScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
         config.setAutoCaptureSessions(false)
-        config.detectAnrs = false
+        config.autoDetectAnrs = false
     }
 
     override fun run() {

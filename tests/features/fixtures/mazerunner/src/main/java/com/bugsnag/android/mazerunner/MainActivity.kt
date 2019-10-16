@@ -76,7 +76,7 @@ class MainActivity : Activity() {
         val config = Configuration("ABCDEFGHIJKLMNOPQRSTUVWXYZ012345")
         config.setEndpoints(Endpoints("http://bs-local.com:9339", "http://bs-local.com:9339"))
         config.detectNdkCrashes = true
-        config.detectAnrs = true
+        config.autoDetectAnrs = true
         config.loggingEnabled = true
         return config
     }

@@ -16,7 +16,7 @@ internal class ManifestConfigLoader {
 
         // detection
         private const val AUTO_NOTIFY = "$BUGSNAG_NS.AUTO_NOTIFY"
-        private const val DETECT_ANRS = "$BUGSNAG_NS.DETECT_ANRS"
+        private const val AUTO_DETECT_ANRS = "$BUGSNAG_NS.AUTO_DETECT_ANRS"
         private const val DETECT_NDK_CRASHES = "$BUGSNAG_NS.DETECT_NDK_CRASHES"
         private const val AUTO_CAPTURE_SESSIONS = "$BUGSNAG_NS.AUTO_CAPTURE_SESSIONS"
         private const val AUTO_CAPTURE_BREADCRUMBS = "$BUGSNAG_NS.AUTO_CAPTURE_BREADCRUMBS"
@@ -31,7 +31,7 @@ internal class ManifestConfigLoader {
         private const val APP_VERSION = "$BUGSNAG_NS.APP_VERSION"
         private const val VERSION_CODE = "$BUGSNAG_NS.VERSION_CODE"
         private const val RELEASE_STAGE = "$BUGSNAG_NS.RELEASE_STAGE"
-        private const val NOTIFY_RELEASE_STAGES = "$BUGSNAG_NS.NOTIFY_RELEASE_STAGES"
+        private const val ENABLED_RELEASE_STAGES = "$BUGSNAG_NS.ENABLED_RELEASE_STAGES"
         private const val IGNORE_CLASSES = "$BUGSNAG_NS.IGNORE_CLASSES"
         private const val PROJECT_PACKAGES = "$BUGSNAG_NS.PROJECT_PACKAGES"
         private const val FILTERS = "$BUGSNAG_NS.FILTERS"
@@ -85,7 +85,7 @@ internal class ManifestConfigLoader {
         with(config) {
             autoNotify = data.getBoolean(ENABLE_EXCEPTION_HANDLER, autoNotify)
             autoNotify = data.getBoolean(AUTO_NOTIFY, autoNotify)
-            detectAnrs = data.getBoolean(DETECT_ANRS, detectAnrs)
+            autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
             detectNdkCrashes = data.getBoolean(DETECT_NDK_CRASHES, detectNdkCrashes)
             autoCaptureSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoCaptureSessions)
             autoCaptureBreadcrumbs =
@@ -111,7 +111,7 @@ internal class ManifestConfigLoader {
             if (data.containsKey(VERSION_CODE)) {
                 versionCode = data.getInt(VERSION_CODE)
             }
-            enabledReleaseStages = getStrArray(data, NOTIFY_RELEASE_STAGES, enabledReleaseStages)
+            enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             ignoreClasses = getStrArray(data, IGNORE_CLASSES, ignoreClasses)
             projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)
             filters = getStrArray(data, FILTERS, filters)

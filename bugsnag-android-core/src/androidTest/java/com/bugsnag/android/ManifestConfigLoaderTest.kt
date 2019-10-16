@@ -28,7 +28,7 @@ class ManifestConfigLoaderTest {
 
             // detection
             assertTrue(autoNotify)
-            assertFalse(detectAnrs)
+            assertFalse(autoDetectAnrs)
             assertFalse(detectNdkCrashes)
             assertTrue(autoCaptureSessions)
             assertTrue(autoCaptureBreadcrumbs)
@@ -62,7 +62,7 @@ class ManifestConfigLoaderTest {
 
             // detection
             putBoolean("com.bugsnag.android.AUTO_NOTIFY", false)
-            putBoolean("com.bugsnag.android.DETECT_ANRS", true)
+            putBoolean("com.bugsnag.android.AUTO_DETECT_ANRS", true)
             putBoolean("com.bugsnag.android.DETECT_NDK_CRASHES", true)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", false)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_BREADCRUMBS", false)
@@ -77,7 +77,7 @@ class ManifestConfigLoaderTest {
             putString("com.bugsnag.android.APP_VERSION", "5.23.7")
             putInt("com.bugsnag.android.VERSION_CODE", 55)
             putString("com.bugsnag.android.RELEASE_STAGE", "beta")
-            putString("com.bugsnag.android.NOTIFY_RELEASE_STAGES", "beta,production,staging")
+            putString("com.bugsnag.android.ENABLED_RELEASE_STAGES", "beta,production,staging")
             putString("com.bugsnag.android.IGNORE_CLASSES", "com.bugsnag.FooKt,org.example.String")
             putString("com.bugsnag.android.PROJECT_PACKAGES", "com.bugsnag,com.example")
             putString("com.bugsnag.android.FILTERS", "password,auth,foo")
@@ -95,7 +95,7 @@ class ManifestConfigLoaderTest {
 
             // detection
             assertFalse(autoNotify)
-            assertTrue(detectAnrs)
+            assertTrue(autoDetectAnrs)
             assertTrue(detectNdkCrashes)
             assertFalse(autoCaptureSessions)
             assertFalse(autoCaptureBreadcrumbs)

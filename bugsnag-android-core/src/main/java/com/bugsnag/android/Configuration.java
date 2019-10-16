@@ -44,7 +44,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private boolean autoCaptureSessions = true;
     private boolean autoCaptureBreadcrumbs = true;
 
-    private boolean detectAnrs = false;
+    private boolean autoDetectAnrs = false;
     private boolean detectNdkCrashes;
     private boolean loggingEnabled;
     private long anrThresholdMs = 5000;
@@ -620,10 +620,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     /**
      * @return whether ANRs will be captured or not
-     * @see #setDetectAnrs(boolean)
+     * @see #setAutoDetectAnrs(boolean)
      */
-    public boolean getDetectAnrs() {
-        return detectAnrs;
+    public boolean getAutoDetectAnrs() {
+        return autoDetectAnrs;
     }
 
     /**
@@ -635,11 +635,11 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * configure the time threshold required to capture an ANR, you should use the
      * {@link #setAnrThresholdMs(long)} property.
      *
-     * @param detectAnrs whether ANRs should be captured or not
+     * @param autoDetectAnrs whether ANRs should be captured or not
      * @see #setAnrThresholdMs(long)
      */
-    public void setDetectAnrs(boolean detectAnrs) {
-        this.detectAnrs = detectAnrs;
+    public void setAutoDetectAnrs(boolean autoDetectAnrs) {
+        this.autoDetectAnrs = autoDetectAnrs;
     }
 
     /**

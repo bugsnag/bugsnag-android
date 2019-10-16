@@ -34,7 +34,7 @@ class ImmutableConfigTest {
             assertTrue(autoCaptureBreadcrumbs)
             assertTrue(autoCaptureSessions)
             assertTrue(autoNotify)
-            assertFalse(detectAnrs)
+            assertFalse(autoDetectAnrs)
             assertFalse(detectNdkCrashes)
             assertTrue(sendThreads)
 
@@ -68,7 +68,7 @@ class ImmutableConfigTest {
         seed.autoCaptureBreadcrumbs = false
         seed.autoCaptureSessions = false
         seed.autoNotify = false
-        seed.detectAnrs = true
+        seed.autoDetectAnrs = true
         seed.detectNdkCrashes = true
         seed.sendThreads = false
 
@@ -96,7 +96,7 @@ class ImmutableConfigTest {
             assertFalse(autoCaptureBreadcrumbs)
             assertFalse(autoCaptureSessions)
             assertFalse(autoNotify)
-            assertTrue(detectAnrs)
+            assertTrue(autoDetectAnrs)
             assertTrue(detectNdkCrashes)
             assertFalse(sendThreads)
 
