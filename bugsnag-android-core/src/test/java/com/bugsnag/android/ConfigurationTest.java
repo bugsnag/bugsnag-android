@@ -89,9 +89,9 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testOverrideFilters() throws Exception {
-        config.setFilters(Collections.singleton("Foo"));
-        assertEquals(Collections.singleton("Foo"), config.getFilters());
+    public void testOverrideRedactKeys() throws Exception {
+        config.setRedactKeys(Collections.singleton("Foo"));
+        assertEquals(Collections.singleton("Foo"), config.getRedactKeys());
     }
 
     @Test

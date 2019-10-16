@@ -235,11 +235,11 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     /**
      * Get which keys should be filtered when sending metaData to Bugsnag
      *
-     * @return Filters
+     * @return redact keys
      */
     @NonNull
-    public Collection<String> getFilters() {
-        return Collections.unmodifiableSet(metaData.getFilters());
+    public Collection<String> getRedactKeys() {
+        return Collections.unmodifiableSet(metaData.getRedactKeys());
     }
 
     /**
@@ -251,12 +251,12 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * <p/>
      * For example:
      * <p/>
-     * client.setFilters("password", "credit_card");
+     * client.setRedactKeys("password", "credit_card");
      *
-     * @param filters a list of keys to filter from metaData
+     * @param redactKeys a list of keys to redact from metaData
      */
-    public void setFilters(@NonNull Collection<String> filters) {
-        this.metaData.setFilters(filters);
+    public void setRedactKeys(@NonNull Collection<String> redactKeys) {
+        this.metaData.setRedactKeys(redactKeys);
     }
 
     /**

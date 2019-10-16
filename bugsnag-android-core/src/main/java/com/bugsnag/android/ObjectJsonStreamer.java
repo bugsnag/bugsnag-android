@@ -15,11 +15,11 @@ class ObjectJsonStreamer {
     private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
-    Set<String> filters;
+    Set<String> redactKeys;
 
     public ObjectJsonStreamer() {
-        this.filters = new HashSet<>();
-        this.filters.add("password");
+        this.redactKeys = new HashSet<>();
+        this.redactKeys.add("password");
     }
 
     // Write complex/nested values to a JsonStreamer
@@ -45,7 +45,7 @@ class ObjectJsonStreamer {
                 if (keyObj instanceof String) {
                     String key = (String) keyObj;
                     writer.name(key);
-                    if (shouldFilter(key)) {
+                    if (shouldRedact(key)) {
                         writer.value(FILTERED_PLACEHOLDER);
                     } else {
                         objectToStream(entry.getValue(), writer);
@@ -73,13 +73,13 @@ class ObjectJsonStreamer {
         }
     }
 
-    // Should this key be filtered
-    private boolean shouldFilter(@Nullable String key) {
-        if (filters == null || key == null) {
+    // Should this key be redacted
+    private boolean shouldRedact(@Nullable String key) {
+        if (redactKeys == null || key == null) {
             return false;
         }
 
-        for (String filter : filters) {
+        for (String filter : redactKeys) {
             if (key.contains(filter)) {
                 return true;
             }

@@ -67,7 +67,7 @@ class ImmutableConfigTest {
     fun convertWithOverrides() {
         seed.autoCaptureBreadcrumbs = false
         seed.autoTrackSessions = false
-        seed.autoDetectErrors = true
+        seed.autoDetectErrors = false
         seed.autoDetectAnrs = true
         seed.autoDetectNdkCrashes = true
         seed.sendThreads = false

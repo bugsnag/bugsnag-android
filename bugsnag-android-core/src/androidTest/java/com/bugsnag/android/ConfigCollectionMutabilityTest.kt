@@ -23,7 +23,7 @@ class ConfigCollectionMutabilityTest {
     }
 
     @Test(expected = UnsupportedOperationException::class)
-    fun testFilters() {
-        configuration.filters.add("")
+    fun testRedactKeys() {
+        configuration.redactKeys.add("")
     }
 }

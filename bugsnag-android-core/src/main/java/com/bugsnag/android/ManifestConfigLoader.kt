@@ -34,7 +34,7 @@ internal class ManifestConfigLoader {
         private const val ENABLED_RELEASE_STAGES = "$BUGSNAG_NS.ENABLED_RELEASE_STAGES"
         private const val IGNORE_CLASSES = "$BUGSNAG_NS.IGNORE_CLASSES"
         private const val PROJECT_PACKAGES = "$BUGSNAG_NS.PROJECT_PACKAGES"
-        private const val FILTERS = "$BUGSNAG_NS.FILTERS"
+        private const val REDACT_KEYS = "$BUGSNAG_NS.REDACT_KEYS"
 
         // misc
         private const val MAX_BREADCRUMBS = "$BUGSNAG_NS.MAX_BREADCRUMBS"
@@ -114,7 +114,7 @@ internal class ManifestConfigLoader {
             enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             ignoreClasses = getStrArray(data, IGNORE_CLASSES, ignoreClasses)
             projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)
-            filters = getStrArray(data, FILTERS, filters)
+            redactKeys = getStrArray(data, REDACT_KEYS, redactKeys)
         }
     }
 
