@@ -9,7 +9,7 @@
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
     <ID>TooGenericExceptionThrown:CrashHandlerScenario.kt$CrashHandlerScenario$throw RuntimeException("CrashHandlerScenario")</ID>
     <ID>TooGenericExceptionThrown:CustomClientErrorFlushScenario.kt$CustomClientErrorFlushScenario$throw RuntimeException("ReportCacheScenario")</ID>
-    <ID>TooGenericExceptionThrown:DisableAutoNotifyScenario.kt$DisableAutoNotifyScenario$throw RuntimeException("Should never appear")</ID>
+    <ID>TooGenericExceptionThrown:DisableAutoDetectErrorsScenario.kt$DisableAutoNotifyScenario$throw RuntimeException("Should never appear")</ID>
     <ID>TooGenericExceptionThrown:IgnoredExceptionScenario.kt$IgnoredExceptionScenario$throw RuntimeException("Should never appear")</ID>
     <ID>TooGenericExceptionThrown:ReportCacheScenario.kt$ReportCacheScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Regular crash")</ID>

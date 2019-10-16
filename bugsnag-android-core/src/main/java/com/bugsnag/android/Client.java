@@ -184,7 +184,7 @@ public class Client extends Observable implements Observer {
         errorStore = new ErrorStore(immutableConfig, clientState, appContext, delegate);
 
         // Install a default exception handler with this client
-        if (immutableConfig.getAutoNotify()) {
+        if (immutableConfig.getAutoDetectErrors()) {
             new ExceptionHandler(this);
         }
 

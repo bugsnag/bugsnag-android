@@ -48,7 +48,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private boolean autoDetectNdkCrashes;
     private boolean loggingEnabled;
     private long anrThresholdMs = 5000;
-    private boolean autoNotify = true;
+    private boolean autoDetectErrors = true;
 
     @NonNull
     private MetaData metaData;
@@ -363,18 +363,18 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * Gets whether Bugsnag should automatically capture and report unhandled errors.
      * By default, this value is true.
      */
-    public boolean getAutoNotify() {
-        return autoNotify;
+    public boolean getAutoDetectErrors() {
+        return autoDetectErrors;
     }
 
     /**
      * Sets whether Bugsnag should automatically capture and report unhandled errors.
      * By default, this value is true.
      *
-     * @param autoNotify - whether unhandled errors should be reported automatically
+     * @param autoDetectErrors - whether unhandled errors should be reported automatically
      */
-    public void setAutoNotify(boolean autoNotify) {
-        this.autoNotify = autoNotify;
+    public void setAutoDetectErrors(boolean autoDetectErrors) {
+        this.autoDetectErrors = autoDetectErrors;
     }
 
     /**

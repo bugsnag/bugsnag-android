@@ -33,7 +33,7 @@ class ImmutableConfigTest {
             // detection
             assertTrue(autoCaptureBreadcrumbs)
             assertTrue(autoTrackSessions)
-            assertTrue(autoNotify)
+            assertTrue(autoDetectErrors)
             assertFalse(autoDetectAnrs)
             assertFalse(autoDetectNdkCrashes)
             assertTrue(sendThreads)
@@ -67,7 +67,7 @@ class ImmutableConfigTest {
     fun convertWithOverrides() {
         seed.autoCaptureBreadcrumbs = false
         seed.autoTrackSessions = false
-        seed.autoNotify = false
+        seed.autoDetectErrors = true
         seed.autoDetectAnrs = true
         seed.autoDetectNdkCrashes = true
         seed.sendThreads = false
@@ -95,7 +95,7 @@ class ImmutableConfigTest {
             // detection
             assertFalse(autoCaptureBreadcrumbs)
             assertFalse(autoTrackSessions)
-            assertFalse(autoNotify)
+            assertFalse(autoDetectErrors)
             assertTrue(autoDetectAnrs)
             assertTrue(autoDetectNdkCrashes)
             assertFalse(sendThreads)

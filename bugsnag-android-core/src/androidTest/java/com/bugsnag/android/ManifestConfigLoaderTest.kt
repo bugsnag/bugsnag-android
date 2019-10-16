@@ -27,7 +27,7 @@ class ManifestConfigLoaderTest {
             assertNull(buildUuid)
 
             // detection
-            assertTrue(autoNotify)
+            assertTrue(autoDetectErrors)
             assertFalse(autoDetectAnrs)
             assertFalse(autoDetectNdkCrashes)
             assertTrue(autoTrackSessions)
@@ -61,7 +61,7 @@ class ManifestConfigLoaderTest {
             putString("com.bugsnag.android.BUILD_UUID", "fgh123456")
 
             // detection
-            putBoolean("com.bugsnag.android.AUTO_NOTIFY", false)
+            putBoolean("com.bugsnag.android.AUTO_DETECT_ERRORS", false)
             putBoolean("com.bugsnag.android.AUTO_DETECT_ANRS", true)
             putBoolean("com.bugsnag.android.AUTO_DETECT_NDK_CRASHES", true)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", false)
@@ -94,7 +94,7 @@ class ManifestConfigLoaderTest {
             assertEquals("fgh123456", buildUuid)
 
             // detection
-            assertFalse(autoNotify)
+            assertFalse(autoDetectErrors)
             assertTrue(autoDetectAnrs)
             assertTrue(autoDetectNdkCrashes)
             assertFalse(autoTrackSessions)
@@ -132,7 +132,7 @@ class ManifestConfigLoaderTest {
 
         with(config) {
             assertEquals("abc123", apiKey)
-            assertFalse(autoNotify)
+            assertFalse(autoDetectErrors)
         }
     }
 }

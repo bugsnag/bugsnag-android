@@ -15,7 +15,7 @@ internal class ManifestConfigLoader {
         internal const val BUILD_UUID = "$BUGSNAG_NS.BUILD_UUID"
 
         // detection
-        private const val AUTO_NOTIFY = "$BUGSNAG_NS.AUTO_NOTIFY"
+        private const val AUTO_DETECT_ERRORS = "$BUGSNAG_NS.AUTO_DETECT_ERRORS"
         private const val AUTO_DETECT_ANRS = "$BUGSNAG_NS.AUTO_DETECT_ANRS"
         private const val AUTO_DETECT_NDK_CRASHES = "$BUGSNAG_NS.AUTO_DETECT_NDK_CRASHES"
         private const val AUTO_CAPTURE_SESSIONS = "$BUGSNAG_NS.AUTO_CAPTURE_SESSIONS"
@@ -83,8 +83,8 @@ internal class ManifestConfigLoader {
 
     private fun loadDetectionConfig(config: Configuration, data: Bundle) {
         with(config) {
-            autoNotify = data.getBoolean(ENABLE_EXCEPTION_HANDLER, autoNotify)
-            autoNotify = data.getBoolean(AUTO_NOTIFY, autoNotify)
+            autoDetectErrors = data.getBoolean(ENABLE_EXCEPTION_HANDLER, autoDetectErrors)
+            autoDetectErrors = data.getBoolean(AUTO_DETECT_ERRORS, autoDetectErrors)
             autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
             autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
             autoTrackSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoTrackSessions)
