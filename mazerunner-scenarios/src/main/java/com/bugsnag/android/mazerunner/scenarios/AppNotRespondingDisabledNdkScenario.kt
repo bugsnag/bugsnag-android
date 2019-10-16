@@ -14,7 +14,7 @@ internal class AppNotRespondingDisabledNdkScenario(config: Configuration,
     init {
         config.setAutoCaptureSessions(false)
         config.autoDetectAnrs = true
-        config.detectNdkCrashes = false
+        config.autoDetectNdkCrashes = false
     }
 
     override fun run() {

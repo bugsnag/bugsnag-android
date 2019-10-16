@@ -8,7 +8,7 @@ android {
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
 
     buildTypes.each { buildType ->
-        buildType.buildConfigField("boolean", "DETECT_NDK_CRASHES", "true")
+        buildType.buildConfigField("boolean", "AUTO_DETECT_NDK_CRASHES", "true")
     }
 }
 

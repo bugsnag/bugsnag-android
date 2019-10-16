@@ -11,7 +11,7 @@ Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs
     And the exception "errorClass" equals "ANR"
     And the exception "message" starts with " Input dispatching timed out"
 
-Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs = true and detectNdkCrashes = false
+Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs = true and autoDetectNdkCrashes = false
     When I run "AppNotRespondingDisabledNdkScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times

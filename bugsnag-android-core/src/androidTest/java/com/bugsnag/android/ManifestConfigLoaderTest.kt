@@ -29,7 +29,7 @@ class ManifestConfigLoaderTest {
             // detection
             assertTrue(autoNotify)
             assertFalse(autoDetectAnrs)
-            assertFalse(detectNdkCrashes)
+            assertFalse(autoDetectNdkCrashes)
             assertTrue(autoCaptureSessions)
             assertTrue(autoCaptureBreadcrumbs)
             assertTrue(sendThreads)
@@ -63,7 +63,7 @@ class ManifestConfigLoaderTest {
             // detection
             putBoolean("com.bugsnag.android.AUTO_NOTIFY", false)
             putBoolean("com.bugsnag.android.AUTO_DETECT_ANRS", true)
-            putBoolean("com.bugsnag.android.DETECT_NDK_CRASHES", true)
+            putBoolean("com.bugsnag.android.AUTO_DETECT_NDK_CRASHES", true)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", false)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_BREADCRUMBS", false)
             putBoolean("com.bugsnag.android.SEND_THREADS", false)
@@ -96,7 +96,7 @@ class ManifestConfigLoaderTest {
             // detection
             assertFalse(autoNotify)
             assertTrue(autoDetectAnrs)
-            assertTrue(detectNdkCrashes)
+            assertTrue(autoDetectNdkCrashes)
             assertFalse(autoCaptureSessions)
             assertFalse(autoCaptureBreadcrumbs)
             assertFalse(sendThreads)

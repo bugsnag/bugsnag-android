@@ -17,7 +17,7 @@ internal class ManifestConfigLoader {
         // detection
         private const val AUTO_NOTIFY = "$BUGSNAG_NS.AUTO_NOTIFY"
         private const val AUTO_DETECT_ANRS = "$BUGSNAG_NS.AUTO_DETECT_ANRS"
-        private const val DETECT_NDK_CRASHES = "$BUGSNAG_NS.DETECT_NDK_CRASHES"
+        private const val AUTO_DETECT_NDK_CRASHES = "$BUGSNAG_NS.AUTO_DETECT_NDK_CRASHES"
         private const val AUTO_CAPTURE_SESSIONS = "$BUGSNAG_NS.AUTO_CAPTURE_SESSIONS"
         private const val AUTO_CAPTURE_BREADCRUMBS = "$BUGSNAG_NS.AUTO_CAPTURE_BREADCRUMBS"
         private const val SEND_THREADS = "$BUGSNAG_NS.SEND_THREADS"
@@ -86,7 +86,7 @@ internal class ManifestConfigLoader {
             autoNotify = data.getBoolean(ENABLE_EXCEPTION_HANDLER, autoNotify)
             autoNotify = data.getBoolean(AUTO_NOTIFY, autoNotify)
             autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
-            detectNdkCrashes = data.getBoolean(DETECT_NDK_CRASHES, detectNdkCrashes)
+            autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
             autoCaptureSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoCaptureSessions)
             autoCaptureBreadcrumbs =
                 data.getBoolean(AUTO_CAPTURE_BREADCRUMBS, autoCaptureBreadcrumbs)

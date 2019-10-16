@@ -39,7 +39,7 @@
       android:value="true" />
 
     <meta-data
-      android:name="com.bugsnag.android.DETECT_NDK_CRASHES"
+      android:name="com.bugsnag.android.AUTO_DETECT_NDK_CRASHES"
       android:value="true" />
 
   </application>

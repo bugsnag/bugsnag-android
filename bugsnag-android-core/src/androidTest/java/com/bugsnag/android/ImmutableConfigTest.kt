@@ -35,7 +35,7 @@ class ImmutableConfigTest {
             assertTrue(autoCaptureSessions)
             assertTrue(autoNotify)
             assertFalse(autoDetectAnrs)
-            assertFalse(detectNdkCrashes)
+            assertFalse(autoDetectNdkCrashes)
             assertTrue(sendThreads)
 
             // release stages
@@ -69,7 +69,7 @@ class ImmutableConfigTest {
         seed.autoCaptureSessions = false
         seed.autoNotify = false
         seed.autoDetectAnrs = true
-        seed.detectNdkCrashes = true
+        seed.autoDetectNdkCrashes = true
         seed.sendThreads = false
 
         seed.ignoreClasses = setOf("foo")
@@ -97,7 +97,7 @@ class ImmutableConfigTest {
             assertFalse(autoCaptureSessions)
             assertFalse(autoNotify)
             assertTrue(autoDetectAnrs)
-            assertTrue(detectNdkCrashes)
+            assertTrue(autoDetectNdkCrashes)
             assertFalse(sendThreads)
 
             // release stages

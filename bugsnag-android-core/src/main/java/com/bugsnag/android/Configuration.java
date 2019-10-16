@@ -45,7 +45,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private boolean autoCaptureBreadcrumbs = true;
 
     private boolean autoDetectAnrs = false;
-    private boolean detectNdkCrashes;
+    private boolean autoDetectNdkCrashes;
     private boolean loggingEnabled;
     private long anrThresholdMs = 5000;
     private boolean autoNotify = true;
@@ -79,12 +79,12 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         this.metaData.addObserver(this);
 
         try {
-            // check if DETECT_NDK_CRASHES has been set in bugsnag-android or bugsnag-android-ndk
+            // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android or bugsnag-android-ndk
             Class<?> clz = Class.forName("com.bugsnag.android.BuildConfig");
-            Field field = clz.getDeclaredField("DETECT_NDK_CRASHES");
-            detectNdkCrashes = field.getBoolean(null);
+            Field field = clz.getDeclaredField("AUTO_AUTO_DETECT_NDK_CRASHES");
+            autoDetectNdkCrashes = field.getBoolean(null);
         } catch (Throwable exc) {
-            detectNdkCrashes = false;
+            autoDetectNdkCrashes = false;
         }
 
         loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
@@ -644,10 +644,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     /**
      * @return whether NDK crashes will be reported by bugsnag
-     * @see #setDetectNdkCrashes(boolean)
+     * @see #setAutoDetectNdkCrashes(boolean)
      */
-    public boolean getDetectNdkCrashes() {
-        return detectNdkCrashes;
+    public boolean getAutoDetectNdkCrashes() {
+        return autoDetectNdkCrashes;
     }
 
     /**
@@ -656,10 +656,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * If you are using bugsnag-android this flag is false by default; if you are using
      * bugsnag-android-ndk this flag is true by default.
      *
-     * @param detectNdkCrashes whether NDK crashes should be reported
+     * @param autoDetectNdkCrashes whether NDK crashes should be reported
      */
-    public void setDetectNdkCrashes(boolean detectNdkCrashes) {
-        this.detectNdkCrashes = detectNdkCrashes;
+    public void setAutoDetectNdkCrashes(boolean autoDetectNdkCrashes) {
+        this.autoDetectNdkCrashes = autoDetectNdkCrashes;
     }
 
     /**

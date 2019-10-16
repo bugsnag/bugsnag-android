@@ -289,7 +289,7 @@ public class Client extends Observable implements Observer {
         NativeInterface.setClient(this);
         BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
 
-        if (immutableConfig.getDetectNdkCrashes()) {
+        if (immutableConfig.getAutoDetectNdkCrashes()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
             } catch (ClassNotFoundException exc) {
