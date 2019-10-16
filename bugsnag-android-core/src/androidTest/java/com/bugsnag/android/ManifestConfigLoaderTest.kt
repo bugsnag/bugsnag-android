@@ -50,7 +50,7 @@ class ManifestConfigLoaderTest {
             assertEquals(setOf("password"), filters)
 
             // misc
-            assertEquals(maxBreadcrumbs, 32)
+            assertEquals(maxBreadcrumbs, 25)
             assertEquals(launchCrashThresholdMs, 5000)
         }
     }

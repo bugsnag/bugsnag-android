@@ -114,7 +114,7 @@ class BreadcrumbsTest {
     @Test
     fun testMaxBreadcrumbAccessors() {
         val config = Configuration("api-key")
-        assertEquals(32, config.maxBreadcrumbs)
+        assertEquals(25, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = 50
         assertEquals(50, config.maxBreadcrumbs)

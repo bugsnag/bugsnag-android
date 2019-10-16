@@ -28,7 +28,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
     private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
-    private static final int DEFAULT_MAX_SIZE = 32;
+    private static final int DEFAULT_MAX_SIZE = 25;
     static final String DEFAULT_EXCEPTION_TYPE = "android";
 
     @NonNull
