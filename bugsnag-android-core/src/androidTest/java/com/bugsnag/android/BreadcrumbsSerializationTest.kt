@@ -53,9 +53,8 @@ class BreadcrumbsSerializationTest {
         var count = 0
 
         for (breadcrumb in store) {
-            if (MANUAL == breadcrumb.type && "manual" == breadcrumb.message) {
+            if (MANUAL == breadcrumb.type && "manual" == breadcrumb.message && breadcrumb.metadata["message"] == "Hello World") {
                 count++
-                assertEquals("Hello World", breadcrumb.metadata["message"])
             }
         }
         assertEquals(1, count)

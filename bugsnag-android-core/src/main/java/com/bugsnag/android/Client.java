@@ -234,6 +234,7 @@ public class Client extends Observable implements Observer {
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();
+        leaveBreadcrumb("Bugsnag loaded");
     }
 
     void recordStorageCacheBehavior(MetaData metaData) {

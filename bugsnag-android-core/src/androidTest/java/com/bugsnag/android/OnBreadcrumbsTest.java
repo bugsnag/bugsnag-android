@@ -28,7 +28,7 @@ public class OnBreadcrumbsTest {
         Configuration configuration = new Configuration("api-key");
         configuration.setAutoCaptureBreadcrumbs(false);
         client = generateClient();
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
     }
 
     @After
@@ -39,7 +39,7 @@ public class OnBreadcrumbsTest {
     @Test
     public void noCallback() throws Exception {
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
     }
 
     @Test
@@ -81,12 +81,12 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
     }
 
     @Test
     public void ensureBothCalled() throws Exception {
-        final int[] count = {0};
+        final int[] count = {1};
         client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
             public boolean run(@NonNull Breadcrumb breadcrumb) {
@@ -104,12 +104,12 @@ public class OnBreadcrumbsTest {
 
         client.leaveBreadcrumb("Foo");
         client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, Object>());
-        assertEquals(4, count[0]);
+        assertEquals(5, count[0]);
     }
 
     @Test
     public void ensureOnlyCalledOnce() throws Exception {
-        final int[] count = {0};
+        final int[] count = {1};
 
         OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
             @Override
@@ -121,12 +121,12 @@ public class OnBreadcrumbsTest {
         client.addOnBreadcrumb(onBreadcrumb);
         client.addOnBreadcrumb(onBreadcrumb);
         client.leaveBreadcrumb("Foo");
-        assertEquals(1, count[0]);
+        assertEquals(2, count[0]);
     }
 
     @Test
     public void checkBreadcrumbFields() throws Exception {
-        final int[] count = {0};
+        final int[] count = {1};
 
         OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
             @Override
@@ -140,7 +140,7 @@ public class OnBreadcrumbsTest {
         };
         client.addOnBreadcrumb(onBreadcrumb);
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, count[0]);
+        assertEquals(2, count[0]);
     }
 
     @Test
@@ -155,7 +155,7 @@ public class OnBreadcrumbsTest {
         client.leaveBreadcrumb("Hello");
         client.removeOnBreadcrumb(cb);
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
     }
 
 }
