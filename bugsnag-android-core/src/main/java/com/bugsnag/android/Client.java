@@ -990,11 +990,7 @@ public class Client extends Observable implements Observer {
      * @param message the log message to leave (max 140 chars)
      */
     public void leaveBreadcrumb(@NonNull String message) {
-        Breadcrumb crumb = new Breadcrumb(message);
-
-        if (runBeforeBreadcrumbTasks(crumb)) {
-            breadcrumbs.add(crumb);
-        }
+        leaveBreadcrumbInternal(new Breadcrumb(message));
     }
 
     /**
@@ -1004,8 +1000,10 @@ public class Client extends Observable implements Observer {
     public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, Object> metadata) {
-        Breadcrumb crumb = new Breadcrumb(message, type, metadata);
+        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata));
+    }
 
+    private void leaveBreadcrumbInternal(Breadcrumb crumb) {
         if (runBeforeBreadcrumbTasks(crumb)) {
             breadcrumbs.add(crumb);
         }
