@@ -236,7 +236,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     /**
      * Get which keys should be filtered when sending metaData to Bugsnag
      *
-     * @return redact keys
+     * @return a list of keys that should be redacted from the payload
      */
     @NonNull
     public Collection<String> getRedactKeys() {
@@ -412,10 +412,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * <p>
      * By default this behavior is enabled.
      *
-     * @param autoCapture whether sessions should be captured automatically
+     * @param autoTrack whether sessions should be tracked automatically
      */
-    public void setAutoTrackSessions(boolean autoCapture) {
-        this.autoTrackSessions = autoCapture;
+    public void setAutoTrackSessions(boolean autoTrack) {
+        this.autoTrackSessions = autoTrack;
     }
 
     /**

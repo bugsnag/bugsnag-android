@@ -1,12 +1,12 @@
 Feature: Verifies autoDetectNdkCrashes controls when NDK crashes are reported
 
 Scenario: Crash reported when autoDetectNdkCrashes enabled
-    When I run "DetectNdkEnabledScenario" and relaunch the app
-    And I configure Bugsnag for "DetectNdkEnabledScenario"
+    When I run "AutoDetectNdkEnabledScenario" and relaunch the app
+    And I configure Bugsnag for "AutoDetectNdkEnabledScenario"
     Then I wait to receive a request
 
 Scenario: No crash reported when autoDetectNdkCrashes disabled
-    When I run "DetectNdkDisabledScenario" and relaunch the app
-    And I configure Bugsnag for "DetectNdkDisabledScenario"
+    When I run "AutoDetectNdkDisabledScenario" and relaunch the app
+    And I configure Bugsnag for "AutoDetectNdkDisabledScenario"
     And I wait for 2 seconds
     Then I should receive no requests
