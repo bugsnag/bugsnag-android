@@ -569,15 +569,17 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     /**
      * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
-     * By default, we'll keep and send the 32 most recent breadcrumb log
+     * By default, we'll keep and send the 25 most recent breadcrumb log
      * messages.
      *
      * @param numBreadcrumbs max number of breadcrumb log messages to send
      */
     public void setMaxBreadcrumbs(int numBreadcrumbs) {
-        if (numBreadcrumbs < 0) {
-            Logger.warn("Ignoring invalid breadcrumb capacity. Must be >= 0.");
-            return;
+        if (numBreadcrumbs <= 0) {
+            numBreadcrumbs = 0;
+        }
+        if (numBreadcrumbs > 100) {
+            numBreadcrumbs = 100;
         }
         this.maxBreadcrumbs = numBreadcrumbs;
     }
