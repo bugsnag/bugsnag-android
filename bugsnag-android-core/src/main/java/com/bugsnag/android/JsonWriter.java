@@ -110,7 +110,7 @@ import java.io.Writer;
  *
  *   public void writeUser(JsonWriter writer, User user) throws IOException {
  *     writer.beginObject();
- *     writer.name("name").value(user.getName());
+ *     writer.name("name").value(user.getMessage());
  *     writer.name("followers_count").value(user.getFollowersCount());
  *     writer.endObject();
  *   }

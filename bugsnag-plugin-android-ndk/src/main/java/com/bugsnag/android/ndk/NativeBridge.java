@@ -262,7 +262,7 @@ public class NativeBridge implements Observer {
     private void handleAddBreadcrumb(Object arg) {
         if (arg instanceof Breadcrumb) {
             Breadcrumb crumb = (Breadcrumb) arg;
-            addBreadcrumb(crumb.getName(), crumb.getType().toString(),
+            addBreadcrumb(crumb.getMessage(), crumb.getType().toString(),
                 crumb.getTimestamp(), crumb.getMetadata());
         } else {
             warn("Attempted to add non-breadcrumb: " + arg);

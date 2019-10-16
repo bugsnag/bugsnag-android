@@ -987,10 +987,10 @@ public class Client extends Observable implements Observer {
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
      *
-     * @param breadcrumb the log message to leave (max 140 chars)
+     * @param message the log message to leave (max 140 chars)
      */
-    public void leaveBreadcrumb(@NonNull String breadcrumb) {
-        Breadcrumb crumb = new Breadcrumb(breadcrumb);
+    public void leaveBreadcrumb(@NonNull String message) {
+        Breadcrumb crumb = new Breadcrumb(message);
 
         if (runBeforeBreadcrumbTasks(crumb)) {
             breadcrumbs.add(crumb);
@@ -1001,10 +1001,10 @@ public class Client extends Observable implements Observer {
      * Leave a "breadcrumb" log message, representing an action which occurred
      * in your app, to aid with debugging.
      */
-    public void leaveBreadcrumb(@NonNull String name,
+    public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, String> metadata) {
-        Breadcrumb crumb = new Breadcrumb(name, type, metadata);
+        Breadcrumb crumb = new Breadcrumb(message, type, metadata);
 
         if (runBeforeBreadcrumbTasks(crumb)) {
             breadcrumbs.add(crumb);

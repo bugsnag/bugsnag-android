@@ -132,7 +132,7 @@ public class BeforeRecordBreadcrumbsTest {
             @Override
             public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
-                assertEquals("Hello", breadcrumb.getName());
+                assertEquals("Hello", breadcrumb.getMessage());
                 assertEquals(BreadcrumbType.MANUAL, breadcrumb.getType());
                 assertFalse(breadcrumb.getMetadata().isEmpty());
                 return true;

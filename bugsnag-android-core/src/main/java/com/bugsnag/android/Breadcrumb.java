@@ -16,7 +16,7 @@ public final class Breadcrumb implements JsonStream.Streamable {
     private static final String DEFAULT_NAME = "manual";
     private static final String MESSAGE_METAKEY = "message";
     private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String NAME_KEY = "name";
+    private static final String NAME_KEY = "message";
     private static final String METADATA_KEY = "metaData";
     private static final String TYPE_KEY = "type";
 
@@ -24,7 +24,7 @@ public final class Breadcrumb implements JsonStream.Streamable {
     private final String timestamp;
 
     @NonNull
-    private final String name;
+    private final String message;
 
     @NonNull
     private final BreadcrumbType type;
@@ -37,25 +37,25 @@ public final class Breadcrumb implements JsonStream.Streamable {
                 Collections.singletonMap(MESSAGE_METAKEY, message));
     }
 
-    Breadcrumb(@NonNull String name,
+    Breadcrumb(@NonNull String message,
                @NonNull BreadcrumbType type,
                @NonNull Map<String, String> metadata) {
-        this(name, type, new Date(), metadata);
+        this(message, type, new Date(), metadata);
     }
 
-    Breadcrumb(@NonNull String name,
+    Breadcrumb(@NonNull String message,
                @NonNull BreadcrumbType type,
                @NonNull Date captureDate,
                @NonNull Map<String, String> metadata) {
         this.timestamp = DateUtils.toIso8601(captureDate);
         this.type = type;
-        this.name = name;
+        this.message = message;
         this.metadata = new HashMap<>(metadata);
     }
 
     @NonNull
-    public String getName() {
-        return name;
+    public String getMessage() {
+        return message;
     }
 
     @NonNull
@@ -77,7 +77,7 @@ public final class Breadcrumb implements JsonStream.Streamable {
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name(TIMESTAMP_KEY).value(this.timestamp);
-        writer.name(NAME_KEY).value(this.name);
+        writer.name(NAME_KEY).value(this.message);
         writer.name(TYPE_KEY).value(this.type.toString());
         writer.name(METADATA_KEY);
         writer.beginObject();

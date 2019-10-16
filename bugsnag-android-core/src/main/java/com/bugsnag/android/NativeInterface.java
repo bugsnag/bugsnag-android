@@ -273,12 +273,12 @@ public class NativeInterface {
     /**
      * Leaves a breadcrumb on the static client instance
      */
-    public static void leaveBreadcrumb(@NonNull String name,
+    public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull String type,
                                        @NonNull Map<String, String> metadata) {
         String typeName = type.toUpperCase(Locale.US);
         Map<String, String> map = metadata == null ? new HashMap<String, String>() : metadata;
-        getClient().leaveBreadcrumb(name, BreadcrumbType.valueOf(typeName), map);
+        getClient().leaveBreadcrumb(message, BreadcrumbType.valueOf(typeName), map);
     }
 
     /**

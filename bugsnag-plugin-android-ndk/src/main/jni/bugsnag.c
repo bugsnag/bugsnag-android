@@ -18,7 +18,7 @@ void bugsnag_init(JNIEnv *env) { bsg_global_jni_env = env; }
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity);
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name);
-void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *name,
+void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
                                   bsg_breadcrumb_t type);
 
 void bugsnag_notify(char *name, char *message, bsg_severity_t severity) {
@@ -38,9 +38,9 @@ void bugsnag_set_user(char *id, char *email, char *name) {
   }
 }
 
-void bugsnag_leave_breadcrumb(char *name, bsg_breadcrumb_t type) {
+void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type) {
   if (bsg_global_jni_env != NULL) {
-    bugsnag_leave_breadcrumb_env(bsg_global_jni_env, name, type);
+    bugsnag_leave_breadcrumb_env(bsg_global_jni_env, message, type);
   } else {
     BUGSNAG_LOG("Cannot bugsnag_leave_breadcrumb_env before initializing with "
                 "bugsnag_init");
@@ -179,7 +179,7 @@ jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bsg_breadcrumb_t type,
   }
 }
 
-void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *name,
+void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
                                   bsg_breadcrumb_t type) {
   jclass interface_class =
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
@@ -191,7 +191,7 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *name,
 
   jobject jtype = (*env)->GetStaticObjectField(
       env, type_class, bsg_parse_jcrumb_type(env, type, type_class));
-  jstring jname = (*env)->NewStringUTF(env, name);
+  jstring jname = (*env)->NewStringUTF(env, message);
   (*env)->CallStaticVoidMethod(env, interface_class, leave_breadcrumb_method,
                                jname, jtype);
 

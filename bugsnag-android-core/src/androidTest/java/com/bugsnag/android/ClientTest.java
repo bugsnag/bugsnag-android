@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
@@ -178,7 +178,7 @@ public class ClientTest {
 
         Breadcrumb poll = client.breadcrumbs.store.poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
-        assertEquals("manual", poll.getName());
+        assertEquals("manual", poll.getMessage());
         assertEquals("another", poll.getMetadata().get("message"));
     }
 
