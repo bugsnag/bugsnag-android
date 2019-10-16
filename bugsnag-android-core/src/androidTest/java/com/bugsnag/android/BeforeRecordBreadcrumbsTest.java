@@ -103,7 +103,7 @@ public class BeforeRecordBreadcrumbsTest {
         });
 
         client.leaveBreadcrumb("Foo");
-        client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, String>());
+        client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, Object>());
         assertEquals(4, count[0]);
     }
 

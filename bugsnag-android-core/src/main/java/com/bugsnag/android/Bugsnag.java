@@ -348,7 +348,7 @@ public final class Bugsnag {
      */
     public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull BreadcrumbType type,
-                                       @NonNull Map<String, String> metadata) {
+                                       @NonNull Map<String, Object> metadata) {
         getClient().leaveBreadcrumb(message, type, metadata);
     }
 

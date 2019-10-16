@@ -13,13 +13,6 @@ import java.util.Map;
 
 public final class Breadcrumb implements JsonStream.Streamable {
 
-    private static final String DEFAULT_NAME = "manual";
-    private static final String MESSAGE_METAKEY = "message";
-    private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String NAME_KEY = "message";
-    private static final String METADATA_KEY = "metaData";
-    private static final String TYPE_KEY = "type";
-
     @NonNull
     private final String timestamp;
 
@@ -30,23 +23,23 @@ public final class Breadcrumb implements JsonStream.Streamable {
     private final BreadcrumbType type;
 
     @NonNull
-    private final Map<String, String> metadata;
+    private final Map<String, Object> metadata;
 
     Breadcrumb(@NonNull String message) {
-        this(DEFAULT_NAME, BreadcrumbType.MANUAL,
-                Collections.singletonMap(MESSAGE_METAKEY, message));
+        this("manual", BreadcrumbType.MANUAL,
+                Collections.<String, Object>singletonMap("message", message));
     }
 
     Breadcrumb(@NonNull String message,
                @NonNull BreadcrumbType type,
-               @NonNull Map<String, String> metadata) {
+               @NonNull Map<String, Object> metadata) {
         this(message, type, new Date(), metadata);
     }
 
     Breadcrumb(@NonNull String message,
                @NonNull BreadcrumbType type,
                @NonNull Date captureDate,
-               @NonNull Map<String, String> metadata) {
+               @NonNull Map<String, Object> metadata) {
         this.timestamp = DateUtils.toIso8601(captureDate);
         this.type = type;
         this.message = message;
@@ -64,7 +57,7 @@ public final class Breadcrumb implements JsonStream.Streamable {
     }
 
     @NonNull
-    public Map<String, String> getMetadata() {
+    public Map<String, Object> getMetadata() {
         return metadata;
     }
 
@@ -76,10 +69,10 @@ public final class Breadcrumb implements JsonStream.Streamable {
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-        writer.name(TIMESTAMP_KEY).value(this.timestamp);
-        writer.name(NAME_KEY).value(this.message);
-        writer.name(TYPE_KEY).value(this.type.toString());
-        writer.name(METADATA_KEY);
+        writer.name("timestamp").value(timestamp);
+        writer.name("name").value(message);
+        writer.name("type").value(type.toString());
+        writer.name("metaData");
         writer.beginObject();
 
         // sort metadata alphabetically

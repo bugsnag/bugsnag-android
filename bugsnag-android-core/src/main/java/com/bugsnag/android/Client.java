@@ -825,8 +825,8 @@ public class Client extends Observable implements Observer {
 
     private void leaveErrorBreadcrumb(@NonNull Error error) {
         // Add a breadcrumb for this error occurring
-        String exceptionMessage = error.getExceptionMessage();
-        Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
+        String msg = error.getExceptionMessage();
+        Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
         breadcrumbs.add(new Breadcrumb(error.getExceptionName(), BreadcrumbType.ERROR, message));
     }
 
@@ -1003,7 +1003,7 @@ public class Client extends Observable implements Observer {
      */
     public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
-                                @NonNull Map<String, String> metadata) {
+                                @NonNull Map<String, Object> metadata) {
         Breadcrumb crumb = new Breadcrumb(message, type, metadata);
 
         if (runBeforeBreadcrumbTasks(crumb)) {

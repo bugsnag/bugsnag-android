@@ -231,7 +231,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testLeaveBreadcrumbSendsMessage() {
-        client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, String>());
+        client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, Object>());
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.LOG, crumb.getType());
