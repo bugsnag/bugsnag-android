@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 
 /**
- * Add a "before breadcrumb" callback, to execute code before every
+ * Add a "on breadcrumb" callback, to execute code before every
  * breadcrumb captured by Bugsnag.
  * <p>
  * You can use this to modify breadcrumbs before they are stored by Bugsnag.
@@ -17,16 +17,16 @@ import androidx.annotation.NonNull;
  * }
  * })
  */
-public interface BeforeRecordBreadcrumb {
+public interface OnBreadcrumb {
 
     /**
-     * Runs the "before breadcrumb" callback. If the callback returns
-     * <code>false</code> any further BeforeRecordBreadcrumb callbacks will not be called
+     * Runs the "on breadcrumb" callback. If the callback returns
+     * <code>false</code> any further OnBreadcrumb callbacks will not be called
      * and the breadcrumb will not be captured by Bugsnag.
      *
      * @param breadcrumb the breadcrumb to be captured by Bugsnag
      * @see Breadcrumb
      */
-    boolean shouldRecord(@NonNull Breadcrumb breadcrumb);
+    boolean run(@NonNull Breadcrumb breadcrumb);
 
 }

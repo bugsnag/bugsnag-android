@@ -6,14 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -59,7 +54,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
+    private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
 
@@ -748,12 +743,16 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     /**
      * Adds a new before breadcrumb task
      *
-     * @param beforeRecordBreadcrumb the new before breadcrumb task
+     * @param onBreadcrumb the new before breadcrumb task
      */
-    protected void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        if (!beforeRecordBreadcrumbTasks.contains(beforeRecordBreadcrumb)) {
-            beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
+    void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
+            breadcrumbCallbacks.add(onBreadcrumb);
         }
+    }
+
+    void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        breadcrumbCallbacks.remove(onBreadcrumb);
     }
 
     /**
@@ -762,8 +761,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return the before breadcrumb tasks
      */
     @NonNull
-    protected Collection<BeforeRecordBreadcrumb> getBeforeRecordBreadcrumbTasks() {
-        return beforeRecordBreadcrumbTasks;
+    Collection<OnBreadcrumb> getBreadcrumbCallbacks() {
+        return breadcrumbCallbacks;
     }
 
     void addBeforeSendSession(BeforeSendSession beforeSendSession) {

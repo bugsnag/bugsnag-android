@@ -590,17 +590,21 @@ public class Client extends Observable implements Observer {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumb
      */
-    public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        clientState.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.addOnBreadcrumb(onBreadcrumb);
+    }
+
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -1004,7 +1008,7 @@ public class Client extends Observable implements Observer {
     }
 
     private void leaveBreadcrumbInternal(Breadcrumb crumb) {
-        if (runBeforeBreadcrumbTasks(crumb)) {
+        if (runBreadcrumbCallbacks(crumb)) {
             breadcrumbs.add(crumb);
         }
     }
@@ -1104,20 +1108,19 @@ public class Client extends Observable implements Observer {
         return true;
     }
 
-    private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<BeforeRecordBreadcrumb> tasks = clientState.getBeforeRecordBreadcrumbTasks();
-        for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : tasks) {
+    private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
+        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
+        for (OnBreadcrumb callback : tasks) {
             try {
-                if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
+                if (!callback.run(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("BeforeRecordBreadcrumb threw an Exception", ex);
+                Logger.warn("OnBreadcrumb threw an Exception", ex);
             }
         }
         return true;
     }
-
 
     /**
      * Stores the given key value pair into shared preferences
