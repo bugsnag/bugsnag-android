@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private final Set<String> ignoreClasses = new HashSet<>();
     private final Set<String> notifyReleaseStages = new HashSet<>();
     private final Set<String> projectPackages = new HashSet<>();
+    private final Set<BreadcrumbType> enabledBreadcrumbTypes = new HashSet<>();
 
     private String releaseStage;
     private boolean sendThreads = true;
@@ -58,6 +60,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
 
+
     private String codeBundleId;
     private String notifierType;
 
@@ -77,6 +80,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         this.apiKey = apiKey;
         this.metaData = new MetaData();
         this.metaData.addObserver(this);
+        enabledBreadcrumbTypes.addAll(Arrays.asList(BreadcrumbType.values()));
 
         try {
             // check if DETECT_NDK_CRASHES has been set in bugsnag-android or bugsnag-android-ndk
@@ -307,6 +311,16 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     public void setNotifyReleaseStages(@NonNull Collection<String> notifyReleaseStages) {
         this.notifyReleaseStages.clear();
         this.notifyReleaseStages.addAll(notifyReleaseStages);
+    }
+
+    @NonNull
+    public Set<BreadcrumbType> getEnabledBreadcrumbTypes() {
+        return Collections.unmodifiableSet(enabledBreadcrumbTypes);
+    }
+
+    public void setEnabledBreadcrumbTypes(@NonNull Set<BreadcrumbType> enabledBreadcrumbTypes) {
+        this.enabledBreadcrumbTypes.clear();
+        this.enabledBreadcrumbTypes.addAll(enabledBreadcrumbTypes);
     }
 
     /**

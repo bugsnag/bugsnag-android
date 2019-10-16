@@ -223,6 +223,14 @@ public class Client extends Observable implements Observer {
             Logger.warn("Failed to set up orientation tracking: " + ex);
         }
 
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
+            }
+        });
+
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();

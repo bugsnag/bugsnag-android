@@ -14,6 +14,7 @@ internal data class ImmutableConfig(
     val ignoreClasses: Collection<String>,
     val notifyReleaseStages: Collection<String>,
     val projectPackages: Collection<String>,
+    val enabledBreadcrumbTypes: Set<BreadcrumbType>,
     val releaseStage: String?,
     val buildUuid: String?,
     val appVersion: String?,
@@ -100,6 +101,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         persistUserBetweenSessions = config.persistUserBetweenSessions,
         launchCrashThresholdMs = config.launchCrashThresholdMs,
         loggingEnabled = config.loggingEnabled,
-        maxBreadcrumbs = config.maxBreadcrumbs
+        maxBreadcrumbs = config.maxBreadcrumbs,
+        enabledBreadcrumbTypes = config.enabledBreadcrumbTypes.toSet()
     )
 }
