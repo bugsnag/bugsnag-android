@@ -6,11 +6,14 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Map;
+
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
  * <p>
  * See https://github.com/bugsnag/bugsnag-android/issues/194
  */
+@SuppressWarnings("unchecked")
 public class NullMetadataTest {
 
     private static final String TAB_KEY = "tab";
@@ -33,7 +36,7 @@ public class NullMetadataTest {
     public void testErrorDefaultMetaData() throws Exception {
         Error error = new Error.Builder(config, throwable, null,
             Thread.currentThread(), false, new MetaData()).build();
-        validateDefaultMetadata(error.getMetaData());
+        validateDefaultMetadata(error);
     }
 
     @Test
@@ -41,27 +44,7 @@ public class NullMetadataTest {
         Error error = new Error.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
             null, Thread.currentThread(), new MetaData()).build();
-        validateDefaultMetadata(error.getMetaData());
-    }
-
-    @Test
-    public void testErrorSetMetadataRef() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            null,
-            Thread.currentThread(), false, new MetaData()).build();
-        MetaData metaData = new MetaData();
-        metaData.addToTab(TAB_KEY, "test", "data");
-        error.setMetaData(metaData);
-        assertNotNull(metaData.getTab(TAB_KEY));
-    }
-
-    @Test
-    public void testErrorSetNullMetadata() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            null,
-            Thread.currentThread(), false, new MetaData()).build();
-        error.setMetaData(null);
-        validateDefaultMetadata(error.getMetaData());
+        validateDefaultMetadata(error);
     }
 
     @Test
@@ -71,12 +54,12 @@ public class NullMetadataTest {
         validateDefaultMetadata(configuration.getMetaData());
     }
 
-    private void validateDefaultMetadata(MetaData metaData) {
-        assertNotNull(metaData);
-        assertEquals(0, metaData.getTab(TAB_KEY).size());
+    private void validateDefaultMetadata(MetaDataAware error) {
+        Map<String, Object> metadata = (Map<String, Object>) error.getMetadata(TAB_KEY, null);
+        assertEquals(0, metadata.size());
 
-        metaData.addToTab(TAB_KEY, "test", "data");
-        assertEquals(1, metaData.getTab(TAB_KEY).size());
+        error.addMetadata(TAB_KEY, "test", "data");
+        assertEquals(1, metadata.size());
     }
 
 }

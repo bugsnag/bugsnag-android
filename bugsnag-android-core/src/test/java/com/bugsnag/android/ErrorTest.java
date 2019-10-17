@@ -9,8 +9,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
+import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class ErrorTest {
 
     private ImmutableConfig config;
@@ -104,18 +105,20 @@ public class ErrorTest {
         assertNotNull(builder.metaData(new MetaData()).build());
 
         MetaData metaData = new MetaData();
-        metaData.addToTab("foo", "bar", true);
+        metaData.addMetadata("foo", "bar", true);
 
         Error error = builder.metaData(metaData).build();
-        assertEquals(1, error.getMetaData().getTab("foo").size());
+        Map<String, Object> foo = (Map<String, Object>) error.getMetadata("foo", null);
+        assertEquals(1, foo.size());
     }
 
     @Test
     public void testErrorMetaData() {
-        error.addToTab("rocks", "geode", "a shiny mineral");
-        assertNotNull(error.getMetaData().getTab("rocks"));
+        error.addMetadata("rocks", "geode", "a shiny mineral");
+        Map<String, Object> rocks = (Map<String, Object>) error.getMetadata("rocks", null);
+        assertNotNull(rocks);
 
-        error.clearTab("rocks");
-        assertTrue(error.getMetaData().getTab("rocks").isEmpty());
+        error.clearMetadata("rocks", null);
+        assertTrue(rocks.isEmpty());
     }
 }

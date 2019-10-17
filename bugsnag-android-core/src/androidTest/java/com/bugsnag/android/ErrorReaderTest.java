@@ -155,29 +155,27 @@ public class ErrorReaderTest {
 
     @Test
     public void testReadErrorMetaData() throws JSONException {
-        MetaData metadata = error.getMetaData();
-        assertNotNull(metadata);
-        assertEquals("com.bugsnag.android.mazerunner", metadata.getTab("app").get("packageName"));
-        assertEquals("1.1.14", metadata.getTab("app").get("versionName"));
-        assertEquals("MainActivity", metadata.getTab("app").get("activeScreen"));
-        assertEquals("MazeRunner", metadata.getTab("app").get("name"));
-        assertEquals(false, metadata.getTab("app").get("lowMemory"));
-        assertEquals(false, metadata.getTab("customer").get("accountee"));
-        assertEquals("Acme Co", metadata.getTab("customer").get("name"));
-        assertEquals(23423, metadata.getTab("customer").get("id"));
+        assertEquals("com.bugsnag.android.mazerunner", error.getMetadata("app", "packageName"));
+        assertEquals("1.1.14", error.getMetadata("app", "versionName"));
+        assertEquals("MainActivity", error.getMetadata("app", "activeScreen"));
+        assertEquals("MazeRunner", error.getMetadata("app", "name"));
+        assertEquals(false, error.getMetadata("app", "lowMemory"));
+        assertEquals(false, error.getMetadata("customer", "accountee"));
+        assertEquals("Acme Co", error.getMetadata("customer", "name"));
+        assertEquals(23423, error.getMetadata("customer", "id"));
         assertEquals("sdk_phone_armv7-eng 5.0.2 LSY66K 3079185 test-keys",
-                     metadata.getTab("device").get("osBuild"));
-        assertEquals(21, metadata.getTab("device").get("apiLevel"));
-        assertEquals("O-Matic", metadata.getTab("device").get("brand"));
-        assertEquals(false, metadata.getTab("device").get("emulator"));
-        assertEquals(true, metadata.getTab("device").get("jailbroken"));
-        assertEquals("en_US", metadata.getTab("device").get("locale"));
-        assertEquals("allowed", metadata.getTab("device").get("locationStatus"));
-        assertEquals("cellular", metadata.getTab("device").get("networkAccess"));
-        assertEquals(160, metadata.getTab("device").get("dpi"));
-        assertEquals(1, metadata.getTab("device").get("screenDensity"));
-        assertEquals("480x320", metadata.getTab("device").get("screenResolution"));
-        assertEquals("2018-10-19T18:56:13Z", metadata.getTab("device").get("time"));
+                error.getMetadata("device", "osBuild"));
+        assertEquals(21, error.getMetadata("device", "apiLevel"));
+        assertEquals("O-Matic", error.getMetadata("device", "brand"));
+        assertEquals(false, error.getMetadata("device", "emulator"));
+        assertEquals(true, error.getMetadata("device", "jailbroken"));
+        assertEquals("en_US", error.getMetadata("device", "locale"));
+        assertEquals("allowed", error.getMetadata("device", "locationStatus"));
+        assertEquals("cellular", error.getMetadata("device", "networkAccess"));
+        assertEquals(160, error.getMetadata("device", "dpi"));
+        assertEquals(1, error.getMetadata("device", "screenDensity"));
+        assertEquals("480x320", error.getMetadata("device", "screenResolution"));
+        assertEquals("2018-10-19T18:56:13Z", error.getMetadata("device", "time"));
     }
 
     @Test

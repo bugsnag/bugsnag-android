@@ -3,11 +3,11 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @see BeforeNotify
  */
-public class Error implements JsonStream.Streamable {
+public class Error implements JsonStream.Streamable, MetaDataAware {
 
     @NonNull
     private Map<String, Object> appData = new HashMap<>();
@@ -257,63 +257,24 @@ public class Error implements JsonStream.Streamable {
         this.user.setName(name);
     }
 
-    /**
-     * Add additional diagnostic information to send with this Error.
-     * Diagnostic information is collected in "tabs" on your dashboard.
-     * <p>
-     * For example:
-     * <p>
-     * error.addToTab("account", "name", "Acme Co.");
-     * error.addToTab("account", "payingCustomer", true);
-     *
-     * @param tabName the dashboard tab to add diagnostic data to
-     * @param key     the name of the diagnostic information
-     * @param value   the contents of the diagnostic information
-     */
-    public void addToTab(@NonNull String tabName, @NonNull String key, @Nullable Object value) {
-        metaData.addToTab(tabName, key, value);
+    @Override
+    public void addMetadata(@NotNull String section,
+                            @Nullable String key,
+                            @Nullable Object value) {
+        metaData.addMetadata(section, key, value);
     }
 
-    /**
-     * Remove a tab of app-wide diagnostic information from this Error
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public void clearTab(@NonNull String tabName) {
-        metaData.clearTab(tabName);
+    @Override
+    public void clearMetadata(@NotNull String section,
+                              @Nullable String key) {
+        metaData.clearMetadata(section, key);
     }
 
-    /**
-     * Get any additional diagnostic MetaData currently attached to this Error.
-     * <p>
-     * This will contain any MetaData set by setMetaData or addToTab.
-     *
-     * @see Error#setMetaData
-     * @see Error#addToTab
-     */
-    @NonNull
-    public MetaData getMetaData() {
-        return metaData;
-    }
-
-    /**
-     * Set additional diagnostic MetaData to send with this Error. This will
-     * be merged with any global MetaData you set on the Client.
-     * <p>
-     * Note: This will overwrite any MetaData you provided using
-     * Bugsnag.notify, so it is recommended to use addToTab instead.
-     *
-     * @param metaData additional diagnostic data to send with this Error
-     * @see Error#addToTab
-     * @see Error#getMetaData
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        //noinspection ConstantConditions
-        if (metaData == null) {
-            this.metaData = new MetaData();
-        } else {
-            this.metaData = metaData;
-        }
+    @Nullable
+    @Override
+    public Object getMetadata(@NotNull String section,
+                              @Nullable String key) {
+        return metaData.getMetadata(section, key);
     }
 
     /**
@@ -483,14 +444,9 @@ public class Error implements JsonStream.Streamable {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
             Session session = getSession(handledState);
-
-            Error error = new Error(config, exception, handledState,
-                severity, session, threadState, globalMetaData);
-
-            if (metaData != null) {
-                error.setMetaData(metaData);
-            }
-            return error;
+            MetaData metaData = MetaData.merge(globalMetaData, this.metaData);
+            return new Error(config, exception, handledState,
+                severity, session, threadState, metaData);
         }
 
         private Session getSession(HandledState handledState) {

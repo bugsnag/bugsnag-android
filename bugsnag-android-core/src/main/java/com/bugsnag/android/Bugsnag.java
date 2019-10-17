@@ -282,50 +282,18 @@ public final class Bugsnag {
         getClient().internalClientNotify(exception, clientData, blocking, callback);
     }
 
-    /**
-     * Add diagnostic information to every error report.
-     * Diagnostic information is collected in "tabs" on your dashboard.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addToTab("account", "name", "Acme Co.");
-     * Bugsnag.addToTab("account", "payingCustomer", true);
-     *
-     * @param tab   the dashboard tab to add diagnostic data to
-     * @param key   the name of the diagnostic information
-     * @param value the contents of the diagnostic information
-     */
-    public static void addToTab(@NonNull final String tab,
-                                @NonNull final String key,
-                                @Nullable final Object value) {
-        getClient().addToTab(tab, key, value);
+    public static void addMetadata(@NonNull String section, @Nullable String key,
+                                   @Nullable Object value) {
+        getClient().addMetadata(section, key, value);
     }
 
-    /**
-     * Remove a tab of app-wide diagnostic information
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public static void clearTab(@NonNull String tabName) {
-        getClient().clearTab(tabName);
+    public static void clearMetadata(@NonNull String section, @Nullable String key) {
+        getClient().clearMetadata(section, key);
     }
 
-    /**
-     * Get the global diagnostic information currently stored in MetaData.
-     *
-     * @see MetaData
-     */
-    @NonNull public static MetaData getMetaData() {
-        return getClient().getMetaData();
-    }
-
-    /**
-     * Set the global diagnostic information to be send with every error.
-     *
-     * @see MetaData
-     */
-    public static void setMetaData(@NonNull final MetaData metaData) {
-        getClient().setMetaData(metaData);
+    @Nullable
+    public static Object getMetadata(@NonNull String section, @Nullable String key) {
+        return getClient().getMetadata(section, key);
     }
 
     /**

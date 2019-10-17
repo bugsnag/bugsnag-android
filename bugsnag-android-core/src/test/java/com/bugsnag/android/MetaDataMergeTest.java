@@ -18,7 +18,7 @@ public class MetaDataMergeTest {
     private MetaData generateMetaData() {
         MetaData metaData = new MetaData();
         Map<Object, Object> nestedMap = new HashMap<>();
-        metaData.addToTab("foo", "bar", nestedMap);
+        metaData.addMetadata("foo", "bar", nestedMap);
         nestedMap.put("whoops", null);
         return metaData;
     }

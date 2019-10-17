@@ -34,9 +34,9 @@ public class NativeInterfaceTest {
     public void addToTab() {
         Client client = BugsnagTestUtils.generateClient();
         NativeInterface.setClient(client);
-        NativeInterface.addToTab("app", "buildno", "0.1");
-        NativeInterface.addToTab("app", "args", "-print 1");
-        NativeInterface.addToTab("info", "cache", false);
+        NativeInterface.addMetadata("app", "buildno", "0.1");
+        NativeInterface.addMetadata("app", "args", "-print 1");
+        NativeInterface.addMetadata("info", "cache", false);
 
         Map<String, Object> metadata = NativeInterface.getMetaData();
         @SuppressWarnings("unchecked")
@@ -52,10 +52,10 @@ public class NativeInterfaceTest {
     public void clearTab() {
         Client client = BugsnagTestUtils.generateClient();
         NativeInterface.setClient(client);
-        NativeInterface.addToTab("app", "buildno", "0.1");
-        NativeInterface.addToTab("app", "args", "-print 1");
-        NativeInterface.addToTab("info", "cache", false);
-        NativeInterface.clearTab("info");
+        NativeInterface.addMetadata("app", "buildno", "0.1");
+        NativeInterface.addMetadata("app", "args", "-print 1");
+        NativeInterface.addMetadata("info", "cache", false);
+        NativeInterface.clearMetadata("info", null);
 
         Map<String, Object> metadata = NativeInterface.getMetaData();
         @SuppressWarnings("unchecked")

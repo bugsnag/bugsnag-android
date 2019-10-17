@@ -49,8 +49,7 @@ public class ObserverInterfaceTest {
     @Test
     public void testUpdateMetadataFromClientSendsMessage() {
         MetaData metadata = new MetaData(new HashMap<String, Object>());
-        metadata.addToTab("foo", "bar", "baz");
-        client.setMetaData(metadata);
+        client.addMetadata("foo", "bar", "baz");
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_METADATA, Map.class);
         assertEquals(metadata.store, value);
@@ -59,7 +58,7 @@ public class ObserverInterfaceTest {
     @Test
     public void testUpdateMetadataFromConfigSendsMessage() {
         MetaData metadata = new MetaData(new HashMap<String, Object>());
-        metadata.addToTab("foo", "bar", "baz");
+        metadata.addMetadata("foo", "bar", "baz");
         client.getConfiguration().setMetaData(metadata);
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.UPDATE_METADATA, Map.class);
@@ -68,7 +67,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testAddMetadataToClientSendsMessage() {
-        client.addToTab("foo", "bar", "baz");
+        client.addMetadata("foo", "bar", "baz");
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.ADD_METADATA, List.class);
         assertEquals(3, metadataItem.size());
@@ -79,7 +78,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testAddNullMetadataToClientSendsMessage() {
-        client.addToTab("foo", "bar", null);
+        client.addMetadata("foo", "bar", null);
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.REMOVE_METADATA, List.class);
         assertEquals(2, metadataItem.size());
@@ -89,7 +88,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testAddMetadataToMetaDataSendsMessage() {
-        client.getMetaData().addToTab("foo", "bar", "baz");
+        client.addMetadata("foo", "bar", "baz");
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.ADD_METADATA, List.class);
         assertEquals(3, metadataItem.size());
@@ -100,7 +99,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClearTabFromClientSendsMessage() {
-        client.clearTab("axis");
+        client.clearMetadata("axis", null);
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
         assertEquals("axis", value);
@@ -108,7 +107,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClearTabFromMetaDataSendsMessage() {
-        client.getMetaData().clearTab("axis");
+        client.clearMetadata("axis", null);
         Object value =  findMessageInQueue(
                 NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
         assertEquals("axis", value);
@@ -116,7 +115,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testAddNullMetadataToMetaDataSendsMessage() {
-        client.getMetaData().addToTab("foo", "bar", null);
+        client.addMetadata("foo", "bar", null);
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.REMOVE_METADATA, List.class);
         assertEquals(2, metadataItem.size());

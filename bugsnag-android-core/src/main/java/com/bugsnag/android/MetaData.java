@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,23 +22,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-public class MetaData extends Observable implements JsonStream.Streamable {
+public class MetaData extends Observable implements JsonStream.Streamable, MetaDataAware {
 
     @NonNull
     final Map<String, Object> store;
     final ObjectJsonStreamer jsonStreamer;
 
-    /**
-     * Create an empty MetaData object.
-     */
-    public MetaData() {
+    MetaData() {
         this(new ConcurrentHashMap<String, Object>());
     }
 
-    /**
-     * Create a MetaData with values copied from an existing Map
-     */
-    public MetaData(@NonNull Map<String, Object> map) {
+    MetaData(@NonNull Map<String, Object> map) {
         store = new ConcurrentHashMap<>(map);
         jsonStreamer = new ObjectJsonStreamer();
     }
@@ -46,48 +42,39 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         jsonStreamer.objectToStream(store, writer);
     }
 
-    /**
-     * Add diagnostic information to a tab of this MetaData.
-     * <p>
-     * For example:
-     * <p>
-     * metaData.addToTab("account", "name", "Acme Co.");
-     * metaData.addToTab("account", "payingCustomer", true);
-     *
-     * @param tabName the dashboard tab to add diagnostic data to
-     * @param key     the name of the diagnostic information
-     * @param value   the contents of the diagnostic information
-     */
-    public void addToTab(@NonNull String tabName, @NonNull String key, @Nullable Object value) {
-        Map<String, Object> tab = getTab(tabName);
+    @Override
+    public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
+        Map<String, Object> tab = getTab(section);
         setChanged();
         if (value != null) {
             tab.put(key, value);
             notifyObservers(new NativeInterface.Message(
-                        NativeInterface.MessageType.ADD_METADATA,
-                        Arrays.asList(tabName, key, value)));
+                    NativeInterface.MessageType.ADD_METADATA,
+                    Arrays.asList(section, key, value)));
         } else {
             tab.remove(key);
             notifyObservers(new NativeInterface.Message(
-                        NativeInterface.MessageType.REMOVE_METADATA,
-                        Arrays.asList(tabName, key)));
+                    NativeInterface.MessageType.REMOVE_METADATA,
+                    Arrays.asList(section, key)));
         }
     }
 
-    /**
-     * Remove a tab of diagnostic information from this MetaData.
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public void clearTab(@NonNull String tabName) {
-        store.remove(tabName);
+    @Override
+    public void clearMetadata(@NotNull String section, @Nullable String key) {
+        store.remove(section);
         setChanged();
         notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.CLEAR_METADATA_TAB, tabName));
+                NativeInterface.MessageType.CLEAR_METADATA_TAB, section));
+    }
+
+    @Nullable
+    @Override
+    public Object getMetadata(@NotNull String section, @Nullable String key) {
+        return null;
     }
 
     @NonNull
-    Map<String, Object> getTab(String tabName) {
+    private Map<String, Object> getTab(String tabName) {
         @SuppressWarnings("unchecked")
         Map<String, Object> tab = (Map<String, Object>) store.get(tabName);
 
