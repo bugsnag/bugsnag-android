@@ -474,19 +474,16 @@ public class Client extends Observable implements Observer {
     }
 
     @NonNull
-    @InternalApi
     public Collection<Breadcrumb> getBreadcrumbs() {
         return new ArrayList<>(breadcrumbs.store);
     }
 
     @NonNull
-    @InternalApi
     public AppData getAppData() {
         return appData;
     }
 
     @NonNull
-    @InternalApi
     public DeviceData getDeviceData() {
         return deviceData;
     }

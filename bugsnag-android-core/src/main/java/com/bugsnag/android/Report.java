@@ -94,7 +94,6 @@ public class Report implements JsonStream.Streamable {
         return apiKey;
     }
 
-    @InternalApi
     @NonNull
     public Notifier getNotifier() {
         return notifier;

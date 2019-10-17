@@ -38,36 +38,30 @@ public class Notifier implements JsonStream.Streamable {
         writer.endObject();
     }
 
-    @InternalApi
     public void setVersion(@NonNull String version) {
         this.version = version;
     }
 
-    @InternalApi
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public void setURL(@NonNull String url) {
         this.url = url;
     }
 
-    @InternalApi
     public void setName(@NonNull String name) {
         this.name = name;
     }
 
     @NonNull
-    @InternalApi
     public String getName() {
         return name;
     }
 
     @NonNull
-    @InternalApi
     public String getVersion() {
         return version;
     }
 
     @NonNull
-    @InternalApi
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public String getURL() {
         return url;
