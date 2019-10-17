@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-public class MetaData extends Observable implements JsonStream.Streamable, MetaDataAware {
+class MetaData extends Observable implements JsonStream.Streamable, MetaDataAware {
 
     @NonNull
-    final Map<String, Object> store;
-    final ObjectJsonStreamer jsonStreamer;
+    private final Map<String, Object> store;
+    private final ObjectJsonStreamer jsonStreamer;
 
     MetaData() {
         this(new ConcurrentHashMap<String, Object>());
@@ -108,6 +109,10 @@ public class MetaData extends Observable implements JsonStream.Streamable, MetaD
         }
 
         return (Map<String, Object>) tab;
+    }
+
+    Map<String, Object> toMap() {
+        return new HashMap<>(store);
     }
 
     void setFilters(Collection<String> filters) {

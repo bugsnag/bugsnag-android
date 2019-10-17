@@ -68,11 +68,6 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testConfigDefaultMetadata() throws Exception {
-        validateDefaultMetadata(client.getConfiguration().getMetaData());
-    }
-
-    @Test
     public void testConfigSetMetadataRef() throws Exception {
         Configuration configuration = new Configuration("test");
         configuration.setMetaData(new MetaData());

@@ -428,7 +428,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return meta data
      */
     @NonNull
-    @Override
     public MetaData getMetaData() {
         return metaData;
     }
@@ -438,7 +437,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param metaData meta data
      */
-    @Override
     public void setMetaData(@NonNull MetaData metaData) {
         //noinspection ConstantConditions
         if (metaData == null) {

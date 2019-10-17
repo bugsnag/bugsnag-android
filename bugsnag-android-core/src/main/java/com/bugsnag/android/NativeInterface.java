@@ -228,7 +228,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetaData() {
-        return new HashMap<>(getClient().getConfiguration().getMetaData().store);
+        return new HashMap<>(getClient().clientState.getMetaData().toMap());
     }
 
     /**

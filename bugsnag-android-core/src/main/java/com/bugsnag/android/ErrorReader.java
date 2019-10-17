@@ -104,10 +104,9 @@ class ErrorReader {
                 : null;
             HandledState handledState = new HandledState(severityReasonValues.get(0), severity,
                                                          unhandled, severityReasonAttribute);
-
-            MetaData mergedData = MetaData.merge(clientState.getMetaData(), metaData);
+            
             Error error = new Error(config, exceptions.getException(), handledState, severity,
-                                    session, threadState, mergedData);
+                                    session, threadState, metaData);
             error.getExceptions().setExceptionType(exceptions.getExceptionType());
             error.setProjectPackages(projectPackages);
             error.setUser(user);
