@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
@@ -55,7 +55,7 @@ public class ClientConfigTest {
 
             @NotNull
             @Override
-            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+            public DeliveryStatus deliver(@NotNull SessionPayload payload,
                                           @NotNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }
