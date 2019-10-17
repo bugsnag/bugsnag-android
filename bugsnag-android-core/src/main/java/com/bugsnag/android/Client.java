@@ -938,13 +938,29 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     @Override
+    public void addMetadata(@NonNull String section, @Nullable Object value) {
+        addMetadata(section, null, value);
+    }
+
+    @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
         clientState.getMetaData().addMetadata(section, key, value);
     }
 
     @Override
+    public void clearMetadata(@NonNull String section) {
+        clearMetadata(section, null);
+    }
+
+    @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
         clientState.getMetaData().clearMetadata(section, key);
+    }
+
+    @Nullable
+    @Override
+    public Object getMetadata(@NonNull String section) {
+        return getMetadata(section, null);
     }
 
     @Override

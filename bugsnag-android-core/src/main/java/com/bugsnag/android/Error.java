@@ -34,7 +34,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     private Severity severity;
 
     @NonNull
-    private MetaData metaData = new MetaData();
+    private MetaData metaData;
 
     @Nullable
     private String groupingHash;
@@ -55,7 +55,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
 
     Error(@NonNull ImmutableConfig config, @NonNull Throwable exc,
           HandledState handledState, @NonNull Severity severity,
-          Session session, ThreadState threadState, MetaData metaData) {
+          Session session, ThreadState threadState, @NonNull MetaData metaData) {
         this.threadState = threadState;
         this.config = config;
 
@@ -254,6 +254,11 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     @Override
+    public void addMetadata(@NonNull String section, @Nullable Object value) {
+        addMetadata(section, null, value);
+    }
+
+    @Override
     public void addMetadata(@NotNull String section,
                             @Nullable String key,
                             @Nullable Object value) {
@@ -261,10 +266,22 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     @Override
+    public void clearMetadata(@NonNull String section) {
+        clearMetadata(section, null);
+    }
+
+    @Override
     public void clearMetadata(@NotNull String section,
                               @Nullable String key) {
         metaData.clearMetadata(section, key);
     }
+
+    @Nullable
+    @Override
+    public Object getMetadata(@NonNull String section) {
+        return getMetadata(section, null);
+    }
+
 
     @Nullable
     @Override
@@ -387,7 +404,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
         private final SessionTracker sessionTracker;
         private final ThreadState threadState;
         private Severity severity = Severity.WARNING;
-        private MetaData metaData;
+        private MetaData metaData = new MetaData();
         private MetaData globalMetaData;
         private String attributeValue;
 
@@ -440,7 +457,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
             Session session = getSession(handledState);
-            MetaData metaData = MetaData.merge(globalMetaData, this.metaData);
+            MetaData metaData = MetaData.Companion.merge(globalMetaData, this.metaData);
             return new Error(config, exception, handledState,
                 severity, session, threadState, metaData);
         }

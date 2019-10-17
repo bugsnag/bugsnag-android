@@ -20,25 +20,11 @@ public class MetaDataTest {
         base.addMetadata("example", "age", 30);
         base.addMetadata("example", "awesome", true);
 
-        MetaData merged = MetaData.merge(base, overrides);
+        MetaData merged = MetaData.Companion.merge(base, overrides);
         Map<String, Object> tab = (Map<String, Object>) merged.getMetadata("example", null);
         assertEquals("bob", tab.get("name"));
         assertEquals(30, tab.get("age"));
         assertEquals(true, tab.get("awesome"));
-    }
-
-    @Test
-    public void testNullMerge() {
-        MetaData base = new MetaData();
-        base.addMetadata("example", "name", "bob");
-
-        MetaData merged = MetaData.merge(base, null);
-        Map<String, Object> tab = (Map<String, Object>) merged.getMetadata("example", null);
-        assertEquals("bob", tab.get("name"));
-
-        merged = MetaData.merge(null, base);
-        tab = (Map<String, Object>) merged.getMetadata("example", null);
-        assertEquals("bob", tab.get("name"));
     }
 
     @Test
@@ -53,7 +39,7 @@ public class MetaDataTest {
         MetaData overrides = new MetaData();
         overrides.addMetadata("example", "map", overridesMap);
 
-        MetaData merged = MetaData.merge(base, overrides);
+        MetaData merged = MetaData.Companion.merge(base, overrides);
         Map<String, Object> tab = (Map<String, Object>) merged.getMetadata("example", null);
 
         @SuppressWarnings("unchecked")

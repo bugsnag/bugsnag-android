@@ -9,7 +9,7 @@ public class MetaDataMergeTest {
 
     @Test
     public void testConcurrentMapMerge() {
-        MetaData.merge(generateMetaData(), generateMetaData());
+        MetaData.Companion.merge(generateMetaData(), generateMetaData());
     }
 
     /**
