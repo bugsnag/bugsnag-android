@@ -1,7 +1,7 @@
 Feature: NDK Session Tracking
 
-Scenario: Stopped session is not in payload of unhandled NDK error
-    When I run "CXXStopSessionScenario"
+Scenario: Paused session is not in payload of unhandled NDK error
+    When I run "CXXPausedSessionScenario"
     And I wait a bit
     And I wait a bit
     And I configure the app to run in the "non-crashy" state

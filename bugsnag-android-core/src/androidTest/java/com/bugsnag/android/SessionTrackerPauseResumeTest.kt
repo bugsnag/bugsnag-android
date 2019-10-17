@@ -13,7 +13,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class SessionTrackerStopResumeTest {
+class SessionTrackerPauseResumeTest {
 
     private val configuration = generateConfiguration().also {
         it.autoTrackSessions = false
@@ -36,15 +36,15 @@ class SessionTrackerStopResumeTest {
     }
 
     /**
-     * Verifies that a session can be resumed after it is stopped
+     * Verifies that a session can be resumed after it is paused
      */
     @Test
-    fun resumeFromStoppedSession() {
+    fun resumeFromPausedSession() {
         tracker.startSession(false)
         val originalSession = tracker.currentSession
         assertNotNull(originalSession)
 
-        tracker.stopSession()
+        tracker.pauseSession()
         assertNull(tracker.currentSession)
 
         assertTrue(tracker.resumeSession())
@@ -53,24 +53,24 @@ class SessionTrackerStopResumeTest {
 
     /**
      * Verifies that a new session is started when calling [SessionTracker.resumeSession],
-     * if there is no stopped session
+     * if there is no paused session
      */
     @Test
-    fun resumeWithNoStoppedSession() {
+    fun resumeWithNoPausedSession() {
         assertNull(tracker.currentSession)
         assertFalse(tracker.resumeSession())
         assertNotNull(tracker.currentSession)
     }
 
     /**
-     * Verifies that a new session can be created after the previous one is stopped
+     * Verifies that a new session can be created after the previous one is paused
      */
     @Test
-    fun startNewAfterStoppedSession() {
+    fun startNewAfterPausedSession() {
         tracker.startSession(false)
         val originalSession = tracker.currentSession
 
-        tracker.stopSession()
+        tracker.pauseSession()
         tracker.startSession(false)
         assertNotEquals(originalSession, tracker.currentSession)
     }
@@ -82,7 +82,7 @@ class SessionTrackerStopResumeTest {
     fun multipleResumesHaveNoEffect() {
         tracker.startSession(false)
         val original = tracker.currentSession
-        tracker.stopSession()
+        tracker.pauseSession()
 
         assertTrue(tracker.resumeSession())
         assertEquals(original, tracker.currentSession)
@@ -92,33 +92,33 @@ class SessionTrackerStopResumeTest {
     }
 
     /**
-     * Verifies that calling [SessionTracker.stopSession] multiple times only stops one session
+     * Verifies that calling [SessionTracker.pauseSession] multiple times only pauses one session
      */
     @Test
-    fun multipleStopsHaveNoEffect() {
+    fun multiplePausesHaveNoEffect() {
         tracker.startSession(false)
         assertNotNull(tracker.currentSession)
 
-        tracker.stopSession()
+        tracker.pauseSession()
         assertNull(tracker.currentSession)
 
-        tracker.stopSession()
+        tracker.pauseSession()
         assertNull(tracker.currentSession)
     }
 
     /**
-     * Verifies that if a handled or unhandled error occurs when a session is stopped, the
+     * Verifies that if a handled or unhandled error occurs when a session is paused, the
      * error count is not updated
      */
     @Test
-    fun stoppedSessionDoesNotIncrement() {
+    fun pausedSessionDoesNotIncrement() {
         tracker.startSession(false)
         tracker.incrementHandledAndCopy()
         tracker.incrementUnhandledAndCopy()
         assertEquals(1, tracker.currentSession?.handledCount)
         assertEquals(1, tracker.currentSession?.unhandledCount)
 
-        tracker.stopSession()
+        tracker.pauseSession()
         tracker.incrementHandledAndCopy()
         tracker.incrementUnhandledAndCopy()
         tracker.resumeSession()
