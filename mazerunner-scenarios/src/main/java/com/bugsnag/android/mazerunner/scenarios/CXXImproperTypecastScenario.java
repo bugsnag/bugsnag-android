@@ -19,7 +19,7 @@ public class CXXImproperTypecastScenario extends Scenario {
     public CXXImproperTypecastScenario(@NonNull Configuration config,
                                        @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override

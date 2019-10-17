@@ -19,7 +19,7 @@ internal class NewSessionScenario(config: Configuration,
     }
 
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
     }
 
     override fun run() {

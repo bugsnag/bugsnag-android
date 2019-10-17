@@ -9,6 +9,6 @@ class AnrConfigTest {
 
     @Test
     fun testDetectAnrDefault() {
-        assertFalse(config.detectAnrs)
+        assertFalse(config.autoDetectAnrs)
     }
 }

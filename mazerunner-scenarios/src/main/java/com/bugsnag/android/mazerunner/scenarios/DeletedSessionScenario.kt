@@ -19,7 +19,7 @@ internal class DeletedSessionScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
 
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("eventMetaData")

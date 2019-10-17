@@ -16,7 +16,7 @@ import org.junit.Test
 class SessionTrackerStopResumeTest {
 
     private val configuration = generateConfiguration().also {
-        it.autoCaptureSessions = false
+        it.autoTrackSessions = false
     }
     private val sessionStore = generateSessionStore()
     private lateinit var tracker: SessionTracker

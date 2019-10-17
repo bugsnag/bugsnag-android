@@ -5,21 +5,21 @@ import java.util.HashMap
 
 internal data class ImmutableConfig(
     val apiKey: String,
-    val autoNotify: Boolean,
-    val detectAnrs: Boolean,
-    val detectNdkCrashes: Boolean,
-    val autoCaptureSessions: Boolean,
+    val autoDetectErrors: Boolean,
+    val autoDetectAnrs: Boolean,
+    val autoDetectNdkCrashes: Boolean,
+    val autoTrackSessions: Boolean,
     val autoCaptureBreadcrumbs: Boolean,
     val sendThreads: Boolean,
     val ignoreClasses: Collection<String>,
-    val notifyReleaseStages: Collection<String>,
+    val enabledReleaseStages: Collection<String>,
     val projectPackages: Collection<String>,
     val releaseStage: String?,
     val buildUuid: String?,
     val appVersion: String?,
     val versionCode: Int,
     val codeBundleId: String?,
-    val notifierType: String?,
+    val appType: String,
     val delivery: Delivery,
     val endpoints: Endpoints,
     val persistUserBetweenSessions: Boolean,
@@ -41,7 +41,7 @@ internal data class ImmutableConfig(
      * @return true if the release state should be notified else false
      */
     @JvmName("shouldNotifyForReleaseStage")
-    internal fun shouldNotifyForReleaseStage() = notifyReleaseStages.isEmpty() || notifyReleaseStages.contains(releaseStage)
+    internal fun shouldNotifyForReleaseStage() = enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
 
     @JvmName("errorApiDeliveryParams")
     internal fun errorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
@@ -80,21 +80,21 @@ internal data class ImmutableConfig(
 internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
     return ImmutableConfig(
         apiKey = config.apiKey,
-        autoNotify = config.autoNotify,
-        detectAnrs = config.detectAnrs,
-        detectNdkCrashes = config.detectNdkCrashes,
-        autoCaptureSessions = config.autoCaptureSessions,
+        autoDetectErrors = config.autoDetectErrors,
+        autoDetectAnrs = config.autoDetectAnrs,
+        autoDetectNdkCrashes = config.autoDetectNdkCrashes,
+        autoTrackSessions = config.autoTrackSessions,
         autoCaptureBreadcrumbs = config.autoCaptureBreadcrumbs,
         sendThreads = config.sendThreads,
         ignoreClasses = config.ignoreClasses.toSet(),
-        notifyReleaseStages = config.notifyReleaseStages.toSet(),
+        enabledReleaseStages = config.enabledReleaseStages.toSet(),
         projectPackages = config.projectPackages.toSet(),
         releaseStage = config.releaseStage,
         buildUuid = config.buildUuid,
         appVersion = config.appVersion,
         versionCode = config.versionCode!!,
         codeBundleId = config.codeBundleId,
-        notifierType = config.notifierType,
+        appType = config.appType,
         delivery = config.delivery,
         endpoints = config.endpoints,
         persistUserBetweenSessions = config.persistUserBetweenSessions,

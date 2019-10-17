@@ -11,7 +11,7 @@ import com.bugsnag.android.Configuration
 internal class AppVersionScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
         config.setAppVersion("1.2.3.abc")
     }
 

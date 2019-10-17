@@ -13,7 +13,7 @@ public enum NotifyType {
     DEVICE(4),
     CONTEXT(5),
     RELEASE_STAGES(6),
-    FILTERS(7),
+    REDACT_KEYS(7),
     BREADCRUMB(8),
     META(9);
 

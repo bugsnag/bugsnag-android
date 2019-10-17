@@ -2,9 +2,6 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.os.storage.StorageManager
 
 import com.bugsnag.android.BeforeSend
 import com.bugsnag.android.Bugsnag
@@ -15,7 +12,7 @@ internal class EmptyReportScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
 
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
         config.addBeforeSend(BeforeSend { true })
 
 

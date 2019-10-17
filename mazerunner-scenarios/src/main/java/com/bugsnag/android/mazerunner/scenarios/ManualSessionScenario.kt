@@ -11,7 +11,7 @@ import com.bugsnag.android.flushAllSessions
 internal class ManualSessionScenario(config: Configuration,
                                      context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     override fun run() {

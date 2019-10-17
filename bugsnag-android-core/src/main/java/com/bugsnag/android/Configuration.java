@@ -6,14 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -39,21 +34,21 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private String context;
 
     private final Set<String> ignoreClasses = new HashSet<>();
-    private final Set<String> notifyReleaseStages = new HashSet<>();
+    private final Set<String> enabledReleaseStages = new HashSet<>();
     private final Set<String> projectPackages = new HashSet<>();
 
     private String releaseStage;
     private boolean sendThreads = true;
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
-    private boolean autoCaptureSessions = true;
+    private boolean autoTrackSessions = true;
     private boolean autoCaptureBreadcrumbs = true;
 
-    private boolean detectAnrs = false;
-    private boolean detectNdkCrashes;
+    private boolean autoDetectAnrs = false;
+    private boolean autoDetectNdkCrashes;
     private boolean loggingEnabled;
     private long anrThresholdMs = 5000;
-    private boolean autoNotify = true;
+    private boolean autoDetectErrors = true;
 
     @NonNull
     private MetaData metaData;
@@ -64,7 +59,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
 
     private String codeBundleId;
-    private String notifierType;
+    private String appType = "android";
 
     private Delivery delivery;
     private Endpoints endpoints = new Endpoints();
@@ -84,12 +79,13 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         this.metaData.addObserver(this);
 
         try {
-            // check if DETECT_NDK_CRASHES has been set in bugsnag-android or bugsnag-android-ndk
+            // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
+            // or bugsnag-android-ndk
             Class<?> clz = Class.forName("com.bugsnag.android.BuildConfig");
-            Field field = clz.getDeclaredField("DETECT_NDK_CRASHES");
-            detectNdkCrashes = field.getBoolean(null);
+            Field field = clz.getDeclaredField("AUTO_AUTO_DETECT_NDK_CRASHES");
+            autoDetectNdkCrashes = field.getBoolean(null);
         } catch (Throwable exc) {
-            detectNdkCrashes = false;
+            autoDetectNdkCrashes = false;
         }
 
         loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
@@ -240,11 +236,11 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     /**
      * Get which keys should be filtered when sending metaData to Bugsnag
      *
-     * @return Filters
+     * @return a list of keys that should be redacted from the payload
      */
     @NonNull
-    public Collection<String> getFilters() {
-        return Collections.unmodifiableSet(metaData.getFilters());
+    public Collection<String> getRedactKeys() {
+        return Collections.unmodifiableSet(metaData.getRedactKeys());
     }
 
     /**
@@ -256,12 +252,12 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * <p/>
      * For example:
      * <p/>
-     * client.setFilters("password", "credit_card");
+     * client.setRedactKeys("password", "credit_card");
      *
-     * @param filters a list of keys to filter from metaData
+     * @param redactKeys a list of keys to redact from metaData
      */
-    public void setFilters(@NonNull Collection<String> filters) {
-        this.metaData.setFilters(filters);
+    public void setRedactKeys(@NonNull Collection<String> redactKeys) {
+        this.metaData.setRedactKeys(redactKeys);
     }
 
     /**
@@ -291,11 +287,11 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     /**
      * Get for which releaseStages errors should be sent to Bugsnag.
      *
-     * @return Notify release stages
+     * @return Enabled release stages
      */
     @NonNull
-    public Collection<String> getNotifyReleaseStages() {
-        return Collections.unmodifiableSet(notifyReleaseStages);
+    public Collection<String> getEnabledReleaseStages() {
+        return Collections.unmodifiableSet(enabledReleaseStages);
     }
 
     /**
@@ -304,14 +300,14 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * <p/>
      * For example:
      * <p/>
-     * client.setNotifyReleaseStages("production");
+     * client.setEnabledReleaseStages("production");
      *
-     * @param notifyReleaseStages a list of releaseStages to notify for
+     * @param enabledReleaseStages a list of releaseStages to notify for
      * @see #setReleaseStage
      */
-    public void setNotifyReleaseStages(@NonNull Collection<String> notifyReleaseStages) {
-        this.notifyReleaseStages.clear();
-        this.notifyReleaseStages.addAll(notifyReleaseStages);
+    public void setEnabledReleaseStages(@NonNull Collection<String> enabledReleaseStages) {
+        this.enabledReleaseStages.clear();
+        this.enabledReleaseStages.addAll(enabledReleaseStages);
     }
 
     /**
@@ -357,7 +353,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * "production" for non-debug builds.
      *
      * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages
+     * @see #setEnabledReleaseStages
      */
     public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;
@@ -368,18 +364,18 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * Gets whether Bugsnag should automatically capture and report unhandled errors.
      * By default, this value is true.
      */
-    public boolean getAutoNotify() {
-        return autoNotify;
+    public boolean getAutoDetectErrors() {
+        return autoDetectErrors;
     }
 
     /**
      * Sets whether Bugsnag should automatically capture and report unhandled errors.
      * By default, this value is true.
      *
-     * @param autoNotify - whether unhandled errors should be reported automatically
+     * @param autoDetectErrors - whether unhandled errors should be reported automatically
      */
-    public void setAutoNotify(boolean autoNotify) {
-        this.autoNotify = autoNotify;
+    public void setAutoDetectErrors(boolean autoDetectErrors) {
+        this.autoDetectErrors = autoDetectErrors;
     }
 
     /**
@@ -406,8 +402,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @return true if sessions are captured automatically
      */
-    public boolean getAutoCaptureSessions() {
-        return autoCaptureSessions;
+    public boolean getAutoTrackSessions() {
+        return autoTrackSessions;
     }
 
     /**
@@ -416,10 +412,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * <p>
      * By default this behavior is enabled.
      *
-     * @param autoCapture whether sessions should be captured automatically
+     * @param autoTrack whether sessions should be tracked automatically
      */
-    public void setAutoCaptureSessions(boolean autoCapture) {
-        this.autoCaptureSessions = autoCapture;
+    public void setAutoTrackSessions(boolean autoTrack) {
+        this.autoTrackSessions = autoTrack;
     }
 
     /**
@@ -543,10 +539,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     /**
      * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
-     * @param notifierType the notifier type
+     * @param appType the notifier type
      */
-    void setNotifierType(@NonNull String notifierType) {
-        this.notifierType = notifierType;
+    public void setAppType(@NonNull String appType) {
+        this.appType = appType;
     }
 
     /**
@@ -563,8 +559,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     @NonNull
-    String getNotifierType() {
-        return notifierType;
+    public String getAppType() {
+        return appType;
     }
 
     /**
@@ -625,10 +621,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     /**
      * @return whether ANRs will be captured or not
-     * @see #setDetectAnrs(boolean)
+     * @see #setAutoDetectAnrs(boolean)
      */
-    public boolean getDetectAnrs() {
-        return detectAnrs;
+    public boolean getAutoDetectAnrs() {
+        return autoDetectAnrs;
     }
 
     /**
@@ -640,19 +636,19 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * configure the time threshold required to capture an ANR, you should use the
      * {@link #setAnrThresholdMs(long)} property.
      *
-     * @param detectAnrs whether ANRs should be captured or not
+     * @param autoDetectAnrs whether ANRs should be captured or not
      * @see #setAnrThresholdMs(long)
      */
-    public void setDetectAnrs(boolean detectAnrs) {
-        this.detectAnrs = detectAnrs;
+    public void setAutoDetectAnrs(boolean autoDetectAnrs) {
+        this.autoDetectAnrs = autoDetectAnrs;
     }
 
     /**
      * @return whether NDK crashes will be reported by bugsnag
-     * @see #setDetectNdkCrashes(boolean)
+     * @see #setAutoDetectNdkCrashes(boolean)
      */
-    public boolean getDetectNdkCrashes() {
-        return detectNdkCrashes;
+    public boolean getAutoDetectNdkCrashes() {
+        return autoDetectNdkCrashes;
     }
 
     /**
@@ -661,10 +657,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * If you are using bugsnag-android this flag is false by default; if you are using
      * bugsnag-android-ndk this flag is true by default.
      *
-     * @param detectNdkCrashes whether NDK crashes should be reported
+     * @param autoDetectNdkCrashes whether NDK crashes should be reported
      */
-    public void setDetectNdkCrashes(boolean detectNdkCrashes) {
-        this.detectNdkCrashes = detectNdkCrashes;
+    public void setAutoDetectNdkCrashes(boolean autoDetectNdkCrashes) {
+        this.autoDetectNdkCrashes = autoDetectNdkCrashes;
     }
 
     /**

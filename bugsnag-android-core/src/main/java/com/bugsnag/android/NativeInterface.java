@@ -5,11 +5,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -347,8 +345,8 @@ public class NativeInterface {
      * Return which release stages notify
      */
     @Nullable
-    public static Collection<String> getNotifyReleaseStages() {
-        return getClient().getConfig().getNotifyReleaseStages();
+    public static Collection<String> getEnabledReleaseStages() {
+        return getClient().getConfig().getEnabledReleaseStages();
     }
 
     /**

@@ -11,7 +11,7 @@ import com.bugsnag.android.Configuration
 internal class UnhandledExceptionSessionScenario(config: Configuration,
                                                  context: Context) : Scenario(config, context) {
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
         disableSessionDelivery(config)
     }
 
