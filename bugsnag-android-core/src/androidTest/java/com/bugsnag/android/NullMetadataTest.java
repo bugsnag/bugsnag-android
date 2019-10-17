@@ -4,6 +4,7 @@ import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import androidx.annotation.NonNull;
 
@@ -94,11 +95,9 @@ public class NullMetadataTest {
 
     private void validateDefaultMetadata(MetaDataAware metaData) {
         assertNotNull(metaData);
-        Map<String, Object> metadata = (Map<String, Object>) metaData.getMetadata(TAB_KEY, null);
-        assertEquals(0, metadata.size());
-
+        assertNull(metaData.getMetadata(TAB_KEY, null));
         metaData.addMetadata(TAB_KEY, "test", "data");
-        assertEquals(1, metadata.size());
+        assertEquals("data", metaData.getMetadata(TAB_KEY, "test"));
     }
 
 }

@@ -45,7 +45,6 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     @NonNull
     final ImmutableConfig config;
     private Collection<String> projectPackages;
-    private final MetaData globalMetaData;
     private final Exceptions exceptions;
     private Breadcrumbs breadcrumbs;
     private final BugsnagException exception;
@@ -56,7 +55,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
 
     Error(@NonNull ImmutableConfig config, @NonNull Throwable exc,
           HandledState handledState, @NonNull Severity severity,
-          Session session, ThreadState threadState, MetaData globalMetaData) {
+          Session session, ThreadState threadState, MetaData metaData) {
         this.threadState = threadState;
         this.config = config;
 
@@ -70,19 +69,16 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
         this.session = session;
 
         projectPackages = config.getProjectPackages();
-        this.globalMetaData = globalMetaData;
+        this.metaData = metaData;
         exceptions = new Exceptions(config, exception);
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
-        // Merge error metaData into global metadata and apply filters
-        MetaData mergedMetaData = MetaData.merge(globalMetaData, metaData);
-
         // Write error basics
         writer.beginObject();
         writer.name("context").value(context);
-        writer.name("metaData").value(mergedMetaData);
+        writer.name("metaData").value(metaData);
 
         writer.name("severity").value(severity);
         writer.name("severityReason").value(handledState);

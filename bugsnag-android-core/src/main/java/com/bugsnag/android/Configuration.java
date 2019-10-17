@@ -440,17 +440,12 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     @Override
     public void setMetaData(@NonNull MetaData metaData) {
-        this.metaData.deleteObserver(this);
         //noinspection ConstantConditions
         if (metaData == null) {
             this.metaData = new MetaData();
         } else {
             this.metaData = metaData;
         }
-        this.setChanged();
-        this.notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_METADATA, this.metaData.store));
-        this.metaData.addObserver(this);
     }
 
     /**

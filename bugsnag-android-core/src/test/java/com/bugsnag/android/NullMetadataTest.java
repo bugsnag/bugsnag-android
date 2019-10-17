@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,11 +56,9 @@ public class NullMetadataTest {
     }
 
     private void validateDefaultMetadata(MetaDataAware error) {
-        Map<String, Object> metadata = (Map<String, Object>) error.getMetadata(TAB_KEY, null);
-        assertEquals(0, metadata.size());
-
+        assertNull(error.getMetadata(TAB_KEY, null));
         error.addMetadata(TAB_KEY, "test", "data");
-        assertEquals(1, metadata.size());
+        assertEquals("data", error.getMetadata(TAB_KEY, "test"));
     }
 
 }

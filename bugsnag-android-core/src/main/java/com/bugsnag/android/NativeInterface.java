@@ -98,11 +98,6 @@ public class NativeInterface {
          */
         UPDATE_LOW_MEMORY,
         /**
-         * Set a new value for all custom metadata. The message object should be
-         * MetaData.
-         */
-        UPDATE_METADATA,
-        /**
          * Set a new value for `device.orientation`. The message object should
          * be the orientation in degrees
          */

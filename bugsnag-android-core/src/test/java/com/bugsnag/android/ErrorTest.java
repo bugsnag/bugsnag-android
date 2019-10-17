@@ -119,6 +119,7 @@ public class ErrorTest {
         assertNotNull(rocks);
 
         error.clearMetadata("rocks", null);
-        assertTrue(rocks.isEmpty());
+        assertFalse(rocks.isEmpty());
+        assertNull(error.getMetadata("rocks", null));
     }
 }

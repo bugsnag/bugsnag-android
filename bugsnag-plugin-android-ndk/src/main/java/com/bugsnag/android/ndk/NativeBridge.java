@@ -160,9 +160,6 @@ public class NativeBridge implements Observer {
             case UPDATE_LOW_MEMORY:
                 handleLowMemoryChange(arg);
                 break;
-            case UPDATE_METADATA:
-                handleUpdateMetadata(arg);
-                break;
             case UPDATE_ORIENTATION:
                 handleOrientationChange(arg);
                 break;

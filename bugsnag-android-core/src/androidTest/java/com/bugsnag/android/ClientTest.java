@@ -6,6 +6,7 @@ import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -210,8 +211,7 @@ public class ClientTest {
         client.addMetadata("drink", "cola", "cherry");
 
         client.clearMetadata("drink", null);
-        Map<String, Object> metadata = (Map<String, Object>) client.getMetadata("drink", null);
-        assertTrue(metadata.isEmpty());
+        assertNull(client.getMetadata("drink", null));
     }
 
     @Test

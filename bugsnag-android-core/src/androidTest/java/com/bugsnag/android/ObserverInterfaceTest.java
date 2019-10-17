@@ -47,25 +47,6 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testUpdateMetadataFromClientSendsMessage() {
-        MetaData metadata = new MetaData(new HashMap<String, Object>());
-        client.addMetadata("foo", "bar", "baz");
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_METADATA, Map.class);
-        assertEquals(metadata.store, value);
-    }
-
-    @Test
-    public void testUpdateMetadataFromConfigSendsMessage() {
-        MetaData metadata = new MetaData(new HashMap<String, Object>());
-        metadata.addMetadata("foo", "bar", "baz");
-        client.getConfiguration().setMetaData(metadata);
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_METADATA, Map.class);
-        assertEquals(metadata.store, value);
-    }
-
-    @Test
     public void testAddMetadataToClientSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
         List<Object> metadataItem = (List<Object>)findMessageInQueue(

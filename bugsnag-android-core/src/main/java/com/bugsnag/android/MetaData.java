@@ -44,46 +44,70 @@ public class MetaData extends Observable implements JsonStream.Streamable, MetaD
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        Map<String, Object> tab = getTab(section);
-        setChanged();
-        if (value != null) {
-            tab.put(key, value);
+        // TODO merging of values
+
+        if (value == null) {
+            clearMetadata(section, key);
+        } else {
+            Map<String, Object> tab = getOrAddSection(section);
+
+            if (key == null) {
+                store.put(section, value);
+            } else {
+                tab.put(key, value);
+            }
+
+            setChanged();
             notifyObservers(new NativeInterface.Message(
                     NativeInterface.MessageType.ADD_METADATA,
                     Arrays.asList(section, key, value)));
-        } else {
-            tab.remove(key);
-            notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.REMOVE_METADATA,
-                    Arrays.asList(section, key)));
         }
     }
 
     @Override
     public void clearMetadata(@NotNull String section, @Nullable String key) {
-        store.remove(section);
         setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.CLEAR_METADATA_TAB, section));
+
+        if (key == null) {
+            store.remove(section);
+            notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.CLEAR_METADATA_TAB, section));
+        } else {
+            Object tab = store.get(section);
+
+            if (tab instanceof Map) {
+                ((Map) tab).remove(key);
+            }
+            notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.REMOVE_METADATA, Arrays.asList(section, key)));
+        }
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public Object getMetadata(@NotNull String section, @Nullable String key) {
-        return null;
+        Object tab = store.get(section);
+
+        if (!(tab instanceof Map) || key == null) {
+            return tab;
+        } else {
+            Map<String, Object> map = (Map<String, Object>) tab;
+            return map.get(key);
+        }
     }
 
-    @NonNull
-    private Map<String, Object> getTab(String tabName) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> tab = (Map<String, Object>) store.get(tabName);
+    @SuppressWarnings("unchecked")
+    @NotNull
+    private Map<String, Object> getOrAddSection(@NonNull String section) {
+        Object tab = store.get(section);
 
-        if (tab == null) {
+        if (!(tab instanceof Map)) {
             tab = new ConcurrentHashMap<>();
-            store.put(tabName, tab);
+            store.put(section, tab);
         }
 
-        return tab;
+        return (Map<String, Object>) tab;
     }
 
     void setFilters(Collection<String> filters) {
