@@ -32,15 +32,15 @@ class ImmutableConfigTest {
 
             // detection
             assertTrue(autoCaptureBreadcrumbs)
-            assertTrue(autoCaptureSessions)
-            assertTrue(autoNotify)
-            assertFalse(detectAnrs)
-            assertFalse(detectNdkCrashes)
+            assertTrue(autoTrackSessions)
+            assertTrue(autoDetectErrors)
+            assertFalse(autoDetectAnrs)
+            assertFalse(autoDetectNdkCrashes)
             assertTrue(sendThreads)
 
             // release stages
             assertTrue(ignoreClasses.isEmpty())
-            assertTrue(notifyReleaseStages.isEmpty())
+            assertTrue(enabledReleaseStages.isEmpty())
             assertTrue(projectPackages.isEmpty())
             assertEquals(seed.releaseStage, releaseStage)
 
@@ -48,7 +48,7 @@ class ImmutableConfigTest {
             assertEquals(seed.appVersion, appVersion)
             assertEquals(seed.buildUuid, buildUuid)
             assertEquals(seed.codeBundleId, codeBundleId)
-            assertEquals(seed.notifierType, notifierType)
+            assertEquals(seed.appType, appType)
 
             // network config
             assertEquals(seed.delivery, delivery)
@@ -59,34 +59,35 @@ class ImmutableConfigTest {
             assertEquals(seed.loggingEnabled, loggingEnabled)
             assertEquals(seed.maxBreadcrumbs, maxBreadcrumbs)
             assertEquals(seed.persistUserBetweenSessions, persistUserBetweenSessions)
+            assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
         }
     }
-
 
     @Test
     fun convertWithOverrides() {
         seed.autoCaptureBreadcrumbs = false
-        seed.autoCaptureSessions = false
-        seed.autoNotify = false
-        seed.detectAnrs = true
-        seed.detectNdkCrashes = true
+        seed.autoTrackSessions = false
+        seed.autoDetectErrors = false
+        seed.autoDetectAnrs = true
+        seed.autoDetectNdkCrashes = true
         seed.sendThreads = false
 
         seed.ignoreClasses = setOf("foo")
-        seed.notifyReleaseStages = setOf("bar")
+        seed.enabledReleaseStages = setOf("bar")
         seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
 
         seed.appVersion = "1.2.3"
         seed.buildUuid = "f7ab"
         seed.codeBundleId = "codebundle123"
-        seed.notifierType = "custom"
+        seed.appType = "custom"
 
         seed.endpoints = Endpoints("http://example.com:1234", "http://example.com:1235")
         seed.launchCrashThresholdMs = 7000
         seed.loggingEnabled = false
         seed.maxBreadcrumbs = 37
         seed.persistUserBetweenSessions = true
+        seed.enabledBreadcrumbTypes = emptySet()
 
         // verify overrides are copied across
         with(convertToImmutableConfig(seed)) {
@@ -94,15 +95,15 @@ class ImmutableConfigTest {
 
             // detection
             assertFalse(autoCaptureBreadcrumbs)
-            assertFalse(autoCaptureSessions)
-            assertFalse(autoNotify)
-            assertTrue(detectAnrs)
-            assertTrue(detectNdkCrashes)
+            assertFalse(autoTrackSessions)
+            assertFalse(autoDetectErrors)
+            assertTrue(autoDetectAnrs)
+            assertTrue(autoDetectNdkCrashes)
             assertFalse(sendThreads)
 
             // release stages
             assertEquals(setOf("foo"), ignoreClasses)
-            assertEquals(setOf("bar"), notifyReleaseStages)
+            assertEquals(setOf("bar"), enabledReleaseStages)
             assertEquals(setOf("com.example"), projectPackages)
             assertEquals("wham", releaseStage)
 
@@ -110,7 +111,7 @@ class ImmutableConfigTest {
             assertEquals("1.2.3", seed.appVersion)
             assertEquals("f7ab", seed.buildUuid)
             assertEquals("codebundle123", seed.codeBundleId)
-            assertEquals("custom", seed.notifierType)
+            assertEquals("custom", seed.appType)
 
             // network config
             assertEquals(
@@ -123,6 +124,7 @@ class ImmutableConfigTest {
             assertFalse(seed.loggingEnabled)
             assertEquals(37, seed.maxBreadcrumbs)
             assertTrue(seed.persistUserBetweenSessions)
+            assertTrue(seed.enabledBreadcrumbTypes.isEmpty())
         }
     }
 

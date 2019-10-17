@@ -19,7 +19,7 @@ internal class ResumedSessionScenario(config: Configuration,
     }
 
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
     }
 
     override fun run() {
@@ -41,8 +41,8 @@ internal class ResumedSessionScenario(config: Configuration,
             Thread.sleep(SLEEP_MS)
 
             // send 2nd exception after resuming a session
-            client.stopSession()
-            Log.d("Bugsnag - Resumed", "First session stopped")
+            client.pauseSession()
+            Log.d("Bugsnag - Resumed", "First session paused")
             Thread.sleep(SLEEP_MS)
             client.resumeSession()
             Log.d("Bugsnag - Resumed", "First session resumed")

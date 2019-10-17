@@ -12,7 +12,7 @@ internal class AsyncErrorDoubleFlushScenario(config: Configuration,
 
     init {
         config.delivery = createSlowDelivery()
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
     override fun run() {
         super.run()

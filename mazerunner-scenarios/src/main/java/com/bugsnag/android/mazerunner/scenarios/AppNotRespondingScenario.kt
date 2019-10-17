@@ -12,8 +12,8 @@ import android.os.Handler
 internal class AppNotRespondingScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
-        config.detectAnrs = true
+        config.setAutoTrackSessions(false)
+        config.autoDetectAnrs = true
     }
 
     override fun run() {

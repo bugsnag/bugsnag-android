@@ -70,7 +70,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     /**
      * Starts a new session with the given date and user.
      * <p>
-     * A session will only be created if {@link Configuration#getAutoCaptureSessions()} returns
+     * A session will only be created if {@link Configuration#getAutoTrackSessions()} returns
      * true.
      *
      * @param date the session start date
@@ -90,14 +90,14 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         return startNewSession(new Date(), client.getUser(), autoCaptured);
     }
 
-    void stopSession() {
+    void pauseSession() {
         Session session = currentSession.get();
 
         if (session != null) {
-            session.isStopped.set(true);
+            session.isPaused.set(true);
             setChanged();
             notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+                NativeInterface.MessageType.PAUSE_SESSION, null));
         }
     }
 
@@ -109,7 +109,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             session = startSession(false);
             resumed = false;
         } else {
-            resumed = session.isStopped.compareAndSet(true, false);
+            resumed = session.isPaused.compareAndSet(true, false);
         }
 
         if (session != null) {
@@ -148,7 +148,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         } else {
             setChanged();
             notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+                NativeInterface.MessageType.PAUSE_SESSION, null));
         }
         currentSession.set(session);
         return session;
@@ -164,7 +164,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
         if (notifyForRelease
-            && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
+            && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
             notifySessionStartObserver(session);
 
@@ -230,7 +230,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     Session getCurrentSession() {
         Session session = currentSession.get();
 
-        if (session != null && !session.isStopped.get()) {
+        if (session != null && !session.isPaused.get()) {
             return session;
         }
         return null;
@@ -359,7 +359,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
     private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
         if (configuration.getAutoCaptureBreadcrumbs()) {
-            Map<String, String> metadata = new HashMap<>();
+            Map<String, Object> metadata = new HashMap<>();
             metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
 
             try {
@@ -408,7 +408,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 lastEnteredForegroundMs.set(nowMs);
 
                 if (noActivityRunningForMs >= timeoutMs
-                    && configuration.getAutoCaptureSessions()) {
+                    && configuration.getAutoTrackSessions()) {
                     startNewSession(new Date(nowMs), client.getUser(), true);
                 }
             }

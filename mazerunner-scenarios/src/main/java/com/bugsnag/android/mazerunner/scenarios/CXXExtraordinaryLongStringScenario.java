@@ -20,7 +20,7 @@ public class CXXExtraordinaryLongStringScenario extends Scenario {
     public CXXExtraordinaryLongStringScenario(@NonNull Configuration config,
                                               @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
         config.setAppVersion("22.312.749.78.300.810.24.167.321.505.337.177.970.655.513.768.209"
                 + ".616.429.5.654.552.117.275.422.698.110.941.6.611.737.439.489.121.879.119.207"
                 + ".999.721.827.22.312.749.78.300.810.24.167.321.505.337.177.970.655.513.768.209"

@@ -47,18 +47,18 @@ public class ConcurrentCallbackTest {
     @Test
     public void testClientBreadcrumbModification() throws Exception {
         Configuration config = (Configuration) client.getConfiguration();
-        final Collection<BeforeRecordBreadcrumb> breadcrumbTasks =
-                config.getBeforeRecordBreadcrumbTasks();
+        final Collection<OnBreadcrumb> breadcrumbTasks =
+                config.getBreadcrumbCallbacks();
 
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
-                breadcrumbTasks.add(new BeforeRecordBreadcrumbSkeleton());
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                breadcrumbTasks.add(new OnBreadcrumbSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumbSkeleton());
+        client.addOnBreadcrumb(new OnBreadcrumbSkeleton());
         client.leaveBreadcrumb("Whoops");
         client.notify(new RuntimeException());
     }
@@ -70,9 +70,9 @@ public class ConcurrentCallbackTest {
         }
     }
 
-    static class BeforeRecordBreadcrumbSkeleton implements BeforeRecordBreadcrumb {
+    static class OnBreadcrumbSkeleton implements OnBreadcrumb {
         @Override
-        public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+        public boolean run(@NonNull Breadcrumb breadcrumb) {
             return true;
         }
     }

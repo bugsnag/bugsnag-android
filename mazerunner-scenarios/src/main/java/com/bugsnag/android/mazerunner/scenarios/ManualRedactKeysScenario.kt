@@ -7,11 +7,11 @@ import com.bugsnag.android.Configuration
 /**
  * Sends a handled exception to Bugsnag, which contains metadata that should be filtered
  */
-internal class ManualFilterScenario(config: Configuration,
-                                    context: Context) : Scenario(config, context) {
+internal class ManualRedactKeysScenario(config: Configuration,
+                                        context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
-        config.setFilters(listOf("foo"))
+        config.setAutoTrackSessions(false)
+        config.setRedactKeys(listOf("foo"))
     }
 
     override fun run() {

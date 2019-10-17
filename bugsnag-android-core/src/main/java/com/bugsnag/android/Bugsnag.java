@@ -208,18 +208,21 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumb
      */
-    public static void beforeRecordBreadcrumb(
-        @NonNull final BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        getClient().beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    public static void addOnBreadcrumb(@NonNull final OnBreadcrumb onBreadcrumb) {
+        getClient().addOnBreadcrumb(onBreadcrumb);
+    }
+
+    public static void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        getClient().removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -310,14 +313,14 @@ public final class Bugsnag {
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
      *
-     * @param name     A short label (max 32 chars)
+     * @param message     A short label
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
-    public static void leaveBreadcrumb(@NonNull String name,
+    public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull BreadcrumbType type,
-                                       @NonNull Map<String, String> metadata) {
-        getClient().leaveBreadcrumb(name, type, metadata);
+                                       @NonNull Map<String, Object> metadata) {
+        getClient().leaveBreadcrumb(message, type, metadata);
     }
 
     /**
@@ -329,7 +332,7 @@ public final class Bugsnag {
 
     /**
      * Starts tracking a new session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to start a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -340,18 +343,18 @@ public final class Bugsnag {
      * when one doesn't already exist.
      *
      * @see #resumeSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
     public static void startSession() {
         getClient().startSession();
     }
 
     /**
-     * Resumes a session which has previously been stopped, or starts a new session if none exists.
-     * If a session has already been resumed or started and has not been stopped, calling this
+     * Resumes a session which has previously been paused, or starts a new session if none exists.
+     * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * It's important to note that sessions are stored in memory for the lifetime of the
      * application process and are not persisted on disk. Therefore calling this method on app
@@ -364,8 +367,8 @@ public final class Bugsnag {
      * stability score</a>.
      *
      * @see #startSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      *
      * @return true if a previous session was resumed, false if a new session was started.
      */
@@ -374,10 +377,10 @@ public final class Bugsnag {
     }
 
     /**
-     * Stops tracking a session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * Pauses tracking of a session. You should disable automatic session tracking via
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
-     * You should call this at the appropriate time in your application when you wish to stop a
+     * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
      * Bugsnag but will not count towards your application's
      * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
@@ -386,10 +389,10 @@ public final class Bugsnag {
      *
      * @see #startSession()
      * @see #resumeSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
-    public static void stopSession() {
-        getClient().stopSession();
+    public static void pauseSession() {
+        getClient().pauseSession();
     }
 
     /**

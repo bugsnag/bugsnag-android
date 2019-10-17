@@ -11,7 +11,7 @@ import java.io.File
 internal class StrictModeDiscScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     override fun run() {

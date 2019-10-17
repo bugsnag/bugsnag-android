@@ -18,7 +18,7 @@ public class CXXNullPointerScenario extends Scenario {
 
     public CXXNullPointerScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override

@@ -15,9 +15,9 @@ internal class ManifestConfigLoader {
         internal const val BUILD_UUID = "$BUGSNAG_NS.BUILD_UUID"
 
         // detection
-        private const val AUTO_NOTIFY = "$BUGSNAG_NS.AUTO_NOTIFY"
-        private const val DETECT_ANRS = "$BUGSNAG_NS.DETECT_ANRS"
-        private const val DETECT_NDK_CRASHES = "$BUGSNAG_NS.DETECT_NDK_CRASHES"
+        private const val AUTO_DETECT_ERRORS = "$BUGSNAG_NS.AUTO_DETECT_ERRORS"
+        private const val AUTO_DETECT_ANRS = "$BUGSNAG_NS.AUTO_DETECT_ANRS"
+        private const val AUTO_DETECT_NDK_CRASHES = "$BUGSNAG_NS.AUTO_DETECT_NDK_CRASHES"
         private const val AUTO_CAPTURE_SESSIONS = "$BUGSNAG_NS.AUTO_CAPTURE_SESSIONS"
         private const val AUTO_CAPTURE_BREADCRUMBS = "$BUGSNAG_NS.AUTO_CAPTURE_BREADCRUMBS"
         private const val SEND_THREADS = "$BUGSNAG_NS.SEND_THREADS"
@@ -31,10 +31,10 @@ internal class ManifestConfigLoader {
         private const val APP_VERSION = "$BUGSNAG_NS.APP_VERSION"
         private const val VERSION_CODE = "$BUGSNAG_NS.VERSION_CODE"
         private const val RELEASE_STAGE = "$BUGSNAG_NS.RELEASE_STAGE"
-        private const val NOTIFY_RELEASE_STAGES = "$BUGSNAG_NS.NOTIFY_RELEASE_STAGES"
+        private const val ENABLED_RELEASE_STAGES = "$BUGSNAG_NS.ENABLED_RELEASE_STAGES"
         private const val IGNORE_CLASSES = "$BUGSNAG_NS.IGNORE_CLASSES"
         private const val PROJECT_PACKAGES = "$BUGSNAG_NS.PROJECT_PACKAGES"
-        private const val FILTERS = "$BUGSNAG_NS.FILTERS"
+        private const val REDACT_KEYS = "$BUGSNAG_NS.REDACT_KEYS"
 
         // misc
         private const val MAX_BREADCRUMBS = "$BUGSNAG_NS.MAX_BREADCRUMBS"
@@ -83,11 +83,11 @@ internal class ManifestConfigLoader {
 
     private fun loadDetectionConfig(config: Configuration, data: Bundle) {
         with(config) {
-            autoNotify = data.getBoolean(ENABLE_EXCEPTION_HANDLER, autoNotify)
-            autoNotify = data.getBoolean(AUTO_NOTIFY, autoNotify)
-            detectAnrs = data.getBoolean(DETECT_ANRS, detectAnrs)
-            detectNdkCrashes = data.getBoolean(DETECT_NDK_CRASHES, detectNdkCrashes)
-            autoCaptureSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoCaptureSessions)
+            autoDetectErrors = data.getBoolean(ENABLE_EXCEPTION_HANDLER, autoDetectErrors)
+            autoDetectErrors = data.getBoolean(AUTO_DETECT_ERRORS, autoDetectErrors)
+            autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
+            autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
+            autoTrackSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoTrackSessions)
             autoCaptureBreadcrumbs =
                 data.getBoolean(AUTO_CAPTURE_BREADCRUMBS, autoCaptureBreadcrumbs)
             sendThreads = data.getBoolean(SEND_THREADS, sendThreads)
@@ -111,10 +111,10 @@ internal class ManifestConfigLoader {
             if (data.containsKey(VERSION_CODE)) {
                 versionCode = data.getInt(VERSION_CODE)
             }
-            notifyReleaseStages = getStrArray(data, NOTIFY_RELEASE_STAGES, notifyReleaseStages)
+            enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             ignoreClasses = getStrArray(data, IGNORE_CLASSES, ignoreClasses)
             projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)
-            filters = getStrArray(data, FILTERS, filters)
+            redactKeys = getStrArray(data, REDACT_KEYS, redactKeys)
         }
     }
 

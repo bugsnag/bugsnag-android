@@ -183,7 +183,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         errorStore = new ErrorStore(immutableConfig, clientState, appContext, delegate);
 
         // Install a default exception handler with this client
-        if (immutableConfig.getAutoNotify()) {
+        if (immutableConfig.getAutoDetectErrors()) {
             new ExceptionHandler(this);
         }
 
@@ -222,9 +222,18 @@ public class Client extends Observable implements Observer, MetaDataAware {
             Logger.warn("Failed to set up orientation tracking: " + ex);
         }
 
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
+            }
+        });
+
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();
+        leaveBreadcrumb("Bugsnag loaded");
     }
 
     void recordStorageCacheBehavior(Error error) {
@@ -288,7 +297,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         NativeInterface.setClient(this);
         BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
 
-        if (immutableConfig.getDetectNdkCrashes()) {
+        if (immutableConfig.getAutoDetectNdkCrashes()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
             } catch (ClassNotFoundException exc) {
@@ -296,7 +305,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                     + "NDK errors will not be captured.");
             }
         }
-        if (immutableConfig.getDetectAnrs()) {
+        if (immutableConfig.getAutoDetectAnrs()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
             } catch (ClassNotFoundException exc) {
@@ -341,7 +350,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     /**
      * Starts tracking a new session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to start a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -352,18 +361,18 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * when one doesn't already exist.
      *
      * @see #resumeSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
     public void startSession() {
         sessionTracker.startSession(false);
     }
 
     /**
-     * Stops tracking a session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * Pauses tracking of a session. You should disable automatic session tracking via
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
-     * You should call this at the appropriate time in your application when you wish to stop a
+     * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
      * Bugsnag but will not count towards your application's
      * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
@@ -372,17 +381,17 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * @see #startSession()
      * @see #resumeSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
-    public final void stopSession() {
-        sessionTracker.stopSession();
+    public final void pauseSession() {
+        sessionTracker.pauseSession();
     }
 
     /**
-     * Resumes a session which has previously been stopped, or starts a new session if none exists.
-     * If a session has already been resumed or started and has not been stopped, calling this
+     * Resumes a session which has previously been paused, or starts a new session if none exists.
+     * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * It's important to note that sessions are stored in memory for the lifetime of the
      * application process and are not persisted on disk. Therefore calling this method on app
@@ -395,8 +404,8 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * stability score</a>.
      *
      * @see #startSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      *
      * @return true if a previous session was resumed, false if a new session was started.
      */
@@ -589,17 +598,21 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumb
      */
-    public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        clientState.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.addOnBreadcrumb(onBreadcrumb);
+    }
+
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -823,8 +836,8 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     private void leaveErrorBreadcrumb(@NonNull Error error) {
         // Add a breadcrumb for this error occurring
-        String exceptionMessage = error.getExceptionMessage();
-        Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
+        String msg = error.getExceptionMessage();
+        Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
         breadcrumbs.add(new Breadcrumb(error.getExceptionName(), BreadcrumbType.ERROR, message));
     }
 
@@ -973,26 +986,24 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
      *
-     * @param breadcrumb the log message to leave (max 140 chars)
+     * @param message the log message to leave (max 140 chars)
      */
-    public void leaveBreadcrumb(@NonNull String breadcrumb) {
-        Breadcrumb crumb = new Breadcrumb(breadcrumb);
-
-        if (runBeforeBreadcrumbTasks(crumb)) {
-            breadcrumbs.add(crumb);
-        }
+    public void leaveBreadcrumb(@NonNull String message) {
+        leaveBreadcrumbInternal(new Breadcrumb(message));
     }
 
     /**
      * Leave a "breadcrumb" log message, representing an action which occurred
      * in your app, to aid with debugging.
      */
-    public void leaveBreadcrumb(@NonNull String name,
+    public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
-                                @NonNull Map<String, String> metadata) {
-        Breadcrumb crumb = new Breadcrumb(name, type, metadata);
+                                @NonNull Map<String, Object> metadata) {
+        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata));
+    }
 
-        if (runBeforeBreadcrumbTasks(crumb)) {
+    private void leaveBreadcrumbInternal(Breadcrumb crumb) {
+        if (runBreadcrumbCallbacks(crumb)) {
             breadcrumbs.add(crumb);
         }
     }
@@ -1092,20 +1103,19 @@ public class Client extends Observable implements Observer, MetaDataAware {
         return true;
     }
 
-    private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<BeforeRecordBreadcrumb> tasks = clientState.getBeforeRecordBreadcrumbTasks();
-        for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : tasks) {
+    private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
+        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
+        for (OnBreadcrumb callback : tasks) {
             try {
-                if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
+                if (!callback.run(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("BeforeRecordBreadcrumb threw an Exception", ex);
+                Logger.warn("OnBreadcrumb threw an Exception", ex);
             }
         }
         return true;
     }
-
 
     /**
      * Stores the given key value pair into shared preferences

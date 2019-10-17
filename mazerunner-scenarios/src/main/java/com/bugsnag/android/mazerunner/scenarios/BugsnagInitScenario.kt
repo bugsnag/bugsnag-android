@@ -18,7 +18,7 @@ internal class BugsnagInitScenario(
     }
 
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     override fun run() {

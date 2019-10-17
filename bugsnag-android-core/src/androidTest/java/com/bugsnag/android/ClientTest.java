@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
@@ -170,18 +170,18 @@ public class ClientTest {
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
         config.setAutoCaptureBreadcrumbs(false);
-        config.setMaxBreadcrumbs(1);
+        config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
 
         Breadcrumb poll = client.breadcrumbs.store.poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
-        assertEquals("manual", poll.getName());
-        assertEquals("another", poll.getMetadata().get("message"));
+        assertEquals("manual", poll.getMessage());
+        assertEquals("test", poll.getMetadata().get("message"));
     }
 
     @Test
@@ -189,10 +189,10 @@ public class ClientTest {
         Configuration config = generateConfiguration();
         config.setAutoCaptureBreadcrumbs(false);
         client = generateClient(config);
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
 
         client.leaveBreadcrumb("test");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
 
         client.clearBreadcrumbs();
         assertEquals(0, client.breadcrumbs.store.size());

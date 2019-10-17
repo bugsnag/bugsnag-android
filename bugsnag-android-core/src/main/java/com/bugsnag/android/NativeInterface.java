@@ -5,11 +5,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -68,9 +66,9 @@ public class NativeInterface {
         START_SESSION,
 
         /**
-         * A session was stopped.
+         * A session was paused.
          */
-        STOP_SESSION,
+        PAUSE_SESSION,
 
         /**
          * Set a new app version. The Message object should be the new app
@@ -262,18 +260,18 @@ public class NativeInterface {
      */
     public static void leaveBreadcrumb(@NonNull final String name,
                                        @NonNull final BreadcrumbType type) {
-        getClient().leaveBreadcrumb(name, type, new HashMap<String, String>());
+        getClient().leaveBreadcrumb(name, type, new HashMap<String, Object>());
     }
 
     /**
      * Leaves a breadcrumb on the static client instance
      */
-    public static void leaveBreadcrumb(@NonNull String name,
+    public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull String type,
-                                       @NonNull Map<String, String> metadata) {
+                                       @NonNull Map<String, Object> metadata) {
         String typeName = type.toUpperCase(Locale.US);
-        Map<String, String> map = metadata == null ? new HashMap<String, String>() : metadata;
-        getClient().leaveBreadcrumb(name, BreadcrumbType.valueOf(typeName), map);
+        Map<String, Object> map = metadata == null ? new HashMap<String, Object>() : metadata;
+        getClient().leaveBreadcrumb(message, BreadcrumbType.valueOf(typeName), map);
     }
 
     /**
@@ -342,8 +340,8 @@ public class NativeInterface {
      * Return which release stages notify
      */
     @Nullable
-    public static Collection<String> getNotifyReleaseStages() {
-        return getClient().getConfig().getNotifyReleaseStages();
+    public static Collection<String> getEnabledReleaseStages() {
+        return getClient().getConfig().getEnabledReleaseStages();
     }
 
     /**

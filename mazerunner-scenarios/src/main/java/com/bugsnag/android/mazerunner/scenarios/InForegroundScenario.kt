@@ -2,13 +2,9 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.app.Activity
 import android.content.Context
-import android.os.Bundle
 
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import java.lang.Thread
-import android.os.Handler
-import android.os.HandlerThread
 
 /**
  * Sends a handled exception to Bugsnag, which has a short delay to allow the app to remain
@@ -17,7 +13,7 @@ import android.os.HandlerThread
 internal class InForegroundScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     override fun run() {

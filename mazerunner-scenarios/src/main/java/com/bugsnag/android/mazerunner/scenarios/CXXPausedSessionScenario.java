@@ -9,7 +9,7 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
-public class CXXStopSessionScenario extends Scenario {
+public class CXXPausedSessionScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("monochrome");
@@ -20,9 +20,9 @@ public class CXXStopSessionScenario extends Scenario {
 
     public native int crash(int counter);
 
-    public CXXStopSessionScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXPausedSessionScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class CXXStopSessionScenario extends Scenario {
 
         if (metadata == null || !metadata.equals("non-crashy")) {
             Bugsnag.getClient().startSession();
-            Bugsnag.getClient().stopSession();
+            Bugsnag.getClient().pauseSession();
             TestHarnessHooksKt.flushAllSessions();
             handler.postDelayed(new Runnable() {
                 @Override

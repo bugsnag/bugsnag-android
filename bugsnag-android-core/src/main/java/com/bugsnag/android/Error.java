@@ -472,7 +472,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
             if (currentSession == null) {
                 return null;
             }
-            if (config.getAutoCaptureSessions() || !currentSession.isAutoCaptured()) {
+            if (config.getAutoTrackSessions() || !currentSession.isAutoCaptured()) {
                 if (handledState.isUnhandled()) {
                     reportedSession = sessionTracker.incrementUnhandledAndCopy();
                 } else {

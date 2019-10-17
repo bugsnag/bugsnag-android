@@ -120,9 +120,9 @@ public class MetaDataSerializationTest {
     }
 
     @Test
-    public void testBasicFiltering() throws JSONException, IOException {
+    public void testBasicRedaction() throws JSONException, IOException {
         MetaData metaData = new MetaData();
-        metaData.setFilters(Collections.singleton("password"));
+        metaData.setRedactKeys(Collections.singleton("password"));
         metaData.addMetadata("example", "password", "p4ssw0rd");
         metaData.addMetadata("example", "confirm_password", "p4ssw0rd");
         metaData.addMetadata("example", "normal", "safe");
@@ -137,14 +137,14 @@ public class MetaDataSerializationTest {
     }
 
     @Test
-    public void testNestedFiltering() throws JSONException, IOException {
+    public void testNestedRedaction() throws JSONException, IOException {
         Map<String, String> sensitiveMap = new HashMap<>();
         sensitiveMap.put("password", "p4ssw0rd");
         sensitiveMap.put("confirm_password", "p4ssw0rd");
         sensitiveMap.put("normal", "safe");
 
         MetaData metaData = new MetaData();
-        metaData.setFilters(Collections.singleton("password"));
+        metaData.setRedactKeys(Collections.singleton("password"));
         metaData.addMetadata("example", "sensitiveMap", sensitiveMap);
 
         JSONObject metaDataJson = streamableToJson(metaData);
@@ -163,7 +163,7 @@ public class MetaDataSerializationTest {
         metaData.addMetadata("foo", "password", "abc123");
         JSONObject jsonObject = streamableToJson(metaData);
 
-        assertEquals(Collections.singleton("password"), metaData.getFilters());
+        assertEquals(Collections.singleton("password"), metaData.getRedactKeys());
         assertEquals("[FILTERED]", jsonObject.getJSONObject("foo").get("password"));
     }
 

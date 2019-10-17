@@ -18,7 +18,7 @@ public class CXXNativeBreadcrumbNativeCrashScenario extends Scenario {
 
     public CXXNativeBreadcrumbNativeCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override
