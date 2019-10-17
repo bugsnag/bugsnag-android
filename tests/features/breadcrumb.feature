@@ -7,13 +7,19 @@ Scenario: Manually added breadcrumbs are sent in report
     And the exception "message" equals "BreadcrumbScenario"
     And the event "breadcrumbs" is not null
 
+    And the event "breadcrumbs.2.timestamp" is not null
+    And the event "breadcrumbs.2.name" equals "Another Breadcrumb"
+    And the event "breadcrumbs.2.type" equals "user"
+    And the event "breadcrumbs.2.metaData.Foo" equals "Bar"
+
     And the event "breadcrumbs.1.timestamp" is not null
-    And the event "breadcrumbs.1.name" equals "Another Breadcrumb"
-    And the event "breadcrumbs.1.type" equals "user"
-    And the event "breadcrumbs.1.metaData.Foo" equals "Bar"
+    And the event "breadcrumbs.1.name" equals "manual"
+    And the event "breadcrumbs.1.type" equals "manual"
+    And the event "breadcrumbs.1.metaData" is not null
+    And the event "breadcrumbs.1.metaData.message" equals "Hello Breadcrumb!"
 
     And the event "breadcrumbs.0.timestamp" is not null
     And the event "breadcrumbs.0.name" equals "manual"
     And the event "breadcrumbs.0.type" equals "manual"
     And the event "breadcrumbs.0.metaData" is not null
-    And the event "breadcrumbs.0.metaData.message" equals "Hello Breadcrumb!"
+    And the event "breadcrumbs.0.metaData.message" equals "Bugsnag loaded

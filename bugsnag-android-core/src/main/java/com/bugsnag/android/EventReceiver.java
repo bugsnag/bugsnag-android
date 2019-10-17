@@ -32,7 +32,7 @@ public class EventReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         try {
-            Map<String, String> meta = new HashMap<>();
+            Map<String, Object> meta = new HashMap<>();
             String fullAction = intent.getAction();
             String shortAction = shortenActionNameIfNeeded(intent.getAction());
             meta.put(INTENT_ACTION_KEY, fullAction); // always add the Intent Action

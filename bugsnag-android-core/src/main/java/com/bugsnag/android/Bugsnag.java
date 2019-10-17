@@ -208,18 +208,21 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumb
      */
-    public static void beforeRecordBreadcrumb(
-        @NonNull final BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        getClient().beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    public static void addOnBreadcrumb(@NonNull final OnBreadcrumb onBreadcrumb) {
+        getClient().addOnBreadcrumb(onBreadcrumb);
+    }
+
+    public static void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        getClient().removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -342,14 +345,14 @@ public final class Bugsnag {
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
      *
-     * @param name     A short label (max 32 chars)
+     * @param message     A short label
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
-    public static void leaveBreadcrumb(@NonNull String name,
+    public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull BreadcrumbType type,
-                                       @NonNull Map<String, String> metadata) {
-        getClient().leaveBreadcrumb(name, type, metadata);
+                                       @NonNull Map<String, Object> metadata) {
+        getClient().leaveBreadcrumb(message, type, metadata);
     }
 
     /**

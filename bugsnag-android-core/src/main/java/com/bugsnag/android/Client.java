@@ -223,9 +223,18 @@ public class Client extends Observable implements Observer {
             Logger.warn("Failed to set up orientation tracking: " + ex);
         }
 
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
+            }
+        });
+
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();
+        leaveBreadcrumb("Bugsnag loaded");
     }
 
     void recordStorageCacheBehavior(MetaData metaData) {
@@ -590,17 +599,21 @@ public class Client extends Observable implements Observer {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumb
      */
-    public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        clientState.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.addOnBreadcrumb(onBreadcrumb);
+    }
+
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -825,8 +838,8 @@ public class Client extends Observable implements Observer {
 
     private void leaveErrorBreadcrumb(@NonNull Error error) {
         // Add a breadcrumb for this error occurring
-        String exceptionMessage = error.getExceptionMessage();
-        Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
+        String msg = error.getExceptionMessage();
+        Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
         breadcrumbs.add(new Breadcrumb(error.getExceptionName(), BreadcrumbType.ERROR, message));
     }
 
@@ -987,26 +1000,24 @@ public class Client extends Observable implements Observer {
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
      *
-     * @param breadcrumb the log message to leave (max 140 chars)
+     * @param message the log message to leave (max 140 chars)
      */
-    public void leaveBreadcrumb(@NonNull String breadcrumb) {
-        Breadcrumb crumb = new Breadcrumb(breadcrumb);
-
-        if (runBeforeBreadcrumbTasks(crumb)) {
-            breadcrumbs.add(crumb);
-        }
+    public void leaveBreadcrumb(@NonNull String message) {
+        leaveBreadcrumbInternal(new Breadcrumb(message));
     }
 
     /**
      * Leave a "breadcrumb" log message, representing an action which occurred
      * in your app, to aid with debugging.
      */
-    public void leaveBreadcrumb(@NonNull String name,
+    public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
-                                @NonNull Map<String, String> metadata) {
-        Breadcrumb crumb = new Breadcrumb(name, type, metadata);
+                                @NonNull Map<String, Object> metadata) {
+        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata));
+    }
 
-        if (runBeforeBreadcrumbTasks(crumb)) {
+    private void leaveBreadcrumbInternal(Breadcrumb crumb) {
+        if (runBreadcrumbCallbacks(crumb)) {
             breadcrumbs.add(crumb);
         }
     }
@@ -1106,20 +1117,19 @@ public class Client extends Observable implements Observer {
         return true;
     }
 
-    private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<BeforeRecordBreadcrumb> tasks = clientState.getBeforeRecordBreadcrumbTasks();
-        for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : tasks) {
+    private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
+        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
+        for (OnBreadcrumb callback : tasks) {
             try {
-                if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
+                if (!callback.run(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("BeforeRecordBreadcrumb threw an Exception", ex);
+                Logger.warn("OnBreadcrumb threw an Exception", ex);
             }
         }
         return true;
     }
-
 
     /**
      * Stores the given key value pair into shared preferences

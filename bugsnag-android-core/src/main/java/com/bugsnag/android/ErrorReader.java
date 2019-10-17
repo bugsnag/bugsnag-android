@@ -145,7 +145,7 @@ class ErrorReader {
     private static Breadcrumb readBreadcrumb(JsonReader reader) throws IOException {
         String name = null;
         String type = null;
-        Map<String, String> metadata = new HashMap<>();
+        Map<String, Object> metadata = new HashMap<>();
         Date captureDate = null;
         reader.beginObject();
         while (reader.hasNext()) {

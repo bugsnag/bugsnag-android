@@ -201,7 +201,7 @@ public class ObserverInterfaceTest {
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getName());
+        assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
         assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
     }
@@ -212,7 +212,7 @@ public class ObserverInterfaceTest {
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getName());
+        assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
         assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
     }
@@ -231,11 +231,11 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testLeaveBreadcrumbSendsMessage() {
-        client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, String>());
+        client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, Object>());
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.LOG, crumb.getType());
-        assertEquals("Rollback", crumb.getName());
+        assertEquals("Rollback", crumb.getMessage());
         assertEquals(0, crumb.getMetadata().size());
     }
 
