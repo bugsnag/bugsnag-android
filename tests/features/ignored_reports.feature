@@ -7,7 +7,7 @@ Scenario: Exception classname ignored
 
 
 Scenario: Disabled Exception Handler
-    When I run "DisableAutoNotifyScenario"
+    When I run "DisableAutoDetectErrorsScenario"
     And I wait for 2 seconds
     Then I should receive no requests
 

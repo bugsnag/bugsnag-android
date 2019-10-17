@@ -43,7 +43,7 @@ bsg_unwinder bsg_configured_unwind_style() {
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
-    JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
+    JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_detect_ndk_crashes,
     jint _api_level, jboolean is32bit) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
@@ -55,7 +55,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   const char *report_path = (*env)->GetStringUTFChars(env, _report_path, 0);
   sprintf(bugsnag_env->next_report_path, "%s", report_path);
 
-  if ((bool)auto_notify) {
+  if ((bool)auto_detect_ndk_crashes) {
     bsg_handler_install_signal(bugsnag_env);
     bsg_handler_install_cpp(bugsnag_env);
   }

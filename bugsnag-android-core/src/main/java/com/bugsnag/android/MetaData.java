@@ -99,33 +99,33 @@ public class MetaData extends Observable implements JsonStream.Streamable {
         return tab;
     }
 
-    void setFilters(Collection<String> filters) {
-        Collection<String> data = new HashSet<>(filters);
-        jsonStreamer.filters.clear();
-        jsonStreamer.filters.addAll(data);
+    void setRedactKeys(Collection<String> redactKeys) {
+        Collection<String> data = new HashSet<>(redactKeys);
+        jsonStreamer.redactKeys.clear();
+        jsonStreamer.redactKeys.addAll(data);
     }
 
-    Set<String> getFilters() {
-        return jsonStreamer.filters;
+    Set<String> getRedactKeys() {
+        return jsonStreamer.redactKeys;
     }
 
     @NonNull
     static MetaData merge(@NonNull MetaData... metaDataList) {
         List<Map<String, Object>> stores = new ArrayList<>();
-        Collection<String> filters = new HashSet<>();
+        Collection<String> redactKeys = new HashSet<>();
         for (MetaData metaData : metaDataList) {
             if (metaData != null) {
                 stores.add(metaData.store);
 
-                if (metaData.jsonStreamer.filters != null) {
-                    filters.addAll(metaData.jsonStreamer.filters);
+                if (metaData.jsonStreamer.redactKeys != null) {
+                    redactKeys.addAll(metaData.jsonStreamer.redactKeys);
                 }
             }
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         MetaData newMeta = new MetaData(mergeMaps(stores.toArray(new Map[0])));
-        newMeta.setFilters(filters);
+        newMeta.setRedactKeys(redactKeys);
         return newMeta;
     }
 

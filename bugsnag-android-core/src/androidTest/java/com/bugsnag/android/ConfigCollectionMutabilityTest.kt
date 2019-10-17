@@ -18,12 +18,12 @@ class ConfigCollectionMutabilityTest {
     }
 
     @Test(expected = UnsupportedOperationException::class)
-    fun testNotifyReleaseStages() {
-        configuration.notifyReleaseStages.add("")
+    fun testEnabledReleaseStages() {
+        configuration.enabledReleaseStages.add("")
     }
 
     @Test(expected = UnsupportedOperationException::class)
-    fun testFilters() {
-        configuration.filters.add("")
+    fun testRedactKeys() {
+        configuration.redactKeys.add("")
     }
 }

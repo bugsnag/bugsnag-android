@@ -20,7 +20,7 @@ public class CXXUpdateContextCrashScenario extends Scenario {
 
     public CXXUpdateContextCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override

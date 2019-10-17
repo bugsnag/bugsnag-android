@@ -31,7 +31,8 @@ public class NativeBridge implements Observer {
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
-    public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
+    public static native void install(@NonNull String reportingDirectory,
+                                      boolean autoDetectNdkCrashes,
                                       int apiLevel, boolean is32bit);
 
     public static native void deliverReportAtPath(@NonNull String filePath);
@@ -234,7 +235,7 @@ public class NativeBridge implements Observer {
                 if (values.size() > 0 && values.get(0) instanceof Configuration) {
                     Configuration config = (Configuration)values.get(0);
                     String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-                    install(reportPath, config.getDetectNdkCrashes(), Build.VERSION.SDK_INT,
+                    install(reportPath, config.getAutoDetectNdkCrashes(), Build.VERSION.SDK_INT,
                         is32bit());
                     installed.set(true);
                 }

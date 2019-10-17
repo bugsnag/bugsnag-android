@@ -13,7 +13,7 @@ import com.bugsnag.android.createCustomHeaderDelivery
 internal class CustomClientSessionFlushScenario(config: Configuration,
                                                 context: Context) : Scenario(config, context) {
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")

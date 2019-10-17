@@ -184,7 +184,7 @@ public class Client extends Observable implements Observer {
         errorStore = new ErrorStore(immutableConfig, clientState, appContext, delegate);
 
         // Install a default exception handler with this client
-        if (immutableConfig.getAutoNotify()) {
+        if (immutableConfig.getAutoDetectErrors()) {
             new ExceptionHandler(this);
         }
 
@@ -289,7 +289,7 @@ public class Client extends Observable implements Observer {
         NativeInterface.setClient(this);
         BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
 
-        if (immutableConfig.getDetectNdkCrashes()) {
+        if (immutableConfig.getAutoDetectNdkCrashes()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
             } catch (ClassNotFoundException exc) {
@@ -297,7 +297,7 @@ public class Client extends Observable implements Observer {
                     + "NDK errors will not be captured.");
             }
         }
-        if (immutableConfig.getDetectAnrs()) {
+        if (immutableConfig.getAutoDetectAnrs()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
             } catch (ClassNotFoundException exc) {
@@ -342,7 +342,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Starts tracking a new session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to start a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -354,7 +354,7 @@ public class Client extends Observable implements Observer {
      *
      * @see #resumeSession()
      * @see #pauseSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
     public void startSession() {
         sessionTracker.startSession(false);
@@ -362,7 +362,7 @@ public class Client extends Observable implements Observer {
 
     /**
      * Pauses tracking of a session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -373,7 +373,7 @@ public class Client extends Observable implements Observer {
      *
      * @see #startSession()
      * @see #resumeSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
     public final void pauseSession() {
         sessionTracker.pauseSession();
@@ -383,7 +383,7 @@ public class Client extends Observable implements Observer {
      * Resumes a session which has previously been paused, or starts a new session if none exists.
      * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * It's important to note that sessions are stored in memory for the lifetime of the
      * application process and are not persisted on disk. Therefore calling this method on app
@@ -397,7 +397,7 @@ public class Client extends Observable implements Observer {
      *
      * @see #startSession()
      * @see #pauseSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see Configuration#setAutoTrackSessions(boolean)
      *
      * @return true if a previous session was resumed, false if a new session was started.
      */

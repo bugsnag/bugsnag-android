@@ -15,7 +15,7 @@ internal class EmptySessionScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
 
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
         config.addBeforeSend(BeforeSend { true })
 
         if (context is Activity) {

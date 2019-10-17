@@ -11,7 +11,7 @@ import com.bugsnag.android.Configuration
 internal class SessionCacheScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
             if (eventMetaData == "offline") {
