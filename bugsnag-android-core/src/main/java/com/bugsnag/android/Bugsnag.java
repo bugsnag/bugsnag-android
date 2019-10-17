@@ -345,7 +345,7 @@ public final class Bugsnag {
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
      *
-     * @param message     A short label (max 32 chars)
+     * @param message     A short label
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
