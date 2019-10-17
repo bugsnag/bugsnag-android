@@ -779,7 +779,7 @@ public class Client extends Observable implements Observer {
         error.setDeviceData(device);
 
         MetaData metaData = error.getMetaData();
-        Notifier notifier = Notifier.getInstance();
+        Notifier notifier = Notifier.INSTANCE;
         metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
         metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
         metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());

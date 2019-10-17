@@ -21,7 +21,7 @@ public class SessionTrackingPayload implements JsonStream.Streamable {
                            DeviceData deviceData) {
         this.appDataSummary = appData.getAppDataSummary();
         this.deviceDataSummary = deviceData.getDeviceDataSummary();
-        this.notifier = Notifier.getInstance();
+        this.notifier = Notifier.INSTANCE;
         this.session = session;
         this.files = files;
     }
