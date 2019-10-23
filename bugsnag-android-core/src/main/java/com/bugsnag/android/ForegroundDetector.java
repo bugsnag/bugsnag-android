@@ -29,14 +29,15 @@ class ForegroundDetector {
      *
      * @return whether the application is in the foreground or not
      */
-    boolean isInForeground() {
+    @Nullable
+    Boolean isInForeground() {
         ActivityManager.RunningAppProcessInfo info = getProcessInfo();
 
         if (info != null) {
             return info.importance
                 <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
-        } else { // prefer a false negative if process info not available
-            return false;
+        } else {
+            return null;
         }
     }
 
@@ -57,7 +58,7 @@ class ForegroundDetector {
 
         try {
             appProcesses = activityManager.getRunningAppProcesses();
-        } catch (SecurityException exc) {
+        } catch (RuntimeException exc) {
             return null;
         }
 
