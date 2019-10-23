@@ -33,7 +33,7 @@ final class BugsnagTestUtils {
 
             @NotNull
             @Override
-            public DeliveryStatus deliver(@NotNull SessionTrackingPayload payload,
+            public DeliveryStatus deliver(@NotNull SessionPayload payload,
                                           @NotNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }

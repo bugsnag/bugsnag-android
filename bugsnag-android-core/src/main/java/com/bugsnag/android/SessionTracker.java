@@ -175,8 +175,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
-                        SessionTrackingPayload payload =
-                            new SessionTrackingPayload(session, null,
+                        SessionPayload payload =
+                            new SessionPayload(session, null,
                                 client.appData, client.deviceData);
 
                         try {
@@ -275,8 +275,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 storedFiles = sessionStore.findStoredFiles();
 
                 if (!storedFiles.isEmpty()) {
-                    SessionTrackingPayload payload =
-                        new SessionTrackingPayload(null, storedFiles,
+                    SessionPayload payload =
+                        new SessionPayload(null, storedFiles,
                             client.appData, client.deviceData);
 
                     DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
@@ -304,7 +304,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         }
     }
 
-    DeliveryStatus deliverSessionPayload(SessionTrackingPayload payload) {
+    DeliveryStatus deliverSessionPayload(SessionPayload payload) {
         DeliveryParams params = configuration.sessionApiDeliveryParams();
         Delivery delivery = configuration.getDelivery();
         return delivery.deliver(payload, params);
