@@ -96,11 +96,6 @@ public class NativeInterface {
          */
         UPDATE_LOW_MEMORY,
         /**
-         * Set a new value for all custom metadata. The message object should be
-         * MetaData.
-         */
-        UPDATE_METADATA,
-        /**
          * Set a new value for `device.orientation`. The message object should
          * be the orientation in degrees
          */
@@ -231,7 +226,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetaData() {
-        return new HashMap<>(getClient().getMetaData().store);
+        return new HashMap<>(getClient().clientState.getMetaData().toMap());
     }
 
     /**
@@ -282,17 +277,17 @@ public class NativeInterface {
     /**
      * Remove metadata from subsequent exception reports
      */
-    public static void clearTab(@NonNull final String tab) {
-        getClient().clearTab(tab);
+    public static void clearMetadata(@NonNull String section, @Nullable String key) {
+        getClient().clearMetadata(section, key);
     }
 
     /**
      * Add metadata to subsequent exception reports
      */
-    public static void addToTab(@NonNull final String tab,
-                                @NonNull final String key,
-                                @Nullable final Object value) {
-        getClient().addToTab(tab, key, value);
+    public static void addMetadata(@NonNull final String tab,
+                                  @Nullable final String key,
+                                  @Nullable final Object value) {
+        getClient().addMetadata(tab, key, value);
     }
 
     /**

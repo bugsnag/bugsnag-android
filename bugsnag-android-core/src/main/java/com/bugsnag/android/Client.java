@@ -46,7 +46,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer {
+public class Client extends Observable implements Observer, MetaDataAware {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -167,17 +167,16 @@ public class Client extends Observable implements Observer {
                         true, new MetaData()).build();
                 err.setContext(context);
 
-                MetaData metaData = err.getMetaData();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
 
                 @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
-                        long usableSpace = appContext.getCacheDir().getUsableSpace();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
-                recordStorageCacheBehavior(metaData);
+                long usableSpace = appContext.getCacheDir().getUsableSpace();
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
+                recordStorageCacheBehavior(err);
                 Client.this.reportInternalBugsnagError(err);
             }
         };
@@ -237,7 +236,7 @@ public class Client extends Observable implements Observer {
         leaveBreadcrumb("Bugsnag loaded");
     }
 
-    void recordStorageCacheBehavior(MetaData metaData) {
+    void recordStorageCacheBehavior(Error error) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             File cacheDir = appContext.getCacheDir();
             File errDir = new File(cacheDir, "bugsnag-errors");
@@ -245,8 +244,8 @@ public class Client extends Observable implements Observer {
             try {
                 boolean tombstone = storageManager.isCacheBehaviorTombstone(errDir);
                 boolean group = storageManager.isCacheBehaviorGroup(errDir);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
+                error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
+                error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
             } catch (IOException exc) {
                 Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
             }
@@ -699,14 +698,14 @@ public class Client extends Observable implements Observer {
         // Capture the state of the app and device and attach diagnostics to the error
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         error.setDeviceData(errorDeviceData);
-        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
+        error.addMetadata("device", null, deviceData.getDeviceMetaData());
 
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
         error.setAppData(errorAppData);
-        error.getMetaData().store.put("app", appData.getAppDataMetaData());
+        error.addMetadata("app", null, appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);
@@ -781,14 +780,13 @@ public class Client extends Observable implements Observer {
         device.put("freeDisk", deviceData.calculateFreeDisk());
         error.setDeviceData(device);
 
-        MetaData metaData = error.getMetaData();
         Notifier notifier = Notifier.getInstance();
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());
 
         Object packageName = appData.getAppData().get("packageName");
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
 
         final Report report = new Report(null, error);
         try {
@@ -952,48 +950,36 @@ public class Client extends Observable implements Observer {
         return null;
     }
 
-    /**
-     * Add diagnostic information to every error report.
-     * Diagnostic information is collected in "tabs" on your dashboard.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.addToTab("account", "name", "Acme Co.");
-     * client.addToTab("account", "payingCustomer", true);
-     *
-     * @param tab   the dashboard tab to add diagnostic data to
-     * @param key   the name of the diagnostic information
-     * @param value the contents of the diagnostic information
-     */
-    public void addToTab(@NonNull String tab, @NonNull String key, @Nullable Object value) {
-        clientState.getMetaData().addToTab(tab, key, value);
+    @Override
+    public void addMetadata(@NonNull String section, @Nullable Object value) {
+        addMetadata(section, null, value);
     }
 
-    /**
-     * Remove a tab of app-wide diagnostic information
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public void clearTab(@NonNull String tabName) {
-        clientState.getMetaData().clearTab(tabName);
+    @Override
+    public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
+        clientState.getMetaData().addMetadata(section, key, value);
     }
 
-    /**
-     * Get the global diagnostic information currently stored in MetaData.
-     *
-     * @see MetaData
-     */
-    @NonNull public MetaData getMetaData() {
-        return clientState.getMetaData();
+    @Override
+    public void clearMetadata(@NonNull String section) {
+        clearMetadata(section, null);
     }
 
-    /**
-     * Set the global diagnostic information to be send with every error.
-     *
-     * @see MetaData
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        clientState.setMetaData(metaData);
+    @Override
+    public void clearMetadata(@NonNull String section, @Nullable String key) {
+        clientState.getMetaData().clearMetadata(section, key);
+    }
+
+    @Nullable
+    @Override
+    public Object getMetadata(@NonNull String section) {
+        return getMetadata(section, null);
+    }
+
+    @Override
+    @Nullable
+    public Object getMetadata(@NonNull String section, @Nullable String key) {
+        return clientState.getMetaData().getMetadata(section, key);
     }
 
     /**

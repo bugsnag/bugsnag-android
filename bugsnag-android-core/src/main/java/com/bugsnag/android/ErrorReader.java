@@ -104,16 +104,15 @@ class ErrorReader {
                 : null;
             HandledState handledState = new HandledState(severityReasonValues.get(0), severity,
                                                          unhandled, severityReasonAttribute);
-
+            
             Error error = new Error(config, exceptions.getException(), handledState, severity,
-                                    session, threadState, clientState.getMetaData());
+                                    session, threadState, metaData);
             error.getExceptions().setExceptionType(exceptions.getExceptionType());
             error.setProjectPackages(projectPackages);
             error.setUser(user);
             error.setContext(context);
             error.setGroupingHash(groupingHash);
             error.setAppData(appData);
-            error.setMetaData(metaData);
             error.setDeviceData(deviceData);
             error.setBreadcrumbs(crumbs);
 

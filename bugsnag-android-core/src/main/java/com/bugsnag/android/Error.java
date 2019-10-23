@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import java.util.Map;
  *
  * @see BeforeNotify
  */
-public class Error implements JsonStream.Streamable {
+public class Error implements JsonStream.Streamable, MetaDataAware {
 
     @NonNull
     private Map<String, Object> appData = new HashMap<>();
@@ -32,7 +34,7 @@ public class Error implements JsonStream.Streamable {
     private Severity severity;
 
     @NonNull
-    private MetaData metaData = new MetaData();
+    private MetaData metaData;
 
     @Nullable
     private String groupingHash;
@@ -43,7 +45,6 @@ public class Error implements JsonStream.Streamable {
     @NonNull
     final ImmutableConfig config;
     private Collection<String> projectPackages;
-    private final MetaData globalMetaData;
     private final Exceptions exceptions;
     private Breadcrumbs breadcrumbs;
     private final BugsnagException exception;
@@ -54,7 +55,7 @@ public class Error implements JsonStream.Streamable {
 
     Error(@NonNull ImmutableConfig config, @NonNull Throwable exc,
           HandledState handledState, @NonNull Severity severity,
-          Session session, ThreadState threadState, MetaData globalMetaData) {
+          Session session, ThreadState threadState, @NonNull MetaData metaData) {
         this.threadState = threadState;
         this.config = config;
 
@@ -68,19 +69,16 @@ public class Error implements JsonStream.Streamable {
         this.session = session;
 
         projectPackages = config.getProjectPackages();
-        this.globalMetaData = globalMetaData;
+        this.metaData = metaData;
         exceptions = new Exceptions(config, exception);
     }
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
-        // Merge error metaData into global metadata and apply redactKeys
-        MetaData mergedMetaData = MetaData.merge(globalMetaData, metaData);
-
         // Write error basics
         writer.beginObject();
         writer.name("context").value(context);
-        writer.name("metaData").value(mergedMetaData);
+        writer.name("metaData").value(metaData);
 
         writer.name("severity").value(severity);
         writer.name("severityReason").value(handledState);
@@ -255,63 +253,41 @@ public class Error implements JsonStream.Streamable {
         this.user.setName(name);
     }
 
-    /**
-     * Add additional diagnostic information to send with this Error.
-     * Diagnostic information is collected in "tabs" on your dashboard.
-     * <p>
-     * For example:
-     * <p>
-     * error.addToTab("account", "name", "Acme Co.");
-     * error.addToTab("account", "payingCustomer", true);
-     *
-     * @param tabName the dashboard tab to add diagnostic data to
-     * @param key     the name of the diagnostic information
-     * @param value   the contents of the diagnostic information
-     */
-    public void addToTab(@NonNull String tabName, @NonNull String key, @Nullable Object value) {
-        metaData.addToTab(tabName, key, value);
+    @Override
+    public void addMetadata(@NonNull String section, @Nullable Object value) {
+        addMetadata(section, null, value);
     }
 
-    /**
-     * Remove a tab of app-wide diagnostic information from this Error
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public void clearTab(@NonNull String tabName) {
-        metaData.clearTab(tabName);
+    @Override
+    public void addMetadata(@NotNull String section,
+                            @Nullable String key,
+                            @Nullable Object value) {
+        metaData.addMetadata(section, key, value);
     }
 
-    /**
-     * Get any additional diagnostic MetaData currently attached to this Error.
-     * <p>
-     * This will contain any MetaData set by setMetaData or addToTab.
-     *
-     * @see Error#setMetaData
-     * @see Error#addToTab
-     */
-    @NonNull
-    public MetaData getMetaData() {
-        return metaData;
+    @Override
+    public void clearMetadata(@NonNull String section) {
+        clearMetadata(section, null);
     }
 
-    /**
-     * Set additional diagnostic MetaData to send with this Error. This will
-     * be merged with any global MetaData you set on the Client.
-     * <p>
-     * Note: This will overwrite any MetaData you provided using
-     * Bugsnag.notify, so it is recommended to use addToTab instead.
-     *
-     * @param metaData additional diagnostic data to send with this Error
-     * @see Error#addToTab
-     * @see Error#getMetaData
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        //noinspection ConstantConditions
-        if (metaData == null) {
-            this.metaData = new MetaData();
-        } else {
-            this.metaData = metaData;
-        }
+    @Override
+    public void clearMetadata(@NotNull String section,
+                              @Nullable String key) {
+        metaData.clearMetadata(section, key);
+    }
+
+    @Nullable
+    @Override
+    public Object getMetadata(@NonNull String section) {
+        return getMetadata(section, null);
+    }
+
+
+    @Nullable
+    @Override
+    public Object getMetadata(@NotNull String section,
+                              @Nullable String key) {
+        return metaData.getMetadata(section, key);
     }
 
     /**
@@ -428,7 +404,7 @@ public class Error implements JsonStream.Streamable {
         private final SessionTracker sessionTracker;
         private final ThreadState threadState;
         private Severity severity = Severity.WARNING;
-        private MetaData metaData;
+        private MetaData metaData = new MetaData();
         private MetaData globalMetaData;
         private String attributeValue;
 
@@ -481,14 +457,9 @@ public class Error implements JsonStream.Streamable {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
             Session session = getSession(handledState);
-
-            Error error = new Error(config, exception, handledState,
-                severity, session, threadState, globalMetaData);
-
-            if (metaData != null) {
-                error.setMetaData(metaData);
-            }
-            return error;
+            MetaData metaData = MetaData.Companion.merge(globalMetaData, this.metaData);
+            return new Error(config, exception, handledState,
+                severity, session, threadState, metaData);
         }
 
         private Session getSession(HandledState handledState) {

@@ -6,6 +6,7 @@ import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 @SmallTest
 public class ClientTest {
 
@@ -199,17 +201,17 @@ public class ClientTest {
     @Test
     public void testClientAddToTab() {
         client = generateClient();
-        client.addToTab("drink", "cola", "cherry");
-        assertNotNull(client.getMetaData().getTab("drink"));
+        client.addMetadata("drink", "cola", "cherry");
+        assertNotNull(client.getMetadata("drink", null));
     }
 
     @Test
     public void testClientClearTab() {
         client = generateClient();
-        client.addToTab("drink", "cola", "cherry");
+        client.addMetadata("drink", "cola", "cherry");
 
-        client.clearTab("drink");
-        assertTrue(client.getMetaData().getTab("drink").isEmpty());
+        client.clearMetadata("drink", null);
+        assertNull(client.getMetadata("drink", null));
     }
 
     @Test

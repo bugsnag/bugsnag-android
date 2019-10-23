@@ -35,7 +35,7 @@ internal class BugsnagInitScenario(
         val uniqueClients = futures.map { it.get() }.distinct()
 
         val bugsnag = uniqueClients.first()!!
-        bugsnag.addToTab("client", "count", uniqueClients.size)
+        bugsnag.addMetadata("client", "count", uniqueClients.size)
         bugsnag.notify(RuntimeException())
     }
 
