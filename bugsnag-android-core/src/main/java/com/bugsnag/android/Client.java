@@ -473,19 +473,16 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     @NonNull
-    @InternalApi
     public Collection<Breadcrumb> getBreadcrumbs() {
         return new ArrayList<>(breadcrumbs.store);
     }
 
     @NonNull
-    @InternalApi
     public AppData getAppData() {
         return appData;
     }
 
     @NonNull
-    @InternalApi
     public DeviceData getDeviceData() {
         return deviceData;
     }
@@ -780,7 +777,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         device.put("freeDisk", deviceData.calculateFreeDisk());
         error.setDeviceData(device);
 
-        Notifier notifier = Notifier.getInstance();
+        Notifier notifier = Notifier.INSTANCE;
         error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
         error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
         error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());

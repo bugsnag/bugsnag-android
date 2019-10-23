@@ -38,7 +38,7 @@ public class Report implements JsonStream.Streamable {
     private Report(@NonNull String apiKey, @Nullable File errorFile, @Nullable Error error) {
         this.error = error;
         this.errorFile = errorFile;
-        this.notifier = Notifier.getInstance();
+        this.notifier = Notifier.INSTANCE;
         this.apiKey = apiKey;
     }
 
@@ -94,7 +94,6 @@ public class Report implements JsonStream.Streamable {
         return apiKey;
     }
 
-    @InternalApi
     @NonNull
     public Notifier getNotifier() {
         return notifier;

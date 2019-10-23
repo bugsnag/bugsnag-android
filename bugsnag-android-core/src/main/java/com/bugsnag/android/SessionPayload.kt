@@ -10,14 +10,13 @@ class SessionPayload internal constructor(
     device: DeviceData
 ) : JsonStream.Streamable {
 
-    private val notifier: Notifier = Notifier.getInstance()
     val app: MutableMap<String, Any> = app.appDataSummary
     val device: MutableMap<String, Any> = device.deviceDataSummary
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         writer.beginObject()
-        writer.name("notifier").value(notifier)
+        writer.name("notifier").value(Notifier)
         writer.name("app").value(app)
         writer.name("device").value(device)
         writer.name("sessions").beginArray()
