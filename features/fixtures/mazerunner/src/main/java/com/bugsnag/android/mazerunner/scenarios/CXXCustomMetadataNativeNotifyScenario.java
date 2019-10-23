@@ -26,9 +26,9 @@ public class CXXCustomMetadataNativeNotifyScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        Bugsnag.addToTab("fruit", "orange", "meyer");
-        Bugsnag.addToTab("fruit", "counters", 302);
-        Bugsnag.addToTab("fruit", "ripe", false);
+        Bugsnag.addMetadata("fruit", "orange", "meyer");
+        Bugsnag.addMetadata("fruit", "counters", 302);
+        Bugsnag.addMetadata("fruit", "ripe", false);
         activate();
     }
 }

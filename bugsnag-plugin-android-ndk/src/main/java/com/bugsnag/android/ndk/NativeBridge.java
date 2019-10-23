@@ -2,7 +2,6 @@ package com.bugsnag.android.ndk;
 
 import com.bugsnag.android.Breadcrumb;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.MetaData;
 import com.bugsnag.android.NativeInterface;
 
 import android.os.Build;
@@ -160,9 +159,6 @@ public class NativeBridge implements Observer {
                 break;
             case UPDATE_LOW_MEMORY:
                 handleLowMemoryChange(arg);
-                break;
-            case UPDATE_METADATA:
-                handleUpdateMetadata(arg);
                 break;
             case UPDATE_ORIENTATION:
                 handleOrientationChange(arg);
@@ -440,14 +436,6 @@ public class NativeBridge implements Observer {
             updateLowMemory((Boolean)arg);
         } else {
             warn("UPDATE_LOW_MEMORY object is invalid: " + arg);
-        }
-    }
-
-    private void handleUpdateMetadata(Object arg) {
-        if (arg instanceof MetaData) {
-            updateMetadata(arg);
-        } else {
-            warn("UPDATE_METADATA object is invalid: " + arg);
         }
     }
 

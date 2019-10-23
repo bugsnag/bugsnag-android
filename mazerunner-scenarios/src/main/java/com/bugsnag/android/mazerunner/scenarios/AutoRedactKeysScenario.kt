@@ -15,9 +15,9 @@ internal class AutoRedactKeysScenario(config: Configuration,
 
     override fun run() {
         super.run()
-        Bugsnag.addToTab("user", "password", "hunter2")
-        Bugsnag.addToTab("custom", "password", "hunter2")
-        Bugsnag.addToTab("custom", "foo", "hunter2")
+        Bugsnag.addMetadata("user", "password", "hunter2")
+        Bugsnag.addMetadata("custom", "password", "hunter2")
+        Bugsnag.addMetadata("custom", "foo", "hunter2")
         Bugsnag.notify(generateException())
     }
 

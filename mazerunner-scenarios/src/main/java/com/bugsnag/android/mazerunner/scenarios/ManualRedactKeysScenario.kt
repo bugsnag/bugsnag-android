@@ -16,9 +16,9 @@ internal class ManualRedactKeysScenario(config: Configuration,
 
     override fun run() {
         super.run()
-        Bugsnag.addToTab("user", "foo", "hunter2")
-        Bugsnag.addToTab("custom", "foo", "hunter2")
-        Bugsnag.addToTab("custom", "bar", "hunter2")
+        Bugsnag.addMetadata("user", "foo", "hunter2")
+        Bugsnag.addMetadata("custom", "foo", "hunter2")
+        Bugsnag.addMetadata("custom", "bar", "hunter2")
         Bugsnag.notify(generateException())
     }
 

@@ -438,7 +438,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return meta data
      */
     @NonNull
-    @Override
     public MetaData getMetaData() {
         return metaData;
     }
@@ -448,19 +447,13 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param metaData meta data
      */
-    @Override
     public void setMetaData(@NonNull MetaData metaData) {
-        this.metaData.deleteObserver(this);
         //noinspection ConstantConditions
         if (metaData == null) {
             this.metaData = new MetaData();
         } else {
             this.metaData = metaData;
         }
-        this.setChanged();
-        this.notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_METADATA, this.metaData.store));
-        this.metaData.addObserver(this);
     }
 
     /**

@@ -34,7 +34,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         if (strictModeThrowable) { // add strictmode policy violation to metadata
             violationDesc = strictModeHandler.getViolationDescription(throwable.getMessage());
             metaData = new MetaData();
-            metaData.addToTab(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
+            metaData.addMetadata(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
         }
 
         String severityReason = strictModeThrowable
