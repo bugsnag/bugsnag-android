@@ -58,7 +58,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
     private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
+    private final Collection<OnSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
 
 
     private String codeBundleId;
@@ -721,6 +721,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         }
     }
 
+    void removeOnError(@NonNull OnError onError) {
+        onErrorTasks.remove(onError);
+    }
+
     /**
      * Add a "before send" callback, to execute code before sending a
      * report to Bugsnag.
@@ -749,17 +753,22 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Adds a new before breadcrumb task
+     * Adds an on breadcrumb callback
      *
-     * @param onBreadcrumb the new before breadcrumb task
+     * @param onBreadcrumb the on breadcrumb callback
      */
-    void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
             breadcrumbCallbacks.add(onBreadcrumb);
         }
     }
 
-    void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    /**
+     * Removes an on breadcrumb callback
+     *
+     * @param onBreadcrumb the on breadcrumb callback
+     */
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         breadcrumbCallbacks.remove(onBreadcrumb);
     }
 
@@ -773,11 +782,27 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         return breadcrumbCallbacks;
     }
 
-    void addBeforeSendSession(BeforeSendSession beforeSendSession) {
-        sessionCallbacks.add(beforeSendSession);
+    /**
+     * Adds an on session callback
+     *
+     * @param onSession the on session callback
+     */
+    public void addOnSession(@NonNull OnSession onSession) {
+        if (!sessionCallbacks.contains(onSession)) {
+            sessionCallbacks.add(onSession);
+        }
     }
 
-    Collection<BeforeSendSession> getSessionCallbacks() {
+    /**
+     * Removes an on session callback
+     *
+     * @param onSession the on session callback
+     */
+    public void removeOnSession(@NonNull OnSession onSession) {
+        sessionCallbacks.remove(onSession);
+    }
+
+    Collection<OnSession> getSessionCallbacks() {
         return sessionCallbacks;
     }
 }

@@ -564,6 +564,10 @@ public class Client extends Observable implements Observer, MetaDataAware {
         clientState.addOnError(onError);
     }
 
+    public void removeOnError(@NonNull OnError onError) {
+        clientState.removeOnError(onError);
+    }
+
     /**
      * Add a "before send" callback, to execute code before sending a
      * report to Bugsnag.
@@ -612,6 +616,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.removeOnBreadcrumb(onBreadcrumb);
+    }
+
+    public void addOnSession(@NonNull OnSession onSession) {
+        clientState.addOnSession(onSession);
+    }
+
+    public void removeOnSession(@NonNull OnSession onSession) {
+        clientState.removeOnSession(onSession);
     }
 
     /**
