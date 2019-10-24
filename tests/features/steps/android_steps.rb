@@ -122,6 +122,7 @@ Then("the report contains the required fields") do
     And the payload field "events.0.device.model" is not null
     And the payload field "events.0.device.orientation" is not null
     And the payload field "events.0.device.osName" equals "android"
+    And the payload field "events.0.device.time" is not null
     And the payload field "events.0.device.totalMemory" is not null
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null
     And the payload field "events.0.metaData.app.name" equals "MazeRunner"
@@ -134,7 +135,6 @@ Then("the report contains the required fields") do
     And the payload field "events.0.metaData.device.networkAccess" is not null
     And the payload field "events.0.metaData.device.screenDensity" is not null
     And the payload field "events.0.metaData.device.screenResolution" is not null
-    And the payload field "events.0.metaData.device.time" is not null
     And the payload field "events.0.severity" is not null
     And the payload field "events.0.severityReason.type" is not null
     And the payload field "events.0.device.cpuAbi" is a non-empty array

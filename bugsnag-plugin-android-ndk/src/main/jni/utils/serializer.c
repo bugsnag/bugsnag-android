@@ -228,6 +228,12 @@ void bsg_serialize_device(const bsg_device_info device, JSON_Object *event) {
   }
 
   json_object_dotset_number(event, "device.totalMemory", device.total_memory);
+
+  char report_time[sizeof "2018-10-08T12:07:09Z"];
+  if (device.time > 0) {
+    strftime(report_time, sizeof report_time, "%FT%TZ", gmtime(&device.time));
+    json_object_dotset_string(event, "device.time", report_time);
+  }
 }
 
 void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event) {
@@ -240,12 +246,6 @@ void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *ev
   json_object_dotset_number(event, "metaData.device.dpi", device.dpi);
   json_object_dotset_number(event, "metaData.device.screenDensity", device.screen_density);
   json_object_dotset_string(event, "metaData.device.screenResolution", device.screen_resolution);
-
-  char report_time[sizeof "2018-10-08T12:07:09Z"];
-  if (device.time > 0) {
-    strftime(report_time, sizeof report_time, "%FT%TZ", gmtime(&device.time));
-    json_object_dotset_string(event, "metaData.device.time", report_time);
-  }
 }
 
 void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event) {

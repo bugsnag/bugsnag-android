@@ -131,6 +131,7 @@ Then("the report in request {int} contains the required fields") do |index|
     And the payload field "events.0.device.model" is not null for request #{index}
     And the payload field "events.0.device.orientation" is not null for request #{index}
     And the payload field "events.0.device.osName" equals "android" for request #{index}
+    And the payload field "events.0.device.time" is not null for request #{index}
     And the payload field "events.0.device.totalMemory" is not null for request #{index}
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null for request #{index}
     And the payload field "events.0.metaData.app.name" equals "MazeRunner" for request #{index}
@@ -144,7 +145,6 @@ Then("the report in request {int} contains the required fields") do |index|
     And the payload field "events.0.metaData.device.networkAccess" is not null for request #{index}
     And the payload field "events.0.metaData.device.screenDensity" is not null for request #{index}
     And the payload field "events.0.metaData.device.screenResolution" is not null for request #{index}
-    And the payload field "events.0.metaData.device.time" is not null for request #{index}
     And the payload field "events.0.severity" is not null for request #{index}
     And the payload field "events.0.severityReason.type" is not null for request #{index}
     And the payload field "events.0.device.cpuAbi" is a non-empty array for request #{index}
