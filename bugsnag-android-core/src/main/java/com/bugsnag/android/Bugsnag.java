@@ -161,7 +161,7 @@ public final class Bugsnag {
      * For example:
      * <p>
      * Bugsnag.addBeforeNotify(new BeforeNotify() {
-     * public boolean run(Error error) {
+     * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
@@ -186,7 +186,7 @@ public final class Bugsnag {
      * For example:
      * <p>
      * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Error error) {
+     * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }

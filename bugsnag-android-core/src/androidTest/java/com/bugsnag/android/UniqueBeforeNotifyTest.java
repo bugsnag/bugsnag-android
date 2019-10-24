@@ -18,14 +18,14 @@ public class UniqueBeforeNotifyTest {
 
     private BeforeNotify firstCb = new BeforeNotify() {
         @Override
-        public boolean run(@NonNull Error error) {
+        public boolean run(@NonNull Event event) {
             return handleCallback();
         }
     };
 
     private BeforeNotify secondCb = new BeforeNotify() {
         @Override
-        public boolean run(@NonNull Error error) {
+        public boolean run(@NonNull Event event) {
             return handleCallback();
         }
     };
@@ -70,7 +70,7 @@ public class UniqueBeforeNotifyTest {
     public void testCallbackOrder() {
         client.addBeforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(@NonNull Error error) {
+            public boolean run(@NonNull Event event) {
                 assertEquals(0, callbackCount);
                 callbackCount++;
                 return false;
@@ -78,7 +78,7 @@ public class UniqueBeforeNotifyTest {
         });
         client.addBeforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(@NonNull Error error) {
+            public boolean run(@NonNull Event event) {
                 assertEquals(1, callbackCount);
                 return false;
             }

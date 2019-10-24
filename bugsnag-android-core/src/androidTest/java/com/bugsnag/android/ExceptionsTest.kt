@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.json.JSONObject
@@ -57,7 +56,7 @@ class ExceptionsTest {
     fun testNamedException() {
         val element = StackTraceElement("Class", "method", "Class.java", 123)
         val frames = arrayOf(element)
-        val error = Error.Builder(
+        val error = Event.Builder(
             config, "RuntimeException",
             "Example message", frames, BugsnagTestUtils.generateSessionTracker(),
             Thread.currentThread(), MetaData()

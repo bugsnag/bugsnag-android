@@ -17,10 +17,10 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
 
 /**
- * Store and flush Error reports which couldn't be sent immediately due to
+ * Store and flush Event reports which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-class ErrorStore extends FileStore<Error> {
+class EventStore extends FileStore<Event> {
 
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
@@ -32,7 +32,7 @@ class ErrorStore extends FileStore<Error> {
     private final Configuration clientState;
     private final Delegate delegate;
 
-    static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
+    static final Comparator<File> EVENT_COMPARATOR = new Comparator<File>() {
         @Override
         public int compare(File lhs, File rhs) {
             if (lhs == null && rhs == null) {
@@ -50,9 +50,9 @@ class ErrorStore extends FileStore<Error> {
         }
     };
 
-    ErrorStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
+    EventStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
                @NonNull Context appContext, Delegate delegate) {
-        super(appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR, delegate);
+        super(appContext, "/bugsnag-errors/", 128, EVENT_COMPARATOR, delegate);
         this.config = config;
         this.clientState = clientState;
         this.delegate = delegate;
@@ -131,8 +131,8 @@ class ErrorStore extends FileStore<Error> {
                 Logger.info(String.format(Locale.US,
                     "Sending %d saved error(s) to Bugsnag", storedReports.size()));
 
-                for (File errorFile : storedReports) {
-                    flushErrorReport(errorFile);
+                for (File eventFile : storedReports) {
+                    flushEventFile(eventFile);
                 }
             } finally {
                 semaphore.release(1);
@@ -140,21 +140,21 @@ class ErrorStore extends FileStore<Error> {
         }
     }
 
-    private void flushErrorReport(File errorFile) {
+    private void flushEventFile(File eventFile) {
         try {
             Report report;
 
             if (clientState.getBeforeSendTasks().isEmpty()) {
-                report = new Report(config.getApiKey(), errorFile);
+                report = new Report(config.getApiKey(), eventFile);
             } else {
-                Error error = ErrorReader.readError(config, clientState, errorFile);
-                report = new Report(config.getApiKey(), error);
+                Event event = EventReader.readEvent(config, clientState, eventFile);
+                report = new Report(config.getApiKey(), event);
 
                 for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
                     try {
                         if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(errorFile));
-                            Logger.info("Deleting cancelled error file " + errorFile.getName());
+                            deleteStoredFiles(Collections.singleton(eventFile));
+                            Logger.info("Deleting cancelled event file " + eventFile.getName());
                             return;
                         }
                     } catch (Throwable ex) {
@@ -168,31 +168,31 @@ class ErrorStore extends FileStore<Error> {
 
             switch (deliveryStatus) {
                 case DELIVERED:
-                    deleteStoredFiles(Collections.singleton(errorFile));
-                    Logger.info("Deleting sent error file " + errorFile.getName());
+                    deleteStoredFiles(Collections.singleton(eventFile));
+                    Logger.info("Deleting sent error file " + eventFile.getName());
                     break;
                 case UNDELIVERED:
-                    cancelQueuedFiles(Collections.singleton(errorFile));
+                    cancelQueuedFiles(Collections.singleton(eventFile));
                     Logger.warn("Could not send previously saved error(s)"
                             + " to Bugsnag, will try again later");
                     break;
                 case FAILURE:
                     Exception exc = new RuntimeException("Failed to deliver report");
-                    handleErrorFlushFailure(exc, errorFile);
+                    handleEventFlushFailure(exc, eventFile);
                     break;
                 default:
                     break;
             }
         } catch (Exception exception) {
-            handleErrorFlushFailure(exception, errorFile);
+            handleEventFlushFailure(exception, eventFile);
         }
     }
 
-    private void handleErrorFlushFailure(Exception exc, File errorFile) {
+    private void handleEventFlushFailure(Exception exc, File eventFile) {
         if (delegate != null) {
-            delegate.onErrorIOFailure(exc, errorFile, "Crash Report Deserialization");
+            delegate.onErrorIOFailure(exc, eventFile, "Crash Report Deserialization");
         }
-        deleteStoredFiles(Collections.singleton(errorFile));
+        deleteStoredFiles(Collections.singleton(eventFile));
     }
 
     boolean isLaunchCrashReport(File file) {
@@ -215,10 +215,10 @@ class ErrorStore extends FileStore<Error> {
     String getFilename(Object object) {
         String suffix = "";
 
-        if (object instanceof Error) {
-            Error error = (Error) object;
+        if (object instanceof Event) {
+            Event event = (Event) object;
 
-            Map<String, Object> appData = error.getAppData();
+            Map<String, Object> appData = event.getAppData();
             if (appData instanceof Map) {
                 Object duration = appData.get("duration");
                 if (duration instanceof Number

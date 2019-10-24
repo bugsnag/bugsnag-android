@@ -16,7 +16,7 @@ import java.util.Map;
  * e.g. ~/Library/Android/sdk/platforms/android-9/data/broadcast_actions.txt
  * See http://stackoverflow.com/a/27601497
  */
-class EventReceiver extends BroadcastReceiver {
+class SystemBroadcastReceiver extends BroadcastReceiver {
 
     private static final String INTENT_ACTION_KEY = "Intent Action";
 
@@ -25,7 +25,7 @@ class EventReceiver extends BroadcastReceiver {
 
     private final Client client;
 
-    EventReceiver(@NonNull Client client) {
+    SystemBroadcastReceiver(@NonNull Client client) {
         this.client = client;
     }
 
@@ -58,7 +58,8 @@ class EventReceiver extends BroadcastReceiver {
             }
 
         } catch (Exception ex) {
-            Logger.warn("Failed to leave breadcrumb in EventReceiver: " + ex.getMessage());
+            Logger.warn("Failed to leave breadcrumb in SystemBroadcastReceiver: "
+                    + ex.getMessage());
         }
     }
 

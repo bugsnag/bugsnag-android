@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
-import com.bugsnag.android.ErrorStore.ERROR_REPORT_COMPARATOR
+import com.bugsnag.android.EventStore.EVENT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -13,23 +13,28 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 
 @RunWith(MockitoJUnitRunner::class)
-class ErrorFilenameTest {
+class EventFilenameTest {
 
     @Mock
     lateinit var context: Context
 
-    private lateinit var errorStore: ErrorStore
+    private lateinit var eventStore: EventStore
 
     private val config = BugsnagTestUtils.generateImmutableConfig()
 
     /**
-     * Generates a client and ensures that its errorStore has 0 files persisted
+     * Generates a client and ensures that its eventStore has 0 files persisted
      *
      * @throws Exception if initialisation failed
      */
     @Before
     fun setUp() {
-        errorStore = ErrorStore(config, BugsnagTestUtils.generateConfiguration(), context, null)
+        eventStore = EventStore(
+            config,
+            BugsnagTestUtils.generateConfiguration(),
+            context,
+            null
+        )
     }
 
     @Test
@@ -46,10 +51,10 @@ class ErrorFilenameTest {
         )
 
         for (s in valid) {
-            assertTrue(errorStore.isLaunchCrashReport(File(s)))
+            assertTrue(eventStore.isLaunchCrashReport(File(s)))
         }
         for (s in invalid) {
-            assertFalse(errorStore.isLaunchCrashReport(File(s)))
+            assertFalse(eventStore.isLaunchCrashReport(File(s)))
         }
     }
 
@@ -60,20 +65,20 @@ class ErrorFilenameTest {
         val startup = "1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json"
 
         // handle defaults
-        assertEquals(0, ERROR_REPORT_COMPARATOR.compare(null, null).toLong())
-        assertEquals(-1, ERROR_REPORT_COMPARATOR.compare(File(""), null).toLong())
-        assertEquals(1, ERROR_REPORT_COMPARATOR.compare(null, File("")).toLong())
+        assertEquals(0, EVENT_COMPARATOR.compare(null, null).toLong())
+        assertEquals(-1, EVENT_COMPARATOR.compare(File(""), null).toLong())
+        assertEquals(1, EVENT_COMPARATOR.compare(null, File("")).toLong())
 
         // same value should always be 0
-        assertEquals(0, ERROR_REPORT_COMPARATOR.compare(File(first), File(first)).toLong())
-        assertEquals(0, ERROR_REPORT_COMPARATOR.compare(File(startup), File(startup)).toLong())
+        assertEquals(0, EVENT_COMPARATOR.compare(File(first), File(first)).toLong())
+        assertEquals(0, EVENT_COMPARATOR.compare(File(startup), File(startup)).toLong())
 
         // first is before second
-        assertTrue(ERROR_REPORT_COMPARATOR.compare(File(first), File(second)) < 0)
-        assertTrue(ERROR_REPORT_COMPARATOR.compare(File(second), File(first)) > 0)
+        assertTrue(EVENT_COMPARATOR.compare(File(first), File(second)) < 0)
+        assertTrue(EVENT_COMPARATOR.compare(File(second), File(first)) > 0)
 
         // startup is handled correctly
-        assertTrue(ERROR_REPORT_COMPARATOR.compare(File(first), File(startup)) < 0)
-        assertTrue(ERROR_REPORT_COMPARATOR.compare(File(second), File(startup)) > 0)
+        assertTrue(EVENT_COMPARATOR.compare(File(first), File(startup)) < 0)
+        assertTrue(EVENT_COMPARATOR.compare(File(second), File(startup)) > 0)
     }
 }

@@ -54,17 +54,17 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, throwable, generateSessionTracker(),
+        Event event = new Event.Builder(config, throwable, generateSessionTracker(),
             Thread.currentThread(), false, new MetaData()).build();
-        validateDefaultMetadata(error);
+        validateDefaultMetadata(event);
     }
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, "RuntimeException",
+        Event event = new Event.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
             generateSessionTracker(), Thread.currentThread(), new MetaData()).build();
-        validateDefaultMetadata(error);
+        validateDefaultMetadata(event);
     }
 
     @Test
@@ -78,14 +78,14 @@ public class NullMetadataTest {
     public void testNotify() throws Exception {
         client.addBeforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(@NonNull Error error) {
-                validateDefaultMetadata(error);
+            public boolean run(@NonNull Event event) {
+                validateDefaultMetadata(event);
                 return false;
             }
         });
-        Error error = new Error.Builder(config, new Throwable(),
+        Event event = new Event.Builder(config, new Throwable(),
             generateSessionTracker(), Thread.currentThread(), false, new MetaData()).build();
-        client.notify(error, DeliveryStyle.SAME_THREAD, null);
+        client.notify(event, DeliveryStyle.SAME_THREAD, null);
     }
 
     private void validateDefaultMetadata(MetaDataAware metaData) {

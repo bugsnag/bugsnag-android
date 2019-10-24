@@ -31,14 +31,14 @@ import java.util.Date;
 import java.util.Map;
 
 @SmallTest
-public class ErrorSerializationTest {
+public class EventSerializationTest {
 
     private ImmutableConfig config;
-    private Error error;
+    private Event event;
     private Client client;
 
     /**
-     * Generates a new default error for use by tests
+     * Generates a new default event for use by tests
      *
      * @throws Exception if initialisation failed
      */
@@ -47,7 +47,7 @@ public class ErrorSerializationTest {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         this.config = convert(configuration);
         RuntimeException exception = new RuntimeException("Example message");
-        error = new Error.Builder(this.config, exception, generateSessionTracker(),
+        event = new Event.Builder(this.config, exception, generateSessionTracker(),
             Thread.currentThread(), false, new MetaData()).build();
         client = generateClient();
     }
@@ -64,9 +64,9 @@ public class ErrorSerializationTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
-        error.setAppData(client.getAppData().getAppData());
+        event.setAppData(client.getAppData().getAppData());
 
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         assertEquals("warning", errorJson.get("severity"));
         assertNotNull(errorJson.get("severity"));
         assertNotNull(errorJson.get("severityReason"));
@@ -78,7 +78,7 @@ public class ErrorSerializationTest {
 
     @Test
     public void testHandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+        Event err = new Event.Builder(config, new RuntimeException(), generateSessionTracker(),
                 Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -96,7 +96,7 @@ public class ErrorSerializationTest {
 
     @Test
     public void testUnhandledSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+        Event err = new Event.Builder(config, new RuntimeException(), generateSessionTracker(),
                 Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_UNHANDLED_EXCEPTION)
             .severity(Severity.ERROR)
@@ -115,7 +115,7 @@ public class ErrorSerializationTest {
 
     @Test
     public void testPromiseRejectionSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+        Event err = new Event.Builder(config, new RuntimeException(), generateSessionTracker(),
                 Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_PROMISE_REJECTION)
             .severity(Severity.ERROR)
@@ -134,7 +134,7 @@ public class ErrorSerializationTest {
 
     @Test
     public void testLogSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+        Event err = new Event.Builder(config, new RuntimeException(), generateSessionTracker(),
                 Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_LOG)
             .severity(Severity.WARNING)
@@ -157,7 +157,7 @@ public class ErrorSerializationTest {
 
     @Test
     public void testUserSpecifiedSerialisation() throws Exception {
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         assertNotNull(errorJson);
         assertEquals("warning", errorJson.getString("severity"));
         assertEquals(false, errorJson.getBoolean("unhandled"));
@@ -170,7 +170,7 @@ public class ErrorSerializationTest {
 
     @Test
     public void testStrictModeSerialisation() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+        Event err = new Event.Builder(config, new RuntimeException(), generateSessionTracker(),
                 Thread.currentThread(), false, new MetaData())
             .severityReasonType(HandledState.REASON_STRICT_MODE)
             .attributeValue("Test")
@@ -193,9 +193,9 @@ public class ErrorSerializationTest {
 
     @Test
     public void testCallbackSpecified() throws Exception {
-        error.setSeverity(Severity.INFO); // mutate severity
+        event.setSeverity(Severity.INFO); // mutate severity
 
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         assertNotNull(errorJson);
         assertEquals("info", errorJson.getString("severity"));
         assertEquals(false, errorJson.getBoolean("unhandled"));
@@ -209,27 +209,27 @@ public class ErrorSerializationTest {
     @Test
     public void testSetContext() throws JSONException, IOException {
         String context = "ExampleContext";
-        error.setContext(context);
+        event.setContext(context);
 
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         assertEquals(context, errorJson.get("context"));
     }
 
     @Test
     public void testSetGroupingHash() throws JSONException, IOException {
         String groupingHash = "herpderp";
-        error.setGroupingHash(groupingHash);
-        assertEquals(groupingHash, error.getGroupingHash());
+        event.setGroupingHash(groupingHash);
+        assertEquals(groupingHash, event.getGroupingHash());
 
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         assertEquals(groupingHash, errorJson.get("groupingHash"));
     }
 
     @Test
     public void testSetSeverity() throws JSONException, IOException {
-        error.setSeverity(Severity.INFO);
+        event.setSeverity(Severity.INFO);
 
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         assertEquals("info", errorJson.get("severity"));
     }
 
@@ -237,7 +237,7 @@ public class ErrorSerializationTest {
     public void testSessionIncluded() throws Exception {
         SessionTracker sessionTracker = generateSessionTracker();
         final Session session = sessionTracker.startNewSession(new Date(), new User(), false);
-        Error err = new Error.Builder(config, new RuntimeException(), sessionTracker,
+        Event err = new Event.Builder(config, new RuntimeException(), sessionTracker,
                 Thread.currentThread(), false, new MetaData()).build();
 
         JSONObject errorJson = streamableToJson(err);
@@ -258,7 +258,7 @@ public class ErrorSerializationTest {
 
     @Test(expected = JSONException.class)
     public void testSessionExcluded() throws Exception {
-        Error err = new Error.Builder(config, new RuntimeException(), generateSessionTracker(),
+        Event err = new Event.Builder(config, new RuntimeException(), generateSessionTracker(),
             Thread.currentThread(), false, new MetaData()).build();
 
         JSONObject errorJson = streamableToJson(err);
@@ -270,7 +270,7 @@ public class ErrorSerializationTest {
     public void testSendThreadsDisabled() throws Exception {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setSendThreads(false);
-        Error err = new Error.Builder(convert(configuration), new RuntimeException(),
+        Event err = new Event.Builder(convert(configuration), new RuntimeException(),
                 generateSessionTracker(), Thread.currentThread(),
                 false, new MetaData()).build();
 
@@ -287,15 +287,15 @@ public class ErrorSerializationTest {
         DeviceData data = new DeviceData(connectivity, context, resources, "123");
 
         Map<String, Object> deviceData = data.getDeviceData();
-        error.setDeviceData(deviceData);
-        assertEquals(deviceData, error.getDeviceData());
+        event.setDeviceData(deviceData);
+        assertEquals(deviceData, event.getDeviceData());
 
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         JSONObject device = errorJson.getJSONObject("device");
         assertEquals(deviceData.get("id"), device.getString("id"));
 
-        error.setDeviceId(null);
-        errorJson = streamableToJson(error);
+        event.setDeviceId(null);
+        errorJson = streamableToJson(event);
         device = errorJson.getJSONObject("device");
         assertFalse(device.has("id"));
     }
@@ -308,10 +308,10 @@ public class ErrorSerializationTest {
 
         SessionTracker sessionTracker = generateSessionTracker();
         sessionTracker.startNewSession(new Date(), new User(), true);
-        error = new Error.Builder(BugsnagTestUtils.convert(config), exception, sessionTracker,
+        event = new Event.Builder(BugsnagTestUtils.convert(config), exception, sessionTracker,
             Thread.currentThread(), false, new MetaData()).build();
 
-        JSONObject errorJson = streamableToJson(error);
+        JSONObject errorJson = streamableToJson(event);
         assertFalse(errorJson.has("session"));
     }
 
@@ -320,10 +320,10 @@ public class ErrorSerializationTest {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setIgnoreClasses(Collections.<String>emptyList());
 
-        error = new Error.Builder(BugsnagTestUtils.convert(configuration), new RuntimeException(),
+        event = new Event.Builder(BugsnagTestUtils.convert(configuration), new RuntimeException(),
                 generateSessionTracker(), Thread.currentThread(), false,
                 new MetaData()).build();
-        assertFalse(error.shouldIgnoreClass());
+        assertFalse(event.shouldIgnoreClass());
     }
 
     @Test
@@ -331,10 +331,10 @@ public class ErrorSerializationTest {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setIgnoreClasses(Collections.singleton("java.io.IOException"));
 
-        error = new Error.Builder(BugsnagTestUtils.convert(configuration), new IOException(),
+        event = new Event.Builder(BugsnagTestUtils.convert(configuration), new IOException(),
                 generateSessionTracker(), Thread.currentThread(), false,
                 new MetaData()).build();
-        assertTrue(error.shouldIgnoreClass());
+        assertTrue(event.shouldIgnoreClass());
     }
 
     private void validateEmptyAttributes(JSONObject severityReason) {

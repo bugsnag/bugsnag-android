@@ -705,7 +705,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * For example:
      * <p>
      * Bugsnag.addBeforeNotify(new BeforeNotify() {
-     * public boolean run(Error error) {
+     * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
@@ -732,7 +732,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * For example:
      * <p>
      * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Error error) {
+     * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }

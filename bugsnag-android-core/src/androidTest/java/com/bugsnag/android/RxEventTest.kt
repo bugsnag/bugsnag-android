@@ -6,7 +6,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
 
-class RxErrorTest {
+class RxEventTest {
 
     @Test
     fun loadRxError() {
@@ -42,11 +42,11 @@ class RxErrorTest {
         assertEquals(29, causeExc.getJSONArray("stacktrace").length())
     }
 
-    private fun loadErrorFromFile(): Error? {
+    private fun loadErrorFromFile(): Event? {
         val fileContents = javaClass.classLoader!!.getResource("rx_error.json")!!.readText()
         val fixtureFile = File.createTempFile("rx_error", ".json")
         fixtureFile.writeText(fileContents)
-        return ErrorReader.readError(BugsnagTestUtils.generateImmutableConfig(),
+        return EventReader.readEvent(BugsnagTestUtils.generateImmutableConfig(),
             BugsnagTestUtils.generateConfiguration(), fixtureFile)
     }
 }

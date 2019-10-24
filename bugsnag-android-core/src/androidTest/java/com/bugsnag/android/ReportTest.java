@@ -28,10 +28,10 @@ public class ReportTest {
     public void setUp() throws Exception {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Something broke");
-        Error error = new Error.Builder(config, exception,
+        Event event = new Event.Builder(config, exception,
             BugsnagTestUtils.generateSessionTracker(),
             Thread.currentThread(), false, new MetaData()).build();
-        report = new Report("api-key", error);
+        report = new Report("api-key", event);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ReportTest {
     @Test
     public void testModifyingGroupingHash() throws JSONException, IOException {
         String groupingHash = "File.java:300429";
-        report.getError().setGroupingHash(groupingHash);
+        report.getEvent().setGroupingHash(groupingHash);
 
         JSONObject reportJson = streamableToJson(report);
         JSONArray events = reportJson.getJSONArray("events");

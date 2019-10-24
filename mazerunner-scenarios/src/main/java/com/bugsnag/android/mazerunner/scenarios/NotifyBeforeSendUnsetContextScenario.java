@@ -22,8 +22,8 @@ public class NotifyBeforeSendUnsetContextScenario extends Scenario {
         config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {
-                report.getError().setContext(null);
-                report.getError().setSeverity(Severity.ERROR);
+                report.getEvent().setContext(null);
+                report.getEvent().setSeverity(Severity.ERROR);
 
                 return true;
             }
