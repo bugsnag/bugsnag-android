@@ -83,7 +83,7 @@ public class NullMetadataTest {
         });
         Event event = new Event.Builder(config, new Throwable(),
             generateSessionTracker(), Thread.currentThread(), false, new MetaData()).build();
-        client.notify(event, DeliveryStyle.SAME_THREAD, null);
+        client.notifyInternal(event, DeliveryStyle.ASYNC, null);
     }
 
     private void validateDefaultMetadata(MetaDataAware metaData) {
