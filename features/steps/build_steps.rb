@@ -127,6 +127,7 @@ Then("the report in request {int} contains the required fields") do |index|
     And the payload field "events.0.app.version" is not null for request #{index}
     And the payload field "events.0.app.versionCode" equals 34 for request #{index}
     And the payload field "events.0.device.id" is not null for request #{index}
+    And the payload field "events.0.device.locale" is not null for request #{index}
     And the payload field "events.0.device.manufacturer" is not null for request #{index}
     And the payload field "events.0.device.model" is not null for request #{index}
     And the payload field "events.0.device.orientation" is not null for request #{index}
@@ -140,7 +141,6 @@ Then("the report in request {int} contains the required fields") do |index|
     And the payload field "events.0.metaData.device.brand" is not null for request #{index}
     And the payload field "events.0.metaData.device.dpi" is not null for request #{index}
     And the payload field "events.0.metaData.device.emulator" is true for request #{index}
-    And the payload field "events.0.metaData.device.locale" is not null for request #{index}
     And the payload field "events.0.metaData.device.locationStatus" is not null for request #{index}
     And the payload field "events.0.metaData.device.networkAccess" is not null for request #{index}
     And the payload field "events.0.metaData.device.screenDensity" is not null for request #{index}

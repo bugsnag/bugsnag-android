@@ -59,6 +59,7 @@ public class DeviceDataTest {
         assertTrue(deviceDataJson.has("freeDisk"));
         assertNotNull(deviceDataJson.getString("orientation"));
         assertNotNull(deviceDataJson.getString("time"));
+        assertNotNull(deviceDataJson.get("locale"));
     }
 
 }

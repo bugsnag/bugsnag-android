@@ -274,13 +274,12 @@ public class ClientTest {
         client = generateClient();
         Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
 
-        assertEquals(10, metaData.size());
+        assertEquals(9, metaData.size());
         assertNotNull(metaData.get("batteryLevel"));
         assertNotNull(metaData.get("charging"));
         assertNotNull(metaData.get("locationStatus"));
         assertNotNull(metaData.get("networkAccess"));
         assertNotNull(metaData.get("brand"));
-        assertNotNull(metaData.get("locale"));
         assertNotNull(metaData.get("screenDensity"));
         assertNotNull(metaData.get("dpi"));
         assertNotNull(metaData.get("emulator"));

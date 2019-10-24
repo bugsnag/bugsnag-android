@@ -213,6 +213,7 @@ void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event) {
 void bsg_serialize_device(const bsg_device_info device, JSON_Object *event) {
   json_object_dotset_string(event, "device.osName", "android");
   json_object_dotset_string(event, "device.id", device.id);
+  json_object_dotset_string(event, "device.locale", device.locale);
   json_object_dotset_string(event, "device.osVersion", device.os_version);
   json_object_dotset_string(event, "device.manufacturer", device.manufacturer);
   json_object_dotset_string(event, "device.model", device.model);
@@ -240,7 +241,6 @@ void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *ev
   json_object_dotset_string(event, "metaData.device.brand", device.brand);
   json_object_dotset_boolean(event, "metaData.device.emulator", device.emulator);
   json_object_dotset_boolean(event, "metaData.device.jailbroken", device.jailbroken);
-  json_object_dotset_string(event, "metaData.device.locale", device.locale);
   json_object_dotset_string(event, "metaData.device.locationStatus", device.location_status);
   json_object_dotset_string(event, "metaData.device.networkAccess", device.network_access);
   json_object_dotset_number(event, "metaData.device.dpi", device.dpi);
