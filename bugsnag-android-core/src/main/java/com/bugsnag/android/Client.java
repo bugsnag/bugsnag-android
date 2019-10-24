@@ -539,29 +539,29 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     /**
-     * Add a "before notify" callback, to execute code at the point where an error report is
+     * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before reports generated in the event
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * Bugsnag.addOnError(new OnError() {
      * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending errors to Bugsnag
-     * @see BeforeNotify
+     * @param onError a callback to run before sending errors to Bugsnag
+     * @see OnError
      */
-    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        clientState.addBeforeNotify(beforeNotify);
+    public void addOnError(@NonNull OnError onError) {
+        clientState.addOnError(onError);
     }
 
     /**
@@ -718,9 +718,9 @@ public class Client extends Observable implements Observer, MetaDataAware {
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
-        // Run beforeNotify tasks, don't notify if any return true
-        if (!runBeforeNotifyTasks(event)) {
-            Logger.info("Skipping notification - beforeNotify task returned false");
+        // Run on error tasks, don't notify if any return false
+        if (!runOnErrorTasks(event)) {
+            Logger.info("Skipping notification - onError task returned false");
             return;
         }
 
@@ -1087,14 +1087,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
         return sessionTracker;
     }
 
-    private boolean runBeforeNotifyTasks(Event event) {
-        for (BeforeNotify beforeNotify : clientState.getBeforeNotifyTasks()) {
+    private boolean runOnErrorTasks(Event event) {
+        for (OnError onError : clientState.getOnErrorTasks()) {
             try {
-                if (!beforeNotify.run(event)) {
+                if (!onError.run(event)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("BeforeNotify threw an Exception", ex);
+                Logger.warn("OnError threw an Exception", ex);
             }
         }
 

@@ -54,7 +54,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     @NonNull
     private MetaData metaData;
-    private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
+    private final Collection<OnError> onErrorTasks = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
     private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
@@ -462,8 +462,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return the before notify tasks
      */
     @NonNull
-    protected Collection<BeforeNotify> getBeforeNotifyTasks() {
-        return beforeNotifyTasks;
+    protected Collection<OnError> getOnErrorTasks() {
+        return onErrorTasks;
     }
 
     /**
@@ -693,31 +693,31 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Add a "before notify" callback, to execute code at the point where an error report is
+     * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before reports generated in the event
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * Bugsnag.addOnError(new OnError() {
      * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending errors to Bugsnag
-     * @see BeforeNotify
+     * @param onError a callback to run before sending errors to Bugsnag
+     * @see OnError
      */
     @Override
-    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        if (!beforeNotifyTasks.contains(beforeNotify)) {
-            beforeNotifyTasks.add(beforeNotify);
+    public void addOnError(@NonNull OnError onError) {
+        if (!onErrorTasks.contains(onError)) {
+            onErrorTasks.add(onError);
         }
     }
 
