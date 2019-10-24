@@ -45,10 +45,11 @@ public class ClientNotifyTest {
 
     @Test
     public void testNotifyBlockingCallback() {
-        client.notifyBlocking(new RuntimeException("Testing"), new Callback() {
+        client.notifyBlocking(new RuntimeException("Testing"), new OnError() {
             @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getEvent().setUserName("Foo");
+            public boolean run(@NonNull Event event) {
+                event.setUserName("Foo");
+                return true;
             }
         });
         Event event = apiClient.report.getEvent();
@@ -68,10 +69,11 @@ public class ClientNotifyTest {
             new StackTraceElement("MyClass", "MyMethod", "MyFile", 5)
         };
 
-        client.notifyBlocking("Name", "Message", stacktrace, new Callback() {
+        client.notifyBlocking("Name", "Message", stacktrace, new OnError() {
             @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getEvent().setSeverity(Severity.ERROR);
+            public boolean run(@NonNull Event event) {
+                event.setSeverity(Severity.ERROR);
+                return true;
             }
         });
         Event event = apiClient.report.getEvent();

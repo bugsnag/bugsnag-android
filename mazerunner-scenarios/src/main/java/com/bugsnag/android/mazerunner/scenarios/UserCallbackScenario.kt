@@ -18,7 +18,8 @@ internal class UserCallbackScenario(config: Configuration,
         super.run()
         Bugsnag.setUser("abc", "user@example.com", "Jake")
         Bugsnag.notify(generateException()) {
-            it.event.setUser("Agent Pink", "bob@example.com", "Zebedee")
+            it.setUser("Agent Pink", "bob@example.com", "Zebedee")
+            true
         }
     }
 

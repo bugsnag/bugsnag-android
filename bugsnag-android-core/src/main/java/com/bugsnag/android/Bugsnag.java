@@ -238,12 +238,12 @@ public final class Bugsnag {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
+     * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
     public static void notify(@NonNull final Throwable exception,
-                              @Nullable final Callback callback) {
-        getClient().notify(exception, callback);
+                              @Nullable final OnError onError) {
+        getClient().notify(exception, onError);
     }
 
     /**
@@ -252,14 +252,14 @@ public final class Bugsnag {
      * @param name       the error name or class
      * @param message    the error message
      * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
+     * @param onError   callback invoked on the generated error report for
      *                   additional modification
      */
     public static void notify(@NonNull String name,
                               @NonNull String message,
                               @NonNull StackTraceElement[] stacktrace,
-                              @Nullable Callback callback) {
-        getClient().notify(name, message, stacktrace, callback);
+                              @Nullable OnError onError) {
+        getClient().notify(name, message, stacktrace, onError);
     }
 
     /**
@@ -281,8 +281,8 @@ public final class Bugsnag {
     public static void internalClientNotify(@NonNull final Throwable exception,
                                             @NonNull Map<String, Object> clientData,
                                             boolean blocking,
-                                            @Nullable Callback callback) {
-        getClient().internalClientNotify(exception, clientData, blocking, callback);
+                                            @Nullable OnError onError) {
+        getClient().internalClientNotify(exception, clientData, blocking, onError);
     }
 
     public static void addMetadata(@NonNull String section, @Nullable String key,

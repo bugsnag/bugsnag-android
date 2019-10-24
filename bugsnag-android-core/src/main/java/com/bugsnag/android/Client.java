@@ -631,15 +631,15 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
+     * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
+    public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
             Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.ASYNC, callback);
+        notify(event, DeliveryStyle.ASYNC, onError);
     }
 
     /**
@@ -648,18 +648,18 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param name       the error name or class
      * @param message    the error message
      * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
+     * @param onError   callback invoked on the generated error report for
      *                   additional modification
      */
     public void notify(@NonNull String name,
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
-                       @Nullable Callback callback) {
+                       @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
             sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.ASYNC, callback);
+        notify(event, DeliveryStyle.ASYNC, onError);
     }
 
     /**
@@ -684,7 +684,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     void notify(@NonNull Event event,
                 @NonNull DeliveryStyle style,
-                @Nullable Callback callback) {
+                @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
         if (event.shouldIgnoreClass()) {
             return;
@@ -719,17 +719,13 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
 
         // Run on error tasks, don't notify if any return false
-        if (!runOnErrorTasks(event)) {
+        if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
             Logger.info("Skipping notification - onError task returned false");
             return;
         }
 
         // Build the report
         Report report = new Report(immutableConfig.getApiKey(), event);
-
-        if (callback != null) {
-            callback.beforeNotify(report);
-        }
 
         if (event.getSession() != null) {
             setChanged();
@@ -857,15 +853,15 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
+     * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notifyBlocking(@NonNull Throwable exception, @Nullable Callback callback) {
+    public void notifyBlocking(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
             Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.SAME_THREAD, callback);
+        notify(event, DeliveryStyle.SAME_THREAD, onError);
     }
 
     /**
@@ -874,18 +870,18 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param name       the error name or class
      * @param message    the error message
      * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
+     * @param onError   callback invoked on the generated error report for
      *                   additional modification
      */
     public void notifyBlocking(@NonNull String name,
                                @NonNull String message,
                                @NonNull StackTraceElement[] stacktrace,
-                               @Nullable Callback callback) {
+                               @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, name, message,
             stacktrace, sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.SAME_THREAD, callback);
+        notify(event, DeliveryStyle.SAME_THREAD, onError);
     }
 
     /**
@@ -909,12 +905,12 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param exception the exception
      * @param clientData the clientdata
      * @param blocking whether to block when notifying
-     * @param callback a callback when notifying
+     * @param onError a callback when notifying
      */
     public void internalClientNotify(@NonNull Throwable exception,
                               @NonNull Map<String, Object> clientData,
                               boolean blocking,
-                              @Nullable Callback callback) {
+                              @Nullable OnError onError) {
         String severity = getKeyFromClientData(clientData, "severity", true);
         String severityReason =
             getKeyFromClientData(clientData, "severityReason", true);
@@ -933,7 +929,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
             .build();
 
         DeliveryStyle deliveryStyle = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(event, deliveryStyle, callback);
+        notify(event, deliveryStyle, onError);
     }
 
     @NonNull
