@@ -22,7 +22,7 @@ public class Session implements JsonStream.Streamable {
         return copy;
     }
 
-    public Session(String id, Date startedAt, User user, boolean autoCaptured) {
+    Session(String id, Date startedAt, User user, boolean autoCaptured) {
         this.id = id;
         this.startedAt = new Date(startedAt.getTime());
         this.user = user;
@@ -44,14 +44,17 @@ public class Session implements JsonStream.Streamable {
     private AtomicBoolean tracked = new AtomicBoolean(false);
     final AtomicBoolean isPaused = new AtomicBoolean(false);
 
+    @NonNull
     public String getId() {
         return id;
     }
 
+    @NonNull
     public Date getStartedAt() {
         return new Date(startedAt.getTime());
     }
 
+    @NonNull
     public User getUser() {
         return user;
     }
