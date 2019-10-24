@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.os.StrictMode;
 import androidx.annotation.NonNull;
 
+import java.lang.Thread;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 /**

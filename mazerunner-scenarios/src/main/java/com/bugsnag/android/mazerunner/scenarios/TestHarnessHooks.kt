@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import java.lang.Thread
+
 /**
  * Accesses the session tracker and flushes all stored sessions
  */

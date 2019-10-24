@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * A representation of a thread recorded in a {@link Report}
  */
-class CachedThread implements JsonStream.Streamable {
+class Thread implements JsonStream.Streamable {
 
     private final long id;
     private final String name;
@@ -17,19 +17,19 @@ class CachedThread implements JsonStream.Streamable {
     private final boolean isErrorReportingThread;
     private Stacktrace stacktrace;
 
-    CachedThread(ImmutableConfig config, long id, String name, String type,
-                 boolean isErrorReportingThread, StackTraceElement[] frames) {
+    Thread(ImmutableConfig config, long id, String name, String type,
+           boolean isErrorReportingThread, StackTraceElement[] frames) {
         this(id, name, type, isErrorReportingThread,
                 new Stacktrace(frames, config.getProjectPackages()));
     }
 
-    CachedThread(long id, String name, String type,
-                 boolean isErrorReportingThread, List<Map<String, Object>> customFrames) {
+    Thread(long id, String name, String type,
+           boolean isErrorReportingThread, List<Map<String, Object>> customFrames) {
         this(id, name, type, isErrorReportingThread, new Stacktrace(customFrames));
     }
 
-    private CachedThread(long id, String name, String type,
-                         boolean isErrorReportingThread, Stacktrace stackTrace) {
+    private Thread(long id, String name, String type,
+                   boolean isErrorReportingThread, Stacktrace stackTrace) {
         this.id = id;
         this.name = name;
         this.type = type;

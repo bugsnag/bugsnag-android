@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 @SmallTest
-public class CachedThreadTest {
+public class ThreadTest {
 
     @Test
     public void testToStreamErrorHandlingThread() throws JSONException, IOException {
@@ -25,7 +25,7 @@ public class CachedThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        CachedThread thread = new CachedThread(config, 24, "main-one", "ando", true, stacktrace);
+        Thread thread = new Thread(config, 24, "main-one", "ando", true, stacktrace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
@@ -54,7 +54,7 @@ public class CachedThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        CachedThread thread = new CachedThread(config, 24, "main-one", "ando",false, stacktrace);
+        Thread thread = new Thread(config, 24, "main-one", "ando",false, stacktrace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
