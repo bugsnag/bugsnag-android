@@ -13,7 +13,7 @@ internal class Stacktrace : JsonStream.Streamable {
         private const val STACKTRACE_TRIM_LENGTH = 200
     }
 
-    private val trace: List<Stackframe>
+    internal val trace: List<Stackframe>
 
     constructor(stacktrace: Array<StackTraceElement>, projectPackages: Collection<String>) {
         trace = limitTraceLength(stacktrace

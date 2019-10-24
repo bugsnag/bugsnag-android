@@ -10,8 +10,10 @@ class Thread internal constructor(
     val name: String,
     val type: String,
     val isErrorReportingThread: Boolean,
-    private val stacktrace: Stacktrace
+    stacktrace: Stacktrace
 ) : JsonStream.Streamable {
+
+    var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
@@ -19,7 +21,12 @@ class Thread internal constructor(
         writer.name("id").value(id)
         writer.name("name").value(name)
         writer.name("type").value(type)
-        writer.name("stacktrace").value(stacktrace)
+
+        writer.name("stacktrace")
+        writer.beginArray()
+        stacktrace.forEach { writer.value(it) }
+        writer.endArray()
+
         if (isErrorReportingThread) {
             writer.name("errorReportingThread").value(true)
         }
