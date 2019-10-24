@@ -565,30 +565,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        clientState.addBeforeSend(beforeSend);
-    }
-
-    /**
      * Add a "before breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
      * <p>
@@ -1015,11 +991,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     void deliver(@NonNull Report report, @NonNull Event event) {
-        if (!runBeforeSendTasks(report)) {
-            Logger.info("Skipping notification - beforeSend task returned false");
-            return;
-        }
-
         DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
@@ -1062,21 +1033,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
             .build();
 
         notify(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
-    }
-
-    private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-            try {
-                if (!beforeSend.run(report)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeSend threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the error to be sent if there were no objections
-        return true;
     }
 
     OrientationEventListener getOrientationListener() {

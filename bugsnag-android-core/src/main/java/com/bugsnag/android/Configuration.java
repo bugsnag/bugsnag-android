@@ -55,7 +55,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
     private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
@@ -467,16 +466,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Gets any before send tasks to run
-     *
-     * @return the before send tasks
-     */
-    @NonNull
-    protected Collection<BeforeSend> getBeforeSendTasks() {
-        return beforeSendTasks;
-    }
-
-    /**
      * Get whether or not Bugsnag should persist user information between application settings
      *
      * @return whether or not Bugsnag should persist user information
@@ -718,33 +707,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
         if (!beforeNotifyTasks.contains(beforeNotify)) {
             beforeNotifyTasks.add(beforeNotify);
-        }
-    }
-
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    @Override
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        if (!beforeSendTasks.contains(beforeSend)) {
-            beforeSendTasks.add(beforeSend);
         }
     }
 

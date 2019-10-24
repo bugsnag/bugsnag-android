@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
-import com.bugsnag.android.BeforeSend
 import com.bugsnag.android.Bugsnag
 
 import com.bugsnag.android.Configuration
@@ -16,7 +15,6 @@ internal class PartialSessionScenario(config: Configuration,
 
     init {
         config.setAutoTrackSessions(false)
-        config.addBeforeSend(BeforeSend { true })
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("eventMetaData")

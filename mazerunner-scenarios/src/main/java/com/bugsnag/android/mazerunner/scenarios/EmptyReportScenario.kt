@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.app.Activity
 import android.content.Context
 
-import com.bugsnag.android.BeforeSend
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import java.io.File
@@ -13,9 +12,6 @@ internal class EmptyReportScenario(config: Configuration,
 
     init {
         config.setAutoTrackSessions(false)
-        config.addBeforeSend(BeforeSend { true })
-
-
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
