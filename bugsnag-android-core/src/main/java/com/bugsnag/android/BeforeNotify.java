@@ -14,10 +14,10 @@ public interface BeforeNotify {
     /**
      * Runs the "before notify" callback. If the callback returns
      * <code>false</code> any further BeforeNotify callbacks will not be called
-     * and the error will not be sent to Bugsnag.
+     * and the event will not be sent to Bugsnag.
      *
-     * @param error the error to be sent to Bugsnag
-     * @see Error
+     * @param event the event to be sent to Bugsnag
+     * @see Event
      */
-    boolean run(@NonNull Error error);
+    boolean run(@NonNull Event event);
 }

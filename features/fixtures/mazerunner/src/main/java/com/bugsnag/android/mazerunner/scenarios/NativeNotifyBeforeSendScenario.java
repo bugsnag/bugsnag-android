@@ -24,7 +24,7 @@ public class NativeNotifyBeforeSendScenario extends Scenario {
         config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {
-                report.getError().setContext("hello");
+                report.getEvent().setContext("hello");
 
                 return true;
             }

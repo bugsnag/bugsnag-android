@@ -18,7 +18,7 @@ public class BeforeSendScenario extends Scenario {
         config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {
-                report.getError().setContext("UNSET");
+                report.getEvent().setContext("UNSET");
 
                 return true;
             }

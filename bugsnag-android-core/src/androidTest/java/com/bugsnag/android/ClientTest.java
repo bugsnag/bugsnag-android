@@ -104,11 +104,11 @@ public class ClientTest {
 
         client.addBeforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(@NonNull Error error) {
+            public boolean run(@NonNull Event event) {
                 // Pull out the user information
-                user.setId(error.getUser().getId());
-                user.setEmail(error.getUser().getEmail());
-                user.setName(error.getUser().getName());
+                user.setId(event.getUser().getId());
+                user.setEmail(event.getUser().getEmail());
+                user.setName(event.getUser().getName());
                 return true;
             }
         });

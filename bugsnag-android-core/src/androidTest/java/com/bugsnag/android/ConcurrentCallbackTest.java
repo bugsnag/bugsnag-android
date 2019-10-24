@@ -34,7 +34,7 @@ public class ConcurrentCallbackTest {
         final Collection<BeforeNotify> beforeNotifyTasks = config.getBeforeNotifyTasks();
         client.addBeforeNotify(new BeforeNotify() {
             @Override
-            public boolean run(@NonNull Error error) {
+            public boolean run(@NonNull Event event) {
                 beforeNotifyTasks.add(new BeforeNotifySkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
@@ -65,7 +65,7 @@ public class ConcurrentCallbackTest {
 
     static class BeforeNotifySkeleton implements BeforeNotify {
         @Override
-        public boolean run(@NonNull Error error) {
+        public boolean run(@NonNull Event event) {
             return true;
         }
     }
