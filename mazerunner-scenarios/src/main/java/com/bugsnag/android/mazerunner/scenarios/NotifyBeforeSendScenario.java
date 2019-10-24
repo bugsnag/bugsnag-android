@@ -20,8 +20,8 @@ public class NotifyBeforeSendScenario extends Scenario {
         config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {
-                report.getError().setContext("RESET");
-                report.getError().setSeverity(Severity.ERROR);
+                report.getEvent().setContext("RESET");
+                report.getEvent().setSeverity(Severity.ERROR);
 
                 return true;
             }

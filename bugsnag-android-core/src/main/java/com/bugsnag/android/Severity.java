@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.io.IOException;
 
 /**
- * The severity of an Error, one of "error", "warning" or "info".
+ * The severity of an Event, one of "error", "warning" or "info".
  * <p>
  * By default, unhandled exceptions will be Severity.ERROR and handled
  * exceptions sent with bugsnag.notify will be Severity.WARNING.

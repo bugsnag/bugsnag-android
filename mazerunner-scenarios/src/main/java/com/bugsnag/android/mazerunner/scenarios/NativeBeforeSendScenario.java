@@ -24,7 +24,7 @@ public class NativeBeforeSendScenario extends Scenario {
         config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {
-                report.getError().setContext("!important");
+                report.getEvent().setContext("!important");
 
                 return true;
             }

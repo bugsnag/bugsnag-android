@@ -15,17 +15,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-class ErrorReader {
+class EventReader {
 
     /**
-     * Parses an {@link Error} cached as JSON into an Error object.
+     * Parses an {@link Event} cached as JSON into an Event object.
      *
      * @throws IOException if the file cannot be parsed into a valid JSON object,
      *                     such as if the JSON syntax is invalid or a required
      *                     field is missing.
      */
-    static Error readError(@NonNull ImmutableConfig config,
-                           @NonNull BugsnagConfiguration clientState, @NonNull File errorFile)
+    static Event readEvent(@NonNull ImmutableConfig config,
+                           @NonNull BugsnagConfiguration clientState, @NonNull File eventFile)
             throws IOException {
         JsonReader reader = null;
 
@@ -45,7 +45,7 @@ class ErrorReader {
             List<String> projectPackages = Collections.emptyList();
             boolean unhandled = false;
 
-            reader = new JsonReader(new BufferedReader(new FileReader(errorFile)));
+            reader = new JsonReader(new BufferedReader(new FileReader(eventFile)));
             reader.beginObject();
             while (reader.hasNext()) {
                 switch (reader.nextName()) {
@@ -97,7 +97,7 @@ class ErrorReader {
             }
             reader.endObject();
             if (severityReasonValues == null || exceptions == null) {
-                throw new IOException("File did not contain a valid error");
+                throw new IOException("File did not contain a valid event");
             }
             String severityReasonAttribute = severityReasonValues.size() > 1
                 ? severityReasonValues.get(1)
@@ -105,18 +105,18 @@ class ErrorReader {
             HandledState handledState = new HandledState(severityReasonValues.get(0), severity,
                                                          unhandled, severityReasonAttribute);
             
-            Error error = new Error(config, exceptions.getException(), handledState, severity,
+            Event event = new Event(config, exceptions.getException(), handledState, severity,
                                     session, threadState, metaData);
-            error.getExceptions().setExceptionType(exceptions.getExceptionType());
-            error.setProjectPackages(projectPackages);
-            error.setUser(user);
-            error.setContext(context);
-            error.setGroupingHash(groupingHash);
-            error.setAppData(appData);
-            error.setDeviceData(deviceData);
-            error.setBreadcrumbs(crumbs);
+            event.getExceptions().setExceptionType(exceptions.getExceptionType());
+            event.setProjectPackages(projectPackages);
+            event.setUser(user);
+            event.setContext(context);
+            event.setGroupingHash(groupingHash);
+            event.setAppData(appData);
+            event.setDeviceData(deviceData);
+            event.setBreadcrumbs(crumbs);
 
-            return error;
+            return event;
         } finally {
             if (reader != null) {
                 try {

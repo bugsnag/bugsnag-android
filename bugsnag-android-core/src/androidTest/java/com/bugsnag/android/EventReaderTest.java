@@ -29,18 +29,18 @@ import java.util.Map;
 import java.util.TimeZone;
 
 @SmallTest
-public class ErrorReaderTest {
+public class EventReaderTest {
 
-    private static Error error = null;
+    private static Event event = null;
     private static Configuration clientState;
     private static ImmutableConfig immutableConfig;
 
-    /** Constructs an Error from a JSON file */
+    /** Constructs an Event from a JSON file */
     @BeforeClass
     public static void setUp() throws IOException {
-        ClassLoader classLoader = ErrorReaderTest.class.getClassLoader();
+        ClassLoader classLoader = EventReaderTest.class.getClassLoader();
         InputStream input = classLoader.getResourceAsStream("error.json");
-        File fixtureFile = File.createTempFile("error", ".json");
+        File fixtureFile = File.createTempFile("event", ".json");
         OutputStream output = new FileOutputStream(fixtureFile);
         try {
             byte[] buffer = new byte[1024];
@@ -54,48 +54,48 @@ public class ErrorReaderTest {
         }
         clientState = BugsnagTestUtils.generateConfiguration();
         immutableConfig = BugsnagTestUtils.convert(clientState);
-        error = ErrorReader.readError(immutableConfig, clientState, fixtureFile);
+        event = EventReader.readEvent(immutableConfig, clientState, fixtureFile);
     }
 
     @Test
     public void testReadError() throws IOException {
-        assertNotNull(error);
+        assertNotNull(event);
     }
 
     @Test(expected = IOException.class)
     public void testReadPartialFileThrows() throws IOException {
         File fixtureFile = null;
         try {
-            fixtureFile = File.createTempFile("error", ".json");
+            fixtureFile = File.createTempFile("event", ".json");
             FileOutputStream output = new FileOutputStream(fixtureFile);
             output.write("{".getBytes());
         } catch (Exception ex) {
             assertTrue("Failed to configure test", false);
         }
-        ErrorReader.readError(immutableConfig, clientState,  fixtureFile);
+        EventReader.readEvent(immutableConfig, clientState,  fixtureFile);
     }
 
     @Test(expected = IOException.class)
     public void testReadEmptyErrorFileThrows() throws IOException {
         File fixtureFile = null;
         try {
-            fixtureFile = File.createTempFile("error", ".json");
+            fixtureFile = File.createTempFile("event", ".json");
             FileOutputStream output = new FileOutputStream(fixtureFile);
             output.write("{}".getBytes());
         } catch (Exception ex) {
             assertTrue("Failed to configure test", false);
         }
-        ErrorReader.readError(immutableConfig, clientState, fixtureFile);
+        EventReader.readEvent(immutableConfig, clientState, fixtureFile);
     }
 
     @Test
     public void testReadErrorSeverity() throws JSONException {
-        assertEquals(Severity.WARNING, error.getSeverity());
+        assertEquals(Severity.WARNING, event.getSeverity());
     }
 
     @Test
     public void testReadErrorSession() throws Exception {
-        Session session = error.getSession();
+        Session session = event.getSession();
         assertNotNull(session);
         assertEquals("225bcada-e0c8-15a0-0bba-0e3c7f43c13f", session.getId());
         assertEquals(2, session.getHandledCount());
@@ -114,7 +114,7 @@ public class ErrorReaderTest {
 
     @Test
     public void testReadErrorAppData() throws JSONException {
-        Map<String, Object> appData = error.getAppData();
+        Map<String, Object> appData = event.getAppData();
         assertNotNull(appData);
         assertEquals(appData.get("version"), "1.1.14");
         assertEquals(appData.get("id"), "com.bugsnag.android.mazerunner");
@@ -129,7 +129,7 @@ public class ErrorReaderTest {
 
     @Test
     public void testReadErrorDeviceData() throws JSONException {
-        Map<String, Object> data = error.getDeviceData();
+        Map<String, Object> data = event.getDeviceData();
         assertNotNull(data);
         assertEquals("android", data.get("osName"));
         assertEquals("9659cc1f-fec8-47a3-8ad2-0e3c7e84c24d", data.get("id"));
@@ -147,7 +147,7 @@ public class ErrorReaderTest {
 
     @Test
     public void testReadErrorHandledState() throws JSONException {
-        HandledState state = error.getHandledState();
+        HandledState state = event.getHandledState();
         assertNotNull(state);
         assertTrue(state.isUnhandled());
         assertEquals("signal", state.calculateSeverityReasonType());
@@ -155,32 +155,32 @@ public class ErrorReaderTest {
 
     @Test
     public void testReadErrorMetaData() throws JSONException {
-        assertEquals("com.bugsnag.android.mazerunner", error.getMetadata("app", "packageName"));
-        assertEquals("1.1.14", error.getMetadata("app", "versionName"));
-        assertEquals("MainActivity", error.getMetadata("app", "activeScreen"));
-        assertEquals("MazeRunner", error.getMetadata("app", "name"));
-        assertEquals(false, error.getMetadata("app", "lowMemory"));
-        assertEquals(false, error.getMetadata("customer", "accountee"));
-        assertEquals("Acme Co", error.getMetadata("customer", "name"));
-        assertEquals(23423, error.getMetadata("customer", "id"));
+        assertEquals("com.bugsnag.android.mazerunner", event.getMetadata("app", "packageName"));
+        assertEquals("1.1.14", event.getMetadata("app", "versionName"));
+        assertEquals("MainActivity", event.getMetadata("app", "activeScreen"));
+        assertEquals("MazeRunner", event.getMetadata("app", "name"));
+        assertEquals(false, event.getMetadata("app", "lowMemory"));
+        assertEquals(false, event.getMetadata("customer", "accountee"));
+        assertEquals("Acme Co", event.getMetadata("customer", "name"));
+        assertEquals(23423, event.getMetadata("customer", "id"));
         assertEquals("sdk_phone_armv7-eng 5.0.2 LSY66K 3079185 test-keys",
-                error.getMetadata("device", "osBuild"));
-        assertEquals(21, error.getMetadata("device", "apiLevel"));
-        assertEquals("O-Matic", error.getMetadata("device", "brand"));
-        assertEquals(false, error.getMetadata("device", "emulator"));
-        assertEquals(true, error.getMetadata("device", "jailbroken"));
-        assertEquals("en_US", error.getMetadata("device", "locale"));
-        assertEquals("allowed", error.getMetadata("device", "locationStatus"));
-        assertEquals("cellular", error.getMetadata("device", "networkAccess"));
-        assertEquals(160, error.getMetadata("device", "dpi"));
-        assertEquals(1, error.getMetadata("device", "screenDensity"));
-        assertEquals("480x320", error.getMetadata("device", "screenResolution"));
-        assertEquals("2018-10-19T18:56:13Z", error.getMetadata("device", "time"));
+                event.getMetadata("device", "osBuild"));
+        assertEquals(21, event.getMetadata("device", "apiLevel"));
+        assertEquals("O-Matic", event.getMetadata("device", "brand"));
+        assertEquals(false, event.getMetadata("device", "emulator"));
+        assertEquals(true, event.getMetadata("device", "jailbroken"));
+        assertEquals("en_US", event.getMetadata("device", "locale"));
+        assertEquals("allowed", event.getMetadata("device", "locationStatus"));
+        assertEquals("cellular", event.getMetadata("device", "networkAccess"));
+        assertEquals(160, event.getMetadata("device", "dpi"));
+        assertEquals(1, event.getMetadata("device", "screenDensity"));
+        assertEquals("480x320", event.getMetadata("device", "screenResolution"));
+        assertEquals("2018-10-19T18:56:13Z", event.getMetadata("device", "time"));
     }
 
     @Test
     public void testReadErrorUser() throws JSONException {
-        User user = error.getUser();
+        User user = event.getUser();
         assertNotNull(user);
         assertEquals("Rasputin", user.getName());
         assertEquals("ras@example.com", user.getEmail());
@@ -190,26 +190,26 @@ public class ErrorReaderTest {
     @Test
     public void testReadErrorExceptionClass() throws JSONException, IOException {
         assertEquals("SIGSEGV",
-                     streamableToJsonArray(error.getExceptions())
+                     streamableToJsonArray(event.getExceptions())
                                                 .getJSONObject(0).getString("errorClass"));
     }
 
     @Test
     public void testReadErrorExceptionMessage() throws JSONException, IOException {
         assertEquals("Segmentation violation (invalid memory reference)",
-                     streamableToJsonArray(error.getExceptions())
+                     streamableToJsonArray(event.getExceptions())
                                                 .getJSONObject(0).getString("message"));
     }
 
     @Test
     public void testReadErrorExceptionType() throws JSONException, IOException {
-        assertEquals("c", streamableToJsonArray(error.getExceptions())
+        assertEquals("c", streamableToJsonArray(event.getExceptions())
                             .getJSONObject(0).getString("type"));
     }
 
     @Test
     public void testReadErrorExceptionStacktrace() throws JSONException, IOException {
-        JSONArray stacktrace = streamableToJsonArray(error.getExceptions())
+        JSONArray stacktrace = streamableToJsonArray(event.getExceptions())
                                     .getJSONObject(0)
                                     .getJSONArray("stacktrace");
         assertEquals(3, stacktrace.length());
@@ -232,17 +232,17 @@ public class ErrorReaderTest {
 
     @Test
     public void testReadErrorGroupingHash() throws JSONException {
-        assertEquals("400-b", error.getGroupingHash());
+        assertEquals("400-b", event.getGroupingHash());
     }
 
     @Test
     public void testReadErrorContext() throws JSONException {
-        assertEquals("MainActivity", error.getContext());
+        assertEquals("MainActivity", event.getContext());
     }
 
     @Test
     public void testReadErrorBreadcrumbs() throws JSONException, IOException {
-        JSONArray breadcrumbs = streamableToJson(error).getJSONArray("breadcrumbs");
+        JSONArray breadcrumbs = streamableToJson(event).getJSONArray("breadcrumbs");
         assertNotNull(breadcrumbs);
         assertEquals(3, breadcrumbs.length());
 
@@ -275,7 +275,7 @@ public class ErrorReaderTest {
 
     @Test
     public void testReadErrorThreadState() throws JSONException, IOException {
-        JSONArray threads = streamableToJson(error).getJSONArray("threads");
+        JSONArray threads = streamableToJson(event).getJSONArray("threads");
         assertNotNull(threads);
         assertEquals(7, threads.length());
         for (int i = 0; i < threads.length(); i++) {

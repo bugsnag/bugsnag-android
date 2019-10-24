@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @see BeforeNotify
  */
-public class Error implements JsonStream.Streamable, MetaDataAware {
+public class Event implements JsonStream.Streamable, MetaDataAware {
 
     @NonNull
     private Map<String, Object> appData = new HashMap<>();
@@ -53,7 +53,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     private final ThreadState threadState;
     private boolean incomplete = false;
 
-    Error(@NonNull ImmutableConfig config, @NonNull Throwable exc,
+    Event(@NonNull ImmutableConfig config, @NonNull Throwable exc,
           HandledState handledState, @NonNull Severity severity,
           Session session, ThreadState threadState, @NonNull MetaData metaData) {
         this.threadState = threadState;
@@ -133,7 +133,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Override the context sent to Bugsnag with this Error. By default we'll
+     * Override the context sent to Bugsnag with this Event. By default we'll
      * attempt to detect the name of the top-most Activity when this error
      * occurred, and use this as the context, but sometimes this is not
      * possible.
@@ -145,7 +145,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Get the context associated with this Error.
+     * Get the context associated with this Event.
      */
     @Nullable
     public String getContext() {
@@ -153,7 +153,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Set a custom grouping hash to use when grouping this Error on the
+     * Set a custom grouping hash to use when grouping this Event on the
      * Bugsnag dashboard. By default, we use a combination of error class
      * and top-most stacktrace line to calculate this, and we do not recommend
      * you override this.
@@ -165,7 +165,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Get the grouping hash associated with this Error.
+     * Get the grouping hash associated with this Event.
      *
      * @return the grouping hash, if set
      */
@@ -175,7 +175,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Set the Severity of this Error.
+     * Set the Severity of this Event.
      * <p>
      * By default, unhandled exceptions will be Severity.ERROR and handled
      * exceptions sent with bugsnag.notify will be Severity.WARNING.
@@ -191,7 +191,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Get the Severity of this Error.
+     * Get the Severity of this Event.
      *
      * @see Severity
      */
@@ -201,7 +201,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Set user information associated with this Error
+     * Set user information associated with this Event
      *
      * @param id    the id of the user
      * @param email the email address of the user
@@ -216,7 +216,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * @return user information associated with this Error
+     * @return user information associated with this Event
      */
     @NonNull
     public User getUser() {
@@ -224,7 +224,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Set user id associated with this Error
+     * Set user id associated with this Event
      *
      * @param id the id of the user
      */
@@ -234,7 +234,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Set user email address associated with this Error
+     * Set user email address associated with this Event
      *
      * @param email the email address of the user
      */
@@ -244,7 +244,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Set user name associated with this Error
+     * Set user name associated with this Event
      *
      * @param name the name of the user
      */
@@ -291,7 +291,7 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Get the class name from the exception contained in this Error report.
+     * Get the class name from the exception contained in this Event report.
      */
     @NonNull
     public String getExceptionName() {
@@ -299,14 +299,14 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Sets the class name from the exception contained in this Error report.
+     * Sets the class name from the exception contained in this Event report.
      */
     public void setExceptionName(@NonNull String exceptionName) {
         exception.setName(exceptionName);
     }
 
     /**
-     * Get the message from the exception contained in this Error report.
+     * Get the message from the exception contained in this Event report.
      */
     @NonNull
     public String getExceptionMessage() {
@@ -315,14 +315,14 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
     }
 
     /**
-     * Sets the message from the exception contained in this Error report.
+     * Sets the message from the exception contained in this Event report.
      */
     public void setExceptionMessage(@NonNull String exceptionMessage) {
         exception.setMessage(exceptionMessage);
     }
 
     /**
-     * The {@linkplain Throwable exception} which triggered this Error report.
+     * The {@linkplain Throwable exception} which triggered this Event report.
      */
     @NonNull
     public Throwable getException() {
@@ -453,12 +453,12 @@ public class Error implements JsonStream.Streamable, MetaDataAware {
             return this;
         }
 
-        Error build() {
+        Event build() {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
             Session session = getSession(handledState);
             MetaData metaData = MetaData.Companion.merge(globalMetaData, this.metaData);
-            return new Error(config, exception, handledState,
+            return new Event(config, exception, handledState,
                 severity, session, threadState, metaData);
         }
 

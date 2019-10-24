@@ -2,7 +2,7 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>MaxLineLength:ErrorFilenameTest.kt$ErrorFilenameTest$arrayOf("1504255147933_e-u-java.lang.RuntimeException_30b7e350-dcd1-4032-969e-98d30be62bbc_startupcrash.json")</ID>
+    <ID>MaxLineLength:EventFilenameTest.kt$ErrorFilenameTest$arrayOf("1504255147933_e-u-java.lang.RuntimeException_30b7e350-dcd1-4032-969e-98d30be62bbc_startupcrash.json")</ID>
     <ID>TooGenericExceptionCaught:BugsnagPluginInterface.kt$BugsnagPluginInterface$exc: Exception</ID>
   </Whitelist>
 </SmellBaseline>

@@ -8,11 +8,11 @@ internal fun flushAllSessions() {
 }
 
 internal fun flushErrorStoreAsync(client: Client) {
-    client.errorStore.flushAsync()
+    client.eventStore.flushAsync()
 }
 
 internal fun flushErrorStoreOnLaunch(client: Client) {
-    client.errorStore.flushOnLaunch()
+    client.eventStore.flushOnLaunch()
 }
 
 /**
@@ -60,7 +60,7 @@ internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDel
 }
 
 internal fun writeErrorToStore(client: Client) {
-    val error = Error.Builder(client.getConfig(), RuntimeException(), null,
+    val event = Event.Builder(client.getConfig(), RuntimeException(), null,
         Thread.currentThread(), false, MetaData()).build()
-    client.errorStore.write(error)
+    client.eventStore.write(event)
 }

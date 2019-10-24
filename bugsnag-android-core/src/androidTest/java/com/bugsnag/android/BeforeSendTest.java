@@ -107,11 +107,11 @@ public class BeforeSendTest {
         config.addBeforeSend(new BeforeSend() {
             @Override
             public boolean run(@NonNull Report report) {
-                report.getError().setGroupingHash("123");
+                report.getEvent().setGroupingHash("123");
                 return true;
             }
         });
         client.notifyBlocking(new Exception("womp womp"));
-        assertEquals("123", lastReport.getError().getGroupingHash());
+        assertEquals("123", lastReport.getEvent().getGroupingHash());
     }
 }

@@ -43,15 +43,15 @@ internal class AnrDetailsCollector {
         }
     }
 
-    internal fun addErrorStateInfo(error: Error, anrState: ProcessErrorStateInfo) {
+    internal fun addErrorStateInfo(event: Event, anrState: ProcessErrorStateInfo) {
         val msg = anrState.shortMsg
-        error.exceptionMessage = when {
+        event.exceptionMessage = when {
             msg.startsWith("ANR") -> msg.replaceFirst("ANR", "")
             else -> msg
         }
     }
 
-    internal fun collectAnrErrorDetails(client: Client, error: Error) {
+    internal fun collectAnrErrorDetails(client: Client, event: Event) {
         val handler = Handler(handlerThread.looper)
         val attempts = AtomicInteger()
 
@@ -64,8 +64,8 @@ internal class AnrDetailsCollector {
                         handler.postDelayed(this, INFO_POLL_THRESHOLD_MS)
                     }
                 } else {
-                    addErrorStateInfo(error, anrDetails)
-                    client.notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null)
+                    addErrorStateInfo(event, anrDetails)
+                    client.notify(event, DeliveryStyle.ASYNC_WITH_CACHE, null)
                 }
             }
         })

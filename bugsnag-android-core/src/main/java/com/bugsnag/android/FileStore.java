@@ -42,7 +42,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     final Lock lock = new ReentrantLock();
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
-    protected final ErrorStore.Delegate delegate;
+    protected final EventStore.Delegate delegate;
 
 
     FileStore(@NonNull Context appContext, String folder,
@@ -81,13 +81,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             out.write(content);
         } catch (Exception exc) {
-            File errorFile = new File(filename);
+            File eventFile = new File(filename);
 
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, errorFile, "NDK Crash report copy");
+                delegate.onErrorIOFailure(exc, eventFile, "NDK Crash report copy");
             }
 
-            IOUtils.deleteFile(errorFile);
+            IOUtils.deleteFile(eventFile);
         } finally {
             try {
                 if (out != null) {
@@ -122,13 +122,13 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         } catch (FileNotFoundException exc) {
             Logger.warn("Ignoring FileNotFoundException - unable to create file", exc);
         } catch (Exception exc) {
-            File errorFile = new File(filename);
+            File eventFile = new File(filename);
 
             if (delegate != null) {
-                delegate.onErrorIOFailure(exc, errorFile, "Crash report serialization");
+                delegate.onErrorIOFailure(exc, eventFile, "Crash report serialization");
             }
 
-            IOUtils.deleteFile(errorFile);
+            IOUtils.deleteFile(eventFile);
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();

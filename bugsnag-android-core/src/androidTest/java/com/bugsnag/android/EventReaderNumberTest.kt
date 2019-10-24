@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.convert
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.streamableToJson
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.junit.Assert.assertEquals
@@ -11,15 +10,15 @@ import org.junit.Test
 import java.io.File
 import java.io.FileOutputStream
 
-class ErrorReaderNumberTest {
+class EventReaderNumberTest {
 
-    private var error: Error? = null
+    private var event: Event? = null
 
     @Before
     fun setUp() {
-        val classLoader = ErrorReaderNumberTest::class.java.classLoader
+        val classLoader = EventReaderNumberTest::class.java.classLoader
         val input = classLoader!!.getResourceAsStream("stackframe_numbers.json")
-        val fixtureFile = File.createTempFile("error", ".json")
+        val fixtureFile = File.createTempFile("event", ".json")
         val output = FileOutputStream(fixtureFile)
 
         output.use {
@@ -34,12 +33,12 @@ class ErrorReaderNumberTest {
         }
         val config = generateConfiguration()
         val immutableConfig = convert(config)
-        error = ErrorReader.readError(immutableConfig, config, fixtureFile)
+        event = EventReader.readEvent(immutableConfig, config, fixtureFile)
     }
 
     @Test
     fun readErrorExceptionStacktrace() {
-        val event = streamableToJsonArray(error!!.exceptions).getJSONObject(0)
+        val event = streamableToJsonArray(event!!.exceptions).getJSONObject(0)
         val stacktrace = event.getJSONArray("stacktrace")
         assertEquals(3, stacktrace.length().toLong())
 
@@ -55,7 +54,7 @@ class ErrorReaderNumberTest {
 
     @Test
     fun readErrorThreadStacktrace() {
-        val thread = streamableToJson(error).getJSONArray("threads").getJSONObject(0)
+        val thread = streamableToJson(event).getJSONArray("threads").getJSONObject(0)
         assertEquals(11236722452451234, thread.getLong("id"))
 
         val trace = thread.getJSONArray("stacktrace")
