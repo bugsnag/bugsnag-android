@@ -33,7 +33,7 @@ internal class ThreadState : JsonStream.Streamable {
         threads = stackTraces.keys
             .sortedBy { it.id }
             .map {
-                val stacktrace = Stacktrace(stackTraces[it], config.projectPackages)
+                val stacktrace = Stacktrace(stackTraces[it]!!, config.projectPackages)
                 Thread(it.id, it.name, "android", it.id == currentThreadId, stacktrace)
             }
     }
