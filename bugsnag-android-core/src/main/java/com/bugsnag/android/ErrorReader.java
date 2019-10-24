@@ -409,7 +409,7 @@ class ErrorReader {
             }
         }
         reader.endArray();
-        return new ThreadState(threads.toArray(new Thread[0]));
+        return new ThreadState(threads);
     }
 
     private static Thread readThread(JsonReader reader) throws IOException {
@@ -443,7 +443,7 @@ class ErrorReader {
         }
         reader.endObject();
         if (type != null && frames != null) {
-            return new Thread(id, name, type, errorReportingThread, frames);
+            return new Thread(id, name, type, errorReportingThread, new Stacktrace(frames));
         } else {
             return null;
         }

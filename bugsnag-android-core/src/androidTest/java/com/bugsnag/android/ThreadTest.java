@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @SmallTest
 public class ThreadTest {
@@ -25,7 +26,8 @@ public class ThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        Thread thread = new Thread(config, 24, "main-one", "ando", true, stacktrace);
+        Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList());
+        Thread thread = new Thread(24, "main-one", "ando", true, trace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
@@ -54,7 +56,8 @@ public class ThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        Thread thread = new Thread(config, 24, "main-one", "ando",false, stacktrace);
+        Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList());
+        Thread thread = new Thread(24, "main-one", "ando",false, trace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));

@@ -9,6 +9,8 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
+import java.lang.Thread
+
 class ExceptionsTest {
 
     private lateinit var config: ImmutableConfig

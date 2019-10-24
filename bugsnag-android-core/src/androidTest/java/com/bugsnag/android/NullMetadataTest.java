@@ -12,7 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
+import java.lang.Thread;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs

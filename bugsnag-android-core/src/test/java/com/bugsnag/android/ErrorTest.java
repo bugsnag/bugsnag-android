@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.Thread;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
