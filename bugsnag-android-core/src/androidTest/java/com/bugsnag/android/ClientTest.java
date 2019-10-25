@@ -102,7 +102,7 @@ public class ClientTest {
 
         final User user = new User();
 
-        client.addBeforeNotify(new BeforeNotify() {
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 // Pull out the user information

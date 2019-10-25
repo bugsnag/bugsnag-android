@@ -180,8 +180,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 client.appData, client.deviceData);
 
                         try {
-                            for (BeforeSendSession mutator : clientState.getSessionCallbacks()) {
-                                mutator.beforeSendSession(payload);
+                            for (OnSession mutator : clientState.getSessionCallbacks()) {
+                                mutator.run(payload);
                             }
 
                             DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
