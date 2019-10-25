@@ -7,7 +7,7 @@ import java.io.IOException
  */
 internal class ThreadState : JsonStream.Streamable {
 
-    private val threads: List<Thread>
+    internal val threads: List<Thread>
 
     constructor(threads: List<Thread>) {
         this.threads = threads

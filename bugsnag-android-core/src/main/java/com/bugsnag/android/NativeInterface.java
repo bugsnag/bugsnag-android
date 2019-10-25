@@ -393,7 +393,9 @@ public class NativeInterface {
                 if (severity != null) {
                     event.setSeverity(severity);
                 }
-                event.getException$bugsnag_android_core_debug().setType("c");
+                for (Error error : event.getErrors()) {
+                    error.setType("c");
+                }
                 return true;
             }
         });

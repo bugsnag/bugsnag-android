@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import java.io.IOException
-import java.lang.Thread
 import java.util.HashMap
 
 /**
@@ -15,22 +14,44 @@ import java.util.HashMap
  */
 class Event internal constructor(
     internal val config: ImmutableConfig,
-    exc: Throwable,
-    internal val handledState: HandledState,
-    private var severity: Severity?,
-    val session: Session?,
-    internal val threadState: ThreadState,
-    val metaData: MetaData
+    originalError: Throwable,
+    private val handledState: HandledState,
+    s: Severity,
+    session: Session?,
+    private val threadState: ThreadState,
+    private val metadata: MetaData
 ) : JsonStream.Streamable, MetaDataAware {
+
+    val session = session
+    val originalError = originalError
+
+    /**
+     * Set the Severity of this Event.
+     *
+     * By default, unhandled exceptions will be Severity.ERROR and handled
+     * exceptions sent with bugsnag.notify will be Severity.WARNING.
+     *
+     * @param severity the severity of this error
+     * @see Severity
+     */
+    var severity: Severity = s
+        set(value) {
+            field = value
+            handledState.currentSeverity = severity
+        }
+    var apiKey: String = config.apiKey
 
     var app: MutableMap<String, Any> = HashMap()
     var device: MutableMap<String, Any> = HashMap()
 
-    /**
-     * @return user information associated with this Event
-     */
-    var user = User()
-        internal set
+    val unhandled = handledState.isUnhandled
+
+    var breadcrumbs: MutableList<Breadcrumb> = emptyList<Breadcrumb>().toMutableList()
+
+    var projectPackages: Collection<String> = config.projectPackages
+    var errors: MutableList<Error> =
+        Error.createError(originalError, projectPackages).toMutableList()
+    var threads: MutableList<Thread> = threadState.threads.toMutableList()
 
     /**
      * Get the grouping hash associated with this Event.
@@ -59,47 +80,14 @@ class Event internal constructor(
      * @param context what was happening at the time of a crash
      */
     var context: String? = null
-    var projectPackages: Collection<String>? = null
-    internal val exceptions: Exceptions?
-    internal var breadcrumbs: Breadcrumbs? = null
-    internal val exception: BugsnagException
-    var isIncomplete = false
 
     /**
-     * Get the class name from the exception contained in this Event report.
+     * @return user information associated with this Event
      */
-    /**
-     * Sets the class name from the exception contained in this Event report.
-     */
-    var exceptionName: String
-        get() = exception.name
-        set(exceptionName) {
-            exception.name = exceptionName
-        }
+    private var _user = User()
 
-    /**
-     * Get the message from the exception contained in this Event report.
-     */
-    /**
-     * Sets the message from the exception contained in this Event report.
-     */
-    var exceptionMessage: String
-        get() {
-            val msg = exception.message
-            return msg
-        }
-        set(exceptionMessage) = exception.setMessage(exceptionMessage)
-
-    init {
-
-        if (exc is BugsnagException) {
-            this.exception = exc
-        } else {
-            this.exception = BugsnagException(exc)
-        }
-
-        projectPackages = config.projectPackages
-        exceptions = Exceptions(config, exception)
+    protected fun shouldIgnoreClass(): Boolean {
+        return config.ignoreClasses.contains(errors[0].errorClass)
     }
 
     @Throws(IOException::class)
@@ -107,31 +95,29 @@ class Event internal constructor(
         // Write error basics
         writer.beginObject()
         writer.name("context").value(context)
-        writer.name("metaData").value(metaData)
+        writer.name("metaData").value(metadata)
 
-        writer.name("severity").value(severity!!)
+        writer.name("severity").value(severity)
         writer.name("severityReason").value(handledState)
         writer.name("unhandled").value(handledState.isUnhandled)
-        writer.name("incomplete").value(isIncomplete)
 
-        if (projectPackages != null) {
-            writer.name("projectPackages").beginArray()
-            for (projectPackage in projectPackages!!) {
-                writer.value(projectPackage)
-            }
-            writer.endArray()
-        }
+        writer.name("projectPackages").beginArray()
+        projectPackages.forEach { writer.value(it) }
+        writer.endArray()
 
         // Write exception info
-        writer.name("exceptions").value(exceptions!!)
+        writer.name("exceptions")
+        writer.beginArray()
+        errors.forEach { writer.value(it) }
+        writer.endArray()
 
         // Write user info
-        writer.name("user").value(user)
+        writer.name("user").value(_user)
 
         // Write diagnostics
         writer.name("app").value(app)
         writer.name("device").value(device)
-        writer.name("breadcrumbs").value(breadcrumbs!!)
+        writer.name("breadcrumbs").value(breadcrumbs)
         writer.name("groupingHash").value(groupingHash)
 
         if (config.sendThreads) {
@@ -154,32 +140,6 @@ class Event internal constructor(
     }
 
     /**
-     * Set the Severity of this Event.
-     *
-     *
-     * By default, unhandled exceptions will be Severity.ERROR and handled
-     * exceptions sent with bugsnag.notify will be Severity.WARNING.
-     *
-     * @param severity the severity of this error
-     * @see Severity
-     */
-    fun setSeverity(severity: Severity?) {
-        if (severity != null) {
-            this.severity = severity
-            this.handledState.currentSeverity = severity
-        }
-    }
-
-    /**
-     * Get the Severity of this Event.
-     *
-     * @see Severity
-     */
-    fun getSeverity(): Severity? {
-        return severity
-    }
-
-    /**
      * Set user information associated with this Event
      *
      * @param id    the id of the user
@@ -187,68 +147,20 @@ class Event internal constructor(
      * @param name  the name of the user
      */
     fun setUser(id: String?, email: String?, name: String?) {
-        this.user = User(id, email, name)
+        _user = User(id, email, name)
     }
 
-    /**
-     * Set user id associated with this Event
-     *
-     * @param id the id of the user
-     */
-    fun setUserId(id: String?) {
-        this.user = User(this.user)
-        this.user.id = id
-    }
+    fun getUser() = _user
 
-    /**
-     * Set user email address associated with this Event
-     *
-     * @param email the email address of the user
-     */
-    fun setUserEmail(email: String?) {
-        this.user = User(this.user)
-        this.user.email = email
-    }
-
-    /**
-     * Set user name associated with this Event
-     *
-     * @param name the name of the user
-     */
-    fun setUserName(name: String?) {
-        this.user = User(this.user)
-        this.user.name = name
-    }
+    fun clearUser() = setUser(null, null, null)
 
     override fun addMetadata(section: String, value: Any?) = addMetadata(section, null, value)
     override fun addMetadata(section: String, key: String?, value: Any?) =
-        metaData.addMetadata(section, key, value)
+        metadata.addMetadata(section, key, value)
 
     override fun clearMetadata(section: String) = clearMetadata(section, null)
-    override fun clearMetadata(section: String, key: String?) = metaData.clearMetadata(section, key)
+    override fun clearMetadata(section: String, key: String?) = metadata.clearMetadata(section, key)
 
     override fun getMetadata(section: String) = getMetadata(section, null)
-    override fun getMetadata(section: String, key: String?) = metaData.getMetadata(section, key)
-
-    /**
-     * The [exception][Throwable] which triggered this Event report.
-     */
-    fun getException(): Throwable {
-        return exception
-    }
-
-    internal fun shouldIgnoreClass(): Boolean {
-        return config.ignoreClasses.contains(exceptionName)
-    }
-
-    internal fun getProjectPackages(): Collection<String>? {
-        return projectPackages
-    }
-
-    internal fun setProjectPackages(projectPackages: Collection<String>) {
-        this.projectPackages = projectPackages
-        if (exceptions != null) {
-            exceptions.projectPackages = projectPackages
-        }
-    }
+    override fun getMetadata(section: String, key: String?) = metadata.getMetadata(section, key)
 }

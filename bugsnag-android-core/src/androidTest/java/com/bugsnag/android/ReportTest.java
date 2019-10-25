@@ -28,10 +28,10 @@ public class ReportTest {
     public void setUp() throws Exception {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Something broke");
-        Event event = new Event.Builder(config, exception,
+        Event event = new EventGenerator.Builder(config, exception,
             BugsnagTestUtils.generateSessionTracker(),
             Thread.currentThread(), false, new MetaData()).build();
-        report = new Report("api-key", event);
+        report = new Report("api-key", null, event);
     }
 
     @Test
@@ -54,9 +54,9 @@ public class ReportTest {
     @Test
     public void testModifyReportDetails() throws Exception {
         report.setApiKey("custom-api-key");
-        report.getNotifier().setName("React Native");
-        report.getNotifier().setUrl("https://bugsnag.com/reactnative");
-        report.getNotifier().setVersion("3.4.5");
+        Notifier.INSTANCE.setName("React Native");
+        Notifier.INSTANCE.setUrl("https://bugsnag.com/reactnative");
+        Notifier.INSTANCE.setVersion("3.4.5");
 
         JSONObject reportJson = streamableToJson(report);
         assertEquals("custom-api-key", reportJson.getString("apiKey"));

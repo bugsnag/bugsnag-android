@@ -35,14 +35,14 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Event event = new Event.Builder(config, throwable, null,
+        Event event = new EventGenerator.Builder(config, throwable, null,
             Thread.currentThread(), false, new MetaData()).build();
         validateDefaultMetadata(event);
     }
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
-        Event event = new Event.Builder(config, "RuntimeException",
+        Event event = new EventGenerator.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
             null, Thread.currentThread(), new MetaData()).build();
         validateDefaultMetadata(event);

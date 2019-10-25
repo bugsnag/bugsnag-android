@@ -31,6 +31,7 @@ import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -707,7 +708,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                         @NonNull DeliveryStyle style,
                         @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
-        if (event.shouldIgnoreClass$bugsnag_android_core_debug()) {
+        if (event.shouldIgnoreClass()) {
             return;
         }
 
@@ -728,7 +729,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         event.addMetadata("app", null, appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the event
-        event.setBreadcrumbs$bugsnag_android_core_debug(breadcrumbs);
+        event.setBreadcrumbs(new ArrayList<>(breadcrumbs.store));
 
         // Attach user info to the event
         event.setUser(user.getId(), user.getEmail(), user.getName());
@@ -746,17 +747,23 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
 
         // Build the report
-        Report report = new Report(immutableConfig.getApiKey(), null, event);
+        Report report = new Report(event.getApiKey(), null, event);
 
         if (event.getSession() != null) {
             setChanged();
 
-            if (event.getHandledState$bugsnag_android_core_debug().isUnhandled()) {
+            if (event.getUnhandled()) {
                 notifyObservers(new Message(
                     NativeInterface.MessageType.NOTIFY_UNHANDLED, null));
             } else {
-                notifyObservers(new Message(
-                    NativeInterface.MessageType.NOTIFY_HANDLED, event.getExceptionName()));
+                List<Error> errors = event.getErrors();
+
+                String name = "";
+
+                if (errors.size() > 0) {
+                    name = errors.get(0).getErrorClass();
+                }
+                notifyObservers(new Message(NativeInterface.MessageType.NOTIFY_HANDLED, name));
             }
         }
 
@@ -845,9 +852,18 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     private void leaveErrorBreadcrumb(@NonNull Event event) {
         // Add a breadcrumb for this event occurring
-        String msg = event.getExceptionMessage();
+        List<Error> errors = event.getErrors();
+
+        String name = "";
+        String msg = "";
+
+        if (errors.size() > 0) {
+            name = errors.get(0).getErrorClass();
+            msg = errors.get(0).getErrorMessage();
+        }
+
         Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-        breadcrumbs.add(new Breadcrumb(event.getExceptionName(), BreadcrumbType.ERROR, message));
+        breadcrumbs.add(new Breadcrumb(name, BreadcrumbType.ERROR, message));
     }
 
     @NonNull

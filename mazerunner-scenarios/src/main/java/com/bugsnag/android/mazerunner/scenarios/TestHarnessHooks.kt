@@ -62,7 +62,7 @@ internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDel
 }
 
 internal fun writeErrorToStore(client: Client) {
-    val event = Event.Builder(client.getConfig(), RuntimeException(), null,
+    val event = EventGenerator.Builder(client.getConfig(), RuntimeException(), null,
         Thread.currentThread(), false, MetaData()).build()
     client.eventStore.write(event)
 }

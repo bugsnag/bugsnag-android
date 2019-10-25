@@ -107,14 +107,13 @@ class EventReader {
             
             Event event = new Event(config, exceptions.getException(), handledState, severity,
                                     session, threadState, metaData);
-            event.getException$bugsnag_android_core_debug().setType(exceptions.getExceptionType());
             event.setProjectPackages(projectPackages);
             event.setUser(user.getId(), user.getEmail(), user.getName());
             event.setContext(context);
             event.setGroupingHash(groupingHash);
             event.setApp(appData);
             event.setDevice(deviceData);
-            event.setBreadcrumbs$bugsnag_android_core_debug(crumbs);
+            event.setBreadcrumbs(new ArrayList<>(crumbs.store));
 
             return event;
         } finally {

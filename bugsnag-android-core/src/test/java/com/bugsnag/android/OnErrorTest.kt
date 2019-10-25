@@ -21,7 +21,7 @@ class OnErrorTest {
             false
         }
 
-        val error = Event.Builder(config, RuntimeException("Test"), null,
+        val error = EventGenerator.Builder(config, RuntimeException("Test"), null,
             Thread.currentThread(), false, MetaData()).build()
         onError.run(error)
         assertEquals(context, error.context)

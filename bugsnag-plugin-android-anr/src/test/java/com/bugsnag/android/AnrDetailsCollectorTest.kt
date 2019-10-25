@@ -33,7 +33,7 @@ class AnrDetailsCollectorTest {
         stateInfo.shortMsg = "Input dispatching timed out"
         stateInfo.longMsg = "ANR in com.bugsnag.android.example"
 
-        event = Event.Builder(
+        event = EventGenerator.Builder(
             BugsnagTestUtils.generateImmutableConfig(),
             RuntimeException(),
             null,
@@ -73,6 +73,6 @@ class AnrDetailsCollectorTest {
     @Test
     fun anrDetailsAltered() {
         collector.addErrorStateInfo(event, stateInfo)
-        assertEquals(stateInfo.shortMsg.replace("ANR", ""), event.exceptionMessage)
+        assertEquals(stateInfo.shortMsg.replace("ANR", ""), event.errors[0].errorMessage)
     }
 }

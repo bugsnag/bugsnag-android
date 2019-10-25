@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.Thread;
+import java.util.Collections;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
@@ -27,43 +28,24 @@ public class EventTest {
     public void setUp() throws Exception {
         config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Example message");
-        event = new Event.Builder(config, exception, null,
+        event = new EventGenerator.Builder(config, exception, null,
             Thread.currentThread(), false, new MetaData()).build();
-    }
-
-    @Test
-    public void checkExceptionMessageNullity() throws Exception {
-        String msg = "Foo";
-        Event err = new Event.Builder(config,
-            new RuntimeException(msg), null,
-            Thread.currentThread(), false, new MetaData()).build();
-        assertEquals(msg, err.getExceptionMessage());
-
-        err = new Event.Builder(config,
-            new RuntimeException(), null,
-            Thread.currentThread(), false, new MetaData()).build();
-        assertEquals("", err.getExceptionMessage());
-    }
-
-    @Test
-    public void testNullSeverity() throws Exception {
-        event.setSeverity(null);
-        assertEquals(Severity.WARNING, event.getSeverity());
     }
 
     @Test
     public void testBugsnagExceptionName() throws Exception {
         BugsnagException exception = new BugsnagException("Busgang", "exceptional",
             new StackTraceElement[]{});
-        Event err = new Event.Builder(config,
+        Event err = new EventGenerator.Builder(config,
             exception, null, Thread.currentThread(), false, new MetaData()).build();
-        assertEquals("Busgang", err.getExceptionName());
+        err.getErrors().get(0).setErrorClass("Busgang");
+        assertEquals("Busgang", err.getErrors().get(0).getErrorClass());
     }
 
     @Test
     public void testNullContext() throws Exception {
         event.setContext(null);
-        event.setAppData(null);
+        event.setApp(Collections.<String, Object>emptyMap());
         assertNull(event.getContext());
     }
 
@@ -79,19 +61,19 @@ public class EventTest {
         assertEquals(firstName, event.getUser().getName());
 
         String userId = "foo";
-        event.setUserId(userId);
+        event.setUser(userId, event.getUser().getEmail(), event.getUser().getName());
         assertEquals(userId, event.getUser().getId());
         assertEquals(firstEmail, event.getUser().getEmail());
         assertEquals(firstName, event.getUser().getName());
 
         String userEmail = "another@example.com";
-        event.setUserEmail(userEmail);
+        event.setUser(event.getUser().getId(), userEmail, event.getUser().getName());
         assertEquals(userId, event.getUser().getId());
         assertEquals(userEmail, event.getUser().getEmail());
         assertEquals(firstName, event.getUser().getName());
 
         String userName = "Isaac";
-        event.setUserName(userName);
+        event.setUser(event.getUser().getId(), event.getUser().getEmail(), userName);
         assertEquals(userId, event.getUser().getId());
         assertEquals(userEmail, event.getUser().getEmail());
         assertEquals(userName, event.getUser().getName());
@@ -99,7 +81,7 @@ public class EventTest {
 
     @Test
     public void testBuilderMetaData() {
-        Event.Builder builder = new Event.Builder(config,
+        EventGenerator.Builder builder = new EventGenerator.Builder(config,
             new RuntimeException("foo"), null,
             Thread.currentThread(), false, new MetaData());
 
