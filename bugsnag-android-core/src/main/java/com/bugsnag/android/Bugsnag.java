@@ -252,6 +252,20 @@ public final class Bugsnag {
      * @param name       the error name or class
      * @param message    the error message
      * @param stacktrace the stackframes associated with the error
+     *
+     */
+    public static void notify(@NonNull String name,
+                              @NonNull String message,
+                              @NonNull StackTraceElement[] stacktrace) {
+        getClient().notify(name, message, stacktrace, null);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
      * @param onError   callback invoked on the generated error report for
      *                   additional modification
      */
@@ -260,29 +274,6 @@ public final class Bugsnag {
                               @NonNull StackTraceElement[] stacktrace,
                               @Nullable OnError onError) {
         getClient().notify(name, message, stacktrace, onError);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     */
-    public static void notify(@NonNull final Throwable exception,
-                              @NonNull final Severity severity) {
-        getClient().notify(exception, severity);
-    }
-
-    /**
-     * Intended for use by other clients (React Native/Unity). Calling this method directly from
-     * Android is not supported.
-     */
-    public static void internalClientNotify(@NonNull final Throwable exception,
-                                            @NonNull Map<String, Object> clientData,
-                                            boolean blocking,
-                                            @Nullable OnError onError) {
-        getClient().internalClientNotify(exception, clientData, blocking, onError);
     }
 
     public static void addMetadata(@NonNull String section, @Nullable String key,

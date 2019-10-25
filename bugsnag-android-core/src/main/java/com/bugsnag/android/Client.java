@@ -632,11 +632,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, !BLOCKING);
+        notify(exception, null);
     }
 
     /**
@@ -651,7 +647,20 @@ public class Client extends Observable implements Observer, MetaDataAware {
             Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.ASYNC, onError);
+        notifyInternal(event, DeliveryStyle.ASYNC, onError);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     */
+    public void notify(@NonNull String name,
+                       @NonNull String message,
+                       @NonNull StackTraceElement[] stacktrace) {
+        notify(name, message, stacktrace, null);
     }
 
     /**
@@ -671,32 +680,31 @@ public class Client extends Observable implements Observer, MetaDataAware {
             sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.ASYNC, onError);
+        notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
     /**
-     * Notify Bugsnag of a handled exception
+     * Caches an error then attempts to notify.
      *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
+     * Should only ever be called from the {@link ExceptionHandler}.
      */
-    public void notify(@NonNull Throwable exception, @NonNull Severity severity) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severity(severity)
-            .build();
-        notify(event, !BLOCKING);
+    void notifyUnhandledException(@NonNull Throwable exception, MetaData metaData,
+                                  @HandledState.SeverityReason String severityReason,
+                                  @Nullable String attributeValue, Thread thread) {
+        Event event = new Event.Builder(immutableConfig, exception,
+                sessionTracker, thread, true, clientState.getMetaData())
+                .severity(Severity.ERROR)
+                .metaData(metaData)
+                .severityReasonType(severityReason)
+                .attributeValue(attributeValue)
+                .build();
+
+        notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
-    private void notify(@NonNull Event event, boolean blocking) {
-        DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(event, style, null);
-    }
-
-    void notify(@NonNull Event event,
-                @NonNull DeliveryStyle style,
-                @Nullable OnError onError) {
+    void notifyInternal(@NonNull Event event,
+                        @NonNull DeliveryStyle style,
+                        @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
         if (event.shouldIgnoreClass()) {
             return;
@@ -752,13 +760,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
 
         switch (style) {
-            case SAME_THREAD:
-                deliver(report, event);
-                break;
-            case NO_CACHE:
-                report.setCachingDisabled(true);
-                deliverReportAsync(event, report);
-                break;
             case ASYNC:
                 deliverReportAsync(event, report);
                 break;
@@ -846,102 +847,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
         String msg = event.getExceptionMessage();
         Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
         breadcrumbs.add(new Breadcrumb(event.getExceptionName(), BreadcrumbType.ERROR, message));
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     */
-    public void notifyBlocking(@NonNull Throwable exception) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param onError  callback invoked on the generated error report for
-     *                  additional modification
-     */
-    public void notifyBlocking(@NonNull Throwable exception, @Nullable OnError onError) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, DeliveryStyle.SAME_THREAD, onError);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param onError   callback invoked on the generated error report for
-     *                   additional modification
-     */
-    public void notifyBlocking(@NonNull String name,
-                               @NonNull String message,
-                               @NonNull StackTraceElement[] stacktrace,
-                               @Nullable OnError onError) {
-        Event event = new Event.Builder(immutableConfig, name, message,
-            stacktrace, sessionTracker, Thread.currentThread(), clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, DeliveryStyle.SAME_THREAD, onError);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     */
-    public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity) {
-        Event event = new Event.Builder(immutableConfig, exception,
-            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
-            .severity(severity)
-            .build();
-        notify(event, BLOCKING);
-    }
-
-    /**
-     * Intended for internal use only
-     *
-     * @param exception the exception
-     * @param clientData the clientdata
-     * @param blocking whether to block when notifying
-     * @param onError a callback when notifying
-     */
-    public void internalClientNotify(@NonNull Throwable exception,
-                              @NonNull Map<String, Object> clientData,
-                              boolean blocking,
-                              @Nullable OnError onError) {
-        String severity = getKeyFromClientData(clientData, "severity", true);
-        String severityReason =
-            getKeyFromClientData(clientData, "severityReason", true);
-        String logLevel = getKeyFromClientData(clientData, "logLevel", false);
-
-        String msg = String.format("Internal client notify, severity = '%s',"
-            + " severityReason = '%s'", severity, severityReason);
-        Logger.info(msg);
-
-        @SuppressWarnings("WrongConstant")
-        Event event = new Event.Builder(immutableConfig, exception,
-            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
-            .severity(Severity.fromString(severity))
-            .severityReasonType(severityReason)
-            .attributeValue(logLevel)
-            .build();
-
-        DeliveryStyle deliveryStyle = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(event, deliveryStyle, onError);
     }
 
     @NonNull
@@ -1051,25 +956,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
             default:
                 break;
         }
-    }
-
-    /**
-     * Caches an error then attempts to notify.
-     *
-     * Should only ever be called from the {@link ExceptionHandler}.
-     */
-    void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData,
-                        @HandledState.SeverityReason String severityReason,
-                        @Nullable String attributeValue, Thread thread) {
-        Event event = new Event.Builder(immutableConfig, exception,
-            sessionTracker, thread, true, clientState.getMetaData())
-            .severity(severity)
-            .metaData(metaData)
-            .severityReasonType(severityReason)
-            .attributeValue(attributeValue)
-            .build();
-
-        notify(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
     private boolean runBeforeSendTasks(Report report) {

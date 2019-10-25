@@ -36,7 +36,7 @@ internal class PausedSessionScenario(config: Configuration,
             flushAllSessions()
             Log.d("Bugsnag - Stopped", "First session flushed")
             Thread.sleep(SLEEP_MS)
-            client.notifyBlocking(generateException())
+            client.notify(generateException())
             Log.d("Bugsnag - Stopped", "First exception sent")
             Thread.sleep(SLEEP_MS)
 
@@ -47,7 +47,7 @@ internal class PausedSessionScenario(config: Configuration,
             flushAllSessions()
             Log.d("Bugsnag - Stopped", "First session flushed (again)")
             Thread.sleep(SLEEP_MS)
-            client.notifyBlocking(generateException())
+            client.notify(generateException())
             Log.d("Bugsnag - Stopped", "Second exception sent")
         })
     }
