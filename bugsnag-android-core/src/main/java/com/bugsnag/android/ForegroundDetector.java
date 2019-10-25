@@ -31,12 +31,16 @@ class ForegroundDetector {
      */
     @Nullable
     Boolean isInForeground() {
-        ActivityManager.RunningAppProcessInfo info = getProcessInfo();
+        try {
+            ActivityManager.RunningAppProcessInfo info = getProcessInfo();
 
-        if (info != null) {
-            return info.importance
-                <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
-        } else {
+            if (info != null) {
+                return info.importance
+                        <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+            } else {
+                return null;
+            }
+        } catch (RuntimeException exc) {
             return null;
         }
     }
@@ -54,13 +58,8 @@ class ForegroundDetector {
 
     @Nullable
     private ActivityManager.RunningAppProcessInfo getProcessInfoPreApi16() {
-        List<ActivityManager.RunningAppProcessInfo> appProcesses;
-
-        try {
-            appProcesses = activityManager.getRunningAppProcesses();
-        } catch (RuntimeException exc) {
-            return null;
-        }
+        List<ActivityManager.RunningAppProcessInfo> appProcesses
+                = activityManager.getRunningAppProcesses();
 
         if (appProcesses != null) {
             int pid = Process.myPid();
