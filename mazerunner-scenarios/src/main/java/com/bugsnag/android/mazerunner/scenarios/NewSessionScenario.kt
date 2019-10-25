@@ -36,7 +36,7 @@ internal class NewSessionScenario(config: Configuration,
             flushAllSessions()
             Log.d("Bugsnag - New", "First session flushed")
             Thread.sleep(SLEEP_MS)
-            client.notifyBlocking(generateException())
+            client.notify(generateException())
             Log.d("Bugsnag - New", "First exception notified")
             Thread.sleep(SLEEP_MS)
             // stop tracking the existing session
@@ -50,7 +50,7 @@ internal class NewSessionScenario(config: Configuration,
             flushAllSessions()
             Log.d("Bugsnag - New", "Second session flushed")
             Thread.sleep(SLEEP_MS)
-            client.notifyBlocking(generateException())
+            client.notify(generateException())
             Log.d("Bugsnag - New", "Second exception notified")
         })
     }

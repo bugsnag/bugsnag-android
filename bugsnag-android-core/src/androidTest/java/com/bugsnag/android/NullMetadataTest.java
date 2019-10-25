@@ -76,7 +76,7 @@ public class NullMetadataTest {
 
     @Test
     public void testNotify() throws Exception {
-        client.addBeforeNotify(new BeforeNotify() {
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 validateDefaultMetadata(event);
@@ -85,7 +85,7 @@ public class NullMetadataTest {
         });
         Event event = new Event.Builder(config, new Throwable(),
             generateSessionTracker(), Thread.currentThread(), false, new MetaData()).build();
-        client.notify(event, DeliveryStyle.SAME_THREAD, null);
+        client.notifyInternal(event, DeliveryStyle.ASYNC, null);
     }
 
     private void validateDefaultMetadata(MetaDataAware metaData) {

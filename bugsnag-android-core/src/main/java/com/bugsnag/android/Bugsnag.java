@@ -149,30 +149,30 @@ public final class Bugsnag {
     }
 
     /**
-     * Add a "before notify" callback, to execute code at the point where an error report is
+     * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before reports generated in the event
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * Bugsnag.addOnError(new OnError() {
      * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending errors to Bugsnag
+     * @param onError a callback to run before sending errors to Bugsnag
      * <p/>
-     * @see BeforeNotify
+     * @see OnError
      */
-    public static void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        getClient().addBeforeNotify(beforeNotify);
+    public static void addOnError(@NonNull OnError onError) {
+        getClient().addOnError(onError);
     }
 
     /**
@@ -238,12 +238,12 @@ public final class Bugsnag {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
+     * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
     public static void notify(@NonNull final Throwable exception,
-                              @Nullable final Callback callback) {
-        getClient().notify(exception, callback);
+                              @Nullable final OnError onError) {
+        getClient().notify(exception, onError);
     }
 
     /**
@@ -252,37 +252,28 @@ public final class Bugsnag {
      * @param name       the error name or class
      * @param message    the error message
      * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
+     *
+     */
+    public static void notify(@NonNull String name,
+                              @NonNull String message,
+                              @NonNull StackTraceElement[] stacktrace) {
+        getClient().notify(name, message, stacktrace, null);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param onError   callback invoked on the generated error report for
      *                   additional modification
      */
     public static void notify(@NonNull String name,
                               @NonNull String message,
                               @NonNull StackTraceElement[] stacktrace,
-                              @Nullable Callback callback) {
-        getClient().notify(name, message, stacktrace, callback);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     */
-    public static void notify(@NonNull final Throwable exception,
-                              @NonNull final Severity severity) {
-        getClient().notify(exception, severity);
-    }
-
-    /**
-     * Intended for use by other clients (React Native/Unity). Calling this method directly from
-     * Android is not supported.
-     */
-    public static void internalClientNotify(@NonNull final Throwable exception,
-                                            @NonNull Map<String, Object> clientData,
-                                            boolean blocking,
-                                            @Nullable Callback callback) {
-        getClient().internalClientNotify(exception, clientData, blocking, callback);
+                              @Nullable OnError onError) {
+        getClient().notify(name, message, stacktrace, onError);
     }
 
     public static void addMetadata(@NonNull String section, @Nullable String key,

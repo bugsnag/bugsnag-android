@@ -8,7 +8,7 @@ import org.junit.Test
 
 import java.lang.Thread
 
-class BeforeNotifyTest {
+class OnErrorTest {
 
     private val config = generateImmutableConfig()
 
@@ -16,14 +16,14 @@ class BeforeNotifyTest {
     fun testRunModifiesError() {
         val context = "new-context"
 
-        val beforeNotify = BeforeNotify {
+        val onError = OnError {
             it.context = context
             false
         }
 
         val error = Event.Builder(config, RuntimeException("Test"), null,
             Thread.currentThread(), false, MetaData()).build()
-        beforeNotify.run(error)
+        onError.run(error)
         assertEquals(context, error.context)
     }
 }
