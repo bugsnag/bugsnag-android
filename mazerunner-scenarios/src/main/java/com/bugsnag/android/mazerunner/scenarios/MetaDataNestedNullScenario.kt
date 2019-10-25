@@ -28,7 +28,8 @@ internal class MetaDataNestedNullScenario(
         Bugsnag.notify(RuntimeException("MetaDataScenario")) {
             val map = HashMap<String, Any?>()
             map["test"] = null
-            it.event.addMetadata("Custom", "foo", map)
+            it.addMetadata("Custom", "foo", map)
+            true
         }
     }
 

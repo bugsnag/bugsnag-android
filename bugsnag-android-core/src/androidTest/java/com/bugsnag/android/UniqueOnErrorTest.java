@@ -10,20 +10,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Ensures that BeforeNotify is only called once,
+ * Ensures that OnError is only called once,
  * and that the callbacks are called in insertion order.
  */
 @SmallTest
-public class UniqueBeforeNotifyTest {
+public class UniqueOnErrorTest {
 
-    private BeforeNotify firstCb = new BeforeNotify() {
+    private OnError firstCb = new OnError() {
         @Override
         public boolean run(@NonNull Event event) {
             return handleCallback();
         }
     };
 
-    private BeforeNotify secondCb = new BeforeNotify() {
+    private OnError secondCb = new OnError() {
         @Override
         public boolean run(@NonNull Event event) {
             return handleCallback();
@@ -50,25 +50,25 @@ public class UniqueBeforeNotifyTest {
     }
 
     @Test
-    public void checkBeforeNotify() {
-        client.addBeforeNotify(firstCb);
+    public void checkOnError() {
+        client.addOnError(firstCb);
         client.notify(new Throwable());
         assertEquals(1, callbackCount);
     }
 
     @Test
     public void testDuplicateCallback() {
-        client.addBeforeNotify(firstCb);
-        client.addBeforeNotify(firstCb);
-        client.addBeforeNotify(secondCb);
-        client.addBeforeNotify(secondCb);
+        client.addOnError(firstCb);
+        client.addOnError(firstCb);
+        client.addOnError(secondCb);
+        client.addOnError(secondCb);
         client.notify(new Throwable());
         assertEquals(2, callbackCount);
     }
 
     @Test
     public void testCallbackOrder() {
-        client.addBeforeNotify(new BeforeNotify() {
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 assertEquals(0, callbackCount);
@@ -76,7 +76,7 @@ public class UniqueBeforeNotifyTest {
                 return false;
             }
         });
-        client.addBeforeNotify(new BeforeNotify() {
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 assertEquals(1, callbackCount);

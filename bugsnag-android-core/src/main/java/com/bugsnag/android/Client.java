@@ -539,29 +539,33 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     /**
-     * Add a "before notify" callback, to execute code at the point where an error report is
+     * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before reports generated in the event
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * Bugsnag.addOnError(new OnError() {
      * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending errors to Bugsnag
-     * @see BeforeNotify
+     * @param onError a callback to run before sending errors to Bugsnag
+     * @see OnError
      */
-    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        clientState.addBeforeNotify(beforeNotify);
+    public void addOnError(@NonNull OnError onError) {
+        clientState.addOnError(onError);
+    }
+
+    public void removeOnError(@NonNull OnError onError) {
+        clientState.removeOnError(onError);
     }
 
     /**
@@ -614,6 +618,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
         clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
+    public void addOnSession(@NonNull OnSession onSession) {
+        clientState.addOnSession(onSession);
+    }
+
+    public void removeOnSession(@NonNull OnSession onSession) {
+        clientState.removeOnSession(onSession);
+    }
+
     /**
      * Notify Bugsnag of a handled exception
      *
@@ -627,15 +639,15 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
+     * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
+    public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
             Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notifyInternal(event, DeliveryStyle.ASYNC, callback);
+        notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
     /**
@@ -657,18 +669,18 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param name       the error name or class
      * @param message    the error message
      * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
+     * @param onError   callback invoked on the generated error report for
      *                   additional modification
      */
     public void notify(@NonNull String name,
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
-                       @Nullable Callback callback) {
+                       @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
             sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notifyInternal(event, DeliveryStyle.ASYNC, callback);
+        notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
     /**
@@ -692,7 +704,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     void notifyInternal(@NonNull Event event,
                         @NonNull DeliveryStyle style,
-                        @Nullable Callback callback) {
+                        @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
         if (event.shouldIgnoreClass()) {
             return;
@@ -726,18 +738,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
-        // Run beforeNotify tasks, don't notify if any return true
-        if (!runBeforeNotifyTasks(event)) {
-            Logger.info("Skipping notification - beforeNotify task returned false");
+        // Run on error tasks, don't notify if any return false
+        if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
+            Logger.info("Skipping notification - onError task returned false");
             return;
         }
 
         // Build the report
         Report report = new Report(immutableConfig.getApiKey(), event);
-
-        if (callback != null) {
-            callback.beforeNotify(report);
-        }
 
         if (event.getSession() != null) {
             setChanged();
@@ -973,14 +981,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
         return sessionTracker;
     }
 
-    private boolean runBeforeNotifyTasks(Event event) {
-        for (BeforeNotify beforeNotify : clientState.getBeforeNotifyTasks()) {
+    private boolean runOnErrorTasks(Event event) {
+        for (OnError onError : clientState.getOnErrorTasks()) {
             try {
-                if (!beforeNotify.run(event)) {
+                if (!onError.run(event)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("BeforeNotify threw an Exception", ex);
+                Logger.warn("OnError threw an Exception", ex);
             }
         }
 

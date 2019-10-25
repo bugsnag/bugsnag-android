@@ -16,7 +16,8 @@ internal class MetaDataScenario(config: Configuration,
     override fun run() {
         super.run()
         Bugsnag.notify(RuntimeException("MetaDataScenario"), {
-            it.event.addMetadata("Custom", "foo", "Hello World!")
+            it.addMetadata("Custom", "foo", "Hello World!")
+            true
         })
     }
 
