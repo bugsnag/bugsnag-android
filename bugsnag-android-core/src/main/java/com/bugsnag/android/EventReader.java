@@ -399,20 +399,20 @@ class EventReader {
 
     private static ThreadState readThreadState(JsonReader reader)
         throws IOException {
-        List<CachedThread> threads = new ArrayList<>();
+        List<Thread> threads = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            CachedThread cachedThread = readThread(reader);
+            Thread thread = readThread(reader);
 
-            if (cachedThread != null) {
-                threads.add(cachedThread);
+            if (thread != null) {
+                threads.add(thread);
             }
         }
         reader.endArray();
-        return new ThreadState(threads.toArray(new CachedThread[0]));
+        return new ThreadState(threads);
     }
 
-    private static CachedThread readThread(JsonReader reader) throws IOException {
+    private static Thread readThread(JsonReader reader) throws IOException {
         long id = 0;
         String name = null;
         String type = null;
@@ -443,7 +443,7 @@ class EventReader {
         }
         reader.endObject();
         if (type != null && frames != null) {
-            return new CachedThread(id, name, type, errorReportingThread, frames);
+            return new Thread(id, name, type, errorReportingThread, new Stacktrace(frames));
         } else {
             return null;
         }

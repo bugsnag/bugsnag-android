@@ -5,6 +5,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
+import java.lang.Thread
+
 class EventNameTest {
 
     private lateinit var event: Event
