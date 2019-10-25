@@ -145,10 +145,10 @@ class EventStore extends FileStore<Event> {
             Report report;
 
             if (clientState.getBeforeSendTasks().isEmpty()) {
-                report = new Report(config.getApiKey(), eventFile);
+                report = new Report(config.getApiKey(), eventFile, null);
             } else {
                 Event event = EventReader.readEvent(config, clientState, eventFile);
-                report = new Report(config.getApiKey(), event);
+                report = new Report(config.getApiKey(), null, event);
 
                 for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
                     try {

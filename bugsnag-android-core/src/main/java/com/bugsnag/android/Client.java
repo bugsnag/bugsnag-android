@@ -746,7 +746,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
 
         // Build the report
-        Report report = new Report(immutableConfig.getApiKey(), event);
+        Report report = new Report(immutableConfig.getApiKey(), null, event);
 
         if (event.getSession() != null) {
             setChanged();
@@ -797,7 +797,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         Object packageName = appData.getAppData().get("packageName");
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
 
-        final Report report = new Report(null, event);
+        final Report report = new Report(null, null, event);
         try {
             Async.run(new Runnable() {
                 @Override
@@ -944,12 +944,10 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 leaveErrorBreadcrumb(event);
                 break;
             case UNDELIVERED:
-                if (!report.isCachingDisabled()) {
-                    Logger.warn("Could not send event(s) to Bugsnag,"
-                            + " saving to disk to send later");
-                    eventStore.write(event);
-                    leaveErrorBreadcrumb(event);
-                }
+                Logger.warn("Could not send event(s) to Bugsnag,"
+                        + " saving to disk to send later");
+                eventStore.write(event);
+                leaveErrorBreadcrumb(event);
                 break;
             case FAILURE:
                 Logger.warn("Problem sending event to Bugsnag");
