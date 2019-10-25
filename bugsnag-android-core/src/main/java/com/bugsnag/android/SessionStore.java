@@ -33,8 +33,8 @@ class SessionStore extends FileStore<Session> {
         }
     };
 
-    SessionStore(@NonNull Context appContext, @Nullable Delegate delegate) {
-        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, delegate);
+    SessionStore(@NonNull Context appContext, Logger logger, @Nullable Delegate delegate) {
+        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, logger, delegate);
     }
 
     @NonNull

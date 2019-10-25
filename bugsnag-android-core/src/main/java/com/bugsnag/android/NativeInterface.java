@@ -163,10 +163,6 @@ public class NativeInterface {
         return getClient().getContext();
     }
 
-    public static boolean getLoggingEnabled() {
-        return Logger.getEnabled();
-    }
-
     @NonNull
     public static String getNativeReportPath() {
         return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
@@ -399,5 +395,10 @@ public class NativeInterface {
                 }
             }
         });
+    }
+
+    @NonNull
+    public static Logger getLogger() {
+        return getClient().logger;
     }
 }

@@ -27,7 +27,7 @@ class SessionTrackerPauseResumeTest {
     fun setUp() {
         client = generateClient()
         tracker = SessionTracker(BugsnagTestUtils.generateImmutableConfig(),
-            configuration, client, sessionStore)
+            configuration, client, sessionStore, NoopLogger)
     }
 
     @After

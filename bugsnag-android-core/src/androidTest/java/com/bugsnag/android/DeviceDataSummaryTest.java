@@ -31,7 +31,8 @@ public class DeviceDataSummaryTest {
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
-        DeviceData deviceData = new DeviceData(connectivity, context, resources, "123");
+        DeviceData deviceData = new DeviceData(connectivity, context, resources,
+                "123", NoopLogger.INSTANCE);
         this.deviceData = deviceData.getDeviceDataSummary();
     }
 

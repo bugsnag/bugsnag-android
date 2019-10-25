@@ -37,10 +37,8 @@ class Async {
     }
 
     static void cancelTasks() throws InterruptedException {
-        Logger.info("Cancelling tasks");
         EXECUTOR.shutdown();
         EXECUTOR.awaitTermination(2000, TimeUnit.MILLISECONDS);
-        Logger.info("Finishing cancelling tasks");
     }
 
 }

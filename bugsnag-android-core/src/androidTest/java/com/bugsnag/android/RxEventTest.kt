@@ -47,6 +47,6 @@ class RxEventTest {
         val fixtureFile = File.createTempFile("rx_error", ".json")
         fixtureFile.writeText(fileContents)
         return EventReader.readEvent(BugsnagTestUtils.generateImmutableConfig(),
-            BugsnagTestUtils.generateConfiguration(), fixtureFile)
+            BugsnagTestUtils.generateConfiguration(), fixtureFile, NoopLogger)
     }
 }

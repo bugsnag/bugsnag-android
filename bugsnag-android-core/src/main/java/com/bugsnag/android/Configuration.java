@@ -48,7 +48,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     private boolean autoDetectAnrs = false;
     private boolean autoDetectNdkCrashes;
-    private boolean loggingEnabled;
     private long anrThresholdMs = 5000;
     private boolean autoDetectErrors = true;
 
@@ -65,6 +64,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private String appType = "android";
 
     private Delivery delivery;
+    private Logger logger;
     private Endpoints endpoints = new Endpoints();
     private int maxBreadcrumbs = DEFAULT_MAX_SIZE;
 
@@ -92,7 +92,13 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
             autoDetectNdkCrashes = false;
         }
 
-        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+        boolean loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+
+        if (loggingEnabled) {
+            logger = DebugLogger.INSTANCE;
+        } else {
+            logger = NoopLogger.INSTANCE;
+        }
     }
 
     /**
@@ -371,7 +377,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;
-        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
     }
 
     /**
@@ -673,23 +678,27 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * @return true if SDK logging is enabled
+     * Retrieves the logger used for logging internal messages within the bugsnag SDK
+     *
+     * @return the logger
      */
-    public boolean getLoggingEnabled() {
-        return loggingEnabled;
+    @Nullable
+    public Logger getLogger() {
+        return logger;
     }
 
     /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
+     * Sets the logger used for logging internal messages within the bugsnag SDK to a custom
+     * implementation. If set to null, no log messages will be logged.
      *
-     * @param loggingEnabled true if logging is enabled
+     * @param logger the logger, or null
      */
-    public void setLoggingEnabled(boolean loggingEnabled) {
-        this.loggingEnabled = loggingEnabled;
+    public void setLogger(@Nullable Logger logger) {
+        if (logger == null) {
+            this.logger = NoopLogger.INSTANCE;
+        } else {
+            this.logger = logger;
+        }
     }
 
     /**

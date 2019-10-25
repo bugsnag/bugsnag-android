@@ -33,6 +33,7 @@ class EventFilenameTest {
             config,
             BugsnagTestUtils.generateConfiguration(),
             context,
+            NoopLogger,
             null
         )
     }

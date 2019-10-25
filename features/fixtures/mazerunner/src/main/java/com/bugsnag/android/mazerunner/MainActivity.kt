@@ -48,7 +48,6 @@ class MainActivity : Activity() {
         config.setEndpoints(Endpoints("${findHostname()}:$port", "${findHostname()}:$port"))
         config.autoDetectNdkCrashes = true
         config.autoDetectAnrs = true
-        config.loggingEnabled = true
         return config
     }
 

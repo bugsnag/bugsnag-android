@@ -51,7 +51,8 @@ public class AppDataTest {
         PackageManager packageManager = context.getPackageManager();
         Configuration config = generateConfiguration();
         config.setVersionCode(1);
-        AppData obj = new AppData(context, packageManager, convert(config), sessionTracker);
+        AppData obj = new AppData(context, packageManager, convert(config),
+                sessionTracker, NoopLogger.INSTANCE);
         this.appData = obj.getAppData();
     }
 

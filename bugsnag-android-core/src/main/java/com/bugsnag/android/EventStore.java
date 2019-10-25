@@ -29,6 +29,7 @@ class EventStore extends FileStore<Event> {
     private final Semaphore semaphore = new Semaphore(1);
     private final ImmutableConfig config;
     private final Configuration clientState;
+    private final Logger logger;
     private final Delegate delegate;
 
     static final Comparator<File> EVENT_COMPARATOR = new Comparator<File>() {
@@ -50,10 +51,11 @@ class EventStore extends FileStore<Event> {
     };
 
     EventStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
-               @NonNull Context appContext, Delegate delegate) {
-        super(appContext, "/bugsnag-errors/", 128, EVENT_COMPARATOR, delegate);
+               @NonNull Context appContext, Logger logger, Delegate delegate) {
+        super(appContext, "/bugsnag-errors/", 128, EVENT_COMPARATOR, logger, delegate);
         this.config = config;
         this.clientState = clientState;
+        this.logger = logger;
         this.delegate = delegate;
     }
 
@@ -72,7 +74,7 @@ class EventStore extends FileStore<Event> {
                 // The request itself will run in a background thread and will continue after the 2
                 // second period until the request completes, or the app crashes.
                 flushOnLaunchCompleted = false;
-                Logger.info("Attempting to send launch crash reports");
+                logger.i("Attempting to send launch crash reports");
 
                 try {
                     Async.run(new Runnable() {
@@ -83,7 +85,7 @@ class EventStore extends FileStore<Event> {
                         }
                     });
                 } catch (RejectedExecutionException ex) {
-                    Logger.warn("Failed to flush launch crash reports", ex);
+                    logger.w("Failed to flush launch crash reports", ex);
                     flushOnLaunchCompleted = true;
                 }
 
@@ -94,10 +96,10 @@ class EventStore extends FileStore<Event> {
                         Thread.sleep(LAUNCH_CRASH_POLL_MS);
                         waitMs += LAUNCH_CRASH_POLL_MS;
                     } catch (InterruptedException exception) {
-                        Logger.warn("Interrupted while waiting for launch crash report request");
+                        logger.w("Interrupted while waiting for launch crash report request");
                     }
                 }
-                Logger.info("Continuing with Bugsnag initialisation");
+                logger.i("Continuing with Bugsnag initialisation");
             }
         }
 
@@ -120,14 +122,14 @@ class EventStore extends FileStore<Event> {
                 }
             });
         } catch (RejectedExecutionException exception) {
-            Logger.warn("Failed to flush all on-disk errors, retaining unsent errors for later.");
+            logger.w("Failed to flush all on-disk errors, retaining unsent errors for later.");
         }
     }
 
     void flushReports(Collection<File> storedReports) {
         if (!storedReports.isEmpty() && semaphore.tryAcquire(1)) {
             try {
-                Logger.info(String.format(Locale.US,
+                logger.i(String.format(Locale.US,
                     "Sending %d saved error(s) to Bugsnag", storedReports.size()));
 
                 for (File eventFile : storedReports) {
@@ -146,18 +148,18 @@ class EventStore extends FileStore<Event> {
             if (clientState.getBeforeSendTasks().isEmpty()) {
                 report = new Report(config.getApiKey(), eventFile);
             } else {
-                Event event = EventReader.readEvent(config, clientState, eventFile);
+                Event event = EventReader.readEvent(config, clientState, eventFile, logger);
                 report = new Report(config.getApiKey(), event);
 
                 for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
                     try {
                         if (!beforeSend.run(report)) {
                             deleteStoredFiles(Collections.singleton(eventFile));
-                            Logger.info("Deleting cancelled event file " + eventFile.getName());
+                            logger.i("Deleting cancelled event file " + eventFile.getName());
                             return;
                         }
                     } catch (Throwable ex) {
-                        Logger.warn("BeforeSend threw an Exception", ex);
+                        logger.w("BeforeSend threw an Exception", ex);
                     }
                 }
             }
@@ -168,11 +170,11 @@ class EventStore extends FileStore<Event> {
             switch (deliveryStatus) {
                 case DELIVERED:
                     deleteStoredFiles(Collections.singleton(eventFile));
-                    Logger.info("Deleting sent error file " + eventFile.getName());
+                    logger.i("Deleting sent error file " + eventFile.getName());
                     break;
                 case UNDELIVERED:
                     cancelQueuedFiles(Collections.singleton(eventFile));
-                    Logger.warn("Could not send previously saved error(s)"
+                    logger.w("Could not send previously saved error(s)"
                             + " to Bugsnag, will try again later");
                     break;
                 case FAILURE:

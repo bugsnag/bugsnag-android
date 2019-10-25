@@ -54,7 +54,8 @@ public class EventReaderTest {
         }
         clientState = BugsnagTestUtils.generateConfiguration();
         immutableConfig = BugsnagTestUtils.convert(clientState);
-        event = EventReader.readEvent(immutableConfig, clientState, fixtureFile);
+        event = EventReader.readEvent(immutableConfig, clientState, fixtureFile,
+                NoopLogger.INSTANCE);
     }
 
     @Test
@@ -72,7 +73,7 @@ public class EventReaderTest {
         } catch (Exception ex) {
             assertTrue("Failed to configure test", false);
         }
-        EventReader.readEvent(immutableConfig, clientState,  fixtureFile);
+        EventReader.readEvent(immutableConfig, clientState,  fixtureFile, NoopLogger.INSTANCE);
     }
 
     @Test(expected = IOException.class)
@@ -85,7 +86,7 @@ public class EventReaderTest {
         } catch (Exception ex) {
             assertTrue("Failed to configure test", false);
         }
-        EventReader.readEvent(immutableConfig, clientState, fixtureFile);
+        EventReader.readEvent(immutableConfig, clientState, fixtureFile, NoopLogger.INSTANCE);
     }
 
     @Test

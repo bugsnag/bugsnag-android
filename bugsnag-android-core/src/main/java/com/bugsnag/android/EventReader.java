@@ -25,7 +25,9 @@ class EventReader {
      *                     field is missing.
      */
     static Event readEvent(@NonNull ImmutableConfig config,
-                           @NonNull BugsnagConfiguration clientState, @NonNull File eventFile)
+                           @NonNull BugsnagConfiguration clientState,
+                           @NonNull File eventFile,
+                           Logger logger)
             throws IOException {
         JsonReader reader = null;
 
@@ -53,7 +55,7 @@ class EventReader {
                         appData = jsonObjectToMap(reader);
                         break;
                     case "breadcrumbs":
-                        crumbs = readBreadcrumbs(config, reader);
+                        crumbs = readBreadcrumbs(config, reader, logger);
                         break;
                     case "context":
                         context = reader.nextString();
@@ -65,7 +67,7 @@ class EventReader {
                         projectPackages = jsonArrayToList(reader);
                         break;
                     case "exceptions":
-                        exceptions = readExceptions(config, reader);
+                        exceptions = readExceptions(config, reader, logger);
                         break;
                     case "groupingHash":
                         groupingHash = reader.nextString();
@@ -83,7 +85,7 @@ class EventReader {
                         severityReasonValues = readSeverityReason(reader);
                         break;
                     case "threads":
-                        threadState = readThreadState(reader);
+                        threadState = readThreadState(reader, logger);
                         break;
                     case "unhandled":
                         unhandled = reader.nextBoolean();
@@ -126,9 +128,10 @@ class EventReader {
         }
     }
 
-    private static Breadcrumbs readBreadcrumbs(ImmutableConfig config, JsonReader reader)
+    private static Breadcrumbs readBreadcrumbs(ImmutableConfig config, JsonReader reader,
+                                               Logger logger)
         throws IOException {
-        Breadcrumbs crumbs = new Breadcrumbs(config.getMaxBreadcrumbs());
+        Breadcrumbs crumbs = new Breadcrumbs(config.getMaxBreadcrumbs(), logger);
         reader.beginArray();
         while (reader.hasNext()) {
             Breadcrumb breadcrumb = readBreadcrumb(reader);
@@ -184,15 +187,16 @@ class EventReader {
         }
     }
 
-    private static Exceptions readExceptions(ImmutableConfig config, JsonReader reader)
+    private static Exceptions readExceptions(ImmutableConfig config, JsonReader reader,
+                                             Logger logger)
         throws IOException {
         reader.beginArray();
 
-        BugsnagException root = readException(reader);
+        BugsnagException root = readException(reader, logger);
         Throwable ref = root; // the latest throwable pulled from the reader
 
         while (reader.hasNext()) {
-            Throwable exc = readException(reader);
+            Throwable exc = readException(reader, logger);
             // initialise this throwable as the cause of the previous throwable
             ref.initCause(exc);
             ref = exc;
@@ -207,7 +211,8 @@ class EventReader {
         return ex;
     }
 
-    private static BugsnagException readException(JsonReader reader) throws IOException {
+    private static BugsnagException readException(JsonReader reader,
+                                                  Logger logger) throws IOException {
         reader.beginObject();
         String errorClass = null;
         String message = null;
@@ -223,7 +228,7 @@ class EventReader {
                     message = reader.nextString();
                     break;
                 case "stacktrace":
-                    frames = readStackFrames(reader);
+                    frames = readStackFrames(reader, logger);
                     break;
                 case "type":
                     type = reader.nextString();
@@ -240,17 +245,19 @@ class EventReader {
     }
 
 
-    private static List<Map<String, Object>> readStackFrames(JsonReader reader) throws IOException {
+    private static List<Map<String, Object>> readStackFrames(JsonReader reader,
+                                                             Logger logger) throws IOException {
         List<Map<String, Object>> frames = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            frames.add(readStackFrame(reader));
+            frames.add(readStackFrame(reader, logger));
         }
         reader.endArray();
         return frames;
     }
 
-    private static Map<String, Object> readStackFrame(JsonReader reader) throws IOException {
+    private static Map<String, Object> readStackFrame(JsonReader reader,
+                                                      Logger logger) throws IOException {
         Map<String, Object> map = new HashMap<>();
         reader.beginObject();
 
@@ -270,7 +277,7 @@ class EventReader {
                 }
             }
         } catch (IllegalStateException exc) {
-            Logger.warn("Failed to read stackframe", exc);
+            logger.w("Failed to read stackframe", exc);
         }
         reader.endObject();
         return map;
@@ -397,12 +404,12 @@ class EventReader {
         return user;
     }
 
-    private static ThreadState readThreadState(JsonReader reader)
+    private static ThreadState readThreadState(JsonReader reader, Logger logger)
         throws IOException {
         List<CachedThread> threads = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            CachedThread cachedThread = readThread(reader);
+            CachedThread cachedThread = readThread(reader, logger);
 
             if (cachedThread != null) {
                 threads.add(cachedThread);
@@ -412,7 +419,7 @@ class EventReader {
         return new ThreadState(threads.toArray(new CachedThread[0]));
     }
 
-    private static CachedThread readThread(JsonReader reader) throws IOException {
+    private static CachedThread readThread(JsonReader reader, Logger logger) throws IOException {
         long id = 0;
         String name = null;
         String type = null;
@@ -431,7 +438,7 @@ class EventReader {
                     type = reader.nextString();
                     break;
                 case "stacktrace":
-                    frames = readStackFrames(reader);
+                    frames = readStackFrames(reader, logger);
                     break;
                 case "errorReportingThread":
                     errorReportingThread = reader.nextBoolean();

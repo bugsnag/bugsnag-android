@@ -78,7 +78,6 @@ class Stacktrace implements JsonStream.Streamable {
             }
             return map;
         } catch (Exception lineEx) {
-            Logger.warn("Failed to serialize stacktrace", lineEx);
             return null;
         }
     }

@@ -67,9 +67,9 @@ public final class Bugsnag {
     }
 
     private static void logClientInitWarning() {
-        Logger.warn("It appears that Bugsnag.init() was called more than once. Subsequent "
-            + "calls have no effect, but may indicate that Bugsnag is not integrated in an"
-            + " Application subclass, which can lead to undesired behaviour.");
+        DebugLogger.INSTANCE.w("It appears that Bugsnag.init() was called more than once. "
+            + "Subsequent calls have no effect, but may indicate that Bugsnag is not integrated in "
+            + "an Application subclass, which can lead to undesired behaviour.");
     }
 
     /**

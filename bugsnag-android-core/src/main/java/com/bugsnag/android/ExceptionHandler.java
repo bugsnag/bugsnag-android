@@ -16,9 +16,11 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     private final UncaughtExceptionHandler originalHandler;
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     private final Client client;
+    private final Logger logger;
 
-    ExceptionHandler(Client client) {
+    ExceptionHandler(Client client, Logger logger) {
         this.client = client;
+        this.logger = logger;
         this.originalHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
@@ -58,7 +60,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             originalHandler.uncaughtException(thread, throwable);
         } else {
             System.err.printf("Exception in thread \"%s\" ", thread.getName());
-            Logger.warn("Exception", throwable);
+            logger.w("Exception", throwable);
         }
     }
 }

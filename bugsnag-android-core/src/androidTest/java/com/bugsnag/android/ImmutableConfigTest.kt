@@ -56,7 +56,7 @@ class ImmutableConfigTest {
 
             // behaviour
             assertEquals(seed.launchCrashThresholdMs, launchCrashThresholdMs)
-            assertEquals(seed.loggingEnabled, loggingEnabled)
+            assertEquals(seed.logger, DebugLogger)
             assertEquals(seed.maxBreadcrumbs, maxBreadcrumbs)
             assertEquals(seed.persistUserBetweenSessions, persistUserBetweenSessions)
             assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
@@ -84,7 +84,7 @@ class ImmutableConfigTest {
 
         seed.endpoints = Endpoints("http://example.com:1234", "http://example.com:1235")
         seed.launchCrashThresholdMs = 7000
-        seed.loggingEnabled = false
+        seed.logger = null
         seed.maxBreadcrumbs = 37
         seed.persistUserBetweenSessions = true
         seed.enabledBreadcrumbTypes = emptySet()
@@ -121,7 +121,7 @@ class ImmutableConfigTest {
 
             // behaviour
             assertEquals(7000, seed.launchCrashThresholdMs)
-            assertFalse(seed.loggingEnabled)
+            assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)
             assertTrue(seed.persistUserBetweenSessions)
             assertTrue(seed.enabledBreadcrumbTypes.isEmpty())

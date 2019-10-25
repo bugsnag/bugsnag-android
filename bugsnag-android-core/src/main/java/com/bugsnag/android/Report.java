@@ -62,7 +62,7 @@ public class Report implements JsonStream.Streamable {
         } else if (eventFile != null) { // Write on-disk event
             writer.value(eventFile);
         } else {
-            Logger.warn("Expected event or eventFile, found empty payload instead");
+            throw new IOException("Expected event or eventFile");
         }
 
         // End events array
