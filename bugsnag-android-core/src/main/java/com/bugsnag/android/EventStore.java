@@ -218,7 +218,7 @@ class EventStore extends FileStore<Event> {
         if (object instanceof Event) {
             Event event = (Event) object;
 
-            Map<String, Object> appData = event.getAppData();
+            Map<String, Object> appData = event.getApp();
             if (appData instanceof Map) {
                 Object duration = appData.get("duration");
                 if (duration instanceof Number

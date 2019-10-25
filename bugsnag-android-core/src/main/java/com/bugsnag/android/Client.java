@@ -165,7 +165,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
             public void onErrorIOFailure(Exception exc, File errorFile, String context) {
                 // send an internal error to bugsnag with no cache
                 Thread thread = Thread.currentThread();
-                Event err = new Event.Builder(immutableConfig, exc, null, thread,
+                Event err = new EventGenerator.Builder(immutableConfig, exc, null, thread,
                         true, new MetaData()).build();
                 err.setContext(context);
 
@@ -644,7 +644,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *                  additional modification
      */
     public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
+        Event event = new EventGenerator.Builder(immutableConfig, exception, sessionTracker,
             Thread.currentThread(), false, clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -677,7 +677,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
-        Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
+        Event event = new EventGenerator.Builder(immutableConfig, name, message, stacktrace,
             sessionTracker, Thread.currentThread(), clientState.getMetaData())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
@@ -692,7 +692,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     void notifyUnhandledException(@NonNull Throwable exception, MetaData metaData,
                                   @HandledState.SeverityReason String severityReason,
                                   @Nullable String attributeValue, Thread thread) {
-        Event event = new Event.Builder(immutableConfig, exception,
+        Event event = new EventGenerator.Builder(immutableConfig, exception,
                 sessionTracker, thread, true, clientState.getMetaData())
                 .severity(Severity.ERROR)
                 .metaData(metaData)
@@ -707,7 +707,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                         @NonNull DeliveryStyle style,
                         @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
-        if (event.shouldIgnoreClass()) {
+        if (event.shouldIgnoreClass$bugsnag_android_core_debug()) {
             return;
         }
 
@@ -717,21 +717,21 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
         // Capture the state of the app and device and attach diagnostics to the event
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
-        event.setDeviceData(errorDeviceData);
+        event.setDevice(errorDeviceData);
         event.addMetadata("device", null, deviceData.getDeviceMetaData());
 
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
-        event.setAppData(errorAppData);
+        event.setApp(errorAppData);
         event.addMetadata("app", null, appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the event
-        event.setBreadcrumbs(breadcrumbs);
+        event.setBreadcrumbs$bugsnag_android_core_debug(breadcrumbs);
 
         // Attach user info to the event
-        event.setUser(user);
+        event.setUser(user.getId(), user.getEmail(), user.getName());
 
         // Attach default context from active activity
         if (TextUtils.isEmpty(event.getContext())) {
@@ -751,7 +751,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         if (event.getSession() != null) {
             setChanged();
 
-            if (event.getHandledState().isUnhandled()) {
+            if (event.getHandledState$bugsnag_android_core_debug().isUnhandled()) {
                 notifyObservers(new Message(
                     NativeInterface.MessageType.NOTIFY_UNHANDLED, null));
             } else {
@@ -783,11 +783,11 @@ public class Client extends Observable implements Observer, MetaDataAware {
         app.put("duration", AppData.getDurationMs());
         app.put("durationInForeground", appData.calculateDurationInForeground());
         app.put("inForeground", sessionTracker.isInForeground());
-        event.setAppData(app);
+        event.setApp(app);
 
         Map<String, Object> device = deviceData.getDeviceDataSummary();
         device.put("freeDisk", deviceData.calculateFreeDisk());
-        event.setDeviceData(device);
+        event.setDevice(device);
 
         Notifier notifier = Notifier.INSTANCE;
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
