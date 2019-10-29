@@ -53,8 +53,6 @@ public class Configuration extends Observable implements Observer {
     private long anrThresholdMs = 5000;
     private boolean autoDetectErrors = true;
 
-    private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
-
     private String codeBundleId;
     private String appType = "android";
 
@@ -669,32 +667,6 @@ public class Configuration extends Observable implements Observer {
 
     void removeOnError(@NonNull OnError onError) {
         clientState.removeOnError(onError);
-    }
-
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        if (!beforeSendTasks.contains(beforeSend)) {
-            beforeSendTasks.add(beforeSend);
-        }
     }
 
     /**
