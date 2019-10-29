@@ -12,7 +12,7 @@ import java.io.IOException;
  * This payload contains an error report and identifies the source application
  * using your API key.
  */
-public class Report implements JsonStream.Streamable {
+public final class Report implements JsonStream.Streamable {
 
     @Nullable
     private final File eventFile;

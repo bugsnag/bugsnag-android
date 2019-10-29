@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @see OnError
  */
-public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
+public final class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
 
     @NonNull
     private Map<String, Object> appData = new HashMap<>();
