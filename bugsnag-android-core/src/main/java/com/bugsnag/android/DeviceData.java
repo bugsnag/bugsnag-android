@@ -5,12 +5,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
-import android.os.StatFs;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import androidx.annotation.NonNull;
@@ -22,7 +20,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 class DeviceData {
 
@@ -47,6 +44,7 @@ class DeviceData {
     private final Connectivity connectivity;
     private final Resources resources;
     private final String installId;
+    private final Logger logger;
     private final DisplayMetrics displayMetrics;
     private final boolean rooted;
 
@@ -66,11 +64,12 @@ class DeviceData {
     final String[] cpuAbi;
 
     DeviceData(Connectivity connectivity, Context appContext, Resources resources,
-               String installId) {
+               String installId, Logger logger) {
         this.connectivity = connectivity;
         this.appContext = appContext;
         this.resources = resources;
         this.installId = installId;
+        this.logger = logger;
 
         if (resources != null) {
             displayMetrics = resources.getDisplayMetrics();
@@ -81,7 +80,7 @@ class DeviceData {
         screenDensity = getScreenDensity();
         dpi = getScreenDensityDpi();
         screenResolution = getScreenResolution();
-        locale = getLocale();
+        locale = Locale.getDefault().toString();
         cpuAbi = getCpuAbi();
         emulator = isEmulator();
         rooted = isRooted();
@@ -127,10 +126,6 @@ class DeviceData {
         map.put("emulator", emulator);
         map.put("screenResolution", screenResolution);
         return map;
-    }
-
-    String getId() {
-        return installId;
     }
 
     /**
@@ -216,14 +211,6 @@ class DeviceData {
     }
 
     /**
-     * Get the locale of the current Android device, eg en_US
-     */
-    @NonNull
-    private String getLocale() {
-        return Locale.getDefault().toString();
-    }
-
-    /**
      * Gets information about the CPU / API
      */
     @NonNull
@@ -291,7 +278,7 @@ class DeviceData {
             return batteryStatus.getIntExtra("level", -1)
                 / (float) batteryStatus.getIntExtra("scale", -1);
         } catch (Exception exception) {
-            Logger.warn("Could not get batteryLevel");
+            logger.w("Could not get batteryLevel");
         }
         return null;
     }
@@ -309,7 +296,7 @@ class DeviceData {
             return (status == BatteryManager.BATTERY_STATUS_CHARGING
                 || status == BatteryManager.BATTERY_STATUS_FULL);
         } catch (Exception exception) {
-            Logger.warn("Could not get charging status");
+            logger.w("Could not get charging status");
         }
         return null;
     }
@@ -330,7 +317,7 @@ class DeviceData {
                 return "disallowed";
             }
         } catch (Exception exception) {
-            Logger.warn("Could not get locationStatus");
+            logger.w("Could not get locationStatus");
         }
         return null;
     }

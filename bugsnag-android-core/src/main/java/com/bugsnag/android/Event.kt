@@ -84,7 +84,7 @@ class Event internal constructor(
     /**
      * @return user information associated with this Event
      */
-    private var _user = User()
+    private var _user = User(null, null, null)
 
     protected fun shouldIgnoreClass(): Boolean {
         return config.ignoreClasses.contains(errors[0].errorClass)

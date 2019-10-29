@@ -163,10 +163,6 @@ public class NativeInterface {
         return getClient().getContext();
     }
 
-    public static boolean getLoggingEnabled() {
-        return Logger.getEnabled();
-    }
-
     @NonNull
     public static String getNativeReportPath() {
         return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
@@ -194,7 +190,7 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static Map<String,Object> getAppData() {
         HashMap<String,Object> data = new HashMap<>();
-        AppData source = getClient().getAppData();
+        AppData source = getClient().appData;
         data.putAll(source.getAppData());
         data.putAll(source.getAppDataMetaData());
         return data;
@@ -207,7 +203,7 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static Map<String,Object> getDeviceData() {
         HashMap<String,Object> deviceData = new HashMap<>();
-        DeviceData source = getClient().getDeviceData();
+        DeviceData source = getClient().deviceData;
         deviceData.putAll(source.getDeviceMetaData());
         deviceData.putAll(source.getDeviceData()); // wat
         return deviceData;
@@ -226,7 +222,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetaData() {
-        return new HashMap<>(getClient().clientState.getMetaData().toMap());
+        return new HashMap<>(getClient().clientState.getMetadata().toMap());
     }
 
     /**
@@ -399,5 +395,10 @@ public class NativeInterface {
                 return true;
             }
         });
+    }
+
+    @NonNull
+    public static Logger getLogger() {
+        return getClient().logger;
     }
 }

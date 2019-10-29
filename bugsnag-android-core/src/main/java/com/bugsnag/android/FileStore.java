@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-abstract class FileStore<T extends JsonStream.Streamable> {
+abstract class FileStore {
 
     interface Delegate {
 
@@ -42,13 +42,15 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     final Lock lock = new ReentrantLock();
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
+    private final Logger logger;
     protected final EventStore.Delegate delegate;
 
 
     FileStore(@NonNull Context appContext, String folder,
-              int maxStoreCount, Comparator<File> comparator, Delegate delegate) {
+              int maxStoreCount, Comparator<File> comparator, Logger logger, Delegate delegate) {
         this.maxStoreCount = maxStoreCount;
         this.comparator = comparator;
+        this.logger = logger;
         this.delegate = delegate;
 
         String path;
@@ -58,11 +60,11 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             File outFile = new File(path);
             outFile.mkdirs();
             if (!outFile.exists()) {
-                Logger.warn("Could not prepare file storage directory");
+                logger.w("Could not prepare file storage directory");
                 path = null;
             }
         } catch (Exception exception) {
-            Logger.warn("Could not prepare file storage directory", exception);
+            logger.w("Could not prepare file storage directory", exception);
             path = null;
         }
         this.storeDirectory = path;
@@ -87,14 +89,14 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 delegate.onErrorIOFailure(exc, eventFile, "NDK Crash report copy");
             }
 
-            IOUtils.deleteFile(eventFile);
+            IOUtils.deleteFile(eventFile, logger);
         } finally {
             try {
                 if (out != null) {
                     out.close();
                 }
             } catch (Exception exception) {
-                Logger.warn(String.format("Failed to close unsent payload writer (%s) ",
+                logger.w(String.format("Failed to close unsent payload writer (%s) ",
                     filename), exception);
             }
             lock.unlock();
@@ -117,10 +119,10 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             stream = new JsonStream(out);
             stream.value(streamable);
-            Logger.info(String.format("Saved unsent payload to disk (%s) ", filename));
+            logger.i(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (FileNotFoundException exc) {
-            Logger.warn("Ignoring FileNotFoundException - unable to create file", exc);
+            logger.w("Ignoring FileNotFoundException - unable to create file", exc);
         } catch (Exception exc) {
             File eventFile = new File(filename);
 
@@ -128,7 +130,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                 delegate.onErrorIOFailure(exc, eventFile, "Crash report serialization");
             }
 
-            IOUtils.deleteFile(eventFile);
+            IOUtils.deleteFile(eventFile, logger);
         } finally {
             IOUtils.closeQuietly(stream);
             lock.unlock();
@@ -150,7 +152,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
                     File oldestFile = files[k];
 
                     if (!queuedFiles.contains(oldestFile)) {
-                        Logger.warn(String.format("Discarding oldest error as stored "
+                        logger.w(String.format("Discarding oldest error as stored "
                             + "error limit reached (%s)", oldestFile.getPath()));
                         deleteStoredFiles(Collections.singleton(oldestFile));
                     }

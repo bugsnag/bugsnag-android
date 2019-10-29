@@ -18,7 +18,7 @@ class BreadcrumbsSerializationTest {
 
     @Before
     fun setUp() {
-        breadcrumbs = Breadcrumbs(20)
+        breadcrumbs = Breadcrumbs(20, NoopLogger)
         client = generateClient()
     }
 

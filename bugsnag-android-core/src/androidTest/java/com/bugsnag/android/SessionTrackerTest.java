@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateSessionStore;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -35,10 +34,10 @@ public class SessionTrackerTest {
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
         client = generateClient();
         immutableConfig = BugsnagTestUtils.generateImmutableConfig();
-        sessionTracker = new SessionTracker(immutableConfig,
-                configuration, client, generateSessionStore());
+        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(),
+                client, generateSessionStore(), NoopLogger.INSTANCE);
         configuration.setAutoTrackSessions(true);
-        user = new User();
+        user = new User(null, null, null);
     }
 
     @After
@@ -127,8 +126,8 @@ public class SessionTrackerTest {
 
     @Test
     public void testZeroSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(immutableConfig, configuration, client,
-            0, generateSessionStore());
+        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
+            0, generateSessionStore(), NoopLogger.INSTANCE);
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -142,8 +141,8 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(immutableConfig, configuration, client,
-            100, generateSessionStore());
+        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
+            100, generateSessionStore(), NoopLogger.INSTANCE);
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);

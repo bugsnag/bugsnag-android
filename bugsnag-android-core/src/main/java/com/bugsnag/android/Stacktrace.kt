@@ -67,7 +67,6 @@ internal class Stacktrace : JsonStream.Streamable {
             }
             return map
         } catch (lineEx: Exception) {
-            Logger.warn("Failed to serialize stacktrace", lineEx)
             return null
         }
     }

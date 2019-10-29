@@ -13,7 +13,7 @@ import java.util.UUID;
  * Store and flush Sessions which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-class SessionStore extends FileStore<Session> {
+class SessionStore extends FileStore {
 
     static final Comparator<File> SESSION_COMPARATOR = new Comparator<File>() {
         @Override
@@ -33,8 +33,8 @@ class SessionStore extends FileStore<Session> {
         }
     };
 
-    SessionStore(@NonNull Context appContext, @Nullable Delegate delegate) {
-        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, delegate);
+    SessionStore(@NonNull Context appContext, Logger logger, @Nullable Delegate delegate) {
+        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, logger, delegate);
     }
 
     @NonNull

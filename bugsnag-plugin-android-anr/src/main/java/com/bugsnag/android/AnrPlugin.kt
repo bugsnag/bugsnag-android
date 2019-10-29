@@ -15,7 +15,6 @@ internal class AnrPlugin : BugsnagPlugin {
         val monitor = AppNotRespondingMonitor(delegate)
         monitor.start()
         installAnrDetection(monitor.sentinelBuffer)
-        Logger.info("Initialised ANR Plugin")
     }
 
     private fun handleAnr(thread: Thread, client: Client) {
@@ -23,7 +22,7 @@ internal class AnrPlugin : BugsnagPlugin {
         val errMsg = "Application did not respond to UI input"
         val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
         val error = EventGenerator.Builder(client.config, exc, client.sessionTracker, thread, true,
-            client.clientState.metaData)
+            MetaData())
             .severity(Severity.ERROR)
             .severityReasonType(HandledState.REASON_ANR)
             .build()

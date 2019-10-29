@@ -168,7 +168,7 @@ TEST test_report_device_info_to_json(void) {
   ASSERT(event != NULL);
   ASSERT(strcmp( "HI-TEC™", json_object_dotget_string(event, "device.manufacturer")) == 0);
   ASSERT(strcmp( "Rasseur", json_object_dotget_string(event, "device.model")) == 0);
-  ASSERT(strcmp( "en_AU#Melbun", json_object_dotget_string(event, "metaData.device.locale")) == 0);
+  ASSERT(strcmp( "en_AU#Melbun", json_object_dotget_string(event, "device.locale")) == 0);
   json_value_free(root_value);
   PASS();
 }

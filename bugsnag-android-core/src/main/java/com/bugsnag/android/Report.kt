@@ -28,7 +28,7 @@ class Report internal constructor(
         when {
             event != null -> writer.value(event)
             eventFile != null -> writer.value(eventFile)
-            else -> Logger.warn("Expected event or eventFile, found empty payload instead")
+            else -> Unit
         }
 
         writer.endArray()

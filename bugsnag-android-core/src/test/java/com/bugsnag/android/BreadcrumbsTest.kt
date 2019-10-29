@@ -16,7 +16,7 @@ class BreadcrumbsTest {
 
     @Before
     fun setUp() {
-        breadcrumbs = Breadcrumbs(20)
+        breadcrumbs = Breadcrumbs(20, NoopLogger)
     }
 
     /**
@@ -42,7 +42,7 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSizeLimitBeforeAdding() {
-        breadcrumbs = Breadcrumbs(5)
+        breadcrumbs = Breadcrumbs(5, NoopLogger)
 
         for (k in 1..6) {
             breadcrumbs.add(Breadcrumb("$k"))
@@ -58,7 +58,7 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeEmpty() {
-        breadcrumbs = Breadcrumbs(0)
+        breadcrumbs = Breadcrumbs(0, NoopLogger)
         breadcrumbs.add(Breadcrumb("1"))
         breadcrumbs.add(Breadcrumb("2"))
         assertTrue(breadcrumbs.store.isEmpty())
@@ -69,7 +69,7 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeNegative() {
-        breadcrumbs = Breadcrumbs(-1)
+        breadcrumbs = Breadcrumbs(-1, NoopLogger)
         breadcrumbs.add(Breadcrumb("1"))
         assertEquals(0, breadcrumbs.store.size)
     }

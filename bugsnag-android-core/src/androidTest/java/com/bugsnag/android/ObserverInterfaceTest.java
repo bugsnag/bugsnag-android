@@ -14,7 +14,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -134,14 +133,6 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testClientSetContextSendsMessage() {
-        client.setContext("Pod Bay");
-        String context = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_CONTEXT, String.class);
-        assertEquals("Pod Bay", context);
-    }
-
-    @Test
     public void testClientSetUserId() {
         client.setUserId("personX");
         String value = (String)findMessageInQueue(
@@ -166,16 +157,6 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testClientClearUserSendsMessage() {
-        client.clearUser(); // resets to device ID
-        String value = (String)findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_ID,
-                                                  String.class);
-        assertEquals(client.getDeviceData().getDeviceData().get("id"), value);
-        findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_EMAIL, null);
-        findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_NAME, null);
-    }
-
-    @Test
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
@@ -195,12 +176,6 @@ public class ObserverInterfaceTest {
         assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
         assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
-    }
-
-    @Test
-    public void testClearBreadcrumbsSendsMessage() {
-        client.clearBreadcrumbs();
-        findMessageInQueue(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null);
     }
 
     @Test

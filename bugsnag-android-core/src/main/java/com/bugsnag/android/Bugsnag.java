@@ -67,9 +67,9 @@ public final class Bugsnag {
     }
 
     private static void logClientInitWarning() {
-        Logger.warn("It appears that Bugsnag.init() was called more than once. Subsequent "
-            + "calls have no effect, but may indicate that Bugsnag is not integrated in an"
-            + " Application subclass, which can lead to undesired behaviour.");
+        DebugLogger.INSTANCE.w("It appears that Bugsnag.init() was called more than once. "
+            + "Subsequent calls have no effect, but may indicate that Bugsnag is not integrated in "
+            + "an Application subclass, which can lead to undesired behaviour.");
     }
 
     /**
@@ -108,13 +108,6 @@ public final class Bugsnag {
                                @Nullable final String email,
                                @Nullable final String name) {
         getClient().setUser(id, email, name);
-    }
-
-    /**
-     * Removes the current user data and sets it back to defaults
-     */
-    public static void clearUser() {
-        getClient().clearUser();
     }
 
     /**
@@ -173,30 +166,6 @@ public final class Bugsnag {
      */
     public static void addOnError(@NonNull OnError onError) {
         getClient().addOnError(onError);
-    }
-
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public static void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        getClient().addBeforeSend(beforeSend);
     }
 
     /**
@@ -312,13 +281,6 @@ public final class Bugsnag {
                                        @NonNull BreadcrumbType type,
                                        @NonNull Map<String, Object> metadata) {
         getClient().leaveBreadcrumb(message, type, metadata);
-    }
-
-    /**
-     * Clear any breadcrumbs that have been left so far.
-     */
-    public static void clearBreadcrumbs() {
-        getClient().clearBreadcrumbs();
     }
 
     /**

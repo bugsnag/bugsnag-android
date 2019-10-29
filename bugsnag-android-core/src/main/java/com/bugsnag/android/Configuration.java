@@ -13,22 +13,20 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-public class Configuration extends Observable implements Observer, BugsnagConfiguration {
+public class Configuration extends Observable implements Observer, CallbackAware {
 
-    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
-    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
     private static final int DEFAULT_MAX_SIZE = 25;
     static final String DEFAULT_EXCEPTION_TYPE = "android";
 
     @NonNull
     private final String apiKey;
+    private final ClientState clientState;
     private String buildUuid;
     private String appVersion;
     private Integer versionCode = 0;
@@ -48,23 +46,13 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     private boolean autoDetectAnrs = false;
     private boolean autoDetectNdkCrashes;
-    private boolean loggingEnabled;
-    private long anrThresholdMs = 5000;
     private boolean autoDetectErrors = true;
-
-    @NonNull
-    private MetaData metaData;
-    private final Collection<OnError> onErrorTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<OnBreadcrumb> breadcrumbCallbacks
-        = new ConcurrentLinkedQueue<>();
-    private final Collection<OnSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
-
 
     private String codeBundleId;
     private String appType = "android";
 
     private Delivery delivery;
+    private Logger logger;
     private Endpoints endpoints = new Endpoints();
     private int maxBreadcrumbs = DEFAULT_MAX_SIZE;
 
@@ -77,9 +65,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         if (TextUtils.isEmpty(apiKey)) {
             throw new IllegalArgumentException("You must provide a Bugsnag API key");
         }
+
         this.apiKey = apiKey;
-        this.metaData = new MetaData();
-        this.metaData.addObserver(this);
+        this.clientState = new ClientState();
+        this.clientState.getMetadata().addObserver(this);
         enabledBreadcrumbTypes.addAll(Arrays.asList(BreadcrumbType.values()));
 
         try {
@@ -92,7 +81,13 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
             autoDetectNdkCrashes = false;
         }
 
-        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+        boolean loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+
+        if (loggingEnabled) {
+            logger = DebugLogger.INSTANCE;
+        } else {
+            logger = NoopLogger.INSTANCE;
+        }
     }
 
     /**
@@ -172,7 +167,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return Context
      */
     @Nullable
-    @Override
     public String getContext() {
         return context;
     }
@@ -184,7 +178,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param context set what was happening at the time of a crash
      */
-    @Override
     public void setContext(@Nullable String context) {
         this.context = context;
         setChanged();
@@ -244,7 +237,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     @NonNull
     public Collection<String> getRedactKeys() {
-        return Collections.unmodifiableSet(metaData.getRedactKeys());
+        return Collections.unmodifiableSet(clientState.getMetadata().getRedactKeys());
     }
 
     /**
@@ -261,7 +254,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param redactKeys a list of keys to redact from metaData
      */
     public void setRedactKeys(@NonNull Collection<String> redactKeys) {
-        this.metaData.setRedactKeys(redactKeys);
+        clientState.getMetadata().setRedactKeys(redactKeys);
     }
 
     /**
@@ -371,7 +364,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     public void setReleaseStage(@Nullable String releaseStage) {
         this.releaseStage = releaseStage;
-        loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
     }
 
     /**
@@ -430,50 +422,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     public void setAutoTrackSessions(boolean autoTrack) {
         this.autoTrackSessions = autoTrack;
-    }
-
-    /**
-     * Gets any meta data associated with the error
-     *
-     * @return meta data
-     */
-    @NonNull
-    public MetaData getMetaData() {
-        return metaData;
-    }
-
-    /**
-     * Sets any meta data associated with the error
-     *
-     * @param metaData meta data
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        //noinspection ConstantConditions
-        if (metaData == null) {
-            this.metaData = new MetaData();
-        } else {
-            this.metaData = metaData;
-        }
-    }
-
-    /**
-     * Gets any before notify tasks to run
-     *
-     * @return the before notify tasks
-     */
-    @NonNull
-    protected Collection<OnError> getOnErrorTasks() {
-        return onErrorTasks;
-    }
-
-    /**
-     * Gets any before send tasks to run
-     *
-     * @return the before send tasks
-     */
-    @NonNull
-    protected Collection<BeforeSend> getBeforeSendTasks() {
-        return beforeSendTasks;
     }
 
     /**
@@ -673,23 +621,27 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * @return true if SDK logging is enabled
+     * Retrieves the logger used for logging internal messages within the bugsnag SDK
+     *
+     * @return the logger
      */
-    public boolean getLoggingEnabled() {
-        return loggingEnabled;
+    @Nullable
+    public Logger getLogger() {
+        return logger;
     }
 
     /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
+     * Sets the logger used for logging internal messages within the bugsnag SDK to a custom
+     * implementation. If set to null, no log messages will be logged.
      *
-     * @param loggingEnabled true if logging is enabled
+     * @param logger the logger, or null
      */
-    public void setLoggingEnabled(boolean loggingEnabled) {
-        this.loggingEnabled = loggingEnabled;
+    public void setLogger(@Nullable Logger logger) {
+        if (logger == null) {
+            this.logger = NoopLogger.INSTANCE;
+        } else {
+            this.logger = logger;
+        }
     }
 
     /**
@@ -716,40 +668,12 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     @Override
     public void addOnError(@NonNull OnError onError) {
-        if (!onErrorTasks.contains(onError)) {
-            onErrorTasks.add(onError);
-        }
+        clientState.addOnError(onError);
     }
 
-    void removeOnError(@NonNull OnError onError) {
-        onErrorTasks.remove(onError);
-    }
-
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
     @Override
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        if (!beforeSendTasks.contains(beforeSend)) {
-            beforeSendTasks.add(beforeSend);
-        }
+    public void removeOnError(@NonNull OnError onError) {
+        clientState.removeOnError(onError);
     }
 
     /**
@@ -757,10 +681,9 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
+    @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
-            breadcrumbCallbacks.add(onBreadcrumb);
-        }
+        clientState.addOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -768,18 +691,9 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
+    @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        breadcrumbCallbacks.remove(onBreadcrumb);
-    }
-
-    /**
-     * Gets any before breadcrumb tasks to run
-     *
-     * @return the before breadcrumb tasks
-     */
-    @NonNull
-    Collection<OnBreadcrumb> getBreadcrumbCallbacks() {
-        return breadcrumbCallbacks;
+        clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -787,10 +701,9 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param onSession the on session callback
      */
+    @Override
     public void addOnSession(@NonNull OnSession onSession) {
-        if (!sessionCallbacks.contains(onSession)) {
-            sessionCallbacks.add(onSession);
-        }
+        clientState.addOnSession(onSession);
     }
 
     /**
@@ -798,11 +711,12 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param onSession the on session callback
      */
+    @Override
     public void removeOnSession(@NonNull OnSession onSession) {
-        sessionCallbacks.remove(onSession);
+        clientState.removeOnSession(onSession);
     }
 
-    Collection<OnSession> getSessionCallbacks() {
-        return sessionCallbacks;
+    ClientState getClientState() {
+        return clientState;
     }
 }

@@ -14,8 +14,10 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
     final Queue<Breadcrumb> store = new ConcurrentLinkedQueue<>();
 
     private final int maxBreadcrumbs;
+    private final Logger logger;
 
-    Breadcrumbs(int maxBreadcrumbs) {
+    Breadcrumbs(int maxBreadcrumbs, Logger logger) {
+        this.logger = logger;
         if (maxBreadcrumbs > 0) {
             this.maxBreadcrumbs = maxBreadcrumbs;
         } else {
@@ -36,20 +38,9 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
     }
 
     void add(@NonNull Breadcrumb breadcrumb) {
-        addToStore(breadcrumb);
-    }
-
-    void clear() {
-        store.clear();
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.CLEAR_BREADCRUMBS, null));
-    }
-
-    private void addToStore(@NonNull Breadcrumb breadcrumb) {
         try {
             if (breadcrumb.payloadSize() > MAX_PAYLOAD_SIZE) {
-                Logger.warn("Dropping breadcrumb because payload exceeds 4KB limit");
+                logger.w("Dropping breadcrumb because payload exceeds 4KB limit");
                 return;
             }
             store.add(breadcrumb);
@@ -58,8 +49,15 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
             notifyObservers(new NativeInterface.Message(
                         NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb));
         } catch (IOException ex) {
-            Logger.warn("Dropping breadcrumb because it could not be serialized", ex);
+            logger.w("Dropping breadcrumb because it could not be serialized", ex);
         }
+    }
+
+    void clear() {
+        store.clear();
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                    NativeInterface.MessageType.CLEAR_BREADCRUMBS, null));
     }
 
     private void pruneBreadcrumbs() {

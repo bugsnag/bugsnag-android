@@ -25,7 +25,7 @@ internal data class ImmutableConfig(
     val endpoints: Endpoints,
     val persistUserBetweenSessions: Boolean,
     val launchCrashThresholdMs: Long,
-    val loggingEnabled: Boolean,
+    val logger: Logger,
     val maxBreadcrumbs: Int
 ) {
 
@@ -100,7 +100,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         endpoints = config.endpoints,
         persistUserBetweenSessions = config.persistUserBetweenSessions,
         launchCrashThresholdMs = config.launchCrashThresholdMs,
-        loggingEnabled = config.loggingEnabled,
+        logger = config.logger ?: NoopLogger,
         maxBreadcrumbs = config.maxBreadcrumbs,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes.toSet()
     )

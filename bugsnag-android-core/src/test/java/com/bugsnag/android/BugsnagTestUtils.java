@@ -19,6 +19,10 @@ final class BugsnagTestUtils {
         return ImmutableConfigKt.convertToImmutableConfig(config);
     }
 
+    static ClientState generateClientState() {
+        return generateConfiguration().getClientState();
+    }
+
     public static Delivery generateDelivery() {
         return new Delivery() {
             @NotNull

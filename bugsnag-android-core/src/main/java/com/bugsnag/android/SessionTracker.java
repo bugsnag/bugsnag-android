@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
@@ -26,10 +24,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 class SessionTracker extends Observable implements Application.ActivityLifecycleCallbacks {
 
-    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
-    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
-    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
-
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
@@ -38,7 +32,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final long timeoutMs;
 
     final ImmutableConfig configuration;
-    final Configuration clientState;
+    final ClientState clientState;
     final Client client;
     final SessionStore sessionStore;
 
@@ -50,20 +44,22 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final AtomicReference<Session> currentSession = new AtomicReference<>();
     private final Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
+    final Logger logger;
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
-                   Client client, SessionStore sessionStore) {
-        this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore);
+    SessionTracker(ImmutableConfig configuration, ClientState clientState,
+                   Client client, SessionStore sessionStore, Logger logger) {
+        this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore, logger);
     }
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
-                   Client client, long timeoutMs, SessionStore sessionStore) {
+    SessionTracker(ImmutableConfig configuration, ClientState clientState,
+                   Client client, long timeoutMs, SessionStore sessionStore, Logger logger) {
         this.configuration = configuration;
         this.clientState = clientState;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
         this.foregroundDetector = new ForegroundDetector(client.appContext);
+        this.logger = logger;
         notifyNdkInForeground();
     }
 
@@ -180,7 +176,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 client.appData, client.deviceData);
 
                         try {
-                            for (OnSession mutator : clientState.getSessionCallbacks()) {
+                            for (OnSession mutator : clientState.getOnSessionTasks()) {
                                 mutator.run(payload);
                             }
 
@@ -190,17 +186,17 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 case DELIVERED:
                                     break;
                                 case UNDELIVERED:
-                                    Logger.warn("Storing session payload for future delivery");
+                                    logger.w("Storing session payload for future delivery");
                                     sessionStore.write(session);
                                     break;
                                 case FAILURE:
-                                    Logger.warn("Dropping invalid session tracking payload");
+                                    logger.w("Dropping invalid session tracking payload");
                                     break;
                                 default:
                                     break;
                             }
                         } catch (Exception exception) {
-                            Logger.warn("Session tracking payload failed", exception);
+                            logger.w("Session tracking payload failed", exception);
                         }
                     }
                 });
@@ -220,10 +216,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             // If there is no session we will wait for one to be created
             trackSessionIfNeeded(session);
         }
-    }
-
-    private String getReleaseStage() {
-        return getStringFromMap("releaseStage", client.appData.getAppDataSummary());
     }
 
     @Nullable
@@ -287,11 +279,11 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                             break;
                         case UNDELIVERED:
                             sessionStore.cancelQueuedFiles(storedFiles);
-                            Logger.warn("Leaving session payload for future delivery");
+                            logger.w("Leaving session payload for future delivery");
                             break;
                         case FAILURE:
                             // drop bad data
-                            Logger.warn("Deleting invalid session tracking payload");
+                            logger.w("Deleting invalid session tracking payload");
                             sessionStore.deleteStoredFiles(storedFiles);
                             break;
                         default:
@@ -365,7 +357,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             try {
                 client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
             } catch (Exception ex) {
-                Logger.warn("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
+                logger.w("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
@@ -46,13 +45,6 @@ public class NullMetadataTest {
             "Something broke", new StackTraceElement[]{},
             null, Thread.currentThread(), new MetaData()).build();
         validateDefaultMetadata(event);
-    }
-
-    @Test
-    public void testConfigSetMetadataRef() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
-        validateDefaultMetadata(configuration.getMetaData());
     }
 
     private void validateDefaultMetadata(MetaDataAware error) {

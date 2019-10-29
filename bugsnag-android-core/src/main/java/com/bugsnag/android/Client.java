@@ -1,12 +1,8 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
 import com.bugsnag.android.NativeInterface.Message;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -49,14 +45,14 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetaDataAware {
+public class Client extends Observable implements Observer, MetaDataAware, CallbackAware,
+        UserAware {
 
-    private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
-    final Configuration clientState;
+    final ClientState clientState;
     final ImmutableConfig immutableConfig;
 
     final Context appContext;
@@ -84,8 +80,9 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     final StorageManager storageManager;
+    final Logger logger;
 
     /**
      * Initialize a Bugsnag client
@@ -113,9 +110,10 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
+        logger = configuration.getLogger();
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-        sessionStore = new SessionStore(appContext, null);
+        sessionStore = new SessionStore(appContext, logger, null);
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
@@ -130,33 +128,34 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
-        clientState = configuration;
+        clientState = configuration.getClientState().copy();
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
-        sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore);
-        systemBroadcastReceiver = new SystemBroadcastReceiver(this);
+        sessionTracker = new SessionTracker(immutableConfig, clientState, this,
+                sessionStore, logger);
+        systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         appData = new AppData(appContext, appContext.getPackageManager(),
-                immutableConfig, sessionTracker);
+                immutableConfig, sessionTracker, logger);
         Resources resources = appContext.getResources();
 
         userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUserBetweenSessions());
         setUserInternal(userRepository.load());
 
-        deviceData = new DeviceData(connectivity, appContext, resources, user.installId);
+        deviceData = new DeviceData(connectivity, appContext, resources, user.getId(), logger);
 
         // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs());
+        breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs(), logger);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
             application.registerActivityLifecycleCallbacks(sessionTracker);
         } else {
-            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle "
+            logger.w("Bugsnag is unable to setup automatic activity lifecycle "
                 + "breadcrumbs on API Levels below 14.");
         }
 
@@ -183,11 +182,11 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 Client.this.reportInternalBugsnagError(err);
             }
         };
-        eventStore = new EventStore(immutableConfig, clientState, appContext, delegate);
+        eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
 
         // Install a default exception handler with this client
         if (immutableConfig.getAutoDetectErrors()) {
-            new ExceptionHandler(this);
+            new ExceptionHandler(this, logger);
         }
 
         // register a receiver for automatic breadcrumbs
@@ -201,11 +200,9 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 }
             });
         } catch (RejectedExecutionException ex) {
-            Logger.warn("Failed to register for automatic breadcrumb broadcasts", ex);
+            logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
         }
         connectivity.registerForNetworkChanges();
-
-        Logger.setEnabled(immutableConfig.getLoggingEnabled());
 
         configuration.addObserver(this);
         breadcrumbs.addObserver(this);
@@ -223,7 +220,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         try {
             orientationListener.enable();
         } catch (IllegalStateException ex) {
-            Logger.warn("Failed to set up orientation tracking: " + ex);
+            logger.w("Failed to set up orientation tracking: " + ex);
         }
 
         // filter out any disabled breadcrumb types
@@ -251,7 +248,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
                 event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
             } catch (IOException exc) {
-                Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
+                logger.w("Failed to record cache behaviour, skipping diagnostics", exc);
             }
         }
     }
@@ -259,7 +256,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     @SuppressWarnings("deprecation")
     private void sanitiseConfiguration(@NonNull Configuration configuration) {
         if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(connectivity));
+            configuration.setDelivery(new DefaultDelivery(connectivity, logger));
         }
 
         String packageName = appContext.getPackageName();
@@ -270,7 +267,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
                 configuration.setVersionCode(packageInfo.versionCode);
             } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read version code from manifest.");
+                logger.w("Bugsnag is unable to read version code from manifest.");
             }
         }
 
@@ -287,9 +284,9 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 PackageManager packageManager = appContext.getPackageManager();
                 ApplicationInfo ai = packageManager.getApplicationInfo(
                         packageName, PackageManager.GET_META_DATA);
-                buildUuid = ai.metaData.getString(BUILD_UUID);
+                buildUuid = ai.metaData.getString(ManifestConfigLoader.BUILD_UUID);
             } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read build UUID from manifest.");
+                logger.w("Bugsnag is unable to read build UUID from manifest.");
             }
             if (buildUuid != null) {
                 configuration.setBuildUuid(buildUuid);
@@ -304,16 +301,18 @@ public class Client extends Observable implements Observer, MetaDataAware {
         if (immutableConfig.getAutoDetectNdkCrashes()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
+                logger.i("Registering NDK plugin");
             } catch (ClassNotFoundException exc) {
-                Logger.warn("bugsnag-plugin-android-ndk artefact not found on classpath, "
+                logger.w("bugsnag-plugin-android-ndk artefact not found on classpath, "
                     + "NDK errors will not be captured.");
             }
         }
         if (immutableConfig.getAutoDetectAnrs()) {
             try {
                 pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
+                logger.i("Registering ANR plugin");
             } catch (ClassNotFoundException exc) {
-                Logger.warn("bugsnag-plugin-android-anr artefact not found on classpath, "
+                logger.w("bugsnag-plugin-android-anr artefact not found on classpath, "
                     + "ANR errors will not be captured.");
             }
         }
@@ -334,7 +333,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 }
             });
         } catch (RejectedExecutionException ex) {
-            Logger.warn("Failed to enqueue native reports, will retry next launch: ", ex);
+            logger.w("Failed to enqueue native reports, will retry next launch: ", ex);
         }
     }
 
@@ -418,16 +417,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     /**
-     * Starts tracking a new session only if no sessions have yet been tracked
-     *
-     * This is an integration point for custom libraries implementing automatic session capture
-     * which differs from the default activity-based initialization.
-     */
-    public void startFirstSession(@NonNull Activity activity) {
-        sessionTracker.startFirstSession(activity);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -459,6 +448,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param email the email address of the current user
      * @param name  the name of the current user
      */
+    @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         setUserId(id);
         setUserEmail(email);
@@ -472,38 +462,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @return the current user
      */
     @NonNull
+    @Override
     public User getUser() {
         return user;
-    }
-
-    @NonNull
-    public Collection<Breadcrumb> getBreadcrumbs() {
-        return new ArrayList<>(breadcrumbs.store);
-    }
-
-    @NonNull
-    public AppData getAppData() {
-        return appData;
-    }
-
-    @NonNull
-    public DeviceData getDeviceData() {
-        return deviceData;
     }
 
     private void setUserInternal(User user) {
         this.user = user;
         user.addObserver(this);
-    }
-
-    /**
-     * Removes the current user data and sets it back to defaults
-     */
-    public void clearUser() {
-        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
-        user.setEmail(null);
-        user.setName(null);
-        userRepository.save(user);
     }
 
     /**
@@ -513,9 +479,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * @param id a unique identifier of the current user
      */
+    @Override
     public void setUserId(@Nullable String id) {
-        user.setId(id);
+        user = user.copy(id, user.getEmail(), user.getName());
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_ID, id));
+
     }
 
     /**
@@ -524,9 +495,13 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * @param email the email address of the current user
      */
+    @Override
     public void setUserEmail(@Nullable String email) {
-        user.setEmail(email);
+        user = user.copy(user.getId(), email, user.getName());
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_EMAIL, email));
     }
 
     /**
@@ -535,9 +510,13 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * @param name the name of the current user
      */
+    @Override
     public void setUserName(@Nullable String name) {
-        user.setName(name);
+        user = user.copy(user.getId(), user.getEmail(), name);
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_NAME, name));
     }
 
     /**
@@ -562,36 +541,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnError
      */
+    @Override
     public void addOnError(@NonNull OnError onError) {
         clientState.addOnError(onError);
     }
 
+    @Override
     public void removeOnError(@NonNull OnError onError) {
         clientState.removeOnError(onError);
-    }
-
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        clientState.addBeforeSend(beforeSend);
     }
 
     /**
@@ -612,18 +569,22 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param onBreadcrumb a callback to run before a breadcrumb is captured
      * @see OnBreadcrumb
      */
+    @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.addOnBreadcrumb(onBreadcrumb);
     }
 
+    @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
+    @Override
     public void addOnSession(@NonNull OnSession onSession) {
         clientState.addOnSession(onSession);
     }
 
+    @Override
     public void removeOnSession(@NonNull OnSession onSession) {
         clientState.removeOnSession(onSession);
     }
@@ -646,7 +607,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      */
     public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new EventGenerator.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
+            Thread.currentThread(), false, clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -679,7 +640,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
         Event event = new EventGenerator.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), clientState.getMetaData())
+            sessionTracker, Thread.currentThread(), clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -694,7 +655,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                                   @HandledState.SeverityReason String severityReason,
                                   @Nullable String attributeValue, Thread thread) {
         Event event = new EventGenerator.Builder(immutableConfig, exception,
-                sessionTracker, thread, true, clientState.getMetaData())
+                sessionTracker, thread, true, clientState.getMetadata())
                 .severity(Severity.ERROR)
                 .metaData(metaData)
                 .severityReasonType(severityReason)
@@ -742,7 +703,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
         // Run on error tasks, don't notify if any return false
         if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
-            Logger.info("Skipping notification - onError task returned false");
+            logger.i("Skipping notification - onError task returned false");
             return;
         }
 
@@ -823,7 +784,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                         }
 
                     } catch (Exception exception) {
-                        Logger.warn("Failed to report internal event to Bugsnag", exception);
+                        logger.w("Failed to report internal event to Bugsnag", exception);
                     }
                 }
             });
@@ -846,7 +807,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
             });
         } catch (RejectedExecutionException exception) {
             eventStore.write(event);
-            Logger.warn("Exceeded max queue count, saving to disk to send later");
+            logger.w("Exceeded max queue count, saving to disk to send later");
         }
     }
 
@@ -866,19 +827,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
         breadcrumbs.add(new Breadcrumb(name, BreadcrumbType.ERROR, message));
     }
 
-    @NonNull
-    private String getKeyFromClientData(Map<String, Object> clientData,
-                                        String key,
-                                        boolean required) {
-        Object value = clientData.get(key);
-        if (value instanceof String) {
-            return (String) value;
-        } else if (required) {
-            throw new IllegalStateException("Failed to set " + key + " in client data!");
-        }
-        return null;
-    }
-
     @Override
     public void addMetadata(@NonNull String section, @Nullable Object value) {
         addMetadata(section, null, value);
@@ -886,7 +834,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        clientState.getMetaData().addMetadata(section, key, value);
+        clientState.getMetadata().addMetadata(section, key, value);
     }
 
     @Override
@@ -896,7 +844,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
-        clientState.getMetaData().clearMetadata(section, key);
+        clientState.getMetadata().clearMetadata(section, key);
     }
 
     @Nullable
@@ -908,7 +856,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return clientState.getMetaData().getMetadata(section, key);
+        return clientState.getMetadata().getMetadata(section, key);
     }
 
     /**
@@ -937,59 +885,28 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
     }
 
-    /**
-     * Clear any breadcrumbs that have been left so far.
-     */
-    public void clearBreadcrumbs() {
-        breadcrumbs.clear();
-    }
-
     void deliver(@NonNull Report report, @NonNull Event event) {
-        if (!runBeforeSendTasks(report)) {
-            Logger.info("Skipping notification - beforeSend task returned false");
-            return;
-        }
-
         DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
 
         switch (deliveryStatus) {
             case DELIVERED:
-                Logger.info("Sent 1 new event to Bugsnag");
+                logger.i("Sent 1 new event to Bugsnag");
                 leaveErrorBreadcrumb(event);
                 break;
             case UNDELIVERED:
-                Logger.warn("Could not send event(s) to Bugsnag,"
+                logger.w("Could not send event(s) to Bugsnag,"
                         + " saving to disk to send later");
                 eventStore.write(event);
                 leaveErrorBreadcrumb(event);
                 break;
             case FAILURE:
-                Logger.warn("Problem sending event to Bugsnag");
+                logger.w("Problem sending event to Bugsnag");
                 break;
             default:
                 break;
         }
-    }
-
-    private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-            try {
-                if (!beforeSend.run(report)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeSend threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the error to be sent if there were no objections
-        return true;
-    }
-
-    OrientationEventListener getOrientationListener() {
-        return orientationListener; // this only exists for tests
     }
 
     SessionTracker getSessionTracker() {
@@ -1003,7 +920,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("OnError threw an Exception", ex);
+                logger.w("OnError threw an Exception", ex);
             }
         }
 
@@ -1012,29 +929,17 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
-        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
+        Collection<OnBreadcrumb> tasks = clientState.getOnBreadcrumbTasks();
         for (OnBreadcrumb callback : tasks) {
             try {
                 if (!callback.run(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("OnBreadcrumb threw an Exception", ex);
+                logger.w("OnBreadcrumb threw an Exception", ex);
             }
         }
         return true;
-    }
-
-    /**
-     * Stores the given key value pair into shared preferences
-     *
-     * @param key   The key to store
-     * @param value The value to store
-     */
-    private void storeInSharedPrefs(String key, String value) {
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit().putString(key, value).apply();
     }
 
     EventStore getEventStore() {
@@ -1052,25 +957,20 @@ public class Client extends Observable implements Observer, MetaDataAware {
             try {
                 appContext.unregisterReceiver(systemBroadcastReceiver);
             } catch (IllegalArgumentException exception) {
-                Logger.warn("Receiver not registered");
+                logger.w("Receiver not registered");
             }
         }
         super.finalize();
     }
 
-    private static void warnIfNotAppContext(Context androidContext) {
+    private void warnIfNotAppContext(Context androidContext) {
         if (!(androidContext instanceof Application)) {
-            Logger.warn("Warning - Non-Application context detected! Please ensure that you are "
+            logger.w("Warning - Non-Application context detected! Please ensure that you are "
                 + "initializing Bugsnag from a custom Application class.");
         }
     }
 
-    /**
-     * Returns the configuration used to initialise the client
-     * @return the config
-     */
-    @NonNull
-    public BugsnagConfiguration getConfiguration() {
+    ClientState getClientState() {
         return clientState;
     }
 
@@ -1079,7 +979,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     void setBinaryArch(String binaryArch) {
-        getAppData().setBinaryArch(binaryArch);
+        appData.setBinaryArch(binaryArch);
     }
 
     void close() {

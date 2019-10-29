@@ -43,20 +43,19 @@ public class SessionPayloadTest {
     @Before
     public void setUp() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        sessionStore = new SessionStore(context, null);
+        sessionStore = new SessionStore(context, NoopLogger.INSTANCE, null);
 
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
         session = generateSession();
         client = generateClient();
-        payload = generatePayloadFromSession(context, session);
+        payload = generatePayloadFromSession(session);
         rootNode = streamableToJson(payload);
     }
 
-    private SessionPayload generatePayloadFromSession(Context context,
-                                                      Session session) throws Exception {
-        appData = client.getAppData();
+    private SessionPayload generatePayloadFromSession(Session session) throws Exception {
+        appData = client.appData;
         deviceData = client.deviceData;
         return new SessionPayload(session, null, appData, deviceData);
     }
@@ -112,7 +111,7 @@ public class SessionPayloadTest {
     public void testAutoCapturedOverride() throws Exception {
         session = new Session("id", new Date(), null, false);
         Context context = ApplicationProvider.getApplicationContext();
-        payload = generatePayloadFromSession(context, session);
+        payload = generatePayloadFromSession(session);
         assertFalse(session.isAutoCaptured());
         session.setAutoCaptured(true);
         assertTrue(session.isAutoCaptured());

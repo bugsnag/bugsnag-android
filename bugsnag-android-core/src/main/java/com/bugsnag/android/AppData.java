@@ -27,6 +27,7 @@ class AppData {
     private final SessionTracker sessionTracker;
 
     private final String packageName;
+    private final Logger logger;
     private String binaryArch = null;
 
     @Nullable
@@ -41,7 +42,7 @@ class AppData {
     private PackageManager packageManager;
 
     AppData(Context appContext, PackageManager packageManager,
-            ImmutableConfig config, SessionTracker sessionTracker) {
+            ImmutableConfig config, SessionTracker sessionTracker, Logger logger) {
         this.appContext = appContext;
         this.packageManager = packageManager;
         this.config = config;
@@ -49,13 +50,14 @@ class AppData {
 
         // cache values which are widely used, expensive to lookup, or unlikely to change
         packageName = appContext.getPackageName();
+        this.logger = logger;
 
         try {
             this.packageManager = packageManager;
             packageInfo = this.packageManager.getPackageInfo(packageName, 0);
             applicationInfo = this.packageManager.getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException exception) {
-            Logger.warn("Could not retrieve package/application information for " + packageName);
+            logger.w("Could not retrieve package/application information for " + packageName);
         }
 
         appName = getAppName();
@@ -66,7 +68,7 @@ class AppData {
         map.put("type", config.getAppType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
-        map.put("versionCode", calculateVersionCode());
+        map.put("versionCode", config.getVersionCode());
         map.put("codeBundleId", config.getCodeBundleId());
         return map;
     }
@@ -118,14 +120,6 @@ class AppData {
 
     String getActiveScreenClass() {
         return sessionTracker.getContextActivity();
-    }
-
-    /**
-     * The version code of the running Android app, from android:versionCode
-     * in AndroidManifest.xml
-     */
-    private int calculateVersionCode() {
-        return config.getVersionCode();
     }
 
     /**
@@ -202,7 +196,7 @@ class AppData {
                 return memInfo.lowMemory;
             }
         } catch (Exception exception) {
-            Logger.warn("Could not check lowMemory status");
+            logger.w("Could not check lowMemory status");
         }
         return null;
     }

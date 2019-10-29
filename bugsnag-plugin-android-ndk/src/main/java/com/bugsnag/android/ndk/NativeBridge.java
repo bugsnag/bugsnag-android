@@ -2,10 +2,11 @@ package com.bugsnag.android.ndk;
 
 import com.bugsnag.android.Breadcrumb;
 import com.bugsnag.android.Configuration;
+import com.bugsnag.android.Logger;
 import com.bugsnag.android.NativeInterface;
 
 import android.os.Build;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -86,7 +87,7 @@ public class NativeBridge implements Observer {
 
     public static native void updateUserName(@NonNull String newValue);
 
-    private boolean loggingEnabled = true;
+    private Logger logger;
     private final String reportDirectory;
 
     /**
@@ -95,11 +96,11 @@ public class NativeBridge implements Observer {
      * immediately.
      */
     public NativeBridge() {
-        loggingEnabled = NativeInterface.getLoggingEnabled();
+        logger = NativeInterface.getLogger();
         reportDirectory = NativeInterface.getNativeReportPath();
         File outFile = new File(reportDirectory);
         if (!outFile.exists() && !outFile.mkdirs()) {
-            warn("The native reporting directory cannot be created.");
+            logger.w("The native reporting directory cannot be created.");
         }
     }
 
@@ -184,16 +185,16 @@ public class NativeBridge implements Observer {
         if (rawMessage instanceof NativeInterface.Message) {
             NativeInterface.Message message = (NativeInterface.Message)rawMessage;
             if (message.type != NativeInterface.MessageType.INSTALL && !installed.get()) {
-                warn("Received message before INSTALL: " + message.type);
+                logger.w("Received message before INSTALL: " + message.type);
                 return null;
             }
             return message;
         } else {
             if (rawMessage == null) {
-                warn("Received observable update with null Message");
+                logger.w("Received observable update with null Message");
             } else {
-                warn("Received observable update object which is not instance of Message: "
-                    + rawMessage.getClass());
+                logger.w("Received observable update object which is not instance of Message: "
+                            + rawMessage.getClass());
             }
             return null;
         }
@@ -211,10 +212,10 @@ public class NativeBridge implements Observer {
                     }
                 }
             } else {
-                warn("Report directory does not exist, cannot read pending reports");
+                logger.w("Report directory does not exist, cannot read pending reports");
             }
         } catch (Exception ex) {
-            warn("Failed to parse/write pending reports: " + ex);
+            logger.w("Failed to parse/write pending reports: " + ex);
         } finally {
             lock.unlock();
         }
@@ -224,7 +225,7 @@ public class NativeBridge implements Observer {
         lock.lock();
         try {
             if (installed.get()) {
-                warn("Received duplicate setup message with arg: " + arg);
+                logger.w("Received duplicate setup message with arg: " + arg);
             } else if (arg instanceof List) {
                 @SuppressWarnings("unchecked")
                 List<Object> values = (List<Object>)arg;
@@ -236,7 +237,7 @@ public class NativeBridge implements Observer {
                     installed.set(true);
                 }
             } else {
-                warn("Received install message with incorrect arg: " + arg);
+                logger.w("Received install message with incorrect arg: " + arg);
             }
         } finally {
             lock.unlock();
@@ -262,7 +263,7 @@ public class NativeBridge implements Observer {
             addBreadcrumb(crumb.getMessage(), crumb.getType().toString(),
                 crumb.getTimestamp(), crumb.getMetadata());
         } else {
-            warn("Attempted to add non-breadcrumb: " + arg);
+            logger.w("Attempted to add non-breadcrumb: " + arg);
         }
     }
 
@@ -295,14 +296,14 @@ public class NativeBridge implements Observer {
             }
         }
 
-        warn("ADD_METADATA object is invalid: " + arg);
+        logger.w("ADD_METADATA object is invalid: " + arg);
     }
 
     private void handleClearMetadataTab(Object arg) {
         if (arg instanceof String) {
             clearMetadataTab((String)arg);
         } else {
-            warn("CLEAR_METADATA_TAB object is invalid: " + arg);
+            logger.w("CLEAR_METADATA_TAB object is invalid: " + arg);
         }
     }
 
@@ -310,7 +311,7 @@ public class NativeBridge implements Observer {
         if (arg instanceof String) {
             updateAppVersion((String)arg);
         } else {
-            warn("UPDATE_APP_VERSION object is invalid: " + arg);
+            logger.w("UPDATE_APP_VERSION object is invalid: " + arg);
         }
     }
 
@@ -325,7 +326,7 @@ public class NativeBridge implements Observer {
             }
         }
 
-        warn("REMOVE_METADATA object is invalid: " + arg);
+        logger.w("REMOVE_METADATA object is invalid: " + arg);
     }
 
     private void handleStartSession(Object arg) {
@@ -347,14 +348,14 @@ public class NativeBridge implements Observer {
             }
         }
 
-        warn("START_SESSION object is invalid: " + arg);
+        logger.w("START_SESSION object is invalid: " + arg);
     }
 
     private void handleReleaseStageChange(Object arg) {
         if (arg instanceof String) {
             updateReleaseStage((String)arg);
         } else {
-            warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
+            logger.w("UPDATE_RELEASE_STAGE object is invalid: " + arg);
         }
     }
 
@@ -362,9 +363,9 @@ public class NativeBridge implements Observer {
         if (arg instanceof Integer) {
             updateOrientation((int) arg);
         } else if (arg == null) {
-            warn("UPDATE_ORIENTATION object is null");
+            logger.w("UPDATE_ORIENTATION object is null");
         } else {
-            warn("UPDATE_ORIENTATION object is invalid: " + arg);
+            logger.w("UPDATE_ORIENTATION object is invalid: " + arg);
         }
     }
 
@@ -378,7 +379,7 @@ public class NativeBridge implements Observer {
             }
         }
 
-        warn("UPDATE_IN_FOREGROUND object is invalid: " + arg);
+        logger.w("UPDATE_IN_FOREGROUND object is invalid: " + arg);
     }
 
     private void handleUserIdChange(Object arg) {
@@ -387,7 +388,7 @@ public class NativeBridge implements Observer {
         } else if (arg instanceof String) {
             updateUserId((String)arg);
         } else {
-            warn("UPDATE_USER_ID object is invalid: " + arg);
+            logger.w("UPDATE_USER_ID object is invalid: " + arg);
         }
     }
 
@@ -397,7 +398,7 @@ public class NativeBridge implements Observer {
         } else if (arg instanceof String) {
             updateUserName((String)arg);
         } else {
-            warn("UPDATE_USER_NAME object is invalid: " + arg);
+            logger.w("UPDATE_USER_NAME object is invalid: " + arg);
         }
     }
 
@@ -407,7 +408,7 @@ public class NativeBridge implements Observer {
         } else if (arg instanceof String) {
             updateUserEmail((String)arg);
         } else {
-            warn("UPDATE_USER_EMAIL object is invalid: " + arg);
+            logger.w("UPDATE_USER_EMAIL object is invalid: " + arg);
         }
     }
 
@@ -417,7 +418,7 @@ public class NativeBridge implements Observer {
         } else if (arg instanceof String) {
             updateBuildUUID((String)arg);
         } else {
-            warn("UPDATE_BUILD_UUID object is invalid: " + arg);
+            logger.w("UPDATE_BUILD_UUID object is invalid: " + arg);
         }
     }
 
@@ -427,7 +428,7 @@ public class NativeBridge implements Observer {
         } else if (arg instanceof String) {
             updateContext((String)arg);
         } else {
-            warn("UPDATE_CONTEXT object is invalid: " + arg);
+            logger.w("UPDATE_CONTEXT object is invalid: " + arg);
         }
     }
 
@@ -435,13 +436,7 @@ public class NativeBridge implements Observer {
         if (arg instanceof Boolean) {
             updateLowMemory((Boolean)arg);
         } else {
-            warn("UPDATE_LOW_MEMORY object is invalid: " + arg);
-        }
-    }
-
-    private void warn(String message) {
-        if (loggingEnabled) {
-            Log.w(LOG_TAG, message);
+            logger.w("UPDATE_LOW_MEMORY object is invalid: " + arg);
         }
     }
 }

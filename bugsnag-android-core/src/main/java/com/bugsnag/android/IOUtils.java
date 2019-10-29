@@ -49,13 +49,13 @@ class IOUtils {
         return (int) count;
     }
 
-    static void deleteFile(File file) {
+    static void deleteFile(File file, Logger logger) {
         try {
             if (!file.delete()) {
                 file.deleteOnExit();
             }
         } catch (Exception ex) {
-            Logger.warn("Failed to delete file", ex);
+            logger.w("Failed to delete file", ex);
         }
     }
 }

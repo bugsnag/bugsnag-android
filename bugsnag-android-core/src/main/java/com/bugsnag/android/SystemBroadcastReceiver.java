@@ -24,9 +24,11 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
     private static final Map<String, BreadcrumbType> actions = buildActions();
 
     private final Client client;
+    private final Logger logger;
 
-    SystemBroadcastReceiver(@NonNull Client client) {
+    SystemBroadcastReceiver(@NonNull Client client, Logger logger) {
         this.client = client;
+        this.logger = logger;
     }
 
     @Override
@@ -58,7 +60,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
             }
 
         } catch (Exception ex) {
-            Logger.warn("Failed to leave breadcrumb in SystemBroadcastReceiver: "
+            logger.w("Failed to leave breadcrumb in SystemBroadcastReceiver: "
                     + ex.getMessage());
         }
     }
