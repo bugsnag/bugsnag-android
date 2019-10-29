@@ -29,7 +29,7 @@ class EventStore extends FileStore<Event> {
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
     private final ImmutableConfig config;
-    private final Configuration clientState;
+    private final ClientState clientState;
     private final Delegate delegate;
 
     static final Comparator<File> EVENT_COMPARATOR = new Comparator<File>() {
@@ -50,7 +50,7 @@ class EventStore extends FileStore<Event> {
         }
     };
 
-    EventStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
+    EventStore(@NonNull ImmutableConfig config, @NonNull ClientState clientState,
                @NonNull Context appContext, Delegate delegate) {
         super(appContext, "/bugsnag-errors/", 128, EVENT_COMPARATOR, delegate);
         this.config = config;

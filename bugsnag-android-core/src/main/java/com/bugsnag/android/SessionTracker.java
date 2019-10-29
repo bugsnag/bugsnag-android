@@ -38,7 +38,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final long timeoutMs;
 
     final ImmutableConfig configuration;
-    final Configuration clientState;
+    final ClientState clientState;
     final Client client;
     final SessionStore sessionStore;
 
@@ -51,12 +51,12 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+    SessionTracker(ImmutableConfig configuration, ClientState clientState,
                    Client client, SessionStore sessionStore) {
         this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore);
     }
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+    SessionTracker(ImmutableConfig configuration, ClientState clientState,
                    Client client, long timeoutMs, SessionStore sessionStore) {
         this.configuration = configuration;
         this.clientState = clientState;
@@ -180,7 +180,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 client.appData, client.deviceData);
 
                         try {
-                            for (OnSession mutator : clientState.getSessionCallbacks()) {
+                            for (OnSession mutator : clientState.getOnSessionTasks()) {
                                 mutator.run(payload);
                             }
 
