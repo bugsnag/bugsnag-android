@@ -29,7 +29,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
     private Map<String, Object> deviceData = new HashMap<>();
 
     @NonNull
-    private User user = new User();
+    private User user = new User(null, null, null);
 
     @Nullable
     private Severity severity;
@@ -230,8 +230,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      * @param id the id of the user
      */
     public void setUserId(@Nullable String id) {
-        this.user = new User(this.user);
-        this.user.setId(id);
+        this.user = user.copy(id, user.getEmail(), user.getName());
     }
 
     /**
@@ -240,8 +239,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      * @param email the email address of the user
      */
     public void setUserEmail(@Nullable String email) {
-        this.user = new User(this.user);
-        this.user.setEmail(email);
+        this.user = user.copy(user.getId(), email, user.getName());
     }
 
     /**
@@ -250,8 +248,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      * @param name the name of the user
      */
     public void setUserName(@Nullable String name) {
-        this.user = new User(this.user);
-        this.user.setName(name);
+        this.user = user.copy(user.getId(), user.getEmail(), name);
     }
 
     @Override

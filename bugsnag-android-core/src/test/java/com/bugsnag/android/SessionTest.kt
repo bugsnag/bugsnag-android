@@ -7,7 +7,7 @@ import java.util.Date
 
 class SessionTest {
 
-    private val session = Session("123", Date(), User(), true)
+    private val session = Session("123", Date(), User(null, null, null), true)
 
     /**
      * Verifies that all the fields in session are copied into a new object correctly

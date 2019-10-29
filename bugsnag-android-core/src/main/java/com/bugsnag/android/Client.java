@@ -146,7 +146,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 immutableConfig.getPersistUserBetweenSessions());
         setUserInternal(userRepository.load());
 
-        deviceData = new DeviceData(connectivity, appContext, resources, user.installId);
+        deviceData = new DeviceData(connectivity, appContext, resources, user.getId());
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs());
@@ -499,10 +499,17 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Removes the current user data and sets it back to defaults
      */
     public void clearUser() {
-        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
-        user.setEmail(null);
-        user.setName(null);
+        user = user.copy(getStringFromMap("id", deviceData.getDeviceData()), null, null);
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_ID, user.getId()));
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_EMAIL, null));
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_NAME, null));
     }
 
     /**
@@ -513,8 +520,12 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param id a unique identifier of the current user
      */
     public void setUserId(@Nullable String id) {
-        user.setId(id);
+        user = user.copy(id, user.getEmail(), user.getName());
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_ID, id));
+
     }
 
     /**
@@ -524,8 +535,11 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param email the email address of the current user
      */
     public void setUserEmail(@Nullable String email) {
-        user.setEmail(email);
+        user = user.copy(user.getId(), email, user.getName());
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_EMAIL, email));
     }
 
     /**
@@ -535,8 +549,11 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param name the name of the current user
      */
     public void setUserName(@Nullable String name) {
-        user.setName(name);
+        user = user.copy(user.getId(), user.getEmail(), name);
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_NAME, name));
     }
 
     /**

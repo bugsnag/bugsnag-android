@@ -38,7 +38,7 @@ public class SessionTrackerTest {
         sessionTracker = new SessionTracker(immutableConfig,
                 configuration.getClientState(), client, generateSessionStore());
         configuration.setAutoTrackSessions(true);
-        user = new User();
+        user = new User(null, null, null);
     }
 
     @After
