@@ -38,7 +38,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final long timeoutMs;
 
     final ImmutableConfig configuration;
-    final Configuration clientState;
+    final ClientState clientState;
     final Client client;
     final SessionStore sessionStore;
 
@@ -52,12 +52,12 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final ForegroundDetector foregroundDetector;
     final Logger logger;
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+    SessionTracker(ImmutableConfig configuration, ClientState clientState,
                    Client client, SessionStore sessionStore, Logger logger) {
         this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore, logger);
     }
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+    SessionTracker(ImmutableConfig configuration, ClientState clientState,
                    Client client, long timeoutMs, SessionStore sessionStore, Logger logger) {
         this.configuration = configuration;
         this.clientState = clientState;
@@ -182,8 +182,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 client.appData, client.deviceData);
 
                         try {
-                            for (BeforeSendSession mutator : clientState.getSessionCallbacks()) {
-                                mutator.beforeSendSession(payload);
+                            for (OnSession mutator : clientState.getOnSessionTasks()) {
+                                mutator.run(payload);
                             }
 
                             DeliveryStatus deliveryStatus = deliverSessionPayload(payload);

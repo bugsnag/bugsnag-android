@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.Thread;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
@@ -235,7 +236,8 @@ public class EventSerializationTest {
     @Test
     public void testSessionIncluded() throws Exception {
         SessionTracker sessionTracker = generateSessionTracker();
-        final Session session = sessionTracker.startNewSession(new Date(), new User(), false);
+        User user = new User(null, null, null);
+        final Session session = sessionTracker.startNewSession(new Date(), user, false);
         Event err = new Event.Builder(config, new RuntimeException(), sessionTracker,
                 Thread.currentThread(), false, new MetaData()).build();
 
@@ -307,7 +309,7 @@ public class EventSerializationTest {
         RuntimeException exception = new RuntimeException("foo");
 
         SessionTracker sessionTracker = generateSessionTracker();
-        sessionTracker.startNewSession(new Date(), new User(), true);
+        sessionTracker.startNewSession(new Date(), new User(null, null, null), true);
         event = new Event.Builder(BugsnagTestUtils.convert(config), exception, sessionTracker,
             Thread.currentThread(), false, new MetaData()).build();
 

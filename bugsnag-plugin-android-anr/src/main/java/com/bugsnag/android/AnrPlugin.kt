@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import java.lang.Thread
 import java.nio.ByteBuffer
 
 internal class AnrPlugin : BugsnagPlugin {
@@ -21,7 +22,7 @@ internal class AnrPlugin : BugsnagPlugin {
         val errMsg = "Application did not respond to UI input"
         val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
         val error = Event.Builder(client.config, exc, client.sessionTracker, thread, true,
-            client.clientState.metaData)
+            MetaData())
             .severity(Severity.ERROR)
             .severityReasonType(HandledState.REASON_ANR)
             .build()

@@ -12,6 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.Thread;
+
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
  * <p>
@@ -44,13 +46,6 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testConfigSetNullMetadata() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(null);
-        validateDefaultMetadata(configuration.getMetaData());
-    }
-
-    @Test
     public void testErrorDefaultMetaData() throws Exception {
         Event event = new Event.Builder(config, throwable, generateSessionTracker(),
             Thread.currentThread(), false, new MetaData()).build();
@@ -66,15 +61,8 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testConfigSetMetadataRef() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
-        validateDefaultMetadata(configuration.getMetaData());
-    }
-
-    @Test
     public void testNotify() throws Exception {
-        client.addBeforeNotify(new BeforeNotify() {
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 validateDefaultMetadata(event);
@@ -83,7 +71,7 @@ public class NullMetadataTest {
         });
         Event event = new Event.Builder(config, new Throwable(),
             generateSessionTracker(), Thread.currentThread(), false, new MetaData()).build();
-        client.notify(event, DeliveryStyle.SAME_THREAD, null);
+        client.notifyInternal(event, DeliveryStyle.ASYNC, null);
     }
 
     private void validateDefaultMetadata(MetaDataAware metaData) {

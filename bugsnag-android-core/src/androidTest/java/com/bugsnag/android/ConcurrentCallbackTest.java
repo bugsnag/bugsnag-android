@@ -30,25 +30,25 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientNotifyModification() throws Exception {
-        Configuration config = (Configuration) client.getConfiguration();
-        final Collection<BeforeNotify> beforeNotifyTasks = config.getBeforeNotifyTasks();
-        client.addBeforeNotify(new BeforeNotify() {
+        ClientState config = client.getClientState();
+        final Collection<OnError> onErrorTasks = config.getOnErrorTasks();
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
-                beforeNotifyTasks.add(new BeforeNotifySkeleton());
+                onErrorTasks.add(new OnErrorSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        client.addBeforeNotify(new BeforeNotifySkeleton());
+        client.addOnError(new OnErrorSkeleton());
         client.notify(new RuntimeException());
     }
 
     @Test
     public void testClientBreadcrumbModification() throws Exception {
-        Configuration config = (Configuration) client.getConfiguration();
+        ClientState config = client.getClientState();
         final Collection<OnBreadcrumb> breadcrumbTasks =
-                config.getBreadcrumbCallbacks();
+                config.getOnBreadcrumbTasks();
 
         client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
@@ -63,7 +63,7 @@ public class ConcurrentCallbackTest {
         client.notify(new RuntimeException());
     }
 
-    static class BeforeNotifySkeleton implements BeforeNotify {
+    static class OnErrorSkeleton implements OnError {
         @Override
         public boolean run(@NonNull Event event) {
             return true;

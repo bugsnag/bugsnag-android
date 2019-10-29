@@ -12,9 +12,10 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @SmallTest
-public class CachedThreadTest {
+public class ThreadTest {
 
     @Test
     public void testToStreamErrorHandlingThread() throws JSONException, IOException {
@@ -25,7 +26,8 @@ public class CachedThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        CachedThread thread = new CachedThread(config, 24, "main-one", "ando", true, stacktrace);
+        Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList());
+        Thread thread = new Thread(24, "main-one", "ando", true, trace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
@@ -54,7 +56,8 @@ public class CachedThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        CachedThread thread = new CachedThread(config, 24, "main-one", "ando",false, stacktrace);
+        Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList());
+        Thread thread = new Thread(24, "main-one", "ando",false, trace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));

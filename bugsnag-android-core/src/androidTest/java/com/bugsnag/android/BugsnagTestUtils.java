@@ -54,13 +54,17 @@ final class BugsnagTestUtils {
     }
 
     static Session generateSession() {
-        return new Session("test", new Date(), new User(), false);
+        return new Session("test", new Date(), new User(null, null, null), false);
     }
 
     static Configuration generateConfiguration() {
         Configuration configuration = new Configuration("test");
         configuration.setDelivery(generateDelivery());
         return configuration;
+    }
+
+    static ClientState generateClientState() {
+        return generateConfiguration().getClientState();
     }
 
     static ImmutableConfig generateImmutableConfig() {
@@ -74,8 +78,8 @@ final class BugsnagTestUtils {
 
     static SessionTracker generateSessionTracker() {
         Configuration config = generateConfiguration();
-        return new SessionTracker(convert(config), config, BugsnagTestUtils.generateClient(),
-            generateSessionStore(), NoopLogger.INSTANCE);
+        return new SessionTracker(convert(config), config.getClientState(),
+                BugsnagTestUtils.generateClient(), generateSessionStore(), NoopLogger.INSTANCE);
     }
 
     static Connectivity generateConnectivity() {

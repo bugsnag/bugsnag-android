@@ -27,6 +27,7 @@ import kotlin.jvm.functions.Function1;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
-    final Configuration clientState;
+    final ClientState clientState;
     final ImmutableConfig immutableConfig;
 
     final Context appContext;
@@ -130,7 +131,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
-        clientState = configuration;
+        clientState = configuration.getClientState().copy();
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
         sessionTracker = new SessionTracker(immutableConfig, clientState, this,
@@ -148,7 +149,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 immutableConfig.getPersistUserBetweenSessions());
         setUserInternal(userRepository.load());
 
-        deviceData = new DeviceData(connectivity, appContext, resources, user.installId, logger);
+        deviceData = new DeviceData(connectivity, appContext, resources, user.getId(), logger);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs(), logger);
@@ -501,10 +502,17 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Removes the current user data and sets it back to defaults
      */
     public void clearUser() {
-        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
-        user.setEmail(null);
-        user.setName(null);
+        user = user.copy(getStringFromMap("id", deviceData.getDeviceData()), null, null);
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_ID, user.getId()));
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_EMAIL, null));
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_NAME, null));
     }
 
     /**
@@ -515,8 +523,12 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param id a unique identifier of the current user
      */
     public void setUserId(@Nullable String id) {
-        user.setId(id);
+        user = user.copy(id, user.getEmail(), user.getName());
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_ID, id));
+
     }
 
     /**
@@ -526,8 +538,11 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param email the email address of the current user
      */
     public void setUserEmail(@Nullable String email) {
-        user.setEmail(email);
+        user = user.copy(user.getId(), email, user.getName());
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_EMAIL, email));
     }
 
     /**
@@ -537,58 +552,41 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param name the name of the current user
      */
     public void setUserName(@Nullable String name) {
-        user.setName(name);
+        user = user.copy(user.getId(), user.getEmail(), name);
         userRepository.save(user);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_USER_NAME, name));
     }
 
     /**
-     * Add a "before notify" callback, to execute code at the point where an error report is
+     * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before reports generated in the event
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * Bugsnag.addOnError(new OnError() {
      * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending errors to Bugsnag
-     * @see BeforeNotify
+     * @param onError a callback to run before sending errors to Bugsnag
+     * @see OnError
      */
-    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        clientState.addBeforeNotify(beforeNotify);
+    public void addOnError(@NonNull OnError onError) {
+        clientState.addOnError(onError);
     }
 
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        clientState.addBeforeSend(beforeSend);
+    public void removeOnError(@NonNull OnError onError) {
+        clientState.removeOnError(onError);
     }
 
     /**
@@ -617,32 +615,36 @@ public class Client extends Observable implements Observer, MetaDataAware {
         clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     */
-    public void notify(@NonNull Throwable exception) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, !BLOCKING);
+    public void addOnSession(@NonNull OnSession onSession) {
+        clientState.addOnSession(onSession);
+    }
+
+    public void removeOnSession(@NonNull OnSession onSession) {
+        clientState.removeOnSession(onSession);
     }
 
     /**
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
+     */
+    public void notify(@NonNull Throwable exception) {
+        notify(exception, null);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
+    public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
+            Thread.currentThread(), false, clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.ASYNC, callback);
+        notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
     /**
@@ -651,43 +653,55 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param name       the error name or class
      * @param message    the error message
      * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
+     */
+    public void notify(@NonNull String name,
+                       @NonNull String message,
+                       @NonNull StackTraceElement[] stacktrace) {
+        notify(name, message, stacktrace, null);
+    }
+
+    /**
+     * Notify Bugsnag of an error
+     *
+     * @param name       the error name or class
+     * @param message    the error message
+     * @param stacktrace the stackframes associated with the error
+     * @param onError   callback invoked on the generated error report for
      *                   additional modification
      */
     public void notify(@NonNull String name,
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
-                       @Nullable Callback callback) {
+                       @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), clientState.getMetaData())
+            sessionTracker, Thread.currentThread(), clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
-        notify(event, DeliveryStyle.ASYNC, callback);
+        notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
     /**
-     * Notify Bugsnag of a handled exception
+     * Caches an error then attempts to notify.
      *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
+     * Should only ever be called from the {@link ExceptionHandler}.
      */
-    public void notify(@NonNull Throwable exception, @NonNull Severity severity) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severity(severity)
-            .build();
-        notify(event, !BLOCKING);
+    void notifyUnhandledException(@NonNull Throwable exception, MetaData metaData,
+                                  @HandledState.SeverityReason String severityReason,
+                                  @Nullable String attributeValue, Thread thread) {
+        Event event = new Event.Builder(immutableConfig, exception,
+                sessionTracker, thread, true, clientState.getMetadata())
+                .severity(Severity.ERROR)
+                .metaData(metaData)
+                .severityReasonType(severityReason)
+                .attributeValue(attributeValue)
+                .build();
+
+        notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
-    private void notify(@NonNull Event event, boolean blocking) {
-        DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(event, style, null);
-    }
-
-    void notify(@NonNull Event event,
-                @NonNull DeliveryStyle style,
-                @Nullable Callback callback) {
+    void notifyInternal(@NonNull Event event,
+                        @NonNull DeliveryStyle style,
+                        @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
         if (event.shouldIgnoreClass()) {
             return;
@@ -721,18 +735,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
-        // Run beforeNotify tasks, don't notify if any return true
-        if (!runBeforeNotifyTasks(event)) {
-            logger.i("Skipping notification - beforeNotify task returned false");
+        // Run on error tasks, don't notify if any return false
+        if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
+            logger.i("Skipping notification - onError task returned false");
             return;
         }
 
         // Build the report
         Report report = new Report(immutableConfig.getApiKey(), event);
-
-        if (callback != null) {
-            callback.beforeNotify(report);
-        }
 
         if (event.getSession() != null) {
             setChanged();
@@ -747,13 +757,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
 
         switch (style) {
-            case SAME_THREAD:
-                deliver(report, event);
-                break;
-            case NO_CACHE:
-                report.setCachingDisabled(true);
-                deliverReportAsync(event, report);
-                break;
             case ASYNC:
                 deliverReportAsync(event, report);
                 break;
@@ -843,102 +846,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
         breadcrumbs.add(new Breadcrumb(event.getExceptionName(), BreadcrumbType.ERROR, message));
     }
 
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     */
-    public void notifyBlocking(@NonNull Throwable exception) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
-     *                  additional modification
-     */
-    public void notifyBlocking(@NonNull Throwable exception, @Nullable Callback callback) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, DeliveryStyle.SAME_THREAD, callback);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
-     *                   additional modification
-     */
-    public void notifyBlocking(@NonNull String name,
-                               @NonNull String message,
-                               @NonNull StackTraceElement[] stacktrace,
-                               @Nullable Callback callback) {
-        Event event = new Event.Builder(immutableConfig, name, message,
-            stacktrace, sessionTracker, Thread.currentThread(), clientState.getMetaData())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(event, DeliveryStyle.SAME_THREAD, callback);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     */
-    public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity) {
-        Event event = new Event.Builder(immutableConfig, exception,
-            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
-            .severity(severity)
-            .build();
-        notify(event, BLOCKING);
-    }
-
-    /**
-     * Intended for internal use only
-     *
-     * @param exception the exception
-     * @param clientData the clientdata
-     * @param blocking whether to block when notifying
-     * @param callback a callback when notifying
-     */
-    public void internalClientNotify(@NonNull Throwable exception,
-                              @NonNull Map<String, Object> clientData,
-                              boolean blocking,
-                              @Nullable Callback callback) {
-        String severity = getKeyFromClientData(clientData, "severity", true);
-        String severityReason =
-            getKeyFromClientData(clientData, "severityReason", true);
-        String logLevel = getKeyFromClientData(clientData, "logLevel", false);
-
-        String msg = String.format("Internal client notify, severity = '%s',"
-            + " severityReason = '%s'", severity, severityReason);
-        logger.i(msg);
-
-        @SuppressWarnings("WrongConstant")
-        Event event = new Event.Builder(immutableConfig, exception,
-            sessionTracker, Thread.currentThread(), false, clientState.getMetaData())
-            .severity(Severity.fromString(severity))
-            .severityReasonType(severityReason)
-            .attributeValue(logLevel)
-            .build();
-
-        DeliveryStyle deliveryStyle = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(event, deliveryStyle, callback);
-    }
-
     @NonNull
     private String getKeyFromClientData(Map<String, Object> clientData,
                                         String key,
@@ -959,7 +866,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        clientState.getMetaData().addMetadata(section, key, value);
+        clientState.getMetadata().addMetadata(section, key, value);
     }
 
     @Override
@@ -969,7 +876,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
-        clientState.getMetaData().clearMetadata(section, key);
+        clientState.getMetadata().clearMetadata(section, key);
     }
 
     @Nullable
@@ -981,7 +888,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return clientState.getMetaData().getMetadata(section, key);
+        return clientState.getMetadata().getMetadata(section, key);
     }
 
     /**
@@ -1018,11 +925,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     void deliver(@NonNull Report report, @NonNull Event event) {
-        if (!runBeforeSendTasks(report)) {
-            logger.i("Skipping notification - beforeSend task returned false");
-            return;
-        }
-
         DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
@@ -1048,40 +950,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
     }
 
-    /**
-     * Caches an error then attempts to notify.
-     *
-     * Should only ever be called from the {@link ExceptionHandler}.
-     */
-    void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData,
-                        @HandledState.SeverityReason String severityReason,
-                        @Nullable String attributeValue, Thread thread) {
-        Event event = new Event.Builder(immutableConfig, exception,
-            sessionTracker, thread, true, clientState.getMetaData())
-            .severity(severity)
-            .metaData(metaData)
-            .severityReasonType(severityReason)
-            .attributeValue(attributeValue)
-            .build();
-
-        notify(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
-    }
-
-    private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-            try {
-                if (!beforeSend.run(report)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                logger.w("BeforeSend threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the error to be sent if there were no objections
-        return true;
-    }
-
     OrientationEventListener getOrientationListener() {
         return orientationListener; // this only exists for tests
     }
@@ -1090,14 +958,14 @@ public class Client extends Observable implements Observer, MetaDataAware {
         return sessionTracker;
     }
 
-    private boolean runBeforeNotifyTasks(Event event) {
-        for (BeforeNotify beforeNotify : clientState.getBeforeNotifyTasks()) {
+    private boolean runOnErrorTasks(Event event) {
+        for (OnError onError : clientState.getOnErrorTasks()) {
             try {
-                if (!beforeNotify.run(event)) {
+                if (!onError.run(event)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                logger.w("BeforeNotify threw an Exception", ex);
+                logger.w("OnError threw an Exception", ex);
             }
         }
 
@@ -1106,7 +974,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
-        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
+        Collection<OnBreadcrumb> tasks = clientState.getOnBreadcrumbTasks();
         for (OnBreadcrumb callback : tasks) {
             try {
                 if (!callback.run(breadcrumb)) {
@@ -1159,12 +1027,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
     }
 
-    /**
-     * Returns the configuration used to initialise the client
-     * @return the config
-     */
-    @NonNull
-    public BugsnagConfiguration getConfiguration() {
+    ClientState getClientState() {
         return clientState;
     }
 

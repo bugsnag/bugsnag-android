@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.lang.Thread;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +15,10 @@ import java.util.Map;
  * Information and associated diagnostics relating to a handled or unhandled
  * Exception.
  * <p>
- * <p>This object is made available in BeforeNotify callbacks, so you can
+ * <p>This object is made available in OnError callbacks, so you can
  * inspect and modify it before it is delivered to Bugsnag.
  *
- * @see BeforeNotify
+ * @see OnError
  */
 public class Event implements JsonStream.Streamable, MetaDataAware {
 
@@ -28,7 +29,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
     private Map<String, Object> deviceData = new HashMap<>();
 
     @NonNull
-    private User user = new User();
+    private User user = new User(null, null, null);
 
     @Nullable
     private Severity severity;
@@ -229,8 +230,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      * @param id the id of the user
      */
     public void setUserId(@Nullable String id) {
-        this.user = new User(this.user);
-        this.user.setId(id);
+        this.user = user.copy(id, user.getEmail(), user.getName());
     }
 
     /**
@@ -239,8 +239,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      * @param email the email address of the user
      */
     public void setUserEmail(@Nullable String email) {
-        this.user = new User(this.user);
-        this.user.setEmail(email);
+        this.user = user.copy(user.getId(), email, user.getName());
     }
 
     /**
@@ -249,8 +248,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      * @param name the name of the user
      */
     public void setUserName(@Nullable String name) {
-        this.user = new User(this.user);
-        this.user.setName(name);
+        this.user = user.copy(user.getId(), user.getEmail(), name);
     }
 
     @Override

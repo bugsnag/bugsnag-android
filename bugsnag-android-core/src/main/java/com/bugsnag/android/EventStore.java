@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +29,7 @@ class EventStore extends FileStore<Event> {
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
     private final ImmutableConfig config;
-    private final Configuration clientState;
+    private final ClientState clientState;
     private final Logger logger;
     private final Delegate delegate;
 
@@ -50,7 +51,7 @@ class EventStore extends FileStore<Event> {
         }
     };
 
-    EventStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
+    EventStore(@NonNull ImmutableConfig config, @NonNull ClientState clientState,
                @NonNull Context appContext, Logger logger, Delegate delegate) {
         super(appContext, "/bugsnag-errors/", 128, EVENT_COMPARATOR, logger, delegate);
         this.config = config;
@@ -143,27 +144,7 @@ class EventStore extends FileStore<Event> {
 
     private void flushEventFile(File eventFile) {
         try {
-            Report report;
-
-            if (clientState.getBeforeSendTasks().isEmpty()) {
-                report = new Report(config.getApiKey(), eventFile);
-            } else {
-                Event event = EventReader.readEvent(config, clientState, eventFile, logger);
-                report = new Report(config.getApiKey(), event);
-
-                for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-                    try {
-                        if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(eventFile));
-                            logger.i("Deleting cancelled event file " + eventFile.getName());
-                            return;
-                        }
-                    } catch (Throwable ex) {
-                        logger.w("BeforeSend threw an Exception", ex);
-                    }
-                }
-            }
-
+            Report report = new Report(config.getApiKey(), eventFile);
             DeliveryParams deliveryParams = config.errorApiDeliveryParams();
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
 

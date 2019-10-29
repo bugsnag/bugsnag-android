@@ -112,6 +112,8 @@ class DeviceData {
         map.put("totalMemory", calculateTotalMemory());
         map.put("freeDisk", calculateFreeDisk());
         map.put("orientation", calculateOrientation());
+        map.put("time", getTime());
+        map.put("locale", locale);
         return map;
     }
 
@@ -121,9 +123,7 @@ class DeviceData {
         map.put("charging", isCharging());
         map.put("locationStatus", getLocationStatus());
         map.put("networkAccess", getNetworkAccess());
-        map.put("time", getTime());
         map.put("brand", Build.BRAND);
-        map.put("locale", locale);
         map.put("screenDensity", screenDensity);
         map.put("dpi", dpi);
         map.put("emulator", emulator);

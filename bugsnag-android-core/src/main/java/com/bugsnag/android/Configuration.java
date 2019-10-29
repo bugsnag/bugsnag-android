@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-public class Configuration extends Observable implements Observer, BugsnagConfiguration {
+public class Configuration extends Observable implements Observer {
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
@@ -29,6 +29,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     @NonNull
     private final String apiKey;
+    private final ClientState clientState;
     private String buildUuid;
     private String appVersion;
     private Integer versionCode = 0;
@@ -51,15 +52,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private long anrThresholdMs = 5000;
     private boolean autoDetectErrors = true;
 
-    @NonNull
-    private MetaData metaData;
-    private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<OnBreadcrumb> breadcrumbCallbacks
-        = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
-
-
     private String codeBundleId;
     private String appType = "android";
 
@@ -77,9 +69,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         if (TextUtils.isEmpty(apiKey)) {
             throw new IllegalArgumentException("You must provide a Bugsnag API key");
         }
+
         this.apiKey = apiKey;
-        this.metaData = new MetaData();
-        this.metaData.addObserver(this);
+        this.clientState = new ClientState();
+        this.clientState.getMetadata().addObserver(this);
         enabledBreadcrumbTypes.addAll(Arrays.asList(BreadcrumbType.values()));
 
         try {
@@ -178,7 +171,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return Context
      */
     @Nullable
-    @Override
     public String getContext() {
         return context;
     }
@@ -190,7 +182,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param context set what was happening at the time of a crash
      */
-    @Override
     public void setContext(@Nullable String context) {
         this.context = context;
         setChanged();
@@ -250,7 +241,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     @NonNull
     public Collection<String> getRedactKeys() {
-        return Collections.unmodifiableSet(metaData.getRedactKeys());
+        return Collections.unmodifiableSet(clientState.getMetadata().getRedactKeys());
     }
 
     /**
@@ -267,7 +258,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param redactKeys a list of keys to redact from metaData
      */
     public void setRedactKeys(@NonNull Collection<String> redactKeys) {
-        this.metaData.setRedactKeys(redactKeys);
+        clientState.getMetadata().setRedactKeys(redactKeys);
     }
 
     /**
@@ -435,50 +426,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     public void setAutoTrackSessions(boolean autoTrack) {
         this.autoTrackSessions = autoTrack;
-    }
-
-    /**
-     * Gets any meta data associated with the error
-     *
-     * @return meta data
-     */
-    @NonNull
-    public MetaData getMetaData() {
-        return metaData;
-    }
-
-    /**
-     * Sets any meta data associated with the error
-     *
-     * @param metaData meta data
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        //noinspection ConstantConditions
-        if (metaData == null) {
-            this.metaData = new MetaData();
-        } else {
-            this.metaData = metaData;
-        }
-    }
-
-    /**
-     * Gets any before notify tasks to run
-     *
-     * @return the before notify tasks
-     */
-    @NonNull
-    protected Collection<BeforeNotify> getBeforeNotifyTasks() {
-        return beforeNotifyTasks;
-    }
-
-    /**
-     * Gets any before send tasks to run
-     *
-     * @return the before send tasks
-     */
-    @NonNull
-    protected Collection<BeforeSend> getBeforeSendTasks() {
-        return beforeSendTasks;
     }
 
     /**
@@ -702,91 +649,72 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Add a "before notify" callback, to execute code at the point where an error report is
+     * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before reports generated in the event
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * Bugsnag.addOnError(new OnError() {
      * public boolean run(Event error) {
      * error.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending errors to Bugsnag
-     * @see BeforeNotify
+     * @param onError a callback to run before sending errors to Bugsnag
+     * @see OnError
      */
-    @Override
-    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        if (!beforeNotifyTasks.contains(beforeNotify)) {
-            beforeNotifyTasks.add(beforeNotify);
-        }
+    public void addOnError(@NonNull OnError onError) {
+        clientState.addOnError(onError);
+    }
+
+    void removeOnError(@NonNull OnError onError) {
+        clientState.removeOnError(onError);
     }
 
     /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
+     * Adds an on breadcrumb callback
      *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
+     * @param onBreadcrumb the on breadcrumb callback
      */
-    @Override
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        if (!beforeSendTasks.contains(beforeSend)) {
-            beforeSendTasks.add(beforeSend);
-        }
+    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.addOnBreadcrumb(onBreadcrumb);
     }
 
     /**
-     * Adds a new before breadcrumb task
+     * Removes an on breadcrumb callback
      *
-     * @param onBreadcrumb the new before breadcrumb task
+     * @param onBreadcrumb the on breadcrumb callback
      */
-    void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
-            breadcrumbCallbacks.add(onBreadcrumb);
-        }
-    }
-
-    void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        breadcrumbCallbacks.remove(onBreadcrumb);
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
-     * Gets any before breadcrumb tasks to run
+     * Adds an on session callback
      *
-     * @return the before breadcrumb tasks
+     * @param onSession the on session callback
      */
-    @NonNull
-    Collection<OnBreadcrumb> getBreadcrumbCallbacks() {
-        return breadcrumbCallbacks;
+    public void addOnSession(@NonNull OnSession onSession) {
+        clientState.addOnSession(onSession);
     }
 
-    void addBeforeSendSession(BeforeSendSession beforeSendSession) {
-        sessionCallbacks.add(beforeSendSession);
+    /**
+     * Removes an on session callback
+     *
+     * @param onSession the on session callback
+     */
+    public void removeOnSession(@NonNull OnSession onSession) {
+        clientState.removeOnSession(onSession);
     }
 
-    Collection<BeforeSendSession> getSessionCallbacks() {
-        return sessionCallbacks;
+    ClientState getClientState() {
+        return clientState;
     }
 }

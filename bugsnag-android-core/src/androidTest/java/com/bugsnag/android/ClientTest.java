@@ -100,15 +100,13 @@ public class ClientTest {
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         client = new Client(context, config);
 
-        final User user = new User();
+        final User[] user = new User[1];
 
-        client.addBeforeNotify(new BeforeNotify() {
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 // Pull out the user information
-                user.setId(event.getUser().getId());
-                user.setEmail(event.getUser().getEmail());
-                user.setName(event.getUser().getName());
+                user[0] = event.getUser();
                 return true;
             }
         });
@@ -116,9 +114,9 @@ public class ClientTest {
         client.notify(new RuntimeException("Testing"));
 
         // Check the user details have been set
-        assertEquals(USER_ID, user.getId());
-        assertEquals(USER_EMAIL, user.getEmail());
-        assertEquals(USER_NAME, user.getName());
+        assertEquals(USER_ID, user[0].getId());
+        assertEquals(USER_EMAIL, user[0].getEmail());
+        assertEquals(USER_NAME, user[0].getName());
     }
 
     @Test
@@ -274,14 +272,12 @@ public class ClientTest {
         client = generateClient();
         Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
 
-        assertEquals(11, metaData.size());
+        assertEquals(9, metaData.size());
         assertNotNull(metaData.get("batteryLevel"));
         assertNotNull(metaData.get("charging"));
         assertNotNull(metaData.get("locationStatus"));
         assertNotNull(metaData.get("networkAccess"));
-        assertNotNull(metaData.get("time"));
         assertNotNull(metaData.get("brand"));
-        assertNotNull(metaData.get("locale"));
         assertNotNull(metaData.get("screenDensity"));
         assertNotNull(metaData.get("dpi"));
         assertNotNull(metaData.get("emulator"));
