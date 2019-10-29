@@ -1,12 +1,8 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
 import com.bugsnag.android.NativeInterface.Message;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -51,7 +47,6 @@ import java.util.concurrent.RejectedExecutionException;
 public class Client extends Observable implements Observer, MetaDataAware, CallbackAware,
         UserAware {
 
-    private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
@@ -84,9 +79,9 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     final StorageManager storageManager;
-    Logger logger;
+    final Logger logger;
 
     /**
      * Initialize a Bugsnag client
@@ -186,7 +181,7 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
                 Client.this.reportInternalBugsnagError(err);
             }
         };
-        eventStore = new EventStore(immutableConfig, clientState, appContext, logger, delegate);
+        eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
 
         // Install a default exception handler with this client
         if (immutableConfig.getAutoDetectErrors()) {
@@ -421,16 +416,6 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
     }
 
     /**
-     * Starts tracking a new session only if no sessions have yet been tracked
-     *
-     * This is an integration point for custom libraries implementing automatic session capture
-     * which differs from the default activity-based initialization.
-     */
-    public void startFirstSession(@NonNull Activity activity) {
-        sessionTracker.startFirstSession(activity);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -479,21 +464,6 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
     @Override
     public User getUser() {
         return user;
-    }
-
-    @NonNull
-    public Collection<Breadcrumb> getBreadcrumbs() {
-        return new ArrayList<>(breadcrumbs.store);
-    }
-
-    @NonNull
-    public AppData getAppData() {
-        return appData;
-    }
-
-    @NonNull
-    public DeviceData getDeviceData() {
-        return deviceData;
     }
 
     private void setUserInternal(User user) {
@@ -841,19 +811,6 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
         breadcrumbs.add(new Breadcrumb(event.getExceptionName(), BreadcrumbType.ERROR, message));
     }
 
-    @NonNull
-    private String getKeyFromClientData(Map<String, Object> clientData,
-                                        String key,
-                                        boolean required) {
-        Object value = clientData.get(key);
-        if (value instanceof String) {
-            return (String) value;
-        } else if (required) {
-            throw new IllegalStateException("Failed to set " + key + " in client data!");
-        }
-        return null;
-    }
-
     @Override
     public void addMetadata(@NonNull String section, @Nullable Object value) {
         addMetadata(section, null, value);
@@ -912,13 +869,6 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
         }
     }
 
-    /**
-     * Clear any breadcrumbs that have been left so far.
-     */
-    public void clearBreadcrumbs() {
-        breadcrumbs.clear();
-    }
-
     void deliver(@NonNull Report report, @NonNull Event event) {
         DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
@@ -930,12 +880,10 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
                 leaveErrorBreadcrumb(event);
                 break;
             case UNDELIVERED:
-                if (!report.isCachingDisabled()) {
-                    logger.w("Could not send event(s) to Bugsnag,"
-                            + " saving to disk to send later");
-                    eventStore.write(event);
-                    leaveErrorBreadcrumb(event);
-                }
+                logger.w("Could not send event(s) to Bugsnag,"
+                        + " saving to disk to send later");
+                eventStore.write(event);
+                leaveErrorBreadcrumb(event);
                 break;
             case FAILURE:
                 logger.w("Problem sending event to Bugsnag");
@@ -943,10 +891,6 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
             default:
                 break;
         }
-    }
-
-    OrientationEventListener getOrientationListener() {
-        return orientationListener; // this only exists for tests
     }
 
     SessionTracker getSessionTracker() {
@@ -980,18 +924,6 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
             }
         }
         return true;
-    }
-
-    /**
-     * Stores the given key value pair into shared preferences
-     *
-     * @param key   The key to store
-     * @param value The value to store
-     */
-    private void storeInSharedPrefs(String key, String value) {
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit().putString(key, value).apply();
     }
 
     EventStore getEventStore() {
@@ -1031,7 +963,7 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
     }
 
     void setBinaryArch(String binaryArch) {
-        getAppData().setBinaryArch(binaryArch);
+        appData.setBinaryArch(binaryArch);
     }
 
     void close() {

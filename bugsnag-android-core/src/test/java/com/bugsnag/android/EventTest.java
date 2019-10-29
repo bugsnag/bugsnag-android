@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,12 +42,6 @@ public class EventTest {
             new RuntimeException(), null,
             Thread.currentThread(), false, new MetaData()).build();
         assertEquals("", err.getExceptionMessage());
-    }
-
-    @Test
-    public void testNullSeverity() throws Exception {
-        event.setSeverity(null);
-        assertEquals(Severity.WARNING, event.getSeverity());
     }
 
     @Test

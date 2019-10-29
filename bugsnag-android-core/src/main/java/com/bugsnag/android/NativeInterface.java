@@ -190,7 +190,7 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static Map<String,Object> getAppData() {
         HashMap<String,Object> data = new HashMap<>();
-        AppData source = getClient().getAppData();
+        AppData source = getClient().appData;
         data.putAll(source.getAppData());
         data.putAll(source.getAppDataMetaData());
         return data;
@@ -203,7 +203,7 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static Map<String,Object> getDeviceData() {
         HashMap<String,Object> deviceData = new HashMap<>();
-        DeviceData source = getClient().getDeviceData();
+        DeviceData source = getClient().deviceData;
         deviceData.putAll(source.getDeviceMetaData());
         deviceData.putAll(source.getDeviceData()); // wat
         return deviceData;

@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
@@ -25,10 +23,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 class SessionTracker extends Observable implements Application.ActivityLifecycleCallbacks {
-
-    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
-    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
-    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
 
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
@@ -222,10 +216,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             // If there is no session we will wait for one to be created
             trackSessionIfNeeded(session);
         }
-    }
-
-    private String getReleaseStage() {
-        return getStringFromMap("releaseStage", client.appData.getAppDataSummary());
     }
 
     @Nullable

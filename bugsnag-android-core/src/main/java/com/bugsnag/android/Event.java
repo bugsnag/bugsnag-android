@@ -31,7 +31,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
     @NonNull
     private User user = new User(null, null, null);
 
-    @Nullable
+    @NonNull
     private Severity severity;
 
     @NonNull
@@ -52,7 +52,6 @@ public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
     private final HandledState handledState;
     private final Session session;
     private final ThreadState threadState;
-    private boolean incomplete = false;
 
     Event(@NonNull ImmutableConfig config, @NonNull Throwable exc,
           HandledState handledState, @NonNull Severity severity,
@@ -84,7 +83,6 @@ public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
         writer.name("severity").value(severity);
         writer.name("severityReason").value(handledState);
         writer.name("unhandled").value(handledState.isUnhandled());
-        writer.name("incomplete").value(incomplete);
 
         if (projectPackages != null) {
             writer.name("projectPackages").beginArray();
@@ -123,14 +121,6 @@ public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
         }
 
         writer.endObject();
-    }
-
-    boolean isIncomplete() {
-        return incomplete;
-    }
-
-    void setIncomplete(boolean incomplete) {
-        this.incomplete = incomplete;
     }
 
     /**
@@ -184,11 +174,9 @@ public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
      * @param severity the severity of this error
      * @see Severity
      */
-    public void setSeverity(@Nullable Severity severity) {
-        if (severity != null) {
-            this.severity = severity;
-            this.handledState.setCurrentSeverity(severity);
-        }
+    public void setSeverity(@NonNull Severity severity) {
+        this.severity = severity;
+        this.handledState.setCurrentSeverity(severity);
     }
 
     /**
@@ -196,7 +184,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
      *
      * @see Severity
      */
-    @Nullable
+    @NonNull
     public Severity getSeverity() {
         return severity;
     }

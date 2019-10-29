@@ -14,7 +14,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -177,12 +176,6 @@ public class ObserverInterfaceTest {
         assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
         assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
-    }
-
-    @Test
-    public void testClearBreadcrumbsSendsMessage() {
-        client.clearBreadcrumbs();
-        findMessageInQueue(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null);
     }
 
     @Test

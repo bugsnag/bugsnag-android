@@ -68,6 +68,6 @@ internal class CustomFileStore(
     maxStoreCount: Int,
     comparator: Comparator<File>?,
     delegate: Delegate?
-) : FileStore<CustomStreamable>(appContext, folder, maxStoreCount, comparator, NoopLogger, delegate) {
+) : FileStore(appContext, folder, maxStoreCount, comparator, NoopLogger, delegate) {
     override fun getFilename(`object`: Any?) = "$folder/foo.json"
 }

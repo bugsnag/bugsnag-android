@@ -13,7 +13,7 @@ import java.util.UUID;
  * Store and flush Sessions which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-class SessionStore extends FileStore<Session> {
+class SessionStore extends FileStore {
 
     static final Comparator<File> SESSION_COMPARATOR = new Comparator<File>() {
         @Override

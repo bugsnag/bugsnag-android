@@ -31,7 +31,6 @@ class EventFilenameTest {
     fun setUp() {
         eventStore = EventStore(
             config,
-            BugsnagTestUtils.generateClientState(),
             context,
             NoopLogger,
             null

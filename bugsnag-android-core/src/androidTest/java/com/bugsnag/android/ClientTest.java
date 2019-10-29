@@ -20,7 +20,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collection;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
@@ -183,20 +182,6 @@ public class ClientTest {
     }
 
     @Test
-    public void testClearBreadcrumbs() {
-        Configuration config = generateConfiguration();
-        config.setAutoCaptureBreadcrumbs(false);
-        client = generateClient(config);
-        assertEquals(1, client.breadcrumbs.store.size());
-
-        client.leaveBreadcrumb("test");
-        assertEquals(2, client.breadcrumbs.store.size());
-
-        client.clearBreadcrumbs();
-        assertEquals(0, client.breadcrumbs.store.size());
-    }
-
-    @Test
     public void testClientAddToTab() {
         client = generateClient();
         client.addMetadata("drink", "cola", "cherry");
@@ -220,37 +205,16 @@ public class ClientTest {
     }
 
     @Test
-    public void testBreadcrumbGetter() {
-        client = generateClient();
-        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-
-        int breadcrumbCount = breadcrumbs.size();
-        client.leaveBreadcrumb("Foo");
-        assertEquals(breadcrumbCount, breadcrumbs.size()); // should not pick up new breadcrumbs
-    }
-
-    @Test
-    public void testBreadcrumbStoreNotModified() {
-        client = generateClient();
-        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-        int breadcrumbCount = client.breadcrumbs.store.size();
-
-        breadcrumbs.clear(); // only the copy should be cleared
-        assertTrue(breadcrumbs.isEmpty());
-        assertEquals(breadcrumbCount, client.breadcrumbs.store.size());
-    }
-
-    @Test
     public void testAppDataCollection() {
         client = generateClient();
-        AppData appData = client.getAppData();
-        assertEquals(client.getAppData(), appData);
+        AppData appData = client.appData;
+        assertEquals(client.appData, appData);
     }
 
     @Test
     public void testAppDataMetaData() {
         client = generateClient();
-        Map<String, Object> app = client.getAppData().getAppDataMetaData();
+        Map<String, Object> app = client.appData.getAppDataMetaData();
         assertEquals(6, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
         assertEquals("com.bugsnag.android.core.test", app.get("packageName"));
@@ -263,14 +227,14 @@ public class ClientTest {
     @Test
     public void testDeviceDataCollection() {
         client = generateClient();
-        DeviceData deviceData = client.getDeviceData();
-        assertEquals(client.getDeviceData(), deviceData);
+        DeviceData deviceData = client.deviceData;
+        assertEquals(client.deviceData, deviceData);
     }
 
     @Test
     public void testPopulateDeviceMetadata() {
         client = generateClient();
-        Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
+        Map<String, Object> metaData = client.deviceData.getDeviceMetaData();
 
         assertEquals(9, metaData.size());
         assertNotNull(metaData.get("batteryLevel"));

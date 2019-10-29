@@ -284,13 +284,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Clear any breadcrumbs that have been left so far.
-     */
-    public static void clearBreadcrumbs() {
-        getClient().clearBreadcrumbs();
-    }
-
-    /**
      * Starts tracking a new session. You should disable automatic session tracking via
      * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>

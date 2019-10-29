@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.convert;
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
-import static com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

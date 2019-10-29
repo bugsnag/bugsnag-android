@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-abstract class FileStore<T extends JsonStream.Streamable> {
+abstract class FileStore {
 
     interface Delegate {
 

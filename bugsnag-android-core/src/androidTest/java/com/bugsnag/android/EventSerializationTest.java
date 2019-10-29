@@ -64,7 +64,7 @@ public class EventSerializationTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
-        event.setAppData(client.getAppData().getAppData());
+        event.setAppData(client.appData.getAppData());
 
         JSONObject errorJson = streamableToJson(event);
         assertEquals("warning", errorJson.get("severity"));

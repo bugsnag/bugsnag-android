@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -24,9 +23,5 @@ class DateUtils {
 
     static String toIso8601(@NonNull Date date) {
         return iso8601Holder.get().format(date);
-    }
-
-    static Date fromIso8601(@NonNull String date) throws ParseException {
-        return iso8601Holder.get().parse(date);
     }
 }

@@ -25,7 +25,6 @@ public class Report implements JsonStream.Streamable {
 
     @NonNull
     private String apiKey;
-    private transient boolean cachingDisabled;
 
     Report(@NonNull String apiKey, @NonNull Event event) {
         this(apiKey, null, event);
@@ -97,13 +96,5 @@ public class Report implements JsonStream.Streamable {
     @NonNull
     public Notifier getNotifier() {
         return notifier;
-    }
-
-    boolean isCachingDisabled() {
-        return cachingDisabled;
-    }
-
-    void setCachingDisabled(boolean cachingDisabled) {
-        this.cachingDisabled = cachingDisabled;
     }
 }

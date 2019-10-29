@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * User-specified configuration storage object, contains information
@@ -21,9 +20,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Configuration extends Observable implements Observer, CallbackAware {
 
-    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
-    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
     private static final int DEFAULT_MAX_SIZE = 25;
     static final String DEFAULT_EXCEPTION_TYPE = "android";
 
@@ -49,7 +46,6 @@ public class Configuration extends Observable implements Observer, CallbackAware
 
     private boolean autoDetectAnrs = false;
     private boolean autoDetectNdkCrashes;
-    private long anrThresholdMs = 5000;
     private boolean autoDetectErrors = true;
 
     private String codeBundleId;
