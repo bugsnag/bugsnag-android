@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.lang.Thread;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +15,10 @@ import java.util.Map;
  * Information and associated diagnostics relating to a handled or unhandled
  * Exception.
  * <p>
- * <p>This object is made available in BeforeNotify callbacks, so you can
+ * <p>This object is made available in OnError callbacks, so you can
  * inspect and modify it before it is delivered to Bugsnag.
  *
- * @see BeforeNotify
+ * @see OnError
  */
 public class Event implements JsonStream.Streamable, MetaDataAware {
 

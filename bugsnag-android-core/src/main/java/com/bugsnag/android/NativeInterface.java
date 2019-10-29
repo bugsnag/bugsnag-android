@@ -387,16 +387,14 @@ public class NativeInterface {
                               @NonNull final Severity severity,
                               @NonNull final StackTraceElement[] stacktrace) {
 
-        getClient().notify(name, message, stacktrace, new Callback() {
+        getClient().notify(name, message, stacktrace, new OnError() {
             @Override
-            public void beforeNotify(@NonNull Report report) {
-                Event event = report.getEvent();
-                if (event != null) {
-                    if (severity != null) {
-                        event.setSeverity(severity);
-                    }
-                    event.getExceptions().setExceptionType("c");
+            public boolean run(@NonNull Event event) {
+                if (severity != null) {
+                    event.setSeverity(severity);
                 }
+                event.getExceptions().setExceptionType("c");
+                return true;
             }
         });
     }
