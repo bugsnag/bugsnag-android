@@ -63,8 +63,17 @@ abstract class Scenario(
     }
 
     internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
-        val clz = java.lang.Class.forName("com.bugsnag.android.DefaultDelivery")
-        return clz.constructors[0].newInstance(null) as Delivery
+        val clz = Class.forName("com.bugsnag.android.DefaultDelivery")
+        return clz.constructors[0].newInstance(null, object: Logger {
+            override fun e(msg: String) = Unit
+            override fun e(msg: String, throwable: Throwable) = Unit
+            override fun w(msg: String) = Unit
+            override fun w(msg: String, throwable: Throwable) = Unit
+            override fun i(msg: String) = Unit
+            override fun i(msg: String, throwable: Throwable) = Unit
+            override fun d(msg: String) = Unit
+            override fun d(msg: String, throwable: Throwable) = Unit
+        }) as Delivery
     }
 
     /**

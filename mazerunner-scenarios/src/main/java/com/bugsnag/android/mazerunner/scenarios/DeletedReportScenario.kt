@@ -24,9 +24,7 @@ internal class DeletedReportScenario(config: Configuration,
             if (eventMetaData != "non-crashy") {
                 disableAllDelivery(config)
             } else {
-                val ctor = Class.forName("com.bugsnag.android.DefaultDelivery").declaredConstructors[0]
-                ctor.isAccessible = true
-                val baseDelivery = ctor.newInstance(null) as Delivery
+                val baseDelivery = createDefaultDelivery()
                 val errDir = File(context.cacheDir, "bugsnag-errors")
 
                 config.delivery = object: Delivery {
