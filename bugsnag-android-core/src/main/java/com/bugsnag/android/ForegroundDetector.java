@@ -22,21 +22,24 @@ class ForegroundDetector {
      * importance as a proxy.
      * <p/>
      * In the unlikely event that information about the process cannot be retrieved, this method
-     * will return true. This is deemed preferable as ANRs are only reported when the application
-     * is in the foreground, and we would rather deliver false-positives than miss true ANRs in
-     * this case. We also need to report 'inForeground' as a boolean value in API calls, and
-     * need to keep the definition of the value consistent throughout the application.
+     * will return null, and the 'inForeground' and 'durationInForeground' values will not be
+     * serialized in API calls.
      *
      * @return whether the application is in the foreground or not
      */
-    boolean isInForeground() {
-        ActivityManager.RunningAppProcessInfo info = getProcessInfo();
+    @Nullable
+    Boolean isInForeground() {
+        try {
+            ActivityManager.RunningAppProcessInfo info = getProcessInfo();
 
-        if (info != null) {
-            return info.importance
-                <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
-        } else { // prefer a false negative if process info not available
-            return false;
+            if (info != null) {
+                return info.importance
+                        <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+            } else {
+                return null;
+            }
+        } catch (RuntimeException exc) {
+            return null;
         }
     }
 
@@ -53,13 +56,8 @@ class ForegroundDetector {
 
     @Nullable
     private ActivityManager.RunningAppProcessInfo getProcessInfoPreApi16() {
-        List<ActivityManager.RunningAppProcessInfo> appProcesses;
-
-        try {
-            appProcesses = activityManager.getRunningAppProcesses();
-        } catch (SecurityException exc) {
-            return null;
-        }
+        List<ActivityManager.RunningAppProcessInfo> appProcesses
+                = activityManager.getRunningAppProcesses();
 
         if (appProcesses != null) {
             int pid = Process.myPid();

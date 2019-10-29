@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Catch throwables when invoking methods on system services
+  [#623](https://github.com/bugsnag/bugsnag-android/pull/623)
+
 ## 4.21.1 (2019-10-15)
 
 * Fix a packaging issue on Maven Central in v4.21.0
