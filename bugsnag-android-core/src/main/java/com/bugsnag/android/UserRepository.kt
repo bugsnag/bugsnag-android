@@ -13,24 +13,22 @@ internal class UserRepository(private val prefs: SharedPreferences, private val 
     }
 
     fun load(): User {
-        val user = User()
         var installId = prefs.getString(INSTALL_ID_KEY, null)
 
         if (installId == null) {
             installId = UUID.randomUUID().toString()
             prefs.edit().putString(INSTALL_ID_KEY, installId).apply()
         }
-        user.installId = installId
 
-        if (persist) {
-            // Check to see if a user was stored in the SharedPreferences
-            user.id = prefs.getString(USER_ID_KEY, installId)
-            user.name = prefs.getString(USER_NAME_KEY, null)
-            user.email = prefs.getString(USER_EMAIL_KEY, null)
-        } else {
-            user.id = installId
+        return when {
+            persist -> // Check to see if a user was stored in the SharedPreferences
+                User(
+                    prefs.getString(USER_ID_KEY, installId),
+                    prefs.getString(USER_EMAIL_KEY, null),
+                    prefs.getString(USER_NAME_KEY, null)
+                )
+            else -> User(installId, null, null)
         }
-        return user
     }
 
     fun save(user: User) {
