@@ -25,7 +25,7 @@ class EventReader {
      *                     field is missing.
      */
     static Event readEvent(@NonNull ImmutableConfig config,
-                           @NonNull BugsnagConfiguration clientState, @NonNull File eventFile)
+                           @NonNull ClientState clientState, @NonNull File eventFile)
             throws IOException {
         JsonReader reader = null;
 

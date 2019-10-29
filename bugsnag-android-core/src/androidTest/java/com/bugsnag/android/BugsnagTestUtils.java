@@ -63,6 +63,10 @@ final class BugsnagTestUtils {
         return configuration;
     }
 
+    static ClientState generateClientState() {
+        return generateConfiguration().getClientState();
+    }
+
     static ImmutableConfig generateImmutableConfig() {
         return convert(generateConfiguration());
     }
@@ -74,8 +78,8 @@ final class BugsnagTestUtils {
 
     static SessionTracker generateSessionTracker() {
         Configuration config = generateConfiguration();
-        return new SessionTracker(convert(config), config, BugsnagTestUtils.generateClient(),
-            generateSessionStore());
+        return new SessionTracker(convert(config), config.getClientState(),
+                BugsnagTestUtils.generateClient(), generateSessionStore());
     }
 
     static Connectivity generateConnectivity() {

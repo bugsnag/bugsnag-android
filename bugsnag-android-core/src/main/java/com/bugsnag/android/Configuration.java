@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-public class Configuration extends Observable implements Observer, BugsnagConfiguration {
+public class Configuration extends Observable implements Observer {
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
@@ -29,6 +29,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     @NonNull
     private final String apiKey;
+    private final ClientState clientState;
     private String buildUuid;
     private String appVersion;
     private Integer versionCode = 0;
@@ -52,14 +53,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private long anrThresholdMs = 5000;
     private boolean autoDetectErrors = true;
 
-    @NonNull
-    private MetaData metaData;
-    private final Collection<OnError> onErrorTasks = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<OnBreadcrumb> breadcrumbCallbacks
-        = new ConcurrentLinkedQueue<>();
-    private final Collection<OnSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
-
 
     private String codeBundleId;
     private String appType = "android";
@@ -77,9 +71,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         if (TextUtils.isEmpty(apiKey)) {
             throw new IllegalArgumentException("You must provide a Bugsnag API key");
         }
+
         this.apiKey = apiKey;
-        this.metaData = new MetaData();
-        this.metaData.addObserver(this);
+        this.clientState = new ClientState();
+        this.clientState.getMetadata().addObserver(this);
         enabledBreadcrumbTypes.addAll(Arrays.asList(BreadcrumbType.values()));
 
         try {
@@ -172,7 +167,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return Context
      */
     @Nullable
-    @Override
     public String getContext() {
         return context;
     }
@@ -184,7 +178,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param context set what was happening at the time of a crash
      */
-    @Override
     public void setContext(@Nullable String context) {
         this.context = context;
         setChanged();
@@ -244,7 +237,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     @NonNull
     public Collection<String> getRedactKeys() {
-        return Collections.unmodifiableSet(metaData.getRedactKeys());
+        return Collections.unmodifiableSet(clientState.getMetadata().getRedactKeys());
     }
 
     /**
@@ -261,7 +254,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param redactKeys a list of keys to redact from metaData
      */
     public void setRedactKeys(@NonNull Collection<String> redactKeys) {
-        this.metaData.setRedactKeys(redactKeys);
+        clientState.getMetadata().setRedactKeys(redactKeys);
     }
 
     /**
@@ -430,50 +423,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      */
     public void setAutoTrackSessions(boolean autoTrack) {
         this.autoTrackSessions = autoTrack;
-    }
-
-    /**
-     * Gets any meta data associated with the error
-     *
-     * @return meta data
-     */
-    @NonNull
-    public MetaData getMetaData() {
-        return metaData;
-    }
-
-    /**
-     * Sets any meta data associated with the error
-     *
-     * @param metaData meta data
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        //noinspection ConstantConditions
-        if (metaData == null) {
-            this.metaData = new MetaData();
-        } else {
-            this.metaData = metaData;
-        }
-    }
-
-    /**
-     * Gets any before notify tasks to run
-     *
-     * @return the before notify tasks
-     */
-    @NonNull
-    protected Collection<OnError> getOnErrorTasks() {
-        return onErrorTasks;
-    }
-
-    /**
-     * Gets any before send tasks to run
-     *
-     * @return the before send tasks
-     */
-    @NonNull
-    protected Collection<BeforeSend> getBeforeSendTasks() {
-        return beforeSendTasks;
     }
 
     /**
@@ -714,15 +663,12 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnError
      */
-    @Override
     public void addOnError(@NonNull OnError onError) {
-        if (!onErrorTasks.contains(onError)) {
-            onErrorTasks.add(onError);
-        }
+        clientState.addOnError(onError);
     }
 
     void removeOnError(@NonNull OnError onError) {
-        onErrorTasks.remove(onError);
+        clientState.removeOnError(onError);
     }
 
     /**
@@ -745,7 +691,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param beforeSend a callback to run before sending errors to Bugsnag
      * @see BeforeSend
      */
-    @Override
     public void addBeforeSend(@NonNull BeforeSend beforeSend) {
         if (!beforeSendTasks.contains(beforeSend)) {
             beforeSendTasks.add(beforeSend);
@@ -758,9 +703,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param onBreadcrumb the on breadcrumb callback
      */
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
-            breadcrumbCallbacks.add(onBreadcrumb);
-        }
+        clientState.addOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -769,17 +712,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param onBreadcrumb the on breadcrumb callback
      */
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        breadcrumbCallbacks.remove(onBreadcrumb);
-    }
-
-    /**
-     * Gets any before breadcrumb tasks to run
-     *
-     * @return the before breadcrumb tasks
-     */
-    @NonNull
-    Collection<OnBreadcrumb> getBreadcrumbCallbacks() {
-        return breadcrumbCallbacks;
+        clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -788,9 +721,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param onSession the on session callback
      */
     public void addOnSession(@NonNull OnSession onSession) {
-        if (!sessionCallbacks.contains(onSession)) {
-            sessionCallbacks.add(onSession);
-        }
+        clientState.addOnSession(onSession);
     }
 
     /**
@@ -799,10 +730,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @param onSession the on session callback
      */
     public void removeOnSession(@NonNull OnSession onSession) {
-        sessionCallbacks.remove(onSession);
+        clientState.removeOnSession(onSession);
     }
 
-    Collection<OnSession> getSessionCallbacks() {
-        return sessionCallbacks;
+    ClientState getClientState() {
+        return clientState;
     }
 }

@@ -55,7 +55,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
-    final Configuration clientState;
+    final ClientState clientState;
     final ImmutableConfig immutableConfig;
 
     final Context appContext;
@@ -129,7 +129,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
-        clientState = configuration;
+        clientState = configuration.getClientState().copy();
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
         sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore);
@@ -590,7 +590,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @see BeforeSend
      */
     public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        clientState.addBeforeSend(beforeSend);
     }
 
     /**
@@ -645,7 +644,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      */
     public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
+            Thread.currentThread(), false, clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -678,7 +677,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), clientState.getMetaData())
+            sessionTracker, Thread.currentThread(), clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -693,7 +692,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                                   @HandledState.SeverityReason String severityReason,
                                   @Nullable String attributeValue, Thread thread) {
         Event event = new Event.Builder(immutableConfig, exception,
-                sessionTracker, thread, true, clientState.getMetaData())
+                sessionTracker, thread, true, clientState.getMetadata())
                 .severity(Severity.ERROR)
                 .metaData(metaData)
                 .severityReasonType(severityReason)
@@ -870,7 +869,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        clientState.getMetaData().addMetadata(section, key, value);
+        clientState.getMetadata().addMetadata(section, key, value);
     }
 
     @Override
@@ -880,7 +879,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
-        clientState.getMetaData().clearMetadata(section, key);
+        clientState.getMetadata().clearMetadata(section, key);
     }
 
     @Nullable
@@ -892,7 +891,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return clientState.getMetaData().getMetadata(section, key);
+        return clientState.getMetadata().getMetadata(section, key);
     }
 
     /**
@@ -960,15 +959,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-            try {
-                if (!beforeSend.run(report)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeSend threw an Exception", ex);
-            }
-        }
 
         // By default, allow the error to be sent if there were no objections
         return true;
@@ -998,7 +988,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
-        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
+        Collection<OnBreadcrumb> tasks = clientState.getOnBreadcrumbTasks();
         for (OnBreadcrumb callback : tasks) {
             try {
                 if (!callback.run(breadcrumb)) {
@@ -1051,12 +1041,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         }
     }
 
-    /**
-     * Returns the configuration used to initialise the client
-     * @return the config
-     */
-    @NonNull
-    public BugsnagConfiguration getConfiguration() {
+    ClientState getClientState() {
         return clientState;
     }
 

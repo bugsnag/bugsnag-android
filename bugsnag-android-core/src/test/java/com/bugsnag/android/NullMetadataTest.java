@@ -48,13 +48,6 @@ public class NullMetadataTest {
         validateDefaultMetadata(event);
     }
 
-    @Test
-    public void testConfigSetMetadataRef() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
-        validateDefaultMetadata(configuration.getMetaData());
-    }
-
     private void validateDefaultMetadata(MetaDataAware error) {
         assertNull(error.getMetadata(TAB_KEY, null));
         error.addMetadata(TAB_KEY, "test", "data");

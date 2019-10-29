@@ -36,7 +36,7 @@ public class SessionTrackerTest {
         client = generateClient();
         immutableConfig = BugsnagTestUtils.generateImmutableConfig();
         sessionTracker = new SessionTracker(immutableConfig,
-                configuration, client, generateSessionStore());
+                configuration.getClientState(), client, generateSessionStore());
         configuration.setAutoTrackSessions(true);
         user = new User();
     }
@@ -127,7 +127,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testZeroSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(immutableConfig, configuration, client,
+        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
             0, generateSessionStore());
 
         long now = System.currentTimeMillis();
@@ -142,7 +142,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() throws Exception {
-        sessionTracker = new SessionTracker(immutableConfig, configuration, client,
+        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
             100, generateSessionStore());
 
         long now = System.currentTimeMillis();

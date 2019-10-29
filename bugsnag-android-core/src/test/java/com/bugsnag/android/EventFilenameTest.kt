@@ -31,7 +31,7 @@ class EventFilenameTest {
     fun setUp() {
         eventStore = EventStore(
             config,
-            BugsnagTestUtils.generateConfiguration(),
+            BugsnagTestUtils.generateClientState(),
             context,
             null
         )

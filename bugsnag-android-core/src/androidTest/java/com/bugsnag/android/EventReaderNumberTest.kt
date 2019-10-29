@@ -33,7 +33,7 @@ class EventReaderNumberTest {
         }
         val config = generateConfiguration()
         val immutableConfig = convert(config)
-        event = EventReader.readEvent(immutableConfig, config, fixtureFile)
+        event = EventReader.readEvent(immutableConfig, config.clientState, fixtureFile)
     }
 
     @Test

@@ -46,13 +46,6 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testConfigSetNullMetadata() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(null);
-        validateDefaultMetadata(configuration.getMetaData());
-    }
-
-    @Test
     public void testErrorDefaultMetaData() throws Exception {
         Event event = new Event.Builder(config, throwable, generateSessionTracker(),
             Thread.currentThread(), false, new MetaData()).build();
@@ -65,13 +58,6 @@ public class NullMetadataTest {
             "Something broke", new StackTraceElement[]{},
             generateSessionTracker(), Thread.currentThread(), new MetaData()).build();
         validateDefaultMetadata(event);
-    }
-
-    @Test
-    public void testConfigSetMetadataRef() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
-        validateDefaultMetadata(configuration.getMetaData());
     }
 
     @Test
