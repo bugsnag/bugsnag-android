@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-public class Configuration extends Observable implements Observer {
+public class Configuration extends Observable implements Observer, CallbackAware {
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
@@ -670,11 +670,13 @@ public class Configuration extends Observable implements Observer {
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnError
      */
+    @Override
     public void addOnError(@NonNull OnError onError) {
         clientState.addOnError(onError);
     }
 
-    void removeOnError(@NonNull OnError onError) {
+    @Override
+    public void removeOnError(@NonNull OnError onError) {
         clientState.removeOnError(onError);
     }
 
@@ -683,6 +685,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
+    @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.addOnBreadcrumb(onBreadcrumb);
     }
@@ -692,6 +695,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
+    @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.removeOnBreadcrumb(onBreadcrumb);
     }
@@ -701,6 +705,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param onSession the on session callback
      */
+    @Override
     public void addOnSession(@NonNull OnSession onSession) {
         clientState.addOnSession(onSession);
     }
@@ -710,6 +715,7 @@ public class Configuration extends Observable implements Observer {
      *
      * @param onSession the on session callback
      */
+    @Override
     public void removeOnSession(@NonNull OnSession onSession) {
         clientState.removeOnSession(onSession);
     }

@@ -48,7 +48,8 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetaDataAware {
+public class Client extends Observable implements Observer, MetaDataAware, CallbackAware,
+        UserAware {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -461,6 +462,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param email the email address of the current user
      * @param name  the name of the current user
      */
+    @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         setUserId(id);
         setUserEmail(email);
@@ -474,6 +476,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @return the current user
      */
     @NonNull
+    @Override
     public User getUser() {
         return user;
     }
@@ -499,29 +502,13 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     /**
-     * Removes the current user data and sets it back to defaults
-     */
-    public void clearUser() {
-        user = user.copy(getStringFromMap("id", deviceData.getDeviceData()), null, null);
-        userRepository.save(user);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_ID, user.getId()));
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_EMAIL, null));
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_NAME, null));
-    }
-
-    /**
      * Set a unique identifier for the user currently using your application.
      * By default, this will be an automatically generated unique id
      * You can search for this information in your Bugsnag dashboard.
      *
      * @param id a unique identifier of the current user
      */
+    @Override
     public void setUserId(@Nullable String id) {
         user = user.copy(id, user.getEmail(), user.getName());
         userRepository.save(user);
@@ -537,6 +524,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * @param email the email address of the current user
      */
+    @Override
     public void setUserEmail(@Nullable String email) {
         user = user.copy(user.getId(), email, user.getName());
         userRepository.save(user);
@@ -551,6 +539,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * @param name the name of the current user
      */
+    @Override
     public void setUserName(@Nullable String name) {
         user = user.copy(user.getId(), user.getEmail(), name);
         userRepository.save(user);
@@ -581,10 +570,12 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnError
      */
+    @Override
     public void addOnError(@NonNull OnError onError) {
         clientState.addOnError(onError);
     }
 
+    @Override
     public void removeOnError(@NonNull OnError onError) {
         clientState.removeOnError(onError);
     }
@@ -607,18 +598,22 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * @param onBreadcrumb a callback to run before a breadcrumb is captured
      * @see OnBreadcrumb
      */
+    @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.addOnBreadcrumb(onBreadcrumb);
     }
 
+    @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
+    @Override
     public void addOnSession(@NonNull OnSession onSession) {
         clientState.addOnSession(onSession);
     }
 
+    @Override
     public void removeOnSession(@NonNull OnSession onSession) {
         clientState.removeOnSession(onSession);
     }
@@ -727,7 +722,10 @@ public class Client extends Observable implements Observer, MetaDataAware {
         event.setBreadcrumbs(breadcrumbs);
 
         // Attach user info to the event
-        event.setUser(user);
+        event.setUser(user.getId(), user.getEmail(), user.getName());
+
+
+        Foo.bar();
 
         // Attach default context from active activity
         if (TextUtils.isEmpty(event.getContext())) {

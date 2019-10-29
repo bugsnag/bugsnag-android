@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @see OnError
  */
-public class Event implements JsonStream.Streamable, MetaDataAware {
+public class Event implements JsonStream.Streamable, MetaDataAware, UserAware {
 
     @NonNull
     private Map<String, Object> appData = new HashMap<>();
@@ -208,18 +208,16 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      * @param email the email address of the user
      * @param name  the name of the user
      */
+    @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         this.user = new User(id, email, name);
-    }
-
-    void setUser(@NonNull User user) {
-        this.user = user;
     }
 
     /**
      * @return user information associated with this Event
      */
     @NonNull
+    @Override
     public User getUser() {
         return user;
     }
@@ -229,6 +227,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      *
      * @param id the id of the user
      */
+    @Override
     public void setUserId(@Nullable String id) {
         this.user = user.copy(id, user.getEmail(), user.getName());
     }
@@ -238,6 +237,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      *
      * @param email the email address of the user
      */
+    @Override
     public void setUserEmail(@Nullable String email) {
         this.user = user.copy(user.getId(), email, user.getName());
     }
@@ -247,6 +247,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
      *
      * @param name the name of the user
      */
+    @Override
     public void setUserName(@Nullable String name) {
         this.user = user.copy(user.getId(), user.getEmail(), name);
     }

@@ -111,13 +111,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Removes the current user data and sets it back to defaults
-     */
-    public static void clearUser() {
-        getClient().clearUser();
-    }
-
-    /**
      * Set a unique identifier for the user currently using your application.
      * By default, this will be an automatically generated unique id
      * You can search for this information in your Bugsnag dashboard.
