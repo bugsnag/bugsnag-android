@@ -158,16 +158,6 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testClientClearUserSendsMessage() {
-        client.clearUser(); // resets to device ID
-        String value = (String)findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_ID,
-                                                  String.class);
-        assertEquals(client.getDeviceData().getDeviceData().get("id"), value);
-        findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_EMAIL, null);
-        findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_NAME, null);
-    }
-
-    @Test
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(

@@ -724,9 +724,6 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
         // Attach user info to the event
         event.setUser(user.getId(), user.getEmail(), user.getName());
 
-
-        Foo.bar();
-
         // Attach default context from active activity
         if (TextUtils.isEmpty(event.getContext())) {
             String context = clientState.getContext();

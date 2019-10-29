@@ -153,7 +153,7 @@ public class ClientTest {
 
         // Clear the user using the command
         client = new Client(context, "api-key");
-        client.clearUser();
+        client.setUser(null, null, null);
 
         // Check that there is no user information in the prefs anymore
         SharedPreferences sharedPref = getSharedPrefs(context);
