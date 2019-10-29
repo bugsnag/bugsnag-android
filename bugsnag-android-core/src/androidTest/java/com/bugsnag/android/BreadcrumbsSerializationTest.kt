@@ -9,6 +9,7 @@ import com.bugsnag.android.BugsnagTestUtils.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.util.Date
 
 @SmallTest
 class BreadcrumbsSerializationTest {
@@ -32,8 +33,8 @@ class BreadcrumbsSerializationTest {
      */
     @Test
     fun testPayloadType() {
-        val metadata = mapOf(Pair("direction", "left"))
-        breadcrumbs.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata))
+        val metadata = mutableMapOf<String, Any>(Pair("direction", "left"))
+        breadcrumbs.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata, Date()))
 
         val json = streamableToJsonArray(breadcrumbs)
         val node = json.getJSONObject(0)

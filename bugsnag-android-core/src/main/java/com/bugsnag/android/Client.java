@@ -27,6 +27,7 @@ import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -824,7 +825,7 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
         }
 
         Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-        breadcrumbs.add(new Breadcrumb(name, BreadcrumbType.ERROR, message));
+        breadcrumbs.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
     }
 
     @Override
@@ -876,7 +877,7 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
     public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, Object> metadata) {
-        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata));
+        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata, new Date()));
     }
 
     private void leaveBreadcrumbInternal(Breadcrumb crumb) {
