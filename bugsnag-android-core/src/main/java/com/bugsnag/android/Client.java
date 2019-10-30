@@ -614,7 +614,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
         Event event = new Event(exc, immutableConfig, handledState, clientState.getMetadata());
-        notifyInternal(event, DeliveryStyle.ASYNC, onError);
+        notifyInternal(event, onError);
     }
 
     /**
@@ -648,7 +648,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         Error err = new Error(name, message, trace.getTrace());
         Event event = new Event(null, immutableConfig, handledState, clientState.getMetadata());
         event.setErrors(Collections.singletonList(err));
-        notifyInternal(event, DeliveryStyle.ASYNC, onError);
+        notifyInternal(event, onError);
     }
 
     /**
@@ -665,11 +665,10 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
         Event event = new Event(exc, immutableConfig, handledState,
                 clientState.getMetadata(), threadState);
-        notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
+        notifyInternal(event, null);
     }
 
     void notifyInternal(@NonNull Event event,
-                        @NonNull DeliveryStyle style,
                         @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
         if (event.shouldIgnoreClass()) {
@@ -750,16 +749,11 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             }
         }
 
-        switch (style) {
-            case ASYNC:
-                deliverReportAsync(event, report);
-                break;
-            case ASYNC_WITH_CACHE:
-                eventStore.write(event);
-                eventStore.flushAsync();
-                break;
-            default:
-                break;
+        if (event.getUnhandled()) {
+            eventStore.write(event);
+            eventStore.flushAsync();
+        } else {
+            deliverReportAsync(event, report);
         }
     }
 
