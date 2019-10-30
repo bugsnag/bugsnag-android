@@ -19,16 +19,20 @@ internal class AnrPlugin : BugsnagPlugin {
 
     private fun handleAnr(thread: Thread, client: Client) {
         // generate a full report as soon as possible, then wait for extra process error info
-        val errMsg = "Application did not respond to UI input"
-        val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
-        val error = EventGenerator.Builder(client.config, exc, client.sessionTracker, thread, true,
+        val exc = RuntimeException()
+        exc.stackTrace = thread.stackTrace
+
+        val event = EventGenerator.Builder(client.config, exc, client.sessionTracker, thread, true,
             MetaData())
             .severity(Severity.ERROR)
             .severityReasonType(HandledState.REASON_ANR)
             .build()
+        val err = event.errors[0]
+        err.errorClass = "ANR"
+        err.errorMessage = "Application did not respond to UI input"
 
         // wait and poll for error info to be collected. this occurs just before the ANR dialog
         // is displayed
-        collector.collectAnrErrorDetails(client, error)
+        collector.collectAnrErrorDetails(client, event)
     }
 }

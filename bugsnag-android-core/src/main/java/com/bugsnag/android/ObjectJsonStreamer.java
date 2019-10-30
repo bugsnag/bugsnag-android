@@ -68,6 +68,8 @@ class ObjectJsonStreamer {
                 objectToStream(Array.get(obj, i), writer);
             }
             writer.endArray();
+        } else if (obj instanceof JsonStream.Streamable) {
+            ((JsonStream.Streamable) obj).toStream(writer);
         } else {
             writer.value(OBJECT_PLACEHOLDER);
         }
