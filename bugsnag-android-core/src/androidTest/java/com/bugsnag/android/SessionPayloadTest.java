@@ -54,7 +54,7 @@ public class SessionPayloadTest {
         rootNode = streamableToJson(payload);
     }
 
-    private SessionPayload generatePayloadFromSession(Session session) throws Exception {
+    private SessionPayload generatePayloadFromSession(Session session) {
         appData = client.appData;
         deviceData = client.deviceData;
         return new SessionPayload(session, null, appData, deviceData);
@@ -62,8 +62,6 @@ public class SessionPayloadTest {
 
     /**
      * Deletes any files in the session store created during the test
-     *
-     * @throws Exception if the operation fails
      */
     @After
     public void tearDown() {

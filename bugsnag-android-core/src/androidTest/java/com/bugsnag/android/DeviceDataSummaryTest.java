@@ -26,11 +26,10 @@ public class DeviceDataSummaryTest {
      * Generates a device data object
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
-        SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
         DeviceData deviceData = new DeviceData(connectivity, context, resources,
                 "123", NoopLogger.INSTANCE);
         this.deviceData = deviceData.getDeviceDataSummary();

@@ -1,11 +1,8 @@
 package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-
-import java.lang.Thread
 
 class EventNameTest {
 

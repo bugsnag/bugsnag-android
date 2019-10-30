@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.Thread;
 import java.util.Collections;
 import java.util.Map;
 
@@ -23,10 +22,9 @@ public class EventTest {
     /**
      * Generates a new default event for use by tests
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Example message");
         HandledState handledState = this.handledState;
@@ -34,21 +32,21 @@ public class EventTest {
     }
 
     @Test
-    public void testBugsnagExceptionName() throws Exception {
+    public void testBugsnagExceptionName() {
         Event err = new Event(new RuntimeException("whoops"), config, handledState);
         err.getErrors().get(0).setErrorClass("Busgang");
         assertEquals("Busgang", err.getErrors().get(0).getErrorClass());
     }
 
     @Test
-    public void testNullContext() throws Exception {
+    public void testNullContext() {
         event.setContext(null);
         event.setApp(Collections.<String, Object>emptyMap());
         assertNull(event.getContext());
     }
 
     @Test
-    public void testSetUser() throws Exception {
+    public void testSetUser() {
         String firstId = "123";
         String firstEmail = "fake@example.com";
         String firstName = "Bob Swaggins";

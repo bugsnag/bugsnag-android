@@ -19,7 +19,7 @@ public class CXXDelayedCrashScenario extends Scenario {
     public native int activate(int value);
 
     private boolean didActivate = false;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     public CXXDelayedCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);

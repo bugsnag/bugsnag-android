@@ -26,10 +26,9 @@ public class SessionTrackerTest {
     /**
      * Configures a session tracker that automatically captures sessions
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
         client = generateClient();
@@ -46,7 +45,7 @@ public class SessionTrackerTest {
     }
 
     @Test
-    public void startNewSession() throws Exception {
+    public void startNewSession() {
         assertNotNull(sessionTracker);
         assertNull(sessionTracker.getCurrentSession());
         Date date = new Date();
@@ -60,7 +59,7 @@ public class SessionTrackerTest {
     }
 
     @Test
-    public void startSessionDisabled() throws Exception {
+    public void startSessionDisabled() {
         assertNull(sessionTracker.getCurrentSession());
         configuration.setAutoTrackSessions(false);
 
@@ -74,7 +73,7 @@ public class SessionTrackerTest {
     }
 
     @Test
-    public void testUniqueSessionIds() throws Exception {
+    public void testUniqueSessionIds() {
         sessionTracker.startNewSession(new Date(), user, false);
         Session firstSession = sessionTracker.getCurrentSession();
 
@@ -84,7 +83,7 @@ public class SessionTrackerTest {
     }
 
     @Test
-    public void testIncrementCounts() throws Exception {
+    public void testIncrementCounts() {
         sessionTracker.startNewSession(new Date(), user, false);
         sessionTracker.incrementHandledAndCopy();
         sessionTracker.incrementHandledAndCopy();
@@ -104,7 +103,7 @@ public class SessionTrackerTest {
     }
 
     @Test
-    public void testBasicInForeground() throws Exception {
+    public void testBasicInForeground() {
         assertNotNull(sessionTracker.isInForeground());
         assertNull(sessionTracker.getCurrentSession());
         assertNull(sessionTracker.getContextActivity());
@@ -125,7 +124,7 @@ public class SessionTrackerTest {
     }
 
     @Test
-    public void testZeroSessionTimeout() throws Exception {
+    public void testZeroSessionTimeout() {
         sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
             0, generateSessionStore(), NoopLogger.INSTANCE);
 
@@ -140,7 +139,7 @@ public class SessionTrackerTest {
     }
 
     @Test
-    public void testSessionTimeout() throws Exception {
+    public void testSessionTimeout() {
         sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
             100, generateSessionStore(), NoopLogger.INSTANCE);
 

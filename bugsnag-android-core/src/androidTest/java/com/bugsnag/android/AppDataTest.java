@@ -31,18 +31,14 @@ public class AppDataTest {
     private Map<String, Object> appData;
 
     @Mock
-    Client client;
-
-    @Mock
     SessionTracker sessionTracker;
 
     /**
      * Configures a new AppData for testing accessors + serialisation
      *
-     * @throws Exception if setup failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(sessionTracker.isInForeground()).thenReturn(true);
         when(sessionTracker.getDurationInForegroundMs(anyLong())).thenReturn(500L);
 

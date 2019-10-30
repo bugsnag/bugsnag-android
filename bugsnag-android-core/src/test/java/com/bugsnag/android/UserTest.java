@@ -10,7 +10,7 @@ public class UserTest {
     private User user;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         user = new User("123", "bob@example.com", "bob smith");
     }
 

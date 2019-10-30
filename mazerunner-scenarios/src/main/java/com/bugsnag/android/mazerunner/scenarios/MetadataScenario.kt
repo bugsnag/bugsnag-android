@@ -10,15 +10,15 @@ import com.bugsnag.android.Configuration
 internal class MetadataScenario(config: Configuration,
                                 context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {
         super.run()
-        Bugsnag.notify(RuntimeException("MetadataScenario"), {
+        Bugsnag.notify(RuntimeException("MetadataScenario")) {
             it.addMetadata("Custom", "foo", "Hello World!")
             true
-        })
+        }
     }
 
 }

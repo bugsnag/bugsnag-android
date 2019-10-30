@@ -226,7 +226,7 @@ public class Configuration extends Observable implements Observer, CallbackAware
     }
 
     /**
-     * Get which keys should be filtered when sending metadata to Bugsnag
+     * Get which keys should be redacted when sending metadata to Bugsnag
      *
      * @return a list of keys that should be redacted from the payload
      */
@@ -236,11 +236,11 @@ public class Configuration extends Observable implements Observer, CallbackAware
     }
 
     /**
-     * Set which keys should be filtered when sending metadata to Bugsnag.
+     * Set which keys should be redacted when sending metadata to Bugsnag.
      * Use this when you want to ensure sensitive information, such as passwords
      * or credit card information is stripped from metadata you send to Bugsnag.
      * Any keys in metadata which contain these strings will be marked as
-     * [FILTERED] when send to Bugsnag.
+     * [REDACTED] when send to Bugsnag.
      * <p/>
      * For example:
      * <p/>
@@ -433,7 +433,6 @@ public class Configuration extends Observable implements Observer, CallbackAware
      * if set then any user information set will be re-used until
      *
      * @param persistUserBetweenSessions whether or not Bugsnag should persist user information
-     * @see Client#clearUser() is called
      */
     public void setPersistUserBetweenSessions(boolean persistUserBetweenSessions) {
         this.persistUserBetweenSessions = persistUserBetweenSessions;
@@ -584,12 +583,9 @@ public class Configuration extends Observable implements Observer, CallbackAware
      * should be reported to Bugsnag. When enabled, Bugsnag will record an ANR whenever the main
      * thread has been blocked for 5000 milliseconds or longer.
      * <p/>
-     * If you wish to enable ANR detection, you should set this property to true; if you wish to
-     * configure the time threshold required to capture an ANR, you should use the
-     * {@link #setAnrThresholdMs(long)} property.
+     * If you wish to enable ANR detection, you should set this property to true.
      *
      * @param autoDetectAnrs whether ANRs should be captured or not
-     * @see #setAnrThresholdMs(long)
      */
     public void setAutoDetectAnrs(boolean autoDetectAnrs) {
         this.autoDetectAnrs = autoDetectAnrs;

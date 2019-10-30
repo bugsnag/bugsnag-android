@@ -19,9 +19,9 @@ class ExampleActivity : AppCompatActivity() {
         }
     }
 
-    external fun doCrash()
+    private external fun doCrash()
 
-    external fun notifyFromCXX()
+    private external fun notifyFromCXX()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,7 +128,7 @@ class ExampleActivity : AppCompatActivity() {
         Bugsnag.leaveBreadcrumb("LoginButtonClick")
 
         val metadata = HashMap<String, String>()
-        metadata.put("reason", "Incorrect password")
+        metadata["reason"] = "Incorrect password"
         Bugsnag.leaveBreadcrumb("WebAuthFailure", BreadcrumbType.ERROR, metadata)
 
         val e = RuntimeException("Error Report with Breadcrumbs")
@@ -173,7 +173,7 @@ class ExampleActivity : AppCompatActivity() {
     }
 
     private fun generateUserMetadata(): MetaData {
-        val completedLevels = Arrays.asList("Level 1 - The Beginning", "Level 2 - Tower Defence")
+        val completedLevels = listOf("Level 1 - The Beginning", "Level 2 - Tower Defence")
         val userDetails = HashMap<String, String>()
         userDetails["playerName"] = "Joe Bloggs the Invincible"
 

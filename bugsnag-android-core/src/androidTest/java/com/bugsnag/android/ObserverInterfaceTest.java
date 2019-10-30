@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
@@ -21,18 +22,16 @@ import java.util.Observer;
 @SuppressWarnings("unchecked")
 public class ObserverInterfaceTest {
 
-    private Configuration config;
     private Client client;
     private BugsnagTestObserver observer;
 
     /**
      * Configures a new AppData for testing accessors + serialisation
      *
-     * @throws Exception if setup failed
      */
     @Before
-    public void setUp() throws Exception {
-        config = new Configuration("some-api-key");
+    public void setUp() {
+        Configuration config = new Configuration("some-api-key");
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         config.setAutoDetectErrors(false);
         client = new Client(ApplicationProvider.getApplicationContext(), config);
@@ -113,7 +112,7 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testStartSessionSendsMessage() throws InterruptedException {
+    public void testStartSessionSendsMessage() {
         client.startSession();
         List<Object> sessionInfo = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.START_SESSION, List.class);
@@ -210,7 +209,7 @@ public class ObserverInterfaceTest {
                 }
             }
         }
-        assertTrue("Failed to find message matching " + type, false);
+        fail("Failed to find message matching " + type);
 
         return null;
     }

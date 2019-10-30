@@ -25,10 +25,9 @@ public class JsonStreamTest {
     /**
      * Deletes a file in the cache directory if it already exists from previous test cases
      *
-     * @throws Exception if setup failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         writer = new StringWriter();
         stream = new JsonStream(writer);
         File cacheDir = ApplicationProvider.getApplicationContext().getCacheDir();

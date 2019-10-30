@@ -24,10 +24,9 @@ public class SessionStoreTest {
     /**
      * Generates a session store with 0 files
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Context context = ApplicationProvider.getApplicationContext();
         SessionStore sessionStore = new SessionStore(context, NoopLogger.INSTANCE, null);
         assertNotNull(sessionStore.storeDirectory);
@@ -38,15 +37,14 @@ public class SessionStoreTest {
     /**
      * Removes any sessions in the store created during testing
      *
-     * @throws Exception if the operation failed
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         FileUtils.clearFilesInDir(storageDir);
     }
 
     @Test
-    public void testComparator() throws Exception {
+    public void testComparator() {
         final String first = "1504255147933d06e6168-1c10-4727-80d8-627a5111775b.json";
         final String second = "1505000000000ef070b5b-fc0f-411e-8630-429acc477982.json";
         final String startup = "150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json";

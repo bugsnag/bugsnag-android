@@ -13,7 +13,7 @@ internal class AsyncErrorConnectivityScenario(config: Configuration,
     init {
         val delivery = createSlowDelivery()
         config.delivery = delivery
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {

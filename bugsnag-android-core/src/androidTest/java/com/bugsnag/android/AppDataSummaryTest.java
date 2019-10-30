@@ -26,16 +26,13 @@ public class AppDataSummaryTest {
     private Map<String, Object> appData;
 
     @Mock
-    Client client;
-
-    @Mock
     SessionTracker sessionTracker;
 
     /**
      * Constructs an app data object
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Context context = ApplicationProvider.getApplicationContext();
         PackageManager packageManager = context.getPackageManager();
         Configuration config = generateConfiguration();

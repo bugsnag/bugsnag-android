@@ -11,7 +11,7 @@ import android.content.Context
 internal class HandledExceptionSessionScenario(config: Configuration,
                                                context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
         disableSessionDelivery(config)
     }
 

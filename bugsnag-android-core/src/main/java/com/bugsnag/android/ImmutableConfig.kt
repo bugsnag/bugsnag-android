@@ -38,7 +38,6 @@ internal data class ImmutableConfig(
     /**
      * Checks if the given release stage should be notified or not
      *
-     * @param releaseStage the release stage to check
      * @return true if the release state should be notified else false
      */
     @JvmName("shouldNotifyForReleaseStage")

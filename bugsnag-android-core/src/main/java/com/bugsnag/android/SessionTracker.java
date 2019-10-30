@@ -183,8 +183,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                             DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
 
                             switch (deliveryStatus) {
-                                case DELIVERED:
-                                    break;
                                 case UNDELIVERED:
                                     logger.w("Storing session payload for future delivery");
                                     sessionStore.write(session);
@@ -192,6 +190,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 case FAILURE:
                                     logger.w("Dropping invalid session tracking payload");
                                     break;
+                                case DELIVERED:
                                 default:
                                     break;
                             }

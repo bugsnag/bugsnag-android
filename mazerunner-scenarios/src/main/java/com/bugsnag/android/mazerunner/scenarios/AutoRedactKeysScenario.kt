@@ -5,12 +5,12 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 /**
- * Sends a handled exception to Bugsnag, which contains metadata that should be filtered
+ * Sends a handled exception to Bugsnag, which contains metadata that should be redacted
  */
 internal class AutoRedactKeysScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {

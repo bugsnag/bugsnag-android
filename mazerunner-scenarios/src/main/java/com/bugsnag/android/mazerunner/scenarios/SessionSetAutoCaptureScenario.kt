@@ -12,7 +12,7 @@ internal class SessionSetAutoCaptureScenario(config: Configuration,
                                              context: Context) : Scenario(config, context) {
 
     init {
-        config.setAutoTrackSessions(true)
+        config.autoTrackSessions = true
     }
 
     override fun run() {

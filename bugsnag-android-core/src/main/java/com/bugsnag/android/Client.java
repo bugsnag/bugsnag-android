@@ -62,10 +62,10 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final Context appContext;
 
     @NonNull
-    protected final DeviceData deviceData;
+    final DeviceData deviceData;
 
     @NonNull
-    protected final AppData appData;
+    final AppData appData;
 
     @NonNull
     final Breadcrumbs breadcrumbs;
@@ -356,7 +356,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     /**
      * Starts tracking a new session. You should disable automatic session tracking via
-     * {@link #setAutoTrackSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to start a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -376,7 +376,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     /**
      * Pauses tracking of a session. You should disable automatic session tracking via
-     * {@link #setAutoTrackSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -397,7 +397,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * Resumes a session which has previously been paused, or starts a new session if none exists.
      * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
-     * {@link #setAutoTrackSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * It's important to note that sessions are stored in memory for the lifetime of the
      * application process and are not persisted on disk. Therefore calling this method on app
@@ -958,6 +958,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         return true;
     }
 
+    @NonNull
     EventStore getEventStore() {
         return eventStore;
     }

@@ -32,7 +32,7 @@ public class StacktraceTest {
      * Creates an initial exception
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         config = new Configuration("api-key");
         exception = new RuntimeException("oops");
     }

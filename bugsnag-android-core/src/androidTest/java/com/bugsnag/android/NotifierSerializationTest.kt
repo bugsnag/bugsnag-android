@@ -3,11 +3,7 @@ package com.bugsnag.android
 import com.bugsnag.android.BugsnagTestUtils.streamableToJson
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-
-import org.json.JSONException
 import org.junit.Test
-
-import java.io.IOException
 
 class NotifierSerializationTest {
     @Test

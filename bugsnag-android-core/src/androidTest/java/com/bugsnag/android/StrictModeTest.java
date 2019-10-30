@@ -29,23 +29,23 @@ public class StrictModeTest {
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         StrictModeWrapper.setUp();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         StrictModeWrapper.tearDown();
     }
 
     @Test
-    public void testIsNotStrictModeThrowable() throws Exception {
+    public void testIsNotStrictModeThrowable() {
         assertFalse(strictModeHandler.isStrictModeThrowable(new RuntimeException()));
         assertFalse(strictModeHandler.isStrictModeThrowable(new Throwable()));
     }
 
     @Test
-    public void testIsStrictModeThrowable() throws Exception {
+    public void testIsStrictModeThrowable() {
         Exception strictModeException = generateStrictModeException();
 
         if (strictModeException != null) {

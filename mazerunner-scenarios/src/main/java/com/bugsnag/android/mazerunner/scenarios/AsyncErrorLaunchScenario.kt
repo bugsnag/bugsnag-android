@@ -12,7 +12,7 @@ internal class AsyncErrorLaunchScenario(config: Configuration,
 
     init {
         config.delivery = createSlowDelivery()
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {

@@ -108,9 +108,9 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
     companion object {
         fun merge(vararg data: Metadata): Metadata {
             val stores = data.map { it.toMap() }
-            val filters = data.flatMap { it.jsonStreamer.redactKeys }
+            val redactKeys = data.flatMap { it.jsonStreamer.redactKeys }
             val newMeta = Metadata(mergeMaps(stores))
-            newMeta.setRedactKeys(filters.toSet())
+            newMeta.setRedactKeys(redactKeys.toSet())
             return newMeta
         }
 

@@ -11,7 +11,7 @@ import com.bugsnag.android.Configuration
 internal class TrimmedStacktraceScenario(config: Configuration,
                                          context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {

@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.Thread;
 
 @SmallTest
 public class ReportTest {
@@ -22,10 +21,9 @@ public class ReportTest {
     /**
      * Generates a report
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Something broke");
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);

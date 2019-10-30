@@ -16,7 +16,6 @@ import org.junit.Test;
  * <p>
  * See https://github.com/bugsnag/bugsnag-android/issues/194
  */
-@SuppressWarnings("unchecked")
 public class NullMetadataTest {
 
     private static final String TAB_KEY = "tab";
@@ -28,10 +27,9 @@ public class NullMetadataTest {
     /**
      * Generates a bugsnag client with a NOP error api client
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         client = generateClient(new Configuration("api-key"));
         config = client.immutableConfig;
         throwable = new RuntimeException("Test");
@@ -43,14 +41,14 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testErrorDefaultMetadata() throws Exception {
+    public void testErrorDefaultMetadata() {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         Event event = new Event(throwable, config, handledState);
         validateDefaultMetadata(event);
     }
 
     @Test
-    public void testNotify() throws Exception {
+    public void testNotify() {
         client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {

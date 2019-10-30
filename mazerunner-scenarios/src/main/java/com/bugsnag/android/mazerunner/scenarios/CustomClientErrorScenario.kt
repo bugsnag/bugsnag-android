@@ -13,7 +13,7 @@ internal class CustomClientErrorScenario(config: Configuration,
 
     init {
         config.delivery = createCustomHeaderDelivery()
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {

@@ -29,7 +29,7 @@ public class MetadataSerializationTest {
     private Client client;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         client = BugsnagTestUtils.generateClient();
     }
 
@@ -61,7 +61,7 @@ public class MetadataSerializationTest {
         assertEquals("value", tab.getString("string"));
         assertEquals(123, tab.getInt("integer"));
         assertEquals(123.45, tab.getDouble("double"), 0.01);
-        assertEquals(true, tab.getBoolean("boolean"));
+        assertTrue(tab.getBoolean("boolean"));
         assertTrue(tab.isNull("null"));
 
         JSONArray array = tab.getJSONArray("array");
@@ -131,8 +131,8 @@ public class MetadataSerializationTest {
         assertTrue(metadataJson.has("example"));
 
         JSONObject tabJson = metadataJson.getJSONObject("example");
-        assertEquals("[FILTERED]", tabJson.getString("password"));
-        assertEquals("[FILTERED]", tabJson.getString("confirm_password"));
+        assertEquals("[REDACTED]", tabJson.getString("password"));
+        assertEquals("[REDACTED]", tabJson.getString("confirm_password"));
         assertEquals("safe", tabJson.getString("normal"));
     }
 
@@ -152,8 +152,8 @@ public class MetadataSerializationTest {
 
         JSONObject tabJson = metadataJson.getJSONObject("example");
         JSONObject sensitiveMapJson = tabJson.getJSONObject("sensitiveMap");
-        assertEquals("[FILTERED]", sensitiveMapJson.getString("password"));
-        assertEquals("[FILTERED]", sensitiveMapJson.getString("confirm_password"));
+        assertEquals("[REDACTED]", sensitiveMapJson.getString("password"));
+        assertEquals("[REDACTED]", sensitiveMapJson.getString("confirm_password"));
         assertEquals("safe", sensitiveMapJson.getString("normal"));
     }
 
@@ -164,7 +164,7 @@ public class MetadataSerializationTest {
         JSONObject jsonObject = streamableToJson(metadata);
 
         assertEquals(Collections.singleton("password"), metadata.getRedactKeys());
-        assertEquals("[FILTERED]", jsonObject.getJSONObject("foo").get("password"));
+        assertEquals("[REDACTED]", jsonObject.getJSONObject("foo").get("password"));
     }
 
     @Test

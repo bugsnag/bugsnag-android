@@ -8,7 +8,7 @@ import org.junit.Test;
 public class SystemBroadcastReceiverTest {
 
     @Test
-    public void checkActionName() throws Exception {
+    public void checkActionName() {
         assertEquals("CONNECTION_STATE_CHANGE",
             shortenActionNameIfNeeded("android.net.wifi.p2p.CONNECTION_STATE_CHANGE"));
 

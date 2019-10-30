@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -26,11 +25,10 @@ public class DeviceDataTest {
      * Generates a device data object
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
-        SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
         DeviceData deviceData = new DeviceData(connectivity, context, resources,
                 "123", NoopLogger.INSTANCE);
         this.deviceData = deviceData.getDeviceData();
@@ -45,7 +43,7 @@ public class DeviceDataTest {
     }
 
     @Test
-    public void testJsonSerialisation() throws IOException, JSONException {
+    public void testJsonSerialisation() throws JSONException {
         JSONObject deviceDataJson = mapToJson(deviceData);
 
         // serialises inherited fields correctly

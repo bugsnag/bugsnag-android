@@ -16,7 +16,7 @@ public class CXXPausedSessionScenario extends Scenario {
         System.loadLibrary("entrypoint");
     }
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     public native int crash(int counter);
 

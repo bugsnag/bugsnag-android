@@ -14,7 +14,6 @@ import java.util.List;
  * <p>
  * See https://github.com/bugsnag/bugsnag-android/issues/194
  */
-@SuppressWarnings("unchecked")
 public class NullMetadataTest {
 
     private static final String TAB_KEY = "tab";
@@ -25,26 +24,25 @@ public class NullMetadataTest {
     /**
      * Generates a bugsnag client with a NOP error api client
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         config = BugsnagTestUtils.generateImmutableConfig();
         throwable = new RuntimeException("Test");
     }
 
     @Test
-    public void testErrorDefaultMetadata() throws Exception {
+    public void testErrorDefaultMetadata() {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         Event event = new Event(throwable, config, handledState);
         validateDefaultMetadata(event);
     }
 
     @Test
-    public void testSecondErrorDefaultMetadata() throws Exception {
+    public void testSecondErrorDefaultMetadata() {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         Event event = new Event(null, config, handledState);
-        List<String> projectPackages = Collections.<String>emptyList();
+        List<String> projectPackages = Collections.emptyList();
         Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages);
         Error err = new Error("RuntimeException", "Something broke",
                 stacktrace.getTrace());

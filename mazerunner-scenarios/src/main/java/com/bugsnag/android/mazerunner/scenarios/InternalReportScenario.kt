@@ -16,7 +16,7 @@ internal class InternalReportScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
 
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
 
         if (context is Activity) {
             eventMetadata = context.intent.getStringExtra("EVENT_METADATA")

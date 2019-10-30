@@ -14,7 +14,7 @@ internal class EmptySessionScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
 
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
 
         if (context is Activity) {
             eventMetadata = context.intent.getStringExtra("eventMetadata")
@@ -24,7 +24,7 @@ internal class EmptySessionScenario(config: Configuration,
                 disableAllDelivery(config)
             } else {
                 val files = dir.listFiles()
-                Log.d("Bugsnag", "Empty sessions: ${files}")
+                Log.d("Bugsnag", "Empty sessions: $files")
                 files.forEach { it.writeText("") }
             }
         }

@@ -11,8 +11,8 @@ import com.bugsnag.android.Configuration
 internal class AppVersionScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
-        config.setAppVersion("1.2.3.abc")
+        config.autoTrackSessions = false
+        config.appVersion = "1.2.3.abc"
     }
 
     override fun run() {

@@ -19,17 +19,17 @@ public class ConcurrentCallbackTest {
     private Client client;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         client = BugsnagTestUtils.generateClient();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         client.close();
     }
 
     @Test
-    public void testClientNotifyModification() throws Exception {
+    public void testClientNotifyModification() {
         ClientState config = client.getClientState();
         final Collection<OnError> onErrorTasks = config.getOnErrorTasks();
         client.addOnError(new OnError() {
@@ -45,7 +45,7 @@ public class ConcurrentCallbackTest {
     }
 
     @Test
-    public void testClientBreadcrumbModification() throws Exception {
+    public void testClientBreadcrumbModification() {
         ClientState config = client.getClientState();
         final Collection<OnBreadcrumb> breadcrumbTasks =
                 config.getOnBreadcrumbTasks();

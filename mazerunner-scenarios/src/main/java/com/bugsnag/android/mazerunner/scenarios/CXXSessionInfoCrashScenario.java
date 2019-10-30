@@ -19,7 +19,7 @@ public class CXXSessionInfoCrashScenario extends Scenario {
 
     public native int crash(int value);
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     public CXXSessionInfoCrashScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);

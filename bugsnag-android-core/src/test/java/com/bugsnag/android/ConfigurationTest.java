@@ -18,7 +18,7 @@ public class ConfigurationTest {
     private Configuration config;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         config = BugsnagTestUtils.generateConfiguration();
     }
 
@@ -64,7 +64,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testLaunchThreshold() throws Exception {
+    public void testLaunchThreshold() {
         assertEquals(5000L, config.getLaunchCrashThresholdMs());
 
         config.setLaunchCrashThresholdMs(-5);
@@ -76,44 +76,44 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testAutoTrackSessions() throws Exception {
+    public void testAutoTrackSessions() {
         assertTrue(config.getAutoTrackSessions());
         config.setAutoTrackSessions(false);
         assertFalse(config.getAutoTrackSessions());
     }
 
     @Test
-    public void testOverrideContext() throws Exception {
+    public void testOverrideContext() {
         config.setContext("LevelOne");
         assertEquals("LevelOne", config.getContext());
     }
 
     @Test
-    public void testOverrideRedactKeys() throws Exception {
+    public void testOverrideRedactKeys() {
         config.setRedactKeys(Collections.singleton("Foo"));
         assertEquals(Collections.singleton("Foo"), config.getRedactKeys());
     }
 
     @Test
-    public void testOverrideIgnoreClasses() throws Exception {
+    public void testOverrideIgnoreClasses() {
         config.setIgnoreClasses(Collections.singleton("Bar"));
         assertEquals(Collections.singleton("Bar"), config.getIgnoreClasses());
     }
 
     @Test
-    public void testOverrideEnabledReleaseStages() throws Exception {
+    public void testOverrideEnabledReleaseStages() {
         config.setEnabledReleaseStages(Collections.singleton("Test"));
         assertEquals(Collections.singleton("Test"), config.getEnabledReleaseStages());
     }
 
     @Test
-    public void testOverrideAppType() throws Exception {
+    public void testOverrideAppType() {
         config.setAppType("React Native");
         assertEquals("React Native", config.getAppType());
     }
 
     @Test
-    public void testOverrideCodeBundleId() throws Exception {
+    public void testOverrideCodeBundleId() {
         config.setCodeBundleId("abc123");
         assertEquals("abc123", config.getCodeBundleId());
     }

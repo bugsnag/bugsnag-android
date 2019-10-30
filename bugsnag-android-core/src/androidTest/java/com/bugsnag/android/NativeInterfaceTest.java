@@ -15,7 +15,7 @@ public class NativeInterfaceTest {
     private Client client;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         client = BugsnagTestUtils.generateClient();
     }
 

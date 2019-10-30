@@ -13,7 +13,7 @@ import java.util.HashMap
  * @see OnError
  */
 class Event @JvmOverloads internal constructor(
-    originalError: Throwable? = null,
+    val originalError: Throwable? = null,
     internal val config: ImmutableConfig,
     private val handledState: HandledState,
     private val metadata: Metadata = Metadata(),
@@ -21,15 +21,12 @@ class Event @JvmOverloads internal constructor(
 ) : JsonStream.Streamable, MetadataAware {
 
     var session: Session? = null
-    val originalError = originalError
 
     /**
      * Set the Severity of this Event.
      *
      * By default, unhandled exceptions will be Severity.ERROR and handled
      * exceptions sent with bugsnag.notify will be Severity.WARNING.
-     *
-     * @param severity the severity of this error
      * @see Severity
      */
     var severity: Severity
@@ -65,8 +62,6 @@ class Event @JvmOverloads internal constructor(
      * Bugsnag dashboard. By default, we use a combination of error class
      * and top-most stacktrace line to calculate this, and we do not recommend
      * you override this.
-     *
-     * @param groupingHash a string to use when grouping errors
      */
     var groupingHash: String? = null
 
@@ -78,8 +73,6 @@ class Event @JvmOverloads internal constructor(
      * attempt to detect the name of the top-most Activity when this error
      * occurred, and use this as the context, but sometimes this is not
      * possible.
-     *
-     * @param context what was happening at the time of a crash
      */
     var context: String? = null
 

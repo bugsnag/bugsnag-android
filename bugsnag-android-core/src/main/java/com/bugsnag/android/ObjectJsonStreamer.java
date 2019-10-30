@@ -12,10 +12,10 @@ import java.util.Set;
 
 class ObjectJsonStreamer {
 
-    private static final String FILTERED_PLACEHOLDER = "[FILTERED]";
+    private static final String REDACTED_PLACEHOLDER = "[REDACTED]";
     private static final String OBJECT_PLACEHOLDER = "[OBJECT]";
 
-    Set<String> redactKeys;
+    final Set<String> redactKeys;
 
     public ObjectJsonStreamer() {
         this.redactKeys = new HashSet<>();
@@ -46,7 +46,7 @@ class ObjectJsonStreamer {
                     String key = (String) keyObj;
                     writer.name(key);
                     if (shouldRedact(key)) {
-                        writer.value(FILTERED_PLACEHOLDER);
+                        writer.value(REDACTED_PLACEHOLDER);
                     } else {
                         objectToStream(entry.getValue(), writer);
                     }

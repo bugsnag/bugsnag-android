@@ -41,10 +41,9 @@ public class EventSerializationTest {
     /**
      * Generates a new default event for use by tests
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         this.config = convert(configuration);
         RuntimeException exception = new RuntimeException("Example message");
@@ -82,7 +81,7 @@ public class EventSerializationTest {
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
         assertEquals("warning", errorJson.getString("severity"));
-        assertEquals(false, errorJson.getBoolean("unhandled"));
+        assertFalse(errorJson.getBoolean("unhandled"));
 
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
@@ -98,7 +97,7 @@ public class EventSerializationTest {
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
         assertEquals("error", errorJson.getString("severity"));
-        assertEquals(true, errorJson.getBoolean("unhandled"));
+        assertTrue(errorJson.getBoolean("unhandled"));
 
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
@@ -114,7 +113,7 @@ public class EventSerializationTest {
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
         assertEquals("error", errorJson.getString("severity"));
-        assertEquals(true, errorJson.getBoolean("unhandled"));
+        assertTrue(errorJson.getBoolean("unhandled"));
 
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
@@ -131,7 +130,7 @@ public class EventSerializationTest {
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
         assertEquals("warning", errorJson.getString("severity"));
-        assertEquals(false, errorJson.getBoolean("unhandled"));
+        assertFalse(errorJson.getBoolean("unhandled"));
 
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
@@ -151,7 +150,7 @@ public class EventSerializationTest {
         JSONObject errorJson = streamableToJson(err);
         assertNotNull(errorJson);
         assertEquals("warning", errorJson.getString("severity"));
-        assertEquals(true, errorJson.getBoolean("unhandled"));
+        assertTrue(errorJson.getBoolean("unhandled"));
 
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
@@ -170,7 +169,7 @@ public class EventSerializationTest {
         JSONObject errorJson = streamableToJson(event);
         assertNotNull(errorJson);
         assertEquals("info", errorJson.getString("severity"));
-        assertEquals(false, errorJson.getBoolean("unhandled"));
+        assertFalse(errorJson.getBoolean("unhandled"));
 
         JSONObject severityReason = errorJson.getJSONObject("severityReason");
         assertNotNull(severityReason);
@@ -252,7 +251,6 @@ public class EventSerializationTest {
         Connectivity connectivity = BugsnagTestUtils.generateConnectivity();
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
-        SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
         DeviceData data = new DeviceData(connectivity, context, resources,
                 "123", NoopLogger.INSTANCE);
 
