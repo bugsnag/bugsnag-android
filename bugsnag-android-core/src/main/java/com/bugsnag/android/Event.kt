@@ -16,9 +16,9 @@ class Event @JvmOverloads internal constructor(
     originalError: Throwable? = null,
     internal val config: ImmutableConfig,
     private val handledState: HandledState,
-    private val metadata: MetaData = MetaData(),
+    private val metadata: Metadata = Metadata(),
     private val threadState: ThreadState = ThreadState(config, originalError)
-) : JsonStream.Streamable, MetaDataAware {
+) : JsonStream.Streamable, MetadataAware {
 
     var session: Session? = null
     val originalError = originalError

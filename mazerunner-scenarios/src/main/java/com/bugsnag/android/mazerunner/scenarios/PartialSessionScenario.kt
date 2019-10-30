@@ -17,10 +17,10 @@ internal class PartialSessionScenario(config: Configuration,
         config.setAutoTrackSessions(false)
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            eventMetadata = context.intent.getStringExtra("eventMetadata")
             val dir = File(context.cacheDir, "bugsnag-sessions")
 
-            if (eventMetaData != "non-crashy") {
+            if (eventMetadata != "non-crashy") {
                 disableAllDelivery(config)
             } else {
                 val files = dir.listFiles()
@@ -32,7 +32,7 @@ internal class PartialSessionScenario(config: Configuration,
     override fun run() {
         super.run()
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             Bugsnag.startSession()
         }
 

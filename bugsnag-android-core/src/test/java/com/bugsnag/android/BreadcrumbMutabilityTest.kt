@@ -17,7 +17,7 @@ class BreadcrumbMutabilityTest {
     }
 
     @Test
-    fun breadcrumbProtectsMetaData() {
+    fun breadcrumbProtectsMetadata() {
         val data = mutableMapOf<String, Any>()
         val breadcrumb = Breadcrumb("foo", BreadcrumbType.MANUAL, data)
         breadcrumb.metadata["a"] = "bar"

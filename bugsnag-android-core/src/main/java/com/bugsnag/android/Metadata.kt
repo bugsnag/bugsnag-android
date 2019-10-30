@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-class MetaData @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashMap()) :
-    Observable(), JsonStream.Streamable, MetaDataAware {
+class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashMap()) :
+    Observable(), JsonStream.Streamable, MetadataAware {
 
     private val store: MutableMap<String, Any> = ConcurrentHashMap(map)
     internal val jsonStreamer = ObjectJsonStreamer()
@@ -106,10 +106,10 @@ class MetaData @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
     }
 
     companion object {
-        fun merge(vararg data: MetaData): MetaData {
+        fun merge(vararg data: Metadata): Metadata {
             val stores = data.map { it.toMap() }
             val filters = data.flatMap { it.jsonStreamer.redactKeys }
-            val newMeta = MetaData(mergeMaps(stores))
+            val newMeta = Metadata(mergeMaps(stores))
             newMeta.setRedactKeys(filters.toSet())
             return newMeta
         }

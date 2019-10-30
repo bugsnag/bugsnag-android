@@ -100,7 +100,7 @@ public class Configuration extends Observable implements Observer, CallbackAware
     }
 
     /**
-     * Respond to an update notification from observed objects, like MetaData
+     * Respond to an update notification from observed objects, like Metadata
      */
     public void update(@NonNull Observable observable, @NonNull Object arg) {
         if (arg instanceof NativeInterface.Message) {
@@ -226,7 +226,7 @@ public class Configuration extends Observable implements Observer, CallbackAware
     }
 
     /**
-     * Get which keys should be filtered when sending metaData to Bugsnag
+     * Get which keys should be filtered when sending metadata to Bugsnag
      *
      * @return a list of keys that should be redacted from the payload
      */
@@ -236,17 +236,17 @@ public class Configuration extends Observable implements Observer, CallbackAware
     }
 
     /**
-     * Set which keys should be filtered when sending metaData to Bugsnag.
+     * Set which keys should be filtered when sending metadata to Bugsnag.
      * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metaData you send to Bugsnag.
-     * Any keys in metaData which contain these strings will be marked as
+     * or credit card information is stripped from metadata you send to Bugsnag.
+     * Any keys in metadata which contain these strings will be marked as
      * [FILTERED] when send to Bugsnag.
      * <p/>
      * For example:
      * <p/>
      * client.setRedactKeys("password", "credit_card");
      *
-     * @param redactKeys a list of keys to redact from metaData
+     * @param redactKeys a list of keys to redact from metadata
      */
     public void setRedactKeys(@NonNull Collection<String> redactKeys) {
         clientState.getMetadata().setRedactKeys(redactKeys);

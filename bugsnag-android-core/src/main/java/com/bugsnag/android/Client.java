@@ -49,7 +49,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetaDataAware, CallbackAware,
+public class Client extends Observable implements Observer, MetadataAware, CallbackAware,
         UserAware {
 
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -691,14 +691,14 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
         // Capture the state of the app and device and attach diagnostics to the event
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         event.setDevice(errorDeviceData);
-        event.addMetadata("device", null, deviceData.getDeviceMetaData());
+        event.addMetadata("device", null, deviceData.getDeviceMetadata());
 
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
         event.setApp(errorAppData);
-        event.addMetadata("app", null, appData.getAppDataMetaData());
+        event.addMetadata("app", null, appData.getAppDataMetadata());
 
         // Attach breadcrumbs to the event
         event.setBreadcrumbs(new ArrayList<>(breadcrumbs.store));

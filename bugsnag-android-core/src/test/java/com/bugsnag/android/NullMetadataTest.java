@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.Thread;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,14 +34,14 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testErrorDefaultMetaData() throws Exception {
+    public void testErrorDefaultMetadata() throws Exception {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         Event event = new Event(throwable, config, handledState);
         validateDefaultMetadata(event);
     }
 
     @Test
-    public void testSecondErrorDefaultMetaData() throws Exception {
+    public void testSecondErrorDefaultMetadata() throws Exception {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         Event event = new Event(null, config, handledState);
         List<String> projectPackages = Collections.<String>emptyList();
@@ -53,7 +52,7 @@ public class NullMetadataTest {
         validateDefaultMetadata(event);
     }
 
-    private void validateDefaultMetadata(MetaDataAware error) {
+    private void validateDefaultMetadata(MetadataAware error) {
         assertNull(error.getMetadata(TAB_KEY, null));
         error.addMetadata(TAB_KEY, "test", "data");
         assertEquals("data", error.getMetadata(TAB_KEY, "test"));

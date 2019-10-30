@@ -32,11 +32,11 @@ class MainActivity : Activity() {
 
     private fun loadScenario(configuration: Configuration): Scenario {
         val eventType = intent.getStringExtra("EVENT_TYPE")
-        val eventMetaData = intent.getStringExtra("EVENT_METADATA")
+        val eventMetadata = intent.getStringExtra("EVENT_METADATA")
         Log.d("Bugsnag", "Received test case, executing " + eventType)
 
         val testCase = factory.testCaseForName(eventType, configuration, this)
-        testCase.eventMetaData = eventMetaData
+        testCase.eventMetadata = eventMetadata
 
         return testCase
     }

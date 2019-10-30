@@ -42,7 +42,7 @@ class ExampleActivity : AppCompatActivity() {
         // Set the global user information
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
 
-        // Add some global metaData
+        // Add some global metadata
         Bugsnag.addToTab("user", "age", 31)
     }
 
@@ -113,7 +113,7 @@ class ExampleActivity : AppCompatActivity() {
         Bugsnag.notify(e) {report ->
             val error = report.error
             error.severity = Severity.ERROR
-            error.metaData.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
+            error.metaData.addToTab("CustomMetadata", "HasLaunchedGameTutorial", true)
         }
         displayToastNotification()
     }
@@ -146,7 +146,7 @@ class ExampleActivity : AppCompatActivity() {
 
         Bugsnag.notify(e) { report ->
             // modify the report
-            report.error.metaData = generateUserMetaData()
+            report.error.metaData = generateUserMetadata()
         }
         displayToastNotification()
     }
@@ -172,15 +172,15 @@ class ExampleActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun generateUserMetaData(): MetaData {
+    private fun generateUserMetadata(): MetaData {
         val completedLevels = Arrays.asList("Level 1 - The Beginning", "Level 2 - Tower Defence")
         val userDetails = HashMap<String, String>()
         userDetails["playerName"] = "Joe Bloggs the Invincible"
 
-        val metaData = MetaData()
-        metaData.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
-        metaData.addToTab("CustomMetaData", "UserDetails", userDetails)
-        metaData.addToTab("CustomMetaData", "CompletedLevels", completedLevels)
-        return metaData
+        val metadata = MetaData()
+        metadata.addToTab("CustomMetadata", "HasLaunchedGameTutorial", true)
+        metadata.addToTab("CustomMetadata", "UserDetails", userDetails)
+        metadata.addToTab("CustomMetadata", "CompletedLevels", completedLevels)
+        return metadata
     }
 }

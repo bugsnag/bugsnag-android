@@ -12,7 +12,7 @@ abstract class Scenario(
     protected val context: Context
 ): Application.ActivityLifecycleCallbacks {
 
-    var eventMetaData: String? = null
+    var eventMetadata: String? = null
 
     open fun run() {
 

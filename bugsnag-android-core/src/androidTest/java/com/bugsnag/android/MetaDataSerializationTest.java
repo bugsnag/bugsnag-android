@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @SmallTest
-public class MetaDataSerializationTest {
+public class MetadataSerializationTest {
 
     private Client client;
 
@@ -40,24 +40,24 @@ public class MetaDataSerializationTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
-        MetaData metaData = new MetaData();
-        metaData.addMetadata("example", "string", "value");
-        metaData.addMetadata("example", "integer", 123);
-        metaData.addMetadata("example", "double", 123.45);
-        metaData.addMetadata("example", "boolean", true);
-        metaData.addMetadata("example", "null", null);
-        metaData.addMetadata("example", "array", new String[]{"a", "b"});
+        Metadata metadata = new Metadata();
+        metadata.addMetadata("example", "string", "value");
+        metadata.addMetadata("example", "integer", 123);
+        metadata.addMetadata("example", "double", 123.45);
+        metadata.addMetadata("example", "boolean", true);
+        metadata.addMetadata("example", "null", null);
+        metadata.addMetadata("example", "array", new String[]{"a", "b"});
         List<String> strings = Arrays.asList("Hello", "World");
-        metaData.addMetadata("example", "collection", strings);
+        metadata.addMetadata("example", "collection", strings);
 
         Map<String, String> map = new HashMap<>();
         map.put("key", "value");
-        metaData.addMetadata("example", "map", map);
+        metadata.addMetadata("example", "map", map);
 
-        JSONObject metaDataJson = streamableToJson(metaData);
-        assertTrue(metaDataJson.has("example"));
+        JSONObject metadataJson = streamableToJson(metadata);
+        assertTrue(metadataJson.has("example"));
 
-        JSONObject tab = metaDataJson.getJSONObject("example");
+        JSONObject tab = metadataJson.getJSONObject("example");
         assertEquals("value", tab.getString("string"));
         assertEquals(123, tab.getInt("integer"));
         assertEquals(123.45, tab.getDouble("double"), 0.01);
@@ -86,13 +86,13 @@ public class MetaDataSerializationTest {
         Map<String, Object> map = new HashMap<>();
         map.put("key", childMap);
 
-        MetaData metaData = new MetaData();
-        metaData.addMetadata("example", "map", map);
+        Metadata metadata = new Metadata();
+        metadata.addMetadata("example", "map", map);
 
-        JSONObject metaDataJson = streamableToJson(metaData);
-        assertTrue(metaDataJson.has("example"));
+        JSONObject metadataJson = streamableToJson(metadata);
+        assertTrue(metadataJson.has("example"));
 
-        JSONObject example = metaDataJson.getJSONObject("example");
+        JSONObject example = metadataJson.getJSONObject("example");
         JSONObject childMapJson = example.getJSONObject("map").getJSONObject("key");
         assertEquals("value", childMapJson.getString("key"));
     }
@@ -106,13 +106,13 @@ public class MetaDataSerializationTest {
         Collection<Collection<String>> list = new LinkedList<>();
         list.add(childList);
 
-        MetaData metaData = new MetaData();
-        metaData.addMetadata("example", "list", list);
+        Metadata metadata = new Metadata();
+        metadata.addMetadata("example", "list", list);
 
-        JSONObject metaDataJson = streamableToJson(metaData);
-        assertTrue(metaDataJson.has("example"));
+        JSONObject metadataJson = streamableToJson(metadata);
+        assertTrue(metadataJson.has("example"));
 
-        JSONArray jsonArray = metaDataJson.getJSONObject("example").getJSONArray("list");
+        JSONArray jsonArray = metadataJson.getJSONObject("example").getJSONArray("list");
         JSONArray childListJson = jsonArray.getJSONArray(0);
         assertEquals(2, childListJson.length());
         assertEquals("james", childListJson.get(0));
@@ -121,16 +121,16 @@ public class MetaDataSerializationTest {
 
     @Test
     public void testBasicRedaction() throws JSONException, IOException {
-        MetaData metaData = new MetaData();
-        metaData.setRedactKeys(Collections.singleton("password"));
-        metaData.addMetadata("example", "password", "p4ssw0rd");
-        metaData.addMetadata("example", "confirm_password", "p4ssw0rd");
-        metaData.addMetadata("example", "normal", "safe");
+        Metadata metadata = new Metadata();
+        metadata.setRedactKeys(Collections.singleton("password"));
+        metadata.addMetadata("example", "password", "p4ssw0rd");
+        metadata.addMetadata("example", "confirm_password", "p4ssw0rd");
+        metadata.addMetadata("example", "normal", "safe");
 
-        JSONObject metaDataJson = streamableToJson(metaData);
-        assertTrue(metaDataJson.has("example"));
+        JSONObject metadataJson = streamableToJson(metadata);
+        assertTrue(metadataJson.has("example"));
 
-        JSONObject tabJson = metaDataJson.getJSONObject("example");
+        JSONObject tabJson = metadataJson.getJSONObject("example");
         assertEquals("[FILTERED]", tabJson.getString("password"));
         assertEquals("[FILTERED]", tabJson.getString("confirm_password"));
         assertEquals("safe", tabJson.getString("normal"));
@@ -143,14 +143,14 @@ public class MetaDataSerializationTest {
         sensitiveMap.put("confirm_password", "p4ssw0rd");
         sensitiveMap.put("normal", "safe");
 
-        MetaData metaData = new MetaData();
-        metaData.setRedactKeys(Collections.singleton("password"));
-        metaData.addMetadata("example", "sensitiveMap", sensitiveMap);
+        Metadata metadata = new Metadata();
+        metadata.setRedactKeys(Collections.singleton("password"));
+        metadata.addMetadata("example", "sensitiveMap", sensitiveMap);
 
-        JSONObject metaDataJson = streamableToJson(metaData);
-        assertTrue(metaDataJson.has("example"));
+        JSONObject metadataJson = streamableToJson(metadata);
+        assertTrue(metadataJson.has("example"));
 
-        JSONObject tabJson = metaDataJson.getJSONObject("example");
+        JSONObject tabJson = metadataJson.getJSONObject("example");
         JSONObject sensitiveMapJson = tabJson.getJSONObject("sensitiveMap");
         assertEquals("[FILTERED]", sensitiveMapJson.getString("password"));
         assertEquals("[FILTERED]", sensitiveMapJson.getString("confirm_password"));
@@ -159,20 +159,20 @@ public class MetaDataSerializationTest {
 
     @Test
     public void testFilterConstructor() throws Exception {
-        MetaData metaData = new MetaData();
-        metaData.addMetadata("foo", "password", "abc123");
-        JSONObject jsonObject = streamableToJson(metaData);
+        Metadata metadata = new Metadata();
+        metadata.addMetadata("foo", "password", "abc123");
+        JSONObject jsonObject = streamableToJson(metadata);
 
-        assertEquals(Collections.singleton("password"), metaData.getRedactKeys());
+        assertEquals(Collections.singleton("password"), metadata.getRedactKeys());
         assertEquals("[FILTERED]", jsonObject.getJSONObject("foo").get("password"));
     }
 
     @Test
     public void testClearTab() throws Exception {
-        MetaData metaData = new MetaData();
-        metaData.addMetadata("example", "string", "value");
-        metaData.clearMetadata("example", null);
-        JSONObject json = streamableToJson(metaData);
+        Metadata metadata = new Metadata();
+        metadata.addMetadata("example", "string", "value");
+        metadata.clearMetadata("example", null);
+        JSONObject json = streamableToJson(metadata);
         assertFalse(json.has("example"));
     }
 }

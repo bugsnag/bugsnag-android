@@ -13,8 +13,8 @@ internal class ReportCacheScenario(config: Configuration,
     init {
         config.autoTrackSessions = false
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            if (eventMetaData != "online") {
+            eventMetadata = context.intent.getStringExtra("EVENT_METADATA")
+            if (eventMetadata != "online") {
                 disableAllDelivery(config)
             }
         }
@@ -22,7 +22,7 @@ internal class ReportCacheScenario(config: Configuration,
 
     override fun run() {
         super.run()
-        if (eventMetaData != "online") {
+        if (eventMetadata != "online") {
             throw RuntimeException("ReportCacheScenario")
         }
     }

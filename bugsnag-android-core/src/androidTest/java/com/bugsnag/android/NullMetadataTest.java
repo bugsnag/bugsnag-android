@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionTracker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -11,8 +10,6 @@ import androidx.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.Thread;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
@@ -46,7 +43,7 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testErrorDefaultMetaData() throws Exception {
+    public void testErrorDefaultMetadata() throws Exception {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         Event event = new Event(throwable, config, handledState);
         validateDefaultMetadata(event);
@@ -66,11 +63,11 @@ public class NullMetadataTest {
         client.notifyInternal(event, DeliveryStyle.ASYNC, null);
     }
 
-    private void validateDefaultMetadata(MetaDataAware metaData) {
-        assertNotNull(metaData);
-        assertNull(metaData.getMetadata(TAB_KEY, null));
-        metaData.addMetadata(TAB_KEY, "test", "data");
-        assertEquals("data", metaData.getMetadata(TAB_KEY, "test"));
+    private void validateDefaultMetadata(MetadataAware metadata) {
+        assertNotNull(metadata);
+        assertNull(metadata.getMetadata(TAB_KEY, null));
+        metadata.addMetadata(TAB_KEY, "test", "data");
+        assertEquals("data", metadata.getMetadata(TAB_KEY, "test"));
     }
 
 }

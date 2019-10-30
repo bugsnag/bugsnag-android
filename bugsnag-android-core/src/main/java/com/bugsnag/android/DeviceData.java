@@ -114,7 +114,7 @@ class DeviceData {
         return map;
     }
 
-    Map<String, Object> getDeviceMetaData() {
+    Map<String, Object> getDeviceMetadata() {
         Map<String, Object> map = new HashMap<>();
         map.put("batteryLevel", getBatteryLevel());
         map.put("charging", isCharging());

@@ -22,9 +22,9 @@ internal class DeletedSessionScenario(config: Configuration,
         config.setAutoTrackSessions(false)
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            eventMetadata = context.intent.getStringExtra("eventMetadata")
 
-            if (eventMetaData != "non-crashy") {
+            if (eventMetadata != "non-crashy") {
                 disableAllDelivery(config)
             } else {
                 val baseDelivery = createDefaultDelivery()
@@ -52,7 +52,7 @@ internal class DeletedSessionScenario(config: Configuration,
     override fun run() {
         super.run()
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             Bugsnag.startSession()
         }
 

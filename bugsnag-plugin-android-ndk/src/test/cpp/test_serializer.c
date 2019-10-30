@@ -45,7 +45,7 @@ bsg_app_info * loadAppTestCase(jint num) {
     return app;
 }
 
-bsg_app_info * loadAppMetaDataTestCase(jint num) {
+bsg_app_info * loadAppMetadataTestCase(jint num) {
     bsg_app_info *app = malloc(sizeof(bsg_app_info));
     strcpy(app->package_name, "com.bugsnag.example");
     strcpy(app->version_name, "5.0");
@@ -71,7 +71,7 @@ bsg_device_info * loadDeviceTestCase(jint num) {
     return device;
 }
 
-bsg_device_info * loadDeviceMetaDataTestCase(jint num) {
+bsg_device_info * loadDeviceMetadataTestCase(jint num) {
     bsg_device_info *device = malloc(sizeof(bsg_device_info));
     strcpy(device->brand, "Samsung");
     strcpy(device->locale, "En");
@@ -88,7 +88,7 @@ bsg_device_info * loadDeviceMetaDataTestCase(jint num) {
     return device;
 }
 
-bugsnag_metadata * loadCustomMetaDataTestCase(jint num) {
+bugsnag_metadata * loadCustomMetadataTestCase(jint num) {
     bugsnag_metadata *data = malloc(sizeof(bugsnag_metadata));
     return data;
 }

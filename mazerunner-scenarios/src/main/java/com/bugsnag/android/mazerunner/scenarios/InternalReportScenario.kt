@@ -19,17 +19,17 @@ internal class InternalReportScenario(config: Configuration,
         config.setAutoTrackSessions(false)
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            eventMetadata = context.intent.getStringExtra("EVENT_METADATA")
             val errDir = File(context.cacheDir, "bugsnag-errors")
 
-            if (eventMetaData == "tombstone" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (eventMetadata == "tombstone" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 errDir.mkdir()
                 val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
                 storageManager.setCacheBehaviorGroup(errDir, true)
                 storageManager.setCacheBehaviorTombstone(errDir, true)
             }
 
-            if (eventMetaData != "non-crashy") {
+            if (eventMetadata != "non-crashy") {
                 disableAllDelivery(config)
             } else {
                 val files = errDir.listFiles()
@@ -41,7 +41,7 @@ internal class InternalReportScenario(config: Configuration,
     override fun run() {
         super.run()
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             Bugsnag.notify(java.lang.RuntimeException("Whoops"))
         }
     }

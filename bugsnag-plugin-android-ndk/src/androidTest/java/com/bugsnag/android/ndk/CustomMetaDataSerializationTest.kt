@@ -6,7 +6,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.*
 
 @RunWith(Parameterized::class)
-internal class CustomMetaDataSerializationTest {
+internal class CustomMetadataSerializationTest {
 
     companion object {
         init {

@@ -14,10 +14,10 @@ internal class EmptyReportScenario(config: Configuration,
         config.setAutoTrackSessions(false)
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            eventMetadata = context.intent.getStringExtra("EVENT_METADATA")
             val errDir = File(context.cacheDir, "bugsnag-errors")
 
-            if (eventMetaData != "non-crashy") {
+            if (eventMetadata != "non-crashy") {
                 disableAllDelivery(config)
             } else {
                 val files = errDir.listFiles()
@@ -29,7 +29,7 @@ internal class EmptyReportScenario(config: Configuration,
     override fun run() {
         super.run()
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             Bugsnag.notify(java.lang.RuntimeException("Whoops"))
         }
     }

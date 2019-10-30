@@ -3,7 +3,7 @@ package com.bugsnag.android
 import java.util.concurrent.ConcurrentLinkedQueue
 
 internal data class ClientState(
-    val metadata: MetaData = MetaData(),
+    val metadata: Metadata = Metadata(),
     var context: String? = null,
     val onErrorTasks: MutableCollection<OnError> = ConcurrentLinkedQueue<OnError>(),
     val onBreadcrumbTasks: MutableCollection<OnBreadcrumb> = ConcurrentLinkedQueue<OnBreadcrumb>(),

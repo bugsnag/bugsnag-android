@@ -45,8 +45,8 @@ end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
   steps %Q{
-    Given the element "scenarioMetaData" is present
-    And I send the keys "#{event_metadata}" to the element "scenarioMetaData"
+    Given the element "scenarioMetadata" is present
+    And I send the keys "#{event_metadata}" to the element "scenarioMetadata"
   }
 end
 

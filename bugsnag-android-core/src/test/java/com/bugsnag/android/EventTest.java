@@ -78,7 +78,7 @@ public class EventTest {
     }
 
     @Test
-    public void testErrorMetaData() {
+    public void testErrorMetadata() {
         event.addMetadata("rocks", "geode", "a shiny mineral");
         Map<String, Object> rocks = (Map<String, Object>) event.getMetadata("rocks", null);
         assertNotNull(rocks);

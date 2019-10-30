@@ -24,9 +24,9 @@ class MainActivity : Activity() {
         bugsnagStarter.setOnClickListener {
             val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
             val scenario = scenarioPicker.text.toString()
-            val scenarioMetaData = findViewById<EditText>(R.id.scenarioMetaData)
-            val metaData = scenarioMetaData.text.toString()
-            startBugsnag(scenario, metaData)
+            val scenarioMetadata = findViewById<EditText>(R.id.scenarioMetadata)
+            val metadata = scenarioMetadata.text.toString()
+            startBugsnag(scenario, metadata)
         }
 
         val scenarioStarter = findViewById<Button>(R.id.startScenarioButton)
@@ -34,22 +34,22 @@ class MainActivity : Activity() {
         scenarioStarter.setOnClickListener {
             val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
             val scenario = scenarioPicker.text.toString()
-            val scenarioMetaData = findViewById<EditText>(R.id.scenarioMetaData)
-            val metaData = scenarioMetaData.text.toString()
-            executeScenario(scenario, metaData)
+            val scenarioMetadata = findViewById<EditText>(R.id.scenarioMetadata)
+            val metadata = scenarioMetadata.text.toString()
+            executeScenario(scenario, metadata)
         }
     }
 
-    private fun startBugsnag(eventType: String, metaData: String) {
+    private fun startBugsnag(eventType: String, metadata: String) {
         val config = prepareConfig()
-        loadScenario(config, eventType, metaData)
+        loadScenario(config, eventType, metadata)
 
         Bugsnag.init(this, config)
     }
 
-    private fun executeScenario(eventType: String, metaData: String) {
+    private fun executeScenario(eventType: String, metadata: String) {
         val config = prepareConfig()
-        val testCase = loadScenario(config, eventType, metaData)
+        val testCase = loadScenario(config, eventType, metadata)
 
         Bugsnag.init(this, config)
 
@@ -62,11 +62,11 @@ class MainActivity : Activity() {
         }, 1)
     }
 
-    private fun loadScenario(configuration: Configuration, eventType: String, eventMetaData: String): Scenario {
+    private fun loadScenario(configuration: Configuration, eventType: String, eventMetadata: String): Scenario {
         Log.d("Bugsnag", "Received test case, executing " + eventType)
-        Log.d("Bugsnag", "Received metadata: " + eventMetaData)
+        Log.d("Bugsnag", "Received metadata: " + eventMetadata)
 
-        this.intent.putExtra("EVENT_METADATA", eventMetaData)
+        this.intent.putExtra("EVENT_METADATA", eventMetadata)
         val testCase = factory.testCaseForName(eventType, configuration, this)
 
         return testCase

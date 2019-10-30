@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-internal interface MetaDataAware {
+internal interface MetadataAware {
     fun addMetadata(section: String, value: Any?)
     fun addMetadata(section: String, key: String?, value: Any?)
 

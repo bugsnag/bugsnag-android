@@ -33,7 +33,7 @@ public class CXXDelayedCrashScenario extends Scenario {
             return;
         }
         didActivate = true;
-        String metadata = getEventMetaData();
+        String metadata = getEventMetadata();
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }

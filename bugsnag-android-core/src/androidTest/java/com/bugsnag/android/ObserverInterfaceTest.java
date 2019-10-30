@@ -67,7 +67,7 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testAddMetadataToMetaDataSendsMessage() {
+    public void testAddMetadataToMetadataSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.ADD_METADATA, List.class);
@@ -86,7 +86,7 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testClearTabFromMetaDataSendsMessage() {
+    public void testClearTabFromMetadataSendsMessage() {
         client.clearMetadata("axis", null);
         Object value =  findMessageInQueue(
                 NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
@@ -94,7 +94,7 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testAddNullMetadataToMetaDataSendsMessage() {
+    public void testAddNullMetadataToMetadataSendsMessage() {
         client.addMetadata("foo", "bar", null);
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.REMOVE_METADATA, List.class);

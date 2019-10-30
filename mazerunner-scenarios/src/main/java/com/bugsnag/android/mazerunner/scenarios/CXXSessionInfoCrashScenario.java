@@ -29,7 +29,7 @@ public class CXXSessionInfoCrashScenario extends Scenario {
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
+        String metadata = getEventMetadata();
 
         if (metadata == null || !metadata.equals("non-crashy")) {
             Bugsnag.startSession();

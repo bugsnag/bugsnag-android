@@ -14,8 +14,8 @@ internal class CustomClientErrorFlushScenario(config: Configuration,
     init {
         config.setAutoTrackSessions(false)
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            if ("online" == eventMetaData) {
+            eventMetadata = context.intent.getStringExtra("EVENT_METADATA")
+            if ("online" == eventMetadata) {
                 config.delivery = createCustomHeaderDelivery()
             } else {
                 disableAllDelivery(config)
@@ -26,7 +26,7 @@ internal class CustomClientErrorFlushScenario(config: Configuration,
     override fun run() {
         super.run()
 
-        if ("online" != eventMetaData) {
+        if ("online" != eventMetadata) {
             throw RuntimeException("ReportCacheScenario")
         }
     }

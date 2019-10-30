@@ -16,8 +16,8 @@ internal class CustomClientSessionFlushScenario(config: Configuration,
         config.autoTrackSessions = false
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            if ("online" == eventMetaData) {
+            eventMetadata = context.intent.getStringExtra("EVENT_METADATA")
+            if ("online" == eventMetadata) {
                 config.delivery = createCustomHeaderDelivery()
             } else {
                 disableAllDelivery(config)
