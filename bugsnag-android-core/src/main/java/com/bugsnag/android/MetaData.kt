@@ -3,7 +3,6 @@
 package com.bugsnag.android
 
 import java.io.IOException
-import java.util.Arrays
 import java.util.HashMap
 import java.util.HashSet
 import java.util.Observable
@@ -48,7 +47,7 @@ class MetaData @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
             notifyObservers(
                 NativeInterface.Message(
                     NativeInterface.MessageType.ADD_METADATA,
-                    Arrays.asList<Any>(section, key, value)
+                    listOf(section, key, value)
                 )
             )
         }

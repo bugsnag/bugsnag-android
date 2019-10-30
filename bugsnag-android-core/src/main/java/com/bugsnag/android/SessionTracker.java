@@ -207,17 +207,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         }
     }
 
-    /**
-     * Track a new session when auto capture is enabled via config after initialisation.
-     */
-    void onAutoCaptureEnabled() {
-        Session session = currentSession.get();
-        if (session != null && !foregroundActivities.isEmpty()) {
-            // If there is no session we will wait for one to be created
-            trackSessionIfNeeded(session);
-        }
-    }
-
     @Nullable
     Session getCurrentSession() {
         Session session = currentSession.get();
@@ -359,22 +348,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             } catch (Exception ex) {
                 logger.w("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
             }
-        }
-    }
-
-    /**
-     * Tracks a session if a session has not yet been captured,
-     * recording the session as auto-captured. Requires the current activity.
-     *
-     * @param activity the current activity
-     */
-    void startFirstSession(Activity activity) {
-        Session session = currentSession.get();
-        if (session == null) {
-            long nowMs = System.currentTimeMillis();
-            lastEnteredForegroundMs.set(nowMs);
-            startNewSession(new Date(nowMs), client.getUser(), true);
-            foregroundActivities.add(getActivityName(activity));
         }
     }
 

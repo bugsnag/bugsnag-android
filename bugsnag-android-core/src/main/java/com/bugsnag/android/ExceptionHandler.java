@@ -31,7 +31,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(throwable);
 
         // Notify any subscribed clients of the uncaught exception
-        MetaData metaData = new MetaData();
+        MetaData metaData;
         String violationDesc = null;
 
         if (strictModeThrowable) { // add strictmode policy violation to metadata

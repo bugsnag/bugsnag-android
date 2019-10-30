@@ -22,7 +22,6 @@ public class Configuration extends Observable implements Observer, CallbackAware
 
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
     private static final int DEFAULT_MAX_SIZE = 25;
-    static final String DEFAULT_EXCEPTION_TYPE = "android";
 
     @NonNull
     private final String apiKey;
@@ -74,7 +73,7 @@ public class Configuration extends Observable implements Observer, CallbackAware
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
             // or bugsnag-android-ndk
             Class<?> clz = Class.forName("com.bugsnag.android.BuildConfig");
-            Field field = clz.getDeclaredField("AUTO_AUTO_DETECT_NDK_CRASHES");
+            Field field = clz.getDeclaredField("AUTO_DETECT_NDK_CRASHES");
             autoDetectNdkCrashes = field.getBoolean(null);
         } catch (Throwable exc) {
             autoDetectNdkCrashes = false;

@@ -155,8 +155,6 @@ class Event @JvmOverloads internal constructor(
 
     fun getUser() = _user
 
-    fun clearUser() = setUser(null, null, null)
-
     override fun addMetadata(section: String, value: Any?) = addMetadata(section, null, value)
     override fun addMetadata(section: String, key: String?, value: Any?) =
         metadata.addMetadata(section, key, value)
