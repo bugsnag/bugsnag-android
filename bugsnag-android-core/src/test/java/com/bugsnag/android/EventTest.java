@@ -15,6 +15,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class EventTest {
 
+    private final HandledState handledState
+            = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
     private ImmutableConfig config;
     private Event event;
 
@@ -27,16 +29,13 @@ public class EventTest {
     public void setUp() throws Exception {
         config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Example message");
-        event = new EventGenerator.Builder(config, exception, null,
-            Thread.currentThread(), false, new MetaData()).build();
+        HandledState handledState = this.handledState;
+        event = new Event(exception, config, handledState);
     }
 
     @Test
     public void testBugsnagExceptionName() throws Exception {
-        BugsnagException exception = new BugsnagException("Busgang", "exceptional",
-            new StackTraceElement[]{});
-        Event err = new EventGenerator.Builder(config,
-            exception, null, Thread.currentThread(), false, new MetaData()).build();
+        Event err = new Event(new RuntimeException("whoops"), config, handledState);
         err.getErrors().get(0).setErrorClass("Busgang");
         assertEquals("Busgang", err.getErrors().get(0).getErrorClass());
     }
@@ -76,22 +75,6 @@ public class EventTest {
         assertEquals(userId, event.getUser().getId());
         assertEquals(userEmail, event.getUser().getEmail());
         assertEquals(userName, event.getUser().getName());
-    }
-
-    @Test
-    public void testBuilderMetaData() {
-        EventGenerator.Builder builder = new EventGenerator.Builder(config,
-            new RuntimeException("foo"), null,
-            Thread.currentThread(), false, new MetaData());
-
-        assertNotNull(builder.metaData(new MetaData()).build());
-
-        MetaData metaData = new MetaData();
-        metaData.addMetadata("foo", "bar", true);
-
-        Event event = builder.metaData(metaData).build();
-        Map<String, Object> foo = (Map<String, Object>) event.getMetadata("foo", null);
-        assertEquals(1, foo.size());
     }
 
     @Test

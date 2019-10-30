@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.Thread;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
@@ -34,16 +36,20 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Event event = new EventGenerator.Builder(config, throwable, null,
-            Thread.currentThread(), false, new MetaData()).build();
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(throwable, config, handledState);
         validateDefaultMetadata(event);
     }
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
-        Event event = new EventGenerator.Builder(config, "RuntimeException",
-            "Something broke", new StackTraceElement[]{},
-            null, Thread.currentThread(), new MetaData()).build();
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(null, config, handledState);
+        List<String> projectPackages = Collections.<String>emptyList();
+        Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages);
+        Error err = new Error("RuntimeException", "Something broke",
+                stacktrace.getTrace());
+        event.setErrors(Collections.singletonList(err));
         validateDefaultMetadata(event);
     }
 

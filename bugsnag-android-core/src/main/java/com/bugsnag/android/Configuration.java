@@ -30,7 +30,6 @@ public class Configuration extends Observable implements Observer, CallbackAware
     private String buildUuid;
     private String appVersion;
     private Integer versionCode = 0;
-    private String context;
 
     private final Set<String> ignoreClasses = new HashSet<>();
     private final Set<String> enabledReleaseStages = new HashSet<>();
@@ -168,7 +167,7 @@ public class Configuration extends Observable implements Observer, CallbackAware
      */
     @Nullable
     public String getContext() {
-        return context;
+        return clientState.getContext();
     }
 
     /**
@@ -179,10 +178,7 @@ public class Configuration extends Observable implements Observer, CallbackAware
      * @param context set what was happening at the time of a crash
      */
     public void setContext(@Nullable String context) {
-        this.context = context;
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_CONTEXT, context));
+        clientState.setContext(context);
     }
 
     /**

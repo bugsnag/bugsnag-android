@@ -22,4 +22,4 @@ Scenario: Manually added breadcrumbs are sent in report
     And the event "breadcrumbs.0.name" equals "manual"
     And the event "breadcrumbs.0.type" equals "manual"
     And the event "breadcrumbs.0.metaData" is not null
-    And the event "breadcrumbs.0.metaData.message" equals "Bugsnag loaded
+    And the event "breadcrumbs.0.metaData.message" equals "Bugsnag loaded"

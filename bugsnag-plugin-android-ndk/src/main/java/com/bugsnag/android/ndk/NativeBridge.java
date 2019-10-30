@@ -111,6 +111,7 @@ public class NativeBridge implements Observer {
             return;
         }
         Object arg = message.value;
+        logger.i(String.format("Received NDK message %s", message.type));
 
         switch (message.type) {
             case INSTALL:
@@ -229,11 +230,10 @@ public class NativeBridge implements Observer {
             } else if (arg instanceof List) {
                 @SuppressWarnings("unchecked")
                 List<Object> values = (List<Object>)arg;
-                if (values.size() > 0 && values.get(0) instanceof Configuration) {
-                    Configuration config = (Configuration)values.get(0);
+                if (values.size() > 0 && values.get(0) instanceof Boolean) {
+                    Boolean autoDetectNdkCrashes = (Boolean) values.get(0);
                     String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-                    install(reportPath, config.getAutoDetectNdkCrashes(), Build.VERSION.SDK_INT,
-                        is32bit());
+                    install(reportPath, autoDetectNdkCrashes, Build.VERSION.SDK_INT, is32bit());
                     installed.set(true);
                 }
             } else {

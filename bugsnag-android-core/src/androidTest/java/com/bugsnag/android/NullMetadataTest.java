@@ -47,16 +47,8 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Event event = new EventGenerator.Builder(config, throwable, generateSessionTracker(),
-            Thread.currentThread(), false, new MetaData()).build();
-        validateDefaultMetadata(event);
-    }
-
-    @Test
-    public void testSecondErrorDefaultMetaData() throws Exception {
-        Event event = new EventGenerator.Builder(config, "RuntimeException",
-            "Something broke", new StackTraceElement[]{},
-            generateSessionTracker(), Thread.currentThread(), new MetaData()).build();
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(throwable, config, handledState);
         validateDefaultMetadata(event);
     }
 
@@ -69,8 +61,8 @@ public class NullMetadataTest {
                 return false;
             }
         });
-        Event event = new EventGenerator.Builder(config, new Throwable(),
-            generateSessionTracker(), Thread.currentThread(), false, new MetaData()).build();
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(throwable, config, handledState);
         client.notifyInternal(event, DeliveryStyle.ASYNC, null);
     }
 

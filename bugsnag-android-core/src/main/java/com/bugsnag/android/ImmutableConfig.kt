@@ -42,7 +42,8 @@ internal data class ImmutableConfig(
      * @return true if the release state should be notified else false
      */
     @JvmName("shouldNotifyForReleaseStage")
-    internal fun shouldNotifyForReleaseStage() = enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
+    internal fun shouldNotifyForReleaseStage()
+            = enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
 
     @JvmName("errorApiDeliveryParams")
     internal fun errorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())

@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-class Error(
+class Error @JvmOverloads internal constructor(
     var errorClass: String,
     var errorMessage: String?,
     var stacktrace: List<Stackframe>,

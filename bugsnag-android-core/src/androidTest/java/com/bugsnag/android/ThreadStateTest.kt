@@ -14,7 +14,7 @@ import java.lang.Thread
 class ThreadStateTest {
 
     private val configuration = generateImmutableConfig()
-    private val threadState = ThreadState(configuration, Thread.currentThread(), Thread.getAllStackTraces(), null)
+    private val threadState = ThreadState(configuration)
     private val json = streamableToJsonArray(threadState)
 
     /**
@@ -51,7 +51,7 @@ class ThreadStateTest {
             .map { it.key }
             .first()
 
-        val state = ThreadState(configuration, otherThread, Thread.getAllStackTraces(), null)
+        val state = ThreadState(configuration, null, otherThread, Thread.getAllStackTraces())
         val json = streamableToJsonArray(state)
         verifyCurrentThreadStructure(json, otherThread.id)
     }
@@ -66,7 +66,7 @@ class ThreadStateTest {
         val missingTraces = Thread.getAllStackTraces()
         missingTraces.remove(currentThread)
 
-        val state = ThreadState(configuration, currentThread, missingTraces, null)
+        val state = ThreadState(configuration, null ,currentThread, missingTraces)
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {
@@ -81,7 +81,7 @@ class ThreadStateTest {
     fun testHandledStacktrace() {
         val currentThread = Thread.currentThread()
         val allStackTraces = Thread.getAllStackTraces()
-        val state = ThreadState(configuration, currentThread, allStackTraces, null)
+        val state = ThreadState(configuration, null, currentThread, allStackTraces)
         val json = streamableToJsonArray(state)
 
         // find the stack trace for the current thread that was passed as a parameter
@@ -116,7 +116,7 @@ class ThreadStateTest {
         val exc: Throwable = RuntimeException("Whoops")
         val expectedTrace = exc.stackTrace
 
-        val state = ThreadState(configuration, currentThread, allStackTraces, exc)
+        val state = ThreadState(configuration, exc, currentThread, allStackTraces)
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {

@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
+import static com.bugsnag.android.HandledState.REASON_UNHANDLED_EXCEPTION;
+
 import com.bugsnag.android.NativeInterface.Message;
 
 import android.annotation.SuppressLint;
@@ -165,9 +168,8 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
             @Override
             public void onErrorIOFailure(Exception exc, File errorFile, String context) {
                 // send an internal error to bugsnag with no cache
-                Thread thread = Thread.currentThread();
-                Event err = new EventGenerator.Builder(immutableConfig, exc, null, thread,
-                        true, new MetaData()).build();
+                HandledState handledState = HandledState.newInstance(REASON_UNHANDLED_EXCEPTION);
+                Event err = new Event(exc, immutableConfig, handledState);
                 err.setContext(context);
 
                 err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
@@ -323,7 +325,7 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
     void sendNativeSetupNotification() {
         setChanged();
         ArrayList<Object> messageArgs = new ArrayList<>();
-        messageArgs.add(clientState);
+        messageArgs.add(immutableConfig.getAutoDetectNdkCrashes());
 
         super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
         try {
@@ -435,6 +437,9 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
      */
     public void setContext(@Nullable String context) {
         clientState.setContext(context);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_CONTEXT, context));
     }
 
     /**
@@ -602,15 +607,13 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param exception the exception to send to Bugsnag
+     * @param exc the exception to send to Bugsnag
      * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
-        Event event = new EventGenerator.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetadata())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
+    public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
+        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
+        Event event = new Event(exc, immutableConfig, handledState, clientState.getMetadata());
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
@@ -640,10 +643,11 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
-        Event event = new EventGenerator.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), clientState.getMetadata())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
+        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
+        Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages());
+        Error err = new Error(name, message, trace.getTrace());
+        Event event = new Event(null, immutableConfig, handledState, clientState.getMetadata());
+        event.setErrors(Collections.singletonList(err));
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
@@ -652,17 +656,15 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
      *
      * Should only ever be called from the {@link ExceptionHandler}.
      */
-    void notifyUnhandledException(@NonNull Throwable exception, MetaData metaData,
+    void notifyUnhandledException(@NonNull Throwable exc,
                                   @HandledState.SeverityReason String severityReason,
-                                  @Nullable String attributeValue, Thread thread) {
-        Event event = new EventGenerator.Builder(immutableConfig, exception,
-                sessionTracker, thread, true, clientState.getMetadata())
-                .severity(Severity.ERROR)
-                .metaData(metaData)
-                .severityReasonType(severityReason)
-                .attributeValue(attributeValue)
-                .build();
-
+                                  @Nullable String attributeValue,
+                                  Thread thread) {
+        HandledState handledState
+                = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
+        ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
+        Event event = new Event(exc, immutableConfig, handledState,
+                clientState.getMetadata(), threadState);
         notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
@@ -676,6 +678,14 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
 
         if (!immutableConfig.shouldNotifyForReleaseStage()) {
             return;
+        }
+
+        // get session for event
+        Session currentSession = sessionTracker.getCurrentSession();
+
+        if (currentSession != null
+                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
+            event.setSession(currentSession);
         }
 
         // Capture the state of the app and device and attach diagnostics to the event
@@ -706,6 +716,17 @@ public class Client extends Observable implements Observer, MetaDataAware, Callb
         if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
             logger.i("Skipping notification - onError task returned false");
             return;
+        }
+
+        // increment handled counts after error not rejected by callbacks
+        Session session = event.getSession();
+
+        if (session != null) {
+            if (event.getUnhandled()) {
+                event.setSession(session.incrementUnhandledAndCopy());
+            } else {
+                event.setSession(session.incrementHandledAndCopy());
+            }
         }
 
         // Build the report

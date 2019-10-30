@@ -5,14 +5,14 @@ import java.io.IOException
 /**
  * Capture and serialize the state of all threads at the time of an exception.
  */
-internal class ThreadState
+internal class ThreadState @JvmOverloads constructor
 // unhandled errors use the exception trace// API 24/25 don't record the currentThread, add it in manually
 // https://issuetracker.google.com/issues/64122757
     (
     config: ImmutableConfig,
-    currentThread: java.lang.Thread,
-    stackTraces: MutableMap<java.lang.Thread, Array<StackTraceElement>>,
-    exc: Throwable?
+    exc: Throwable? = null,
+    currentThread: java.lang.Thread = java.lang.Thread.currentThread(),
+    stackTraces: MutableMap<java.lang.Thread, Array<StackTraceElement>> = java.lang.Thread.getAllStackTraces()
 ) : JsonStream.Streamable {
 
     internal val threads: List<Thread>

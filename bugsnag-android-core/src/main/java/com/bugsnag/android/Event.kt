@@ -12,17 +12,15 @@ import java.util.HashMap
  *
  * @see OnError
  */
-class Event internal constructor(
+class Event @JvmOverloads internal constructor(
+    originalError: Throwable? = null,
     internal val config: ImmutableConfig,
-    originalError: Throwable,
     private val handledState: HandledState,
-    s: Severity,
-    session: Session?,
-    private val threadState: ThreadState,
-    private val metadata: MetaData
+    private val metadata: MetaData = MetaData(),
+    private val threadState: ThreadState = ThreadState(config, originalError)
 ) : JsonStream.Streamable, MetaDataAware {
 
-    val session = session
+    var session: Session? = null
     val originalError = originalError
 
     /**
@@ -34,11 +32,12 @@ class Event internal constructor(
      * @param severity the severity of this error
      * @see Severity
      */
-    var severity: Severity = s
+    var severity: Severity
+        get() = handledState.currentSeverity
         set(value) {
-            field = value
-            handledState.currentSeverity = severity
+            handledState.currentSeverity = value
         }
+
     var apiKey: String = config.apiKey
 
     var app: MutableMap<String, Any> = HashMap()
@@ -49,8 +48,11 @@ class Event internal constructor(
     var breadcrumbs: MutableList<Breadcrumb> = emptyList<Breadcrumb>().toMutableList()
 
     var projectPackages: Collection<String> = config.projectPackages
-    var errors: MutableList<Error> =
-        Error.createError(originalError, projectPackages).toMutableList()
+    var errors: MutableList<Error> = when (originalError) {
+        null -> mutableListOf()
+        else -> Error.createError(originalError, projectPackages).toMutableList()
+    }
+
     var threads: MutableList<Thread> = threadState.threads.toMutableList()
 
     /**
@@ -125,13 +127,14 @@ class Event internal constructor(
         }
 
         if (session != null) {
+            val copy = Session.copySession(session)
             writer.name("session").beginObject()
-            writer.name("id").value(session.id)
-            writer.name("startedAt").value(DateUtils.toIso8601(session.startedAt))
+            writer.name("id").value(copy.id)
+            writer.name("startedAt").value(DateUtils.toIso8601(copy.startedAt))
 
             writer.name("events").beginObject()
-            writer.name("handled").value(session.handledCount.toLong())
-            writer.name("unhandled").value(session.unhandledCount.toLong())
+            writer.name("handled").value(copy.handledCount.toLong())
+            writer.name("unhandled").value(copy.unhandledCount.toLong())
             writer.endObject()
             writer.endObject()
         }
