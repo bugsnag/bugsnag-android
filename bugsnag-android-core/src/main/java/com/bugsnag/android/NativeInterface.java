@@ -29,7 +29,7 @@ public class NativeInterface {
          */
         ADD_METADATA,
         /**
-         * Clear all breadcrumbs
+         * Clear all breadcrumbState
          */
         CLEAR_BREADCRUMBS,
         /**
@@ -226,11 +226,11 @@ public class NativeInterface {
     }
 
     /**
-     * Retrieves breadcrumbs from the static Client instance as a Map
+     * Retrieves breadcrumbState from the static Client instance as a Map
      */
     @NonNull
     public static List<Breadcrumb> getBreadcrumbs() {
-        Queue<Breadcrumb> store = getClient().breadcrumbs.getStore();
+        Queue<Breadcrumb> store = getClient().breadcrumbState.getStore();
         return new ArrayList<>(store);
     }
 

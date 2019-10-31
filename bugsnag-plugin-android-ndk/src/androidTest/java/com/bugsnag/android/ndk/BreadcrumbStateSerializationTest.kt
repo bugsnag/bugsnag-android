@@ -6,7 +6,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.*
 
 @RunWith(Parameterized::class)
-internal class BreadcrumbsSerializationTest {
+internal class BreadcrumbStateSerializationTest {
 
     companion object {
         init {

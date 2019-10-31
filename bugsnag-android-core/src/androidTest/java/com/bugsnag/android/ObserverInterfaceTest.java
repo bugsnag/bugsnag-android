@@ -168,7 +168,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testLeaveStringBreadcrumbDirectlySendsMessage() {
-        client.breadcrumbs.add(new Breadcrumb("Drift 4 units left"));
+        client.breadcrumbState.add(new Breadcrumb("Drift 4 units left"));
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
@@ -179,7 +179,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClearBreadcrumbsDirectlySendsMessage() {
-        client.breadcrumbs.clear();
+        client.breadcrumbState.clear();
         findMessageInQueue(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null);
     }
 

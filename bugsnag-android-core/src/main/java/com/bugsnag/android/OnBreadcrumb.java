@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
  * Add a "on breadcrumb" callback, to execute code before every
  * breadcrumb captured by Bugsnag.
  * <p>
- * You can use this to modify breadcrumbs before they are stored by Bugsnag.
+ * You can use this to modify breadcrumbState before they are stored by Bugsnag.
  * You can also return <code>false</code> from any callback to ignore a breadcrumb.
  * <p>
  * For example:

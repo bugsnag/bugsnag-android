@@ -12,14 +12,14 @@ import org.junit.Test
 import java.util.Date
 
 @SmallTest
-class BreadcrumbsSerializationTest {
+class BreadcrumbStateSerializationTest {
 
-    private lateinit var breadcrumbs: Breadcrumbs
+    private lateinit var breadcrumbState: BreadcrumbState
     private var client: Client? = null
 
     @Before
     fun setUp() {
-        breadcrumbs = Breadcrumbs(20, NoopLogger)
+        breadcrumbState = BreadcrumbState(20, NoopLogger)
         client = generateClient()
     }
 
@@ -34,9 +34,9 @@ class BreadcrumbsSerializationTest {
     @Test
     fun testPayloadType() {
         val metadata = mutableMapOf<String, Any>(Pair("direction", "left"))
-        breadcrumbs.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata, Date()))
+        breadcrumbState.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata, Date()))
 
-        val json = streamableToJsonArray(breadcrumbs)
+        val json = streamableToJsonArray(breadcrumbState)
         val node = json.getJSONObject(0)
         assertEquals("Rotated Menu", node.get("name"))
         assertEquals("state", node.get("type"))
@@ -45,12 +45,12 @@ class BreadcrumbsSerializationTest {
     }
 
     /**
-     * Verifies that the Client methods leave breadcrumbs correctly
+     * Verifies that the Client methods leave breadcrumbState correctly
      */
     @Test
     fun testClientMethods() {
         client!!.leaveBreadcrumb("Hello World")
-        val store = client!!.breadcrumbs.store
+        val store = client!!.breadcrumbState.store
         var count = 0
 
         for (breadcrumb in store) {

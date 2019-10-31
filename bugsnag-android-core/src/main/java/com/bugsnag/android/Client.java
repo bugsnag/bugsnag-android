@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.Thread;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +71,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final AppData appData;
 
     @NonNull
-    final Breadcrumbs breadcrumbs;
+    final BreadcrumbState breadcrumbState;
 
     @NonNull
     protected final EventStore eventStore;
@@ -159,15 +158,15 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         String id = userState.getUser().getId();
         deviceData = new DeviceData(connectivity, appContext, resources, id, logger);
 
-        // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs(), logger);
+        // Set up breadcrumbState
+        breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs(), logger);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
             application.registerActivityLifecycleCallbacks(sessionTracker);
         } else {
             logger.w("Bugsnag is unable to setup automatic activity lifecycle "
-                + "breadcrumbs on API Levels below 14.");
+                + "breadcrumbState on API Levels below 14.");
         }
 
         // Create the error store that is used in the exception handler
@@ -199,7 +198,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             new ExceptionHandler(this, logger);
         }
 
-        // register a receiver for automatic breadcrumbs
+        // register a receiver for automatic breadcrumbState
 
         try {
             Async.run(new Runnable() {
@@ -215,7 +214,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         connectivity.registerForNetworkChanges();
 
         configuration.addObserver(this);
-        breadcrumbs.addObserver(this);
+        breadcrumbState.addObserver(this);
         sessionTracker.addObserver(this);
 
         final Client client = this;
@@ -550,7 +549,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * Add a "before breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
      * <p>
-     * You can use this to modify breadcrumbs before they are stored by Bugsnag.
+     * You can use this to modify breadcrumbState before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a breadcrumb.
      * <p>
      * For example:
@@ -688,8 +687,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         event.setApp(errorAppData);
         event.addMetadata("app", null, appData.getAppDataMetadata());
 
-        // Attach breadcrumbs to the event
-        event.setBreadcrumbs(new ArrayList<>(breadcrumbs.getStore()));
+        // Attach breadcrumbState to the event
+        event.setBreadcrumbs(new ArrayList<>(breadcrumbState.getStore()));
 
         // Attach user info to the event
         User user = userState.getUser();
@@ -831,7 +830,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
 
         Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-        breadcrumbs.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
+        breadcrumbState.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
     }
 
     @Override
@@ -888,7 +887,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     private void leaveBreadcrumbInternal(Breadcrumb crumb) {
         if (callbackState.runOnBreadcrumbTasks(crumb, logger)) {
-            breadcrumbs.add(crumb);
+            breadcrumbState.add(crumb);
         }
     }
 

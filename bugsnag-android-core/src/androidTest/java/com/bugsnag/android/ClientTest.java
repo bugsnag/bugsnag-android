@@ -167,13 +167,13 @@ public class ClientTest {
         config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(1, client.breadcrumbs.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
-        assertEquals(2, client.breadcrumbs.getStore().size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
 
-        Breadcrumb poll = client.breadcrumbs.getStore().poll();
+        Breadcrumb poll = client.breadcrumbState.getStore().poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
         assertEquals("manual", poll.getMessage());
         assertEquals("test", poll.getMetadata().get("message"));

@@ -6,7 +6,7 @@ import java.util.Observable
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
-internal class Breadcrumbs(maxBreadcrumbs: Int, private val logger: Logger) : Observable(),
+internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) : Observable(),
     JsonStream.Streamable {
     val store: Queue<Breadcrumb> = ConcurrentLinkedQueue()
 
@@ -57,7 +57,7 @@ internal class Breadcrumbs(maxBreadcrumbs: Int, private val logger: Logger) : Ob
     }
 
     private fun pruneBreadcrumbs() {
-        // Remove oldest breadcrumbs until new max size reached
+        // Remove oldest breadcrumbState until new max size reached
         while (store.size > maxBreadcrumbs) {
             store.poll()
         }

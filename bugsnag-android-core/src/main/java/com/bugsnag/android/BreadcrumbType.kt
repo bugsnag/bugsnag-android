@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
 /**
- * Recognized types of breadcrumbs
+ * Recognized types of breadcrumbState
  */
 enum class BreadcrumbType(private val type: String) {
     /**

@@ -15,12 +15,12 @@ import java.util.Collections;
 import java.util.HashMap;
 
 @SmallTest
-public class OnBreadcrumbsTest {
+public class OnBreadcrumbStateTest {
 
     private Client client;
 
     /**
-     * Configures a client which does not automatically record breadcrumbs
+     * Configures a client which does not automatically record breadcrumbState
      *
      */
     @Before
@@ -28,7 +28,7 @@ public class OnBreadcrumbsTest {
         Configuration configuration = new Configuration("api-key");
         configuration.setEnabledBreadcrumbTypes(Collections.<BreadcrumbType>emptySet());
         client = generateClient();
-        assertEquals(1, client.breadcrumbs.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @After
@@ -39,7 +39,7 @@ public class OnBreadcrumbsTest {
     @Test
     public void noCallback() {
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbs.getStore().size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbs.getStore().size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class OnBreadcrumbsTest {
         client.leaveBreadcrumb("Hello");
         client.removeOnBreadcrumb(cb);
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbs.getStore().size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
     }
 
 }

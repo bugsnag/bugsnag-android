@@ -112,7 +112,7 @@ class Event @JvmOverloads internal constructor(
         // Write diagnostics
         writer.name("app").value(app)
         writer.name("device").value(device)
-        writer.name("breadcrumbs").value(breadcrumbs)
+        writer.name("breadcrumbState").value(breadcrumbs)
         writer.name("groupingHash").value(groupingHash)
 
         if (config.sendThreads) {

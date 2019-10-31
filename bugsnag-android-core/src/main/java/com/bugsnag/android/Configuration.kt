@@ -145,7 +145,7 @@ class Configuration(
     var endpoints = Endpoints()
 
     /**
-     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
+     * Set the maximum number of breadcrumbState to keep and sent to Bugsnag.
      * By default, we'll keep and send the 25 most recent breadcrumb log
      * messages.
      */

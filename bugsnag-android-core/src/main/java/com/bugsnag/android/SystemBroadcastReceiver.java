@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Used to automatically create breadcrumbs for system events
+ * Used to automatically create breadcrumbState for system events
  * Broadcast actions and categories can be found in text files in the android folder
  * e.g. ~/Library/Android/sdk/platforms/android-9/data/broadcast_actions.txt
  * See http://stackoverflow.com/a/27601497
@@ -78,7 +78,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
     /**
      * Builds a map of intent actions and their breadcrumb type.
      *
-     * Noisy breadcrumbs are commented out, along with anything that involves a state change.
+     * Noisy breadcrumbState are commented out, along with anything that involves a state change.
      * @return the action map
      */
     @NonNull
@@ -121,7 +121,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Creates a new Intent filter with all the intents to record breadcrumbs for
+     * Creates a new Intent filter with all the intents to record breadcrumbState for
      *
      * @return The intent filter
      */
