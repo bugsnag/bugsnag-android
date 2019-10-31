@@ -14,7 +14,7 @@ class ProjectPackagesTest {
         assertTrue(configuration.projectPackages.isEmpty())
 
         val client = Client(ApplicationProvider.getApplicationContext<Context>(), configuration)
-        assertEquals(setOf("com.bugsnag.android.core.test"), client.config.projectPackages)
+        assertEquals(setOf("com.bugsnag.android.core.test"), client.immutableConfig.projectPackages)
         client.close()
     }
 
@@ -23,7 +23,7 @@ class ProjectPackagesTest {
         val configuration = Configuration("api-key")
         configuration.projectPackages = setOf("com.foo.example")
         val client = Client(ApplicationProvider.getApplicationContext<Context>(), configuration)
-        assertEquals(setOf("com.foo.example"), client.config.projectPackages)
+        assertEquals(setOf("com.foo.example"), client.immutableConfig.projectPackages)
         client.close()
     }
 }

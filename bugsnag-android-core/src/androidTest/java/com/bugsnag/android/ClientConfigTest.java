@@ -62,6 +62,6 @@ public class ClientConfigTest {
         };
         config.setDelivery(customDelivery);
         client = new Client(context, config);
-        assertEquals(customDelivery, client.getConfig().getDelivery());
+        assertEquals(customDelivery, client.immutableConfig.getDelivery());
     }
 }

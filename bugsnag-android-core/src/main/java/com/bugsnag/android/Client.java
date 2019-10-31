@@ -74,7 +74,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final BreadcrumbState breadcrumbState;
 
     @NonNull
-    protected final EventStore eventStore;
+    final EventStore eventStore;
 
     final SessionStore sessionStore;
 
@@ -873,45 +873,11 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
     }
 
-    SessionTracker getSessionTracker() {
-        return sessionTracker;
-    }
-
-    @NonNull
-    EventStore getEventStore() {
-        return eventStore;
-    }
-
-    /**
-     * Finalize by removing the receiver
-     *
-     * @throws Throwable if something goes wrong
-     */
-    @SuppressWarnings("checkstyle:NoFinalizer")
-    protected void finalize() throws Throwable {
-        if (systemBroadcastReceiver != null) {
-            try {
-                appContext.unregisterReceiver(systemBroadcastReceiver);
-            } catch (IllegalArgumentException exception) {
-                logger.w("Receiver not registered");
-            }
-        }
-        super.finalize();
-    }
-
     private void warnIfNotAppContext(Context androidContext) {
         if (!(androidContext instanceof Application)) {
             logger.w("Warning - Non-Application context detected! Please ensure that you are "
                 + "initializing Bugsnag from a custom Application class.");
         }
-    }
-
-    CallbackState getCallbackState() {
-        return callbackState;
-    }
-
-    ImmutableConfig getConfig() {
-        return immutableConfig;
     }
 
     void setBinaryArch(String binaryArch) {
@@ -921,5 +887,12 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     void close() {
         orientationListener.disable();
         connectivity.unregisterForNetworkChanges();
+        if (systemBroadcastReceiver != null) {
+            try {
+                appContext.unregisterReceiver(systemBroadcastReceiver);
+            } catch (IllegalArgumentException exception) {
+                logger.w("Receiver not registered");
+            }
+        }
     }
 }

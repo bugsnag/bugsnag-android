@@ -30,7 +30,7 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientNotifyModification() {
-        CallbackState config = client.getCallbackState();
+        CallbackState config = client.callbackState;
         final Collection<OnError> onErrorTasks = config.getOnErrorTasks();
         client.addOnError(new OnError() {
             @Override
@@ -46,7 +46,7 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientBreadcrumbModification() {
-        CallbackState config = client.getCallbackState();
+        CallbackState config = client.callbackState;
         final Collection<OnBreadcrumb> breadcrumbTasks =
                 config.getOnBreadcrumbTasks();
 

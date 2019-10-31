@@ -291,7 +291,7 @@ public class NativeInterface {
      */
     @Nullable
     public static String getReleaseStage() {
-        return getClient().getConfig().getReleaseStage();
+        return getClient().immutableConfig.getReleaseStage();
     }
 
     /**
@@ -299,7 +299,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getSessionEndpoint() {
-        return getClient().getConfig().getEndpoints().getSessions();
+        return getClient().immutableConfig.getEndpoints().getSessions();
     }
 
     /**
@@ -307,7 +307,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getEndpoint() {
-        return getClient().getConfig().getEndpoints().getNotify();
+        return getClient().immutableConfig.getEndpoints().getNotify();
     }
 
     /**
@@ -329,7 +329,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getAppVersion() {
-        return getClient().getConfig().getAppVersion();
+        return getClient().immutableConfig.getAppVersion();
     }
 
     /**
@@ -337,7 +337,7 @@ public class NativeInterface {
      */
     @Nullable
     public static Collection<String> getEnabledReleaseStages() {
-        return getClient().getConfig().getEnabledReleaseStages();
+        return getClient().immutableConfig.getEnabledReleaseStages();
     }
 
     /**
@@ -348,7 +348,7 @@ public class NativeInterface {
         Client client = getClient();
         User user = client.getUser();
         Date startDate = startedAt > 0 ? new Date(startedAt) : null;
-        client.getSessionTracker().registerExistingSession(startDate, sessionId, user,
+        client.sessionTracker.registerExistingSession(startDate, sessionId, user,
                                                            unhandledCount, handledCount);
     }
 
@@ -364,9 +364,9 @@ public class NativeInterface {
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
-            || client.getConfig().shouldNotifyForReleaseStage()) {
-            client.getEventStore().enqueueContentForDelivery(payload);
-            client.getEventStore().flushAsync();
+            || client.immutableConfig.shouldNotifyForReleaseStage()) {
+            client.eventStore.enqueueContentForDelivery(payload);
+            client.eventStore.flushAsync();
         }
     }
 
