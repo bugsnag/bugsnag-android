@@ -38,9 +38,9 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
             val tab = getOrAddSection(section)
 
             if (key == null) {
-                store[section] = value
+                insertValue(store, section, value)
             } else {
-                tab[key] = value
+                insertValue(tab, key, value)
             }
 
             setChanged()
@@ -50,6 +50,17 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
                     listOf(section, key, value)
                 )
             )
+        }
+    }
+
+    private fun insertValue(map: MutableMap<String, Any>, section: String, value: Any) {
+        val existingVal = map[section]
+
+        if (existingVal is Map<*, *>) {
+            map[section] = mergeMaps(listOf(existingVal as Map<String, Any>, value as Map<String, Any>
+            ))
+        } else {
+            map[section] = value
         }
     }
 
@@ -114,7 +125,7 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
             return newMeta
         }
 
-        private fun mergeMaps(data: List<Map<String, Any>>): Map<String, Any> {
+        internal fun mergeMaps(data: List<Map<String, Any>>): Map<String, Any> {
             val keys = data.flatMap { it.keys }.toSet()
             val result = ConcurrentHashMap<String, Any>()
 
