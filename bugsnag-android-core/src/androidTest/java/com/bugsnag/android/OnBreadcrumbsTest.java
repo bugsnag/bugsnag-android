@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 
 @SmallTest
@@ -25,7 +26,7 @@ public class OnBreadcrumbsTest {
     @Before
     public void setUp() {
         Configuration configuration = new Configuration("api-key");
-        configuration.setAutoCaptureBreadcrumbs(false);
+        configuration.setEnabledBreadcrumbTypes(Collections.<BreadcrumbType>emptySet());
         client = generateClient();
         assertEquals(1, client.breadcrumbs.store.size());
     }

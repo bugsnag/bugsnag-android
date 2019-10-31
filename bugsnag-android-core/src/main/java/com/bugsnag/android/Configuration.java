@@ -40,7 +40,6 @@ public class Configuration extends Observable implements Observer, CallbackAware
     private boolean persistUserBetweenSessions = false;
     private long launchCrashThresholdMs = 5 * 1000;
     private boolean autoTrackSessions = true;
-    private boolean autoCaptureBreadcrumbs = true;
 
     private boolean autoDetectAnrs = false;
     private boolean autoDetectNdkCrashes;
@@ -464,26 +463,6 @@ public class Configuration extends Observable implements Observer, CallbackAware
         } else {
             this.launchCrashThresholdMs = launchCrashThresholdMs;
         }
-    }
-
-    /**
-     * Returns whether automatic breadcrumb capture or common application events is enabled.
-     * @return true if automatic capture is enabled, otherwise false.
-     */
-    public boolean getAutoCaptureBreadcrumbs() {
-        return autoCaptureBreadcrumbs;
-    }
-
-    /**
-     * By default, we will automatically add breadcrumbs for common application events,
-     * such as activity lifecycle events, and system intents.
-     * To disable this behavior, set this property to false.
-     *
-     * @param autoCaptureBreadcrumbs whether breadcrumbs should be automatically captured
-     *                                        or not
-     */
-    public void setAutoCaptureBreadcrumbs(boolean autoCaptureBreadcrumbs) {
-        this.autoCaptureBreadcrumbs = autoCaptureBreadcrumbs;
     }
 
     /**

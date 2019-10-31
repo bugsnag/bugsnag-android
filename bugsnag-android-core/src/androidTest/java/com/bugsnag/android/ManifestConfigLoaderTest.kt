@@ -31,7 +31,6 @@ class ManifestConfigLoaderTest {
             assertFalse(autoDetectAnrs)
             assertFalse(autoDetectNdkCrashes)
             assertTrue(autoTrackSessions)
-            assertTrue(autoCaptureBreadcrumbs)
             assertTrue(sendThreads)
             assertFalse(persistUserBetweenSessions)
 
@@ -98,7 +97,6 @@ class ManifestConfigLoaderTest {
             assertTrue(autoDetectAnrs)
             assertTrue(autoDetectNdkCrashes)
             assertFalse(autoTrackSessions)
-            assertFalse(autoCaptureBreadcrumbs)
             assertFalse(sendThreads)
             assertTrue(persistUserBetweenSessions)
 

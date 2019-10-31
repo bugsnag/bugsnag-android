@@ -20,6 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
@@ -163,7 +164,7 @@ public class ClientTest {
     @Test
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setAutoCaptureBreadcrumbs(false);
+        config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
         assertEquals(1, client.breadcrumbs.store.size());

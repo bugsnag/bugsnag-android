@@ -54,10 +54,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
 
             BreadcrumbType type =
                 actions.containsKey(fullAction) ? actions.get(fullAction) : BreadcrumbType.LOG;
-
-            if (client.getConfig().getAutoCaptureBreadcrumbs()) {
-                client.leaveBreadcrumb(shortAction, type, meta);
-            }
+            client.leaveBreadcrumb(shortAction, type, meta);
 
         } catch (Exception ex) {
             logger.w("Failed to leave breadcrumb in SystemBroadcastReceiver: "

@@ -15,7 +15,7 @@ internal class BreadcrumbScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
-        config.autoCaptureBreadcrumbs = false
+        config.enabledBreadcrumbTypes = setOf(BreadcrumbType.USER)
     }
 
     override fun run() {

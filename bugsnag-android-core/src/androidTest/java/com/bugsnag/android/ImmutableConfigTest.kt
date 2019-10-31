@@ -31,7 +31,6 @@ class ImmutableConfigTest {
             assertEquals("api-key", apiKey)
 
             // detection
-            assertTrue(autoCaptureBreadcrumbs)
             assertTrue(autoTrackSessions)
             assertTrue(autoDetectErrors)
             assertFalse(autoDetectAnrs)
@@ -65,7 +64,6 @@ class ImmutableConfigTest {
 
     @Test
     fun convertWithOverrides() {
-        seed.autoCaptureBreadcrumbs = false
         seed.autoTrackSessions = false
         seed.autoDetectErrors = false
         seed.autoDetectAnrs = true
@@ -94,7 +92,6 @@ class ImmutableConfigTest {
             assertEquals("api-key", apiKey)
 
             // detection
-            assertFalse(autoCaptureBreadcrumbs)
             assertFalse(autoTrackSessions)
             assertFalse(autoDetectErrors)
             assertTrue(autoDetectAnrs)

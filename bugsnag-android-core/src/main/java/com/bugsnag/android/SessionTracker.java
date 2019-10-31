@@ -338,15 +338,13 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     }
 
     private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
-        if (configuration.getAutoCaptureBreadcrumbs()) {
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
 
-            try {
-                client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
-            } catch (Exception ex) {
-                logger.w("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
-            }
+        try {
+            client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
+        } catch (Exception ex) {
+            logger.w("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
         }
     }
 
