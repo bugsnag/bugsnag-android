@@ -1,22 +1,13 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
-import static com.bugsnag.android.HandledState.REASON_UNHANDLED_EXCEPTION;
-
 import com.bugsnag.android.NativeInterface.Message;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.storage.StorageManager;
-import android.text.TextUtils;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,13 +15,8 @@ import androidx.annotation.Nullable;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.Thread;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -85,6 +71,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     private final UserRepository userRepository;
     final Logger logger;
     final ReportDeliveryDelegate reportDeliveryDelegate;
+    NotifyDelegate notifyDelegate;
 
     /**
      * Initialize a Bugsnag client
@@ -177,6 +164,9 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         reportDeliveryDelegate = new ReportDeliveryDelegate(logger, eventStore,
                 immutableConfig, breadcrumbState);
         reportDeliveryDelegate.addObserver(this);
+        notifyDelegate = new NotifyDelegate(immutableConfig, metadataState, userState,
+                contextState, breadcrumbState, callbackState, appData, deviceData, sessionTracker,
+                logger, reportDeliveryDelegate);
 
         // Install a default exception handler with this client
         if (immutableConfig.getAutoDetectErrors()) {
@@ -523,9 +513,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      *                  additional modification
      */
     public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
-        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Event event = new Event(exc, immutableConfig, handledState, metadataState.getMetadata());
-        notifyInternal(event, onError);
+        notifyDelegate.notify(exc, onError);
     }
 
     /**
@@ -554,83 +542,9 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
-        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages());
-        Error err = new Error(name, message, trace.getTrace());
-        Event event = new Event(null, immutableConfig, handledState, metadataState.getMetadata());
-        event.setErrors(Collections.singletonList(err));
-        notifyInternal(event, onError);
+        notifyDelegate.notify(name, message, stacktrace, onError);
     }
 
-    /**
-     * Caches an error then attempts to notify.
-     *
-     * Should only ever be called from the {@link ExceptionHandler}.
-     */
-    void notifyUnhandledException(@NonNull Throwable exc,
-                                  @HandledState.SeverityReason String severityReason,
-                                  @Nullable String attributeValue,
-                                  Thread thread) {
-        HandledState handledState
-                = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
-        ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
-        Event event = new Event(exc, immutableConfig, handledState,
-                metadataState.getMetadata(), threadState);
-        notifyInternal(event, null);
-    }
-
-    void notifyInternal(@NonNull Event event,
-                        @Nullable OnError onError) {
-        // Don't notify if this event class should be ignored
-        if (event.shouldIgnoreClass()) {
-            return;
-        }
-
-        if (!immutableConfig.shouldNotifyForReleaseStage()) {
-            return;
-        }
-
-        // get session for event
-        Session currentSession = sessionTracker.getCurrentSession();
-
-        if (currentSession != null
-                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
-            event.setSession(currentSession);
-        }
-
-        // Capture the state of the app and device and attach diagnostics to the event
-        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
-        event.setDevice(errorDeviceData);
-        event.addMetadata("device", null, deviceData.getDeviceMetadata());
-
-
-        // add additional info that belongs in metadata
-        // generate new object each time, as this can be mutated by end-users
-        Map<String, Object> errorAppData = appData.getAppData();
-        event.setApp(errorAppData);
-        event.addMetadata("app", null, appData.getAppDataMetadata());
-
-        // Attach breadcrumbState to the event
-        event.setBreadcrumbs(new ArrayList<>(breadcrumbState.getStore()));
-
-        // Attach user info to the event
-        User user = userState.getUser();
-        event.setUser(user.getId(), user.getEmail(), user.getName());
-
-        // Attach default context from active activity
-        if (TextUtils.isEmpty(event.getContext())) {
-            String context = contextState.getContext();
-            event.setContext(context != null ? context : appData.getActiveScreenClass());
-        }
-
-        // Run on error tasks, don't notify if any return false
-        if (!callbackState.runOnErrorTasks(event, logger)
-                || (onError != null && !onError.run(event))) {
-            logger.i("Skipping notification - onError task returned false");
-            return;
-        }
-        reportDeliveryDelegate.deliverReport(event);
-    }
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable Object value) {

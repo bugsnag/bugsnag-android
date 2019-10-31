@@ -58,7 +58,7 @@ public class NullMetadataTest {
         });
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         Event event = new Event(throwable, config, handledState);
-        client.notifyInternal(event, null);
+        client.notifyDelegate.notifyInternal(event, null);
     }
 
     private void validateDefaultMetadata(MetadataAware metadata) {

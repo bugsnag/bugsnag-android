@@ -47,12 +47,12 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             StrictMode.ThreadPolicy originalThreadPolicy = StrictMode.getThreadPolicy();
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
 
-            client.notifyUnhandledException(throwable,
+            client.notifyDelegate.notifyUnhandledException(throwable,
                     severityReason, violationDesc, thread);
 
             StrictMode.setThreadPolicy(originalThreadPolicy);
         } else {
-            client.notifyUnhandledException(throwable,
+            client.notifyDelegate.notifyUnhandledException(throwable,
                     severityReason, null, thread);
         }
 
