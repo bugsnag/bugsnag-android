@@ -56,7 +56,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
-    final ClientState clientState;
+    final CallbackState callbackState;
     final ImmutableConfig immutableConfig;
 
     final Context appContext;
@@ -132,10 +132,10 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
-        clientState = configuration.clientState.copy();
+        callbackState = configuration.callbackState.copy();
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
-        sessionTracker = new SessionTracker(immutableConfig, clientState, this,
+        sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
@@ -425,7 +425,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @return Context
      */
     @Nullable public String getContext() {
-        return clientState.getContext();
+        return callbackState.getContext();
     }
 
     /**
@@ -436,7 +436,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param context set what was happening at the time of a crash
      */
     public void setContext(@Nullable String context) {
-        clientState.setContext(context);
+        callbackState.setContext(context);
         setChanged();
         notifyObservers(new NativeInterface.Message(
                 NativeInterface.MessageType.UPDATE_CONTEXT, context));
@@ -549,12 +549,12 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @Override
     public void addOnError(@NonNull OnError onError) {
-        clientState.addOnError(onError);
+        callbackState.addOnError(onError);
     }
 
     @Override
     public void removeOnError(@NonNull OnError onError) {
-        clientState.removeOnError(onError);
+        callbackState.removeOnError(onError);
     }
 
     /**
@@ -577,22 +577,22 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        clientState.addOnBreadcrumb(onBreadcrumb);
+        callbackState.addOnBreadcrumb(onBreadcrumb);
     }
 
     @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        clientState.removeOnBreadcrumb(onBreadcrumb);
+        callbackState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     @Override
     public void addOnSession(@NonNull OnSession onSession) {
-        clientState.addOnSession(onSession);
+        callbackState.addOnSession(onSession);
     }
 
     @Override
     public void removeOnSession(@NonNull OnSession onSession) {
-        clientState.removeOnSession(onSession);
+        callbackState.removeOnSession(onSession);
     }
 
     /**
@@ -613,7 +613,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Event event = new Event(exc, immutableConfig, handledState, clientState.getMetadata());
+        Event event = new Event(exc, immutableConfig, handledState, callbackState.getMetadata());
         notifyInternal(event, onError);
     }
 
@@ -646,7 +646,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
         Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages());
         Error err = new Error(name, message, trace.getTrace());
-        Event event = new Event(null, immutableConfig, handledState, clientState.getMetadata());
+        Event event = new Event(null, immutableConfig, handledState, callbackState.getMetadata());
         event.setErrors(Collections.singletonList(err));
         notifyInternal(event, onError);
     }
@@ -664,7 +664,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
         ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
         Event event = new Event(exc, immutableConfig, handledState,
-                clientState.getMetadata(), threadState);
+                callbackState.getMetadata(), threadState);
         notifyInternal(event, null);
     }
 
@@ -707,12 +707,13 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         // Attach default context from active activity
         if (TextUtils.isEmpty(event.getContext())) {
-            String context = clientState.getContext();
+            String context = callbackState.getContext();
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
         // Run on error tasks, don't notify if any return false
-        if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
+        if (!callbackState.runOnErrorTasks(event, logger)
+                || (onError != null && !onError.run(event))) {
             logger.i("Skipping notification - onError task returned false");
             return;
         }
@@ -850,7 +851,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        clientState.getMetadata().addMetadata(section, key, value);
+        callbackState.getMetadata().addMetadata(section, key, value);
     }
 
     @Override
@@ -860,7 +861,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
-        clientState.getMetadata().clearMetadata(section, key);
+        callbackState.getMetadata().clearMetadata(section, key);
     }
 
     @Nullable
@@ -872,7 +873,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return clientState.getMetadata().getMetadata(section, key);
+        return callbackState.getMetadata().getMetadata(section, key);
     }
 
     /**
@@ -896,7 +897,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     private void leaveBreadcrumbInternal(Breadcrumb crumb) {
-        if (runBreadcrumbCallbacks(crumb)) {
+        if (callbackState.runOnBreadcrumbTasks(crumb, logger)) {
             breadcrumbs.add(crumb);
         }
     }
@@ -929,35 +930,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         return sessionTracker;
     }
 
-    private boolean runOnErrorTasks(Event event) {
-        for (OnError onError : clientState.getOnErrorTasks()) {
-            try {
-                if (!onError.run(event)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                logger.w("OnError threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the event to be sent if there were no objections
-        return true;
-    }
-
-    private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
-        Collection<OnBreadcrumb> tasks = clientState.getOnBreadcrumbTasks();
-        for (OnBreadcrumb callback : tasks) {
-            try {
-                if (!callback.run(breadcrumb)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                logger.w("OnBreadcrumb threw an Exception", ex);
-            }
-        }
-        return true;
-    }
-
     @NonNull
     EventStore getEventStore() {
         return eventStore;
@@ -987,8 +959,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
     }
 
-    ClientState getClientState() {
-        return clientState;
+    CallbackState getCallbackState() {
+        return callbackState;
     }
 
     ImmutableConfig getConfig() {

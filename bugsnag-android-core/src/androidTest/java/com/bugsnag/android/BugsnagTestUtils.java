@@ -63,8 +63,8 @@ final class BugsnagTestUtils {
         return configuration;
     }
 
-    static ClientState generateClientState() {
-        return generateConfiguration().clientState;
+    static CallbackState generateClientState() {
+        return generateConfiguration().callbackState;
     }
 
     static ImmutableConfig generateImmutableConfig() {
@@ -78,7 +78,7 @@ final class BugsnagTestUtils {
 
     static SessionTracker generateSessionTracker() {
         Configuration config = generateConfiguration();
-        return new SessionTracker(convert(config), config.clientState,
+        return new SessionTracker(convert(config), config.callbackState,
                 BugsnagTestUtils.generateClient(), generateSessionStore(), NoopLogger.INSTANCE);
     }
 

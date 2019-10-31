@@ -18,7 +18,7 @@ class Configuration(
 ) : Observable(), Observer, CallbackAware {
 
     @JvmField
-    internal val clientState: ClientState
+    internal val callbackState: CallbackState
 
     /**
      * Set the buildUUID to your own value. This is used to identify proguard
@@ -158,9 +158,9 @@ class Configuration(
      * as the context, but sometime this is not possible.
      */
     var context: String?
-        get() = clientState.context
+        get() = callbackState.context
         set(context) {
-            clientState.context = context
+            callbackState.context = context
         }
 
     /**
@@ -175,8 +175,8 @@ class Configuration(
      * client.setRedactKeys("password", "credit_card");
      */
     var redactKeys: Collection<String>
-        get() = Collections.unmodifiableSet(clientState.metadata.redactKeys)
-        set(redactKeys) = clientState.metadata.setRedactKeys(redactKeys)
+        get() = Collections.unmodifiableSet(callbackState.metadata.redactKeys)
+        set(redactKeys) = callbackState.metadata.setRedactKeys(redactKeys)
 
     /**
      * Sets the logger used for logging internal messages within the bugsnag SDK to a custom
@@ -187,8 +187,8 @@ class Configuration(
 
     init {
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
-        this.clientState = ClientState()
-        this.clientState.metadata.addObserver(this)
+        this.callbackState = CallbackState()
+        this.callbackState.metadata.addObserver(this)
 
         autoDetectNdkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
@@ -276,9 +276,9 @@ class Configuration(
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnError
      */
-    override fun addOnError(onError: OnError) = clientState.addOnError(onError)
+    override fun addOnError(onError: OnError) = callbackState.addOnError(onError)
 
-    override fun removeOnError(onError: OnError) = clientState.removeOnError(onError)
+    override fun removeOnError(onError: OnError) = callbackState.removeOnError(onError)
 
     /**
      * Adds an on breadcrumb callback
@@ -286,7 +286,7 @@ class Configuration(
      * @param onBreadcrumb the on breadcrumb callback
      */
     override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
-        clientState.addOnBreadcrumb(onBreadcrumb)
+        callbackState.addOnBreadcrumb(onBreadcrumb)
 
     /**
      * Removes an on breadcrumb callback
@@ -294,21 +294,21 @@ class Configuration(
      * @param onBreadcrumb the on breadcrumb callback
      */
     override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
-        clientState.removeOnBreadcrumb(onBreadcrumb)
+        callbackState.removeOnBreadcrumb(onBreadcrumb)
 
     /**
      * Adds an on session callback
      *
      * @param onSession the on session callback
      */
-    override fun addOnSession(onSession: OnSession) = clientState.addOnSession(onSession)
+    override fun addOnSession(onSession: OnSession) = callbackState.addOnSession(onSession)
 
     /**
      * Removes an on session callback
      *
      * @param onSession the on session callback
      */
-    override fun removeOnSession(onSession: OnSession) = clientState.removeOnSession(onSession)
+    override fun removeOnSession(onSession: OnSession) = callbackState.removeOnSession(onSession)
 
     companion object {
         internal const val HEADER_API_KEY = "Bugsnag-Api-Key"
