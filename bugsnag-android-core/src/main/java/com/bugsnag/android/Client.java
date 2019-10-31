@@ -61,6 +61,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final CallbackState callbackState;
     final MetadataState metadataState;
     final ContextState contextState;
+    final UserState userState;
 
     final Context appContext;
 
@@ -72,9 +73,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @NonNull
     final Breadcrumbs breadcrumbs;
-
-    @NonNull
-    private User user;
 
     @NonNull
     protected final EventStore eventStore;
@@ -135,29 +133,31 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
+        immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
+
         callbackState = configuration.callbackState.copy();
         contextState = configuration.contextState.copy();
         metadataState = configuration.metadataState.copy();
         metadataState.getMetadata().addObserver(this);
+        // Set up and collect constant app and device diagnostics
+        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
+        userRepository = new UserRepository(sharedPrefs,
+                immutableConfig.getPersistUserBetweenSessions());
+        userState = new UserState(userRepository);
+        userState.addObserver(this);
 
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
-        // Set up and collect constant app and device diagnostics
-        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-
         appData = new AppData(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker, logger);
         Resources resources = appContext.getResources();
 
-        userRepository = new UserRepository(sharedPrefs,
-                immutableConfig.getPersistUserBetweenSessions());
-        setUserInternal(userRepository.load());
 
-        deviceData = new DeviceData(connectivity, appContext, resources, user.getId(), logger);
+        String id = userState.getUser().getId();
+        deviceData = new DeviceData(connectivity, appContext, resources, id, logger);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs(), logger);
@@ -477,12 +477,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     @NonNull
     @Override
     public User getUser() {
-        return user;
-    }
-
-    private void setUserInternal(User user) {
-        this.user = user;
-        user.addObserver(this);
+        return userState.getUser();
     }
 
     /**
@@ -494,12 +489,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @Override
     public void setUserId(@Nullable String id) {
-        user = user.copy(id, user.getEmail(), user.getName());
-        userRepository.save(user);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_ID, id));
-
+        userState.setUserId(id);
     }
 
     /**
@@ -510,11 +500,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @Override
     public void setUserEmail(@Nullable String email) {
-        user = user.copy(user.getId(), email, user.getName());
-        userRepository.save(user);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_EMAIL, email));
+        userState.setUserEmail(email);
     }
 
     /**
@@ -525,11 +511,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @Override
     public void setUserName(@Nullable String name) {
-        user = user.copy(user.getId(), user.getEmail(), name);
-        userRepository.save(user);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_NAME, name));
+        userState.setUserName(name);
     }
 
     /**
@@ -710,6 +692,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         event.setBreadcrumbs(new ArrayList<>(breadcrumbs.getStore()));
 
         // Attach user info to the event
+        User user = userState.getUser();
         event.setUser(user.getId(), user.getEmail(), user.getName());
 
         // Attach default context from active activity
