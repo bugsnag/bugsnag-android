@@ -20,6 +20,9 @@ class Configuration(
     @JvmField
     internal val callbackState: CallbackState
 
+    @JvmField
+    internal val metadataState: MetadataState
+
     /**
      * Set the buildUUID to your own value. This is used to identify proguard
      * mapping files in the case that you publish multiple different apps with
@@ -175,8 +178,8 @@ class Configuration(
      * client.setRedactKeys("password", "credit_card");
      */
     var redactKeys: Collection<String>
-        get() = Collections.unmodifiableSet(callbackState.metadata.redactKeys)
-        set(redactKeys) = callbackState.metadata.setRedactKeys(redactKeys)
+        get() = Collections.unmodifiableSet(metadataState.metadata.redactKeys)
+        set(redactKeys) = metadataState.metadata.setRedactKeys(redactKeys)
 
     /**
      * Sets the logger used for logging internal messages within the bugsnag SDK to a custom
@@ -188,7 +191,7 @@ class Configuration(
     init {
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
         this.callbackState = CallbackState()
-        this.callbackState.metadata.addObserver(this)
+        this.metadataState = MetadataState()
 
         autoDetectNdkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android

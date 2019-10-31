@@ -3,7 +3,6 @@ package com.bugsnag.android
 import java.util.concurrent.ConcurrentLinkedQueue
 
 internal data class CallbackState(
-    val metadata: Metadata = Metadata(),
     var context: String? = null,
     val onErrorTasks: MutableCollection<OnError> = ConcurrentLinkedQueue<OnError>(),
     val onBreadcrumbTasks: MutableCollection<OnBreadcrumb> = ConcurrentLinkedQueue<OnBreadcrumb>(),
@@ -68,7 +67,6 @@ internal data class CallbackState(
     }
 
     fun copy() = this.copy(
-        metadata = metadata,
         context = context,
         onErrorTasks = onErrorTasks,
         onBreadcrumbTasks = onBreadcrumbTasks,

@@ -222,7 +222,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetadata() {
-        return new HashMap<>(getClient().callbackState.getMetadata().toMap());
+        return new HashMap<>(getClient().metadataState.getMetadata().toMap());
     }
 
     /**

@@ -56,8 +56,10 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
-    final CallbackState callbackState;
     final ImmutableConfig immutableConfig;
+
+    final CallbackState callbackState;
+    final MetadataState metadataState;
 
     final Context appContext;
 
@@ -133,6 +135,9 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
         callbackState = configuration.callbackState.copy();
+        metadataState = configuration.metadataState.copy();
+        metadataState.getMetadata().addObserver(this);
+
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
@@ -613,7 +618,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Event event = new Event(exc, immutableConfig, handledState, callbackState.getMetadata());
+        Event event = new Event(exc, immutableConfig, handledState, metadataState.getMetadata());
         notifyInternal(event, onError);
     }
 
@@ -646,7 +651,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
         Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages());
         Error err = new Error(name, message, trace.getTrace());
-        Event event = new Event(null, immutableConfig, handledState, callbackState.getMetadata());
+        Event event = new Event(null, immutableConfig, handledState, metadataState.getMetadata());
         event.setErrors(Collections.singletonList(err));
         notifyInternal(event, onError);
     }
@@ -664,7 +669,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
         ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
         Event event = new Event(exc, immutableConfig, handledState,
-                callbackState.getMetadata(), threadState);
+                metadataState.getMetadata(), threadState);
         notifyInternal(event, null);
     }
 
@@ -851,7 +856,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        callbackState.getMetadata().addMetadata(section, key, value);
+        metadataState.addMetadata(section, key, value);
     }
 
     @Override
@@ -861,7 +866,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
-        callbackState.getMetadata().clearMetadata(section, key);
+        metadataState.clearMetadata(section, key);
     }
 
     @Nullable
@@ -873,7 +878,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return callbackState.getMetadata().getMetadata(section, key);
+        return metadataState.getMetadata(section, key);
     }
 
     /**
