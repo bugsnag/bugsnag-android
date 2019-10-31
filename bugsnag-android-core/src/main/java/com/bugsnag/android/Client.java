@@ -60,6 +60,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     final CallbackState callbackState;
     final MetadataState metadataState;
+    final ContextState contextState;
 
     final Context appContext;
 
@@ -135,6 +136,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
         callbackState = configuration.callbackState.copy();
+        contextState = configuration.contextState.copy();
         metadataState = configuration.metadataState.copy();
         metadataState.getMetadata().addObserver(this);
 
@@ -430,7 +432,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @return Context
      */
     @Nullable public String getContext() {
-        return callbackState.getContext();
+        return contextState.getContext();
     }
 
     /**
@@ -441,7 +443,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param context set what was happening at the time of a crash
      */
     public void setContext(@Nullable String context) {
-        callbackState.setContext(context);
+        contextState.setContext(context);
         setChanged();
         notifyObservers(new NativeInterface.Message(
                 NativeInterface.MessageType.UPDATE_CONTEXT, context));
@@ -712,7 +714,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         // Attach default context from active activity
         if (TextUtils.isEmpty(event.getContext())) {
-            String context = callbackState.getContext();
+            String context = contextState.getContext();
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 

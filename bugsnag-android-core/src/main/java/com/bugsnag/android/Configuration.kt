@@ -23,6 +23,9 @@ class Configuration(
     @JvmField
     internal val metadataState: MetadataState
 
+    @JvmField
+    internal val contextState: ContextState
+
     /**
      * Set the buildUUID to your own value. This is used to identify proguard
      * mapping files in the case that you publish multiple different apps with
@@ -161,9 +164,9 @@ class Configuration(
      * as the context, but sometime this is not possible.
      */
     var context: String?
-        get() = callbackState.context
+        get() = contextState.context
         set(context) {
-            callbackState.context = context
+            contextState.context = context
         }
 
     /**
@@ -192,6 +195,7 @@ class Configuration(
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
         this.callbackState = CallbackState()
         this.metadataState = MetadataState()
+        this.contextState = ContextState()
 
         autoDetectNdkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
