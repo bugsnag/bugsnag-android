@@ -3,8 +3,6 @@ package com.bugsnag.android
 import android.content.Context
 import android.text.TextUtils
 import java.util.Collections
-import java.util.Observable
-import java.util.Observer
 
 /**
  * User-specified configuration storage object, contains information
@@ -15,7 +13,7 @@ class Configuration(
      * Gets the API key to send reports to
      */
     val apiKey: String
-) : Observable(), Observer, CallbackAware {
+) : CallbackAware {
 
     @JvmField
     internal val callbackState: CallbackState
@@ -212,16 +210,6 @@ class Configuration(
         logger = when {
             loggingEnabled -> DebugLogger
             else -> NoopLogger
-        }
-    }
-
-    /**
-     * Respond to an update notification from observed objects, like Metadata
-     */
-    override fun update(observable: Observable, arg: Any) {
-        if (arg is NativeInterface.Message) {
-            setChanged()
-            notifyObservers(arg)
         }
     }
 

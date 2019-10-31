@@ -21,7 +21,7 @@ data class User internal constructor(
      * @return the user's name, if available
      */
     val name: String? = null
-) : Observable(), JsonStream.Streamable {
+) : JsonStream.Streamable {
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {

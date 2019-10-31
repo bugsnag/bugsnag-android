@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -16,7 +17,7 @@ class BugsnagPluginInterfaceTest {
     @Test
     fun registerPlugin() {
         BugsnagPluginInterface.registerPlugin(FakePlugin::class.java)
-        BugsnagPluginInterface.loadPlugins(client)
+        BugsnagPluginInterface.loadPlugins(client, generateImmutableConfig(), NoopLogger)
         assertTrue(FakePlugin.initialised)
     }
 }

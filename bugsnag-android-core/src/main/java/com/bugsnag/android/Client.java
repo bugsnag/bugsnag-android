@@ -120,17 +120,15 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         callbackState = configuration.callbackState.copy();
         contextState = configuration.contextState.copy();
-        contextState.addObserver(this);
 
         metadataState = configuration.metadataState.copy();
-        metadataState.getMetadata().addObserver(this);
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUserBetweenSessions());
         userState = new UserState(userRepository);
-        userState.addObserver(this);
+
 
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
@@ -147,14 +145,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // Set up breadcrumbState
         breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs(), logger);
 
-        if (appContext instanceof Application) {
-            Application application = (Application) appContext;
-            application.registerActivityLifecycleCallbacks(sessionTracker);
-        } else {
-            logger.w("Bugsnag is unable to setup automatic activity lifecycle "
-                + "breadcrumbState on API Levels below 14.");
-        }
-
         StorageManager storageManager
                 = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
         InternalReportDelegate delegate = new InternalReportDelegate(appContext,
@@ -163,7 +153,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         reportDeliveryDelegate = new ReportDeliveryDelegate(logger, eventStore,
                 immutableConfig, breadcrumbState);
-        reportDeliveryDelegate.addObserver(this);
+
         notifyDelegate = new NotifyDelegate(immutableConfig, metadataState, userState,
                 contextState, breadcrumbState, callbackState, appData, deviceData, sessionTracker,
                 logger, reportDeliveryDelegate);
@@ -174,6 +164,51 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
 
         // register a receiver for automatic breadcrumbState
+        captureLifecycleBreadcrumbs();
+        connectivity.registerForNetworkChanges();
+        orientationListener = registerOrientationChangeListener(this);
+
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
+            }
+        });
+
+        registerStateObservers();
+
+        // Flush any on-disk errors
+        eventStore.flushOnLaunch();
+        loadPlugins();
+        leaveBreadcrumb("Bugsnag loaded");
+    }
+
+    private OrientationEventListener registerOrientationChangeListener(final Client client) {
+        OrientationEventListener listener = new OrientationEventListener(appContext) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                client.setChanged();
+                client.notifyObservers(new Message(
+                        NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
+            }
+        };
+        try {
+            listener.enable();
+        } catch (IllegalStateException ex) {
+            logger.w("Failed to set up orientation tracking: " + ex);
+        }
+        return listener;
+    }
+
+    private void captureLifecycleBreadcrumbs() {
+        if (appContext instanceof Application) {
+            Application application = (Application) appContext;
+            application.registerActivityLifecycleCallbacks(sessionTracker);
+        } else {
+            logger.w("Bugsnag is unable to setup automatic activity lifecycle "
+                    + "breadcrumbState on API Levels below 14.");
+        }
 
         try {
             Async.run(new Runnable() {
@@ -186,64 +221,21 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         } catch (RejectedExecutionException ex) {
             logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
         }
-        connectivity.registerForNetworkChanges();
+    }
 
-        configuration.addObserver(this);
+    private void registerStateObservers() {
         breadcrumbState.addObserver(this);
+        contextState.addObserver(this);
+        metadataState.getMetadata().addObserver(this);
+        userState.addObserver(this);
         sessionTracker.addObserver(this);
-
-        final Client client = this;
-        orientationListener = new OrientationEventListener(appContext) {
-            @Override
-            public void onOrientationChanged(int orientation) {
-                client.setChanged();
-                client.notifyObservers(new Message(
-                    NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
-            }
-        };
-        try {
-            orientationListener.enable();
-        } catch (IllegalStateException ex) {
-            logger.w("Failed to set up orientation tracking: " + ex);
-        }
-
-        // filter out any disabled breadcrumb types
-        addOnBreadcrumb(new OnBreadcrumb() {
-            @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
-                return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
-            }
-        });
-
-        // Flush any on-disk errors
-        eventStore.flushOnLaunch();
-        loadPlugins();
-        leaveBreadcrumb("Bugsnag loaded");
+        reportDeliveryDelegate.addObserver(this);
     }
 
     private void loadPlugins() {
         NativeInterface.setClient(this);
         BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
-
-        if (immutableConfig.getAutoDetectNdkCrashes()) {
-            try {
-                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
-                logger.i("Registering NDK plugin");
-            } catch (ClassNotFoundException exc) {
-                logger.w("bugsnag-plugin-android-ndk artefact not found on classpath, "
-                    + "NDK errors will not be captured.");
-            }
-        }
-        if (immutableConfig.getAutoDetectAnrs()) {
-            try {
-                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
-                logger.i("Registering ANR plugin");
-            } catch (ClassNotFoundException exc) {
-                logger.w("bugsnag-plugin-android-anr artefact not found on classpath, "
-                    + "ANR errors will not be captured.");
-            }
-        }
-        pluginInterface.loadPlugins(this);
+        pluginInterface.loadPlugins(this, immutableConfig, logger);
     }
 
     void sendNativeSetupNotification() {
