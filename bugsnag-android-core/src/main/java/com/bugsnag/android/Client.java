@@ -136,6 +136,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         callbackState = configuration.callbackState.copy();
         contextState = configuration.contextState.copy();
+        contextState.addObserver(this);
+
         metadataState = configuration.metadataState.copy();
         metadataState.getMetadata().addObserver(this);
         // Set up and collect constant app and device diagnostics
@@ -443,9 +445,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     public void setContext(@Nullable String context) {
         contextState.setContext(context);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_CONTEXT, context));
     }
 
     /**

@@ -1,5 +1,19 @@
 package com.bugsnag.android
 
-internal data class ContextState(var context: String? = null) {
-    fun copy() = this.copy(context = context)
+import java.util.Observable
+
+internal class ContextState(context: String? = null) : Observable() {
+    var context = context
+        set(value) {
+            field = value
+            setChanged()
+            notifyObservers(
+                NativeInterface.Message(
+                    NativeInterface.MessageType.UPDATE_CONTEXT,
+                    context
+                )
+            )
+        }
+
+    fun copy() = ContextState(context)
 }
