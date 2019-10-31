@@ -94,7 +94,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         versionCode = config.versionCode!!,
         codeBundleId = config.codeBundleId,
         appType = config.appType,
-        delivery = config.delivery,
+        delivery = config.delivery!!,
         endpoints = config.endpoints,
         persistUserBetweenSessions = config.persistUserBetweenSessions,
         launchCrashThresholdMs = config.launchCrashThresholdMs,

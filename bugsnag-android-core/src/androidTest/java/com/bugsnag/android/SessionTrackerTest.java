@@ -33,7 +33,7 @@ public class SessionTrackerTest {
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
         client = generateClient();
         immutableConfig = BugsnagTestUtils.generateImmutableConfig();
-        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(),
+        sessionTracker = new SessionTracker(immutableConfig, configuration.clientState,
                 client, generateSessionStore(), NoopLogger.INSTANCE);
         configuration.setAutoTrackSessions(true);
         user = new User(null, null, null);
@@ -125,7 +125,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testZeroSessionTimeout() {
-        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
+        sessionTracker = new SessionTracker(immutableConfig, configuration.clientState, client,
             0, generateSessionStore(), NoopLogger.INSTANCE);
 
         long now = System.currentTimeMillis();
@@ -140,7 +140,7 @@ public class SessionTrackerTest {
 
     @Test
     public void testSessionTimeout() {
-        sessionTracker = new SessionTracker(immutableConfig, configuration.getClientState(), client,
+        sessionTracker = new SessionTracker(immutableConfig, configuration.clientState, client,
             100, generateSessionStore(), NoopLogger.INSTANCE);
 
         long now = System.currentTimeMillis();

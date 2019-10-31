@@ -56,7 +56,7 @@ public class ConfigurationTest {
     }
 
     private ImmutableConfig createConfigWithReleaseStages(Configuration config,
-                                                          Collection<String> releaseStages,
+                                                          Set<String> releaseStages,
                                                           String releaseStage) {
         config.setEnabledReleaseStages(releaseStages);
         config.setReleaseStage(releaseStage);
@@ -141,11 +141,6 @@ public class ConfigurationTest {
 
         assertFalse(configuration.getDelivery() instanceof DefaultDelivery);
         assertEquals(delivery, configuration.getDelivery());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetNullDelivery() {
-        config.setDelivery(null);
     }
 
     @Test

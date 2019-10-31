@@ -132,7 +132,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         // set sensible defaults for delivery/project packages etc if not set
         sanitiseConfiguration(configuration);
-        clientState = configuration.getClientState().copy();
+        clientState = configuration.clientState.copy();
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
         sessionTracker = new SessionTracker(immutableConfig, clientState, this,

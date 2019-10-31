@@ -285,7 +285,7 @@ public class EventSerializationTest {
     @Test
     public void shouldIgnoreEmpty() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setIgnoreClasses(Collections.<String>emptyList());
+        configuration.setIgnoreClasses(Collections.<String>emptySet());
         ImmutableConfig conf = convert(configuration);
         event = new Event(new RuntimeException(), conf, handledState);
         assertFalse(event.shouldIgnoreClass());

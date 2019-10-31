@@ -20,7 +20,7 @@ final class BugsnagTestUtils {
     }
 
     static ClientState generateClientState() {
-        return generateConfiguration().getClientState();
+        return generateConfiguration().clientState;
     }
 
     public static Delivery generateDelivery() {

@@ -45,6 +45,7 @@ class Breadcrumbs extends Observable implements JsonStream.Streamable {
             }
             store.add(breadcrumb);
             pruneBreadcrumbs();
+
             setChanged();
             notifyObservers(new NativeInterface.Message(
                         NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb));

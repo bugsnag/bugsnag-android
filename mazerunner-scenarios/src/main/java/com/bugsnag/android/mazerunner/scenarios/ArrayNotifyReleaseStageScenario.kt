@@ -13,7 +13,7 @@ internal class ArrayEnabledReleaseStageScenario(config: Configuration,
     init {
         config.autoTrackSessions = false
         config.releaseStage = "prod"
-        config.enabledReleaseStages = listOf("dev", "prod")
+        config.enabledReleaseStages = setOf("dev", "prod")
     }
 
     override fun run() {

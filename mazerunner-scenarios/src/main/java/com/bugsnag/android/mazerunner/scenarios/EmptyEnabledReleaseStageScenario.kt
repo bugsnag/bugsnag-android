@@ -13,7 +13,7 @@ internal class EmptyEnabledReleaseStageScenario(config: Configuration,
     init {
         config.autoTrackSessions = false
         config.releaseStage = "prod"
-        config.enabledReleaseStages = emptyList()
+        config.enabledReleaseStages = emptySet()
     }
 
     override fun run() {

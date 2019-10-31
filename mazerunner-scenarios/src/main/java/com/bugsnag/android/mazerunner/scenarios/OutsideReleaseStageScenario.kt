@@ -14,7 +14,7 @@ internal class OutsideReleaseStageScenario(config: Configuration,
     init {
         config.autoTrackSessions = false
         config.releaseStage = "prod"
-        config.enabledReleaseStages = listOf("dev")
+        config.enabledReleaseStages = setOf("dev")
     }
 
     override fun run() {
