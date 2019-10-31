@@ -700,7 +700,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         event.addMetadata("app", null, appData.getAppDataMetadata());
 
         // Attach breadcrumbs to the event
-        event.setBreadcrumbs(new ArrayList<>(breadcrumbs.store));
+        event.setBreadcrumbs(new ArrayList<>(breadcrumbs.getStore()));
 
         // Attach user info to the event
         event.setUser(user.getId(), user.getEmail(), user.getName());

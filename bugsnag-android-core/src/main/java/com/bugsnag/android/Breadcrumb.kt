@@ -38,12 +38,4 @@ class Breadcrumb internal constructor(
         writer.endObject()
         writer.endObject()
     }
-
-    @Throws(IOException::class)
-    protected fun payloadSize(): Int {
-        val writer = StringWriter()
-        val jsonStream = JsonStream(writer)
-        toStream(jsonStream)
-        return writer.toString().length
-    }
 }
