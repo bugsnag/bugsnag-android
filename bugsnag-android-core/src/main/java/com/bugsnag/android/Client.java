@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.NativeInterface.Message;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -15,7 +13,8 @@ import androidx.annotation.Nullable;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Observable;
@@ -34,8 +33,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetadataAware, CallbackAware,
-        UserAware {
+public class Client implements MetadataAware, CallbackAware, UserAware {
 
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
@@ -72,6 +70,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final Logger logger;
     final ReportDeliveryDelegate reportDeliveryDelegate;
     NotifyDelegate notifyDelegate;
+
+    final ClientObservable clientObservable = new ClientObservable();
 
     /**
      * Initialize a Bugsnag client
@@ -166,7 +166,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // register a receiver for automatic breadcrumbState
         captureLifecycleBreadcrumbs();
         connectivity.registerForNetworkChanges();
-        orientationListener = registerOrientationChangeListener(this);
+        orientationListener = registerOrientationChangeListener();
 
         // filter out any disabled breadcrumb types
         addOnBreadcrumb(new OnBreadcrumb() {
@@ -176,21 +176,17 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             }
         });
 
-        registerStateObservers();
-
         // Flush any on-disk errors
         eventStore.flushOnLaunch();
         loadPlugins();
         leaveBreadcrumb("Bugsnag loaded");
     }
 
-    private OrientationEventListener registerOrientationChangeListener(final Client client) {
+    private OrientationEventListener registerOrientationChangeListener() {
         OrientationEventListener listener = new OrientationEventListener(appContext) {
             @Override
             public void onOrientationChanged(int orientation) {
-                client.setChanged();
-                client.notifyObservers(new Message(
-                        NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
+                clientObservable.postOrientationChange(orientation);
             }
         };
         try {
@@ -223,13 +219,20 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
     }
 
-    private void registerStateObservers() {
-        breadcrumbState.addObserver(this);
-        contextState.addObserver(this);
-        metadataState.getMetadata().addObserver(this);
-        userState.addObserver(this);
-        sessionTracker.addObserver(this);
-        reportDeliveryDelegate.addObserver(this);
+    void registerObserver(Observer observer) {
+        Collection<Observable> observableState = Arrays.asList(
+                breadcrumbState,
+                contextState,
+                metadataState.getMetadata(),
+                userState,
+                sessionTracker,
+                reportDeliveryDelegate,
+                clientObservable
+        );
+
+        for (Observable observable : observableState) {
+            observable.addObserver(observer);
+        }
     }
 
     private void loadPlugins() {
@@ -239,34 +242,16 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     void sendNativeSetupNotification() {
-        setChanged();
-        ArrayList<Object> messageArgs = new ArrayList<>();
-        messageArgs.add(immutableConfig.getAutoDetectNdkCrashes());
-
-        super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
+        clientObservable.postNdkInstall(immutableConfig);
         try {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    enqueuePendingNativeReports();
+                    clientObservable.postNdkDeliverPending();
                 }
             });
         } catch (RejectedExecutionException ex) {
             logger.w("Failed to enqueue native reports, will retry next launch: ", ex);
-        }
-    }
-
-    void enqueuePendingNativeReports() {
-        setChanged();
-        notifyObservers(new Message(
-            NativeInterface.MessageType.DELIVER_PENDING, null));
-    }
-
-    @Override
-    public void update(@NonNull Observable observable, @NonNull Object arg) {
-        if (arg instanceof Message) {
-            setChanged();
-            super.notifyObservers(arg);
         }
     }
 

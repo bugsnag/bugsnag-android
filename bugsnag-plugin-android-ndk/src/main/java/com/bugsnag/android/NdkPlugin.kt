@@ -7,7 +7,7 @@ internal class NdkPlugin : BugsnagPlugin {
     override fun initialisePlugin(client: Client) {
         System.loadLibrary("bugsnag-ndk")
         val nativeBridge = NativeBridge()
-        client.addObserver(nativeBridge)
+        client.registerObserver(nativeBridge)
         client.sendNativeSetupNotification()
     }
 }
