@@ -18,11 +18,6 @@ object BugsnagPluginInterface {
         immutableConfig: ImmutableConfig,
         logger: Logger
     ) {
-        plugins
-            .toSet()
-            .mapNotNull { convertClzToPlugin(it) }
-            .forEach { it.initialisePlugin(client) }
-
         if (immutableConfig.autoDetectNdkCrashes) {
             try {
                 registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"))
@@ -41,6 +36,11 @@ object BugsnagPluginInterface {
                         + "ANR errors will not be captured.")
             }
         }
+
+        plugins
+            .toSet()
+            .mapNotNull { convertClzToPlugin(it) }
+            .forEach { it.initialisePlugin(client) }
     }
 
     private fun convertClzToPlugin(it: Class<*>): BugsnagPlugin? {
