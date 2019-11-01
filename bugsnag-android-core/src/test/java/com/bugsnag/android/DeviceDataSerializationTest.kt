@@ -24,8 +24,10 @@ internal class DeviceDataSerializationTest {
             Mockito.`when`(prefs.edit()).thenReturn(editor)
             Mockito.`when`(editor.putString(Mockito.anyString(), Mockito.anyString())).thenReturn(editor)
 
-            val buildInfo = DeviceBuildInfo("samsung", "s7", "7.1", 24, "bulldog",
-                "foo-google", "my-brand", "prod,build", arrayOf("armeabi-v7a"))
+            val buildInfo = DeviceBuildInfo(
+                "samsung", "s7", "7.1", 24, "bulldog",
+                "foo-google", "prod,build", arrayOf("armeabi-v7a")
+            )
             val deviceData = DeviceData(null, context, res, "123", buildInfo, NoopLogger)
             return generateSerializationTestCases("device_data", deviceData.deviceDataSummary)
         }

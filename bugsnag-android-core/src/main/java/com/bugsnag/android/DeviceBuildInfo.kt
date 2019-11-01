@@ -9,7 +9,6 @@ internal class DeviceBuildInfo(
     val apiLevel: Int,
     val osBuild: String,
     val fingerprint: String,
-    val brand: String,
     val tags: String,
     val cpuAbis: Array<String>
 ) {
@@ -27,7 +26,6 @@ internal class DeviceBuildInfo(
                 Build.VERSION.SDK_INT,
                 Build.DISPLAY,
                 Build.FINGERPRINT,
-                Build.BRAND,
                 Build.TAGS,
                 cpuABis
             )

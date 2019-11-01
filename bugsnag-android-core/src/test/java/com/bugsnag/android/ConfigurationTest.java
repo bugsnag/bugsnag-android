@@ -5,11 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import androidx.annotation.NonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -116,6 +117,42 @@ public class ConfigurationTest {
     public void testOverrideCodeBundleId() {
         config.setCodeBundleId("abc123");
         assertEquals("abc123", config.getCodeBundleId());
+    }
+
+    @Test
+    public void testAddOnError() {
+        OnError cb = new OnError() {
+            @Override
+            public boolean run(@NonNull Event event) {
+                return false;
+            }
+        };
+        config.addOnError(cb);
+        config.removeOnError(cb);
+    }
+
+    @Test
+    public void testAddOnSession() {
+        OnSession cb = new OnSession() {
+            @Override
+            public boolean run(@NonNull SessionPayload session) {
+                return false;
+            }
+        };
+        config.addOnSession(cb);
+        config.removeOnSession(cb);
+    }
+
+    @Test
+    public void testAddOnBreadcrumb() {
+        OnBreadcrumb cb = new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return false;
+            }
+        };
+        config.addOnBreadcrumb(cb);
+        config.removeOnBreadcrumb(cb);
     }
 
     @Test
