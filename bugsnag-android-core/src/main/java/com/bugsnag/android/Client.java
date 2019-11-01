@@ -140,7 +140,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
 
         String id = userState.getUser().getId();
-        deviceData = new DeviceData(connectivity, appContext, resources, id, logger);
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        deviceData = new DeviceData(connectivity, appContext, resources, id, buildInfo, logger);
 
         // Set up breadcrumbState
         breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs(), logger);

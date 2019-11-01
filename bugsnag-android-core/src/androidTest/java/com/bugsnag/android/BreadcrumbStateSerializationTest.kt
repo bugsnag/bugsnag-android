@@ -29,22 +29,6 @@ class BreadcrumbStateSerializationTest {
     }
 
     /**
-     * Verifies that breadcrumb metadata is serialised
-     */
-    @Test
-    fun testPayloadType() {
-        val metadata = mutableMapOf<String, Any>(Pair("direction", "left"))
-        breadcrumbState.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata, Date()))
-
-        val json = streamableToJsonArray(breadcrumbState)
-        val node = json.getJSONObject(0)
-        assertEquals("Rotated Menu", node.get("name"))
-        assertEquals("state", node.get("type"))
-        assertEquals("left", node.getJSONObject("metaData").get("direction"))
-        assertEquals(1, json.length())
-    }
-
-    /**
      * Verifies that the Client methods leave breadcrumbState correctly
      */
     @Test

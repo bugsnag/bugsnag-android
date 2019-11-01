@@ -252,7 +252,7 @@ public class EventSerializationTest {
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         DeviceData data = new DeviceData(connectivity, context, resources,
-                "123", NoopLogger.INSTANCE);
+                "123", DeviceBuildInfo.Companion.defaultInfo(), NoopLogger.INSTANCE);
 
         Map<String, Object> deviceData = data.getDeviceData();
         event.setDevice(deviceData);

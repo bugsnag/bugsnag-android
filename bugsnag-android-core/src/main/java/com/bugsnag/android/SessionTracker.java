@@ -173,7 +173,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
                         SessionPayload payload =
                             new SessionPayload(session, null,
-                                client.appData, client.deviceData);
+                                client.appData.getAppDataSummary(),
+                                    client.deviceData.getDeviceDataSummary());
 
                         try {
                             for (OnSession mutator : callbackState.getOnSessionTasks()) {
@@ -257,7 +258,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 if (!storedFiles.isEmpty()) {
                     SessionPayload payload =
                         new SessionPayload(null, storedFiles,
-                            client.appData, client.deviceData);
+                            client.appData.getAppDataSummary(),
+                                client.deviceData.getDeviceDataSummary());
 
                     DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
 

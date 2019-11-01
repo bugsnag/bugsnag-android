@@ -57,7 +57,8 @@ public class SessionPayloadTest {
     private SessionPayload generatePayloadFromSession(Session session) {
         appData = client.appData;
         deviceData = client.deviceData;
-        return new SessionPayload(session, null, appData, deviceData);
+        return new SessionPayload(session, null, appData.getAppDataSummary(),
+                deviceData.getDeviceDataSummary());
     }
 
     /**
@@ -96,7 +97,7 @@ public class SessionPayloadTest {
         List<File> storedFiles = sessionStore.findStoredFiles();
 
         SessionPayload payload = new SessionPayload(null,
-            storedFiles, appData, deviceData);
+            storedFiles, appData.getAppDataSummary(), deviceData.getDeviceDataSummary());
         rootNode = streamableToJson(payload);
 
         assertNotNull(rootNode);

@@ -44,6 +44,7 @@ class DeviceData {
     private final Connectivity connectivity;
     private final Resources resources;
     private final String installId;
+    private final DeviceBuildInfo buildInfo;
     private final Logger logger;
     private final DisplayMetrics displayMetrics;
     private final boolean rooted;
@@ -64,11 +65,12 @@ class DeviceData {
     final String[] cpuAbi;
 
     DeviceData(Connectivity connectivity, Context appContext, Resources resources,
-               String installId, Logger logger) {
+               String installId, DeviceBuildInfo buildInfo, Logger logger) {
         this.connectivity = connectivity;
         this.appContext = appContext;
         this.resources = resources;
         this.installId = installId;
+        this.buildInfo = buildInfo;
         this.logger = logger;
 
         if (resources != null) {
@@ -88,16 +90,16 @@ class DeviceData {
 
     Map<String, Object> getDeviceDataSummary() {
         Map<String, Object> map = new HashMap<>();
-        map.put("manufacturer", Build.MANUFACTURER);
-        map.put("model", Build.MODEL);
+        map.put("manufacturer", buildInfo.getManufacturer());
+        map.put("model", buildInfo.getModel());
         map.put("jailbroken", rooted);
         map.put("osName", "android");
-        map.put("osVersion", Build.VERSION.RELEASE);
+        map.put("osVersion", buildInfo.getOsVersion());
         map.put("cpuAbi", cpuAbi);
 
         Map<String, Object> versions = new HashMap<>();
-        versions.put("androidApiLevel", Build.VERSION.SDK_INT);
-        versions.put("osBuild", Build.DISPLAY);
+        versions.put("androidApiLevel", buildInfo.getApiLevel());
+        versions.put("osBuild", buildInfo.getOsBuild());
         map.put("runtimeVersions", versions);
         return map;
     }
@@ -132,7 +134,7 @@ class DeviceData {
      * Check if the current Android device is rooted
      */
     private boolean isRooted() {
-        if (android.os.Build.TAGS != null && android.os.Build.TAGS.contains("test-keys")) {
+        if (buildInfo.getTags().contains("test-keys")) {
             return true;
         }
 
@@ -154,7 +156,7 @@ class DeviceData {
      * @return true if the current device is an emulator
      */
     private boolean isEmulator() {
-        String fingerprint = Build.FINGERPRINT;
+        String fingerprint = buildInfo.getFingerprint();
         return fingerprint.startsWith("unknown")
             || fingerprint.contains("generic")
             || fingerprint.contains("vbox"); // genymotion
@@ -215,10 +217,7 @@ class DeviceData {
      */
     @NonNull
     private String[] getCpuAbi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return SupportedAbiWrapper.getSupportedAbis();
-        }
-        return Abi2Wrapper.getAbi1andAbi2();
+        return buildInfo.getCpuAbis();
     }
 
     /**
@@ -336,26 +335,5 @@ class DeviceData {
     @NonNull
     private String getTime() {
         return DateUtils.toIso8601(new Date());
-    }
-
-    /**
-     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
-     */
-    static class SupportedAbiWrapper {
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-        static String[] getSupportedAbis() {
-            return Build.SUPPORTED_ABIS;
-        }
-    }
-
-    /**
-     * Wrapper class to allow the test framework to use the correct version of the CPU / ABI
-     */
-    static class Abi2Wrapper {
-        @NonNull
-        @SuppressWarnings("deprecation") // new API already used elsewhere
-        static String[] getAbi1andAbi2() {
-            return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
-        }
     }
 }
