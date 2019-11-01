@@ -17,6 +17,7 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
         jcenter()
@@ -66,7 +67,7 @@ android {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:4.21.1"
+    implementation "com.bugsnag:bugsnag-android:9.9.9"
     implementation "androidx.appcompat:appcompat:$supportLibVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
