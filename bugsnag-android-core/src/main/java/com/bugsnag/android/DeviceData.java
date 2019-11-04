@@ -216,7 +216,7 @@ class DeviceData {
      * Gets information about the CPU / API
      */
     @NonNull
-    private String[] getCpuAbi() {
+    String[] getCpuAbi() {
         return buildInfo.getCpuAbis();
     }
 
@@ -336,4 +336,5 @@ class DeviceData {
     private String getTime() {
         return DateUtils.toIso8601(new Date());
     }
+
 }

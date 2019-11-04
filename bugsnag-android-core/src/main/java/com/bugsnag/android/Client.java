@@ -604,4 +604,40 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             }
         }
     }
+
+    Context getAppContext() {
+        return appContext;
+    }
+
+    @NonNull
+    DeviceData getDeviceData() {
+        return deviceData;
+    }
+
+    @NonNull
+    AppData getAppData() {
+        return appData;
+    }
+
+    ImmutableConfig getImmutableConfig() {
+        return immutableConfig;
+    }
+
+    MetadataState getMetadataState() {
+        return metadataState;
+    }
+
+    @NonNull
+    BreadcrumbState getBreadcrumbState() {
+        return breadcrumbState;
+    }
+
+    @NonNull
+    EventStore getEventStore() {
+        return eventStore;
+    }
+
+    SessionTracker getSessionTracker() {
+        return sessionTracker;
+    }
 }

@@ -165,7 +165,7 @@ public class NativeInterface {
 
     @NonNull
     public static String getNativeReportPath() {
-        return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
+        return getClient().getAppContext().getCacheDir().getAbsolutePath() + "/bugsnag-native/";
     }
 
     /**
@@ -190,7 +190,7 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static Map<String,Object> getAppData() {
         HashMap<String,Object> data = new HashMap<>();
-        AppData source = getClient().appData;
+        AppData source = getClient().getAppData();
         data.putAll(source.getAppData());
         data.putAll(source.getAppDataMetadata());
         return data;
@@ -203,7 +203,7 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static Map<String,Object> getDeviceData() {
         HashMap<String,Object> deviceData = new HashMap<>();
-        DeviceData source = getClient().deviceData;
+        DeviceData source = getClient().getDeviceData();
         deviceData.putAll(source.getDeviceMetadata());
         deviceData.putAll(source.getDeviceData()); // wat
         return deviceData;
@@ -214,7 +214,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String[] getCpuAbi() {
-        return getClient().deviceData.cpuAbi;
+        return getClient().getDeviceData().getCpuAbi();
     }
 
     /**
@@ -222,7 +222,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetadata() {
-        return new HashMap<>(getClient().metadataState.getMetadata().toMap());
+        return new HashMap<>(getClient().getMetadataState().getMetadata().toMap());
     }
 
     /**
@@ -230,7 +230,7 @@ public class NativeInterface {
      */
     @NonNull
     public static List<Breadcrumb> getBreadcrumbs() {
-        Queue<Breadcrumb> store = getClient().breadcrumbState.getStore();
+        Queue<Breadcrumb> store = getClient().getBreadcrumbState().getStore();
         return new ArrayList<>(store);
     }
 
@@ -291,7 +291,7 @@ public class NativeInterface {
      */
     @Nullable
     public static String getReleaseStage() {
-        return getClient().immutableConfig.getReleaseStage();
+        return getClient().getImmutableConfig().getReleaseStage();
     }
 
     /**
@@ -299,7 +299,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getSessionEndpoint() {
-        return getClient().immutableConfig.getEndpoints().getSessions();
+        return getClient().getImmutableConfig().getEndpoints().getSessions();
     }
 
     /**
@@ -307,7 +307,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getEndpoint() {
-        return getClient().immutableConfig.getEndpoints().getNotify();
+        return getClient().getImmutableConfig().getEndpoints().getNotify();
     }
 
     /**
@@ -329,7 +329,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getAppVersion() {
-        return getClient().immutableConfig.getAppVersion();
+        return getClient().getImmutableConfig().getAppVersion();
     }
 
     /**
@@ -337,7 +337,7 @@ public class NativeInterface {
      */
     @Nullable
     public static Collection<String> getEnabledReleaseStages() {
-        return getClient().immutableConfig.getEnabledReleaseStages();
+        return getClient().getImmutableConfig().getEnabledReleaseStages();
     }
 
     /**
@@ -348,7 +348,7 @@ public class NativeInterface {
         Client client = getClient();
         User user = client.getUser();
         Date startDate = startedAt > 0 ? new Date(startedAt) : null;
-        client.sessionTracker.registerExistingSession(startDate, sessionId, user,
+        client.getSessionTracker().registerExistingSession(startDate, sessionId, user,
                                                            unhandledCount, handledCount);
     }
 
@@ -364,9 +364,9 @@ public class NativeInterface {
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
-            || client.immutableConfig.shouldNotifyForReleaseStage()) {
-            client.eventStore.enqueueContentForDelivery(payload);
-            client.eventStore.flushAsync();
+            || client.getImmutableConfig().shouldNotifyForReleaseStage()) {
+            client.getEventStore().enqueueContentForDelivery(payload);
+            client.getEventStore().flushAsync();
         }
     }
 
@@ -399,6 +399,6 @@ public class NativeInterface {
 
     @NonNull
     public static Logger getLogger() {
-        return getClient().logger;
+        return getClient().getImmutableConfig().getLogger();
     }
 }
