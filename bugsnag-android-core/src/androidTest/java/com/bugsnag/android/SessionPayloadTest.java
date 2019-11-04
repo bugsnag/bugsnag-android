@@ -70,23 +70,6 @@ public class SessionPayloadTest {
         client.close();
     }
 
-    @Test
-    public void testPayloadSerialisation() throws Exception {
-        assertNotNull(rootNode);
-        JSONArray sessions = rootNode.getJSONArray("sessions");
-
-        JSONObject sessionNode = sessions.getJSONObject(0);
-        assertNotNull(sessionNode);
-        assertEquals("test", sessionNode.getString("id"));
-        String startedAt = sessionNode.getString("startedAt");
-        assertEquals(DateUtils.toIso8601(session.getStartedAt()), startedAt);
-        assertNotNull(sessionNode.getJSONObject("user"));
-
-        assertNotNull(rootNode.getJSONObject("notifier"));
-        assertNotNull(rootNode.getJSONObject("device"));
-        assertNotNull(rootNode.getJSONObject("app"));
-    }
-
     /**
      * Serialises sessions from a file instead
      */
