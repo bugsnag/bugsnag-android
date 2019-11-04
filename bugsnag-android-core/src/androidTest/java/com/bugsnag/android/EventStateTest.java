@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.Map;
 
 @SmallTest
-public class EventSerializationTest {
+public class EventStateTest {
 
     private HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
@@ -72,108 +72,6 @@ public class EventSerializationTest {
         assertNotNull(errorJson.get("threads"));
         assertNotNull(errorJson.get("exceptions"));
         assertNotNull(errorJson.get("app"));
-    }
-
-    @Test
-    public void testHandledSerialisation() throws Exception {
-        Event err = new Event(new RuntimeException(), config, handledState);
-        JSONObject errorJson = streamableToJson(err);
-        assertNotNull(errorJson);
-        assertEquals("warning", errorJson.getString("severity"));
-        assertFalse(errorJson.getBoolean("unhandled"));
-
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals(HandledState.REASON_HANDLED_EXCEPTION, severityReason.getString("type"));
-        validateEmptyAttributes(severityReason);
-    }
-
-    @Test
-    public void testUnhandledSerialisation() throws Exception {
-        handledState = HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION);
-        Event err = new Event(new RuntimeException(), config, handledState);
-
-        JSONObject errorJson = streamableToJson(err);
-        assertNotNull(errorJson);
-        assertEquals("error", errorJson.getString("severity"));
-        assertTrue(errorJson.getBoolean("unhandled"));
-
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals(HandledState.REASON_UNHANDLED_EXCEPTION, severityReason.getString("type"));
-        validateEmptyAttributes(severityReason);
-    }
-
-    @Test
-    public void testPromiseRejectionSerialisation() throws Exception {
-        handledState = HandledState.newInstance(HandledState.REASON_PROMISE_REJECTION);
-        Event err = new Event(new RuntimeException(), config, handledState);
-
-        JSONObject errorJson = streamableToJson(err);
-        assertNotNull(errorJson);
-        assertEquals("error", errorJson.getString("severity"));
-        assertTrue(errorJson.getBoolean("unhandled"));
-
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals(HandledState.REASON_PROMISE_REJECTION, severityReason.getString("type"));
-        validateEmptyAttributes(severityReason);
-    }
-
-    @Test
-    public void testLogSerialisation() throws Exception {
-        handledState = HandledState.newInstance(HandledState.REASON_LOG,
-                Severity.WARNING, "warning");
-        Event err = new Event(new RuntimeException(), config, handledState);
-
-        JSONObject errorJson = streamableToJson(err);
-        assertNotNull(errorJson);
-        assertEquals("warning", errorJson.getString("severity"));
-        assertFalse(errorJson.getBoolean("unhandled"));
-
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals(HandledState.REASON_LOG, severityReason.getString("type"));
-        JSONObject attributes = severityReason.getJSONObject("attributes");
-        assertNotNull(attributes);
-        assertEquals(1, attributes.length());
-        assertEquals("warning", attributes.getString("level"));
-    }
-
-    @Test
-    public void testStrictModeSerialisation() throws Exception {
-        handledState = HandledState.newInstance(HandledState.REASON_STRICT_MODE,
-                Severity.WARNING, "Test");
-        Event err = new Event(new RuntimeException(), config, handledState);
-
-        JSONObject errorJson = streamableToJson(err);
-        assertNotNull(errorJson);
-        assertEquals("warning", errorJson.getString("severity"));
-        assertTrue(errorJson.getBoolean("unhandled"));
-
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals(HandledState.REASON_STRICT_MODE, severityReason.getString("type"));
-
-        JSONObject attributes = severityReason.getJSONObject("attributes");
-        assertNotNull(attributes);
-        assertEquals(1, attributes.length());
-        assertEquals("Test", attributes.getString("violationType"));
-    }
-
-    @Test
-    public void testCallbackSpecified() throws Exception {
-        event.setSeverity(Severity.INFO); // mutate severity
-
-        JSONObject errorJson = streamableToJson(event);
-        assertNotNull(errorJson);
-        assertEquals("info", errorJson.getString("severity"));
-        assertFalse(errorJson.getBoolean("unhandled"));
-
-        JSONObject severityReason = errorJson.getJSONObject("severityReason");
-        assertNotNull(severityReason);
-        assertEquals(HandledState.REASON_CALLBACK_SPECIFIED, severityReason.getString("type"));
-        validateEmptyAttributes(severityReason);
     }
 
     @Test

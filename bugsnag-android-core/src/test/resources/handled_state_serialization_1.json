@@ -1,0 +1,6 @@
+{
+  "type": "strictMode",
+  "attributes": {
+    "violationType": "diskRead"
+  }
+}
