@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-internal class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashMap()) :
+internal data class Metadata @JvmOverloads constructor(private val map: Map<String, Any> = ConcurrentHashMap()) :
     Observable(), JsonStream.Streamable, MetadataAware {
 
     private val store: MutableMap<String, Any> = ConcurrentHashMap(map)
@@ -56,7 +56,8 @@ internal class Metadata @JvmOverloads constructor(map: Map<String, Any> = Concur
     private fun insertValue(map: MutableMap<String, Any>, section: String, value: Any) {
         val existingVal = map[section]
 
-        if (existingVal is Map<*, *>) {
+        // FIXME need to rework merging for top-level values
+        if (existingVal is Map<*, *> && existingVal.isNotEmpty()) {
             map[section] = mergeMaps(listOf(existingVal as Map<String, Any>, value as Map<String, Any>
             ))
         } else {

@@ -12,6 +12,4 @@ internal data class MetadataState(val metadata: Metadata = Metadata()) : Metadat
     override fun getMetadata(section: String) = getMetadata(section, null)
     override fun getMetadata(section: String, key: String?): Any? =
         metadata.getMetadata(section, key)
-
-    fun copy() = this.copy(metadata = metadata)
 }

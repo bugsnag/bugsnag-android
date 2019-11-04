@@ -121,7 +121,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         callbackState = configuration.callbackState.copy();
         contextState = configuration.contextState.copy();
 
-        metadataState = configuration.metadataState.copy();
+        metadataState = configuration.metadataState.copy(configuration.metadataState.getMetadata());
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
