@@ -14,7 +14,7 @@ internal class UserState(private val userRepository: UserRepository) : Observabl
     }
 
     fun setUserId(id: String?) {
-        user = user.copy(id, user.email, user.name)
+        user = user.copy(id = id, email = user.email, name = user.name)
         userRepository.save(user)
         setChanged()
         notifyObservers(
@@ -22,11 +22,10 @@ internal class UserState(private val userRepository: UserRepository) : Observabl
                 NativeInterface.MessageType.UPDATE_USER_ID, id
             )
         )
-
     }
 
     fun setUserEmail(email: String?) {
-        user = user.copy(user.id, email, user.name)
+        user = user.copy(id = user.id, email = email, name = user.name)
         userRepository.save(user)
         setChanged()
         notifyObservers(
@@ -37,7 +36,7 @@ internal class UserState(private val userRepository: UserRepository) : Observabl
     }
 
     fun setUserName(name: String?) {
-        user = user.copy(user.id, user.email, name)
+        user = user.copy(id = user.id, email = user.email, name = name)
         userRepository.save(user)
         setChanged()
         notifyObservers(

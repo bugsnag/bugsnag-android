@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig;
+
 import androidx.annotation.NonNull;
 
 import org.junit.Test;
@@ -9,17 +11,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import static com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig;
-
 /**
  * Ensures that if a callback is added or removed during iteration, a
  * {@link java.util.ConcurrentModificationException} is not thrown
  */
 public class ConcurrentCallbackTest {
 
-    private final HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+    private final HandledState handledState
+            = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
     private final Event event = new Event(generateImmutableConfig(), handledState);
-    private final SessionPayload sessionPayload = new SessionPayload(null, new ArrayList<File>(), new HashMap<String, Object>(), new HashMap<String, Object>());
+    private final SessionPayload sessionPayload = new SessionPayload(null,
+            new ArrayList<File>(), new HashMap<String, Object>(), new HashMap<String, Object>());
 
     @Test
     public void testOnErrorConcurrentModification() {
