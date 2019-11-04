@@ -124,7 +124,7 @@ class NotifyDelegate {
             logger.i("Skipping notification - onError task returned false");
             return;
         }
-        reportDeliveryDelegate.deliverReport(event);
+        reportDeliveryDelegate.deliverEvent(event);
     }
 
 }

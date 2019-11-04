@@ -24,7 +24,7 @@ class ReportDeliveryDelegate extends Observable {
         this.breadcrumbState = breadcrumbState;
     }
 
-    void deliverReport(@NonNull Event event) {
+    void deliverEvent(@NonNull Event event) {
         // increment handled counts after error not rejected by callbacks
         Session session = event.getSession();
 
@@ -84,7 +84,7 @@ class ReportDeliveryDelegate extends Observable {
         }
     }
 
-    void deliver(@NonNull Report report, @NonNull Event event) {
+    DeliveryStatus deliver(@NonNull Report report, @NonNull Event event) {
         DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
@@ -106,6 +106,7 @@ class ReportDeliveryDelegate extends Observable {
             default:
                 break;
         }
+        return deliveryStatus;
     }
 
     private void leaveErrorBreadcrumb(@NonNull Event event) {
