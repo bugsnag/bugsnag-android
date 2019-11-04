@@ -65,6 +65,19 @@ internal data class CallbackState(
         return true
     }
 
+    fun runOnSessionTasks(sessionPayload: SessionPayload, logger: Logger): Boolean {
+        onSessionTasks.forEach {
+            try {
+                if (!it.run(sessionPayload)) {
+                    return false
+                }
+            } catch (ex: Throwable) {
+                logger.w("OnSession threw an Exception", ex)
+            }
+        }
+        return true
+    }
+
     fun copy() = this.copy(
         onErrorTasks = onErrorTasks,
         onBreadcrumbTasks = onBreadcrumbTasks,
