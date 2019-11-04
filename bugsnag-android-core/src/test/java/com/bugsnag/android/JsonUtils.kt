@@ -19,7 +19,7 @@ internal fun verifyJsonMatches(map: Map<String, Any>, resourceName: String) {
     validateJson(resourceName, json)
 }
 
-private fun validateJson(resourceName: String, json: String) {
+internal fun validateJson(resourceName: String, json: String) {
     val whitespace = "\\s".toRegex()
     val rawJson = JsonParser().read(resourceName)
     val expectedJson = rawJson.replace(whitespace, "")

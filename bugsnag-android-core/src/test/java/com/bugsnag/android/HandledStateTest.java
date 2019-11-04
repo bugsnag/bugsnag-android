@@ -91,4 +91,9 @@ public class HandledStateTest {
         HandledState.newInstance(HandledState.REASON_STRICT_MODE);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidHandledVal() {
+        HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION, Severity.ERROR, "Whoops");
+    }
+
 }

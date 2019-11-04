@@ -36,40 +36,6 @@ public class JsonStreamTest {
     }
 
     @Test
-    public void testSaneValues() throws JSONException, IOException {
-        final Long nullLong = null;
-        final Boolean nullBoolean = null;
-        final String nullString = null;
-        final Integer nullInteger = null;
-        final Float nullFloat = null;
-        final Double nullDouble = null;
-
-        stream.beginObject();
-        stream.name("nullLong").value(nullLong);
-        stream.name("nullBoolean").value(nullBoolean);
-        stream.name("nullString").value(nullString);
-        stream.name("nullInteger").value(nullInteger);
-        stream.name("nullFloat").value(nullFloat);
-        stream.name("nullDouble").value(nullDouble);
-        stream.name("string").value("string");
-        stream.name("int").value(123);
-        stream.name("long").value(123L);
-        stream.name("float").value(123.45f);
-        stream.endObject();
-
-        JSONObject json = new JSONObject(writer.toString());
-        assertTrue(json.isNull("nullLong"));
-        assertTrue(json.isNull("nullBoolean"));
-        assertTrue(json.isNull("nullString"));
-        assertTrue(json.isNull("nullInteger"));
-        assertTrue(json.isNull("nullFloat"));
-        assertTrue(json.isNull("nullDouble"));
-        assertEquals("string", json.getString("string"));
-        assertEquals(123, json.getInt("int"));
-        assertEquals(123L, json.getLong("long"));
-    }
-
-    @Test
     public void testEmptyFileValue() throws Throwable {
         file.createNewFile();
         stream.beginArray();
