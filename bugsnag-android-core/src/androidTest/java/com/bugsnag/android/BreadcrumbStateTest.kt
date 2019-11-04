@@ -12,7 +12,7 @@ import org.junit.Test
 import java.util.Date
 
 @SmallTest
-class BreadcrumbStateSerializationTest {
+class BreadcrumbStateTest {
 
     private lateinit var breadcrumbState: BreadcrumbState
     private var client: Client? = null

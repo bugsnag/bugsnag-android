@@ -43,19 +43,4 @@ public class DeviceDataSummaryTest {
         assertNotNull(deviceData.get("osVersion"));
     }
 
-    @Test
-    public void testJsonSerialisation() throws JSONException {
-        JSONObject deviceDataJson = mapToJson(deviceData);
-
-        assertEquals("android", deviceDataJson.getString("osName"));
-        assertNotNull(deviceDataJson.getString("osVersion"));
-        assertNotNull(deviceDataJson.getString("manufacturer"));
-        assertNotNull(deviceDataJson.getString("model"));
-        assertNotNull(deviceDataJson.get("cpuAbi"));
-        assertTrue(deviceDataJson.has("jailbroken"));
-
-        JSONObject versions = deviceDataJson.getJSONObject("runtimeVersions");
-        assertTrue((Integer) versions.get("androidApiLevel") >= 14);
-    }
-
 }

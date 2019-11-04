@@ -42,23 +42,4 @@ public class DeviceDataTest {
         assertTrue((Long) deviceData.get("totalMemory") > 0);
     }
 
-    @Test
-    public void testJsonSerialisation() throws JSONException {
-        JSONObject deviceDataJson = mapToJson(deviceData);
-
-        // serialises inherited fields correctly
-        for (String key : Arrays.asList("osName",
-            "osVersion", "manufacturer", "model", "jailbroken")) {
-            assertTrue(deviceDataJson.has(key));
-        }
-
-        assertNotNull(deviceDataJson.getString("id"));
-        assertTrue(deviceDataJson.getLong("freeMemory") > 0);
-        assertTrue(deviceDataJson.getLong("totalMemory") > 0);
-        assertTrue(deviceDataJson.has("freeDisk"));
-        assertNotNull(deviceDataJson.getString("orientation"));
-        assertNotNull(deviceDataJson.getString("time"));
-        assertNotNull(deviceDataJson.get("locale"));
-    }
-
 }
