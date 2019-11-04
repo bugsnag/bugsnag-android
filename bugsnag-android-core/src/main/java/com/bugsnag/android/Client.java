@@ -9,6 +9,7 @@ import android.os.storage.StorageManager;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -181,6 +182,38 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore.flushOnLaunch();
         loadPlugins();
         leaveBreadcrumb("Bugsnag loaded");
+    }
+
+    @VisibleForTesting
+    Client(ImmutableConfig immutableConfig, CallbackState callbackState,
+           MetadataState metadataState, ContextState contextState, UserState userState,
+           Context appContext, @NonNull DeviceData deviceData, @NonNull AppData appData,
+           @NonNull BreadcrumbState breadcrumbState, @NonNull EventStore eventStore,
+           SessionStore sessionStore, SystemBroadcastReceiver systemBroadcastReceiver,
+           SessionTracker sessionTracker, SharedPreferences sharedPrefs,
+           OrientationEventListener orientationListener, Connectivity connectivity,
+           UserRepository userRepository, Logger logger,
+           ReportDeliveryDelegate reportDeliveryDelegate, NotifyDelegate notifyDelegate) {
+        this.immutableConfig = immutableConfig;
+        this.callbackState = callbackState;
+        this.metadataState = metadataState;
+        this.contextState = contextState;
+        this.userState = userState;
+        this.appContext = appContext;
+        this.deviceData = deviceData;
+        this.appData = appData;
+        this.breadcrumbState = breadcrumbState;
+        this.eventStore = eventStore;
+        this.sessionStore = sessionStore;
+        this.systemBroadcastReceiver = systemBroadcastReceiver;
+        this.sessionTracker = sessionTracker;
+        this.sharedPrefs = sharedPrefs;
+        this.orientationListener = orientationListener;
+        this.connectivity = connectivity;
+        this.userRepository = userRepository;
+        this.logger = logger;
+        this.reportDeliveryDelegate = reportDeliveryDelegate;
+        this.notifyDelegate = notifyDelegate;
     }
 
     private OrientationEventListener registerOrientationChangeListener() {
