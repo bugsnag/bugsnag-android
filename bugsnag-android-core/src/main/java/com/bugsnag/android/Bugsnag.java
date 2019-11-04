@@ -20,6 +20,7 @@ import java.util.Map;
 public final class Bugsnag {
 
     private static final Object lock = new Object();
+    static Logger logger = DebugLogger.INSTANCE;
 
     @SuppressLint("StaticFieldLeak")
     static Client client;
@@ -67,7 +68,7 @@ public final class Bugsnag {
     }
 
     private static void logClientInitWarning() {
-        DebugLogger.INSTANCE.w("It appears that Bugsnag.init() was called more than once. "
+        logger.w("It appears that Bugsnag.init() was called more than once. "
             + "Subsequent calls have no effect, but may indicate that Bugsnag is not integrated in "
             + "an Application subclass, which can lead to undesired behaviour.");
     }
@@ -226,7 +227,7 @@ public final class Bugsnag {
     public static void notify(@NonNull String name,
                               @NonNull String message,
                               @NonNull StackTraceElement[] stacktrace) {
-        getClient().notify(name, message, stacktrace, null);
+        getClient().notify(name, message, stacktrace);
     }
 
     /**
