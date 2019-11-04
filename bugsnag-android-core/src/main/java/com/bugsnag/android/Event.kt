@@ -50,7 +50,7 @@ class Event @JvmOverloads internal constructor(
         else -> Error.createError(originalError, projectPackages).toMutableList()
     }
 
-    var threads: MutableList<Thread> = threadState.threads.toMutableList()
+    var threads: MutableList<Thread> = threadState.threads
 
     /**
      * Get the grouping hash associated with this Event.

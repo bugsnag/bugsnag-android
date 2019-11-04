@@ -15,7 +15,7 @@ internal class ThreadState @JvmOverloads constructor
     stackTraces: MutableMap<java.lang.Thread, Array<StackTraceElement>> = java.lang.Thread.getAllStackTraces()
 ) : JsonStream.Streamable {
 
-    internal val threads: List<Thread>
+    internal val threads: MutableList<Thread>
 
     init {
         if (!stackTraces.containsKey(currentThread)) {
@@ -30,7 +30,7 @@ internal class ThreadState @JvmOverloads constructor
             .map {
                 val stacktrace = Stacktrace(stackTraces[it]!!, config.projectPackages)
                 Thread(it.id, it.name, "android", it.id == currentThreadId, stacktrace)
-            }
+            }.toMutableList()
     }
 
     @Throws(IOException::class)

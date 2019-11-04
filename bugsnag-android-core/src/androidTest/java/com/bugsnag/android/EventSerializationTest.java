@@ -11,7 +11,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import androidx.test.core.app.ApplicationProvider;

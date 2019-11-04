@@ -7,20 +7,19 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-internal class StacktraceSerializationTest {
+internal class ErrorSerializationTest {
 
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() =
-            generateSerializationTestCases(
-                "stacktrace", Stacktrace(arrayOf(), emptySet()),
-                Stacktrace(listOf(mapOf(Pair("columnNumber", "55"))))
-            )
+        fun testCases() = generateSerializationTestCases(
+            "error",
+            Error("foo", "bar", listOf())
+        )
     }
 
     @Parameter
-    lateinit var testCase: Pair<Stacktrace, String>
+    lateinit var testCase: Pair<Error, String>
 
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)

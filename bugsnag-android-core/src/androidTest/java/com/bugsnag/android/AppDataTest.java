@@ -4,7 +4,6 @@ import static com.bugsnag.android.BugsnagTestUtils.convert;
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.anyLong;
@@ -15,8 +14,6 @@ import android.content.pm.PackageManager;
 
 import androidx.test.core.app.ApplicationProvider;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

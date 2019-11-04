@@ -18,20 +18,6 @@ class ThreadStateTest {
     private val json = streamableToJsonArray(threadState)
 
     /**
-     * Verifies that the required values for 'thread' are serialised as an array
-     */
-    @Test
-    fun testSerialisation() {
-        for (k in 0 until json.length()) {
-            val thread = json[k] as JSONObject
-            assertNotNull(thread.getString("id"))
-            assertNotNull(thread.getString("name"))
-            assertNotNull(thread.getString("stacktrace"))
-            assertEquals("android", thread.getString("type"))
-        }
-    }
-
-    /**
      * Verifies that the current thread is serialised as an object, and that only this value
      * contains the errorReportingThread boolean flag
      */

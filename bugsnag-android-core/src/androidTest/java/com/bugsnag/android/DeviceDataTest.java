@@ -1,20 +1,15 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.mapToJson;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import androidx.test.core.app.ApplicationProvider;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class DeviceDataTest {
