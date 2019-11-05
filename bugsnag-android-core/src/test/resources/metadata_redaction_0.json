@@ -1,0 +1,7 @@
+{
+  "example": {
+    "normal": "safe",
+    "password": "[REDACTED]",
+    "confirm_password": "[REDACTED]"
+  }
+}
