@@ -2,16 +2,13 @@ package com.bugsnag.android
 
 import java.io.IOException
 import java.util.Date
-import java.util.HashMap
 
 class Breadcrumb internal constructor(
     val message: String,
     val type: BreadcrumbType,
-    metadata: MutableMap<String, Any?>,
+    val metadata: MutableMap<String, Any?>,
     val timestamp: Date = Date()
 ) : JsonStream.Streamable {
-
-    val metadata: MutableMap<String, Any?> = HashMap(metadata)
 
     internal constructor(message: String) : this(
         "manual",
