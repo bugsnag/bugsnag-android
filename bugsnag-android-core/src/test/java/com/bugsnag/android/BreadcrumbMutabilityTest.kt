@@ -9,7 +9,7 @@ class BreadcrumbMutabilityTest {
 
     @Test
     fun breadcrumbCopiesMap() {
-        val data = mutableMapOf<String, Any>()
+        val data = mutableMapOf<String, Any?>()
         val breadcrumb = Breadcrumb("foo", BreadcrumbType.MANUAL, data)
         data["a"] = "bar"
         assertTrue(breadcrumb.metadata.isEmpty())
@@ -18,7 +18,7 @@ class BreadcrumbMutabilityTest {
 
     @Test
     fun breadcrumbProtectsMetadata() {
-        val data = mutableMapOf<String, Any>()
+        val data = mutableMapOf<String, Any?>()
         val breadcrumb = Breadcrumb("foo", BreadcrumbType.MANUAL, data)
         breadcrumb.metadata["a"] = "bar"
         assertFalse(breadcrumb.metadata.isEmpty())

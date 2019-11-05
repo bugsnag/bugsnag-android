@@ -98,7 +98,7 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testPayloadSizeLimit() {
-        val metadata = HashMap<String, Any>()
+        val metadata = HashMap<String, Any?>()
         for (i in 0..399) {
             metadata[String.format(Locale.US, "%d", i)] = "!!"
         }
