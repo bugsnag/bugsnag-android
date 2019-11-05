@@ -16,23 +16,6 @@ buildscript {
     }
 }
 
-repositories {
-    mavenLocal()
-    google()
-
-    // ignore already published artefacts in jcenter/bintray in favour of mavenLocal artefact
-    mavenCentral {
-        content {
-            excludeModule("com.bugsnag", "bugsnag-android")
-        }
-    }
-    jcenter {
-        content {
-            excludeModule("com.bugsnag", "bugsnag-android")
-        }
-    }
-}
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
