@@ -680,4 +680,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     SessionTracker getSessionTracker() {
         return sessionTracker;
     }
+
+    NotifyDelegate getNotifyDelegate() {
+        return notifyDelegate;
+    }
 }
