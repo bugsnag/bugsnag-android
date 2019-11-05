@@ -357,6 +357,9 @@ public class Configuration extends Observable implements Observer {
      */
     public void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
         this.notifyReleaseStages = notifyReleaseStages;
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, notifyReleaseStages));
     }
 
     /**

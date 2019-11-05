@@ -1,8 +1,8 @@
 package com.bugsnag.android
 
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -14,20 +14,33 @@ class BugsnagPluginInterfaceTest {
     lateinit var client: Client
 
     @Test
-    fun registerPlugin() {
-        BugsnagPluginInterface.registerPlugin(FakePlugin::class.java)
-        BugsnagPluginInterface.loadPlugins(client)
-        assertTrue(FakePlugin.initialised)
+    fun loadUnloadPlugin() {
+        BugsnagPluginInterface.loadPlugin(client, FakePlugin::class.java)
+        assertTrue(FakePlugin.active)
+        BugsnagPluginInterface.unloadPlugin(FakePlugin::class.java)
+        assertFalse(FakePlugin.active)
+    }
+
+    @Test
+    fun noExceptionThrownWithInvalidPlugin() {
+        BugsnagPluginInterface.loadPlugin(client, String::class.java)
+        BugsnagPluginInterface.unloadPlugin(String::class.java)
     }
 }
 
-internal class FakePlugin: BugsnagPlugin {
+internal class FakePlugin : BugsnagPlugin {
     companion object {
-        var initialised = false
+        var active = false
     }
 
-    override fun initialisePlugin(client: Client) {
-        initialised = true
+    override var loaded = false
+
+    override fun loadPlugin(client: Client) {
+        active = true
+    }
+
+    override fun unloadPlugin() {
+        active = false
     }
 }
 

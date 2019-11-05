@@ -105,6 +105,11 @@ public class NativeInterface {
          */
         UPDATE_ORIENTATION,
         /**
+         * Set a new value for `app.notifyReleaseStages`. The message object should be
+         * the Configuration object
+         */
+        UPDATE_NOTIFY_RELEASE_STAGES,
+        /**
          * Set a new value for `app.releaseStage`. The message object should be
          * the new release stage
          */
@@ -365,6 +370,48 @@ public class NativeInterface {
      */
     public static void setBinaryArch(@NonNull final String binaryArch) {
         getClient().setBinaryArch(binaryArch);
+    }
+
+    /**
+     * Enable automatic reporting of ANRs.
+     */
+    public static void enableAnrReporting() {
+        getClient().enableAnrReporting();
+    }
+
+    /**
+     * Disable automatic reporting of ANRs.
+     */
+    public static void disableAnrReporting() {
+        getClient().disableAnrReporting();
+    }
+
+    /**
+     * Enable automatic reporting of C/C++ crashes.
+     */
+    public static void enableNdkCrashReporting() {
+        getClient().enableNdkCrashReporting();
+    }
+
+    /**
+     * Disable automatic reporting of C/C++ crashes.
+     */
+    public static void disableNdkCrashReporting() {
+        getClient().disableNdkCrashReporting();
+    }
+
+    /**
+     * Enable automatic reporting of uncaught Java exceptions.
+     */
+    public static void enableUncaughtJavaExceptionReporting() {
+        getClient().enableExceptionHandler();
+    }
+
+    /**
+     * Disable automatic reporting of uncaught Java exceptions.
+     */
+    public static void disableUncaughtJavaExceptionReporting() {
+        getClient().disableExceptionHandler();
     }
 
     /**

@@ -29,3 +29,19 @@ Scenario: Sleeping the main thread with pending touch events
     And I wait for 4 seconds
     And I clear any error dialogue
     Then I should receive no requests
+
+Scenario: Sleeping the main thread with pending touch events after disabling ANR reporting
+    When I run "AppNotRespondingLaterDisabledScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 4 seconds
+    And I clear any error dialogue
+    Then I should receive no requests
+
+Scenario: Sleeping the main thread with pending touch events after the release stage settings change to disable reporting
+    When I run "AppNotRespondingOutsideReleaseStagesScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 4 seconds
+    And I clear any error dialogue
+    Then I should receive no requests
