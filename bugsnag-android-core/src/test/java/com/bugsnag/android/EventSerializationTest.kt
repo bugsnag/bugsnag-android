@@ -48,7 +48,7 @@ internal class EventSerializationTest {
                 HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
                 stackTrace = arrayOf()
             )
-            event.threads.clear()
+            event.threads = emptyList()
             cb(event)
             return event
         }

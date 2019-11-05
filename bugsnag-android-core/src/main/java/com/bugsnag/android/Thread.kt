@@ -13,7 +13,7 @@ class Thread internal constructor(
     stacktrace: Stacktrace
 ) : JsonStream.Streamable {
 
-    var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
+    var stacktrace: List<Stackframe> = stacktrace.trace
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {

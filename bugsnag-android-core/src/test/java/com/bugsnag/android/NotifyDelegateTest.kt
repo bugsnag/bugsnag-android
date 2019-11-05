@@ -90,7 +90,6 @@ internal class NotifyDelegateTest {
 
         val stacktrace = event.errors[0].stacktrace
         assertEquals("com.bugsnag.android.NotifyDelegateTest.notifyByMessage", stacktrace[0].method)
-        // FIXME this fails
         val threadTrace = event.threads.single { it.isErrorReportingThread }
         assertTrue(stacktrace[0].method == threadTrace.stacktrace[0].method)
         validateEventMetadata(event)
