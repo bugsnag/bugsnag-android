@@ -18,7 +18,7 @@ class Event @JvmOverloads internal constructor(
     private val handledState: HandledState,
     private val metadata: Metadata = Metadata(),
     private val stackTrace: Array<StackTraceElement>? = null,
-    private val threadState: ThreadState = ThreadState(config, originalError?.stackTrace ?: stackTrace!!)
+    private val threadState: ThreadState? = if (config.sendThreads) ThreadState(config, originalError?.stackTrace ?: stackTrace!!) else null
 ) : JsonStream.Streamable, MetadataAware, UserAware {
 
     var session: Session? = null
@@ -38,8 +38,8 @@ class Event @JvmOverloads internal constructor(
 
     var apiKey: String = config.apiKey
 
-    var app: MutableMap<String, Any> = HashMap()
-    var device: MutableMap<String, Any> = HashMap()
+    var app: MutableMap<String, Any?> = HashMap()
+    var device: MutableMap<String, Any?> = HashMap()
 
     val unhandled = handledState.isUnhandled
 
@@ -51,7 +51,7 @@ class Event @JvmOverloads internal constructor(
         else -> Error.createError(originalError, projectPackages).toMutableList()
     }
 
-    var threads: MutableList<Thread> = threadState.threads
+    var threads: MutableList<Thread> = threadState?.threads ?: mutableListOf()
 
     /**
      * Get the grouping hash associated with this Event.
@@ -116,9 +116,12 @@ class Event @JvmOverloads internal constructor(
         writer.name("breadcrumbs").value(breadcrumbs)
         writer.name("groupingHash").value(groupingHash)
 
-        if (config.sendThreads) {
-            writer.name("threads").value(threadState)
+        writer.name("threads")
+        writer.beginArray()
+        for (thread in threads) {
+            writer.value(thread)
         }
+        writer.endArray()
 
         if (session != null) {
             val copy = Session.copySession(session)

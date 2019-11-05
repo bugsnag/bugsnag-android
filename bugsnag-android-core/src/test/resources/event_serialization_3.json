@@ -1,0 +1,15 @@
+{
+  "metaData": {},
+  "severity": "info",
+  "severityReason": {
+    "type": "userCallbackSetSeverity"
+  },
+  "unhandled": false,
+  "projectPackages": [],
+  "exceptions": [],
+  "user": {},
+  "app": {},
+  "device": {},
+  "breadcrumbs": [],
+  "threads": []
+}

@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.JsonUtilsKt.validateJson;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -7,8 +9,6 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.bugsnag.android.JsonUtilsKt.validateJson;
 
 public class MetadataRedactionTest {
 
