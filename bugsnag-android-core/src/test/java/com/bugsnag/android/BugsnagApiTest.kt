@@ -12,7 +12,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.lang.IllegalStateException
 
 /**
  * Verifies that method calls are forwarded onto the appropriate method on Client.
@@ -60,6 +59,12 @@ class BugsnagApiTest {
     }
 
     @Test
+    fun getUser() {
+        Bugsnag.getUser()
+        verify(client, times(1)).getUser()
+    }
+
+    @Test
     fun setUser() {
         Bugsnag.setUser("123", "Jane@example.com", "Jig")
         verify(client, times(1)).setUser("123", "Jane@example.com", "Jig")
@@ -91,6 +96,13 @@ class BugsnagApiTest {
     }
 
     @Test
+    fun removeOnError() {
+        Bugsnag.removeOnError { true }
+        Bugsnag.removeOnError(OnError { true })
+        verify(client, times(2)).removeOnError(ArgumentMatchers.any())
+    }
+
+    @Test
     fun addOnBreadcrumb() {
         Bugsnag.addOnBreadcrumb { true }
         Bugsnag.addOnBreadcrumb(OnBreadcrumb { true })
@@ -102,6 +114,20 @@ class BugsnagApiTest {
         Bugsnag.removeOnBreadcrumb { true }
         Bugsnag.removeOnBreadcrumb(OnBreadcrumb { true })
         verify(client, times(2)).removeOnBreadcrumb(ArgumentMatchers.any())
+    }
+
+    @Test
+    fun addOnSession() {
+        Bugsnag.addOnSession { true }
+        Bugsnag.addOnSession(OnSession { true })
+        verify(client, times(2)).addOnSession(ArgumentMatchers.any())
+    }
+
+    @Test
+    fun removeOnSession() {
+        Bugsnag.removeOnSession { true }
+        Bugsnag.removeOnSession(OnSession { true })
+        verify(client, times(2)).removeOnSession(ArgumentMatchers.any())
     }
 
     @Test
@@ -133,15 +159,33 @@ class BugsnagApiTest {
     }
 
     @Test
+    fun addMetadataTopLevel() {
+        Bugsnag.addMetadata("foo", "bar")
+        verify(client, times(1)).addMetadata("foo", "bar")
+    }
+
+    @Test
     fun addMetadata() {
         Bugsnag.addMetadata("foo", "bar", "wham")
         verify(client, times(1)).addMetadata("foo", "bar", "wham")
     }
 
     @Test
+    fun clearMetadataTopLevel() {
+        Bugsnag.clearMetadata("foo")
+        verify(client, times(1)).clearMetadata("foo")
+    }
+
+    @Test
     fun clearMetadata() {
         Bugsnag.clearMetadata("foo", "bar")
         verify(client, times(1)).clearMetadata("foo", "bar")
+    }
+
+    @Test
+    fun getMetadataTopLevel() {
+        Bugsnag.getMetadata("foo")
+        verify(client, times(1)).getMetadata("foo")
     }
 
     @Test

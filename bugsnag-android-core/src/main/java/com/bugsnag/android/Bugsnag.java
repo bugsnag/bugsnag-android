@@ -111,6 +111,11 @@ public final class Bugsnag {
         getClient().setUser(id, email, name);
     }
 
+    @NonNull
+    public static User getUser() {
+        return getClient().getUser();
+    }
+
     /**
      * Set a unique identifier for the user currently using your application.
      * By default, this will be an automatically generated unique id
@@ -169,6 +174,10 @@ public final class Bugsnag {
         getClient().addOnError(onError);
     }
 
+    public static void removeOnError(@NonNull OnError onError) {
+        getClient().removeOnError(onError);
+    }
+
     /**
      * Add a "before breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
@@ -193,6 +202,14 @@ public final class Bugsnag {
 
     public static void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         getClient().removeOnBreadcrumb(onBreadcrumb);
+    }
+
+    public static void addOnSession(@NonNull OnSession onSession) {
+        getClient().addOnSession(onSession);
+    }
+
+    public static void removeOnSession(@NonNull OnSession onSession) {
+        getClient().removeOnSession(onSession);
     }
 
     /**
@@ -246,13 +263,26 @@ public final class Bugsnag {
         getClient().notify(name, message, stacktrace, onError);
     }
 
+    public static void addMetadata(@NonNull String section, @Nullable Object value) {
+        getClient().addMetadata(section, value);
+    }
+
     public static void addMetadata(@NonNull String section, @Nullable String key,
                                    @Nullable Object value) {
         getClient().addMetadata(section, key, value);
     }
 
+    public static void clearMetadata(@NonNull String section) {
+        getClient().clearMetadata(section);
+    }
+
     public static void clearMetadata(@NonNull String section, @Nullable String key) {
         getClient().clearMetadata(section, key);
+    }
+
+    @Nullable
+    public static Object getMetadata(@NonNull String section) {
+        return getClient().getMetadata(section);
     }
 
     @Nullable
