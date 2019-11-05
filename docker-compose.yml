@@ -28,6 +28,11 @@ services:
     volumes:
       - ./build:/app/build
 
+  android-sizer:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-sizer
+
   android-emulator:
     build:
       context: .
