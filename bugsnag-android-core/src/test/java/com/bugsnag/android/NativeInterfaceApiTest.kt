@@ -21,7 +21,7 @@ import java.io.File
  * and that adequate sanitisation takes place.
  */
 @RunWith(MockitoJUnitRunner::class)
-internal class NativeInterfaceTest {
+internal class NativeInterfaceApiTest {
 
     @Mock
     lateinit var client: Client

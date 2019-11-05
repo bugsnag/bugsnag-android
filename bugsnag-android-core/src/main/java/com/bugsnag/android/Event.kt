@@ -16,9 +16,9 @@ class Event @JvmOverloads internal constructor(
     val originalError: Throwable? = null,
     internal val config: ImmutableConfig,
     private val handledState: HandledState,
-    private val metadata: Metadata = Metadata(),
+    internal val metadata: Metadata = Metadata(),
     private val stackTrace: Array<StackTraceElement>? = null,
-    private val threadState: ThreadState? = if (config.sendThreads) ThreadState(config, originalError?.stackTrace ?: stackTrace!!) else null
+    threadState: ThreadState? = if (config.sendThreads) ThreadState(config, originalError?.stackTrace ?: stackTrace!!) else null
 ) : JsonStream.Streamable, MetadataAware, UserAware {
 
     var session: Session? = null
@@ -80,7 +80,7 @@ class Event @JvmOverloads internal constructor(
     /**
      * @return user information associated with this Event
      */
-    private var _user = User(null, null, null)
+    internal var _user = User(null, null, null)
 
     protected fun shouldIgnoreClass(): Boolean {
         return config.ignoreClasses.contains(errors[0].errorClass)
@@ -155,13 +155,13 @@ class Event @JvmOverloads internal constructor(
     override fun setUserEmail(email: String?) = setUser(_user.id, email, _user.name)
     override fun setUserName(name: String?) = setUser(_user.id, _user.email, name)
 
-    override fun addMetadata(section: String, value: Any?) = addMetadata(section, null, value)
+    override fun addMetadata(section: String, value: Any?) = metadata.addMetadata(section, value)
     override fun addMetadata(section: String, key: String?, value: Any?) =
         metadata.addMetadata(section, key, value)
 
-    override fun clearMetadata(section: String) = clearMetadata(section, null)
+    override fun clearMetadata(section: String) = metadata.clearMetadata(section)
     override fun clearMetadata(section: String, key: String?) = metadata.clearMetadata(section, key)
 
-    override fun getMetadata(section: String) = getMetadata(section, null)
+    override fun getMetadata(section: String) = metadata.getMetadata(section)
     override fun getMetadata(section: String, key: String?) = metadata.getMetadata(section, key)
 }

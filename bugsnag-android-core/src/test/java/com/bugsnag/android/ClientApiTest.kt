@@ -23,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner
  * and that adequate sanitisation takes place.
  */
 @RunWith(MockitoJUnitRunner::class)
-internal class ClientTest {
+internal class ClientApiTest {
 
     @Mock
     lateinit var userRepository: UserRepository

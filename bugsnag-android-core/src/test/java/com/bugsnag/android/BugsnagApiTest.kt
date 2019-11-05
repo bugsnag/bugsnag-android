@@ -18,7 +18,7 @@ import java.lang.IllegalStateException
  * Verifies that method calls are forwarded onto the appropriate method on Client.
  */
 @RunWith(MockitoJUnitRunner::class)
-class BugsnagTest {
+class BugsnagApiTest {
 
     @Mock
     lateinit var client: Client
