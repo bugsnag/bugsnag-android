@@ -14,9 +14,46 @@ internal class StacktraceSerializationTest {
         @Parameters
         fun testCases() =
             generateSerializationTestCases(
-                "stacktrace", Stacktrace(arrayOf(), emptySet()),
-                Stacktrace(listOf(mapOf(Pair("columnNumber", "55"))))
+                "stacktrace",
+
+                // empty stacktrace element ctor
+                Stacktrace(arrayOf(), emptySet()),
+
+                // empty custom frames ctor
+                Stacktrace(listOf(mapOf(Pair("columnNumber", "55")))),
+
+                // basic
+                basic(),
+
+                // in project frames
+                inProject(),
+
+                // stacktrace trimming
+                trimStacktrace(),
+                trimStacktraceListCtor()
             )
+
+        private fun basic() =
+            Stacktrace(RuntimeException("Whoops").stackTrace.sliceArray(IntRange(0, 1)), emptySet())
+
+        private fun inProject() = Stacktrace(
+            RuntimeException("Whoops").stackTrace.sliceArray(IntRange(0, 1)),
+            setOf("com.bugsnag.android")
+        )
+
+        private fun trimStacktrace(): Stacktrace {
+            val elements = (0..999).map {
+                StackTraceElement("SomeClass", "someMethod", "someFile", it)
+            }
+            return Stacktrace(elements.toTypedArray(), emptyList())
+        }
+
+        private fun trimStacktraceListCtor(): Stacktrace {
+            val elements = (0..999).map {
+                mapOf(Pair("Foo", it))
+            }
+            return Stacktrace(elements)
+        }
     }
 
     @Parameter
