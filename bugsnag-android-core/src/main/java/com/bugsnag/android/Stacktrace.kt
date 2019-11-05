@@ -21,11 +21,11 @@ internal class Stacktrace : JsonStream.Streamable {
         ).map { mapToStackframe(it) }
     }
 
-    constructor(frames: List<Map<String, Any>>) {
+    constructor(frames: List<Map<String, Any?>>) {
         trace = limitTraceLength(frames).map { mapToStackframe(it) }
     }
 
-    private fun mapToStackframe(it: Map<String, Any>) =
+    private fun mapToStackframe(it: Map<String, Any?>) =
         Stackframe(
             it["method"] as String?,
             it["file"] as String?,
@@ -34,7 +34,7 @@ internal class Stacktrace : JsonStream.Streamable {
             it.filterNot { arrayOf("method", "file", "lineNumber", "inProject").contains(it.key) }
         )
 
-    private fun limitTraceLength(frames: List<Map<String, Any>>): List<Map<String, Any>> {
+    private fun limitTraceLength(frames: List<Map<String, Any?>>): List<Map<String, Any?>> {
         return when {
             frames.size >= STACKTRACE_TRIM_LENGTH -> frames.subList(0, STACKTRACE_TRIM_LENGTH)
             else -> frames
@@ -51,8 +51,8 @@ internal class Stacktrace : JsonStream.Streamable {
     private fun serializeStackframe(
         el: StackTraceElement,
         projectPackages: Collection<String>
-    ): Map<String, Any>? {
-        val map = HashMap<String, Any>()
+    ): Map<String, Any?>? {
+        val map = HashMap<String, Any?>()
         try {
             val methodName = when {
                 el.className.isNotEmpty() -> el.className + "." + el.methodName

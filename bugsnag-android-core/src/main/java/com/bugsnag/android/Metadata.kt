@@ -15,10 +15,10 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-internal data class Metadata @JvmOverloads constructor(private val map: Map<String, Any> = ConcurrentHashMap()) :
+internal data class Metadata @JvmOverloads constructor(private val map: Map<String, Any?> = ConcurrentHashMap()) :
     Observable(), JsonStream.Streamable, MetadataAware {
 
-    private val store: MutableMap<String, Any> = ConcurrentHashMap(map)
+    private val store: MutableMap<String, Any?> = ConcurrentHashMap(map)
     internal val jsonStreamer = ObjectJsonStreamer()
     val redactKeys: Set<String> = jsonStreamer.redactKeys
 
@@ -53,12 +53,12 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
         }
     }
 
-    private fun insertValue(map: MutableMap<String, Any>, section: String, value: Any) {
+    private fun insertValue(map: MutableMap<String, Any?>, section: String, value: Any) {
         val existingVal = map[section]
 
         // FIXME need to rework merging for top-level values
         if (existingVal is Map<*, *> && existingVal.isNotEmpty()) {
-            map[section] = mergeMaps(listOf(existingVal as Map<String, Any>, value as Map<String, Any>
+            map[section] = mergeMaps(listOf(existingVal as Map<String, Any?>, value as Map<String, Any?>
             ))
         } else {
             map[section] = value
@@ -92,13 +92,13 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
 
         return when {
             tab is Map<*, *> && key != null -> {
-                (tab as Map<String, Any>?)!![key]
+                (tab as Map<String, Any?>?)!![key]
             }
             else -> tab
         }
     }
 
-    private fun getOrAddSection(section: String): MutableMap<String, Any> {
+    private fun getOrAddSection(section: String): MutableMap<String, Any?> {
         var tab = store[section]
 
         if (tab !is MutableMap<*, *>) {
@@ -106,10 +106,10 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
             store[section] = tab
         }
 
-        return (tab as MutableMap<String, Any>?)!!
+        return (tab as MutableMap<String, Any?>?)!!
     }
 
-    fun toMap(): Map<String, Any> = HashMap(store)
+    fun toMap(): Map<String, Any?> = HashMap(store)
 
     fun setRedactKeys(redactKeys: Collection<String>) {
         val data = HashSet(redactKeys)
@@ -126,9 +126,9 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
             return newMeta
         }
 
-        internal fun mergeMaps(data: List<Map<String, Any>>): Map<String, Any> {
+        internal fun mergeMaps(data: List<Map<String, Any?>>): Map<String, Any?> {
             val keys = data.flatMap { it.keys }.toSet()
-            val result = ConcurrentHashMap<String, Any>()
+            val result = ConcurrentHashMap<String, Any?>()
 
             for (map in data) {
                 for (key in keys) {
@@ -139,9 +139,9 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
         }
 
         private fun getMergeValue(
-            result: ConcurrentHashMap<String, Any>,
+            result: ConcurrentHashMap<String, Any?>,
             key: String,
-            map: Map<String, Any>
+            map: Map<String, Any?>
         ) {
             val baseValue = result[key]
             val overridesValue = map[key]
@@ -149,8 +149,8 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
             if (overridesValue != null) {
                 if (baseValue is Map<*, *> && overridesValue is Map<*, *>) {
                     // Both original and overrides are Maps, go deeper
-                    val first = baseValue as Map<String, Any>?
-                    val second = overridesValue as Map<String, Any>?
+                    val first = baseValue as Map<String, Any?>?
+                    val second = overridesValue as Map<String, Any?>?
                     result[key] = mergeMaps(listOf(first!!, second!!))
                 } else {
                     result[key] = overridesValue

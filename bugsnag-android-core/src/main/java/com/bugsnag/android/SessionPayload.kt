@@ -6,8 +6,8 @@ import java.io.IOException
 class SessionPayload internal constructor(
     internal val session: Session?,
     private val files: List<File>?,
-    val app: MutableMap<String, Any>,
-    val device: MutableMap<String, Any>
+    var app: MutableMap<String, Any?>,
+    var device: MutableMap<String, Any?>
 ) : JsonStream.Streamable {
 
     @Throws(IOException::class)

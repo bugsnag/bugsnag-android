@@ -7,7 +7,7 @@ class Stackframe internal constructor(
     var file: String?,
     var lineNumber: Number?,
     var inProject: Boolean?,
-    private var customFields: Map<String, Any>
+    private var customFields: Map<String, Any?>
 ): JsonStream.Streamable {
 
     @Throws(IOException::class)
