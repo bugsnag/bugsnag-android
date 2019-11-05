@@ -1,18 +1,25 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.generateClient;
-import static com.bugsnag.android.BugsnagTestUtils.generateSessionStore;
+import android.app.ActivityManager;
+import android.content.Context;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.*;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Date;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SessionTrackerTest {
 
     private static final String ACTIVITY_NAME = "test";
@@ -20,8 +27,19 @@ public class SessionTrackerTest {
     private SessionTracker sessionTracker;
     private User user;
     private Configuration configuration;
-    private Client client;
     private ImmutableConfig immutableConfig;
+
+    @Mock
+    Client client;
+
+    @Mock
+    Context context;
+
+    @Mock
+    ActivityManager activityManager;
+
+    @Mock
+    SessionStore sessionStore;
 
     /**
      * Configures a session tracker that automatically captures sessions
@@ -29,12 +47,14 @@ public class SessionTrackerTest {
      */
     @Before
     public void setUp() {
+        when(client.getAppContext()).thenReturn(context);
+        when(context.getSystemService("activity")).thenReturn(activityManager);
+
         configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
-        client = generateClient();
         immutableConfig = BugsnagTestUtils.generateImmutableConfig();
         sessionTracker = new SessionTracker(immutableConfig, configuration.callbackState,
-                client, generateSessionStore(), NoopLogger.INSTANCE);
+                client, sessionStore, NoopLogger.INSTANCE);
         configuration.setAutoTrackSessions(true);
         user = new User(null, null, null);
     }
@@ -126,7 +146,7 @@ public class SessionTrackerTest {
     @Test
     public void testZeroSessionTimeout() {
         sessionTracker = new SessionTracker(immutableConfig, configuration.callbackState, client,
-            0, generateSessionStore(), NoopLogger.INSTANCE);
+            0, sessionStore, NoopLogger.INSTANCE);
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -141,7 +161,7 @@ public class SessionTrackerTest {
     @Test
     public void testSessionTimeout() {
         sessionTracker = new SessionTracker(immutableConfig, configuration.callbackState, client,
-            100, generateSessionStore(), NoopLogger.INSTANCE);
+            100, sessionStore, NoopLogger.INSTANCE);
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
