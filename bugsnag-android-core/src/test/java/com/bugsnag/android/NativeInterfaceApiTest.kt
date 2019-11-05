@@ -145,8 +145,8 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun getEnabledReleaseStages() {
-        `when`(immutableConfig.enabledReleaseStages).thenReturn(listOf("prod"))
-        assertEquals(listOf("prod"), NativeInterface.getEnabledReleaseStages())
+        `when`(immutableConfig.enabledReleaseStages).thenReturn(setOf("prod"))
+        assertEquals(setOf("prod"), NativeInterface.getEnabledReleaseStages())
     }
 
     @Test

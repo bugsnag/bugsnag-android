@@ -111,7 +111,7 @@ internal class ManifestConfigLoader {
             enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages).toSet()
             ignoreClasses = getStrArray(data, IGNORE_CLASSES, ignoreClasses).toSet()
             projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages).toSet()
-            redactKeys = getStrArray(data, REDACT_KEYS, redactKeys)
+            redactKeys = getStrArray(data, REDACT_KEYS, redactKeys).toSet()
         }
     }
 

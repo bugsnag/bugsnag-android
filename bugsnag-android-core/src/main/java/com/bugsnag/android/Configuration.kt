@@ -178,7 +178,7 @@ class Configuration(
      *
      * client.setRedactKeys("password", "credit_card");
      */
-    var redactKeys: Collection<String>
+    var redactKeys: Set<String>
         get() = Collections.unmodifiableSet(metadataState.metadata.redactKeys)
         set(redactKeys) = metadataState.metadata.setRedactKeys(redactKeys)
 
