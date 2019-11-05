@@ -8,10 +8,9 @@ class Breadcrumb internal constructor(
     val message: String,
     val type: BreadcrumbType,
     metadata: MutableMap<String, Any?>,
-    captureDate: Date = Date()
+    val timestamp: Date = Date()
 ) : JsonStream.Streamable {
 
-    val timestamp: String = DateUtils.toIso8601(captureDate)
     val metadata: MutableMap<String, Any?> = HashMap(metadata)
 
     internal constructor(message: String) : this(
@@ -24,7 +23,7 @@ class Breadcrumb internal constructor(
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         writer.beginObject()
-        writer.name("timestamp").value(timestamp)
+        writer.name("timestamp").value(DateUtils.toIso8601(timestamp))
         writer.name("name").value(message)
         writer.name("type").value(type.toString())
         writer.name("metaData")
