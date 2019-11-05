@@ -34,7 +34,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client implements MetadataAware, CallbackAware, UserAware {
+public final class Client implements MetadataAware, CallbackAware, UserAware {
 
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
