@@ -68,7 +68,7 @@ internal class InternalReportDelegateTest {
         assertEquals(10592342221, event.device["freeDisk"])
 
         // metadata
-        assertEquals("AndroidBugsnagNotifier", event.getMetadata("BugsnagDiagnostics", "notifierName"))
+        assertNotNull(event.getMetadata("BugsnagDiagnostics", "notifierName"))
         assertNotNull(event.getMetadata("BugsnagDiagnostics", "notifierVersion"))
         assertEquals("test", event.getMetadata("BugsnagDiagnostics", "apiKey"))
         assertEquals("com.example", event.getMetadata("BugsnagDiagnostics", "packageName"))

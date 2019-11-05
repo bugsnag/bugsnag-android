@@ -1,20 +1,23 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import androidx.test.filters.SmallTest
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.json.JSONArray
 import org.json.JSONObject
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
-
 import java.lang.Thread
 
 @SmallTest
 class ThreadStateTest {
 
     private val configuration = generateImmutableConfig()
-    private val threadState = ThreadState(configuration)
+    private val trace = arrayOf(StackTraceElement("Foo", "Bar", "foobar", 5))
+
+    private val threadState = ThreadState(configuration, trace)
     private val json = streamableToJsonArray(threadState)
 
     /**
@@ -37,7 +40,8 @@ class ThreadStateTest {
             .map { it.key }
             .first()
 
-        val state = ThreadState(configuration, null, otherThread, Thread.getAllStackTraces())
+        val state =
+            ThreadState(configuration, trace, otherThread, Thread.getAllStackTraces())
         val json = streamableToJsonArray(state)
         verifyCurrentThreadStructure(json, otherThread.id)
     }
@@ -52,7 +56,8 @@ class ThreadStateTest {
         val missingTraces = Thread.getAllStackTraces()
         missingTraces.remove(currentThread)
 
-        val state = ThreadState(configuration, null ,currentThread, missingTraces)
+        val state = ThreadState(configuration,
+            trace, currentThread, missingTraces)
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {
@@ -67,7 +72,8 @@ class ThreadStateTest {
     fun testHandledStacktrace() {
         val currentThread = Thread.currentThread()
         val allStackTraces = Thread.getAllStackTraces()
-        val state = ThreadState(configuration, null, currentThread, allStackTraces)
+        val state = ThreadState(configuration,
+            trace, currentThread, allStackTraces)
         val json = streamableToJsonArray(state)
 
         // find the stack trace for the current thread that was passed as a parameter
@@ -102,7 +108,7 @@ class ThreadStateTest {
         val exc: Throwable = RuntimeException("Whoops")
         val expectedTrace = exc.stackTrace
 
-        val state = ThreadState(configuration, exc, currentThread, allStackTraces)
+        val state = ThreadState(configuration, exc.stackTrace, currentThread, allStackTraces)
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {
@@ -122,9 +128,11 @@ class ThreadStateTest {
         }
     }
 
-    private fun verifyCurrentThreadStructure(json: JSONArray,
-                                             currentThreadId: Long,
-                                             action: ((thread: JSONObject) -> Unit)? = null) {
+    private fun verifyCurrentThreadStructure(
+        json: JSONArray,
+        currentThreadId: Long,
+        action: ((thread: JSONObject) -> Unit)? = null
+    ) {
         var currentThreadCount = 0
 
         for (k in 0 until json.length()) {
