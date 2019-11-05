@@ -23,13 +23,12 @@ class NotifyDelegate {
     private final DeviceData deviceData;
     private final SessionTracker sessionTracker;
     private final Logger logger;
-    private final ReportDeliveryDelegate reportDeliveryDelegate;
 
     NotifyDelegate(ImmutableConfig immutableConfig, MetadataState metadataState,
                    UserState userState, ContextState contextState,
                    BreadcrumbState breadcrumbState, CallbackState callbackState,
                    AppData appData, DeviceData deviceData, SessionTracker sessionTracker,
-                   Logger logger, ReportDeliveryDelegate reportDeliveryDelegate) {
+                   Logger logger) {
         this.immutableConfig = immutableConfig;
         this.metadataState = metadataState;
         this.userState = userState;
@@ -40,49 +39,49 @@ class NotifyDelegate {
         this.deviceData = deviceData;
         this.sessionTracker = sessionTracker;
         this.logger = logger;
-        this.reportDeliveryDelegate = reportDeliveryDelegate;
     }
 
-    void notify(@NonNull Throwable exc, @Nullable OnError onError) {
+    Event notify(@NonNull Throwable exc, @Nullable OnError onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
         Event event = new Event(exc, immutableConfig, handledState, metadataState.getMetadata());
-        notifyInternal(event, onError);
+        return notifyInternal(event, onError);
     }
 
-    void notify(@NonNull String name,
-                @NonNull String message,
-                @NonNull StackTraceElement[] stacktrace,
-                @Nullable OnError onError) {
+    Event notify(@NonNull String name,
+                 @NonNull String message,
+                 @NonNull StackTraceElement[] stacktrace,
+                 @Nullable OnError onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
         Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages());
         Error err = new Error(name, message, trace.getTrace());
         Metadata metadata = metadataState.getMetadata();
-        Event event = new Event(null, immutableConfig, handledState, metadata);
+        Event event = new Event(null, immutableConfig, handledState, metadata, stacktrace);
         event.setErrors(Collections.singletonList(err));
-        notifyInternal(event, onError);
+        return notifyInternal(event, onError);
     }
 
-    void notifyUnhandledException(@NonNull Throwable exc,
-                                  @HandledState.SeverityReason String severityReason,
-                                  @Nullable String attributeValue,
-                                  java.lang.Thread thread) {
+    Event notifyUnhandledException(@NonNull Throwable exc,
+                                   @HandledState.SeverityReason String severityReason,
+                                   @Nullable String attributeValue,
+                                   java.lang.Thread thread) {
         HandledState handledState
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
-        ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
+        ThreadState threadState = new ThreadState(immutableConfig, exc.getStackTrace(), thread);
         Event event = new Event(exc, immutableConfig, handledState,
-                metadataState.getMetadata(), threadState);
-        notifyInternal(event, null);
+                metadataState.getMetadata(), null, threadState);
+        return notifyInternal(event, null);
     }
 
-    void notifyInternal(@NonNull Event event,
-                        @Nullable OnError onError) {
+    @Nullable
+    Event notifyInternal(@NonNull Event event,
+                         @Nullable OnError onError) {
         // Don't notify if this event class should be ignored
         if (event.shouldIgnoreClass()) {
-            return;
+            return null;
         }
 
         if (!immutableConfig.shouldNotifyForReleaseStage()) {
-            return;
+            return null;
         }
 
         // get session for event
@@ -113,7 +112,7 @@ class NotifyDelegate {
         event.setUser(user.getId(), user.getEmail(), user.getName());
 
         // Attach default context from active activity
-        if (TextUtils.isEmpty(event.getContext())) {
+        if (Intrinsics.isEmpty(event.getContext())) {
             String context = contextState.getContext();
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
@@ -122,9 +121,9 @@ class NotifyDelegate {
         if (!callbackState.runOnErrorTasks(event, logger)
                 || (onError != null && !onError.run(event))) {
             logger.i("Skipping notification - onError task returned false");
-            return;
+            return null;
         }
-        reportDeliveryDelegate.deliverEvent(event);
+        return event;
     }
 
 }

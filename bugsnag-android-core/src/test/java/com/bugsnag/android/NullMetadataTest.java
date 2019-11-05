@@ -41,7 +41,7 @@ public class NullMetadataTest {
     @Test
     public void testSecondErrorDefaultMetadata() {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
-        Event event = new Event(null, config, handledState);
+        Event event = new Event(new RuntimeException(), config, handledState);
         List<String> projectPackages = Collections.emptyList();
         Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages);
         Error err = new Error("RuntimeException", "Something broke",

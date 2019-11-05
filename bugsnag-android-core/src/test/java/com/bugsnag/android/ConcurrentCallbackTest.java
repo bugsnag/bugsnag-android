@@ -19,7 +19,8 @@ public class ConcurrentCallbackTest {
 
     private final HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
-    private final Event event = new Event(generateImmutableConfig(), handledState);
+    private final Event event = new Event(new RuntimeException(),
+            generateImmutableConfig(), handledState);
     private final SessionPayload sessionPayload = new SessionPayload(null,
             new ArrayList<File>(), new HashMap<String, Object>(), new HashMap<String, Object>());
 

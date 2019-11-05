@@ -17,7 +17,8 @@ internal class EventSerializationTest {
             val event = Event(
                 null,
                 generateImmutableConfig(),
-                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+                stackTrace = arrayOf()
             )
             event.threads.clear()
             return generateSerializationTestCases("event", event)

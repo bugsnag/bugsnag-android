@@ -158,7 +158,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         notifyDelegate = new NotifyDelegate(immutableConfig, metadataState, userState,
                 contextState, breadcrumbState, callbackState, appData, deviceData, sessionTracker,
-                logger, reportDeliveryDelegate);
+                logger);
 
         // Install a default exception handler with this client
         if (immutableConfig.getAutoDetectErrors()) {
@@ -524,7 +524,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      *                  additional modification
      */
     public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
-        notifyDelegate.notify(exc, onError);
+        Event event = notifyDelegate.notify(exc, onError);
+        notifyInternal(event);
     }
 
     /**
@@ -553,9 +554,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
-        notifyDelegate.notify(name, message, stacktrace, onError);
+        Event event = notifyDelegate.notify(name, message, stacktrace, onError);
+        notifyInternal(event);
     }
 
+    private void notifyInternal(@Nullable Event event) {
+        if (event != null) {
+            reportDeliveryDelegate.deliverEvent(event);
+        }
+    }
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable Object value) {

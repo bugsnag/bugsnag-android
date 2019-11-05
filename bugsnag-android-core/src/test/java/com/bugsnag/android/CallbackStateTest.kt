@@ -14,7 +14,7 @@ import java.util.HashMap
 class CallbackStateTest {
 
     private val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
-    private val event = Event(config = generateImmutableConfig(), handledState = handledState)
+    private val event = Event(RuntimeException(), config = generateImmutableConfig(), handledState = handledState)
     private val breadcrumb = Breadcrumb("")
     private val sessionPayload = SessionPayload(null, ArrayList(), HashMap(), HashMap())
 
