@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.content.pm.PackageManager
+import com.bugsnag.android.BugsnagTestUtils.convert
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,8 +23,14 @@ internal class AppDataSerializationTest {
 
             val appData = AppData(context, pm, generateImmutableConfig(), null, NoopLogger)
 
+
+            val config = BugsnagTestUtils.generateConfiguration()
+            config.appVersion = "1.2.3"
+            config.releaseStage = "test-stage"
+            val override = AppData(context, pm, convert(config), null, NoopLogger)
+
             return generateSerializationTestCases(
-                "app_data", appData.appDataSummary
+                "app_data", appData.appDataSummary, override.appDataSummary
             )
         }
     }
