@@ -159,7 +159,12 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private void trackSessionIfNeeded(final Session session) {
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
-        if (notifyForRelease
+        final SessionPayload payload = new SessionPayload(session, null,
+                        client.getAppData().getAppDataSummary(),
+                        client.getDeviceData().getDeviceDataSummary());
+        boolean deliverSession = callbackState.runOnSessionTasks(payload, logger);
+
+        if (deliverSession && notifyForRelease
             && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
             notifySessionStartObserver(session);
@@ -171,16 +176,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
-                        SessionPayload payload =
-                            new SessionPayload(session, null,
-                                client.appData.getAppDataSummary(),
-                                    client.deviceData.getDeviceDataSummary());
-
                         try {
-                            for (OnSession mutator : callbackState.getOnSessionTasks()) {
-                                mutator.run(payload);
-                            }
-
                             DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
 
                             switch (deliveryStatus) {

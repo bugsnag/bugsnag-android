@@ -21,6 +21,12 @@ internal class SessionTrackerBreadcrumbTest {
     lateinit var client: Client
 
     @Mock
+    internal var appData: AppData? = null
+
+    @Mock
+    internal var deviceData: DeviceData? = null
+
+    @Mock
     lateinit var context: Context
 
     @Mock
@@ -35,6 +41,8 @@ internal class SessionTrackerBreadcrumbTest {
     @Before
     fun setUp() {
         `when`(client.getAppContext()).thenReturn(context)
+        `when`(client.getAppData()).thenReturn(appData)
+        `when`(client.getDeviceData()).thenReturn(deviceData)
         `when`(context.getSystemService("activity")).thenReturn(activityManager)
         tracker = SessionTracker(
             BugsnagTestUtils.generateImmutableConfig(),

@@ -32,6 +32,12 @@ public class SessionTrackerTest {
     Client client;
 
     @Mock
+    AppData appData;
+
+    @Mock
+    DeviceData deviceData;
+
+    @Mock
     Context context;
 
     @Mock
@@ -42,11 +48,12 @@ public class SessionTrackerTest {
 
     /**
      * Configures a session tracker that automatically captures sessions
-     *
      */
     @Before
     public void setUp() {
         when(client.getAppContext()).thenReturn(context);
+        when(client.getAppData()).thenReturn(appData);
+        when(client.getDeviceData()).thenReturn(deviceData);
         when(context.getSystemService("activity")).thenReturn(activityManager);
 
         configuration = BugsnagTestUtils.generateConfiguration();
