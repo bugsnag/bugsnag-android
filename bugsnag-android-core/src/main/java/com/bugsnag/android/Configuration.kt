@@ -13,7 +13,7 @@ class Configuration(
      * Gets the API key to send reports to
      */
     val apiKey: String
-) : CallbackAware {
+) : CallbackAware, MetadataAware {
 
     @JvmField
     internal val callbackState: CallbackState
@@ -304,6 +304,18 @@ class Configuration(
      * @param onSession the on session callback
      */
     override fun removeOnSession(onSession: OnSession) = callbackState.removeOnSession(onSession)
+
+    override fun addMetadata(section: String, value: Any?) =
+        metadataState.addMetadata(section, value)
+    override fun addMetadata(section: String, key: String?, value: Any?) =
+        metadataState.addMetadata(section, key, value)
+
+    override fun clearMetadata(section: String) = metadataState.clearMetadata(section)
+    override fun clearMetadata(section: String, key: String?) =
+        metadataState.clearMetadata(section, key)
+
+    override fun getMetadata(section: String) = metadataState.getMetadata(section)
+    override fun getMetadata(section: String, key: String?) =metadataState.getMetadata(section, key)
 
     companion object {
         internal const val HEADER_API_KEY = "Bugsnag-Api-Key"
