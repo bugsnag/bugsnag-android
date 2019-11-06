@@ -106,17 +106,6 @@ internal class ClientApiTest {
     }
 
     @Test
-    fun sendNativeSetupNotification() {
-        var msg: NativeInterface.Message? = null
-        client.registerObserver { _, arg ->
-            msg = arg as NativeInterface.Message
-        }
-
-        client.sendNativeSetupNotification()
-        assertEquals(NativeInterface.MessageType.INSTALL, msg!!.type)
-    }
-
-    @Test
     fun startSession() {
         client.startSession()
         verify(sessionTracker, times(1)).startSession(false)
