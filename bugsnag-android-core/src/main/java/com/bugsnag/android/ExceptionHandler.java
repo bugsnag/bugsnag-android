@@ -42,18 +42,16 @@ class ExceptionHandler implements UncaughtExceptionHandler {
 
         String severityReason = strictModeThrowable
                 ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
-        NotifyDelegate notifyDelegate = client.getNotifyDelegate();
 
         if (strictModeThrowable) { // writes to disk on main thread
             StrictMode.ThreadPolicy originalThreadPolicy = StrictMode.getThreadPolicy();
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
-
-            notifyDelegate.notifyUnhandledException(throwable,
+            client.notifyUnhandledException(throwable,
                     severityReason, violationDesc, thread);
 
             StrictMode.setThreadPolicy(originalThreadPolicy);
         } else {
-            notifyDelegate.notifyUnhandledException(throwable,
+            client.notifyUnhandledException(throwable,
                     severityReason, null, thread);
         }
 

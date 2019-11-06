@@ -19,14 +19,10 @@ internal class ExceptionHandlerTest {
     @Mock
     lateinit var client: Client
 
-    @Mock
-    lateinit var notifyDelegate: NotifyDelegate
-
     var originalHandler: Thread.UncaughtExceptionHandler? = null
 
     @Before
     fun setUp() {
-        `when`(client.getNotifyDelegate()).thenReturn(notifyDelegate)
         originalHandler = Thread.getDefaultUncaughtExceptionHandler()
     }
 
@@ -47,7 +43,7 @@ internal class ExceptionHandlerTest {
         val thread = Thread.currentThread()
         val exc = RuntimeException("Whoops")
         exceptionHandler.uncaughtException(thread, exc)
-        verify(notifyDelegate, times(1)).notifyUnhandledException(
+        verify(client, times(1)).notifyUnhandledException(
             exc,
             HandledState.REASON_UNHANDLED_EXCEPTION,
             null,
