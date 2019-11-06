@@ -91,7 +91,7 @@ class Event @JvmOverloads internal constructor(
         // Write error basics
         writer.beginObject()
         writer.name("context").value(context)
-        writer.name("metaData").value(metadata)
+        writer.name("metaData").value(metadata, true)
 
         writer.name("severity").value(severity)
         writer.name("severityReason").value(handledState)

@@ -24,7 +24,7 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
-        jsonStreamer.objectToStream(store, writer)
+        jsonStreamer.objectToStream(store, writer, true)
     }
 
     override fun addMetadata(section: String, value: Any?) = addMetadata(section, null, value)

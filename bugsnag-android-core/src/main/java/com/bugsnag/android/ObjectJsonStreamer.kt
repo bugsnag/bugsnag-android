@@ -14,30 +14,30 @@ internal class ObjectJsonStreamer {
 
     // Write complex/nested values to a JsonStreamer
     @Throws(IOException::class)
-    fun objectToStream(obj: Any?, writer: JsonStream) {
+    fun objectToStream(obj: Any?, writer: JsonStream, shouldRedactKeys: Boolean = false) {
         when {
             obj == null -> writer.nullValue()
             obj is String -> writer.value(obj)
             obj is Number -> writer.value(obj)
             obj is Boolean -> writer.value(obj)
             obj is JsonStream.Streamable -> obj.toStream(writer)
-            obj is Map<*, *> -> mapToStream(writer, obj)
+            obj is Map<*, *> -> mapToStream(writer, obj, shouldRedactKeys)
             obj is Collection<*> -> collectionToStream(writer, obj)
             obj.javaClass.isArray -> arrayToStream(writer, obj)
             else -> writer.value(OBJECT_PLACEHOLDER)
         }
     }
 
-    private fun mapToStream(writer: JsonStream, obj: Map<*, *>) {
+    private fun mapToStream(writer: JsonStream, obj: Map<*, *>, shouldRedactKeys: Boolean) {
         writer.beginObject()
         obj.entries.forEach {
             val keyObj = it.key
             if (keyObj is String) {
                 writer.name(keyObj)
-                if (shouldRedact(keyObj)) {
+                if (shouldRedactKeys && isRedactedKey(keyObj)) {
                     writer.value(REDACTED_PLACEHOLDER)
                 } else {
-                    objectToStream(it.value, writer)
+                    objectToStream(it.value, writer, shouldRedactKeys)
                 }
             }
         }
@@ -63,6 +63,6 @@ internal class ObjectJsonStreamer {
     }
 
     // Should this key be redacted
-    private fun shouldRedact(key: String) = redactKeys.any { key.contains(it) }
+    private fun isRedactedKey(key: String) = redactKeys.any { key.contains(it) }
 
 }

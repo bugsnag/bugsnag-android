@@ -24,13 +24,7 @@ class Breadcrumb internal constructor(
         writer.name("name").value(message)
         writer.name("type").value(type.toString())
         writer.name("metaData")
-        writer.beginObject()
-
-        // sort metadata alphabetically
-        metadata.entries.sortedBy { it.key }
-            .forEach { writer.name(it.key).value(it.value) }
-
-        writer.endObject()
+        writer.value(metadata, true)
         writer.endObject()
     }
 }

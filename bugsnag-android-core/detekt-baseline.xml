@@ -2,19 +2,24 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>ComplexMethod:ObjectJsonStreamer.kt$ObjectJsonStreamer$// Write complex/nested values to a JsonStreamer @Throws(IOException::class) fun objectToStream(obj: Any?, writer: JsonStream)</ID>
+    <ID>ComplexMethod:ImmutableConfig.kt$internal fun sanitiseConfiguration( appContext: Context, configuration: Configuration, connectivity: Connectivity, logger: Logger ): ImmutableConfig</ID>
+    <ID>ComplexMethod:ObjectJsonStreamer.kt$ObjectJsonStreamer$// Write complex/nested values to a JsonStreamer @Throws(IOException::class) fun objectToStream(obj: Any?, writer: JsonStream, shouldRedactKeys: Boolean = false)</ID>
     <ID>MagicNumber:Configuration.kt$Configuration$100</ID>
     <ID>MagicNumber:Configuration.kt$Configuration$1000</ID>
     <ID>MagicNumber:Configuration.kt$Configuration$5</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
+    <ID>MaxLineLength:Event.kt$Event$threadState: ThreadState? = if (config.sendThreads) ThreadState(config, originalError?.stackTrace ?: stackTrace!!) else null</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String&gt; ): DeliveryStatus</ID>
     <ID>TooGenericExceptionCaught:BugsnagPluginInterface.kt$BugsnagPluginInterface$exc: Exception</ID>
+    <ID>TooGenericExceptionCaught:CallbackState.kt$CallbackState$ex: Throwable</ID>
     <ID>TooGenericExceptionCaught:Configuration.kt$Configuration$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultDelivery.kt$DefaultDelivery$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
+    <ID>TooGenericExceptionThrown:CallbackStateTest.kt$CallbackStateTest$throw RuntimeException()</ID>
     <ID>TooManyFunctions:Event.kt$Event : StreamableMetadataAwareUserAware</ID>
     <ID>TooManyFunctions:Metadata.kt$Metadata : ObservableStreamableMetadataAware</ID>
+    <ID>VariableNaming:Event.kt$Event$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
   </Whitelist>
 </SmellBaseline>

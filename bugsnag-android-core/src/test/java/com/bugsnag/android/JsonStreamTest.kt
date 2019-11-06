@@ -18,11 +18,21 @@ class JsonStreamTest {
     }
 
     @Test
-    fun redactedObject() {
+    fun redactKeyNoRedaction() {
         val writer = StringWriter()
         val stream = JsonStream(writer)
         stream.beginObject()
-        stream.name("foo").value(mapOf(Pair("password", 5)))
+        stream.name("foo").value(mapOf(Pair("password", 5)), false)
+        stream.endObject()
+        assertEquals("{\"foo\":{\"password\":5}}", writer.toString())
+    }
+
+    @Test
+    fun redactKeyWithRedaction() {
+        val writer = StringWriter()
+        val stream = JsonStream(writer)
+        stream.beginObject()
+        stream.name("foo").value(mapOf(Pair("password", 5)), true)
         stream.endObject()
         assertEquals("{\"foo\":{\"password\":\"[REDACTED]\"}}", writer.toString())
     }

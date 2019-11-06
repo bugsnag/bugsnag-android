@@ -1,5 +1,9 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
   <Blacklist></Blacklist>
-  <Whitelist></Whitelist>
+  <Whitelist>
+    <ID>MatchingDeclarationName:AppMetaDataSerializationTest.kt$com.bugsnag.android.ndk.AppMetaDataSerializationTest.kt</ID>
+    <ID>MatchingDeclarationName:CustomMetaDataSerializationTest.kt$com.bugsnag.android.ndk.CustomMetaDataSerializationTest.kt</ID>
+    <ID>MatchingDeclarationName:DeviceMetaDataSerializationTest.kt$com.bugsnag.android.ndk.DeviceMetaDataSerializationTest.kt</ID>
+  </Whitelist>
 </SmellBaseline>
