@@ -42,6 +42,6 @@ internal class MetadataStateTest {
     fun clearWithKey() {
         state.addMetadata("foo", "wham", "baz")
         state.clearMetadata("foo", "wham")
-        assertTrue((state.getMetadata("foo") as Map<*, *>).isEmpty())
+        assertNull(state.getMetadata("foo"))
     }
 }

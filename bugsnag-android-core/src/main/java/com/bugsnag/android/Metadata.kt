@@ -56,7 +56,6 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
     private fun insertValue(map: MutableMap<String, Any?>, section: String, value: Any) {
         val existingVal = map[section]
 
-        // FIXME need to rework merging for top-level values
         if (existingVal is Map<*, *> && existingVal.isNotEmpty()) {
             map[section] = mergeMaps(listOf(existingVal as Map<String, Any?>, value as Map<String, Any?>
             ))
@@ -78,7 +77,12 @@ internal data class Metadata @JvmOverloads constructor(private val map: Map<Stri
 
             if (tab is MutableMap<*, *>) {
                 tab.remove(key)
+
+                if (tab.isEmpty()) {
+                    store.remove(section)
+                }
             }
+
             notifyObservers(
                 NativeInterface.Message(
                     NativeInterface.MessageType.REMOVE_METADATA, listOf(section, key)
