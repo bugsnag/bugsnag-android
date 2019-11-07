@@ -38,7 +38,10 @@ public class NativeBridge implements Observer {
 
     public static native void install(@NonNull String reportingDirectory,
                                       boolean autoDetectNdkCrashes,
-                                      int apiLevel, boolean is32bit);
+                                      int apiLevel, boolean is32bit,
+                                      @NonNull String appVersion,
+                                      @NonNull String buildUuid,
+                                      @NonNull String releaseStage);
 
     public static native void deliverReportAtPath(@NonNull String filePath);
 
@@ -69,22 +72,14 @@ public class NativeBridge implements Observer {
 
     public static native void pausedSession();
 
-    public static native void updateAppVersion(@NonNull String appVersion);
-
-    public static native void updateBuildUUID(@NonNull String uuid);
-
     public static native void updateContext(@NonNull String context);
 
     public static native void updateInForeground(boolean inForeground,
                                                  @NonNull String activityName);
 
-    public static native void updateLowMemory(boolean lowMemory);
-
     public static native void updateOrientation(int orientation);
 
     public static native void updateMetadata(@NonNull Object metadata);
-
-    public static native void updateReleaseStage(@NonNull String releaseStage);
 
     public static native void updateUserId(@NonNull String newValue);
 
@@ -152,26 +147,14 @@ public class NativeBridge implements Observer {
             case PAUSE_SESSION:
                 pausedSession();
                 break;
-            case UPDATE_APP_VERSION:
-                handleAppVersionChange(arg);
-                break;
-            case UPDATE_BUILD_UUID:
-                handleBuildUUIDChange(arg);
-                break;
             case UPDATE_CONTEXT:
                 handleContextChange(arg);
                 break;
             case UPDATE_IN_FOREGROUND:
                 handleForegroundActivityChange(arg);
                 break;
-            case UPDATE_LOW_MEMORY:
-                handleLowMemoryChange(arg);
-                break;
             case UPDATE_ORIENTATION:
                 handleOrientationChange(arg);
-                break;
-            case UPDATE_RELEASE_STAGE:
-                handleReleaseStageChange(arg);
                 break;
             case UPDATE_USER_ID:
                 handleUserIdChange(arg);
@@ -235,10 +218,15 @@ public class NativeBridge implements Observer {
             } else if (arg instanceof List) {
                 @SuppressWarnings("unchecked")
                 List<Object> values = (List<Object>)arg;
-                if (values.size() > 0 && values.get(0) instanceof Boolean) {
+                if (values.size() == 4 && values.get(0) instanceof Boolean) {
                     Boolean autoDetectNdkCrashes = (Boolean) values.get(0);
+                    String appVersion = (String) values.get(1);
+                    String buildUuid = (String) values.get(2);
+                    String releaseStage = (String) values.get(3);
+
                     String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-                    install(reportPath, autoDetectNdkCrashes, Build.VERSION.SDK_INT, is32bit());
+                    install(reportPath, autoDetectNdkCrashes, Build.VERSION.SDK_INT, is32bit(),
+                            appVersion, buildUuid, releaseStage);
                     installed.set(true);
                 }
             } else {
@@ -328,14 +316,6 @@ public class NativeBridge implements Observer {
         }
     }
 
-    private void handleAppVersionChange(Object arg) {
-        if (arg instanceof String) {
-            updateAppVersion((String)arg);
-        } else {
-            logger.w("UPDATE_APP_VERSION object is invalid: " + arg);
-        }
-    }
-
     private void handleRemoveMetadata(Object arg) {
         if (arg instanceof List) {
             @SuppressWarnings("unchecked")
@@ -370,14 +350,6 @@ public class NativeBridge implements Observer {
         }
 
         logger.w("START_SESSION object is invalid: " + arg);
-    }
-
-    private void handleReleaseStageChange(Object arg) {
-        if (arg instanceof String) {
-            updateReleaseStage((String)arg);
-        } else {
-            logger.w("UPDATE_RELEASE_STAGE object is invalid: " + arg);
-        }
     }
 
     private void handleOrientationChange(Object arg) {
@@ -433,16 +405,6 @@ public class NativeBridge implements Observer {
         }
     }
 
-    private void handleBuildUUIDChange(Object arg) {
-        if (arg == null) {
-            updateBuildUUID("");
-        } else if (arg instanceof String) {
-            updateBuildUUID((String)arg);
-        } else {
-            logger.w("UPDATE_BUILD_UUID object is invalid: " + arg);
-        }
-    }
-
     private void handleContextChange(Object arg) {
         if (arg == null) {
             updateContext("");
@@ -450,14 +412,6 @@ public class NativeBridge implements Observer {
             updateContext((String)arg);
         } else {
             logger.w("UPDATE_CONTEXT object is invalid: " + arg);
-        }
-    }
-
-    private void handleLowMemoryChange(Object arg) {
-        if (arg instanceof Boolean) {
-            updateLowMemory((Boolean)arg);
-        } else {
-            logger.w("UPDATE_LOW_MEMORY object is invalid: " + arg);
         }
     }
 }

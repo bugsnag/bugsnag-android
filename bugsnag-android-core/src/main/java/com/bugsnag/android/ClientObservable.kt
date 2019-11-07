@@ -18,6 +18,9 @@ internal class ClientObservable : Observable() {
         setChanged()
         val messageArgs = ArrayList<Any>()
         messageArgs.add(immutableConfig.autoDetectNdkCrashes)
+        messageArgs.add(immutableConfig.appVersion ?: "")
+        messageArgs.add(immutableConfig.buildUuid ?: "")
+        messageArgs.add(immutableConfig.releaseStage ?: "")
 
         super.notifyObservers(
             NativeInterface.Message(NativeInterface.MessageType.INSTALL, messageArgs)

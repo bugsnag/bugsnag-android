@@ -44,7 +44,8 @@ bsg_unwinder bsg_configured_unwind_style() {
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_detect_ndk_crashes,
-    jint _api_level, jboolean is32bit) {
+    jint _api_level, jboolean is32bit,
+    jstring app_version, jstring build_uuid, jstring release_stage) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,
@@ -76,6 +77,12 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
 
   (*env)->ReleaseStringUTFChars(env, _report_path, report_path);
   bsg_global_env = bugsnag_env;
+
+  bugsnag_report report = bsg_global_env->next_report;
+  bugsnag_report_set_app_version(&report, app_version);
+  bugsnag_report_set_build_uuid(&report, build_uuid);
+  bugsnag_report_set_release_stage(&report, release_stage);
+
   BUGSNAG_LOG("Initialization complete!");
 }
 
@@ -223,36 +230,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
   (*env)->ReleaseStringUTFChars(env, timestamp_, timestamp);
 }
 
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
-                                                           jobject _this,
-                                                           jstring new_value) {
-  if (bsg_global_env == NULL)
-    return;
-  char *value = new_value == NULL
-                    ? NULL
-                    : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
-  bsg_request_env_write_lock();
-  bugsnag_report_set_app_version(&bsg_global_env->next_report, value);
-  bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_updateBuildUUID(JNIEnv *env,
-                                                          jobject _this,
-                                                          jstring new_value) {
-  if (bsg_global_env == NULL)
-    return;
-  char *value = new_value == NULL
-                    ? NULL
-                    : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
-  bsg_request_env_write_lock();
-  bugsnag_report_set_build_uuid(&bsg_global_env->next_report, value);
-  bsg_release_env_write_lock();
-  (*env)->ReleaseStringUTFChars(env, new_value, value);
-}
-
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateContext(
     JNIEnv *env, jobject _this, jstring new_value) {
   if (bsg_global_env == NULL)
@@ -296,17 +273,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
-                                                          jobject _this,
-                                                          jboolean new_value) {
-  if (bsg_global_env == NULL)
-    return;
-  bsg_request_env_write_lock();
-  bsg_global_env->next_report.app.low_memory = (bool)new_value;
-  bsg_release_env_write_lock();
-}
-
-JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
                                                             jobject _this,
                                                             jint orientation) {
@@ -316,22 +282,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
   bsg_request_env_write_lock();
   bugsnag_report_set_orientation(&bsg_global_env->next_report, orientation);
   bsg_release_env_write_lock();
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_updateReleaseStage(
-    JNIEnv *env, jobject _this, jstring new_value) {
-  if (bsg_global_env == NULL)
-    return;
-  char *value = new_value == NULL
-                    ? NULL
-                    : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
-  bsg_request_env_write_lock();
-  bugsnag_report_set_release_stage(&bsg_global_env->next_report, value);
-  bsg_release_env_write_lock();
-  if (new_value != NULL) {
-    (*env)->ReleaseStringUTFChars(env, new_value, value);
-  }
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
