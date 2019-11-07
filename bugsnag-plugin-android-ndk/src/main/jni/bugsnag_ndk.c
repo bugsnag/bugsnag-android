@@ -406,15 +406,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_removeMetadata(
   (*env)->ReleaseStringUTFChars(env, key_, key);
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
-    JNIEnv *env, jobject _this, jobject metadata) {
-  if (bsg_global_env == NULL)
-    return;
-  bsg_request_env_write_lock();
-  bsg_populate_metadata(env, &bsg_global_env->next_report, metadata);
-  bsg_release_env_write_lock();
-}
-
 #ifdef __cplusplus
 }
 #endif

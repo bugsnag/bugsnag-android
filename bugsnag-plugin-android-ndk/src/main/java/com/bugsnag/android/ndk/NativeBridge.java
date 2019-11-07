@@ -79,8 +79,6 @@ public class NativeBridge implements Observer {
 
     public static native void updateOrientation(int orientation);
 
-    public static native void updateMetadata(@NonNull Object metadata);
-
     public static native void updateUserId(@NonNull String newValue);
 
     public static native void updateUserEmail(@NonNull String newValue);
