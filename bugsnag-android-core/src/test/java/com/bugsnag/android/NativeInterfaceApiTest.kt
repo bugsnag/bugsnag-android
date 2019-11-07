@@ -79,7 +79,7 @@ internal class NativeInterfaceApiTest {
     @Test
     fun getUserData() {
         val data = mapOf(Pair("id", "123"), Pair("email", "tod@example.com"), Pair("name", "Tod"))
-        assertEquals(data, NativeInterface.getUserData())
+        assertEquals(data, NativeInterface.getUser())
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class NativeInterfaceApiTest {
         `when`(appData.appData).thenReturn(mapOf(Pair("og", true)))
         `when`(appData.appDataMetadata).thenReturn(mapOf(Pair("metadata", true)))
         val expected = mapOf(Pair("og", true), Pair("metadata", true))
-        assertEquals(expected, NativeInterface.getAppData())
+        assertEquals(expected, NativeInterface.getApp())
     }
 
     @Test
@@ -95,7 +95,7 @@ internal class NativeInterfaceApiTest {
         `when`(deviceData.deviceData).thenReturn(mapOf(Pair("og", true)))
         `when`(deviceData.deviceMetadata).thenReturn(mapOf(Pair("metadata", true)))
         val expected = mapOf(Pair("og", true), Pair("metadata", true))
-        assertEquals(expected, NativeInterface.getDeviceData())
+        assertEquals(expected, NativeInterface.getDevice())
     }
 
     @Test

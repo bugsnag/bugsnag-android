@@ -29,9 +29,9 @@ typedef struct {
   jmethodID map_key_set;
   jmethodID arraylist_init_with_obj;
   jmethodID arraylist_get;
-  jmethodID get_app_data;
-  jmethodID get_device_data;
-  jmethodID get_user_data;
+  jmethodID get_app;
+  jmethodID get_device;
+  jmethodID get_user;
   jmethodID get_breadcrumbs;
   jmethodID get_metadata;
   jmethodID get_context;
@@ -76,12 +76,12 @@ bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
       env, jni_cache->map, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
   jni_cache->native_interface =
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-  jni_cache->get_app_data = (*env)->GetStaticMethodID(
-      env, jni_cache->native_interface, "getAppData", "()Ljava/util/Map;");
-  jni_cache->get_device_data = (*env)->GetStaticMethodID(
-      env, jni_cache->native_interface, "getDeviceData", "()Ljava/util/Map;");
-  jni_cache->get_user_data = (*env)->GetStaticMethodID(
-      env, jni_cache->native_interface, "getUserData", "()Ljava/util/Map;");
+  jni_cache->get_app = (*env)->GetStaticMethodID(
+      env, jni_cache->native_interface, "getApp", "()Ljava/util/Map;");
+  jni_cache->get_device = (*env)->GetStaticMethodID(
+      env, jni_cache->native_interface, "getDevice", "()Ljava/util/Map;");
+  jni_cache->get_user = (*env)->GetStaticMethodID(
+      env, jni_cache->native_interface, "getUser", "()Ljava/util/Map;");
   jni_cache->get_metadata = (*env)->GetStaticMethodID(
       env, jni_cache->native_interface, "getMetadata", "()Ljava/util/Map;");
   jni_cache->get_context = (*env)->GetStaticMethodID(
@@ -231,7 +231,7 @@ char *bsg_binary_arch() {
 void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                            bugsnag_report *report) {
   jobject data = (*env)->CallStaticObjectMethod(
-      env, jni_cache->native_interface, jni_cache->get_app_data);
+      env, jni_cache->native_interface, jni_cache->get_app);
   bsg_copy_map_value_string(env, jni_cache, data, "version",
                             report->app.version, sizeof(report->app.version));
   bsg_copy_map_value_string(env, jni_cache, data, "versionName",
@@ -270,7 +270,7 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
 void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                               bugsnag_report *report) {
   jobject data = (*env)->CallStaticObjectMethod(
-      env, jni_cache->native_interface, jni_cache->get_device_data);
+      env, jni_cache->native_interface, jni_cache->get_device);
   bsg_copy_map_value_string(env, jni_cache, data, "manufacturer",
                             report->device.manufacturer,
                             sizeof(report->device.manufacturer));
@@ -326,7 +326,7 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
 void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             bugsnag_report *report) {
   jobject data = (*env)->CallStaticObjectMethod(
-      env, jni_cache->native_interface, jni_cache->get_user_data);
+      env, jni_cache->native_interface, jni_cache->get_user);
   bsg_copy_map_value_string(env, jni_cache, data, "id", report->user.id,
                             sizeof(report->user.id));
   bsg_copy_map_value_string(env, jni_cache, data, "name", report->user.name,

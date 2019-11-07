@@ -173,13 +173,12 @@ public class NativeInterface {
      */
     @NonNull
     @SuppressWarnings("unused")
-    public static Map<String,String> getUserData() {
+    public static Map<String,String> getUser() {
         HashMap<String, String> userData = new HashMap<>();
         User user = getClient().getUser();
         userData.put("id", user.getId());
         userData.put("name", user.getName());
         userData.put("email", user.getEmail());
-
         return userData;
     }
 
@@ -188,7 +187,7 @@ public class NativeInterface {
      */
     @NonNull
     @SuppressWarnings("unused")
-    public static Map<String,Object> getAppData() {
+    public static Map<String,Object> getApp() {
         HashMap<String,Object> data = new HashMap<>();
         AppData source = getClient().getAppData();
         data.putAll(source.getAppData());
@@ -201,7 +200,7 @@ public class NativeInterface {
      */
     @NonNull
     @SuppressWarnings("unused")
-    public static Map<String,Object> getDeviceData() {
+    public static Map<String,Object> getDevice() {
         HashMap<String,Object> deviceData = new HashMap<>();
         DeviceData source = getClient().getDeviceData();
         deviceData.putAll(source.getDeviceMetadata());
