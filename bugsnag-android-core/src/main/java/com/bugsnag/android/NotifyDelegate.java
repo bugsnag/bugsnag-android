@@ -2,8 +2,6 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -63,13 +61,13 @@ class NotifyDelegate {
     Event notifyUnhandledException(@NonNull Throwable exc,
                                    @HandledState.SeverityReason String severityReason,
                                    @Nullable String attributeValue,
-                                   java.lang.Thread thread) {
+                                   java.lang.Thread thread, OnError onError) {
         HandledState handledState
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
         ThreadState threadState = new ThreadState(immutableConfig, exc.getStackTrace(), thread);
         Event event = new Event(exc, immutableConfig, handledState,
                 metadataState.getMetadata(), null, threadState);
-        return notifyInternal(event, null);
+        return notifyInternal(event, onError);
     }
 
     @Nullable
@@ -118,8 +116,8 @@ class NotifyDelegate {
         }
 
         // Run on error tasks, don't notify if any return false
-        if (!callbackState.runOnErrorTasks(event, logger)
-                || (onError != null && !onError.run(event))) {
+        if ((onError != null && !onError.run(event)
+                || !callbackState.runOnErrorTasks(event, logger))) {
             logger.i("Skipping notification - onError task returned false");
             return null;
         }

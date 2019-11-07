@@ -102,7 +102,8 @@ internal class NotifyDelegateTest {
             exc,
             HandledState.REASON_UNHANDLED_EXCEPTION,
             null,
-            java.lang.Thread.currentThread()
+            java.lang.Thread.currentThread(),
+            null
         )
 
         assertEquals(Severity.ERROR, event.severity)

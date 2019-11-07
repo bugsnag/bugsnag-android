@@ -47,7 +47,8 @@ internal class ExceptionHandlerTest {
             exc,
             HandledState.REASON_UNHANDLED_EXCEPTION,
             null,
-            thread
+            thread,
+            null
         )
     }
 

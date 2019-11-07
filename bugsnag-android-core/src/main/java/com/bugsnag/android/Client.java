@@ -559,9 +559,9 @@ public final class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     void notifyUnhandledException(Throwable throwable, String severityReason,
-                                  String desc, java.lang.Thread thread) {
+                                  String desc, java.lang.Thread thread, OnError onError) {
         Event event = notifyDelegate.notifyUnhandledException(throwable,
-                severityReason, desc, thread);
+                severityReason, desc, thread, onError);
         notifyInternal(event);
     }
 
