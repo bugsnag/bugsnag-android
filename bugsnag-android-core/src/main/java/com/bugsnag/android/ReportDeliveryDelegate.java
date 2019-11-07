@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.RejectedExecutionException;
 
-class ReportDeliveryDelegate extends Observable {
+class ReportDeliveryDelegate extends BaseObservable {
 
     final Logger logger;
     final EventStore eventStore;
@@ -40,11 +40,8 @@ class ReportDeliveryDelegate extends Observable {
         Report report = new Report(event.getApiKey(), null, event);
 
         if (event.getSession() != null) {
-            setChanged();
-
             if (event.getUnhandled()) {
-                notifyObservers(new NativeInterface.Message(
-                        NativeInterface.MessageType.NOTIFY_UNHANDLED, null));
+                notifyObservers(NativeInterface.MessageType.NOTIFY_UNHANDLED, null);
             } else {
                 List<Error> errors = event.getErrors();
 
@@ -53,8 +50,7 @@ class ReportDeliveryDelegate extends Observable {
                 if (errors.size() > 0) {
                     name = errors.get(0).getErrorClass();
                 }
-                notifyObservers(new NativeInterface.Message(
-                        NativeInterface.MessageType.NOTIFY_HANDLED, name));
+                notifyObservers(NativeInterface.MessageType.NOTIFY_HANDLED, name);
             }
         }
 

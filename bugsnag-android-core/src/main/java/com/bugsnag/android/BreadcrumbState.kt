@@ -6,7 +6,7 @@ import java.util.Observable
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
-internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) : Observable(),
+internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) : BaseObservable(),
     JsonStream.Streamable {
     val store: Queue<Breadcrumb> = ConcurrentLinkedQueue()
 
@@ -35,13 +35,7 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) 
             }
             store.add(breadcrumb)
             pruneBreadcrumbs()
-
-            setChanged()
-            notifyObservers(
-                NativeInterface.Message(
-                    NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb
-                )
-            )
+            notifyObservers(NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb)
         } catch (ex: IOException) {
             logger.w("Dropping breadcrumb because it could not be serialized", ex)
         }
@@ -50,10 +44,7 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) 
 
     fun clear() {
         store.clear()
-        setChanged()
-        notifyObservers(
-            NativeInterface.Message(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null)
-        )
+        notifyObservers(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null)
     }
 
     private fun pruneBreadcrumbs() {

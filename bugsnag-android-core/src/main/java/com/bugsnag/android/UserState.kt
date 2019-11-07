@@ -1,8 +1,6 @@
 package com.bugsnag.android
 
-import java.util.Observable
-
-internal class UserState(private val userRepository: UserRepository) : Observable() {
+internal class UserState(private val userRepository: UserRepository) : BaseObservable() {
 
     var user = userRepository.load()
         private set
@@ -16,34 +14,19 @@ internal class UserState(private val userRepository: UserRepository) : Observabl
     fun setUserId(id: String?) {
         user = user.copy(id = id, email = user.email, name = user.name)
         userRepository.save(user)
-        setChanged()
-        notifyObservers(
-            NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_ID, id
-            )
-        )
+        notifyObservers(NativeInterface.MessageType.UPDATE_USER_ID, id)
     }
 
     fun setUserEmail(email: String?) {
         user = user.copy(id = user.id, email = email, name = user.name)
         userRepository.save(user)
-        setChanged()
-        notifyObservers(
-            NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_EMAIL, email
-            )
-        )
+        notifyObservers(NativeInterface.MessageType.UPDATE_USER_EMAIL, email)
     }
 
     fun setUserName(name: String?) {
         user = user.copy(id = user.id, email = user.email, name = name)
         userRepository.save(user)
-        setChanged()
-        notifyObservers(
-            NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_USER_NAME, name
-            )
-        )
+        notifyObservers(NativeInterface.MessageType.UPDATE_USER_NAME, name)
     }
 
 }
