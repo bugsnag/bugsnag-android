@@ -15,7 +15,7 @@ import java.util.HashMap
 class Event @JvmOverloads internal constructor(
     val originalError: Throwable? = null,
     internal val config: ImmutableConfig,
-    private val handledState: HandledState,
+    private var handledState: HandledState,
     internal val metadata: Metadata = Metadata(),
     private val stackTrace: Array<StackTraceElement>? = null,
     threadState: ThreadState? = if (config.sendThreads) ThreadState(config, originalError?.stackTrace ?: stackTrace!!) else null
@@ -139,7 +139,12 @@ class Event @JvmOverloads internal constructor(
         writer.endObject()
     }
 
-    /**
+    protected fun updateSeverityInternal(severity: Severity) {
+        handledState = HandledState.newInstance(handledState.severityReasonType,
+            severity, handledState.attributeValue)
+    }
+
+        /**
      * Set user information associated with this Event
      *
      * @param id    the id of the user

@@ -365,9 +365,8 @@ public class NativeInterface {
         getClient().notify(name, message, stacktrace, new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
-                if (severity != null) {
-                    event.setSeverity(severity);
-                }
+                event.updateSeverityInternal(severity);
+
                 for (Error error : event.getErrors()) {
                     error.setType("c");
                 }
