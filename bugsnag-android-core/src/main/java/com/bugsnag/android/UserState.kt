@@ -14,19 +14,19 @@ internal class UserState(private val userRepository: UserRepository) : BaseObser
     fun setUserId(id: String?) {
         user = user.copy(id = id, email = user.email, name = user.name)
         userRepository.save(user)
-        notifyObservers(NativeInterface.MessageType.UPDATE_USER_ID, id)
+        notifyObservers(StateEvent.UpdateUserId(id))
     }
 
     fun setUserEmail(email: String?) {
         user = user.copy(id = user.id, email = email, name = user.name)
         userRepository.save(user)
-        notifyObservers(NativeInterface.MessageType.UPDATE_USER_EMAIL, email)
+        notifyObservers(StateEvent.UpdateUserEmail(email))
     }
 
     fun setUserName(name: String?) {
         user = user.copy(id = user.id, email = user.email, name = name)
         userRepository.save(user)
-        notifyObservers(NativeInterface.MessageType.UPDATE_USER_NAME, name)
+        notifyObservers(StateEvent.UpdateUserName(name))
     }
 
 }

@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ClientObservableTest {
@@ -10,9 +11,8 @@ class ClientObservableTest {
     @Test
     fun postOrientationChange() {
         clientObservable.addObserver { _, arg ->
-            val msg = arg as NativeInterface.Message
-            assertEquals(NativeInterface.MessageType.UPDATE_ORIENTATION, msg.type)
-            assertEquals(90, msg.value)
+            val msg = arg as StateEvent.UpdateOrientation
+            assertEquals(90, msg.orientation)
         }
         clientObservable.postOrientationChange(90)
     }
@@ -21,8 +21,7 @@ class ClientObservableTest {
     fun postNdkInstall() {
         clientObservable.postNdkInstall(BugsnagTestUtils.generateImmutableConfig())
         clientObservable.addObserver { _, arg ->
-            val msg = arg as NativeInterface.Message
-            assertEquals(NativeInterface.MessageType.INSTALL, msg.type)
+            assertTrue(arg is StateEvent.Install)
         }
     }
 
@@ -30,8 +29,7 @@ class ClientObservableTest {
     fun postNdkDeliverPending() {
         clientObservable.postNdkDeliverPending()
         clientObservable.addObserver { _, arg ->
-            val msg = arg as NativeInterface.Message
-            assertEquals(NativeInterface.MessageType.DELIVER_PENDING, msg.type)
+            assertTrue(arg is StateEvent.DeliverPending)
         }
     }
 }

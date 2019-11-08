@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import java.io.IOException
 import java.io.StringWriter
-import java.util.Observable
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -35,7 +34,7 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) 
             }
             store.add(breadcrumb)
             pruneBreadcrumbs()
-            notifyObservers(NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb)
+            notifyObservers(StateEvent.AddBreadcrumb(breadcrumb))
         } catch (ex: IOException) {
             logger.w("Dropping breadcrumb because it could not be serialized", ex)
         }
@@ -44,7 +43,7 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) 
 
     fun clear() {
         store.clear()
-        notifyObservers(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null)
+        notifyObservers(StateEvent.ClearBreadcrumbs)
     }
 
     private fun pruneBreadcrumbs() {

@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -31,14 +32,14 @@ internal class ReportDeliveryDelegateTest {
 
     @Test
     fun generateUnhandledReport() {
-        var msg: NativeInterface.Message? = null
+        var msg: StateEvent.NotifyUnhandled? = null
         deliveryDelegate.addObserver { _, arg ->
-            msg = arg as NativeInterface.Message
+            msg = arg as StateEvent.NotifyUnhandled
         }
         deliveryDelegate.deliverEvent(event)
 
         // verify message sent
-        assertEquals(NativeInterface.MessageType.NOTIFY_UNHANDLED, msg!!.type)
+        assertNotNull(msg)
 
         // check session count incremented
         assertEquals(1, event.session!!.unhandledCount)
@@ -51,15 +52,14 @@ internal class ReportDeliveryDelegateTest {
         val event = Event(RuntimeException("Whoops!"), config, state)
         event.session = Session("123", Date(), User(null, null, null), false)
 
-        var msg: NativeInterface.Message? = null
+        var msg: StateEvent.NotifyHandled? = null
         deliveryDelegate.addObserver { _, arg ->
-            msg = arg as NativeInterface.Message
+            msg = arg as StateEvent.NotifyHandled
         }
         deliveryDelegate.deliverEvent(event)
 
         // verify message sent
-        assertEquals(NativeInterface.MessageType.NOTIFY_HANDLED, msg!!.type)
-        assertEquals("java.lang.RuntimeException", msg!!.value)
+        assertEquals("java.lang.RuntimeException", msg!!.name)
 
         // check session count incremented
         assertEquals(0, event.session!!.unhandledCount)

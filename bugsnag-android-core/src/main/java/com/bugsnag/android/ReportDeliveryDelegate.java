@@ -41,7 +41,7 @@ class ReportDeliveryDelegate extends BaseObservable {
 
         if (event.getSession() != null) {
             if (event.getUnhandled()) {
-                notifyObservers(NativeInterface.MessageType.NOTIFY_UNHANDLED, null);
+                notifyObservers(StateEvent.NotifyUnhandled.INSTANCE);
             } else {
                 List<Error> errors = event.getErrors();
 
@@ -50,7 +50,7 @@ class ReportDeliveryDelegate extends BaseObservable {
                 if (errors.size() > 0) {
                     name = errors.get(0).getErrorClass();
                 }
-                notifyObservers(NativeInterface.MessageType.NOTIFY_HANDLED, name);
+                notifyObservers(new StateEvent.NotifyHandled(name));
             }
         }
 

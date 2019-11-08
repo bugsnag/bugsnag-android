@@ -3,8 +3,8 @@ package com.bugsnag.android
 import java.util.Observable
 
 internal open class BaseObservable: Observable() {
-    fun notifyObservers(type: NativeInterface.MessageType, arg: Any?) {
+    fun notifyObservers(event: StateEvent) {
         setChanged()
-        notifyObservers(NativeInterface.Message(type, arg))
+        super.notifyObservers(event)
     }
 }

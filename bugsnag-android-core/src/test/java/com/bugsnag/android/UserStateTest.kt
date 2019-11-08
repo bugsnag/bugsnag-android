@@ -30,57 +30,48 @@ internal class UserStateTest {
     @Test
     fun setUserId() {
         val state = UserState(repository)
-        var msg: NativeInterface.Message? = null
+        var msg: StateEvent.UpdateUserId? = null
         state.addObserver { _, arg ->
-            msg = arg as NativeInterface.Message
+            msg = arg as StateEvent.UpdateUserId
         }
         state.setUserId("55")
-
-        assertEquals(NativeInterface.MessageType.UPDATE_USER_ID, msg!!.type)
-        assertEquals("55", msg!!.value)
+        assertEquals("55", msg!!.id)
     }
 
     @Test
     fun setUserEmail() {
         val state = UserState(repository)
-        var msg: NativeInterface.Message? = null
+        var msg: StateEvent.UpdateUserEmail? = null
         state.addObserver { _, arg ->
-            msg = arg as NativeInterface.Message
+            msg = arg as StateEvent.UpdateUserEmail
         }
         state.setUserEmail("woop@example.com")
-
-        assertEquals(NativeInterface.MessageType.UPDATE_USER_EMAIL, msg!!.type)
-        assertEquals("woop@example.com", msg!!.value)
+        assertEquals("woop@example.com", msg!!.email)
     }
 
     @Test
     fun setUserName() {
         val state = UserState(repository)
-        var msg: NativeInterface.Message? = null
+        var msg: StateEvent.UpdateUserName? = null
         state.addObserver { _, arg ->
-            msg = arg as NativeInterface.Message
+            msg = arg as StateEvent.UpdateUserName
         }
         state.setUserName("Foo")
-
-        assertEquals(NativeInterface.MessageType.UPDATE_USER_NAME, msg!!.type)
-        assertEquals("Foo", msg!!.value)
+        assertEquals("Foo", msg!!.name)
     }
 
     @Test
     fun setUser() {
         val state = UserState(repository)
-        val msgs = mutableListOf<NativeInterface.Message>()
+        val msgs = mutableListOf<StateEvent>()
         state.addObserver { _, arg ->
-            msgs.add(arg as NativeInterface.Message)
+            msgs.add(arg as StateEvent)
         }
 
         state.setUser("99", "tc@example.com", "Tobias")
 
-        assertEquals(NativeInterface.MessageType.UPDATE_USER_ID, msgs[0].type)
-        assertEquals("99", msgs[0].value)
-        assertEquals(NativeInterface.MessageType.UPDATE_USER_EMAIL, msgs[1].type)
-        assertEquals("tc@example.com", msgs[1].value)
-        assertEquals(NativeInterface.MessageType.UPDATE_USER_NAME, msgs[2].type)
-        assertEquals("Tobias", msgs[2].value)
+        assertEquals("99", (msgs[0] as StateEvent.UpdateUserId).id)
+        assertEquals("tc@example.com", (msgs[1] as StateEvent.UpdateUserEmail).email)
+        assertEquals("Tobias", (msgs[2] as StateEvent.UpdateUserName).name)
     }
 }

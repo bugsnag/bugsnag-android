@@ -91,7 +91,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
 
         if (session != null) {
             session.isPaused.set(true);
-            notifyObservers(NativeInterface.MessageType.PAUSE_SESSION, null);
+            notifyObservers(StateEvent.PauseSession.INSTANCE);
         }
     }
 
@@ -114,8 +114,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
 
     private void notifySessionStartObserver(Session session) {
         String startedAt = DateUtils.toIso8601(session.getStartedAt());
-        notifyObservers(NativeInterface.MessageType.START_SESSION,
-            Arrays.asList(session.getId(), startedAt,
+        notifyObservers(new StateEvent.StartSession(session.getId(), startedAt,
                 session.getHandledCount(), session.getUnhandledCount()));
     }
 
@@ -138,7 +137,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
             session = new Session(sessionId, date, user, unhandledCount, handledCount);
             notifySessionStartObserver(session);
         } else {
-            notifyObservers(NativeInterface.MessageType.PAUSE_SESSION, null);
+            notifyObservers(StateEvent.PauseSession.INSTANCE);
         }
         currentSession.set(session);
         return session;
@@ -378,9 +377,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
     }
 
     private void notifyNdkInForeground() {
-        notifyObservers(
-            NativeInterface.MessageType.UPDATE_IN_FOREGROUND,
-            Arrays.asList(isInForeground(), getContextActivity()));
+        notifyObservers(new StateEvent.UpdateInForeground(isInForeground(), getContextActivity()));
     }
 
     boolean isInForeground() {

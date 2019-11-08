@@ -4,7 +4,7 @@ internal class ContextState(context: String? = null) : BaseObservable() {
     var context = context
         set(value) {
             field = value
-            notifyObservers(NativeInterface.MessageType.UPDATE_CONTEXT, context)
+            notifyObservers(StateEvent.UpdateContext(context))
         }
 
     fun copy() = ContextState(context)

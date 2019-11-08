@@ -1,10 +1,9 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
+import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
@@ -14,7 +13,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -27,7 +25,6 @@ public class ObserverInterfaceTest {
 
     /**
      * Configures a new AppData for testing accessors + serialisation
-     *
      */
     @Before
     public void setUp() {
@@ -47,119 +44,78 @@ public class ObserverInterfaceTest {
     @Test
     public void testAddMetadataToClientSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.ADD_METADATA, List.class);
-        assertEquals(3, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
-        assertEquals("baz", metadataItem.get(2));
+        StateEvent.AddMetadata msg = findMessageInQueue(StateEvent.AddMetadata.class);
+        assertEquals("foo", msg.getSection());
+        assertEquals("bar", msg.getKey());
+        assertEquals("baz", msg.getValue());
     }
 
     @Test
     public void testAddNullMetadataToClientSendsMessage() {
         client.addMetadata("foo", "bar", null);
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.REMOVE_METADATA, List.class);
-        assertEquals(2, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
-    }
-
-    @Test
-    public void testAddMetadataToMetadataSendsMessage() {
-        client.addMetadata("foo", "bar", "baz");
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.ADD_METADATA, List.class);
-        assertEquals(3, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
-        assertEquals("baz", metadataItem.get(2));
+        StateEvent.RemoveMetadata msg = findMessageInQueue(StateEvent.RemoveMetadata.class);
+        assertEquals("foo", msg.getSection());
+        assertEquals("bar", msg.getKey());
     }
 
     @Test
     public void testClearTabFromClientSendsMessage() {
         client.clearMetadata("axis", null);
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
-        assertEquals("axis", value);
-    }
-
-    @Test
-    public void testClearTabFromMetadataSendsMessage() {
-        client.clearMetadata("axis", null);
-        Object value =  findMessageInQueue(
-                NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
-        assertEquals("axis", value);
-    }
-
-    @Test
-    public void testAddNullMetadataToMetadataSendsMessage() {
-        client.addMetadata("foo", "bar", null);
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.REMOVE_METADATA, List.class);
-        assertEquals(2, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
+        StateEvent.ClearMetadataTab msg = findMessageInQueue(StateEvent.ClearMetadataTab.class);
+        assertEquals("axis", msg.getSection());
     }
 
     @Test
     public void testNotifySendsMessage() {
         client.startSession();
         client.notify(new Exception("ruh roh"));
-        Object errorClass = findMessageInQueue(
-                NativeInterface.MessageType.NOTIFY_HANDLED, String.class);
-        assertEquals("java.lang.Exception", errorClass);
+        StateEvent.NotifyHandled msg = findMessageInQueue(StateEvent.NotifyHandled.class);
+        assertEquals("java.lang.Exception", msg.getName());
     }
 
     @Test
     public void testStartSessionSendsMessage() {
         client.startSession();
-        List<Object> sessionInfo = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.START_SESSION, List.class);
-        assertEquals(4, sessionInfo.size());
-        assertTrue(sessionInfo.get(0) instanceof String);
-        assertTrue(sessionInfo.get(1) instanceof String);
-        assertTrue(sessionInfo.get(2) instanceof Integer);
-        assertTrue(sessionInfo.get(3) instanceof Integer);
+        StateEvent.StartSession msg = findMessageInQueue(StateEvent.StartSession.class);
+        assertNotNull(msg.getId());
+        assertNotNull(msg.getStartedAt());
+        assertEquals(0, msg.getHandledCount());
+        assertEquals(0, msg.getUnhandledCount());
     }
 
     @Test
     public void testPauseSessionSendsmessage() {
         client.startSession();
         client.pauseSession();
-        Object msg = findMessageInQueue(NativeInterface.MessageType.PAUSE_SESSION, null);
-        assertNull(msg);
+        assertNotNull(findMessageInQueue(StateEvent.PauseSession.class));
     }
 
     @Test
     public void testClientSetUserId() {
         client.setUserId("personX");
-        String value = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_USER_ID, String.class);
-        assertEquals("personX", value);
+        StateEvent.UpdateUserId msg = findMessageInQueue(StateEvent.UpdateUserId.class);
+        assertEquals("personX", msg.getId());
     }
 
     @Test
     public void testClientSetUserEmail() {
         client.setUserEmail("bip@example.com");
-        String value = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_USER_EMAIL, String.class);
-        assertEquals("bip@example.com", value);
+        StateEvent.UpdateUserEmail msg = findMessageInQueue(StateEvent.UpdateUserEmail.class);
+        assertEquals("bip@example.com", msg.getEmail());
     }
 
     @Test
     public void testClientSetUserName() {
         client.setUserName("Loblaw");
-        String value = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_USER_NAME, String.class);
-        assertEquals("Loblaw", value);
+        StateEvent.UpdateUserName msg = findMessageInQueue(StateEvent.UpdateUserName.class);
+        assertEquals("Loblaw", msg.getName());
     }
 
     @Test
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
-        Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
-                NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
+        StateEvent.AddBreadcrumb msg = findMessageInQueue(StateEvent.AddBreadcrumb.class);
+        Breadcrumb crumb = msg.getBreadcrumb();
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
         assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
@@ -169,8 +125,8 @@ public class ObserverInterfaceTest {
     @Test
     public void testLeaveStringBreadcrumbDirectlySendsMessage() {
         client.breadcrumbState.add(new Breadcrumb("Drift 4 units left"));
-        Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
-                NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
+        StateEvent.AddBreadcrumb msg = findMessageInQueue(StateEvent.AddBreadcrumb.class);
+        Breadcrumb crumb = msg.getBreadcrumb();
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
         assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
@@ -180,38 +136,27 @@ public class ObserverInterfaceTest {
     @Test
     public void testClearBreadcrumbsDirectlySendsMessage() {
         client.breadcrumbState.clear();
-        findMessageInQueue(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null);
+        assertNotNull(findMessageInQueue(StateEvent.ClearBreadcrumbs.class));
     }
 
     @Test
     public void testLeaveBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, Object>());
-        Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
-                NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
+        StateEvent.AddBreadcrumb msg = findMessageInQueue(StateEvent.AddBreadcrumb.class);
+        Breadcrumb crumb = msg.getBreadcrumb();
         assertEquals(BreadcrumbType.LOG, crumb.getType());
         assertEquals("Rollback", crumb.getMessage());
         assertEquals(0, crumb.getMetadata().size());
     }
 
-    private Object findMessageInQueue(NativeInterface.MessageType type, Class<?> argClass) {
+    @NonNull
+    private <T extends StateEvent> T findMessageInQueue(Class<T> argClass) {
         for (Object item : observer.observed) {
-            if (item instanceof  NativeInterface.Message) {
-                NativeInterface.Message message = (NativeInterface.Message)item;
-                if (message.type != type) {
-                    continue;
-                }
-                if (argClass == null) {
-                    if (((NativeInterface.Message)item).value == null) {
-                        return null;
-                    }
-                } else if (argClass.isInstance(message.value)) {
-                    return message.value;
-                }
+            if (item.getClass().equals(argClass)) {
+                return (T) item;
             }
         }
-        fail("Failed to find message matching " + type);
-
-        return null;
+        throw new RuntimeException("Failed to find StateEvent message " + argClass.getSimpleName());
     }
 
     static class BugsnagTestObserver implements Observer {
