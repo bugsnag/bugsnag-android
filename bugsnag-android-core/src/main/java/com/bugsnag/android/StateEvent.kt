@@ -15,9 +15,14 @@ sealed class StateEvent {
     class ClearMetadataTab(val section: String) : StateEvent()
     class RemoveMetadata(val section: String, val key: String?) : StateEvent()
 
-    class AddBreadcrumb(val breadcrumb: Breadcrumb) : StateEvent()
+    class AddBreadcrumb(
+        val message: String,
+        val type: BreadcrumbType,
+        val timestamp: String,
+        val metadata: MutableMap<String, Any?>
+    ) : StateEvent()
 
-    class NotifyHandled(val name: String) : StateEvent()
+    object NotifyHandled : StateEvent()
     object NotifyUnhandled : StateEvent()
 
     object PauseSession : StateEvent()

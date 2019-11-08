@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
@@ -70,7 +71,7 @@ public class ObserverInterfaceTest {
         client.startSession();
         client.notify(new Exception("ruh roh"));
         StateEvent.NotifyHandled msg = findMessageInQueue(StateEvent.NotifyHandled.class);
-        assertEquals("java.lang.Exception", msg.getName());
+        assertNotNull(msg);
     }
 
     @Test
@@ -115,22 +116,20 @@ public class ObserverInterfaceTest {
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
         StateEvent.AddBreadcrumb msg = findMessageInQueue(StateEvent.AddBreadcrumb.class);
-        Breadcrumb crumb = msg.getBreadcrumb();
-        assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getMessage());
-        assertEquals(1, crumb.getMetadata().size());
-        assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
+        assertEquals(BreadcrumbType.MANUAL, msg.getType());
+        assertEquals("manual", msg.getMessage());
+        assertEquals(1, msg.getMetadata().size());
+        assertEquals("Drift 4 units left", msg.getMetadata().get("message"));
     }
 
     @Test
     public void testLeaveStringBreadcrumbDirectlySendsMessage() {
         client.breadcrumbState.add(new Breadcrumb("Drift 4 units left"));
         StateEvent.AddBreadcrumb msg = findMessageInQueue(StateEvent.AddBreadcrumb.class);
-        Breadcrumb crumb = msg.getBreadcrumb();
-        assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getMessage());
-        assertEquals(1, crumb.getMetadata().size());
-        assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
+        assertEquals(BreadcrumbType.MANUAL, msg.getType());
+        assertEquals("manual", msg.getMessage());
+        assertEquals(1, msg.getMetadata().size());
+        assertEquals("Drift 4 units left", msg.getMetadata().get("message"));
     }
 
     @Test
@@ -143,10 +142,9 @@ public class ObserverInterfaceTest {
     public void testLeaveBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, Object>());
         StateEvent.AddBreadcrumb msg = findMessageInQueue(StateEvent.AddBreadcrumb.class);
-        Breadcrumb crumb = msg.getBreadcrumb();
-        assertEquals(BreadcrumbType.LOG, crumb.getType());
-        assertEquals("Rollback", crumb.getMessage());
-        assertEquals(0, crumb.getMetadata().size());
+        assertEquals(BreadcrumbType.LOG, msg.getType());
+        assertEquals("Rollback", msg.getMessage());
+        assertEquals(0, msg.getMetadata().size());
     }
 
     @NonNull

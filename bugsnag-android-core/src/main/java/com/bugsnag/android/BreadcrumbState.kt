@@ -34,7 +34,14 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, private val logger: Logger) 
             }
             store.add(breadcrumb)
             pruneBreadcrumbs()
-            notifyObservers(StateEvent.AddBreadcrumb(breadcrumb))
+            notifyObservers(
+                StateEvent.AddBreadcrumb(
+                    breadcrumb.message,
+                    breadcrumb.type,
+                    DateUtils.toIso8601(breadcrumb.timestamp),
+                    breadcrumb.metadata
+                )
+            )
         } catch (ex: IOException) {
             logger.w("Dropping breadcrumb because it could not be serialized", ex)
         }

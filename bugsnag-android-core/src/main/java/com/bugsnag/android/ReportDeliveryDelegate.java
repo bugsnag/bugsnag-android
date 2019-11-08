@@ -50,7 +50,7 @@ class ReportDeliveryDelegate extends BaseObservable {
                 if (errors.size() > 0) {
                     name = errors.get(0).getErrorClass();
                 }
-                notifyObservers(new StateEvent.NotifyHandled(name));
+                notifyObservers(StateEvent.NotifyHandled.INSTANCE);
             }
         }
 
