@@ -42,6 +42,15 @@ bsg_unwinder bsg_configured_unwind_style() {
   return BSG_CUSTOM_UNWIND;
 }
 
+bool bsg_run_on_error_cbs(bsg_environment *const env) {
+  bool (*on_error)(bugsnag_report) = env->on_error;
+  if (on_error != NULL) {
+    bugsnag_report report = env->next_report;
+    return on_error(report);
+  }
+  return true;
+}
+
 bool global_on_err_cb(bugsnag_report report) {
   BUGSNAG_LOG("Received error report, logging callback! %s", report.exception.name);
   return true;
@@ -88,7 +97,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_report_set_build_uuid(&report, build_uuid);
   bugsnag_report_set_release_stage(&report, release_stage);
 
-  bsg_global_env->onError = &global_on_err_cb; // FIXME remove me
+  bsg_global_env->on_error = &global_on_err_cb; // FIXME remove me
   BUGSNAG_LOG("Initialization complete!");
 }
 
