@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.convert;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -34,5 +35,11 @@ public class EventStateTest {
 
         event = new Event(new IOException(), BugsnagTestUtils.convert(configuration), handledState);
         assertTrue(event.shouldIgnoreClass());
+    }
+
+    @Test
+    public void overrideSeverityInternal() {
+        event.updateSeverityInternal(Severity.INFO);
+        assertEquals(Severity.INFO, event.getSeverity());
     }
 }

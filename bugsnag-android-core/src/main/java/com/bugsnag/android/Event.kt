@@ -142,6 +142,7 @@ class Event @JvmOverloads internal constructor(
     protected fun updateSeverityInternal(severity: Severity) {
         handledState = HandledState.newInstance(handledState.severityReasonType,
             severity, handledState.attributeValue)
+        this.severity = severity
     }
 
         /**
