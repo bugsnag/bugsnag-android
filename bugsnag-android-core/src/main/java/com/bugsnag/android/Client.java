@@ -257,7 +257,7 @@ public final class Client implements MetadataAware, CallbackAware, UserAware {
         Collection<BaseObservable> observableState = Arrays.asList(
                 breadcrumbState,
                 contextState,
-                metadataState.getMetadata(),
+                metadataState,
                 userState,
                 sessionTracker,
                 reportDeliveryDelegate,
