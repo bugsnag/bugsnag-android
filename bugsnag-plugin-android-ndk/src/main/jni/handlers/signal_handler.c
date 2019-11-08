@@ -195,6 +195,15 @@ void bsg_handle_signal(int signum, siginfo_t *info,
       break;
     }
   }
+
+  // TODO check return val
+
+  bool (*onErr)(bugsnag_report) = bsg_global_env->onError;
+  if (onErr != NULL) {
+    bugsnag_report report = bsg_global_env->next_report;
+    onErr(report);
+  }
+
   bsg_serialize_report_to_file(bsg_global_env);
   bsg_handler_uninstall_signal();
   bsg_invoke_previous_signal_handler(signum, info, user_context);

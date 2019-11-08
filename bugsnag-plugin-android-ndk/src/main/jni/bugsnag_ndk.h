@@ -54,6 +54,8 @@ typedef struct {
      * true if a handler has completed crash handling
      */
     bool crash_handled;
+
+    bool (*onError)(bugsnag_report report);
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();
