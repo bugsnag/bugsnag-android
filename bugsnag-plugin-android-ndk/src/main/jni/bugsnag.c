@@ -4,6 +4,7 @@
 #include "report.h"
 #include "utils/stack_unwinder.h"
 #include "metadata.h"
+#include "../assets/include/bugsnag.h"
 #include <jni.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,8 +48,8 @@ void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type) {
   }
 }
 
-void bugsnag_add_on_error(bool (*on_error)(bugsnag_report *report)) {
-    bugsnag_add_on_error_env(on_error);
+void bugsnag_add_on_error(on_error on_error) {
+    bugsnag_add_on_error_env(bsg_global_jni_env, on_error);
 }
 
 jfieldID bsg_parse_jseverity(JNIEnv *env, bsg_severity_t severity,

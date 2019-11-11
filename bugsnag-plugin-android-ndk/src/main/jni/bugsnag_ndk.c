@@ -12,6 +12,7 @@
 #include "report.h"
 #include "utils/serializer.h"
 #include "utils/string.h"
+#include "../assets/include/bugsnag.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,7 +43,7 @@ bsg_unwinder bsg_configured_unwind_style() {
   return BSG_CUSTOM_UNWIND;
 }
 
-void bugsnag_add_on_error_env(bool (*on_error)(bugsnag_report *report)) {
+void bugsnag_add_on_error_env(JNIEnv *env, on_error on_error) {
   if (bsg_global_env != NULL) {
     bsg_global_env->on_error = on_error;
   }
@@ -50,10 +51,10 @@ void bugsnag_add_on_error_env(bool (*on_error)(bugsnag_report *report)) {
 
 bool bsg_run_on_error_cbs(bsg_environment *const env) {
 
-  bool (*on_error)(bugsnag_report *) = env->on_error;
-  if (on_error != NULL) {
+  on_error cb = env->on_error;
+  if (cb!= NULL) {
     bugsnag_report *report = &env->next_report;
-    return on_error(report);
+    return cb(report);
   }
   return true;
 }

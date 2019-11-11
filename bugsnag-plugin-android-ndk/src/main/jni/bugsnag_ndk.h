@@ -9,6 +9,7 @@
 
 #include "report.h"
 #include "utils/stack_unwinder.h"
+#include "../assets/include/bugsnag.h"
 
 #ifndef BUGSNAG_LOG
 #define BUGSNAG_LOG(fmt, ...)                                                  \
@@ -55,12 +56,12 @@ typedef struct {
      */
     bool crash_handled;
 
-    bool (*on_error)(bugsnag_report *report);
+    on_error on_error;
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();
 
-void bugsnag_add_on_error_env( bool (*on_error)(bugsnag_report *report));
+void bugsnag_add_on_error_env(JNIEnv *env, on_error on_error);
 bool bsg_run_on_error_cbs(bsg_environment *const env);
 
 #ifdef __cplusplus
