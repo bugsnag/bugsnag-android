@@ -17,7 +17,10 @@ bool bsg_report_write(bsg_report_header *header, bugsnag_report *report,
                       int fd);
 
 bugsnag_report *bsg_report_read(int fd);
+bugsnag_report *bsg_report_v3_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
+bugsnag_report *map_v2_to_report(bugsnag_report_v2 *report_v2);
+bugsnag_report *map_v1_to_report(bugsnag_report_v1 *report_v1);
 
 #ifdef __cplusplus
 }
@@ -53,9 +56,9 @@ bugsnag_report_v1 *bsg_report_v1_read(int fd) {
     return report;
 }
 
-bugsnag_report *bsg_report_v2_read(int fd) {
-    size_t report_size = sizeof(bugsnag_report);
-    bugsnag_report *report = malloc(report_size);
+bugsnag_report_v2 *bsg_report_v2_read(int fd) {
+    size_t report_size = sizeof(bugsnag_report_v2);
+    bugsnag_report_v2 *report = malloc(report_size);
 
     ssize_t len = read(fd, report, report_size);
     if (len != report_size) {
@@ -63,6 +66,18 @@ bugsnag_report *bsg_report_v2_read(int fd) {
       return NULL;
     }
     return report;
+}
+
+bugsnag_report *bsg_report_v3_read(int fd) {
+  size_t report_size = sizeof(bugsnag_report);
+  bugsnag_report *report = malloc(report_size);
+
+  ssize_t len = read(fd, report, report_size);
+  if (len != report_size) {
+    free(report);
+    return NULL;
+  }
+  return report;
 }
 
 bugsnag_report *bsg_report_read(int fd) {
@@ -73,40 +88,80 @@ bugsnag_report *bsg_report_read(int fd) {
 
   int report_version = header->version;
   free(header);
-
   bugsnag_report *report = NULL;
 
   if (report_version == 1) { // 'report->unhandled_events' was added in v2
-      bugsnag_report_v1 *report_v1 = bsg_report_v1_read(fd);
-
-      if (report_v1 != NULL) {
-          report = malloc(sizeof(bugsnag_report));
-
-          report->notifier = report_v1->notifier;
-          report->app = report_v1->app;
-          report->device = report_v1->device;
-          report->user = report_v1->user;
-          report->exception = report_v1->exception;
-          report->metadata = report_v1->metadata;
-          report->crumb_count = report_v1->crumb_count;
-          report->crumb_first_index = report_v1->crumb_first_index;
-
-          size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
-          memcpy(&report->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
-
-          strcpy(report->context, report_v1->context);
-          report->severity = report_v1->severity;
-          strcpy(report->session_id, report_v1->session_id);
-          strcpy(report->session_start, report_v1->session_start);
-          report->handled_events = report_v1->handled_events;
-          report->unhandled_events = 1;
-
-          free(report_v1);
-      }
+    bugsnag_report_v1 *report_v1 = bsg_report_v1_read(fd);
+    report = map_v1_to_report(report_v1);
+  } else if (report_version == 2) {
+    bugsnag_report_v2 *report_v2 = bsg_report_v2_read(fd);
+    report = map_v2_to_report(report_v2);
   } else {
-      report = bsg_report_v2_read(fd);
+    report = bsg_report_v3_read(fd);
   }
   return report;
+}
+
+bugsnag_report *map_v2_to_report(bugsnag_report_v2 *report_v2) {
+  if (report_v2 == NULL) {
+    return NULL;
+  }
+  bugsnag_report *report = malloc(sizeof(bugsnag_report));
+
+  if (report != NULL) {
+    report->notifier = report_v2->notifier;
+    report->app = report_v2->app;
+    report->device = report_v2->device;
+    report->user = report_v2->user;
+    report->exception = report_v2->exception;
+    report->metadata = report_v2->metadata;
+    report->crumb_count = report_v2->crumb_count;
+    report->crumb_first_index = report_v2->crumb_first_index;
+
+    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+    memcpy(&report->breadcrumbs, report_v2->breadcrumbs, breadcrumb_size);
+
+    strcpy(report->context, report_v2->context);
+    report->severity = report_v2->severity;
+    strcpy(report->session_id, report_v2->session_id);
+    strcpy(report->session_start, report_v2->session_start);
+    report->handled_events = report_v2->handled_events;
+    report->unhandled_events = report_v2->unhandled_events;
+  }
+  free(report_v2);
+  return report;
+}
+
+bugsnag_report *map_v1_to_report(bugsnag_report_v1 *report_v1) {
+  if (report_v1 == NULL) {
+    return NULL;
+  }
+  size_t report_size = sizeof(bugsnag_report_v2);
+  bugsnag_report_v2 *report_v2 = malloc(report_size);
+
+  if (report_v2 != NULL) {
+    report_v2->notifier = report_v1->notifier;
+    report_v2->app = report_v1->app;
+    report_v2->device = report_v1->device;
+    report_v2->user = report_v1->user;
+    report_v2->exception = report_v1->exception;
+    report_v2->metadata = report_v1->metadata;
+    report_v2->crumb_count = report_v1->crumb_count;
+    report_v2->crumb_first_index = report_v1->crumb_first_index;
+
+    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+    memcpy(&report_v2->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
+
+    strcpy(report_v2->context, report_v1->context);
+    report_v2->severity = report_v1->severity;
+    strcpy(report_v2->session_id, report_v1->session_id);
+    strcpy(report_v2->session_start, report_v1->session_start);
+    report_v2->handled_events = report_v1->handled_events;
+    report_v2->unhandled_events = 1;
+
+    free(report_v1);
+  }
+  return map_v2_to_report(report_v2);
 }
 
 bsg_report_header *bsg_report_header_read(int fd) {

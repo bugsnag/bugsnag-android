@@ -49,6 +49,12 @@ void generate_basic_report(bugsnag_report *report) {
   strcpy(report->session_start, "2019-03-19T12:58:19+00:00");
 }
 
+bugsnag_report_v2 *bsg_generate_report_v2(void) {
+  bugsnag_report_v2 *report = calloc(1, sizeof(bugsnag_report_v2));
+  generate_basic_report((bugsnag_report *) report);
+  return report;
+}
+
 bugsnag_report_v1 *bsg_generate_report_v1(void) {
   bugsnag_report_v1 *report = calloc(1, sizeof(bugsnag_report_v1));
   generate_basic_report((bugsnag_report *) report);
@@ -112,6 +118,27 @@ TEST test_report_v1_migration(void) {
   ASSERT(strcmp("2019-03-19T12:58:19+00:00", report->session_start) == 0);
   ASSERT_EQ(1, report->handled_events);
   ASSERT_EQ(1, report->unhandled_events);
+
+  free(generated_report);
+  free(env);
+  free(report);
+  PASS();
+}
+
+TEST test_report_v2_migration(void) {
+  bsg_environment *env = malloc(sizeof(bsg_environment));
+  env->report_header.version = 2;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
+
+  bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
+  memcpy(&env->next_report, generated_report, sizeof(bugsnag_report_v2));
+  strcpy(env->next_report_path, SERIALIZE_TEST_FILE);
+  bsg_serialize_report_to_file(env);
+
+  bugsnag_report *report = bsg_deserialize_report_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(report != NULL);
+  // TODO should compare moved fields here
 
   free(generated_report);
   free(env);
