@@ -49,6 +49,12 @@ void bugsnag_add_on_error_env(JNIEnv *env, on_error on_error) {
   }
 }
 
+void bugsnag_remove_on_error_env(JNIEnv *env, on_error on_error) {
+  if (bsg_global_env != NULL) {
+    bsg_global_env->on_error = NULL;
+  }
+}
+
 bool bsg_run_on_error_cbs(bsg_environment *const env) {
 
   on_error cb = env->on_error;

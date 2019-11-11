@@ -52,6 +52,10 @@ void bugsnag_add_on_error(on_error on_error) {
     bugsnag_add_on_error_env(bsg_global_jni_env, on_error);
 }
 
+void bugsnag_remove_on_error(on_error on_error) {
+    bugsnag_remove_on_error_env(bsg_global_jni_env, on_error);
+}
+
 jfieldID bsg_parse_jseverity(JNIEnv *env, bsg_severity_t severity,
                              jclass severity_class) {
   const char *severity_sig = "Lcom/bugsnag/android/Severity;";
