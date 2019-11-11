@@ -1,5 +1,4 @@
 #include "metadata.h"
-#include "report.h"
 #include "utils/string.h"
 #include <malloc.h>
 #include <string.h>

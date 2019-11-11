@@ -1,6 +1,8 @@
 #include <bugsnag.h>
 #include <jni.h>
 #include <stdlib.h>
+#include <stdexcept>
+#include <string.h>
 
 extern "C" {
 JNIEXPORT void JNICALL
@@ -195,4 +197,101 @@ if (x > 0)
 __builtin_trap();
 return 12633;
 }
+
+void mzr_strncpy_safe(char *dst, char *src, int dst_size) {
+    if (dst_size == 0)
+        return;
+    dst[0] = '\0';
+    if (src != NULL) {
+        strncat(dst, src, dst_size - 1);
+    }
+}
+
+bool on_err_true(bugsnag_report *report) {
+    printf("Received Bugsnag error report, logging callback! %s", report->exception.name);
+    mzr_strncpy_safe(report->context, (char *) "Some custom context", sizeof(report->context));
+    return true;
+}
+
+bool on_err_false(bugsnag_report *report) {
+    printf("Received Bugsnag error report, logging callback! %s", report->exception.name);
+    return false;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalOnErrorFalseScenario_crash(
+        JNIEnv *env,
+jobject instance) {
+    bugsnag_add_on_error(&on_err_false);
+    int x = 47;
+    if (x > 0)
+        __builtin_trap();
+    return 12633;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalOnErrorTrueScenario_crash(
+        JNIEnv *env,
+jobject instance) {
+    bugsnag_add_on_error(&on_err_true);
+    int x = 47;
+    if (x > 0)
+        __builtin_trap();
+    return 12633;
+}
+
+
+bool __attribute__((noinline)) f_run_away(bool value) {
+    if (value)
+        throw new std::runtime_error("How about NO");
+
+    return false;
+}
+
+bool __attribute__((noinline)) f_run_back(int value, int boundary) {
+    printf("boundary: %d\n", boundary);
+    if (value > -boundary)
+        throw 42;
+
+    return false;
+}
+
+int __attribute__((noinline)) f_throw_an_object(bool value, int boundary) {
+    if (value) {
+        printf("Now we know what they mean by 'advanced' tactical training: %d", boundary);
+        return (int)f_run_back(value, boundary);
+    }
+    return boundary * 2;
+}
+
+int __attribute__((noinline)) f_trigger_an_exception(bool value) {
+    printf("Shields up! Rrrrred alert!.\n");
+    if (value)
+        return (int)f_run_away(value);
+    else
+        return 405;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionOnErrorFalseScenario_crash(
+        JNIEnv *env,
+        jobject instance) {
+    bugsnag_add_on_error(&on_err_false);
+    int x = 61;
+    printf("This one here: %ld\n", (long) f_trigger_an_exception(x > 0));
+    printf("This one here: %ld\n", (long) f_throw_an_object(x > 0, x));
+    return 22;
+}
+
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionOnErrorTrueScenario_crash(
+        JNIEnv *env,
+        jobject instance) {
+    bugsnag_add_on_error(&on_err_true);
+    int x = 61;
+    printf("This one here: %ld\n", (long) f_trigger_an_exception(x > 0));
+    printf("This one here: %ld\n", (long) f_throw_an_object(x > 0, x));
+    return 55;
+}
+
 }

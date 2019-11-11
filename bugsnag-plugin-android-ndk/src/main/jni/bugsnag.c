@@ -47,6 +47,10 @@ void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type) {
   }
 }
 
+void bugsnag_add_on_error(bool (*on_error)(bugsnag_report *report)) {
+    bugsnag_add_on_error_env(on_error);
+}
+
 jfieldID bsg_parse_jseverity(JNIEnv *env, bsg_severity_t severity,
                              jclass severity_class) {
   const char *severity_sig = "Lcom/bugsnag/android/Severity;";

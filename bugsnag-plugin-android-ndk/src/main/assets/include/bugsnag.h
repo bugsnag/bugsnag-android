@@ -36,6 +36,8 @@ void bugsnag_set_user_env(JNIEnv *env, char* id, char* email, char* name);
 void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type);
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message, bsg_breadcrumb_t type);
 
+void bugsnag_add_on_error(bool (*on_error)(bugsnag_report *report));
+
 #ifdef __cplusplus
 }
 #endif

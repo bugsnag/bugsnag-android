@@ -55,11 +55,12 @@ typedef struct {
      */
     bool crash_handled;
 
-    bool (*on_error)(bugsnag_report report);
+    bool (*on_error)(bugsnag_report *report);
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();
 
+void bugsnag_add_on_error_env( bool (*on_error)(bugsnag_report *report));
 bool bsg_run_on_error_cbs(bsg_environment *const env);
 
 #ifdef __cplusplus
