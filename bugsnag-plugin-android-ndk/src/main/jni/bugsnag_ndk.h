@@ -7,7 +7,7 @@
 #include <android/log.h>
 #include <stdbool.h>
 
-#include "report.h"
+#include "event.h"
 #include "utils/stack_unwinder.h"
 
 #ifndef BUGSNAG_LOG
@@ -32,11 +32,11 @@ typedef struct {
     /**
      * File path on disk where the next crash report will be written if needed.
      */
-    char next_report_path[384];
+    char next_event_path[384];
     /**
      * Cache of static metadata and report info. Exception/time information is populated at crash time.
      */
-    bugsnag_report next_report;
+    bugsnag_event next_event;
     /**
      * Time when installed
      */

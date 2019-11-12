@@ -93,25 +93,25 @@ bugsnag_metadata * loadCustomMetadataTestCase(jint num) {
     return data;
 }
 
-bugsnag_report * loadContextTestCase(jint num) {
-    bugsnag_report *data = malloc(sizeof(bugsnag_report));
+bugsnag_event * loadContextTestCase(jint num) {
+    bugsnag_event *data = malloc(sizeof(bugsnag_event));
     strcpy(data->context, "CustomContext");
     strcpy(data->app.active_screen, "ExampleActivity");
     return data;
 }
 
-bugsnag_report * loadHandledStateTestCase(jint num) {
-    bugsnag_report *data = malloc(sizeof(bugsnag_report));
+bugsnag_event * loadHandledStateTestCase(jint num) {
+    bugsnag_event *data = malloc(sizeof(bugsnag_event));
     return data;
 }
 
-bugsnag_report * loadSessionTestCase(jint num) {
-    bugsnag_report *data = malloc(sizeof(bugsnag_report));
+bugsnag_event * loadSessionTestCase(jint num) {
+    bugsnag_event *data = malloc(sizeof(bugsnag_event));
     return data;
 }
 
-bugsnag_report * loadBreadcrumbsTestCase(jint num) {
-    bugsnag_report *data = malloc(sizeof(bugsnag_report));
+bugsnag_event * loadBreadcrumbsTestCase(jint num) {
+    bugsnag_event *data = malloc(sizeof(bugsnag_event));
     return data;
 }
 
@@ -126,10 +126,10 @@ bsg_stackframe * loadStackframeTestCase(jint num) {
     return data;
 }
 
-bsg_exception * loadExceptionTestCase(jint num) {
-    bsg_exception *data = malloc(sizeof(bsg_exception));
-    strcpy(data->name, "signal");
-    strcpy(data->message, "whoops something went wrong");
+bsg_error * loadExceptionTestCase(jint num) {
+    bsg_error *data = malloc(sizeof(bsg_error));
+    strcpy(data->errorClass, "signal");
+    strcpy(data->errorMessage, "whoops something went wrong");
     strcpy(data->type, "c");
     data->frame_count = 1;
     // TODO stacktrace

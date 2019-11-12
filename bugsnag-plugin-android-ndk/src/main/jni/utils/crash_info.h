@@ -12,7 +12,7 @@ extern "C" {
 /**
  * Add crash-time information to a report, respecting signal safety
  */
-void bsg_populate_report_as(bsg_environment *env) __asyncsafe;
+void bsg_populate_event_as(bsg_environment *env) __asyncsafe;
 #ifdef __cplusplus
 }
 #endif

@@ -2,7 +2,7 @@
 
 #include <fcntl.h>
 #include <parson/parson.h>
-#include <report.h>
+#include <event.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,100 +13,166 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-bool bsg_report_write(bsg_report_header *header, bugsnag_report *report,
-                      int fd);
+bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
+                     int fd);
 
-bugsnag_report *bsg_report_read(int fd);
+bugsnag_event *bsg_event_read(int fd);
+bugsnag_event *bsg_report_v3_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
+bugsnag_event *map_v2_to_report(bugsnag_report_v2 *event_v2);
+bugsnag_event *map_v1_to_report(bugsnag_report_v1 *event_v1);
 
 #ifdef __cplusplus
 }
 #endif
 
-bool bsg_serialize_report_to_file(bsg_environment *env) {
-  int fd = open(env->next_report_path, O_WRONLY | O_CREAT, 0644);
+bool bsg_serialize_event_to_file(bsg_environment *env) {
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
   if (fd == -1) {
     return false;
   }
 
-  return bsg_report_write(&env->report_header, &env->next_report, fd);
+  return bsg_event_write(&env->report_header, &env->next_event, fd);
 }
 
-bugsnag_report *bsg_deserialize_report_from_file(char *filepath) {
+bugsnag_event *bsg_deserialize_event_from_file(char *filepath) {
   int fd = open(filepath, O_RDONLY);
   if (fd == -1) {
     return NULL;
   }
 
-  return bsg_report_read(fd);
+  return bsg_event_read(fd);
 }
 
 bugsnag_report_v1 *bsg_report_v1_read(int fd) {
-    size_t report_size = sizeof(bugsnag_report_v1);
-    bugsnag_report_v1 *report = malloc(report_size);
+    size_t event_size = sizeof(bugsnag_report_v1);
+    bugsnag_report_v1 *event = malloc(event_size);
 
-    ssize_t len = read(fd, report, report_size);
-    if (len != report_size) {
-        free(report);
+    ssize_t len = read(fd, event, event_size);
+    if (len != event_size) {
+        free(event);
         return NULL;
     }
-    return report;
+    return event;
 }
 
-bugsnag_report *bsg_report_v2_read(int fd) {
-    size_t report_size = sizeof(bugsnag_report);
-    bugsnag_report *report = malloc(report_size);
+bugsnag_report_v2 *bsg_report_v2_read(int fd) {
+    size_t event_size = sizeof(bugsnag_report_v2);
+    bugsnag_report_v2 *event = malloc(event_size);
 
-    ssize_t len = read(fd, report, report_size);
-    if (len != report_size) {
-      free(report);
+    ssize_t len = read(fd, event, event_size);
+    if (len != event_size) {
+      free(event);
       return NULL;
     }
-    return report;
+    return event;
 }
 
-bugsnag_report *bsg_report_read(int fd) {
+bugsnag_event *bsg_report_v3_read(int fd) {
+  size_t event_size = sizeof(bugsnag_event);
+  bugsnag_event *event = malloc(event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
+bugsnag_event *bsg_event_read(int fd) {
   bsg_report_header *header = bsg_report_header_read(fd);
   if (header == NULL) {
     return NULL;
   }
 
-  int report_version = header->version;
+  int event_version = header->version;
   free(header);
+  bugsnag_event *event = NULL;
 
-  bugsnag_report *report = NULL;
-
-  if (report_version == 1) { // 'report->unhandled_events' was added in v2
-      bugsnag_report_v1 *report_v1 = bsg_report_v1_read(fd);
-
-      if (report_v1 != NULL) {
-          report = malloc(sizeof(bugsnag_report));
-
-          report->notifier = report_v1->notifier;
-          report->app = report_v1->app;
-          report->device = report_v1->device;
-          report->user = report_v1->user;
-          report->exception = report_v1->exception;
-          report->metadata = report_v1->metadata;
-          report->crumb_count = report_v1->crumb_count;
-          report->crumb_first_index = report_v1->crumb_first_index;
-
-          size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
-          memcpy(&report->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
-
-          strcpy(report->context, report_v1->context);
-          report->severity = report_v1->severity;
-          strcpy(report->session_id, report_v1->session_id);
-          strcpy(report->session_start, report_v1->session_start);
-          report->handled_events = report_v1->handled_events;
-          report->unhandled_events = 1;
-
-          free(report_v1);
-      }
+  if (event_version == 1) { // 'event->unhandled_events' was added in v2
+    bugsnag_report_v1 *report_v1 = bsg_report_v1_read(fd);
+    event = map_v1_to_report(report_v1);
+  } else if (event_version == 2) {
+    bugsnag_report_v2 *report_v2 = bsg_report_v2_read(fd);
+    event = map_v2_to_report(report_v2);
   } else {
-      report = bsg_report_v2_read(fd);
+    event = bsg_report_v3_read(fd);
   }
-  return report;
+  return event;
+}
+
+bugsnag_event *map_v2_to_report(bugsnag_report_v2 *event_v2) {
+  if (event_v2 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    event->app = event_v2->app;
+    event->device = event_v2->device;
+    event->user = event_v2->user;
+    event->metadata = event_v2->metadata;
+    event->crumb_count = event_v2->crumb_count;
+    event->crumb_first_index = event_v2->crumb_first_index;
+
+    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+    memcpy(&event->breadcrumbs, event_v2->breadcrumbs, breadcrumb_size);
+
+    strcpy(event->context, event_v2->context);
+    event->severity = event_v2->severity;
+    strcpy(event->session_id, event_v2->session_id);
+    strcpy(event->session_start, event_v2->session_start);
+    event->handled_events = event_v2->handled_events;
+    event->unhandled_events = event_v2->unhandled_events;
+
+    // migrate changed notifier fields
+    strcpy(event->notifier.version, event_v2->notifier.version);
+    strcpy(event->notifier.name, event_v2->notifier.name);
+    strcpy(event->notifier.url, event_v2->notifier.url);
+
+    // migrate changed error fields
+    strcpy(event->error.errorClass, event_v2->exception.name);
+    strcpy(event->error.errorMessage, event_v2->exception.message);
+    strcpy(event->error.type, event_v2->exception.type);
+    event->error.frame_count = event_v2->exception.frame_count;
+    size_t error_size = sizeof(bsg_stackframe) * BUGSNAG_FRAMES_MAX;
+    memcpy(&event->error.stacktrace, event_v2->exception.stacktrace, error_size);
+  }
+  free(event_v2);
+  return event;
+}
+
+bugsnag_event *map_v1_to_report(bugsnag_report_v1 *event_v1) {
+  if (event_v1 == NULL) {
+    return NULL;
+  }
+  size_t event_size = sizeof(bugsnag_report_v2);
+  bugsnag_report_v2 *event_v2 = malloc(event_size);
+
+  if (event_v2 != NULL) {
+    event_v2->notifier = event_v1->notifier;
+    event_v2->app = event_v1->app;
+    event_v2->device = event_v1->device;
+    event_v2->user = event_v1->user;
+    event_v2->exception = event_v1->exception;
+    event_v2->metadata = event_v1->metadata;
+    event_v2->crumb_count = event_v1->crumb_count;
+    event_v2->crumb_first_index = event_v1->crumb_first_index;
+
+    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+    memcpy(&event_v2->breadcrumbs, event_v1->breadcrumbs, breadcrumb_size);
+
+    strcpy(event_v2->context, event_v1->context);
+    event_v2->severity = event_v1->severity;
+    strcpy(event_v2->session_id, event_v1->session_id);
+    strcpy(event_v2->session_start, event_v1->session_start);
+    event_v2->handled_events = event_v1->handled_events;
+    event_v2->unhandled_events = 1;
+
+    free(event_v1);
+  }
+  return map_v2_to_report(event_v2);
 }
 
 bsg_report_header *bsg_report_header_read(int fd) {
@@ -126,14 +192,14 @@ bool bsg_report_header_write(bsg_report_header *header, int fd) {
   return len == sizeof(bsg_report_header);
 }
 
-bool bsg_report_write(bsg_report_header *header, bugsnag_report *report,
-                      int fd) {
+bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
+                     int fd) {
   if (!bsg_report_header_write(header, fd)) {
     return false;
   }
 
-  ssize_t len = write(fd, report, sizeof(bugsnag_report));
-  return len == sizeof(bugsnag_report);
+  ssize_t len = write(fd, event, sizeof(bugsnag_event));
+  return len == sizeof(bugsnag_event);
 }
 
 const char *bsg_crumb_type_string(bsg_breadcrumb_t type) {
@@ -168,87 +234,87 @@ const char *bsg_severity_string(bsg_severity_t type) {
   }
 }
 
-void bsg_serialize_context(const bugsnag_report *report, JSON_Object *event) {
-  if (strlen(report->context) > 0) {
-    json_object_set_string(event, "context", report->context);
+void bsg_serialize_context(const bugsnag_event *event, JSON_Object *event_obj) {
+  if (strlen(event->context) > 0) {
+    json_object_set_string(event_obj, "context", event->context);
   } else {
-    json_object_set_string(event, "context", report->app.active_screen);
+    json_object_set_string(event_obj, "context", event->app.active_screen);
   }
 }
 
-void bsg_serialize_handled_state(const bugsnag_report *report, JSON_Object *event) {
+void bsg_serialize_handled_state(const bugsnag_event *event, JSON_Object *event_obj) {
   // FUTURE(dm): severityReason/unhandled attributes are currently
   // over-optimized for signal handling. in the future we may want to handle
   // C++ exceptions, etc as well.
-  json_object_set_string(event, "severity", bsg_severity_string(report->severity));
-  json_object_dotset_boolean(event, "unhandled", true);
-  json_object_dotset_string(event, "severityReason.type", "signal");
-  json_object_dotset_string(event, "severityReason.attributes.signalType", report->exception.name);
+  json_object_set_string(event_obj, "severity", bsg_severity_string(event->severity));
+  json_object_dotset_boolean(event_obj, "unhandled", true);
+  json_object_dotset_string(event_obj, "severityReason.type", "signal");
+  json_object_dotset_string(event_obj, "severityReason.attributes.signalType", event->error.errorClass);
 }
 
-void bsg_serialize_app(const bsg_app_info app, JSON_Object *event) {
-  json_object_dotset_string(event, "app.version", app.version);
-  json_object_dotset_string(event, "app.id", app.id);
-  json_object_dotset_string(event, "app.type", app.type);
+void bsg_serialize_app(const bsg_app_info app, JSON_Object *event_obj) {
+  json_object_dotset_string(event_obj, "app.version", app.version);
+  json_object_dotset_string(event_obj, "app.id", app.id);
+  json_object_dotset_string(event_obj, "app.type", app.type);
 
-  json_object_dotset_string(event, "app.releaseStage", app.release_stage);
-  json_object_dotset_number(event, "app.versionCode", app.version_code);
+  json_object_dotset_string(event_obj, "app.releaseStage", app.release_stage);
+  json_object_dotset_number(event_obj, "app.versionCode", app.version_code);
   if (strlen(app.build_uuid) > 0) {
-    json_object_dotset_string(event, "app.buildUUID", app.build_uuid);
+    json_object_dotset_string(event_obj, "app.buildUUID", app.build_uuid);
   }
-  json_object_dotset_string(event, "app.binaryArch", app.binaryArch);
-  json_object_dotset_number(event, "app.duration", app.duration);
-  json_object_dotset_number(event, "app.durationInForeground", app.duration_in_foreground);
-  json_object_dotset_boolean(event, "app.inForeground", app.in_foreground);
+  json_object_dotset_string(event_obj, "app.binaryArch", app.binaryArch);
+  json_object_dotset_number(event_obj, "app.duration", app.duration);
+  json_object_dotset_number(event_obj, "app.durationInForeground", app.duration_in_foreground);
+  json_object_dotset_boolean(event_obj, "app.inForeground", app.in_foreground);
 }
 
-void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event) {
-  json_object_dotset_string(event, "metaData.app.packageName", app.package_name);
-  json_object_dotset_string(event, "metaData.app.versionName", app.version_name);
-  json_object_dotset_string(event, "metaData.app.activeScreen", app.active_screen);
-  json_object_dotset_string(event, "metaData.app.name", app.name);
-  json_object_dotset_boolean(event, "metaData.app.lowMemory", app.low_memory);
+void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event_obj) {
+  json_object_dotset_string(event_obj, "metaData.app.packageName", app.package_name);
+  json_object_dotset_string(event_obj, "metaData.app.versionName", app.version_name);
+  json_object_dotset_string(event_obj, "metaData.app.activeScreen", app.active_screen);
+  json_object_dotset_string(event_obj, "metaData.app.name", app.name);
+  json_object_dotset_boolean(event_obj, "metaData.app.lowMemory", app.low_memory);
 }
 
-void bsg_serialize_device(const bsg_device_info device, JSON_Object *event) {
-  json_object_dotset_string(event, "device.osName", "android");
-  json_object_dotset_string(event, "device.id", device.id);
-  json_object_dotset_string(event, "device.locale", device.locale);
-  json_object_dotset_string(event, "device.osVersion", device.os_version);
-  json_object_dotset_string(event, "device.manufacturer", device.manufacturer);
-  json_object_dotset_string(event, "device.model", device.model);
-  json_object_dotset_string(event, "device.orientation", device.orientation);
-  json_object_dotset_number(event, "device.runtimeVersions.androidApiLevel", device.api_level);
-  json_object_dotset_string(event, "device.runtimeVersions.osBuild", device.os_build);
+void bsg_serialize_device(const bsg_device_info device, JSON_Object *event_obj) {
+  json_object_dotset_string(event_obj, "device.osName", "android");
+  json_object_dotset_string(event_obj, "device.id", device.id);
+  json_object_dotset_string(event_obj, "device.locale", device.locale);
+  json_object_dotset_string(event_obj, "device.osVersion", device.os_version);
+  json_object_dotset_string(event_obj, "device.manufacturer", device.manufacturer);
+  json_object_dotset_string(event_obj, "device.model", device.model);
+  json_object_dotset_string(event_obj, "device.orientation", device.orientation);
+  json_object_dotset_number(event_obj, "device.runtimeVersions.androidApiLevel", device.api_level);
+  json_object_dotset_string(event_obj, "device.runtimeVersions.osBuild", device.os_build);
 
   JSON_Value *abi_val = json_value_init_array();
   JSON_Array *cpu_abis = json_value_get_array(abi_val);
-  json_object_dotset_value(event, "device.cpuAbi", abi_val);
+  json_object_dotset_value(event_obj, "device.cpuAbi", abi_val);
   for (int i = 0; i < device.cpu_abi_count; i++) {
     json_array_append_string(cpu_abis, device.cpu_abi[i].value);
   }
 
-  json_object_dotset_number(event, "device.totalMemory", device.total_memory);
+  json_object_dotset_number(event_obj, "device.totalMemory", device.total_memory);
 
   char report_time[sizeof "2018-10-08T12:07:09Z"];
   if (device.time > 0) {
     strftime(report_time, sizeof report_time, "%FT%TZ", gmtime(&device.time));
-    json_object_dotset_string(event, "device.time", report_time);
+    json_object_dotset_string(event_obj, "device.time", report_time);
   }
 }
 
-void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event) {
-  json_object_dotset_string(event, "metaData.device.brand", device.brand);
-  json_object_dotset_boolean(event, "metaData.device.emulator", device.emulator);
-  json_object_dotset_boolean(event, "metaData.device.jailbroken", device.jailbroken);
-  json_object_dotset_string(event, "metaData.device.locationStatus", device.location_status);
-  json_object_dotset_string(event, "metaData.device.networkAccess", device.network_access);
-  json_object_dotset_number(event, "metaData.device.dpi", device.dpi);
-  json_object_dotset_number(event, "metaData.device.screenDensity", device.screen_density);
-  json_object_dotset_string(event, "metaData.device.screenResolution", device.screen_resolution);
+void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event_obj) {
+  json_object_dotset_string(event_obj, "metaData.device.brand", device.brand);
+  json_object_dotset_boolean(event_obj, "metaData.device.emulator", device.emulator);
+  json_object_dotset_boolean(event_obj, "metaData.device.jailbroken", device.jailbroken);
+  json_object_dotset_string(event_obj, "metaData.device.locationStatus", device.location_status);
+  json_object_dotset_string(event_obj, "metaData.device.networkAccess", device.network_access);
+  json_object_dotset_number(event_obj, "metaData.device.dpi", device.dpi);
+  json_object_dotset_number(event_obj, "metaData.device.screenDensity", device.screen_density);
+  json_object_dotset_string(event_obj, "metaData.device.screenResolution", device.screen_resolution);
 }
 
-void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event) {
+void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event_obj) {
   for (int i = 0; i < metadata.value_count; i++) {
     char *format = malloc(sizeof(char) * 256);
     bsg_metadata_value value = metadata.values[i];
@@ -256,15 +322,15 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object 
     switch (value.type) {
       case BSG_BOOL_VALUE:
         sprintf(format, "metaData.%s.%s", value.section, value.name);
-            json_object_dotset_boolean(event, format, value.bool_value);
+            json_object_dotset_boolean(event_obj, format, value.bool_value);
             break;
       case BSG_CHAR_VALUE:
         sprintf(format, "metaData.%s.%s", value.section, value.name);
-            json_object_dotset_string(event, format, value.char_value);
+            json_object_dotset_string(event_obj, format, value.char_value);
             break;
       case BSG_NUMBER_VALUE:
         sprintf(format, "metaData.%s.%s", value.section, value.name);
-            json_object_dotset_number(event, format, value.double_value);
+            json_object_dotset_number(event_obj, format, value.double_value);
             break;
       default:
         break;
@@ -273,29 +339,29 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object 
   }
 }
 
-void bsg_serialize_user(const bsg_user user, JSON_Object *event) {
+void bsg_serialize_user(const bsg_user user, JSON_Object *event_obj) {
   if (strlen(user.name) > 0)
-    json_object_dotset_string(event, "user.name", user.name);
+    json_object_dotset_string(event_obj, "user.name", user.name);
   if (strlen(user.email) > 0)
-    json_object_dotset_string(event, "user.email", user.email);
+    json_object_dotset_string(event_obj, "user.email", user.email);
   if (strlen(user.id) > 0)
-    json_object_dotset_string(event, "user.id", user.id);
+    json_object_dotset_string(event_obj, "user.id", user.id);
 }
 
-void bsg_serialize_session(bugsnag_report *report, JSON_Object *event) {
-  if (bugsnag_report_has_session(report)) {
-    json_object_dotset_string(event, "session.startedAt",
-                              report->session_start);
-    json_object_dotset_string(event, "session.id", report->session_id);
-    json_object_dotset_number(event, "session.events.handled",
-                              report->handled_events);
-    json_object_dotset_number(event, "session.events.unhandled", report->unhandled_events);
+void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj) {
+  if (bugsnag_event_has_session(event)) {
+    json_object_dotset_string(event_obj, "session.startedAt",
+                              event->session_start);
+    json_object_dotset_string(event_obj, "session.id", event->session_id);
+    json_object_dotset_number(event_obj, "session.events.handled",
+                              event->handled_events);
+    json_object_dotset_number(event_obj, "session.events.unhandled", event->unhandled_events);
   }
 }
 
-void bsg_serialize_exception(bsg_exception exc, JSON_Object *exception, JSON_Array *stacktrace) {
-  json_object_set_string(exception, "errorClass", exc.name);
-  json_object_set_string(exception, "message", exc.message);
+void bsg_serialize_error(bsg_error exc, JSON_Object *exception, JSON_Array *stacktrace) {
+  json_object_set_string(exception, "errorClass", exc.errorClass);
+  json_object_set_string(exception, "message", exc.errorMessage);
   json_object_set_string(exception, "type", "c");
   for (int findex = 0; findex < exc.frame_count; findex++) {
     bsg_stackframe stackframe = exc.stacktrace[findex];
@@ -326,14 +392,14 @@ void bsg_serialize_stackframe(bsg_stackframe *stackframe, JSON_Array *stacktrace
   json_array_append_value(stacktrace, frame_val);
 }
 
-void bsg_serialize_breadcrumbs(const bugsnag_report *report, JSON_Array *crumbs) {
-  if (report->crumb_count > 0) {
-    int current_index = report->crumb_first_index;
-    while (json_array_get_count(crumbs) < report->crumb_count) {
+void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
+  if (event->crumb_count > 0) {
+    int current_index = event->crumb_first_index;
+    while (json_array_get_count(crumbs) < event->crumb_count) {
       JSON_Value *crumb_val = json_value_init_object();
       JSON_Object *crumb = json_value_get_object(crumb_val);
       json_array_append_value(crumbs, crumb_val);
-      bugsnag_breadcrumb breadcrumb = report->breadcrumbs[current_index];
+      bugsnag_breadcrumb breadcrumb = event->breadcrumbs[current_index];
       json_object_set_string(crumb, "name", breadcrumb.name);
       json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
       json_object_set_string(crumb, "type",
@@ -357,9 +423,9 @@ void bsg_serialize_breadcrumbs(const bugsnag_report *report, JSON_Array *crumbs)
   }
 }
 
-char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
+char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
   JSON_Value *event_val = json_value_init_object();
-  JSON_Object *event = json_value_get_object(event_val);
+  JSON_Object *event_obj = json_value_get_object(event_val);
   JSON_Value *crumbs_val = json_value_init_array();
   JSON_Array *crumbs = json_value_get_array(crumbs_val);
   JSON_Value *exceptions_val = json_value_init_array();
@@ -368,23 +434,23 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
   JSON_Object *exception = json_value_get_object(ex_val);
   JSON_Value *stack_val = json_value_init_array();
   JSON_Array *stacktrace = json_value_get_array(stack_val);
-  json_object_set_value(event, "exceptions", exceptions_val);
-  json_object_set_value(event, "breadcrumbs", crumbs_val);
+  json_object_set_value(event_obj, "exceptions", exceptions_val);
+  json_object_set_value(event_obj, "breadcrumbs", crumbs_val);
   json_object_set_value(exception, "stacktrace", stack_val);
   json_array_append_value(exceptions, ex_val);
   char *serialized_string = NULL;
   {
-    bsg_serialize_context(report, event);
-    bsg_serialize_handled_state(report, event);
-    bsg_serialize_app(report->app, event);
-    bsg_serialize_app_metadata(report->app, event);
-    bsg_serialize_device(report->device, event);
-    bsg_serialize_device_metadata(report->device, event);
-    bsg_serialize_custom_metadata(report->metadata, event);
-    bsg_serialize_user(report->user, event);
-    bsg_serialize_session(report, event);
-    bsg_serialize_exception(report->exception, exception, stacktrace);
-    bsg_serialize_breadcrumbs(report, crumbs);
+    bsg_serialize_context(event, event_obj);
+    bsg_serialize_handled_state(event, event_obj);
+    bsg_serialize_app(event->app, event_obj);
+    bsg_serialize_app_metadata(event->app, event_obj);
+    bsg_serialize_device(event->device, event_obj);
+    bsg_serialize_device_metadata(event->device, event_obj);
+    bsg_serialize_custom_metadata(event->metadata, event_obj);
+    bsg_serialize_user(event->user, event_obj);
+    bsg_serialize_session(event, event_obj);
+      bsg_serialize_error(event->error, exception, stacktrace);
+    bsg_serialize_breadcrumbs(event, crumbs);
 
     serialized_string = json_serialize_to_string(event_val);
     json_value_free(event_val);

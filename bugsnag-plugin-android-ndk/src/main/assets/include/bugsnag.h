@@ -3,7 +3,7 @@
 #define BUGSNAG_ANDROID_NDK_BUGSNAG_API_H
 
 #include <jni.h>
-#include "report.h"
+#include "event.h"
 
 #ifdef __cplusplus
 extern "C" {

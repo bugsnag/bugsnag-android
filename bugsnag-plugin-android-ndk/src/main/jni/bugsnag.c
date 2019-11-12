@@ -1,7 +1,7 @@
 /** \brief The public API
  */
 #include "bugsnag_ndk.h"
-#include "report.h"
+#include "event.h"
 #include "utils/stack_unwinder.h"
 #include "metadata.h"
 #include <jni.h>
