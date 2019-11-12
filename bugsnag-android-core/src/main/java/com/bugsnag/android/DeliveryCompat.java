@@ -16,7 +16,7 @@ class DeliveryCompat implements Delivery {
     volatile SessionTrackingApiClient sessionTrackingApiClient;
 
     @Override
-    public void deliver(@NonNull SessionTrackingPayload payload,
+    public void deliver(@NonNull SessionPayload payload,
                         @NonNull Configuration config) throws DeliveryFailureException {
         if (sessionTrackingApiClient != null) {
             try {

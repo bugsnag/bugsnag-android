@@ -28,7 +28,7 @@ public class BeforeSendTest {
         config = new Configuration("key");
         config.setDelivery(new Delivery() {
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
+            public void deliver(@NonNull SessionPayload payload,
                                 @NonNull Configuration config)
                 throws DeliveryFailureException {}
 

@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-public class SessionTrackingPayloadTest {
+public class SessionPayloadTest {
 
     private JSONObject rootNode;
     private Session session;
@@ -31,7 +31,7 @@ public class SessionTrackingPayloadTest {
 
     private SessionStore sessionStore;
     private File storageDir;
-    private SessionTrackingPayload payload;
+    private SessionPayload payload;
     private DeviceData deviceData;
     private Client client;
 
@@ -55,11 +55,12 @@ public class SessionTrackingPayloadTest {
         rootNode = streamableToJson(payload);
     }
 
-    private SessionTrackingPayload generatePayloadFromSession(Context context,
-                                                  Session session) throws Exception {
+    private SessionPayload generatePayloadFromSession(Context context,
+                                                      Session session) throws Exception {
         appData = client.getAppData();
         deviceData = client.deviceData;
-        return new SessionTrackingPayload(session, null, appData, deviceData);
+        return new SessionPayload(session, null, appData.getAppDataSummary(),
+                deviceData.getDeviceDataSummary());
     }
 
     /**
@@ -73,23 +74,6 @@ public class SessionTrackingPayloadTest {
         client.close();
     }
 
-    @Test
-    public void testPayloadSerialisation() throws Exception {
-        assertNotNull(rootNode);
-        JSONArray sessions = rootNode.getJSONArray("sessions");
-
-        JSONObject sessionNode = sessions.getJSONObject(0);
-        assertNotNull(sessionNode);
-        assertEquals("test", sessionNode.getString("id"));
-        String startedAt = sessionNode.getString("startedAt");
-        assertEquals(DateUtils.toIso8601(session.getStartedAt()), startedAt);
-        assertNotNull(sessionNode.getJSONObject("user"));
-
-        assertNotNull(rootNode.getJSONObject("notifier"));
-        assertNotNull(rootNode.getJSONObject("device"));
-        assertNotNull(rootNode.getJSONObject("app"));
-    }
-
     /**
      * Serialises sessions from a file instead
      */
@@ -99,8 +83,8 @@ public class SessionTrackingPayloadTest {
         sessionStore.write(generateSession());
         List<File> storedFiles = sessionStore.findStoredFiles();
 
-        SessionTrackingPayload payload = new SessionTrackingPayload(null,
-            storedFiles, appData, deviceData);
+        SessionPayload payload = new SessionPayload(null,
+            storedFiles, appData.getAppDataSummary(), deviceData.getDeviceDataSummary());
         rootNode = streamableToJson(payload);
 
         assertNotNull(rootNode);

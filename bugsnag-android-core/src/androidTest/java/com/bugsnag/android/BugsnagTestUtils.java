@@ -84,7 +84,7 @@ final class BugsnagTestUtils {
         return new SessionTrackingApiClient() {
             @Override
             public void postSessionTrackingPayload(@NonNull String urlString,
-                                                   @NonNull SessionTrackingPayload payload,
+                                                   @NonNull SessionPayload payload,
                                                    @NonNull Map<String, String> headers)
                 throws NetworkException, BadResponseException {
 
@@ -108,7 +108,7 @@ final class BugsnagTestUtils {
     public static Delivery generateDelivery() {
         return new Delivery() {
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
+            public void deliver(@NonNull SessionPayload payload,
                                 @NonNull Configuration config)
                 throws DeliveryFailureException {}
 

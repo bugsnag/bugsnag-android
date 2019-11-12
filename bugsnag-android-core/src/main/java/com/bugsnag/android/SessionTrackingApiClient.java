@@ -24,7 +24,7 @@ public interface SessionTrackingApiClient {
      * @throws BadResponseException when a non-202 response code is received from the server
      */
     void postSessionTrackingPayload(@NonNull String urlString,
-                                    @NonNull SessionTrackingPayload payload,
+                                    @NonNull SessionPayload payload,
                                     @NonNull Map<String, String> headers)
         throws NetworkException, BadResponseException;
 

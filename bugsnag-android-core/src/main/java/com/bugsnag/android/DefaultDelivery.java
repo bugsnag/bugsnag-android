@@ -21,7 +21,7 @@ class DefaultDelivery implements Delivery {
     }
 
     @Override
-    public void deliver(@NonNull SessionTrackingPayload payload,
+    public void deliver(@NonNull SessionPayload payload,
                         @NonNull Configuration config) throws DeliveryFailureException {
         String endpoint = config.getSessionEndpoint();
         int status = deliver(endpoint, payload, config.getSessionApiHeaders());

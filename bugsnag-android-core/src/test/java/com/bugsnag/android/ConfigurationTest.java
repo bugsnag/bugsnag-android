@@ -217,7 +217,7 @@ public class ConfigurationTest {
         assertNull(configuration.getDelivery());
         Delivery delivery = new Delivery() {
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
+            public void deliver(@NonNull SessionPayload payload,
                                 @NonNull Configuration config) throws DeliveryFailureException {
 
             }

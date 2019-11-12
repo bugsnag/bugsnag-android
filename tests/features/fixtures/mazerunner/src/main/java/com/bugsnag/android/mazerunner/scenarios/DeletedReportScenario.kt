@@ -29,7 +29,7 @@ internal class DeletedReportScenario(config: Configuration,
                 val errDir = File(context.cacheDir, "bugsnag-errors")
 
                 config.delivery = object: Delivery {
-                    override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
+                    override fun deliver(payload: SessionPayload, config: Configuration) {
                         baseDelivery.deliver(payload, config)
                     }
 
