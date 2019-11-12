@@ -135,27 +135,7 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Report report;
-
-            if (config.getBeforeSendTasks().isEmpty()) {
-                report = new Report(config.getApiKey(), errorFile);
-            } else {
-                Error error = ErrorReader.readError(config, errorFile);
-                report = new Report(config.getApiKey(), error);
-
-                for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
-                    try {
-                        if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(errorFile));
-                            Logger.info("Deleting cancelled error file " + errorFile.getName());
-                            return;
-                        }
-                    } catch (Throwable ex) {
-                        Logger.warn("BeforeSend threw an Exception", ex);
-                    }
-                }
-            }
-
+            Report report = new Report(config.getApiKey(), errorFile);
             config.getDelivery().deliver(report, config);
 
             deleteStoredFiles(Collections.singleton(errorFile));
@@ -164,8 +144,6 @@ class ErrorStore extends FileStore<Error> {
             cancelQueuedFiles(Collections.singleton(errorFile));
             Logger.warn("Could not send previously saved error(s)"
                 + " to Bugsnag, will try again later", exception);
-        } catch (FileNotFoundException exc) {
-            Logger.warn("Ignoring empty file - oldest report on disk was deleted", exc);
         } catch (Exception exception) {
             if (delegate != null) {
                 delegate.onErrorIOFailure(exception, errorFile, "Crash Report Deserialization");

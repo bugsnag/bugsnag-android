@@ -65,13 +65,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExtraordinaryLongStringScenario
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_NativeNotifyBeforeSendScenario_activate(JNIEnv *env,
-                                                                         jobject instance) {
-  bugsnag_notify_env(env, (char *)"Ad-hoc",
-                     (char *)"Auto-generated issue", BSG_SEVERITY_INFO);
-}
-
-JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNotifyScenario_activate(JNIEnv *env,
                                                                          jobject instance) {
   bugsnag_notify_env(env, (char *)"Vitamin C deficiency",
