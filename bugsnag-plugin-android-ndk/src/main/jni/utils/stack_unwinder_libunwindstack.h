@@ -1,7 +1,7 @@
 #ifndef BUGSNAG_UTILS_STACK_UNWINDER_LIBUNWINDSTACK_H
 #define BUGSNAG_UTILS_STACK_UNWINDER_LIBUNWINDSTACK_H
 
-#include "../report.h"
+#include "event.h"
 #include <signal.h>
 
 #ifdef __cplusplus

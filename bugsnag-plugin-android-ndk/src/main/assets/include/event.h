@@ -31,7 +31,7 @@
 /**
  * Version of the bugsnag_report struct. Serialized to report header.
  */
-#define BUGSNAG_REPORT_VERSION 3
+#define BUGSNAG_EVENT_VERSION 3
 
 #define BUGSNAG_USER_INFO_LEN 64
 
@@ -286,6 +286,6 @@ typedef struct {
     char session_start[33];
     int handled_events;
     int unhandled_events;
-} bugsnag_report;
+} bugsnag_event;
 
 #endif

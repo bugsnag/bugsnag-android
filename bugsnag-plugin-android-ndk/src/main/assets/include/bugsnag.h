@@ -3,9 +3,9 @@
 #define BUGSNAG_ANDROID_NDK_BUGSNAG_API_H
 
 #include <jni.h>
-#include "report.h"
+#include "event.h"
 
-typedef bool (*on_error)(bugsnag_report *);
+typedef bool (*on_error)(bugsnag_event *);
 
 #ifdef __cplusplus
 extern "C" {

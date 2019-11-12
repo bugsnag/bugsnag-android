@@ -6,7 +6,7 @@
 #include "string.h"
 #include <asm/siginfo.h>
 #include <dlfcn.h>
-#include <report.h>
+#include <event.h>
 #include <ucontext.h>
 
 #define BSG_LIBUNWIND_LEVEL 21

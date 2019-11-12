@@ -11,25 +11,25 @@
 extern "C" {
 #endif
 
-char *bsg_serialize_report_to_json_string(bugsnag_report *report);
+char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
-bool bsg_serialize_report_to_file(bsg_environment *env) __asyncsafe;
+bool bsg_serialize_event_to_file(bsg_environment *env) __asyncsafe;
 
-bugsnag_report *bsg_deserialize_report_from_file(char *filepath);
+bugsnag_event *bsg_deserialize_event_from_file(char *filepath);
 
-void bsg_serialize_context(const bugsnag_report *report, JSON_Object *event);
-void bsg_serialize_handled_state(const bugsnag_report *report, JSON_Object *event);
-void bsg_serialize_app(const bsg_app_info app, JSON_Object *event);
-void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event);
-void bsg_serialize_device(const bsg_device_info device, JSON_Object *event);
-void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event);
-void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event);
-void bsg_serialize_user(const bsg_user user, JSON_Object *event);
-void bsg_serialize_session(bugsnag_report *report, JSON_Object *event);
+void bsg_serialize_context(const bugsnag_event *event, JSON_Object *event_obj);
+void bsg_serialize_handled_state(const bugsnag_event *event, JSON_Object *event_obj);
+void bsg_serialize_app(const bsg_app_info app, JSON_Object *event_obj);
+void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event_obj);
+void bsg_serialize_device(const bsg_device_info device, JSON_Object *event_obj);
+void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event_obj);
+void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event_obj);
+void bsg_serialize_user(const bsg_user user, JSON_Object *event_obj);
+void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj);
 void bsg_serialize_stackframe(bsg_stackframe *stackframe, JSON_Array *stacktrace);
 void bsg_serialize_exception(bsg_error exc, JSON_Object *exception, JSON_Array *stacktrace);
-void bsg_serialize_breadcrumbs(const bugsnag_report *report, JSON_Array *crumbs);
-char *bsg_serialize_report_to_json_string(bugsnag_report *report);
+void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs);
+char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
 #ifdef __cplusplus
 }

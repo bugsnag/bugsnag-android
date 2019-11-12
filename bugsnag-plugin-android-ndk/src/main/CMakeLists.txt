@@ -9,7 +9,7 @@ add_library( # Specifies the name of the library.
     jni/bugsnag_ndk.c
     jni/bugsnag.c
     jni/metadata.c
-    jni/report.c
+        jni/event.c
     jni/handlers/signal_handler.c
     jni/handlers/cpp_handler.cpp
     jni/utils/crash_info.c

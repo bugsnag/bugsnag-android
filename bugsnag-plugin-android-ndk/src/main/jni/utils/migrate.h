@@ -1,7 +1,7 @@
 #ifndef BUGSNAG_MIGRATE_H
 #define BUGSNAG_MIGRATE_H
 
-#include "report.h"
+#include "event.h"
 
 #ifdef __cplusplus
 extern "C" {

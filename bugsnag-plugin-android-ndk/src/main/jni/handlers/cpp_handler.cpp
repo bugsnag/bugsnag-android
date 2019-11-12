@@ -89,26 +89,26 @@ void bsg_handle_cpp_terminate() {
     return;
 
   bsg_global_env->handling_crash = true;
-  bsg_populate_report_as(bsg_global_env);
-  bsg_global_env->next_report.unhandled_events++;
-  bsg_global_env->next_report.error.frame_count = bsg_unwind_stack(
+  bsg_populate_event_as(bsg_global_env);
+  bsg_global_env->next_event.unhandled_events++;
+  bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
       bsg_global_env->unwind_style,
-      bsg_global_env->next_report.error.stacktrace, NULL, NULL);
+      bsg_global_env->next_event.error.stacktrace, NULL, NULL);
 
   std::type_info *tinfo = __cxxabiv1::__cxa_current_exception_type();
   if (tinfo != NULL) {
-    bsg_strncpy(bsg_global_env->next_report.error.errorClass,
+    bsg_strncpy(bsg_global_env->next_event.error.errorClass,
                 (char *)tinfo->name(),
-                sizeof(bsg_global_env->next_report.error.errorClass));
+                sizeof(bsg_global_env->next_event.error.errorClass));
   }
-  size_t message_length = sizeof(bsg_global_env->next_report.error.errorMessage);
+  size_t message_length = sizeof(bsg_global_env->next_event.error.errorMessage);
   char message[message_length];
   bsg_write_current_exception_message(message, message_length);
-  bsg_strncpy(bsg_global_env->next_report.error.errorMessage, (char *)message,
+  bsg_strncpy(bsg_global_env->next_event.error.errorMessage, (char *)message,
               message_length);
 
   if (bsg_run_on_error_cbs(bsg_global_env)) {
-    bsg_serialize_report_to_file(bsg_global_env);
+    bsg_serialize_event_to_file(bsg_global_env);
   }
   bsg_global_env->crash_handled = true;
   bsg_handler_uninstall_cpp();

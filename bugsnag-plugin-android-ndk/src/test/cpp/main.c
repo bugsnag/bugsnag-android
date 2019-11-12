@@ -167,10 +167,10 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetadataSerializationTe
 
 TEST test_context_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_context(report, event);
-    free(report);
+    JSON_Object *event_obj = json_value_get_object(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_context(event, event_obj);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 
@@ -190,10 +190,10 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_ContextSerializationTest_run(
 
 TEST test_handled_state_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_handled_state(report, event);
-    free(report);
+    JSON_Object *event_obj = json_value_get_object(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_handled_state(event, event_obj);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 
@@ -213,10 +213,10 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_HandledStateSerializationTest
 
 TEST test_session_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_session(report, event);
-    free(report);
+    JSON_Object *event_obj = json_value_get_object(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_session(event, event_obj);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 
@@ -236,10 +236,10 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_SessionSerializationTest_run(
 
 TEST test_breadcrumbs_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_array();
-    JSON_Array *event = json_value_get_array(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_breadcrumbs(report, event);
-    free(report);
+    JSON_Array *event_ary = json_value_get_array(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_breadcrumbs(event, event_ary);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 

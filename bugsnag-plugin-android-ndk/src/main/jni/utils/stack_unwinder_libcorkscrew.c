@@ -1,6 +1,6 @@
 #include "stack_unwinder_libcorkscrew.h"
 #include <dlfcn.h>
-#include <report.h>
+#include <event.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
