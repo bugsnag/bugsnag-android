@@ -47,6 +47,10 @@ void generate_basic_report(bugsnag_report *report) {
   report->unhandled_events = 1;
   strcpy(report->session_id, "f1ab");
   strcpy(report->session_start, "2019-03-19T12:58:19+00:00");
+
+  strcpy(report->notifier.version, "1.0");
+  strcpy(report->notifier.url, "bugsnag.com");
+  strcpy(report->notifier.name, "Test Notifier");
 }
 
 bugsnag_report_v2 *bsg_generate_report_v2(void) {
@@ -138,7 +142,10 @@ TEST test_report_v2_migration(void) {
 
   bugsnag_report *report = bsg_deserialize_report_from_file(SERIALIZE_TEST_FILE);
   ASSERT(report != NULL);
-  // TODO should compare moved fields here
+
+  ASSERT_STR_EQ("Test Notifier", report->notifier.name);
+  ASSERT_STR_EQ("bugsnag.com", report->notifier.url);
+  ASSERT_STR_EQ("1.0", report->notifier.version);
 
   free(generated_report);
   free(env);

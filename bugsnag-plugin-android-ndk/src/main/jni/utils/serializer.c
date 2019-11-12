@@ -109,7 +109,6 @@ bugsnag_report *map_v2_to_report(bugsnag_report_v2 *report_v2) {
   bugsnag_report *report = malloc(sizeof(bugsnag_report));
 
   if (report != NULL) {
-    report->notifier = report_v2->notifier;
     report->app = report_v2->app;
     report->device = report_v2->device;
     report->user = report_v2->user;
@@ -127,6 +126,11 @@ bugsnag_report *map_v2_to_report(bugsnag_report_v2 *report_v2) {
     strcpy(report->session_start, report_v2->session_start);
     report->handled_events = report_v2->handled_events;
     report->unhandled_events = report_v2->unhandled_events;
+
+    // migrate changed fields
+    strcpy(report->notifier.version, report_v2->notifier.version);
+    strcpy(report->notifier.name, report_v2->notifier.name);
+    strcpy(report->notifier.url, report_v2->notifier.url);
   }
   free(report_v2);
   return report;

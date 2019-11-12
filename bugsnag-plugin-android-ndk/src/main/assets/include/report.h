@@ -263,10 +263,10 @@ typedef struct {
     char name[64];
     char version[16];
     char url[64];
-} bsg_library;
+} bsg_notifier;
 
 typedef struct {
-    bsg_library notifier;
+    bsg_notifier notifier;
     bsg_app_info app;
     bsg_device_info device;
     bsg_user user;
