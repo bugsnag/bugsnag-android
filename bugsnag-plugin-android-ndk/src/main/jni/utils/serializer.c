@@ -112,7 +112,6 @@ bugsnag_report *map_v2_to_report(bugsnag_report_v2 *report_v2) {
     report->app = report_v2->app;
     report->device = report_v2->device;
     report->user = report_v2->user;
-    report->exception = report_v2->exception;
     report->metadata = report_v2->metadata;
     report->crumb_count = report_v2->crumb_count;
     report->crumb_first_index = report_v2->crumb_first_index;
@@ -127,10 +126,18 @@ bugsnag_report *map_v2_to_report(bugsnag_report_v2 *report_v2) {
     report->handled_events = report_v2->handled_events;
     report->unhandled_events = report_v2->unhandled_events;
 
-    // migrate changed fields
+    // migrate changed notifier fields
     strcpy(report->notifier.version, report_v2->notifier.version);
     strcpy(report->notifier.name, report_v2->notifier.name);
     strcpy(report->notifier.url, report_v2->notifier.url);
+
+    // migrate changed error fields
+    strcpy(report->error.errorClass, report_v2->exception.name);
+    strcpy(report->error.errorMessage, report_v2->exception.message);
+    strcpy(report->error.type, report_v2->exception.type);
+    report->error.frame_count = report_v2->exception.frame_count;
+    size_t error_size = sizeof(bsg_stackframe) * BUGSNAG_FRAMES_MAX;
+    memcpy(&report->error.stacktrace, report_v2->exception.stacktrace, error_size);
   }
   free(report_v2);
   return report;
@@ -242,7 +249,7 @@ void bsg_serialize_handled_state(const bugsnag_report *report, JSON_Object *even
   json_object_set_string(event, "severity", bsg_severity_string(report->severity));
   json_object_dotset_boolean(event, "unhandled", true);
   json_object_dotset_string(event, "severityReason.type", "signal");
-  json_object_dotset_string(event, "severityReason.attributes.signalType", report->exception.name);
+  json_object_dotset_string(event, "severityReason.attributes.signalType", report->error.errorClass);
 }
 
 void bsg_serialize_app(const bsg_app_info app, JSON_Object *event) {
@@ -352,9 +359,9 @@ void bsg_serialize_session(bugsnag_report *report, JSON_Object *event) {
   }
 }
 
-void bsg_serialize_exception(bsg_exception exc, JSON_Object *exception, JSON_Array *stacktrace) {
-  json_object_set_string(exception, "errorClass", exc.name);
-  json_object_set_string(exception, "message", exc.message);
+void bsg_serialize_exception(bsg_error exc, JSON_Object *exception, JSON_Array *stacktrace) {
+  json_object_set_string(exception, "errorClass", exc.errorClass);
+  json_object_set_string(exception, "message", exc.errorMessage);
   json_object_set_string(exception, "type", "c");
   for (int findex = 0; findex < exc.frame_count; findex++) {
     bsg_stackframe stackframe = exc.stacktrace[findex];
@@ -442,7 +449,7 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report) {
     bsg_serialize_custom_metadata(report->metadata, event);
     bsg_serialize_user(report->user, event);
     bsg_serialize_session(report, event);
-    bsg_serialize_exception(report->exception, exception, stacktrace);
+    bsg_serialize_exception(report->error, exception, stacktrace);
     bsg_serialize_breadcrumbs(report, crumbs);
 
     serialized_string = json_serialize_to_string(event_val);

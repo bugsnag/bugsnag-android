@@ -226,9 +226,9 @@ typedef struct {
 /** a Bugsnag exception */
 typedef struct {
     /** The exception name or stringified code */
-    char name[64];
+    char errorClass[64];
     /** A description of what went wrong */
-    char message[256];
+    char errorMessage[256];
     /** The variety of exception which needs to be processed by the pipeline */
     char type[32];
 
@@ -241,7 +241,7 @@ typedef struct {
      * An ordered list of stack frames from the oldest to the most recent
      */
     bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
-} bsg_exception;
+} bsg_error;
 
 typedef struct {
     char key[64];
@@ -270,7 +270,7 @@ typedef struct {
     bsg_app_info app;
     bsg_device_info device;
     bsg_user user;
-    bsg_exception exception;
+    bsg_error error;
     bugsnag_metadata metadata;
 
     int crumb_count;

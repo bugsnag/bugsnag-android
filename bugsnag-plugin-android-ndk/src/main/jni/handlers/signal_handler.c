@@ -181,16 +181,16 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   bsg_global_env->handling_crash = true;
   bsg_populate_report_as(bsg_global_env);
   bsg_global_env->next_report.unhandled_events++;
-  bsg_global_env->next_report.exception.frame_count = bsg_unwind_stack(
+  bsg_global_env->next_report.error.frame_count = bsg_unwind_stack(
       bsg_global_env->signal_unwind_style,
-      bsg_global_env->next_report.exception.stacktrace, info, user_context);
+      bsg_global_env->next_report.error.stacktrace, info, user_context);
 
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
     const int signal = bsg_native_signals[i];
     if (signal == signum) {
-      bsg_strcpy(bsg_global_env->next_report.exception.name,
+      bsg_strcpy(bsg_global_env->next_report.error.errorClass,
                  (char *)bsg_native_signal_names[i]);
-      bsg_strcpy(bsg_global_env->next_report.exception.message,
+      bsg_strcpy(bsg_global_env->next_report.error.errorMessage,
                  (char *)bsg_native_signal_msgs[i]);
       break;
     }

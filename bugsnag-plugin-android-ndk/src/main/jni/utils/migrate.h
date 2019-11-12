@@ -13,6 +13,26 @@ typedef struct {
     char url[64];
 } bsg_library;
 
+/** a Bugsnag exception */
+typedef struct {
+    /** The exception name or stringified code */
+    char name[64];
+    /** A description of what went wrong */
+    char message[256];
+    /** The variety of exception which needs to be processed by the pipeline */
+    char type[32];
+
+    /**
+     * The number of frames used in the stacktrace. Must be less than
+     * BUGSNAG_FRAMES_MAX.
+     */
+    ssize_t frame_count;
+    /**
+     * An ordered list of stack frames from the oldest to the most recent
+     */
+    bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+} bsg_exception;
+
 typedef struct {
     bsg_library notifier;
     bsg_app_info app;

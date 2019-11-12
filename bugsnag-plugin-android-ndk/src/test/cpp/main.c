@@ -287,7 +287,7 @@ TEST test_exception_serialization(test_case *test_case) {
     JSON_Array *stacktrace = json_value_get_array(stack_val);
     json_object_set_value(exception, "stacktrace", stack_val);
 
-    bsg_exception *exc = test_case->data_ptr;
+    bsg_error *exc = test_case->data_ptr;
     bsg_serialize_exception(*exc, exception, stacktrace);
     free(exc);
     return validate_serialized_json(test_case, event_val);

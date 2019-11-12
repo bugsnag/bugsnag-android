@@ -9,12 +9,13 @@ bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_b
 
 void generate_basic_report(bugsnag_report *report) {
   strcpy(report->context, "SomeActivity");
-  strcpy(report->exception.name, "SIGBUS");
-  strcpy(report->exception.message, "POSIX is serious about oncoming traffic");
-  report->exception.stacktrace[0].frame_address = 454379;
-  report->exception.stacktrace[1].frame_address = 342334;
-  report->exception.frame_count = 2;
-  strcpy(report->exception.stacktrace[0].method, "makinBacon");
+  strcpy(report->error.errorClass, "SIGBUS");
+  strcpy(report->error.errorMessage, "POSIX is serious about oncoming traffic");
+  report->error.stacktrace[0].frame_address = 454379;
+  report->error.stacktrace[1].frame_address = 342334;
+  report->error.frame_count = 2;
+  strcpy(report->error.type, "C");
+  strcpy(report->error.stacktrace[0].method, "makinBacon");
   strcpy(report->app.name, "PhotoSnap Plus");
   strcpy(report->app.id, "com.example.PhotoSnapPlus");
   strcpy(report->app.package_name, "com.example.PhotoSnapPlus");
@@ -98,8 +99,8 @@ TEST test_file_to_report(void) {
 
   bugsnag_report *report = bsg_deserialize_report_from_file(SERIALIZE_TEST_FILE);
   ASSERT(report != NULL);
-  ASSERT(strcmp("SIGBUS", report->exception.name) == 0);
-  ASSERT(strcmp("POSIX is serious about oncoming traffic", report->exception.message) == 0);
+  ASSERT(strcmp("SIGBUS", report->error.errorClass) == 0);
+  ASSERT(strcmp("POSIX is serious about oncoming traffic", report->error.errorMessage) == 0);
   free(generated_report);
   free(env);
   free(report);
@@ -143,9 +144,17 @@ TEST test_report_v2_migration(void) {
   bugsnag_report *report = bsg_deserialize_report_from_file(SERIALIZE_TEST_FILE);
   ASSERT(report != NULL);
 
+  // bsg_library -> bsg_notifier
   ASSERT_STR_EQ("Test Notifier", report->notifier.name);
   ASSERT_STR_EQ("bugsnag.com", report->notifier.url);
   ASSERT_STR_EQ("1.0", report->notifier.version);
+
+  // bsg_exception -> bsg_error
+  ASSERT_STR_EQ("SIGBUS", report->error.errorClass);
+  ASSERT_STR_EQ("POSIX is serious about oncoming traffic", report->error.errorMessage);
+  ASSERT_STR_EQ("C", report->error.type);
+  ASSERT(454379 == report->error.frame_count);
+  ASSERT_STR_EQ("makinBacon", report->error.stacktrace[0].method);
 
   free(generated_report);
   free(env);
