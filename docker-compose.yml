@@ -34,6 +34,10 @@ services:
       dockerfile: dockerfiles/Dockerfile.android-sizer
     environment:
       DANGER_GITHUB_API_TOKEN:
+      BUILDKITE:
+      BUILDKITE_PULL_REQUEST_REPO:
+      BUILDKITE_PULL_REQUEST:
+      BUILDKITE_REPO:
 
   android-emulator:
     build:
