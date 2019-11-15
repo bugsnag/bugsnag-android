@@ -95,7 +95,26 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
 
+  - label: ':docker: Build Android sizer image'
+    timeout_in_minutes: 40
+    plugins:
+      - docker-compose#v2.6.0:
+          build: android-sizer
+          cache-from:
+            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
+            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+    env:
+      MAVEN_VERSION: "3.6.1"
+
   - wait
+
+  - label: ':android: Android size reporting'
+    timeout_in_minutes: 30
+    plugins:
+      - docker-compose#v2.6.0:
+          run: android-sizer
 
   - label: ':android: Android 9 end-to-end tests'
     timeout_in_minutes: 60

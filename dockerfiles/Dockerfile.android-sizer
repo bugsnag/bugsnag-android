@@ -51,10 +51,13 @@ RUN ./gradlew assembleRelease publishToMavenLocal
 COPY tests/features/ tests/features
 
 # Download the bundle tool
+RUN apt-get install -y ruby-full
+
 WORKDIR /app/tests/features/fixtures/minimalapp
 RUN curl -LJO https://github.com/google/bundletool/releases/download/0.10.3/bundletool-all-0.10.3.jar
 RUN mv bundletool-all-0.10.3.jar bundletool.jar
 
-WORKDIR /app
+RUN gem install bundler
+RUN bundle install
 
-CMD ./scripts/compare-app-sizes.sh
+CMD bundle exec danger

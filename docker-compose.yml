@@ -32,6 +32,8 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-sizer
+    environment:
+      DANGER_GITHUB_API_TOKEN:
 
   android-emulator:
     build:

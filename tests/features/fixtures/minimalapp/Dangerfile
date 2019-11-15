@@ -1,0 +1,100 @@
+require 'fileutils'
+require 'pp'
+
+BASE_TEMPLATE = "base.template"
+APP_BASE_TEMPLATE = "app/base.template"
+BUGSNAG_TEMPLATE = "bugsnag.template"
+APP_BUGSNAG_TEMPLATE = "app/bugsnag.template"
+
+BUILD_GRADLE = "build.gradle"
+APP_BUILD_GRADLE = "app/build.gradle"
+
+RELEASE_APK = "app/build/outputs/apk/release/app-release-unsigned.apk"
+
+BUNDLE_DIR = "app/build/outputs/bundle/release/"
+RELEASE_BUNDLE = "app.aab"
+UNBUNDLED_RELEASE = "app.apks"
+
+STANDALONE_DIR = BUNDLE_DIR + "standalones/"
+STANDALONE_HDPI_BASE = "standalone-hdpi.apk"
+STANDALONE_ARM64_V8A = "standalone-arm64_v8a_hdpi.apk"
+STANDALONE_ARMEABI = "standalone-armeabi_hdpi.apk"
+STANDALONE_ARMEABI_V7A = "standalone-armeabi_v7a_hdpi.apk"
+STANDALONE_X86_64 = "standalone-x86_64_hdpi.apk"
+STANADLON_X86 = "standalone-x86_hdpi.apk"
+
+
+FileUtils.cp(BASE_TEMPLATE, BUILD_GRADLE)
+FileUtils.cp(APP_BASE_TEMPLATE, APP_BUILD_GRADLE)
+
+`./gradlew clean`
+`./gradlew assembleRelease`
+
+apk_size = `stat --printf="%s" #{RELEASE_APK}`
+
+`./gradlew bundleRelease`
+
+`java -jar bundletool.jar build-apks \
+  --bundle=#{BUNDLE_DIR + RELEASE_BUNDLE} \
+  --output=#{BUNDLE_DIR + UNBUNDLED_RELEASE} \
+  --ks=app/fakekeys.jks \
+  --ks-pass=pass:password \
+  --ks-key-alias=password \
+  --key-pass=pass:password`
+
+`unzip -qq #{BUNDLE_DIR + UNBUNDLED_RELEASE} -d #{BUNDLE_DIR}`
+
+aab_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`
+
+`./gradlew clean`
+
+FileUtils.cp(BUGSNAG_TEMPLATE, BUILD_GRADLE)
+FileUtils.cp(APP_BUGSNAG_TEMPLATE, APP_BUILD_GRADLE)
+
+`./gradlew assembleRelease`
+
+apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`
+
+`./gradlew bundleRelease`
+
+`java -jar bundletool.jar build-apks \
+  --bundle=#{BUNDLE_DIR + RELEASE_BUNDLE} \
+  --output=#{BUNDLE_DIR + UNBUNDLED_RELEASE} \
+  --ks=app/fakekeys.jks \
+  --ks-pass=pass:password \
+  --ks-key-alias=password \
+  --key-pass=pass:password`
+
+`unzip -qq #{BUNDLE_DIR + UNBUNDLED_RELEASE} -d #{BUNDLE_DIR}`
+
+arm64_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`
+armeabi_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI}`
+armeabi_v7a_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`
+x86_64_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86_64}`
+x86_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86}`
+
+calculated_sizes = {
+  :arm64 => arm64_bugsnag_size - aab_size,
+  :armeabi => armeabi_bugsnag_size - aab_size,
+  :armeabi_v7a => armeabi_v7a_bugsnag_size - aab_size,
+  :x86_64 => x86_64_bugsnag_size - aab_size,
+  :x86 => x86_bugsnag_size - aab_size,
+  :apk => apk_bugsnag_size - apk_size
+}
+
+def format_kbs(size)
+  (size/1000).round(2)
+end
+
+markdown(%Q{
+  ### Android notifier sizes
+
+  | Format      | Size (kB)                                     |
+  |-------------|-----------------------------------------------|
+  | APK         | #{format_kbs(calculated_sizes[:apk])}         |
+  | arm64_v8a   | #{format_kbs(calculated_sizes[:arm64])}       |
+  | armeabi     | #{format_kbs(calculated_sizes[:armeabi])}     |
+  | armeabi_v7a | #{format_kbs(calculated_sizes[:armeabi_v7a])} |
+  | x86         | #{format_kbs(calculated_sizes[:x86])}         |
+  | x86_64      | #{format_kbs(calculated_sizes[:x86_64])}      |
+})
