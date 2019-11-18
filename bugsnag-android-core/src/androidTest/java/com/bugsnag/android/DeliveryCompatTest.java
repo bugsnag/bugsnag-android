@@ -62,13 +62,13 @@ public class DeliveryCompatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void deliverSession() throws Exception {
-        SessionTrackingPayload payload = null;
+        SessionPayload payload = null;
         deliveryCompat.deliver(payload, config);
 
         deliveryCompat.sessionTrackingApiClient = new SessionTrackingApiClient() {
             @Override
             public void postSessionTrackingPayload(@NonNull String urlString,
-                                                   @NonNull SessionTrackingPayload payload,
+                                                   @NonNull SessionPayload payload,
                                                    @NonNull Map<String, String> headers)
                 throws NetworkException, BadResponseException {
                 customCount.incrementAndGet();

@@ -24,7 +24,7 @@ abstract internal class Scenario(
     protected fun disableSessionDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
+            override fun deliver(payload: SessionPayload, config: Configuration) {
                 throw DeliveryFailureException("Session Delivery NOP", RuntimeException("NOP"))
             }
 
@@ -40,7 +40,7 @@ abstract internal class Scenario(
     protected fun disableReportDelivery() {
         val baseDelivery = Bugsnag.getClient().config.delivery
         Bugsnag.getClient().config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
+            override fun deliver(payload: SessionPayload, config: Configuration) {
                 baseDelivery.deliver(payload, config)
             }
 
@@ -63,7 +63,7 @@ abstract internal class Scenario(
 
     protected fun disableAllDelivery(config: Configuration) {
         config.delivery = object: Delivery {
-            override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
+            override fun deliver(payload: SessionPayload, config: Configuration) {
                 throw DeliveryFailureException("Error Delivery NOP", RuntimeException("NOP"))
             }
 

@@ -37,7 +37,7 @@ public interface Delivery {
      * @throws DeliveryFailureException when delivery is not successful and
      *                                  the report should be stored for future attempts.
      */
-    void deliver(@NonNull SessionTrackingPayload payload,
+    void deliver(@NonNull SessionPayload payload,
                  @NonNull Configuration config) throws DeliveryFailureException;
 
     /**

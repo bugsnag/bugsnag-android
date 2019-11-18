@@ -24,7 +24,7 @@ internal fun createSlowDelivery(context: Context): Delivery {
     val delivery = DefaultDelivery(null)
 
     return object : Delivery {
-        override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
+        override fun deliver(payload: SessionPayload, config: Configuration) {
             Thread.sleep(500)
             delivery.deliver(payload, config)
         }
@@ -44,7 +44,7 @@ internal fun createCustomHeaderDelivery(context: Context): Delivery {
     return object : Delivery {
         val delivery: DefaultDelivery = createDefaultDelivery(context)
 
-        override fun deliver(payload: SessionTrackingPayload, config: Configuration) {
+        override fun deliver(payload: SessionPayload, config: Configuration) {
             deliver(config.sessionEndpoint, payload, config.sessionApiHeaders)
         }
 

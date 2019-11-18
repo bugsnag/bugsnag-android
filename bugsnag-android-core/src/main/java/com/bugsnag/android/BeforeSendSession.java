@@ -1,5 +1,5 @@
 package com.bugsnag.android;
 
 interface BeforeSendSession {
-    void beforeSendSession(SessionTrackingPayload payload);
+    void beforeSendSession(SessionPayload payload);
 }
