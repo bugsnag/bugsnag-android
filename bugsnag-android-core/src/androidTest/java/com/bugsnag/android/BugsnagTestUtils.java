@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +91,7 @@ final class BugsnagTestUtils {
 
     public static Delivery generateDelivery() {
         return new Delivery() {
-            @NonNull
+            @NotNull
             @Override
             public DeliveryStatus deliver(@NonNull Report report,
                                           @NonNull DeliveryParams deliveryParams) {

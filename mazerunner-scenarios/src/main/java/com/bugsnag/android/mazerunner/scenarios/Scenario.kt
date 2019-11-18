@@ -22,7 +22,7 @@ abstract class Scenario(
      * Sets a NOP implementation for the Session Tracking API, preventing delivery
      */
     protected fun disableSessionDelivery(config: Configuration) {
-        val baseDelivery = createDefaultDelivery()
+        val baseDelivery = config.delivery
         config.delivery = object: Delivery {
             override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
                 return baseDelivery.deliver(report, deliveryParams)
@@ -38,7 +38,7 @@ abstract class Scenario(
      * Sets a NOP implementation for the Error Tracking API, preventing delivery
      */
     protected fun disableReportDelivery(config: Configuration) {
-        val baseDelivery = createDefaultDelivery()
+        val baseDelivery = config.delivery
         config.delivery = object: Delivery {
             override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED

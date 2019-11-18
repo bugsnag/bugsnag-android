@@ -238,12 +238,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_cra
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_NativeBeforeSendScenario_crash(JNIEnv *env,
-                                                                             jobject instance) {
-    printf("This one here: %s\n", crash_improper_cast(39));
-}
-
-JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash(JNIEnv *env,
                                                                                 jobject instance) {
     printf("This one here: %s\n", crash_improper_cast(39));
