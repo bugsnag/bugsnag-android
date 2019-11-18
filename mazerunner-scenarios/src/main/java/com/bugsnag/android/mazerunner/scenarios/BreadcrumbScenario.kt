@@ -21,7 +21,8 @@ internal class BreadcrumbScenario(config: Configuration,
     override fun run() {
         super.run()
         Bugsnag.leaveBreadcrumb("Hello Breadcrumb!")
-        Bugsnag.leaveBreadcrumb("Another Breadcrumb", BreadcrumbType.USER, Collections.singletonMap("Foo", "Bar"))
+        val data = Collections.singletonMap("Foo", "Bar" as Any)
+        Bugsnag.leaveBreadcrumb("Another Breadcrumb", BreadcrumbType.USER, data)
         Bugsnag.notify(generateException())
     }
 

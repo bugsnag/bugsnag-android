@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 

@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.util.HashMap;
 
 @SmallTest
-public class BeforeRecordBreadcrumbsTest {
+public class OnBreadcrumbsTest {
 
     private Client client;
 
@@ -28,7 +28,7 @@ public class BeforeRecordBreadcrumbsTest {
         Configuration configuration = new Configuration("api-key");
         configuration.setAutoCaptureBreadcrumbs(false);
         client = generateClient();
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
     }
 
     @After
@@ -39,27 +39,15 @@ public class BeforeRecordBreadcrumbsTest {
     @Test
     public void noCallback() throws Exception {
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
     }
 
     @Test
     public void falseCallback() throws Exception {
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
                 return false;
-            }
-        });
-        client.leaveBreadcrumb("Hello");
-        assertEquals(0, client.breadcrumbs.store.size());
-    }
-
-    @Test
-    public void trueCallback() throws Exception {
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-            @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
-                return true;
             }
         });
         client.leaveBreadcrumb("Hello");
@@ -67,80 +55,107 @@ public class BeforeRecordBreadcrumbsTest {
     }
 
     @Test
-    public void multipleCallbacks() throws Exception {
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+    public void trueCallback() throws Exception {
+        client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+        client.leaveBreadcrumb("Hello");
+        assertEquals(2, client.breadcrumbs.store.size());
+    }
+
+    @Test
+    public void multipleCallbacks() throws Exception {
+        client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return true;
+            }
+        });
+        client.addOnBreadcrumb(new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
     }
 
     @Test
     public void ensureBothCalled() throws Exception {
-        final int[] count = {0};
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+        final int[] count = {1};
+        client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         });
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         });
 
         client.leaveBreadcrumb("Foo");
-        client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, String>());
-        assertEquals(4, count[0]);
+        client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, Object>());
+        assertEquals(5, count[0]);
     }
 
     @Test
     public void ensureOnlyCalledOnce() throws Exception {
-        final int[] count = {0};
+        final int[] count = {1};
 
-        BeforeRecordBreadcrumb beforeRecordBreadcrumb = new BeforeRecordBreadcrumb() {
+        OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         };
-        client.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
-        client.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+        client.addOnBreadcrumb(onBreadcrumb);
+        client.addOnBreadcrumb(onBreadcrumb);
         client.leaveBreadcrumb("Foo");
-        assertEquals(1, count[0]);
+        assertEquals(2, count[0]);
     }
 
     @Test
-    public void checkBreadrumbFields() throws Exception {
-        final int[] count = {0};
+    public void checkBreadcrumbFields() throws Exception {
+        final int[] count = {1};
 
-        BeforeRecordBreadcrumb beforeRecordBreadcrumb = new BeforeRecordBreadcrumb() {
+        OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
-                assertEquals("Hello", breadcrumb.getName());
+                assertEquals("Hello", breadcrumb.getMessage());
                 assertEquals(BreadcrumbType.MANUAL, breadcrumb.getType());
                 assertFalse(breadcrumb.getMetadata().isEmpty());
                 return true;
             }
         };
-        client.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+        client.addOnBreadcrumb(onBreadcrumb);
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, count[0]);
+        assertEquals(2, count[0]);
+    }
+
+    @Test
+    public void removedCallback() throws Exception {
+        OnBreadcrumb cb = new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return false;
+            }
+        };
+        client.addOnBreadcrumb(cb);
+        client.leaveBreadcrumb("Hello");
+        client.removeOnBreadcrumb(cb);
+        client.leaveBreadcrumb("Hello");
+        assertEquals(2, client.breadcrumbs.store.size());
     }
 
 }

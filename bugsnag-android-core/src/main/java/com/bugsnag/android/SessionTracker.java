@@ -361,7 +361,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
     private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
         if (configuration.getAutoCaptureBreadcrumbs()) {
-            Map<String, String> metadata = new HashMap<>();
+            Map<String, Object> metadata = new HashMap<>();
             metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
 
             try {

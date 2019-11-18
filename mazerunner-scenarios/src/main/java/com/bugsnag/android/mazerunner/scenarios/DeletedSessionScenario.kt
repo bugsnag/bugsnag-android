@@ -33,7 +33,8 @@ internal class DeletedSessionScenario(config: Configuration,
                 val errDir = File(context.cacheDir, "bugsnag-sessions")
 
                 config.delivery = object: Delivery {
-                    override fun deliver(payload: SessionPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                    override fun deliver(payload: SessionPayload,
+                                         deliveryParams: DeliveryParams): DeliveryStatus {
                         // delete files before they can be delivered
                         val files = errDir.listFiles()
                         files.forEach {

@@ -15,9 +15,9 @@ internal class SessionPayloadSerializationTest {
         @Parameters
         fun testCases(): Collection<Pair<Any, String>> {
             val session = Session("123", Date(0), User(null, null, null), 1, 0)
-            Notifier.getInstance().version = "9.9.9"
-            Notifier.getInstance().name = "AndroidBugsnagNotifier"
-            Notifier.getInstance().url = "https://bugsnag.com"
+            Notifier.version = "9.9.9"
+            Notifier.name = "AndroidBugsnagNotifier"
+            Notifier.url = "https://bugsnag.com"
             return generateSerializationTestCases(
                 "session_payload",
                 SessionPayload(

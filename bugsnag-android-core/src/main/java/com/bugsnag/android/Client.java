@@ -46,7 +46,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer {
+public class Client extends Observable implements Observer, MetaDataAware {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -167,17 +167,16 @@ public class Client extends Observable implements Observer {
                         true, new MetaData()).build();
                 err.setContext(context);
 
-                MetaData metaData = err.getMetaData();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
 
                 @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
-                        long usableSpace = appContext.getCacheDir().getUsableSpace();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
-                recordStorageCacheBehavior(metaData);
+                long usableSpace = appContext.getCacheDir().getUsableSpace();
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
+                err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
+                recordStorageCacheBehavior(err);
                 Client.this.reportInternalBugsnagError(err);
             }
         };
@@ -223,12 +222,21 @@ public class Client extends Observable implements Observer {
             Logger.warn("Failed to set up orientation tracking: " + ex);
         }
 
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
+            }
+        });
+
         // Flush any on-disk errors
         errorStore.flushOnLaunch();
         loadPlugins();
+        leaveBreadcrumb("Bugsnag loaded");
     }
 
-    void recordStorageCacheBehavior(MetaData metaData) {
+    void recordStorageCacheBehavior(Error error) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             File cacheDir = appContext.getCacheDir();
             File errDir = new File(cacheDir, "bugsnag-errors");
@@ -236,8 +244,8 @@ public class Client extends Observable implements Observer {
             try {
                 boolean tombstone = storageManager.isCacheBehaviorTombstone(errDir);
                 boolean group = storageManager.isCacheBehaviorGroup(errDir);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
+                error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
+                error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
             } catch (IOException exc) {
                 Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
             }
@@ -465,19 +473,16 @@ public class Client extends Observable implements Observer {
     }
 
     @NonNull
-    @InternalApi
     public Collection<Breadcrumb> getBreadcrumbs() {
         return new ArrayList<>(breadcrumbs.store);
     }
 
     @NonNull
-    @InternalApi
     public AppData getAppData() {
         return appData;
     }
 
     @NonNull
-    @InternalApi
     public DeviceData getDeviceData() {
         return deviceData;
     }
@@ -566,17 +571,21 @@ public class Client extends Observable implements Observer {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumb
      */
-    public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        clientState.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.addOnBreadcrumb(onBreadcrumb);
+    }
+
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -662,14 +671,14 @@ public class Client extends Observable implements Observer {
         // Capture the state of the app and device and attach diagnostics to the error
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         error.setDeviceData(errorDeviceData);
-        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
+        error.addMetadata("device", null, deviceData.getDeviceMetaData());
 
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
         error.setAppData(errorAppData);
-        error.getMetaData().store.put("app", appData.getAppDataMetaData());
+        error.addMetadata("app", null, appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the error
         error.setBreadcrumbs(breadcrumbs);
@@ -744,14 +753,13 @@ public class Client extends Observable implements Observer {
         device.put("freeDisk", deviceData.calculateFreeDisk());
         error.setDeviceData(device);
 
-        MetaData metaData = error.getMetaData();
-        Notifier notifier = Notifier.getInstance();
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());
+        Notifier notifier = Notifier.INSTANCE;
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());
 
         Object packageName = appData.getAppData().get("packageName");
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
+        error.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
 
         final Report report = new Report(null, error);
         try {
@@ -801,8 +809,8 @@ public class Client extends Observable implements Observer {
 
     private void leaveErrorBreadcrumb(@NonNull Error error) {
         // Add a breadcrumb for this error occurring
-        String exceptionMessage = error.getExceptionMessage();
-        Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
+        String msg = error.getExceptionMessage();
+        Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
         breadcrumbs.add(new Breadcrumb(error.getExceptionName(), BreadcrumbType.ERROR, message));
     }
 
@@ -915,74 +923,60 @@ public class Client extends Observable implements Observer {
         return null;
     }
 
-    /**
-     * Add diagnostic information to every error report.
-     * Diagnostic information is collected in "tabs" on your dashboard.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.addToTab("account", "name", "Acme Co.");
-     * client.addToTab("account", "payingCustomer", true);
-     *
-     * @param tab   the dashboard tab to add diagnostic data to
-     * @param key   the name of the diagnostic information
-     * @param value the contents of the diagnostic information
-     */
-    public void addToTab(@NonNull String tab, @NonNull String key, @Nullable Object value) {
-        clientState.getMetaData().addToTab(tab, key, value);
+    @Override
+    public void addMetadata(@NonNull String section, @Nullable Object value) {
+        addMetadata(section, null, value);
     }
 
-    /**
-     * Remove a tab of app-wide diagnostic information
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public void clearTab(@NonNull String tabName) {
-        clientState.getMetaData().clearTab(tabName);
+    @Override
+    public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
+        clientState.getMetaData().addMetadata(section, key, value);
     }
 
-    /**
-     * Get the global diagnostic information currently stored in MetaData.
-     *
-     * @see MetaData
-     */
-    @NonNull public MetaData getMetaData() {
-        return clientState.getMetaData();
+    @Override
+    public void clearMetadata(@NonNull String section) {
+        clearMetadata(section, null);
     }
 
-    /**
-     * Set the global diagnostic information to be send with every error.
-     *
-     * @see MetaData
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        clientState.setMetaData(metaData);
+    @Override
+    public void clearMetadata(@NonNull String section, @Nullable String key) {
+        clientState.getMetaData().clearMetadata(section, key);
+    }
+
+    @Nullable
+    @Override
+    public Object getMetadata(@NonNull String section) {
+        return getMetadata(section, null);
+    }
+
+    @Override
+    @Nullable
+    public Object getMetadata(@NonNull String section, @Nullable String key) {
+        return clientState.getMetaData().getMetadata(section, key);
     }
 
     /**
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
      *
-     * @param breadcrumb the log message to leave (max 140 chars)
+     * @param message the log message to leave (max 140 chars)
      */
-    public void leaveBreadcrumb(@NonNull String breadcrumb) {
-        Breadcrumb crumb = new Breadcrumb(breadcrumb);
-
-        if (runBeforeBreadcrumbTasks(crumb)) {
-            breadcrumbs.add(crumb);
-        }
+    public void leaveBreadcrumb(@NonNull String message) {
+        leaveBreadcrumbInternal(new Breadcrumb(message));
     }
 
     /**
      * Leave a "breadcrumb" log message, representing an action which occurred
      * in your app, to aid with debugging.
      */
-    public void leaveBreadcrumb(@NonNull String name,
+    public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
-                                @NonNull Map<String, String> metadata) {
-        Breadcrumb crumb = new Breadcrumb(name, type, metadata);
+                                @NonNull Map<String, Object> metadata) {
+        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata));
+    }
 
-        if (runBeforeBreadcrumbTasks(crumb)) {
+    private void leaveBreadcrumbInternal(Breadcrumb crumb) {
+        if (runBreadcrumbCallbacks(crumb)) {
             breadcrumbs.add(crumb);
         }
     }
@@ -1062,20 +1056,19 @@ public class Client extends Observable implements Observer {
         return true;
     }
 
-    private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<BeforeRecordBreadcrumb> tasks = clientState.getBeforeRecordBreadcrumbTasks();
-        for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : tasks) {
+    private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
+        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
+        for (OnBreadcrumb callback : tasks) {
             try {
-                if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
+                if (!callback.run(breadcrumb)) {
                     return false;
                 }
             } catch (Throwable ex) {
-                Logger.warn("BeforeRecordBreadcrumb threw an Exception", ex);
+                Logger.warn("OnBreadcrumb threw an Exception", ex);
             }
         }
         return true;
     }
-
 
     /**
      * Stores the given key value pair into shared preferences

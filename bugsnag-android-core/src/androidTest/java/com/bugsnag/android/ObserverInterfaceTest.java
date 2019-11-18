@@ -47,28 +47,8 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testUpdateMetadataFromClientSendsMessage() {
-        MetaData metadata = new MetaData(new HashMap<String, Object>());
-        metadata.addToTab("foo", "bar", "baz");
-        client.setMetaData(metadata);
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_METADATA, Map.class);
-        assertEquals(metadata.store, value);
-    }
-
-    @Test
-    public void testUpdateMetadataFromConfigSendsMessage() {
-        MetaData metadata = new MetaData(new HashMap<String, Object>());
-        metadata.addToTab("foo", "bar", "baz");
-        client.getConfiguration().setMetaData(metadata);
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_METADATA, Map.class);
-        assertEquals(metadata.store, value);
-    }
-
-    @Test
     public void testAddMetadataToClientSendsMessage() {
-        client.addToTab("foo", "bar", "baz");
+        client.addMetadata("foo", "bar", "baz");
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.ADD_METADATA, List.class);
         assertEquals(3, metadataItem.size());
@@ -79,7 +59,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testAddNullMetadataToClientSendsMessage() {
-        client.addToTab("foo", "bar", null);
+        client.addMetadata("foo", "bar", null);
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.REMOVE_METADATA, List.class);
         assertEquals(2, metadataItem.size());
@@ -89,7 +69,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testAddMetadataToMetaDataSendsMessage() {
-        client.getMetaData().addToTab("foo", "bar", "baz");
+        client.addMetadata("foo", "bar", "baz");
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.ADD_METADATA, List.class);
         assertEquals(3, metadataItem.size());
@@ -100,7 +80,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClearTabFromClientSendsMessage() {
-        client.clearTab("axis");
+        client.clearMetadata("axis", null);
         Object value = findMessageInQueue(
                 NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
         assertEquals("axis", value);
@@ -108,7 +88,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClearTabFromMetaDataSendsMessage() {
-        client.getMetaData().clearTab("axis");
+        client.clearMetadata("axis", null);
         Object value =  findMessageInQueue(
                 NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
         assertEquals("axis", value);
@@ -116,7 +96,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testAddNullMetadataToMetaDataSendsMessage() {
-        client.getMetaData().addToTab("foo", "bar", null);
+        client.addMetadata("foo", "bar", null);
         List<Object> metadataItem = (List<Object>)findMessageInQueue(
                 NativeInterface.MessageType.REMOVE_METADATA, List.class);
         assertEquals(2, metadataItem.size());
@@ -201,7 +181,7 @@ public class ObserverInterfaceTest {
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getName());
+        assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
         assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
     }
@@ -212,7 +192,7 @@ public class ObserverInterfaceTest {
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getName());
+        assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
         assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
     }
@@ -231,11 +211,11 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testLeaveBreadcrumbSendsMessage() {
-        client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, String>());
+        client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, Object>());
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
                 NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
         assertEquals(BreadcrumbType.LOG, crumb.getType());
-        assertEquals("Rollback", crumb.getName());
+        assertEquals("Rollback", crumb.getMessage());
         assertEquals(0, crumb.getMetadata().size());
     }
 

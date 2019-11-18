@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
     private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
-    private static final int DEFAULT_MAX_SIZE = 32;
+    private static final int DEFAULT_MAX_SIZE = 25;
     static final String DEFAULT_EXCEPTION_TYPE = "android";
 
     @NonNull
@@ -36,6 +37,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private final Set<String> ignoreClasses = new HashSet<>();
     private final Set<String> enabledReleaseStages = new HashSet<>();
     private final Set<String> projectPackages = new HashSet<>();
+    private final Set<BreadcrumbType> enabledBreadcrumbTypes = new HashSet<>();
 
     private String releaseStage;
     private boolean sendThreads = true;
@@ -53,9 +55,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     @NonNull
     private MetaData metaData;
     private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeRecordBreadcrumb> beforeRecordBreadcrumbTasks
+    private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
     private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
+
 
     private String codeBundleId;
     private String appType = "android";
@@ -76,6 +79,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         this.apiKey = apiKey;
         this.metaData = new MetaData();
         this.metaData.addObserver(this);
+        enabledBreadcrumbTypes.addAll(Arrays.asList(BreadcrumbType.values()));
 
         try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
@@ -309,6 +313,16 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         this.enabledReleaseStages.addAll(enabledReleaseStages);
     }
 
+    @NonNull
+    public Set<BreadcrumbType> getEnabledBreadcrumbTypes() {
+        return Collections.unmodifiableSet(enabledBreadcrumbTypes);
+    }
+
+    public void setEnabledBreadcrumbTypes(@NonNull Set<BreadcrumbType> enabledBreadcrumbTypes) {
+        this.enabledBreadcrumbTypes.clear();
+        this.enabledBreadcrumbTypes.addAll(enabledBreadcrumbTypes);
+    }
+
     /**
      * Get which packages should be considered part of your application.
      *
@@ -423,7 +437,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return meta data
      */
     @NonNull
-    @Override
     public MetaData getMetaData() {
         return metaData;
     }
@@ -433,19 +446,13 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param metaData meta data
      */
-    @Override
     public void setMetaData(@NonNull MetaData metaData) {
-        this.metaData.deleteObserver(this);
         //noinspection ConstantConditions
         if (metaData == null) {
             this.metaData = new MetaData();
         } else {
             this.metaData = metaData;
         }
-        this.setChanged();
-        this.notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_METADATA, this.metaData.store));
-        this.metaData.addObserver(this);
     }
 
     /**
@@ -554,15 +561,17 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     /**
      * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
-     * By default, we'll keep and send the 32 most recent breadcrumb log
+     * By default, we'll keep and send the 25 most recent breadcrumb log
      * messages.
      *
      * @param numBreadcrumbs max number of breadcrumb log messages to send
      */
     public void setMaxBreadcrumbs(int numBreadcrumbs) {
-        if (numBreadcrumbs < 0) {
-            Logger.warn("Ignoring invalid breadcrumb capacity. Must be >= 0.");
-            return;
+        if (numBreadcrumbs <= 0) {
+            numBreadcrumbs = 0;
+        }
+        if (numBreadcrumbs > 100) {
+            numBreadcrumbs = 100;
         }
         this.maxBreadcrumbs = numBreadcrumbs;
     }
@@ -735,12 +744,16 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     /**
      * Adds a new before breadcrumb task
      *
-     * @param beforeRecordBreadcrumb the new before breadcrumb task
+     * @param onBreadcrumb the new before breadcrumb task
      */
-    protected void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        if (!beforeRecordBreadcrumbTasks.contains(beforeRecordBreadcrumb)) {
-            beforeRecordBreadcrumbTasks.add(beforeRecordBreadcrumb);
+    void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
+            breadcrumbCallbacks.add(onBreadcrumb);
         }
+    }
+
+    void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        breadcrumbCallbacks.remove(onBreadcrumb);
     }
 
     /**
@@ -749,8 +762,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return the before breadcrumb tasks
      */
     @NonNull
-    protected Collection<BeforeRecordBreadcrumb> getBeforeRecordBreadcrumbTasks() {
-        return beforeRecordBreadcrumbTasks;
+    Collection<OnBreadcrumb> getBreadcrumbCallbacks() {
+        return breadcrumbCallbacks;
     }
 
     void addBeforeSendSession(BeforeSendSession beforeSendSession) {

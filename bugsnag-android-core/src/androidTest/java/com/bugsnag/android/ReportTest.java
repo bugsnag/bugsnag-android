@@ -54,7 +54,7 @@ public class ReportTest {
     public void testModifyReportDetails() throws Exception {
         report.setApiKey("custom-api-key");
         report.getNotifier().setName("React Native");
-        report.getNotifier().setURL("https://bugsnag.com/reactnative");
+        report.getNotifier().setUrl("https://bugsnag.com/reactnative");
         report.getNotifier().setVersion("3.4.5");
 
         JSONObject reportJson = streamableToJson(report);

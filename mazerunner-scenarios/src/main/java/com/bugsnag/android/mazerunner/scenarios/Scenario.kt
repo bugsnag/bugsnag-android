@@ -40,12 +40,12 @@ abstract class Scenario(
     protected fun disableReportDelivery(config: Configuration) {
         val baseDelivery = config.delivery
         config.delivery = object: Delivery {
-            override fun deliver(payload: SessionPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(payload, deliveryParams)
+            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+                return DeliveryStatus.UNDELIVERED
             }
 
-            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(report, deliveryParams)
+            override fun deliver(payload: SessionPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                return baseDelivery.deliver(payload, deliveryParams)
             }
         }
     }

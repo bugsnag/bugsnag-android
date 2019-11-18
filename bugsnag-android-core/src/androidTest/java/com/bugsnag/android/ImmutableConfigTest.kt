@@ -59,9 +59,9 @@ class ImmutableConfigTest {
             assertEquals(seed.loggingEnabled, loggingEnabled)
             assertEquals(seed.maxBreadcrumbs, maxBreadcrumbs)
             assertEquals(seed.persistUserBetweenSessions, persistUserBetweenSessions)
+            assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
         }
     }
-
 
     @Test
     fun convertWithOverrides() {
@@ -87,6 +87,7 @@ class ImmutableConfigTest {
         seed.loggingEnabled = false
         seed.maxBreadcrumbs = 37
         seed.persistUserBetweenSessions = true
+        seed.enabledBreadcrumbTypes = emptySet()
 
         // verify overrides are copied across
         with(convertToImmutableConfig(seed)) {
@@ -123,6 +124,7 @@ class ImmutableConfigTest {
             assertFalse(seed.loggingEnabled)
             assertEquals(37, seed.maxBreadcrumbs)
             assertTrue(seed.persistUserBetweenSessions)
+            assertTrue(seed.enabledBreadcrumbTypes.isEmpty())
         }
     }
 

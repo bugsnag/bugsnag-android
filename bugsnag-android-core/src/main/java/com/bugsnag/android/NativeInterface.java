@@ -96,11 +96,6 @@ public class NativeInterface {
          */
         UPDATE_LOW_MEMORY,
         /**
-         * Set a new value for all custom metadata. The message object should be
-         * MetaData.
-         */
-        UPDATE_METADATA,
-        /**
          * Set a new value for `device.orientation`. The message object should
          * be the orientation in degrees
          */
@@ -231,7 +226,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetaData() {
-        return new HashMap<>(getClient().getMetaData().store);
+        return new HashMap<>(getClient().clientState.getMetaData().toMap());
     }
 
     /**
@@ -265,34 +260,34 @@ public class NativeInterface {
      */
     public static void leaveBreadcrumb(@NonNull final String name,
                                        @NonNull final BreadcrumbType type) {
-        getClient().leaveBreadcrumb(name, type, new HashMap<String, String>());
+        getClient().leaveBreadcrumb(name, type, new HashMap<String, Object>());
     }
 
     /**
      * Leaves a breadcrumb on the static client instance
      */
-    public static void leaveBreadcrumb(@NonNull String name,
+    public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull String type,
-                                       @NonNull Map<String, String> metadata) {
+                                       @NonNull Map<String, Object> metadata) {
         String typeName = type.toUpperCase(Locale.US);
-        Map<String, String> map = metadata == null ? new HashMap<String, String>() : metadata;
-        getClient().leaveBreadcrumb(name, BreadcrumbType.valueOf(typeName), map);
+        Map<String, Object> map = metadata == null ? new HashMap<String, Object>() : metadata;
+        getClient().leaveBreadcrumb(message, BreadcrumbType.valueOf(typeName), map);
     }
 
     /**
      * Remove metadata from subsequent exception reports
      */
-    public static void clearTab(@NonNull final String tab) {
-        getClient().clearTab(tab);
+    public static void clearMetadata(@NonNull String section, @Nullable String key) {
+        getClient().clearMetadata(section, key);
     }
 
     /**
      * Add metadata to subsequent exception reports
      */
-    public static void addToTab(@NonNull final String tab,
-                                @NonNull final String key,
-                                @Nullable final Object value) {
-        getClient().addToTab(tab, key, value);
+    public static void addMetadata(@NonNull final String tab,
+                                  @Nullable final String key,
+                                  @Nullable final Object value) {
+        getClient().addMetadata(tab, key, value);
     }
 
     /**

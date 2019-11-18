@@ -6,16 +6,14 @@ import java.io.IOException
 class SessionPayload internal constructor(
     internal val session: Session?,
     private val files: List<File>?,
-    val app: MutableMap<String, Any?>,
-    val device: MutableMap<String, Any?>
+    val app: MutableMap<String, Any>,
+    val device: MutableMap<String, Any>
 ) : JsonStream.Streamable {
-
-    private val notifier: Notifier = Notifier.getInstance()
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         writer.beginObject()
-        writer.name("notifier").value(notifier)
+        writer.name("notifier").value(Notifier)
         writer.name("app").value(app)
         writer.name("device").value(device)
         writer.name("sessions").beginArray()

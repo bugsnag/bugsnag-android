@@ -16,7 +16,7 @@ import java.util.Map;
  * e.g. ~/Library/Android/sdk/platforms/android-9/data/broadcast_actions.txt
  * See http://stackoverflow.com/a/27601497
  */
-public class EventReceiver extends BroadcastReceiver {
+class EventReceiver extends BroadcastReceiver {
 
     private static final String INTENT_ACTION_KEY = "Intent Action";
 
@@ -25,14 +25,14 @@ public class EventReceiver extends BroadcastReceiver {
 
     private final Client client;
 
-    public EventReceiver(@NonNull Client client) {
+    EventReceiver(@NonNull Client client) {
         this.client = client;
     }
 
     @Override
     public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         try {
-            Map<String, String> meta = new HashMap<>();
+            Map<String, Object> meta = new HashMap<>();
             String fullAction = intent.getAction();
             String shortAction = shortenActionNameIfNeeded(intent.getAction());
             meta.put(INTENT_ACTION_KEY, fullAction); // always add the Intent Action
@@ -126,7 +126,7 @@ public class EventReceiver extends BroadcastReceiver {
      * @return The intent filter
      */
     @NonNull
-    public static IntentFilter getIntentFilter() {
+    static IntentFilter getIntentFilter() {
         IntentFilter filter = new IntentFilter();
 
         for (String action : actions.keySet()) {
