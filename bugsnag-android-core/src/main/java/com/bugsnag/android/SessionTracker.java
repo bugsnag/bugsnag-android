@@ -26,6 +26,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 class SessionTracker extends Observable implements Application.ActivityLifecycleCallbacks {
 
+    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
+    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
+    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
+
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
@@ -33,7 +37,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         foregroundActivities = new ConcurrentLinkedQueue<>();
     private final long timeoutMs;
 
-    final Configuration configuration;
+    final ImmutableConfig configuration;
+    final Configuration clientState;
     final Client client;
     final SessionStore sessionStore;
 
@@ -46,13 +51,15 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
 
-    SessionTracker(Configuration configuration, Client client, SessionStore sessionStore) {
-        this(configuration, client, DEFAULT_TIMEOUT_MS, sessionStore);
+    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+                   Client client, SessionStore sessionStore) {
+        this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore);
     }
 
-    SessionTracker(Configuration configuration, Client client, long timeoutMs,
-                   SessionStore sessionStore) {
+    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+                   Client client, long timeoutMs, SessionStore sessionStore) {
         this.configuration = configuration;
+        this.clientState = clientState;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
@@ -63,7 +70,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     /**
      * Starts a new session with the given date and user.
      * <p>
-     * A session will only be created if {@link Configuration#getAutoCaptureSessions()} returns
+     * A session will only be created if {@link Configuration#getAutoTrackSessions()} returns
      * true.
      *
      * @param date the session start date
@@ -73,11 +80,6 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     @VisibleForTesting
     Session startNewSession(@NonNull Date date, @Nullable User user,
                                       boolean autoCaptured) {
-        if (configuration.getSessionEndpoint() == null) {
-            Logger.warn("The session tracking endpoint has not been set. "
-                + "Session tracking is disabled");
-            return null;
-        }
         Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);
         currentSession.set(session);
         trackSessionIfNeeded(session);
@@ -88,14 +90,14 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         return startNewSession(new Date(), client.getUser(), autoCaptured);
     }
 
-    void stopSession() {
+    void pauseSession() {
         Session session = currentSession.get();
 
         if (session != null) {
-            session.isStopped.set(true);
+            session.isPaused.set(true);
             setChanged();
             notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+                NativeInterface.MessageType.PAUSE_SESSION, null));
         }
     }
 
@@ -107,7 +109,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             session = startSession(false);
             resumed = false;
         } else {
-            resumed = session.isStopped.compareAndSet(true, false);
+            resumed = session.isPaused.compareAndSet(true, false);
         }
 
         if (session != null) {
@@ -146,7 +148,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         } else {
             setChanged();
             notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+                NativeInterface.MessageType.PAUSE_SESSION, null));
         }
         currentSession.set(session);
         return session;
@@ -159,36 +161,47 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      * @param session the session
      */
     private void trackSessionIfNeeded(final Session session) {
-        boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
+        boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
         if (notifyForRelease
-            && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
+            && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
             && session.isTracked().compareAndSet(false, true)) {
             notifySessionStartObserver(session);
 
             try {
-                final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
                     @Override
                     public void run() {
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
-                        SessionTrackingPayload payload =
-                            new SessionTrackingPayload(session, null,
-                                client.appData, client.deviceData);
+                        SessionPayload payload =
+                            new SessionPayload(session, null,
+                                client.appData.getAppDataSummary(),
+                                    client.deviceData.getDeviceDataSummary());
 
                         try {
-                            for (BeforeSendSession mutator : configuration.getSessionCallbacks()) {
+                            for (BeforeSendSession mutator : clientState.getSessionCallbacks()) {
                                 mutator.beforeSendSession(payload);
                             }
 
-                            configuration.getDelivery().deliver(payload, configuration);
-                        } catch (DeliveryFailureException exception) { // store for later sending
-                            Logger.warn("Storing session payload for future delivery", exception);
-                            sessionStore.write(session);
+                            DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+
+                            switch (deliveryStatus) {
+                                case DELIVERED:
+                                    break;
+                                case UNDELIVERED:
+                                    Logger.warn("Storing session payload for future delivery");
+                                    sessionStore.write(session);
+                                    break;
+                                case FAILURE:
+                                    Logger.warn("Dropping invalid session tracking payload");
+                                    break;
+                                default:
+                                    break;
+                            }
                         } catch (Exception exception) {
-                            Logger.warn("Dropping invalid session tracking payload", exception);
+                            Logger.warn("Session tracking payload failed", exception);
                         }
                     }
                 });
@@ -218,7 +231,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     Session getCurrentSession() {
         Session session = currentSession.get();
 
-        if (session != null && !session.isStopped.get()) {
+        if (session != null && !session.isPaused.get()) {
             return session;
         }
         return null;
@@ -263,27 +276,40 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 storedFiles = sessionStore.findStoredFiles();
 
                 if (!storedFiles.isEmpty()) {
-                    SessionTrackingPayload payload =
-                        new SessionTrackingPayload(null, storedFiles,
-                            client.appData, client.deviceData);
+                    SessionPayload payload =
+                        new SessionPayload(null, storedFiles,
+                            client.appData.getAppDataSummary(),
+                                client.deviceData.getDeviceDataSummary());
 
-                    //FUTURE:SM Reduce duplication here and above
-                    try {
-                        configuration.getDelivery().deliver(payload, configuration);
-                        sessionStore.deleteStoredFiles(storedFiles);
-                    } catch (DeliveryFailureException exception) {
-                        sessionStore.cancelQueuedFiles(storedFiles);
-                        Logger.warn("Leaving session payload for future delivery", exception);
-                    } catch (Exception exception) {
-                        // drop bad data
-                        Logger.warn("Deleting invalid session tracking payload", exception);
-                        sessionStore.deleteStoredFiles(storedFiles);
+                    DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+
+                    switch (deliveryStatus) {
+                        case DELIVERED:
+                            sessionStore.deleteStoredFiles(storedFiles);
+                            break;
+                        case UNDELIVERED:
+                            sessionStore.cancelQueuedFiles(storedFiles);
+                            Logger.warn("Leaving session payload for future delivery");
+                            break;
+                        case FAILURE:
+                            // drop bad data
+                            Logger.warn("Deleting invalid session tracking payload");
+                            sessionStore.deleteStoredFiles(storedFiles);
+                            break;
+                        default:
+                            break;
                     }
                 }
             } finally {
                 flushingRequest.release(1);
             }
         }
+    }
+
+    DeliveryStatus deliverSessionPayload(SessionPayload payload) {
+        DeliveryParams params = configuration.sessionApiDeliveryParams();
+        Delivery delivery = configuration.getDelivery();
+        return delivery.deliver(payload, params);
     }
 
     @Override
@@ -334,8 +360,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     }
 
     private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
-        if (configuration.isAutomaticallyCollectingBreadcrumbs()) {
-            Map<String, String> metadata = new HashMap<>();
+        if (configuration.getAutoCaptureBreadcrumbs()) {
+            Map<String, Object> metadata = new HashMap<>();
             metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
 
             try {
@@ -384,7 +410,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 lastEnteredForegroundMs.set(nowMs);
 
                 if (noActivityRunningForMs >= timeoutMs
-                    && configuration.getAutoCaptureSessions()) {
+                    && configuration.getAutoTrackSessions()) {
                     startNewSession(new Date(nowMs), client.getUser(), true);
                 }
             }

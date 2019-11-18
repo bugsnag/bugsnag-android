@@ -20,15 +20,15 @@ public class CXXCustomMetadataNativeNotifyScenario extends Scenario {
 
     public CXXCustomMetadataNativeNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override
     public void run() {
         super.run();
-        Bugsnag.addToTab("fruit", "orange", "meyer");
-        Bugsnag.addToTab("fruit", "counters", 302);
-        Bugsnag.addToTab("fruit", "ripe", false);
+        Bugsnag.addMetadata("fruit", "orange", "meyer");
+        Bugsnag.addMetadata("fruit", "counters", 302);
+        Bugsnag.addMetadata("fruit", "ripe", false);
         activate();
     }
 }

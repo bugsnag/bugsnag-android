@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
 import org.json.JSONArray
 import org.json.JSONObject
@@ -10,7 +10,7 @@ import org.junit.Test
 
 class BugsnagExceptionTest {
 
-    private val config = generateConfiguration()
+    private val config = generateImmutableConfig()
 
     @Test
     fun stacktraceConstructorSerialisation() {

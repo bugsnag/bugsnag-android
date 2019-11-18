@@ -1,0 +1,56 @@
+apply plugin: 'com.android.library'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+    }
+    ext.kotlin_version = '1.3.21'
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.5.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC16"
+    }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+repositories {
+    mavenLocal()
+    google()
+    mavenCentral()
+    jcenter()
+}
+
+android {
+    compileSdkVersion 28
+    defaultConfig.minSdkVersion 14
+
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+dependencies {
+    try {
+        compileOnly project(":bugsnag-android")
+    } catch (Throwable exc) {
+        implementation "com.bugsnag:bugsnag-android:+"
+        project.logger.lifecycle("Ignoring unfound dependency as running from mazerunner")
+    }
+}
+
+apply from: "../gradle/detekt.gradle"
+apply from: "../gradle/checkstyle.gradle"

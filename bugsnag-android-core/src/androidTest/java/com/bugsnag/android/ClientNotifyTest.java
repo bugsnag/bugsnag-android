@@ -3,15 +3,15 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 
 import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 @SmallTest
 public class ClientNotifyTest {
@@ -24,12 +24,12 @@ public class ClientNotifyTest {
      *
      * @throws Exception if initialisation failed
      */
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        client = BugsnagTestUtils.generateClient();
+        Configuration config = BugsnagTestUtils.generateConfiguration();
         apiClient = new FakeClient();
-        client.setErrorReportApiClient(apiClient);
+        config.setDelivery(apiClient);
+        client = new Client(ApplicationProvider.getApplicationContext(), config);
     }
 
     @After
@@ -80,28 +80,25 @@ public class ClientNotifyTest {
         assertEquals("Message", error.getExceptionMessage());
     }
 
-    @SuppressWarnings("deprecation")
-    static class FakeClient implements ErrorReportApiClient {
+    static class FakeClient implements Delivery {
 
         CountDownLatch latch = new CountDownLatch(1);
         Report report;
 
+        @NotNull
         @Override
-        public void postReport(@NonNull String urlString,
-                               @NonNull Report report,
-                               @NonNull Map<String, String> headers)
-            throws NetworkException, BadResponseException {
-            try {
-                Thread.sleep(10); // simulate async request
-            } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
-            }
-            this.report = report;
-            latch.countDown();
+        public DeliveryStatus deliver(@NotNull SessionPayload payload,
+                                      @NotNull DeliveryParams deliveryParams) {
+            return DeliveryStatus.DELIVERED;
         }
 
-        void awaitReport() throws InterruptedException {
-            latch.await(2000, TimeUnit.MILLISECONDS);
+        @NotNull
+        @Override
+        public DeliveryStatus deliver(@NotNull Report report,
+                                      @NotNull DeliveryParams deliveryParams) {
+            this.report = report;
+            latch.countDown();
+            return DeliveryStatus.DELIVERED;
         }
     }
 

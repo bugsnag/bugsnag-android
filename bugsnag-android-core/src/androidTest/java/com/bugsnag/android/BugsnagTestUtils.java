@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,8 +64,18 @@ final class BugsnagTestUtils {
         return configuration;
     }
 
+    static ImmutableConfig generateImmutableConfig() {
+        return convert(generateConfiguration());
+    }
+
+
+    static ImmutableConfig convert(Configuration config) {
+        return ImmutableConfigKt.convertToImmutableConfig(config);
+    }
+
     static SessionTracker generateSessionTracker() {
-        return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient(),
+        Configuration config = generateConfiguration();
+        return new SessionTracker(convert(config), config, BugsnagTestUtils.generateClient(),
             generateSessionStore());
     }
 
@@ -75,48 +86,24 @@ final class BugsnagTestUtils {
     @NonNull
     static SessionStore generateSessionStore() {
         Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(generateConfiguration(), applicationContext, null);
-    }
-
-    @SuppressWarnings("deprecation")
-    @NonNull
-    static SessionTrackingApiClient generateSessionTrackingApiClient() {
-        return new SessionTrackingApiClient() {
-            @Override
-            public void postSessionTrackingPayload(@NonNull String urlString,
-                                                   @NonNull SessionTrackingPayload payload,
-                                                   @NonNull Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        };
-    }
-
-    @SuppressWarnings("deprecation")
-    static ErrorReportApiClient generateErrorReportApiClient() { // no-op
-        return new ErrorReportApiClient() {
-            @Override
-            public void postReport(@NonNull String urlString,
-                                   @NonNull Report report,
-                                   @NonNull Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        };
+        return new SessionStore(applicationContext, null);
     }
 
     public static Delivery generateDelivery() {
         return new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
+            public DeliveryStatus deliver(@NonNull Report report,
+                                          @NonNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
 
+            @NonNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
+            public DeliveryStatus deliver(@NonNull SessionPayload payload,
+                                          @NonNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
         };
     }
 }

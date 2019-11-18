@@ -28,7 +28,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXStartSessionScenario_crash(JNIE
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXStopSessionScenario_crash(JNIEnv *env,
+Java_com_bugsnag_android_mazerunner_scenarios_CXXPausedSessionScenario_crash(JNIEnv *env,
                                                                            jobject instance,
                                                                            jint value) {
     int x = 22552;
@@ -62,13 +62,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExtraordinaryLongStringScenario
   if (value > 0)
     __builtin_trap();
   return 12062 / value;
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_NativeNotifyBeforeSendScenario_activate(JNIEnv *env,
-                                                                         jobject instance) {
-  bugsnag_notify_env(env, (char *)"Ad-hoc",
-                     (char *)"Auto-generated issue", BSG_SEVERITY_INFO);
 }
 
 JNIEXPORT void JNICALL
@@ -184,7 +177,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeBreadcrumbS
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_DetectNdkDisabledScenario_crash(
+Java_com_bugsnag_android_mazerunner_scenarios_AutoDetectNdkDisabledScenario_crash(
     JNIEnv *env,
 jobject instance) {
 int x = 47;
@@ -194,7 +187,7 @@ return 512345;
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_DetectNdkEnabledScenario_crash(
+Java_com_bugsnag_android_mazerunner_scenarios_AutoDetectNdkEnabledScenario_crash(
     JNIEnv *env,
 jobject instance) {
 int x = 47;

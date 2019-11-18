@@ -1,18 +1,17 @@
 package com.bugsnag.android;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import androidx.annotation.NonNull;
-
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 public class ConfigurationTest {
 
@@ -20,124 +19,48 @@ public class ConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("api-key");
+        config = BugsnagTestUtils.generateConfiguration();
     }
 
     @Test
     public void testEndpoints() {
         String notify = "https://notify.myexample.com";
         String sessions = "https://sessions.myexample.com";
-        config.setEndpoints(notify, sessions);
+        config.setEndpoints(new Endpoints(notify, sessions));
 
-        assertEquals(notify, config.getEndpoint());
-        assertEquals(sessions, config.getSessionEndpoint());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNullNotifyEndpoint() {
-        //noinspection ConstantConditions
-        config.setEndpoints(null, "http://example.com");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testEmptyNotifyEndpoint() {
-        config.setEndpoints("", "http://example.com");
-    }
-
-    @Test
-    public void testInvalidSessionEndpoint() {
-        //noinspection ConstantConditions
-        config.setEndpoints("http://example.com", null);
-        assertFalse(config.getAutoCaptureSessions());
-        assertNull(config.getSessionEndpoint());
-
-        config.setEndpoints("http://example.com", "");
-        assertFalse(config.getAutoCaptureSessions());
-        assertNull(config.getSessionEndpoint());
-
-        config.setEndpoints("http://example.com", "http://sessions.example.com");
-        assertFalse(config.getAutoCaptureSessions());
-        assertEquals("http://sessions.example.com", config.getSessionEndpoint());
-    }
-
-    @Test
-    public void testAutoCaptureOverride() {
-        config.setAutoCaptureSessions(false);
-        config.setEndpoints("http://example.com", "http://example.com");
-        assertFalse(config.getAutoCaptureSessions());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEndpoint() {
-        // Default endpoints
-        assertEquals("https://notify.bugsnag.com", config.getEndpoint());
-
-        // Setting an endpoint
-        String endpoint = "http://localhost:8000";
-        config.setEndpoint(endpoint);
-        assertEquals(endpoint, config.getEndpoint());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSessionEndpoint() {
-        // Default endpoints
-        assertEquals("https://sessions.bugsnag.com", config.getSessionEndpoint());
-
-        // Setting an endpoint
-        String endpoint = "http://localhost:8000";
-        config.setSessionEndpoint(endpoint);
-        assertEquals(endpoint, config.getSessionEndpoint());
+        assertEquals(notify, config.getEndpoints().getNotify());
+        assertEquals(sessions, config.getEndpoints().getSessions());
     }
 
     @Test
     public void testShouldNotify() {
-        // Should notify if notifyReleaseStages is null
-        assertTrue(config.shouldNotifyForReleaseStage("development"));
+        // Should notify if enabledReleaseStages is null
+        ImmutableConfig immutableConfig;
+        immutableConfig = createConfigWithReleaseStages(config,
+                config.getEnabledReleaseStages(), "development");
+        assertTrue(immutableConfig.shouldNotifyForReleaseStage());
 
-        // Shouldn't notify if notifyReleaseStages is set and releaseStage is null
-        config.setNotifyReleaseStages(new String[]{"example"});
-        assertFalse(config.shouldNotifyForReleaseStage(null));
+        // Shouldn't notify if enabledReleaseStages is set and releaseStage is null
+        Set<String> example = Collections.singleton("example");
+        immutableConfig = createConfigWithReleaseStages(config, example, null);
+        assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
-        // Shouldn't notify if releaseStage not in notifyReleaseStages
-        String releaseStage = "production";
-        config.setNotifyReleaseStages(new String[]{releaseStage});
-        assertFalse(config.shouldNotifyForReleaseStage("not-production"));
+        // Shouldn't notify if releaseStage not in enabledReleaseStages
+        Set<String> stages = Collections.singleton("production");
+        immutableConfig = createConfigWithReleaseStages(config, stages, "not-production");
+        assertFalse(immutableConfig.shouldNotifyForReleaseStage());
 
-        // Should notify if releaseStage in notifyReleaseStages
-        config.setNotifyReleaseStages(new String[]{releaseStage});
-        assertTrue(config.shouldNotifyForReleaseStage(releaseStage));
+        // Should notify if releaseStage in enabledReleaseStages
+        immutableConfig = createConfigWithReleaseStages(config, stages, "production");
+        assertTrue(immutableConfig.shouldNotifyForReleaseStage());
     }
 
-    @Test
-    public void testShouldIgnore() {
-        // Should not ignore by default
-        String className = "java.io.IOException";
-        assertFalse(config.shouldIgnoreClass(className));
-
-        // Should ignore when added to ignoreClasses
-        config.setIgnoreClasses(new String[]{className});
-        assertTrue(config.shouldIgnoreClass(className));
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testInProject() {
-        // Shouldn't be inProject if projectPackages hasn't been set
-        assertFalse(config.inProject("com.bugsnag.android.Example"));
-
-        // Should be inProject if class in projectPackages
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
-        assertTrue(config.inProject("com.bugsnag.android.Example"));
-
-        // Shouldn't be inProject if class not in projectPackages
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
-        assertFalse(config.inProject("java.io.IOException"));
-
-        // Should be inProject if class is in projectPackages with null element
-        config.setProjectPackages(new String[]{null, "java.io.IOException"});
-        assertTrue(config.inProject("java.io.IOException"));
+    private ImmutableConfig createConfigWithReleaseStages(Configuration config,
+                                                          Collection<String> releaseStages,
+                                                          String releaseStage) {
+        config.setEnabledReleaseStages(releaseStages);
+        config.setReleaseStage(releaseStage);
+        return BugsnagTestUtils.convert(config);
     }
 
     @Test
@@ -153,26 +76,10 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testAutoCaptureSessions() throws Exception {
-        assertTrue(config.getAutoCaptureSessions());
-        config.setAutoCaptureSessions(false);
-        assertFalse(config.getAutoCaptureSessions());
-    }
-
-    @Test
-    public void testErrorApiHeaders() throws Exception {
-        Map<String, String> headers = config.getErrorApiHeaders();
-        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
-        assertNotNull(headers.get("Bugsnag-Sent-At"));
-        assertNotNull(headers.get("Bugsnag-Payload-Version"));
-    }
-
-    @Test
-    public void testSessionApiHeaders() throws Exception {
-        Map<String, String> headers = config.getSessionApiHeaders();
-        assertEquals(config.getApiKey(), headers.get("Bugsnag-Api-Key"));
-        assertNotNull(headers.get("Bugsnag-Sent-At"));
-        assertNotNull(headers.get("Bugsnag-Payload-Version"));
+    public void testAutoTrackSessions() throws Exception {
+        assertTrue(config.getAutoTrackSessions());
+        config.setAutoTrackSessions(false);
+        assertFalse(config.getAutoTrackSessions());
     }
 
     @Test
@@ -182,27 +89,27 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testOverrideFilters() throws Exception {
-        config.setFilters(new String[]{"Foo"});
-        assertArrayEquals(new String[]{"Foo"}, config.getFilters());
+    public void testOverrideRedactKeys() throws Exception {
+        config.setRedactKeys(Collections.singleton("Foo"));
+        assertEquals(Collections.singleton("Foo"), config.getRedactKeys());
     }
 
     @Test
     public void testOverrideIgnoreClasses() throws Exception {
-        config.setIgnoreClasses(new String[]{"Bar"});
-        assertArrayEquals(new String[]{"Bar"}, config.getIgnoreClasses());
+        config.setIgnoreClasses(Collections.singleton("Bar"));
+        assertEquals(Collections.singleton("Bar"), config.getIgnoreClasses());
     }
 
     @Test
-    public void testOverrideNotifyReleaseStages() throws Exception {
-        config.setNotifyReleaseStages(new String[]{"Test"});
-        assertArrayEquals(new String[]{"Test"}, config.getNotifyReleaseStages());
+    public void testOverrideEnabledReleaseStages() throws Exception {
+        config.setEnabledReleaseStages(Collections.singleton("Test"));
+        assertEquals(Collections.singleton("Test"), config.getEnabledReleaseStages());
     }
 
     @Test
-    public void testOverrideNotifierType() throws Exception {
-        config.setNotifierType("React Native");
-        assertEquals("React Native", config.getNotifierType());
+    public void testOverrideAppType() throws Exception {
+        config.setAppType("React Native");
+        assertEquals("React Native", config.getAppType());
     }
 
     @Test
@@ -216,21 +123,23 @@ public class ConfigurationTest {
         Configuration configuration = new Configuration("api-key");
         assertNull(configuration.getDelivery());
         Delivery delivery = new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config) throws DeliveryFailureException {
-
+            public DeliveryStatus deliver(@NotNull SessionPayload payload,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return null;
             }
 
+            @NotNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config) throws DeliveryFailureException {
-
+            public DeliveryStatus deliver(@NotNull Report report,
+                                          @NotNull DeliveryParams deliveryParams) {
+                return null;
             }
         };
         configuration.setDelivery(delivery);
 
-        assertFalse(configuration.getDelivery() instanceof DeliveryCompat);
+        assertFalse(configuration.getDelivery() instanceof DefaultDelivery);
         assertEquals(delivery, configuration.getDelivery());
     }
 
@@ -242,7 +151,7 @@ public class ConfigurationTest {
     @Test
     public void testVersionCode() {
         Configuration configuration = new Configuration("api-key");
-        assertNull(configuration.getVersionCode()); // populated in client ctor if null
+        assertEquals(0, (int) configuration.getVersionCode()); // populated in client ctor if null
         configuration.setVersionCode(577);
         assertEquals(577, (int) configuration.getVersionCode());
     }

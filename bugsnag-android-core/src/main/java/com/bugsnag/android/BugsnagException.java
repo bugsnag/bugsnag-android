@@ -3,13 +3,15 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Used to store information about an exception that was not provided with an exception object
  */
-public class BugsnagException extends Throwable implements JsonStream.Streamable {
+class BugsnagException extends Throwable implements JsonStream.Streamable {
 
     private static final long serialVersionUID = 5068182621179433346L;
     /**
@@ -22,7 +24,7 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
     private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
 
     private JsonStream.Streamable streamable;
-    private String[] projectPackages;
+    private Collection<String> projectPackages = new ArrayList<>();
 
     /**
      * Constructor
@@ -31,7 +33,7 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
      * @param message The exception message
      * @param frames  The exception stack trace
      */
-    public BugsnagException(@NonNull String name,
+    BugsnagException(@NonNull String name,
                             @NonNull String message,
                             @NonNull StackTraceElement[] frames) {
         super(message);
@@ -134,7 +136,7 @@ public class BugsnagException extends Throwable implements JsonStream.Streamable
         }
     }
 
-    void setProjectPackages(String[] projectPackages) {
+    void setProjectPackages(Collection<String> projectPackages) {
         this.projectPackages = projectPackages;
     }
 }

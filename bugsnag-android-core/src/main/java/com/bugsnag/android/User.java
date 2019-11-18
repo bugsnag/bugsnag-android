@@ -11,6 +11,8 @@ import java.util.Observable;
  */
 class User extends Observable implements JsonStream.Streamable {
 
+    String installId;
+
     @Nullable
     private String id;
 

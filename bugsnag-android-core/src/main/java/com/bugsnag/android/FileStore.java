@@ -35,8 +35,6 @@ abstract class FileStore<T extends JsonStream.Streamable> {
         void onErrorIOFailure(Exception exception, File errorFile, String context);
     }
 
-    @NonNull
-    protected final Configuration config;
     @Nullable
     final String storeDirectory;
     private final int maxStoreCount;
@@ -47,9 +45,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     protected final ErrorStore.Delegate delegate;
 
 
-    FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
+    FileStore(@NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator, Delegate delegate) {
-        this.config = config;
         this.maxStoreCount = maxStoreCount;
         this.comparator = comparator;
         this.delegate = delegate;

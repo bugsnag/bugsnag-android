@@ -23,7 +23,7 @@ class AppData {
     static final String RELEASE_STAGE_PRODUCTION = "production";
 
     private final Context appContext;
-    private final Configuration config;
+    private final ImmutableConfig config;
     private final SessionTracker sessionTracker;
 
     private final String packageName;
@@ -41,7 +41,7 @@ class AppData {
     private PackageManager packageManager;
 
     AppData(Context appContext, PackageManager packageManager,
-            Configuration config, SessionTracker sessionTracker) {
+            ImmutableConfig config, SessionTracker sessionTracker) {
         this.appContext = appContext;
         this.packageManager = packageManager;
         this.config = config;
@@ -63,7 +63,7 @@ class AppData {
 
     Map<String, Object> getAppDataSummary() {
         Map<String, Object> map = new HashMap<>();
-        map.put("type", calculateNotifierType());
+        map.put("type", config.getAppType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
         map.put("versionCode", calculateVersionCode());
@@ -74,7 +74,7 @@ class AppData {
     Map<String, Object> getAppData() {
         Map<String, Object> map = getAppDataSummary();
         map.put("id", packageName);
-        map.put("buildUUID", config.getBuildUUID());
+        map.put("buildUUID", config.getBuildUuid());
         map.put("duration", getDurationMs());
         map.put("durationInForeground", calculateDurationInForeground());
         map.put("inForeground", sessionTracker.isInForeground());
@@ -120,35 +120,12 @@ class AppData {
         return sessionTracker.getContextActivity();
     }
 
-    @NonNull
-    private String calculateNotifierType() {
-        String notifierType = config.getNotifierType();
-
-        if (notifierType != null) {
-            return notifierType;
-        } else {
-            return "android";
-        }
-    }
-
     /**
      * The version code of the running Android app, from android:versionCode
      * in AndroidManifest.xml
      */
-    @Nullable
-    @SuppressWarnings("deprecation")
-    private Integer calculateVersionCode() {
-        Integer versionCode = config.getVersionCode();
-
-        if (versionCode != null) {
-            return versionCode;
-        } else {
-            if (packageInfo != null) {
-                return packageInfo.versionCode;
-            } else {
-                return null;
-            }
-        }
+    private int calculateVersionCode() {
+        return config.getVersionCode();
     }
 
     /**

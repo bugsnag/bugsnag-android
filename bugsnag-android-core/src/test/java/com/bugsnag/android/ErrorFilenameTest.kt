@@ -19,7 +19,8 @@ class ErrorFilenameTest {
     lateinit var context: Context
 
     private lateinit var errorStore: ErrorStore
-    private val config = Configuration("api-key")
+
+    private val config = BugsnagTestUtils.generateImmutableConfig()
 
     /**
      * Generates a client and ensures that its errorStore has 0 files persisted
@@ -28,7 +29,7 @@ class ErrorFilenameTest {
      */
     @Before
     fun setUp() {
-        errorStore = ErrorStore(config, context, null)
+        errorStore = ErrorStore(config, BugsnagTestUtils.generateConfiguration(), context, null)
     }
 
     @Test

@@ -13,12 +13,10 @@ import java.util.Locale
 class BreadcrumbsTest {
 
     private lateinit var breadcrumbs: Breadcrumbs
-    private lateinit var config: Configuration
 
     @Before
     fun setUp() {
-        config = Configuration("api-key")
-        breadcrumbs = Breadcrumbs(config)
+        breadcrumbs = Breadcrumbs(20)
     }
 
     /**
@@ -28,17 +26,15 @@ class BreadcrumbsTest {
     fun testMessageTruncation() {
         breadcrumbs.add(Breadcrumb("Started app"))
         breadcrumbs.add(Breadcrumb("Clicked a button"))
-        breadcrumbs.add(Breadcrumb("Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
-            + " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
-            + "minim veniam, quis nostrud exercitation ullamco laboris nisi"
-            + " ut aliquip ex ea commodo consequat."))
-
+        val longStr = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
+                + " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
+                + "minim veniam, quis nostrud exercitation ullamco laboris nisi"
+                + " ut aliquip ex ea commodo consequat.")
+        breadcrumbs.add(Breadcrumb(longStr))
 
         val crumbs = breadcrumbs.store.toList()
         assertEquals(3, crumbs.size)
-        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do "
-            + "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
-            crumbs[2].metadata["message"])
+        assertEquals(longStr, crumbs[2].metadata["message"])
     }
 
     /**
@@ -46,14 +42,13 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSizeLimitBeforeAdding() {
-        config.maxBreadcrumbs = 5
+        breadcrumbs = Breadcrumbs(5)
 
         for (k in 1..6) {
             breadcrumbs.add(Breadcrumb("$k"))
         }
 
         val crumbs = breadcrumbs.store.toList()
-        assertEquals(config.maxBreadcrumbs, crumbs.size)
         assertEquals("2", crumbs.first().metadata["message"])
         assertEquals("6", crumbs.last().metadata["message"])
     }
@@ -63,7 +58,7 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeEmpty() {
-        config.maxBreadcrumbs = 0
+        breadcrumbs = Breadcrumbs(0)
         breadcrumbs.add(Breadcrumb("1"))
         breadcrumbs.add(Breadcrumb("2"))
         assertTrue(breadcrumbs.store.isEmpty())
@@ -74,9 +69,9 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeNegative() {
-        config.maxBreadcrumbs = -1
+        breadcrumbs = Breadcrumbs(-1)
         breadcrumbs.add(Breadcrumb("1"))
-        assertEquals(1, breadcrumbs.store.size)
+        assertEquals(0, breadcrumbs.store.size)
     }
 
     /**
@@ -103,7 +98,7 @@ class BreadcrumbsTest {
      */
     @Test
     fun testPayloadSizeLimit() {
-        val metadata = HashMap<String, String>()
+        val metadata = HashMap<String, Any>()
         for (i in 0..399) {
             metadata[String.format(Locale.US, "%d", i)] = "!!"
         }
@@ -116,16 +111,14 @@ class BreadcrumbsTest {
      */
     @Test
     fun testMaxBreadcrumbAccessors() {
-        assertEquals(32, config.maxBreadcrumbs)
+        val config = Configuration("api-key")
+        assertEquals(25, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = 50
         assertEquals(50, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = Int.MAX_VALUE
-        assertEquals(Int.MAX_VALUE, config.maxBreadcrumbs)
-
-        config.maxBreadcrumbs = 0
-        assertEquals(0, config.maxBreadcrumbs)
+        assertEquals(100, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = -5
         assertEquals(0, config.maxBreadcrumbs)

@@ -51,24 +51,24 @@ public class UniqueBeforeNotifyTest {
 
     @Test
     public void checkBeforeNotify() {
-        client.beforeNotify(firstCb);
+        client.addBeforeNotify(firstCb);
         client.notify(new Throwable());
         assertEquals(1, callbackCount);
     }
 
     @Test
     public void testDuplicateCallback() {
-        client.beforeNotify(firstCb);
-        client.beforeNotify(firstCb);
-        client.beforeNotify(secondCb);
-        client.beforeNotify(secondCb);
+        client.addBeforeNotify(firstCb);
+        client.addBeforeNotify(firstCb);
+        client.addBeforeNotify(secondCb);
+        client.addBeforeNotify(secondCb);
         client.notify(new Throwable());
         assertEquals(2, callbackCount);
     }
 
     @Test
     public void testCallbackOrder() {
-        client.beforeNotify(new BeforeNotify() {
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 assertEquals(0, callbackCount);
@@ -76,7 +76,7 @@ public class UniqueBeforeNotifyTest {
                 return false;
             }
         });
-        client.beforeNotify(new BeforeNotify() {
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 assertEquals(1, callbackCount);

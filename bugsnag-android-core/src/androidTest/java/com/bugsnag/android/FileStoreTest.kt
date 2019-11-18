@@ -9,6 +9,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.lang.Exception
 import java.lang.RuntimeException
+import java.util.Comparator
 
 class FileStoreTest {
     val appContext = ApplicationProvider.getApplicationContext<Context>()
@@ -20,7 +21,7 @@ class FileStoreTest {
         val dir = File(appContext.filesDir, "custom-store")
         dir.mkdir()
 
-        val store = CustomFileStore(config, appContext, dir.absolutePath, 1, null, delegate)
+        val store = CustomFileStore(appContext, dir.absolutePath, 1, null, delegate)
         val exc = RuntimeException("Whoops")
         store.write(CustomStreamable(exc))
 
@@ -36,7 +37,7 @@ class FileStoreTest {
         val dir = File(appContext.filesDir, "custom-store")
         dir.mkdir()
 
-        val store = CustomFileStore(config, appContext, "", 1, null, delegate)
+        val store = CustomFileStore(appContext, "", 1, null, delegate)
         store.enqueueContentForDelivery("foo")
 
         assertEquals("NDK Crash report copy", delegate.context)
@@ -62,12 +63,11 @@ class CustomStreamable(val exc: Throwable) : JsonStream.Streamable {
 }
 
 internal class CustomFileStore(
-    config: Configuration,
     appContext: Context,
     val folder: String?,
     maxStoreCount: Int,
-    comparator: java.util.Comparator<File>?,
+    comparator: Comparator<File>?,
     delegate: Delegate?
-) : FileStore<CustomStreamable>(config, appContext, folder, maxStoreCount, comparator, delegate) {
+) : FileStore<CustomStreamable>(appContext, folder, maxStoreCount, comparator, delegate) {
     override fun getFilename(`object`: Any?) = "$folder/foo.json"
 }

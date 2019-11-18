@@ -11,9 +11,9 @@ class ErrorNameTest {
 
     @Before
     fun setUp() {
-        val config = Configuration("api-key")
+        val config = BugsnagTestUtils.generateImmutableConfig()
         val exception = RuntimeException("Example message", RuntimeException("Another"))
-        error = Error.Builder(config, exception, null, Thread.currentThread(), false).build()
+        error = Error.Builder(config, exception, null, Thread.currentThread(), false, MetaData()).build()
     }
 
     @Test

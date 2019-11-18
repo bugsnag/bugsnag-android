@@ -17,7 +17,7 @@ class CachedThread implements JsonStream.Streamable {
     private final boolean isErrorReportingThread;
     private Stacktrace stacktrace;
 
-    CachedThread(Configuration config, long id, String name, String type,
+    CachedThread(ImmutableConfig config, long id, String name, String type,
                  boolean isErrorReportingThread, StackTraceElement[] frames) {
         this(id, name, type, isErrorReportingThread,
                 new Stacktrace(frames, config.getProjectPackages()));

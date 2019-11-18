@@ -6,11 +6,12 @@ import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 @SmallTest
 public class ClientTest {
 
@@ -90,19 +92,6 @@ public class ClientTest {
         client.notify(new RuntimeException("Testing"));
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testConfig() {
-        config.setEndpoint("new-endpoint");
-
-        client = new Client(context, config);
-        client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
-        client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
-
-        // Notify should not crash
-        client.notify(new RuntimeException("Testing"));
-    }
-
     @Test
     public void testRestoreUserFromPrefs() {
         setUserPrefs();
@@ -113,7 +102,7 @@ public class ClientTest {
 
         final User user = new User();
 
-        client.beforeNotify(new BeforeNotify() {
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 // Pull out the user information
@@ -153,6 +142,7 @@ public class ClientTest {
 
         // Check that the user was not stored in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
+        assertNotNull(sharedPref.getString("install.iud", null));
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
@@ -169,100 +159,40 @@ public class ClientTest {
 
         // Check that there is no user information in the prefs anymore
         SharedPreferences sharedPref = getSharedPrefs(context);
+        assertNotNull(sharedPref.getString("install.iud", null));
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
-    }
-
-    @Test
-    public void testEmptyManifestConfig() {
-        Bundle data = new Bundle();
-        Configuration protoConfig = new Configuration("api-key");
-        ConfigFactory.populateConfigFromManifest(protoConfig, data);
-
-        assertEquals(config.getApiKey(), protoConfig.getApiKey());
-        assertEquals(config.getVersionCode(), protoConfig.getVersionCode());
-        assertEquals(config.getBuildUUID(), protoConfig.getBuildUUID());
-        assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
-        assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
-        assertEquals(config.getEndpoint(), protoConfig.getEndpoint());
-        assertEquals(config.getSessionEndpoint(), protoConfig.getSessionEndpoint());
-        assertEquals(config.getSendThreads(), protoConfig.getSendThreads());
-        assertEquals(config.getEnableExceptionHandler(), protoConfig.getEnableExceptionHandler());
-        assertEquals(config.getPersistUserBetweenSessions(),
-            protoConfig.getPersistUserBetweenSessions());
-        assertEquals(false, protoConfig.getDetectAnrs());
-        assertEquals(false, protoConfig.getDetectNdkCrashes());
-    }
-
-    @Test
-    public void testFullManifestConfig() {
-        String buildUuid = "123";
-        String appVersion = "v1.0";
-        Integer versionCode = 27;
-        String releaseStage = "debug";
-        String endpoint = "http://example.com";
-        String sessionEndpoint = "http://session-example.com";
-
-        Bundle data = new Bundle();
-        data.putString("com.bugsnag.android.BUILD_UUID", buildUuid);
-        data.putString("com.bugsnag.android.APP_VERSION", appVersion);
-        data.putInt("com.bugsnag.android.VERSION_CODE", versionCode);
-        data.putString("com.bugsnag.android.RELEASE_STAGE", releaseStage);
-        data.putString("com.bugsnag.android.SESSIONS_ENDPOINT", sessionEndpoint);
-        data.putString("com.bugsnag.android.ENDPOINT", endpoint);
-        data.putBoolean("com.bugsnag.android.SEND_THREADS", false);
-        data.putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false);
-        data.putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true);
-        data.putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", true);
-        data.putBoolean("com.bugsnag.android.DETECT_ANRS", true);
-        data.putBoolean("com.bugsnag.android.DETECT_NDK_CRASHES", true);
-
-        Configuration protoConfig = new Configuration("api-key");
-        ConfigFactory.populateConfigFromManifest(protoConfig, data);
-        assertEquals(buildUuid, protoConfig.getBuildUUID());
-        assertEquals(appVersion, protoConfig.getAppVersion());
-        assertEquals(versionCode, protoConfig.getVersionCode());
-        assertEquals(releaseStage, protoConfig.getReleaseStage());
-        assertEquals(endpoint, protoConfig.getEndpoint());
-        assertEquals(sessionEndpoint, protoConfig.getSessionEndpoint());
-        assertEquals(false, protoConfig.getSendThreads());
-        assertEquals(false, protoConfig.getEnableExceptionHandler());
-        assertEquals(true, protoConfig.getPersistUserBetweenSessions());
-        assertEquals(true, protoConfig.getAutoCaptureSessions());
-        assertEquals(true, protoConfig.getDetectAnrs());
-        assertEquals(true, protoConfig.getDetectNdkCrashes());
     }
 
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setAutomaticallyCollectBreadcrumbs(false);
+        config.setAutoCaptureBreadcrumbs(false);
+        config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(0, client.breadcrumbs.store.size());
-
-        client.setMaxBreadcrumbs(1);
+        assertEquals(1, client.breadcrumbs.store.size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
 
         Breadcrumb poll = client.breadcrumbs.store.poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
-        assertEquals("manual", poll.getName());
-        assertEquals("another", poll.getMetadata().get("message"));
+        assertEquals("manual", poll.getMessage());
+        assertEquals("test", poll.getMetadata().get("message"));
     }
 
     @Test
     public void testClearBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setAutomaticallyCollectBreadcrumbs(false);
+        config.setAutoCaptureBreadcrumbs(false);
         client = generateClient(config);
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbs.store.size());
 
         client.leaveBreadcrumb("test");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbs.store.size());
 
         client.clearBreadcrumbs();
         assertEquals(0, client.breadcrumbs.store.size());
@@ -271,23 +201,17 @@ public class ClientTest {
     @Test
     public void testClientAddToTab() {
         client = generateClient();
-        client.addToTab("drink", "cola", "cherry");
-        assertNotNull(client.getMetaData().getTab("drink"));
+        client.addMetadata("drink", "cola", "cherry");
+        assertNotNull(client.getMetadata("drink", null));
     }
 
     @Test
     public void testClientClearTab() {
         client = generateClient();
-        client.addToTab("drink", "cola", "cherry");
+        client.addMetadata("drink", "cola", "cherry");
 
-        client.clearTab("drink");
-        assertTrue(client.getMetaData().getTab("drink").isEmpty());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test(expected = IllegalArgumentException.class)
-    public void testApiClientNullValidation() {
-        generateClient().setSessionTrackingApiClient(null);
+        client.clearMetadata("drink", null);
+        assertNull(client.getMetadata("drink", null));
     }
 
     @Test

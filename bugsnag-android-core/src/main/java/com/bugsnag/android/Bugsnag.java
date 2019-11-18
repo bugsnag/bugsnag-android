@@ -34,7 +34,7 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext) {
-        return init(androidContext, null, true);
+        return init(androidContext, new ManifestConfigLoader().load(androidContext));
     }
 
     /**
@@ -44,24 +44,8 @@ public final class Bugsnag {
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
     @NonNull
-    public static Client init(@NonNull Context androidContext, @Nullable String apiKey) {
-        return init(androidContext, apiKey, true);
-    }
-
-    /**
-     * Initialize the static Bugsnag client
-     *
-     * @param androidContext         an Android context, usually <code>this</code>
-     * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
-     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
-     */
-    @NonNull
-    public static Client init(@NonNull Context androidContext,
-                              @Nullable String apiKey,
-                              boolean enableExceptionHandler) {
-        Configuration config
-            = ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler);
-        return init(androidContext, config);
+    public static Client init(@NonNull Context androidContext, @NonNull String apiKey) {
+        return init(androidContext, new Configuration(apiKey));
     }
 
     /**
@@ -89,16 +73,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Set the application version sent to Bugsnag. By default we'll pull this
-     * from your AndroidManifest.xml
-     *
-     * @param appVersion the app version to send
-     */
-    public static void setAppVersion(@NonNull final String appVersion) {
-        getClient().setAppVersion(appVersion);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -116,133 +90,6 @@ public final class Bugsnag {
      */
     public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
-    }
-
-    /**
-     * Set the endpoint to send data to. By default we'll send reports to
-     * the standard https://notify.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send report to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     * instead.
-     */
-    @Deprecated
-    public static void setEndpoint(@NonNull final String endpoint) {
-        getClient().setEndpoint(endpoint);
-    }
-
-    /**
-     * Set the buildUUID to your own value. This is used to identify proguard
-     * mapping files in the case that you publish multiple different apps with
-     * the same appId and versionCode. The default value is read from the
-     * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
-     *
-     * @param buildUuid the buildUuid.
-     */
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public static void setBuildUUID(@Nullable final String buildUuid) {
-        getClient().setBuildUUID(buildUuid);
-    }
-
-    /**
-     * Set which keys should be filtered when sending metaData to Bugsnag.
-     * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metaData you send to Bugsnag.
-     * Any keys in metaData which contain these strings will be marked as
-     * [FILTERED] when send to Bugsnag.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setFilters("password", "credit_card");
-     *
-     * @param filters a list of keys to filter from metaData
-     */
-    public static void setFilters(@Nullable final String... filters) {
-        getClient().setFilters(filters);
-    }
-
-    /**
-     * Set which exception classes should be ignored (not sent) by Bugsnag.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param ignoreClasses a list of exception classes to ignore
-     */
-    public static void setIgnoreClasses(@Nullable final String... ignoreClasses) {
-        getClient().setIgnoreClasses(ignoreClasses);
-    }
-
-    /**
-     * Set for which releaseStages errors should be sent to Bugsnag.
-     * Use this to stop errors from development builds being sent.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setNotifyReleaseStages("production");
-     *
-     * @param notifyReleaseStages a list of releaseStages to notify for
-     * @see #setReleaseStage
-     */
-    public static void setNotifyReleaseStages(@Nullable final String... notifyReleaseStages) {
-        getClient().setNotifyReleaseStages(notifyReleaseStages);
-    }
-
-    /**
-     * Set which packages should be considered part of your application.
-     * Bugsnag uses this to help with error grouping, and stacktrace display.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setProjectPackages("com.example.myapp");
-     * <p>
-     * By default, we'll mark the current package name as part of you app.
-     *
-     * @param projectPackages a list of package names
-     * @deprecated use {{@link Configuration#setProjectPackages(String[])}} instead
-     */
-    @Deprecated
-    public static void setProjectPackages(@Nullable final String... projectPackages) {
-        getClient().setProjectPackages(projectPackages);
-    }
-
-    /**
-     * Set the current "release stage" of your application.
-     * By default, we'll set this to "development" for debug builds and
-     * "production" for non-debug builds.
-     * <p>
-     * If the release stage is set to "production", logging will automatically be disabled.
-     *
-     * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages {@link #setLoggingEnabled(boolean)}
-     */
-    public static void setReleaseStage(@Nullable final String releaseStage) {
-        getClient().setReleaseStage(releaseStage);
-    }
-
-    /**
-     * Set whether to send thread-state with report.
-     * By default, this will be true.
-     *
-     * @param sendThreads should we send thread-state with report?
-     */
-    public static void setSendThreads(final boolean sendThreads) {
-        getClient().setSendThreads(sendThreads);
-    }
-
-    /**
-     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
-     * the app enters the foreground.
-     * <p>
-     * By default this behavior is enabled.
-     *
-     * @param autoCapture whether sessions should be captured automatically
-     */
-    public static void setAutoCaptureSessions(boolean autoCapture) {
-        getClient().setAutoCaptureSessions(autoCapture);
     }
 
     /**
@@ -302,44 +149,8 @@ public final class Bugsnag {
     }
 
     /**
-     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
-     * requirements such as certificate pinning to be achieved.
-     * <p/>
-     * <p>
-     * The client implementation, and must be capable of sending Error Reports to the Bugsnag API,
-     * as documented here: <a href="https://docs.bugsnag.com/api/error-reporting/">
-     * https://docs.bugsnag.com/api/error-reporting/</a>
-     *
-     * @param errorReportApiClient the custom HTTP client implementation
-     *
-     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
-     */
-    @Deprecated
-    public static void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
-        getClient().setErrorReportApiClient(errorReportApiClient);
-    }
-
-    /**
-     * Replaces the Default HTTP Client with a custom implementation. This allows for custom
-     * requirements such as certificate pinning to be achieved.
-     * <p/>
-     * <p>
-     * The client implementation, and must be capable of sending Session Tracking Payloads to
-     * the Bugsnag API.
-     *
-     * @param apiClient the custom HTTP client implementation
-     *
-     * @deprecated use {@link Configuration#setDelivery(Delivery)} instead
-     */
-    @Deprecated
-    public static void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
-        getClient().setSessionTrackingApiClient(apiClient);
-    }
-
-
-    /**
-     * Add a "before notify" callback, to execute code before sending
-     * reports to Bugsnag.
+     * Add a "before notify" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an error
      * before it is sent to your dashboard. You can also return
@@ -349,7 +160,7 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeNotify(new BeforeNotify() {
+     * Bugsnag.addBeforeNotify(new BeforeNotify() {
      * public boolean run(Error error) {
      * error.setSeverity(Severity.INFO);
      * return true;
@@ -357,10 +168,11 @@ public final class Bugsnag {
      * })
      *
      * @param beforeNotify a callback to run before sending errors to Bugsnag
+     * <p/>
      * @see BeforeNotify
      */
-    public static void beforeNotify(@NonNull final BeforeNotify beforeNotify) {
-        getClient().beforeNotify(beforeNotify);
+    public static void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
+        getClient().addBeforeNotify(beforeNotify);
     }
 
     /**
@@ -372,18 +184,21 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumb
      */
-    public static void beforeRecordBreadcrumb(
-        @NonNull final BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        getClient().beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    public static void addOnBreadcrumb(@NonNull final OnBreadcrumb onBreadcrumb) {
+        getClient().addOnBreadcrumb(onBreadcrumb);
+    }
+
+    public static void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+        getClient().removeOnBreadcrumb(onBreadcrumb);
     }
 
     /**
@@ -436,110 +251,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public static void notify(@NonNull final Throwable exception,
-                              @NonNull final MetaData metaData) {
-        getClient().notify(exception, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setMetaData(metaData);
-            }
-        });
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public static void notify(@NonNull final Throwable exception,
-                              @NonNull final Severity severity,
-                              @NonNull final MetaData metaData) {
-        getClient().notify(exception, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(severity);
-                report.getError().setMetaData(metaData);
-            }
-        });
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public static void notify(@NonNull String name,
-                              @NonNull String message,
-                              @NonNull StackTraceElement[] stacktrace,
-                              @NonNull Severity severity,
-                              @NonNull MetaData metaData) {
-        final Severity finalSeverity = severity;
-        final MetaData finalMetaData = metaData;
-        getClient().notify(name, message, stacktrace, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(finalSeverity);
-                report.getError().setMetaData(finalMetaData);
-            }
-        });
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-
-    public static void notify(@NonNull String name,
-                              @NonNull String message,
-                              @Nullable String context,
-                              @NonNull StackTraceElement[] stacktrace,
-                              @NonNull Severity severity,
-                              @NonNull MetaData metaData) {
-        final String finalContext = context;
-        final Severity finalSeverity = severity;
-        final MetaData finalMetaData = metaData;
-        getClient().notify(name, message, stacktrace, new Callback() {
-            @Override
-            public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(finalSeverity);
-                report.getError().setMetaData(finalMetaData);
-                report.getError().setContext(finalContext);
-            }
-        });
-    }
-
-    /**
      * Intended for use by other clients (React Native/Unity). Calling this method directly from
      * Android is not supported.
      */
@@ -550,50 +261,18 @@ public final class Bugsnag {
         getClient().internalClientNotify(exception, clientData, blocking, callback);
     }
 
-    /**
-     * Add diagnostic information to every error report.
-     * Diagnostic information is collected in "tabs" on your dashboard.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addToTab("account", "name", "Acme Co.");
-     * Bugsnag.addToTab("account", "payingCustomer", true);
-     *
-     * @param tab   the dashboard tab to add diagnostic data to
-     * @param key   the name of the diagnostic information
-     * @param value the contents of the diagnostic information
-     */
-    public static void addToTab(@NonNull final String tab,
-                                @NonNull final String key,
-                                @Nullable final Object value) {
-        getClient().addToTab(tab, key, value);
+    public static void addMetadata(@NonNull String section, @Nullable String key,
+                                   @Nullable Object value) {
+        getClient().addMetadata(section, key, value);
     }
 
-    /**
-     * Remove a tab of app-wide diagnostic information
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public static void clearTab(@NonNull String tabName) {
-        getClient().clearTab(tabName);
+    public static void clearMetadata(@NonNull String section, @Nullable String key) {
+        getClient().clearMetadata(section, key);
     }
 
-    /**
-     * Get the global diagnostic information currently stored in MetaData.
-     *
-     * @see MetaData
-     */
-    @NonNull public static MetaData getMetaData() {
-        return getClient().getMetaData();
-    }
-
-    /**
-     * Set the global diagnostic information to be send with every error.
-     *
-     * @see MetaData
-     */
-    public static void setMetaData(@NonNull final MetaData metaData) {
-        getClient().setMetaData(metaData);
+    @Nullable
+    public static Object getMetadata(@NonNull String section, @Nullable String key) {
+        return getClient().getMetadata(section, key);
     }
 
     /**
@@ -610,27 +289,14 @@ public final class Bugsnag {
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
      *
-     * @param name     A short label (max 32 chars)
+     * @param message     A short label
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
-    public static void leaveBreadcrumb(@NonNull String name,
+    public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull BreadcrumbType type,
-                                       @NonNull Map<String, String> metadata) {
-        getClient().leaveBreadcrumb(name, type, metadata);
-    }
-
-    /**
-     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
-     * By default, we'll keep and send the 20 most recent breadcrumb log
-     * messages.
-     *
-     * @param numBreadcrumbs number of breadcrumb log messages to send
-     * @deprecated use {@link Configuration#setMaxBreadcrumbs(int)} instead
-     */
-    @Deprecated
-    public static void setMaxBreadcrumbs(int numBreadcrumbs) {
-        getClient().config.setMaxBreadcrumbs(numBreadcrumbs);
+                                       @NonNull Map<String, Object> metadata) {
+        getClient().leaveBreadcrumb(message, type, metadata);
     }
 
     /**
@@ -641,36 +307,8 @@ public final class Bugsnag {
     }
 
     /**
-     * Enable automatic reporting of unhandled exceptions.
-     * By default, this is automatically enabled in the constructor.
-     */
-    public static void enableExceptionHandler() {
-        getClient().enableExceptionHandler();
-    }
-
-    /**
-     * Disable automatic reporting of unhandled exceptions.
-     */
-    public static void disableExceptionHandler() {
-        getClient().disableExceptionHandler();
-    }
-
-    /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
-     *
-     * @param enabled true if logging is enabled
-     */
-    public static void setLoggingEnabled(boolean enabled) {
-        getClient().setLoggingEnabled(enabled);
-    }
-
-    /**
      * Starts tracking a new session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to start a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -681,18 +319,18 @@ public final class Bugsnag {
      * when one doesn't already exist.
      *
      * @see #resumeSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
     public static void startSession() {
         getClient().startSession();
     }
 
     /**
-     * Resumes a session which has previously been stopped, or starts a new session if none exists.
-     * If a session has already been resumed or started and has not been stopped, calling this
+     * Resumes a session which has previously been paused, or starts a new session if none exists.
+     * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * It's important to note that sessions are stored in memory for the lifetime of the
      * application process and are not persisted on disk. Therefore calling this method on app
@@ -705,8 +343,8 @@ public final class Bugsnag {
      * stability score</a>.
      *
      * @see #startSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      *
      * @return true if a previous session was resumed, false if a new session was started.
      */
@@ -715,10 +353,10 @@ public final class Bugsnag {
     }
 
     /**
-     * Stops tracking a session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * Pauses tracking of a session. You should disable automatic session tracking via
+     * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
-     * You should call this at the appropriate time in your application when you wish to stop a
+     * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
      * Bugsnag but will not count towards your application's
      * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
@@ -727,10 +365,10 @@ public final class Bugsnag {
      *
      * @see #startSession()
      * @see #resumeSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
-    public static void stopSession() {
-        getClient().stopSession();
+    public static void pauseSession() {
+        getClient().pauseSession();
     }
 
     /**

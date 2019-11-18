@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,9 +66,9 @@ public class NativeInterface {
         START_SESSION,
 
         /**
-         * A session was stopped.
+         * A session was paused.
          */
-        STOP_SESSION,
+        PAUSE_SESSION,
 
         /**
          * Set a new app version. The Message object should be the new app
@@ -94,11 +95,6 @@ public class NativeInterface {
          * Boolean
          */
         UPDATE_LOW_MEMORY,
-        /**
-         * Set a new value for all custom metadata. The message object should be
-         * MetaData.
-         */
-        UPDATE_METADATA,
         /**
          * Set a new value for `device.orientation`. The message object should
          * be the orientation in degrees
@@ -160,11 +156,6 @@ public class NativeInterface {
      */
     public static void setClient(@NonNull Client client) {
         NativeInterface.client = client;
-    }
-
-    @Deprecated
-    public static void configureClientObservers(@NonNull Client client) {
-        setClient(client);
     }
 
     @Nullable
@@ -235,7 +226,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetaData() {
-        return new HashMap<>(getClient().getMetaData().store);
+        return new HashMap<>(getClient().clientState.getMetaData().toMap());
     }
 
     /**
@@ -269,41 +260,34 @@ public class NativeInterface {
      */
     public static void leaveBreadcrumb(@NonNull final String name,
                                        @NonNull final BreadcrumbType type) {
-        getClient().leaveBreadcrumb(name, type, new HashMap<String, String>());
+        getClient().leaveBreadcrumb(name, type, new HashMap<String, Object>());
     }
 
     /**
      * Leaves a breadcrumb on the static client instance
      */
-    public static void leaveBreadcrumb(@NonNull String name,
+    public static void leaveBreadcrumb(@NonNull String message,
                                        @NonNull String type,
-                                       @NonNull Map<String, String> metadata) {
+                                       @NonNull Map<String, Object> metadata) {
         String typeName = type.toUpperCase(Locale.US);
-        Map<String, String> map = metadata == null ? new HashMap<String, String>() : metadata;
-        getClient().leaveBreadcrumb(name, BreadcrumbType.valueOf(typeName), map);
+        Map<String, Object> map = metadata == null ? new HashMap<String, Object>() : metadata;
+        getClient().leaveBreadcrumb(message, BreadcrumbType.valueOf(typeName), map);
     }
 
     /**
      * Remove metadata from subsequent exception reports
      */
-    public static void clearTab(@NonNull final String tab) {
-        getClient().clearTab(tab);
+    public static void clearMetadata(@NonNull String section, @Nullable String key) {
+        getClient().clearMetadata(section, key);
     }
 
     /**
      * Add metadata to subsequent exception reports
      */
-    public static void addToTab(@NonNull final String tab,
-                                @NonNull final String key,
-                                @Nullable final Object value) {
-        getClient().addToTab(tab, key, value);
-    }
-
-    /**
-     * Set the client report release stage
-     */
-    public static void setReleaseStage(@Nullable final String stage) {
-        getClient().setReleaseStage(stage);
+    public static void addMetadata(@NonNull final String tab,
+                                  @Nullable final String key,
+                                  @Nullable final Object value) {
+        getClient().addMetadata(tab, key, value);
     }
 
     /**
@@ -319,7 +303,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getSessionEndpoint() {
-        return getClient().getConfig().getSessionEndpoint();
+        return getClient().getConfig().getEndpoints().getSessions();
     }
 
     /**
@@ -327,23 +311,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String getEndpoint() {
-        return getClient().getConfig().getEndpoint();
-    }
-
-    /**
-     * Set the client session endpoint
-     */
-    @SuppressWarnings("deprecation")
-    public static void setSessionEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setSessionEndpoint(endpoint);
-    }
-
-    /**
-     * Set the client report endpoint
-     */
-    @SuppressWarnings("deprecation")
-    public static void setEndpoint(@NonNull final String endpoint) {
-        getClient().getConfig().setEndpoint(endpoint);
+        return getClient().getConfig().getEndpoints().getNotify();
     }
 
     /**
@@ -351,13 +319,6 @@ public class NativeInterface {
      */
     public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
-    }
-
-    /**
-     * Set the client report app version
-     */
-    public static void setAppVersion(@NonNull final String version) {
-        getClient().setAppVersion(version);
     }
 
     /**
@@ -379,15 +340,8 @@ public class NativeInterface {
      * Return which release stages notify
      */
     @Nullable
-    public static String[] getNotifyReleaseStages() {
-        return getClient().getConfig().getNotifyReleaseStages();
-    }
-
-    /**
-     * Set which release stages notify
-     */
-    public static void setNotifyReleaseStages(@Nullable String[] notifyReleaseStages) {
-        getClient().getConfig().setNotifyReleaseStages(notifyReleaseStages);
+    public static Collection<String> getEnabledReleaseStages() {
+        return getClient().getConfig().getEnabledReleaseStages();
     }
 
     /**
@@ -414,7 +368,7 @@ public class NativeInterface {
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0
-            || client.getConfig().shouldNotifyForReleaseStage(releaseStage)) {
+            || client.getConfig().shouldNotifyForReleaseStage()) {
             client.getErrorStore().enqueueContentForDelivery(payload);
             client.getErrorStore().flushAsync();
         }

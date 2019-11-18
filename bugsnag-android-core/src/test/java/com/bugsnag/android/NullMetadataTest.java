@@ -2,20 +2,24 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
  * <p>
  * See https://github.com/bugsnag/bugsnag-android/issues/194
  */
+@SuppressWarnings("unchecked")
 public class NullMetadataTest {
 
     private static final String TAB_KEY = "tab";
 
-    private Configuration config;
+    private ImmutableConfig config;
     private Throwable throwable;
 
     /**
@@ -25,48 +29,23 @@ public class NullMetadataTest {
      */
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("api-key");
+        config = BugsnagTestUtils.generateImmutableConfig();
         throwable = new RuntimeException("Test");
     }
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
         Error error = new Error.Builder(config, throwable, null,
-            Thread.currentThread(), false).build();
-        validateDefaultMetadata(error.getMetaData());
+            Thread.currentThread(), false, new MetaData()).build();
+        validateDefaultMetadata(error);
     }
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
         Error error = new Error.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
-            null, Thread.currentThread()).build();
-        validateDefaultMetadata(error.getMetaData());
-    }
-
-    @Test
-    public void testErrorSetMetadataRef() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            null,
-            Thread.currentThread(), false).build();
-        MetaData metaData = new MetaData();
-        metaData.addToTab(TAB_KEY, "test", "data");
-        error.setMetaData(metaData);
-        assertNotNull(metaData.getTab(TAB_KEY));
-    }
-
-    @Test
-    public void testErrorSetNullMetadata() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            null,
-            Thread.currentThread(), false).build();
-        error.setMetaData(null);
-        validateDefaultMetadata(error.getMetaData());
-    }
-
-    @Test
-    public void testConfigDefaultMetadata() throws Exception {
-        validateDefaultMetadata(config.getMetaData());
+            null, Thread.currentThread(), new MetaData()).build();
+        validateDefaultMetadata(error);
     }
 
     @Test
@@ -76,12 +55,10 @@ public class NullMetadataTest {
         validateDefaultMetadata(configuration.getMetaData());
     }
 
-    private void validateDefaultMetadata(MetaData metaData) {
-        assertNotNull(metaData);
-        assertEquals(0, metaData.getTab(TAB_KEY).size());
-
-        metaData.addToTab(TAB_KEY, "test", "data");
-        assertEquals(1, metaData.getTab(TAB_KEY).size());
+    private void validateDefaultMetadata(MetaDataAware error) {
+        assertNull(error.getMetadata(TAB_KEY, null));
+        error.addMetadata(TAB_KEY, "test", "data");
+        assertEquals("data", error.getMetadata(TAB_KEY, "test"));
     }
 
 }

@@ -21,7 +21,8 @@ internal class AnrPlugin : BugsnagPlugin {
         // generate a full report as soon as possible, then wait for extra process error info
         val errMsg = "Application did not respond to UI input"
         val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
-        val error = Error.Builder(client.config, exc, client.sessionTracker, thread, true)
+        val error = Error.Builder(client.config, exc, client.sessionTracker, thread, true,
+            client.clientState.metaData)
             .severity(Severity.ERROR)
             .severityReasonType(HandledState.REASON_ANR)
             .build()

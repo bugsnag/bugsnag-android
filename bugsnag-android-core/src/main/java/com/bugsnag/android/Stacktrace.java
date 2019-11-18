@@ -5,8 +5,7 @@ import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,8 @@ class Stacktrace implements JsonStream.Streamable {
 
     private final List<Map<String, Object>> trace;
 
-    Stacktrace(StackTraceElement[] stacktrace, String[] projectPackages) {
-        this.trace = serializeStacktrace(stacktrace, sanitiseProjectPackages(projectPackages));
+    Stacktrace(StackTraceElement[] stacktrace, Collection<String> projectPackages) {
+        this.trace = serializeStacktrace(stacktrace, projectPackages);
     }
 
     Stacktrace(List<Map<String, Object>> frames) {
@@ -43,7 +42,7 @@ class Stacktrace implements JsonStream.Streamable {
     }
 
     private List<Map<String, Object>> serializeStacktrace(StackTraceElement[] trace,
-                                                          List<String> projectPackages) {
+                                                          Collection<String> projectPackages) {
         List<Map<String, Object>> list = new ArrayList<>();
 
         for (int k = 0; k < trace.length && k < STACKTRACE_TRIM_LENGTH; k++) {
@@ -59,7 +58,7 @@ class Stacktrace implements JsonStream.Streamable {
 
     @Nullable
     private Map<String, Object> serializeStackframe(StackTraceElement el,
-                                                    List<String> projectPackages) {
+                                                    Collection<String> projectPackages) {
         Map<String, Object> map = new HashMap<>();
         try {
             String methodName;
@@ -84,19 +83,7 @@ class Stacktrace implements JsonStream.Streamable {
         }
     }
 
-    private static List<String> sanitiseProjectPackages(String[] projectPackages) {
-        if (projectPackages != null) {
-            return Arrays.asList(projectPackages);
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    static boolean inProject(String className, String[] projectPackages) {
-        return inProject(className, sanitiseProjectPackages(projectPackages));
-    }
-
-    private static boolean inProject(String className, List<String> projectPackages) {
+    private static boolean inProject(String className, Collection<String> projectPackages) {
         for (String packageName : projectPackages) {
             if (packageName != null && className.startsWith(packageName)) {
                 return true;

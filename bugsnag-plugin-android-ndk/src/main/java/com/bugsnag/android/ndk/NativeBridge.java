@@ -2,7 +2,6 @@ package com.bugsnag.android.ndk;
 
 import com.bugsnag.android.Breadcrumb;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.MetaData;
 import com.bugsnag.android.NativeInterface;
 
 import android.os.Build;
@@ -31,7 +30,8 @@ public class NativeBridge implements Observer {
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
-    public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
+    public static native void install(@NonNull String reportingDirectory,
+                                      boolean autoDetectNdkCrashes,
                                       int apiLevel, boolean is32bit);
 
     public static native void deliverReportAtPath(@NonNull String filePath);
@@ -61,7 +61,7 @@ public class NativeBridge implements Observer {
     public static native void startedSession(@NonNull String sessionID, @NonNull String key,
                                              int handledCount, int unhandledCount);
 
-    public static native void stoppedSession();
+    public static native void pausedSession();
 
     public static native void updateAppVersion(@NonNull String appVersion);
 
@@ -142,8 +142,8 @@ public class NativeBridge implements Observer {
             case START_SESSION:
                 handleStartSession(arg);
                 break;
-            case STOP_SESSION:
-                stoppedSession();
+            case PAUSE_SESSION:
+                pausedSession();
                 break;
             case UPDATE_APP_VERSION:
                 handleAppVersionChange(arg);
@@ -159,9 +159,6 @@ public class NativeBridge implements Observer {
                 break;
             case UPDATE_LOW_MEMORY:
                 handleLowMemoryChange(arg);
-                break;
-            case UPDATE_METADATA:
-                handleUpdateMetadata(arg);
                 break;
             case UPDATE_ORIENTATION:
                 handleOrientationChange(arg);
@@ -234,7 +231,7 @@ public class NativeBridge implements Observer {
                 if (values.size() > 0 && values.get(0) instanceof Configuration) {
                     Configuration config = (Configuration)values.get(0);
                     String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
-                    install(reportPath, config.getDetectNdkCrashes(), Build.VERSION.SDK_INT,
+                    install(reportPath, config.getAutoDetectNdkCrashes(), Build.VERSION.SDK_INT,
                         is32bit());
                     installed.set(true);
                 }
@@ -262,7 +259,7 @@ public class NativeBridge implements Observer {
     private void handleAddBreadcrumb(Object arg) {
         if (arg instanceof Breadcrumb) {
             Breadcrumb crumb = (Breadcrumb) arg;
-            addBreadcrumb(crumb.getName(), crumb.getType().toString(),
+            addBreadcrumb(crumb.getMessage(), crumb.getType().toString(),
                 crumb.getTimestamp(), crumb.getMetadata());
         } else {
             warn("Attempted to add non-breadcrumb: " + arg);
@@ -353,10 +350,6 @@ public class NativeBridge implements Observer {
         warn("START_SESSION object is invalid: " + arg);
     }
 
-    private void handleStopSession() {
-        stoppedSession();
-    }
-
     private void handleReleaseStageChange(Object arg) {
         if (arg instanceof String) {
             updateReleaseStage((String)arg);
@@ -443,14 +436,6 @@ public class NativeBridge implements Observer {
             updateLowMemory((Boolean)arg);
         } else {
             warn("UPDATE_LOW_MEMORY object is invalid: " + arg);
-        }
-    }
-
-    private void handleUpdateMetadata(Object arg) {
-        if (arg instanceof MetaData) {
-            updateMetadata(arg);
-        } else {
-            warn("UPDATE_METADATA object is invalid: " + arg);
         }
     }
 

@@ -23,13 +23,13 @@ class AppDataOverrideTest {
 
     @Before
     fun setUp() {
-        val config = Configuration("api-key")
+        val config = BugsnagTestUtils.generateConfiguration()
         config.appVersion = "1.2.3"
         config.releaseStage = "test-stage"
 
         val context = ApplicationProvider.getApplicationContext<Context>()
         val packageManager = context.packageManager
-        val obj = AppData(context, packageManager, config, sessionTracker)
+        val obj = AppData(context, packageManager, BugsnagTestUtils.convert(config), sessionTracker)
         this.appData = obj.appData
     }
 

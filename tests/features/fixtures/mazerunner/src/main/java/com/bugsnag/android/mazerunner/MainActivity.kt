@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.Endpoints
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
@@ -51,7 +52,6 @@ class MainActivity : Activity() {
         val testCase = loadScenario(config, eventType, metaData)
 
         Bugsnag.init(this, config)
-        Bugsnag.setLoggingEnabled(true)
 
         /**
          * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
@@ -66,7 +66,7 @@ class MainActivity : Activity() {
         Log.d("Bugsnag", "Received test case, executing " + eventType)
         Log.d("Bugsnag", "Received metadata: " + eventMetaData)
 
-        this.intent.putExtra("eventMetaData", eventMetaData)
+        this.intent.putExtra("EVENT_METADATA", eventMetaData)
         val testCase = factory.testCaseForName(eventType, configuration, this)
 
         return testCase
@@ -74,9 +74,10 @@ class MainActivity : Activity() {
 
     private fun prepareConfig(): Configuration {
         val config = Configuration("ABCDEFGHIJKLMNOPQRSTUVWXYZ012345")
-        config.setEndpoints("http://bs-local.com:9339", "http://bs-local.com:9339")
-        config.detectNdkCrashes = true
-        config.detectAnrs = true
+        config.setEndpoints(Endpoints("http://bs-local.com:9339", "http://bs-local.com:9339"))
+        config.autoDetectNdkCrashes = true
+        config.autoDetectAnrs = true
+        config.loggingEnabled = true
         return config
     }
 

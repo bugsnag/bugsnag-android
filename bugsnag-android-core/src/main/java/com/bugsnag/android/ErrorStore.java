@@ -4,7 +4,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +27,9 @@ class ErrorStore extends FileStore<Error> {
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
+    private final ImmutableConfig config;
+    private final Configuration clientState;
+    private final Delegate delegate;
 
     static final Comparator<File> ERROR_REPORT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -47,8 +49,12 @@ class ErrorStore extends FileStore<Error> {
         }
     };
 
-    ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR, delegate);
+    ErrorStore(@NonNull ImmutableConfig config, @NonNull Configuration clientState,
+               @NonNull Context appContext, Delegate delegate) {
+        super(appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR, delegate);
+        this.config = config;
+        this.clientState = clientState;
+        this.delegate = delegate;
     }
 
     void flushOnLaunch() {
@@ -135,43 +141,37 @@ class ErrorStore extends FileStore<Error> {
 
     private void flushErrorReport(File errorFile) {
         try {
-            Report report;
+            Report report = new Report(config.getApiKey(), errorFile);
+            DeliveryParams deliveryParams = config.errorApiDeliveryParams();
+            DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
 
-            if (config.getBeforeSendTasks().isEmpty()) {
-                report = new Report(config.getApiKey(), errorFile);
-            } else {
-                Error error = ErrorReader.readError(config, errorFile);
-                report = new Report(config.getApiKey(), error);
-
-                for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
-                    try {
-                        if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(errorFile));
-                            Logger.info("Deleting cancelled error file " + errorFile.getName());
-                            return;
-                        }
-                    } catch (Throwable ex) {
-                        Logger.warn("BeforeSend threw an Exception", ex);
-                    }
-                }
+            switch (deliveryStatus) {
+                case DELIVERED:
+                    deleteStoredFiles(Collections.singleton(errorFile));
+                    Logger.info("Deleting sent error file " + errorFile.getName());
+                    break;
+                case UNDELIVERED:
+                    cancelQueuedFiles(Collections.singleton(errorFile));
+                    Logger.warn("Could not send previously saved error(s)"
+                            + " to Bugsnag, will try again later");
+                    break;
+                case FAILURE:
+                    Exception exc = new RuntimeException("Failed to deliver report");
+                    handleErrorFlushFailure(exc, errorFile);
+                    break;
+                default:
+                    break;
             }
-
-            config.getDelivery().deliver(report, config);
-
-            deleteStoredFiles(Collections.singleton(errorFile));
-            Logger.info("Deleting sent error file " + errorFile.getName());
-        } catch (DeliveryFailureException exception) {
-            cancelQueuedFiles(Collections.singleton(errorFile));
-            Logger.warn("Could not send previously saved error(s)"
-                + " to Bugsnag, will try again later", exception);
-        } catch (FileNotFoundException exc) {
-            Logger.warn("Ignoring empty file - oldest report on disk was deleted", exc);
         } catch (Exception exception) {
-            if (delegate != null) {
-                delegate.onErrorIOFailure(exception, errorFile, "Crash Report Deserialization");
-            }
-            deleteStoredFiles(Collections.singleton(errorFile));
+            handleErrorFlushFailure(exception, errorFile);
         }
+    }
+
+    private void handleErrorFlushFailure(Exception exc, File errorFile) {
+        if (delegate != null) {
+            delegate.onErrorIOFailure(exc, errorFile, "Crash Report Deserialization");
+        }
+        deleteStoredFiles(Collections.singleton(errorFile));
     }
 
     boolean isLaunchCrashReport(File file) {
@@ -217,5 +217,4 @@ class ErrorStore extends FileStore<Error> {
     boolean isStartupCrash(long durationMs) {
         return durationMs < config.getLaunchCrashThresholdMs();
     }
-
 }

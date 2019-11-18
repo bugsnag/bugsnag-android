@@ -6,26 +6,19 @@ import org.junit.Assert.assertEquals
 import androidx.test.filters.SmallTest
 import com.bugsnag.android.BugsnagTestUtils.*
 
-import org.json.JSONException
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
-import java.io.IOException
-import java.util.HashMap
-import java.util.Locale
 
 @SmallTest
 class BreadcrumbsSerializationTest {
 
     private lateinit var breadcrumbs: Breadcrumbs
-    private lateinit var config: Configuration
     private var client: Client? = null
 
     @Before
     fun setUp() {
-        config = generateConfiguration()
-        breadcrumbs = Breadcrumbs(config)
+        breadcrumbs = Breadcrumbs(20)
         client = generateClient()
     }
 
@@ -60,9 +53,8 @@ class BreadcrumbsSerializationTest {
         var count = 0
 
         for (breadcrumb in store) {
-            if (MANUAL == breadcrumb.type && "manual" == breadcrumb.name) {
+            if (MANUAL == breadcrumb.type && "manual" == breadcrumb.message && breadcrumb.metadata["message"] == "Hello World") {
                 count++
-                assertEquals("Hello World", breadcrumb.metadata["message"])
             }
         }
         assertEquals(1, count)

@@ -30,8 +30,9 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientNotifyModification() throws Exception {
-        final Collection<BeforeNotify> beforeNotifyTasks = client.config.getBeforeNotifyTasks();
-        client.beforeNotify(new BeforeNotify() {
+        Configuration config = (Configuration) client.getConfiguration();
+        final Collection<BeforeNotify> beforeNotifyTasks = config.getBeforeNotifyTasks();
+        client.addBeforeNotify(new BeforeNotify() {
             @Override
             public boolean run(@NonNull Error error) {
                 beforeNotifyTasks.add(new BeforeNotifySkeleton());
@@ -39,24 +40,25 @@ public class ConcurrentCallbackTest {
                 return true;
             }
         });
-        client.beforeNotify(new BeforeNotifySkeleton());
+        client.addBeforeNotify(new BeforeNotifySkeleton());
         client.notify(new RuntimeException());
     }
 
     @Test
     public void testClientBreadcrumbModification() throws Exception {
-        final Collection<BeforeRecordBreadcrumb> breadcrumbTasks =
-            client.config.getBeforeRecordBreadcrumbTasks();
+        Configuration config = (Configuration) client.getConfiguration();
+        final Collection<OnBreadcrumb> breadcrumbTasks =
+                config.getBreadcrumbCallbacks();
 
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
-            public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
-                breadcrumbTasks.add(new BeforeRecordBreadcrumbSkeleton());
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                breadcrumbTasks.add(new OnBreadcrumbSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        client.beforeRecordBreadcrumb(new BeforeRecordBreadcrumbSkeleton());
+        client.addOnBreadcrumb(new OnBreadcrumbSkeleton());
         client.leaveBreadcrumb("Whoops");
         client.notify(new RuntimeException());
     }
@@ -68,9 +70,9 @@ public class ConcurrentCallbackTest {
         }
     }
 
-    static class BeforeRecordBreadcrumbSkeleton implements BeforeRecordBreadcrumb {
+    static class OnBreadcrumbSkeleton implements OnBreadcrumb {
         @Override
-        public boolean shouldRecord(@NonNull Breadcrumb breadcrumb) {
+        public boolean run(@NonNull Breadcrumb breadcrumb) {
             return true;
         }
     }
