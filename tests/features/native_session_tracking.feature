@@ -1,9 +1,9 @@
 Feature: NDK Session Tracking
 
-Scenario: Stopped session is not in payload of unhandled NDK error
-    And I run "CXXStopSessionScenario" and relaunch the app
+Scenario: Paused session is not in payload of unhandled NDK error
+    And I run "CXXPausedSessionScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
-    And I configure Bugsnag for "CXXStopSessionScenario"
+    And I configure Bugsnag for "CXXPausedSessionScenario"
     And I wait to receive 2 requests
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And I discard the oldest request

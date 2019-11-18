@@ -90,14 +90,14 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         return startNewSession(new Date(), client.getUser(), autoCaptured);
     }
 
-    void stopSession() {
+    void pauseSession() {
         Session session = currentSession.get();
 
         if (session != null) {
-            session.isStopped.set(true);
+            session.isPaused.set(true);
             setChanged();
             notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+                NativeInterface.MessageType.PAUSE_SESSION, null));
         }
     }
 
@@ -109,7 +109,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             session = startSession(false);
             resumed = false;
         } else {
-            resumed = session.isStopped.compareAndSet(true, false);
+            resumed = session.isPaused.compareAndSet(true, false);
         }
 
         if (session != null) {
@@ -148,7 +148,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         } else {
             setChanged();
             notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+                NativeInterface.MessageType.PAUSE_SESSION, null));
         }
         currentSession.set(session);
         return session;
@@ -231,7 +231,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     Session getCurrentSession() {
         Session session = currentSession.get();
 
-        if (session != null && !session.isStopped.get()) {
+        if (session != null && !session.isPaused.get()) {
             return session;
         }
         return null;

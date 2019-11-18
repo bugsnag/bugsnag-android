@@ -9,10 +9,10 @@ import android.os.HandlerThread
 import android.util.Log
 
 /**
- * Sends an exception after stopping the session
+ * Sends an exception after pausing the session
  */
-internal class StoppedSessionScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class PausedSessionScenario(config: Configuration,
+                                     context: Context) : Scenario(config, context) {
 
     companion object {
         private const val SLEEP_MS: Long = 100
@@ -41,8 +41,8 @@ internal class StoppedSessionScenario(config: Configuration,
             Thread.sleep(SLEEP_MS)
 
             // send 2nd exception which should not include session info
-            client.stopSession()
-            Log.d("Bugsnag - Stopped", "First session stopped")
+            client.pauseSession()
+            Log.d("Bugsnag - Stopped", "First session paused")
             Thread.sleep(SLEEP_MS)
             flushAllSessions()
             Log.d("Bugsnag - Stopped", "First session flushed (again)")

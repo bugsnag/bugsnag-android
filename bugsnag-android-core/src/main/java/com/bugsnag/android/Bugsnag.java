@@ -348,7 +348,7 @@ public final class Bugsnag {
      * when one doesn't already exist.
      *
      * @see #resumeSession()
-     * @see #stopSession()
+     * @see #pauseSession()
      * @see Configuration#setAutoTrackSessions(boolean)
      */
     public static void startSession() {
@@ -356,8 +356,8 @@ public final class Bugsnag {
     }
 
     /**
-     * Resumes a session which has previously been stopped, or starts a new session if none exists.
-     * If a session has already been resumed or started and has not been stopped, calling this
+     * Resumes a session which has previously been paused, or starts a new session if none exists.
+     * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
      * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
@@ -372,7 +372,7 @@ public final class Bugsnag {
      * stability score</a>.
      *
      * @see #startSession()
-     * @see #stopSession()
+     * @see #pauseSession()
      * @see Configuration#setAutoTrackSessions(boolean)
      *
      * @return true if a previous session was resumed, false if a new session was started.
@@ -382,10 +382,10 @@ public final class Bugsnag {
     }
 
     /**
-     * Stops tracking a session. You should disable automatic session tracking via
+     * Pauses tracking of a session. You should disable automatic session tracking via
      * {@link #setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
-     * You should call this at the appropriate time in your application when you wish to stop a
+     * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
      * Bugsnag but will not count towards your application's
      * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
@@ -396,8 +396,8 @@ public final class Bugsnag {
      * @see #resumeSession()
      * @see Configuration#setAutoTrackSessions(boolean)
      */
-    public static void stopSession() {
-        getClient().stopSession();
+    public static void pauseSession() {
+        getClient().pauseSession();
     }
 
     /**
