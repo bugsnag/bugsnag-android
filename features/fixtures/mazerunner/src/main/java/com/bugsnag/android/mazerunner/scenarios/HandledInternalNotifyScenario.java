@@ -14,7 +14,7 @@ public class HandledInternalNotifyScenario extends Scenario {
 
     public HandledInternalNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override

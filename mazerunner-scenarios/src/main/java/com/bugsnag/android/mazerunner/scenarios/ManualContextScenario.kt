@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 /**
  * Sends a handled exception to Bugsnag, which includes manual context.
@@ -11,7 +10,7 @@ import com.bugsnag.android.mazerunner.scenarios.Scenario
 internal class ManualContextScenario(config: Configuration,
                                      context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     override fun run() {

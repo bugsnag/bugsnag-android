@@ -19,7 +19,7 @@ internal class StoppedSessionScenario(config: Configuration,
     }
 
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
     }
 
     override fun run() {

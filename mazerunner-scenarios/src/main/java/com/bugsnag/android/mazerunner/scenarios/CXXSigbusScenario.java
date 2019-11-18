@@ -18,7 +18,7 @@ public class CXXSigbusScenario extends Scenario {
 
     public CXXSigbusScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override

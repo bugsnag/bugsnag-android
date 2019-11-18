@@ -63,7 +63,7 @@ class AppData {
 
     Map<String, Object> getAppDataSummary() {
         Map<String, Object> map = new HashMap<>();
-        map.put("type", calculateNotifierType());
+        map.put("type", config.getAppType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
         map.put("versionCode", calculateVersionCode());
@@ -118,17 +118,6 @@ class AppData {
 
     String getActiveScreenClass() {
         return sessionTracker.getContextActivity();
-    }
-
-    @NonNull
-    private String calculateNotifierType() {
-        String notifierType = config.getNotifierType();
-
-        if (notifierType != null) {
-            return notifierType;
-        } else {
-            return "android";
-        }
     }
 
     /**

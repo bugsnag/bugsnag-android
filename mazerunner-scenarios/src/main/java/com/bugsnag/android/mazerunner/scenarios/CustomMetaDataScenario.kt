@@ -12,7 +12,7 @@ internal class CustomMetaDataScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
 
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
     }
 
     override fun run() {

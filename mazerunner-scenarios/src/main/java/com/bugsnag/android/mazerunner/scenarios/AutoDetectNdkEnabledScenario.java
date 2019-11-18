@@ -6,7 +6,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-public class DetectNdkEnabledScenario extends Scenario {
+public class AutoDetectNdkEnabledScenario extends Scenario {
 
     static {
         System.loadLibrary("bugsnag-ndk");
@@ -18,10 +18,10 @@ public class DetectNdkEnabledScenario extends Scenario {
 
     /**
      */
-    public DetectNdkEnabledScenario(@NonNull Configuration config, @NonNull Context context) {
+    public AutoDetectNdkEnabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
-        config.setDetectNdkCrashes(true);
+        config.setAutoTrackSessions(false);
+        config.setAutoDetectNdkCrashes(true);
     }
 
     @Override

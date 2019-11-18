@@ -5,5 +5,5 @@ Scenario: Exception classname ignored
     Then I should receive no requests
 
 Scenario: Disabled Exception Handler
-    When I run "DisableAutoNotifyScenario"
+    When I run "DisableAutoDetectErrorsScenario"
     Then I should receive no requests

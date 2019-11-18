@@ -2,7 +2,6 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.app.Activity
 import android.content.Context
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.createCustomHeaderDelivery
 
@@ -13,7 +12,7 @@ import com.bugsnag.android.createCustomHeaderDelivery
 internal class CustomClientErrorFlushScenario(config: Configuration,
                                               context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
             if ("online" == eventMetaData) {

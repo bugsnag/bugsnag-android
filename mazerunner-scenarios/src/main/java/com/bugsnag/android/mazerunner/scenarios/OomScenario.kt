@@ -10,7 +10,7 @@ import java.util.*
 internal class OomScenario(config: Configuration,
                            context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
     }
 
     private val queue = LinkedList<Array<String>>()

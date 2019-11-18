@@ -18,7 +18,7 @@ public class CXXWriteReadOnlyMemoryScenario extends Scenario {
 
     public CXXWriteReadOnlyMemoryScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
     }
 
     @Override

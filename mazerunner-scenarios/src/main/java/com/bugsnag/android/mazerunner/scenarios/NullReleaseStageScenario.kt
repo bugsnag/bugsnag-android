@@ -11,9 +11,9 @@ import com.bugsnag.android.Configuration
 internal class NullReleaseStageScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
-        config.autoCaptureSessions = false
+        config.autoTrackSessions = false
         config.releaseStage = null
-        config.notifyReleaseStages = listOf("prod")
+        config.enabledReleaseStages = listOf("prod")
     }
 
     override fun run() {

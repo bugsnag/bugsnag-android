@@ -177,7 +177,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeBreadcrumbS
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_DetectNdkDisabledScenario_crash(
+Java_com_bugsnag_android_mazerunner_scenarios_AutoDetectNdkDisabledScenario_crash(
     JNIEnv *env,
 jobject instance) {
 int x = 47;
@@ -187,7 +187,7 @@ return 512345;
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_DetectNdkEnabledScenario_crash(
+Java_com_bugsnag_android_mazerunner_scenarios_AutoDetectNdkEnabledScenario_crash(
     JNIEnv *env,
 jobject instance) {
 int x = 47;

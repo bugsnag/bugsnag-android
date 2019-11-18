@@ -2,7 +2,6 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.storage.StorageManager
 
@@ -17,7 +16,7 @@ internal class InternalReportScenario(config: Configuration,
                                       context: Context) : Scenario(config, context) {
 
     init {
-        config.setAutoCaptureSessions(false)
+        config.setAutoTrackSessions(false)
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
