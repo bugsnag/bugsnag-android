@@ -95,25 +95,6 @@ public class Report implements JsonStream.Streamable {
     }
 
     @InternalApi
-    @Deprecated
-    public void setNotifierVersion(@NonNull String version) {
-        notifier.setVersion(version);
-    }
-
-    @InternalApi
-    @Deprecated
-    public void setNotifierName(@NonNull String name) {
-        notifier.setName(name);
-    }
-
-    @InternalApi
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    @Deprecated
-    public void setNotifierURL(@NonNull String url) {
-        notifier.setURL(url);
-    }
-
-    @InternalApi
     @NonNull
     public Notifier getNotifier() {
         return notifier;

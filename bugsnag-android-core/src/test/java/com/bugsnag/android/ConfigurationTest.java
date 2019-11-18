@@ -67,30 +67,6 @@ public class ConfigurationTest {
         assertFalse(config.getAutoCaptureSessions());
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEndpoint() {
-        // Default endpoints
-        assertEquals("https://notify.bugsnag.com", config.getEndpoint());
-
-        // Setting an endpoint
-        String endpoint = "http://localhost:8000";
-        config.setEndpoint(endpoint);
-        assertEquals(endpoint, config.getEndpoint());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testSessionEndpoint() {
-        // Default endpoints
-        assertEquals("https://sessions.bugsnag.com", config.getSessionEndpoint());
-
-        // Setting an endpoint
-        String endpoint = "http://localhost:8000";
-        config.setSessionEndpoint(endpoint);
-        assertEquals(endpoint, config.getSessionEndpoint());
-    }
-
     @Test
     public void testShouldNotify() {
         // Should notify if notifyReleaseStages is null
@@ -119,25 +95,6 @@ public class ConfigurationTest {
         // Should ignore when added to ignoreClasses
         config.setIgnoreClasses(new String[]{className});
         assertTrue(config.shouldIgnoreClass(className));
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testInProject() {
-        // Shouldn't be inProject if projectPackages hasn't been set
-        assertFalse(config.inProject("com.bugsnag.android.Example"));
-
-        // Should be inProject if class in projectPackages
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
-        assertTrue(config.inProject("com.bugsnag.android.Example"));
-
-        // Shouldn't be inProject if class not in projectPackages
-        config.setProjectPackages(new String[]{"com.bugsnag.android"});
-        assertFalse(config.inProject("java.io.IOException"));
-
-        // Should be inProject if class is in projectPackages with null element
-        config.setProjectPackages(new String[]{null, "java.io.IOException"});
-        assertTrue(config.inProject("java.io.IOException"));
     }
 
     @Test
@@ -230,7 +187,7 @@ public class ConfigurationTest {
         };
         configuration.setDelivery(delivery);
 
-        assertFalse(configuration.getDelivery() instanceof DeliveryCompat);
+        assertFalse(configuration.getDelivery() instanceof DefaultDelivery);
         assertEquals(delivery, configuration.getDelivery());
     }
 
