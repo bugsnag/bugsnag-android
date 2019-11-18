@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.storage.StorageManager
 
-import com.bugsnag.android.BeforeSend
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import java.io.File
@@ -16,9 +15,6 @@ internal class EmptyReportScenario(config: Configuration,
 
     init {
         config.setAutoCaptureSessions(false)
-        config.addBeforeSend(BeforeSend { true })
-
-
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")

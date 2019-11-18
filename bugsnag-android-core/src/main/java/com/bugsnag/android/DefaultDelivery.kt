@@ -12,7 +12,7 @@ import java.nio.charset.Charset
 
 internal class DefaultDelivery(private val connectivity: Connectivity?) : Delivery {
 
-    override fun deliver(payload: SessionTrackingPayload,
+    override fun deliver(payload: SessionPayload,
         deliveryParams: DeliveryParams
     ): DeliveryStatus {
         val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)

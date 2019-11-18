@@ -176,30 +176,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Error error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public static void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        getClient().addBeforeSend(beforeSend);
-    }
-
-    /**
      * Add a "before breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
      * <p>

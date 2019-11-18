@@ -6,5 +6,4 @@ interface BugsnagConfiguration {
     fun setMetaData(metaData: MetaData)
     fun getMetaData(): MetaData
     fun addBeforeNotify(beforeNotify: BeforeNotify)
-    fun addBeforeSend(beforeSend: BeforeSend)
 }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
-import com.bugsnag.android.BeforeSend
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.flushAllSessions
@@ -16,7 +15,6 @@ internal class EmptySessionScenario(config: Configuration,
 
     init {
         config.setAutoCaptureSessions(false)
-        config.addBeforeSend(BeforeSend { true })
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("eventMetaData")
