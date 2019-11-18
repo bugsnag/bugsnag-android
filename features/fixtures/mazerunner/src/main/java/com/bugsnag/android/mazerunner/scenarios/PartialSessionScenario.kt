@@ -17,7 +17,6 @@ internal class PartialSessionScenario(config: Configuration,
 
     init {
         config.setAutoCaptureSessions(false)
-        config.beforeSend { true }
 
         if (context is Activity) {
             eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
