@@ -32,6 +32,10 @@ bool bsg_serialize_report_to_file(bsg_environment *env) {
   return bsg_report_write(&env->report_header, &env->next_report, fd);
 }
 
+bool bsg_delete_report_file(const char *report_path) {
+  return unlink(report_path) == 0;
+}
+
 bugsnag_report *bsg_deserialize_report_from_file(char *filepath) {
   int fd = open(filepath, O_RDONLY);
   if (fd == -1) {

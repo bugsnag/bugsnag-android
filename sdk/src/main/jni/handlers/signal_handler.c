@@ -195,7 +195,22 @@ void bsg_handle_signal(int signum, siginfo_t *info,
       break;
     }
   }
+
+  // write report file
   bsg_serialize_report_to_file(bsg_global_env);
+
+  // copy path to variable so that false positives can be deleted after the JNI env
+  // has been deallocated
+  char bsg_next_report_path[384];
+  bsg_strcpy(bsg_next_report_path, bsg_global_env->next_report_path);
+
+  // Ensure bugsnag is not called in a loop in case the previous handler recrashes
   bsg_handler_uninstall_signal();
+
+  // generally this is an OS handler, which prints system info and crashes.
+  // Users or frameworks (e.g. Unity) may install custom handlers though.
   bsg_invoke_previous_signal_handler(signum, info, user_context);
+
+  // if this line is reached, then the app didn't crash. Delete the report file
+  bsg_delete_report_file(bsg_next_report_path);
 }

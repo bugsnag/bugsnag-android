@@ -15,6 +15,8 @@ char *bsg_serialize_report_to_json_string(bugsnag_report *report);
 
 bool bsg_serialize_report_to_file(bsg_environment *env) __asyncsafe;
 
+bool bsg_delete_report_file(const char *report_path) __asyncsafe;
+
 bugsnag_report *bsg_deserialize_report_from_file(char *filepath);
 #ifdef __cplusplus
 }
