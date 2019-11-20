@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import java.lang.Thread
 import java.nio.ByteBuffer
 
 internal class AnrPlugin : BugsnagPlugin {

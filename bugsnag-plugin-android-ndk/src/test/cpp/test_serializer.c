@@ -65,16 +65,19 @@ bsg_device_info * loadDeviceTestCase(jint num) {
     strcpy(device->os_build, "BullDog 5.2");
     device->total_memory = 512340922;
     device->api_level = 29;
+    strcpy(device->locale, "En");
 
     bsg_strncpy_safe(device->cpu_abi[0].value, "x86", sizeof(device->cpu_abi[0].value));
     device->cpu_abi_count = 1;
+
+    struct tm time = { 0, 0, 0, 1, 12, 128 };
+    device->time = mktime(&time);
     return device;
 }
 
 bsg_device_info * loadDeviceMetaDataTestCase(jint num) {
     bsg_device_info *device = malloc(sizeof(bsg_device_info));
     strcpy(device->brand, "Samsung");
-    strcpy(device->locale, "En");
     strcpy(device->location_status, "cellular");
     strcpy(device->network_access, "full");
     strcpy(device->screen_resolution, "1024x768");
@@ -82,9 +85,6 @@ bsg_device_info * loadDeviceMetaDataTestCase(jint num) {
     device->jailbroken = false;
     device->dpi = 320;
     device->screen_density = 3.5;
-
-    struct tm time = { 0, 0, 0, 1, 12, 128 };
-    device->time = mktime(&time);
     return device;
 }
 

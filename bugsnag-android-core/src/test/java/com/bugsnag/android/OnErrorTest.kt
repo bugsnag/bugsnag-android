@@ -6,6 +6,8 @@ import org.junit.Assert.assertEquals
 
 import org.junit.Test
 
+import java.lang.Thread
+
 class OnErrorTest {
 
     private val config = generateImmutableConfig()

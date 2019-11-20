@@ -36,7 +36,7 @@ internal class ResumedSessionScenario(config: Configuration,
             flushAllSessions()
             Log.d("Bugsnag - Resumed", "First session flushed")
             Thread.sleep(SLEEP_MS)
-            client.notifyBlocking(generateException())
+            client.notify(generateException())
             Log.d("Bugsnag - Resumed", "First exception sent")
             Thread.sleep(SLEEP_MS)
 
@@ -47,7 +47,7 @@ internal class ResumedSessionScenario(config: Configuration,
             client.resumeSession()
             Log.d("Bugsnag - Resumed", "First session resumed")
             Thread.sleep(SLEEP_MS)
-            client.notifyBlocking(generateException())
+            client.notify(generateException())
             Log.d("Bugsnag - Resumed", "Second exception sent")
         })
     }

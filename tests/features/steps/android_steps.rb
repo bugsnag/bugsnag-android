@@ -118,10 +118,12 @@ Then("the report contains the required fields") do
     And the payload field "events.0.app.version" is not null
     And the payload field "events.0.app.versionCode" equals 34
     And the payload field "events.0.device.id" is not null
+    And the payload field "events.0.device.locale" is not null
     And the payload field "events.0.device.manufacturer" is not null
     And the payload field "events.0.device.model" is not null
     And the payload field "events.0.device.orientation" is not null
     And the payload field "events.0.device.osName" equals "android"
+    And the payload field "events.0.device.time" is not null
     And the payload field "events.0.device.totalMemory" is not null
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null
     And the payload field "events.0.metaData.app.name" equals "MazeRunner"
@@ -129,12 +131,10 @@ Then("the report contains the required fields") do
     And the payload field "events.0.metaData.app.versionName" is not null
     And the payload field "events.0.metaData.device.brand" is not null
     And the payload field "events.0.metaData.device.dpi" is not null
-    And the payload field "events.0.metaData.device.locale" is not null
     And the payload field "events.0.metaData.device.locationStatus" is not null
     And the payload field "events.0.metaData.device.networkAccess" is not null
     And the payload field "events.0.metaData.device.screenDensity" is not null
     And the payload field "events.0.metaData.device.screenResolution" is not null
-    And the payload field "events.0.metaData.device.time" is not null
     And the payload field "events.0.severity" is not null
     And the payload field "events.0.severityReason.type" is not null
     And the payload field "events.0.device.cpuAbi" is a non-empty array
