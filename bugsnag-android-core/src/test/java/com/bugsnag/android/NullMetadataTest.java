@@ -53,10 +53,10 @@ public class NullMetadataTest {
         validateDefaultMetadata(configuration.getMetaData());
     }
 
-    private void validateDefaultMetadata(MetaDataAware error) {
-        assertNull(error.getMetadata(TAB_KEY, null));
-        error.addMetadata(TAB_KEY, "test", "data");
-        assertEquals("data", error.getMetadata(TAB_KEY, "test"));
+    private void validateDefaultMetadata(MetaDataAware event) {
+        assertNull(event.getMetadata(TAB_KEY, null));
+        event.addMetadata(TAB_KEY, "test", "data");
+        assertEquals("data", event.getMetadata(TAB_KEY, "test"));
     }
 
 }

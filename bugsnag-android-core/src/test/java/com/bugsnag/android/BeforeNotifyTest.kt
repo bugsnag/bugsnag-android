@@ -19,9 +19,9 @@ class BeforeNotifyTest {
             false
         }
 
-        val error = Event.Builder(config, RuntimeException("Test"), null,
+        val event = Event.Builder(config, RuntimeException("Test"), null,
             Thread.currentThread(), false, MetaData()).build()
-        beforeNotify.run(error)
-        assertEquals(context, error.context)
+        beforeNotify.run(event)
+        assertEquals(context, event.context)
     }
 }
