@@ -6,7 +6,7 @@ RUNNING_CI = ENV['TRAVIS'] == 'true'
 # Install latest versions of bugsnag-android
   run_required_commands([
     [
-      "./gradlew", "assembleRelease", "publishToMavenLocal", "-x", "lintVitalRelease"
+      "./gradlew", "assembleRelease", "publishToMavenLocal"
     ],
   ])
 
@@ -14,7 +14,7 @@ RUNNING_CI = ENV['TRAVIS'] == 'true'
 Dir.chdir('features/fixtures/mazerunner') do
   run_required_commands([
     [
-     "../../../gradlew", "assembleRelease", "-x", "lintVitalRelease"
+     "../../../gradlew", "assembleRelease"
     ],
   ])
 end

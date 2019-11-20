@@ -39,7 +39,7 @@ class AnrDetailsCollectorTest {
             null,
             Thread.currentThread(),
             true,
-            MetaData()
+            Metadata()
         ).build()
     }
 

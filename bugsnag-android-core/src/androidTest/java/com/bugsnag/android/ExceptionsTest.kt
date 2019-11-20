@@ -59,7 +59,7 @@ class ExceptionsTest {
         val event = Event.Builder(
             config, "RuntimeException",
             "Example message", frames, BugsnagTestUtils.generateSessionTracker(),
-            Thread.currentThread(), MetaData()
+            Thread.currentThread(), Metadata()
         ).build()
         val exceptions = Exceptions(config, BugsnagException(event.exception))
 

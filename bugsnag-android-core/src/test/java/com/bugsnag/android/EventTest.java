@@ -28,7 +28,7 @@ public class EventTest {
         config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Example message");
         event = new Event.Builder(config, exception, null,
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
     }
 
     @Test
@@ -36,12 +36,12 @@ public class EventTest {
         String msg = "Foo";
         Event err = new Event.Builder(config,
             new RuntimeException(msg), null,
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
         assertEquals(msg, err.getExceptionMessage());
 
         err = new Event.Builder(config,
             new RuntimeException(), null,
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
         assertEquals("", err.getExceptionMessage());
     }
 
@@ -56,7 +56,7 @@ public class EventTest {
         BugsnagException exception = new BugsnagException("Busgang", "exceptional",
             new StackTraceElement[]{});
         Event err = new Event.Builder(config,
-            exception, null, Thread.currentThread(), false, new MetaData()).build();
+            exception, null, Thread.currentThread(), false, new Metadata()).build();
         assertEquals("Busgang", err.getExceptionName());
     }
 
@@ -101,11 +101,11 @@ public class EventTest {
     public void testBuilderMetaData() {
         Event.Builder builder = new Event.Builder(config,
             new RuntimeException("foo"), null,
-            Thread.currentThread(), false, new MetaData());
+            Thread.currentThread(), false, new Metadata());
 
-        assertNotNull(builder.metaData(new MetaData()).build());
+        assertNotNull(builder.metaData(new Metadata()).build());
 
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.addMetadata("foo", "bar", true);
 
         Event event = builder.metaData(metaData).build();

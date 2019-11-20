@@ -5,18 +5,18 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MetaDataMergeTest {
+public class MetadataMergeTest {
 
     @Test
     public void testConcurrentMapMerge() {
-        MetaData.Companion.merge(generateMetaData(), generateMetaData());
+        Metadata.Companion.merge(generateMetaData(), generateMetaData());
     }
 
     /**
      * Generates a metadata object with a tab value containing a map with a null entry
      */
-    private MetaData generateMetaData() {
-        MetaData metaData = new MetaData();
+    private Metadata generateMetaData() {
+        Metadata metaData = new Metadata();
         Map<Object, Object> nestedMap = new HashMap<>();
         metaData.addMetadata("foo", "bar", nestedMap);
         nestedMap.put("whoops", null);

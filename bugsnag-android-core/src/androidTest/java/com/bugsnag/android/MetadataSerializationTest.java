@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @SmallTest
-public class MetaDataSerializationTest {
+public class MetadataSerializationTest {
 
     private Client client;
 
@@ -40,7 +40,7 @@ public class MetaDataSerializationTest {
 
     @Test
     public void testBasicSerialization() throws JSONException, IOException {
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.addMetadata("example", "string", "value");
         metaData.addMetadata("example", "integer", 123);
         metaData.addMetadata("example", "double", 123.45);
@@ -86,7 +86,7 @@ public class MetaDataSerializationTest {
         Map<String, Object> map = new HashMap<>();
         map.put("key", childMap);
 
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.addMetadata("example", "map", map);
 
         JSONObject metaDataJson = streamableToJson(metaData);
@@ -106,7 +106,7 @@ public class MetaDataSerializationTest {
         Collection<Collection<String>> list = new LinkedList<>();
         list.add(childList);
 
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.addMetadata("example", "list", list);
 
         JSONObject metaDataJson = streamableToJson(metaData);
@@ -121,7 +121,7 @@ public class MetaDataSerializationTest {
 
     @Test
     public void testBasicRedaction() throws JSONException, IOException {
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.setRedactKeys(Collections.singleton("password"));
         metaData.addMetadata("example", "password", "p4ssw0rd");
         metaData.addMetadata("example", "confirm_password", "p4ssw0rd");
@@ -143,7 +143,7 @@ public class MetaDataSerializationTest {
         sensitiveMap.put("confirm_password", "p4ssw0rd");
         sensitiveMap.put("normal", "safe");
 
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.setRedactKeys(Collections.singleton("password"));
         metaData.addMetadata("example", "sensitiveMap", sensitiveMap);
 
@@ -159,7 +159,7 @@ public class MetaDataSerializationTest {
 
     @Test
     public void testFilterConstructor() throws Exception {
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.addMetadata("foo", "password", "abc123");
         JSONObject jsonObject = streamableToJson(metaData);
 
@@ -169,7 +169,7 @@ public class MetaDataSerializationTest {
 
     @Test
     public void testClearTab() throws Exception {
-        MetaData metaData = new MetaData();
+        Metadata metaData = new Metadata();
         metaData.addMetadata("example", "string", "value");
         metaData.clearMetadata("example", null);
         JSONObject json = streamableToJson(metaData);

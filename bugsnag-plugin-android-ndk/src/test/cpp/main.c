@@ -82,7 +82,7 @@ TEST test_app_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
@@ -128,7 +128,7 @@ TEST test_device_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
@@ -151,7 +151,7 @@ TEST test_custom_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};

@@ -6,7 +6,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.*
 
 @RunWith(Parameterized::class)
-internal class CustomMetaDataSerializationTest {
+internal class DeviceMetadataSerializationTest {
 
     companion object {
         init {
@@ -26,7 +26,7 @@ internal class CustomMetaDataSerializationTest {
 
     @Test
     fun testPassesNativeSuite() {
-        val expectedJson = loadJson("custom_meta_data_serialization_$testCase.json")
+        val expectedJson = loadJson("device_meta_data_serialization_$testCase.json")
         verifyNativeRun(run(testCase.toInt(), expectedJson))
     }
 }

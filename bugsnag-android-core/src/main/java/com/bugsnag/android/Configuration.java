@@ -53,7 +53,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private boolean autoDetectErrors = true;
 
     @NonNull
-    private MetaData metaData;
+    private Metadata metaData;
     private final Collection<OnError> onErrorTasks = new ConcurrentLinkedQueue<>();
     private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
@@ -77,7 +77,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
             throw new IllegalArgumentException("You must provide a Bugsnag API key");
         }
         this.apiKey = apiKey;
-        this.metaData = new MetaData();
+        this.metaData = new Metadata();
         this.metaData.addObserver(this);
         enabledBreadcrumbTypes.addAll(Arrays.asList(BreadcrumbType.values()));
 
@@ -106,7 +106,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Respond to an update notification from observed objects, like MetaData
+     * Respond to an update notification from observed objects, like Metadata
      */
     public void update(@NonNull Observable observable, @NonNull Object arg) {
         if (arg instanceof NativeInterface.Message) {
@@ -437,7 +437,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return meta data
      */
     @NonNull
-    public MetaData getMetaData() {
+    public Metadata getMetaData() {
         return metaData;
     }
 
@@ -446,10 +446,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      *
      * @param metaData meta data
      */
-    public void setMetaData(@NonNull MetaData metaData) {
+    public void setMetaData(@NonNull Metadata metaData) {
         //noinspection ConstantConditions
         if (metaData == null) {
-            this.metaData = new MetaData();
+            this.metaData = new Metadata();
         } else {
             this.metaData = metaData;
         }

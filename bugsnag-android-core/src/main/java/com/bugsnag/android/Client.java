@@ -48,7 +48,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetaDataAware {
+public class Client extends Observable implements Observer, MetadataAware {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -166,7 +166,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 // send an internal error to bugsnag with no cache
                 Thread thread = Thread.currentThread();
                 Event err = new Event.Builder(immutableConfig, exc, null, thread,
-                        true, new MetaData()).build();
+                        true, new Metadata()).build();
                 err.setContext(context);
 
                 err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
@@ -665,7 +665,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * Should only ever be called from the {@link ExceptionHandler}.
      */
-    void notifyUnhandledException(@NonNull Throwable exception, MetaData metaData,
+    void notifyUnhandledException(@NonNull Throwable exception, Metadata metaData,
                                   @HandledState.SeverityReason String severityReason,
                                   @Nullable String attributeValue, Thread thread) {
         Event event = new Event.Builder(immutableConfig, exception,

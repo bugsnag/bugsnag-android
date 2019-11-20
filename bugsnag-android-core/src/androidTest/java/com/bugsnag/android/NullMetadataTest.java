@@ -55,7 +55,7 @@ public class NullMetadataTest {
     @Test
     public void testErrorDefaultMetaData() throws Exception {
         Event event = new Event.Builder(config, throwable, generateSessionTracker(),
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
         validateDefaultMetadata(event);
     }
 
@@ -63,14 +63,14 @@ public class NullMetadataTest {
     public void testSecondErrorDefaultMetaData() throws Exception {
         Event event = new Event.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
-            generateSessionTracker(), Thread.currentThread(), new MetaData()).build();
+            generateSessionTracker(), Thread.currentThread(), new Metadata()).build();
         validateDefaultMetadata(event);
     }
 
     @Test
     public void testConfigSetMetadataRef() throws Exception {
         Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
+        configuration.setMetaData(new Metadata());
         validateDefaultMetadata(configuration.getMetaData());
     }
 
@@ -84,11 +84,11 @@ public class NullMetadataTest {
             }
         });
         Event event = new Event.Builder(config, new Throwable(),
-            generateSessionTracker(), Thread.currentThread(), false, new MetaData()).build();
+            generateSessionTracker(), Thread.currentThread(), false, new Metadata()).build();
         client.notifyInternal(event, DeliveryStyle.ASYNC, null);
     }
 
-    private void validateDefaultMetadata(MetaDataAware metaData) {
+    private void validateDefaultMetadata(MetadataAware metaData) {
         assertNotNull(metaData);
         assertNull(metaData.getMetadata(TAB_KEY, null));
         metaData.addMetadata(TAB_KEY, "test", "data");
