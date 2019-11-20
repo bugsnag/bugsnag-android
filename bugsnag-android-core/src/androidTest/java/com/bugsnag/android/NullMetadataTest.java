@@ -74,7 +74,7 @@ public class NullMetadataTest {
 
     @Test
     public void testNotify() throws Exception {
-        client.addBeforeNotify(new BeforeNotify() {
+        client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 validateDefaultMetadata(event);

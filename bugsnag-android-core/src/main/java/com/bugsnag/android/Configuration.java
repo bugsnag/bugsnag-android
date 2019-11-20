@@ -54,10 +54,10 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
 
     @NonNull
     private MetaData metaData;
-    private final Collection<BeforeNotify> beforeNotifyTasks = new ConcurrentLinkedQueue<>();
+    private final Collection<OnError> onErrorTasks = new ConcurrentLinkedQueue<>();
     private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeSendSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
+    private final Collection<OnSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
 
 
     private String codeBundleId;
@@ -461,8 +461,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return the before notify tasks
      */
     @NonNull
-    protected Collection<BeforeNotify> getBeforeNotifyTasks() {
-        return beforeNotifyTasks;
+    protected Collection<OnError> getOnErrorTasks() {
+        return onErrorTasks;
     }
 
     /**
@@ -682,33 +682,36 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Add a "before notify" callback, to execute code at the point where an error report is
+     * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before events generated from
-     * immediate app termination from crashes in C/C++ code.
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
+     * of immediate app termination from crashes in C/C++ code.
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addBeforeNotify(new BeforeNotify() {
+     * Bugsnag.addOnError(new OnError() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending events to Bugsnag
-     * <p/>
-     * @see BeforeNotify
+     * @param onError a callback to run before sending errors to Bugsnag
+     * @see OnError
      */
     @Override
-    public void addBeforeNotify(@NonNull BeforeNotify beforeNotify) {
-        if (!beforeNotifyTasks.contains(beforeNotify)) {
-            beforeNotifyTasks.add(beforeNotify);
+    public void addOnError(@NonNull OnError onError) {
+        if (!onErrorTasks.contains(onError)) {
+            onErrorTasks.add(onError);
         }
+    }
+
+    void removeOnError(@NonNull OnError onError) {
+        onErrorTasks.remove(onError);
     }
 
     /**
@@ -732,28 +735,22 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Adds a new before notify task
+     * Adds an on breadcrumb callback
      *
-     * @param beforeNotify the new before notify task
+     * @param onBreadcrumb the on breadcrumb callback
      */
-    protected void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        if (!beforeNotifyTasks.contains(beforeNotify)) {
-            beforeNotifyTasks.add(beforeNotify);
-        }
-    }
-
-    /**
-     * Adds a new before breadcrumb task
-     *
-     * @param onBreadcrumb the new before breadcrumb task
-     */
-    void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
             breadcrumbCallbacks.add(onBreadcrumb);
         }
     }
 
-    void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    /**
+     * Removes an on breadcrumb callback
+     *
+     * @param onBreadcrumb the on breadcrumb callback
+     */
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         breadcrumbCallbacks.remove(onBreadcrumb);
     }
 
@@ -767,11 +764,27 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
         return breadcrumbCallbacks;
     }
 
-    void addBeforeSendSession(BeforeSendSession beforeSendSession) {
-        sessionCallbacks.add(beforeSendSession);
+    /**
+     * Adds an on session callback
+     *
+     * @param onSession the on session callback
+     */
+    public void addOnSession(@NonNull OnSession onSession) {
+        if (!sessionCallbacks.contains(onSession)) {
+            sessionCallbacks.add(onSession);
+        }
     }
 
-    Collection<BeforeSendSession> getSessionCallbacks() {
+    /**
+     * Removes an on session callback
+     *
+     * @param onSession the on session callback
+     */
+    public void removeOnSession(@NonNull OnSession onSession) {
+        sessionCallbacks.remove(onSession);
+    }
+
+    Collection<OnSession> getSessionCallbacks() {
         return sessionCallbacks;
     }
 }
