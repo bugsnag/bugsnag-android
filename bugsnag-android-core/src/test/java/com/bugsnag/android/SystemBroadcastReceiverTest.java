@@ -1,11 +1,11 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.EventReceiver.shortenActionNameIfNeeded;
+import static com.bugsnag.android.SystemBroadcastReceiver.shortenActionNameIfNeeded;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class EventReceiverTest {
+public class SystemBroadcastReceiverTest {
 
     @Test
     public void checkActionName() throws Exception {

@@ -40,7 +40,7 @@ public class ClientNotifyTest {
     @Test
     public void testNotifyBlockingDefaultSeverity() {
         client.notifyBlocking(new RuntimeException("Testing"));
-        assertEquals(Severity.WARNING, apiClient.report.getError().getSeverity());
+        assertEquals(Severity.WARNING, apiClient.report.getEvent().getSeverity());
     }
 
     @Test
@@ -48,18 +48,18 @@ public class ClientNotifyTest {
         client.notifyBlocking(new RuntimeException("Testing"), new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
-                report.getError().setUserName("Foo");
+                report.getEvent().setUserName("Foo");
             }
         });
-        Error error = apiClient.report.getError();
-        assertEquals(Severity.WARNING, error.getSeverity());
-        assertEquals("Foo", error.getUser().getName());
+        Event event = apiClient.report.getEvent();
+        assertEquals(Severity.WARNING, event.getSeverity());
+        assertEquals("Foo", event.getUser().getName());
     }
 
     @Test
     public void testNotifyBlockingCustomSeverity() {
         client.notifyBlocking(new RuntimeException("Testing"), Severity.INFO);
-        assertEquals(Severity.INFO, apiClient.report.getError().getSeverity());
+        assertEquals(Severity.INFO, apiClient.report.getEvent().getSeverity());
     }
 
     @Test
@@ -71,13 +71,13 @@ public class ClientNotifyTest {
         client.notifyBlocking("Name", "Message", stacktrace, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
-                report.getError().setSeverity(Severity.ERROR);
+                report.getEvent().setSeverity(Severity.ERROR);
             }
         });
-        Error error = apiClient.report.getError();
-        assertEquals(Severity.ERROR, error.getSeverity());
-        assertEquals("Name", error.getExceptionName());
-        assertEquals("Message", error.getExceptionMessage());
+        Event event = apiClient.report.getEvent();
+        assertEquals(Severity.ERROR, event.getSeverity());
+        assertEquals("Name", event.getExceptionName());
+        assertEquals("Message", event.getExceptionMessage());
     }
 
     static class FakeClient implements Delivery {

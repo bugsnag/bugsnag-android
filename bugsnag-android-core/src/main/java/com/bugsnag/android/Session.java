@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class Session implements JsonStream.Streamable {
+public class Session implements JsonStream.Streamable {
 
     private final String id;
     private final Date startedAt;
@@ -22,7 +22,7 @@ class Session implements JsonStream.Streamable {
         return copy;
     }
 
-    public Session(String id, Date startedAt, User user, boolean autoCaptured) {
+    Session(String id, Date startedAt, User user, boolean autoCaptured) {
         this.id = id;
         this.startedAt = new Date(startedAt.getTime());
         this.user = user;
@@ -44,15 +44,18 @@ class Session implements JsonStream.Streamable {
     private AtomicBoolean tracked = new AtomicBoolean(false);
     final AtomicBoolean isPaused = new AtomicBoolean(false);
 
-    String getId() {
+    @NonNull
+    public String getId() {
         return id;
     }
 
-    Date getStartedAt() {
+    @NonNull
+    public Date getStartedAt() {
         return new Date(startedAt.getTime());
     }
 
-    User getUser() {
+    @NonNull
+    public User getUser() {
         return user;
     }
 

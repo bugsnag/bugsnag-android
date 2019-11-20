@@ -9,7 +9,7 @@ import java.util.Observable;
 /**
  * Information about the current user of your application.
  */
-class User extends Observable implements JsonStream.Streamable {
+public class User extends Observable implements JsonStream.Streamable {
 
     String installId;
 

@@ -369,8 +369,8 @@ public class NativeInterface {
         if (releaseStage == null
             || releaseStage.length() == 0
             || client.getConfig().shouldNotifyForReleaseStage()) {
-            client.getErrorStore().enqueueContentForDelivery(payload);
-            client.getErrorStore().flushAsync();
+            client.getEventStore().enqueueContentForDelivery(payload);
+            client.getEventStore().flushAsync();
         }
     }
 
@@ -390,12 +390,12 @@ public class NativeInterface {
         getClient().notify(name, message, stacktrace, new Callback() {
             @Override
             public void beforeNotify(@NonNull Report report) {
-                Error error = report.getError();
-                if (error != null) {
+                Event event = report.getEvent();
+                if (event != null) {
                     if (severity != null) {
-                        error.setSeverity(severity);
+                        event.setSeverity(severity);
                     }
-                    error.getExceptions().setExceptionType("c");
+                    event.getExceptions().setExceptionType("c");
                 }
             }
         });

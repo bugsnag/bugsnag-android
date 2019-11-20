@@ -7,8 +7,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
-
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
  * <p>
@@ -35,17 +33,17 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, throwable, null,
+        Event event = new Event.Builder(config, throwable, null,
             Thread.currentThread(), false, new MetaData()).build();
-        validateDefaultMetadata(error);
+        validateDefaultMetadata(event);
     }
 
     @Test
     public void testSecondErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, "RuntimeException",
+        Event event = new Event.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
             null, Thread.currentThread(), new MetaData()).build();
-        validateDefaultMetadata(error);
+        validateDefaultMetadata(event);
     }
 
     @Test
@@ -55,10 +53,10 @@ public class NullMetadataTest {
         validateDefaultMetadata(configuration.getMetaData());
     }
 
-    private void validateDefaultMetadata(MetaDataAware error) {
-        assertNull(error.getMetadata(TAB_KEY, null));
-        error.addMetadata(TAB_KEY, "test", "data");
-        assertEquals("data", error.getMetadata(TAB_KEY, "test"));
+    private void validateDefaultMetadata(MetaDataAware event) {
+        assertNull(event.getMetadata(TAB_KEY, null));
+        event.addMetadata(TAB_KEY, "test", "data");
+        assertEquals("data", event.getMetadata(TAB_KEY, "test"));
     }
 
 }

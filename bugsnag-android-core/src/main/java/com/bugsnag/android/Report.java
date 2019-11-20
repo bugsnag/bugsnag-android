@@ -15,10 +15,10 @@ import java.io.IOException;
 public class Report implements JsonStream.Streamable {
 
     @Nullable
-    private final File errorFile;
+    private final File eventFile;
 
     @Nullable
-    private final Error error;
+    private final Event event;
 
     @NonNull
     private final Notifier notifier;
@@ -27,17 +27,17 @@ public class Report implements JsonStream.Streamable {
     private String apiKey;
     private transient boolean cachingDisabled;
 
-    Report(@NonNull String apiKey, @NonNull Error error) {
-        this(apiKey, null, error);
+    Report(@NonNull String apiKey, @NonNull Event event) {
+        this(apiKey, null, event);
     }
 
-    Report(@NonNull String apiKey, @Nullable File errorFile) {
-        this(apiKey, errorFile, null);
+    Report(@NonNull String apiKey, @Nullable File eventFile) {
+        this(apiKey, eventFile, null);
     }
 
-    private Report(@NonNull String apiKey, @Nullable File errorFile, @Nullable Error error) {
-        this.error = error;
-        this.errorFile = errorFile;
+    private Report(@NonNull String apiKey, @Nullable File eventFile, @Nullable Event event) {
+        this.event = event;
+        this.eventFile = eventFile;
         this.notifier = Notifier.INSTANCE;
         this.apiKey = apiKey;
     }
@@ -57,12 +57,12 @@ public class Report implements JsonStream.Streamable {
         writer.name("events").beginArray();
 
         // Write in-memory event
-        if (error != null) {
-            writer.value(error);
-        } else if (errorFile != null) { // Write on-disk event
-            writer.value(errorFile);
+        if (event != null) {
+            writer.value(event);
+        } else if (eventFile != null) { // Write on-disk event
+            writer.value(eventFile);
         } else {
-            Logger.warn("Expected error or errorFile, found empty payload instead");
+            Logger.warn("Expected event or eventFile, found empty payload instead");
         }
 
         // End events array
@@ -73,8 +73,8 @@ public class Report implements JsonStream.Streamable {
     }
 
     @NonNull
-    public Error getError() {
-        return error;
+    public Event getEvent() {
+        return event;
     }
 
     /**
