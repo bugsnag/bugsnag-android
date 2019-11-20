@@ -152,7 +152,7 @@ public final class Bugsnag {
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
-     * You can use this to add or modify information attached to an error
+     * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
@@ -161,8 +161,8 @@ public final class Bugsnag {
      * For example:
      * <p>
      * Bugsnag.addOnError(new OnError() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
+     * public boolean run(Event event) {
+     * event.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
@@ -173,30 +173,6 @@ public final class Bugsnag {
      */
     public static void addOnError(@NonNull OnError onError) {
         getClient().addOnError(onError);
-    }
-
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public static void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        getClient().addBeforeSend(beforeSend);
     }
 
     /**

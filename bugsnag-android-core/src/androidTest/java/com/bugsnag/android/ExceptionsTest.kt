@@ -56,12 +56,12 @@ class ExceptionsTest {
     fun testNamedException() {
         val element = StackTraceElement("Class", "method", "Class.java", 123)
         val frames = arrayOf(element)
-        val error = Event.Builder(
+        val event = Event.Builder(
             config, "RuntimeException",
             "Example message", frames, BugsnagTestUtils.generateSessionTracker(),
             Thread.currentThread(), MetaData()
         ).build()
-        val exceptions = Exceptions(config, BugsnagException(error.exception))
+        val exceptions = Exceptions(config, BugsnagException(event.exception))
 
         val json = streamableToJsonArray(exceptions)
         val exceptionJson = json.getJSONObject(0)

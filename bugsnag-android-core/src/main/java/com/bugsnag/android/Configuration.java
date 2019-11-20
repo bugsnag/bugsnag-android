@@ -55,7 +55,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     @NonNull
     private MetaData metaData;
     private final Collection<OnError> onErrorTasks = new ConcurrentLinkedQueue<>();
-    private final Collection<BeforeSend> beforeSendTasks = new ConcurrentLinkedQueue<>();
     private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
     private final Collection<OnSession> sessionCallbacks = new ConcurrentLinkedQueue<>();
@@ -467,16 +466,6 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Gets any before send tasks to run
-     *
-     * @return the before send tasks
-     */
-    @NonNull
-    protected Collection<BeforeSend> getBeforeSendTasks() {
-        return beforeSendTasks;
-    }
-
-    /**
      * Get whether or not Bugsnag should persist user information between application settings
      *
      * @return whether or not Bugsnag should persist user information
@@ -696,7 +685,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
-     * You can use this to add or modify information attached to an error
+     * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
@@ -705,8 +694,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * For example:
      * <p>
      * Bugsnag.addOnError(new OnError() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
+     * public boolean run(Event event) {
+     * event.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
@@ -726,30 +715,23 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
+     * Checks if the given release stage should be notified or not
      *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
+     * @param releaseStage the release stage to check
+     * @return true if the release state should be notified else false
      */
-    @Override
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        if (!beforeSendTasks.contains(beforeSend)) {
-            beforeSendTasks.add(beforeSend);
-        }
+    protected boolean shouldNotifyForReleaseStage(@Nullable String releaseStage) {
+        return enabledReleaseStages.contains(releaseStage);
+    }
+
+    /**
+     * Checks if the given exception class should be ignored or not
+     *
+     * @param className the exception class to check
+     * @return true if the exception class should be ignored else false
+     */
+    protected boolean shouldIgnoreClass(@Nullable String className) {
+        return ignoreClasses.contains(className);
     }
 
     /**

@@ -142,27 +142,7 @@ class EventStore extends FileStore<Event> {
 
     private void flushEventFile(File eventFile) {
         try {
-            Report report;
-
-            if (clientState.getBeforeSendTasks().isEmpty()) {
-                report = new Report(config.getApiKey(), eventFile);
-            } else {
-                Event event = EventReader.readEvent(config, clientState, eventFile);
-                report = new Report(config.getApiKey(), event);
-
-                for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-                    try {
-                        if (!beforeSend.run(report)) {
-                            deleteStoredFiles(Collections.singleton(eventFile));
-                            Logger.info("Deleting cancelled event file " + eventFile.getName());
-                            return;
-                        }
-                    } catch (Throwable ex) {
-                        Logger.warn("BeforeSend threw an Exception", ex);
-                    }
-                }
-            }
-
+            Report report = new Report(config.getApiKey(), eventFile);
             DeliveryParams deliveryParams = config.errorApiDeliveryParams();
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
 
