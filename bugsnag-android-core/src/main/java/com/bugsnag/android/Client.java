@@ -542,7 +542,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
-     * You can use this to add or modify information attached to an error
+     * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
@@ -551,8 +551,8 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * For example:
      * <p>
      * Bugsnag.addOnError(new OnError() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
+     * public boolean run(Event event) {
+     * event.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
@@ -566,30 +566,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     public void removeOnError(@NonNull OnError onError) {
         clientState.removeOnError(onError);
-    }
-
-    /**
-     * Add a "before send" callback, to execute code before sending a
-     * report to Bugsnag.
-     * <p>
-     * You can use this to add or modify information attached to an error
-     * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.addBeforeSend(new BeforeSend() {
-     * public boolean run(Event error) {
-     * error.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
-     *
-     * @param beforeSend a callback to run before sending errors to Bugsnag
-     * @see BeforeSend
-     */
-    public void addBeforeSend(@NonNull BeforeSend beforeSend) {
-        clientState.addBeforeSend(beforeSend);
     }
 
     /**
@@ -1023,11 +999,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
     }
 
     void deliver(@NonNull Report report, @NonNull Event event) {
-        if (!runBeforeSendTasks(report)) {
-            Logger.info("Skipping notification - beforeSend task returned false");
-            return;
-        }
-
         DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
@@ -1070,21 +1041,6 @@ public class Client extends Observable implements Observer, MetaDataAware {
             .build();
 
         notify(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
-    }
-
-    private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : clientState.getBeforeSendTasks()) {
-            try {
-                if (!beforeSend.run(report)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeSend threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the error to be sent if there were no objections
-        return true;
     }
 
     OrientationEventListener getOrientationListener() {

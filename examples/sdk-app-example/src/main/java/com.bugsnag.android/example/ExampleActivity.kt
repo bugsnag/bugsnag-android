@@ -9,6 +9,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import com.bugsnag.android.*
 import com.example.foo.CrashyClass
+import java.lang.Thread
 import java.util.*
 
 class ExampleActivity : AppCompatActivity() {
@@ -19,9 +20,9 @@ class ExampleActivity : AppCompatActivity() {
         }
     }
 
-    external fun doCrash()
+    private external fun doCrash()
 
-    external fun notifyFromCXX()
+    private external fun notifyFromCXX()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +43,8 @@ class ExampleActivity : AppCompatActivity() {
         // Set the global user information
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
 
-        // Add some global metaData
-        Bugsnag.addToTab("user", "age", 31)
+        // Add some global metadata
+        Bugsnag.addMetadata("user", "age", 31)
     }
 
     /**
@@ -85,7 +86,10 @@ class ExampleActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun crashWithCustomSeverity(view: View) {
         val e = RuntimeException("Error Report with altered Severity")
-        Bugsnag.notify(e, Severity.INFO)
+        Bugsnag.notify(e) {
+            it.severity = Severity.ERROR
+            true
+        }
         displayToastNotification()
     }
 
@@ -104,16 +108,16 @@ class ExampleActivity : AppCompatActivity() {
     /**
      * Additional metadata can be attached to crash reports. This can be achieved by calling
      * [Bugsnag.notify], as shown below, or registering a global callback
-     * with [Bugsnag.beforeNotify] that adds metadata to the report.
+     * with [Configuration.addOnError] that adds metadata to the report.
      */
     @Suppress("UNUSED_PARAMETER")
     fun crashWithMetadata(view: View) {
         val e = RuntimeException("Error report with Additional Metadata")
 
-        Bugsnag.notify(e) {report ->
-            val error = report.error
-            error.severity = Severity.ERROR
-            error.metaData.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
+        Bugsnag.notify(e) { event ->
+            event.severity = Severity.ERROR
+            event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
+            true
         }
         displayToastNotification()
     }
@@ -127,8 +131,7 @@ class ExampleActivity : AppCompatActivity() {
     fun crashWithBreadcrumbs(view: View) {
         Bugsnag.leaveBreadcrumb("LoginButtonClick")
 
-        val metadata = HashMap<String, String>()
-        metadata.put("reason", "Incorrect password")
+        val metadata = mapOf(Pair("reason", "incorrect password"))
         Bugsnag.leaveBreadcrumb("WebAuthFailure", BreadcrumbType.ERROR, metadata)
 
         val e = RuntimeException("Error Report with Breadcrumbs")
@@ -144,9 +147,16 @@ class ExampleActivity : AppCompatActivity() {
     fun crashWithCallback(view: View) {
         val e = RuntimeException("Customized Error Report")
 
-        Bugsnag.notify(e) { report ->
+        Bugsnag.notify(e) { event ->
             // modify the report
-            report.error.metaData = generateUserMetaData()
+            val completedLevels = listOf("Level 1 - The Beginning", "Level 2 - Tower Defence")
+            val userDetails = HashMap<String, String>()
+            userDetails["playerName"] = "Joe Bloggs the Invincible"
+
+            event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
+            event.addMetadata("CustomMetadata", "UserDetails", userDetails)
+            event.addMetadata("CustomMetadata", "CompletedLevels", completedLevels)
+            true
         }
         displayToastNotification()
     }
@@ -172,15 +182,4 @@ class ExampleActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun generateUserMetaData(): MetaData {
-        val completedLevels = Arrays.asList("Level 1 - The Beginning", "Level 2 - Tower Defence")
-        val userDetails = HashMap<String, String>()
-        userDetails["playerName"] = "Joe Bloggs the Invincible"
-
-        val metaData = MetaData()
-        metaData.addToTab("CustomMetaData", "HasLaunchedGameTutorial", true)
-        metaData.addToTab("CustomMetaData", "UserDetails", userDetails)
-        metaData.addToTab("CustomMetaData", "CompletedLevels", completedLevels)
-        return metaData
-    }
 }

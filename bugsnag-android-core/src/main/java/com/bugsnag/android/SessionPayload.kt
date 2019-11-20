@@ -6,12 +6,9 @@ import java.io.IOException
 class SessionPayload internal constructor(
     internal val session: Session?,
     private val files: List<File>?,
-    app: AppData,
-    device: DeviceData
+    val app: MutableMap<String, Any>,
+    val device: MutableMap<String, Any>
 ) : JsonStream.Streamable {
-
-    val app: MutableMap<String, Any> = app.appDataSummary
-    val device: MutableMap<String, Any> = device.deviceDataSummary
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
