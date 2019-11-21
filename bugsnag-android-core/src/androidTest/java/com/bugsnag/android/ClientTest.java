@@ -272,7 +272,7 @@ public class ClientTest {
     @Test
     public void testPopulateDeviceMetadata() {
         client = generateClient();
-        Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
+        Map<String, Object> metaData = client.getDeviceData().getDeviceMetadata();
 
         assertEquals(9, metaData.size());
         assertNotNull(metaData.get("batteryLevel"));

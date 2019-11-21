@@ -284,7 +284,8 @@ public class EventSerializationTest {
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         SharedPreferences prefs = context.getSharedPreferences("", Context.MODE_PRIVATE);
-        DeviceData data = new DeviceData(connectivity, context, resources, "123");
+        DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
+        DeviceData data = new DeviceData(connectivity, context, resources, "123", info);
 
         Map<String, Object> deviceData = data.getDeviceData();
         event.setDeviceData(deviceData);

@@ -146,7 +146,8 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 immutableConfig.getPersistUserBetweenSessions());
         setUserInternal(userRepository.load());
 
-        deviceData = new DeviceData(connectivity, appContext, resources, user.installId);
+        DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
+        deviceData = new DeviceData(connectivity, appContext, resources, user.installId, info);
 
         // Set up breadcrumbs
         breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs());
@@ -694,7 +695,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         // Capture the state of the app and device and attach diagnostics to the event
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         event.setDeviceData(errorDeviceData);
-        event.addMetadata("device", null, deviceData.getDeviceMetaData());
+        event.addMetadata("device", null, deviceData.getDeviceMetadata());
 
 
         // add additional info that belongs in metadata
