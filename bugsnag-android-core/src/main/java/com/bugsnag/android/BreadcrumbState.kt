@@ -29,22 +29,22 @@ internal class BreadcrumbState(maxBreadcrumbs: Int) : Observable(),
 
     fun add(breadcrumb: Breadcrumb) {
         try {
-            if (payloadSize(breadcrumb) > MAX_PAYLOAD_SIZE) {
+            if (breadcrumbPayloadSize(breadcrumb) > MAX_PAYLOAD_SIZE) {
                 Logger.warn("Dropping breadcrumb because payload exceeds 4KB limit")
                 return
             }
-            store.add(breadcrumb)
-            pruneBreadcrumbs()
-            setChanged()
-            notifyObservers(
-                NativeInterface.Message(
-                    NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb
-                )
-            )
         } catch (ex: IOException) {
             Logger.warn("Dropping breadcrumb because it could not be serialized", ex)
         }
 
+        store.add(breadcrumb)
+        pruneBreadcrumbs()
+        setChanged()
+        notifyObservers(
+            NativeInterface.Message(
+                NativeInterface.MessageType.ADD_BREADCRUMB, breadcrumb
+            )
+        )
     }
 
     fun clear() {
@@ -68,7 +68,7 @@ internal class BreadcrumbState(maxBreadcrumbs: Int) : Observable(),
         private const val MAX_PAYLOAD_SIZE = 4096
 
         @Throws(IOException::class)
-        internal fun payloadSize(breadcrumb: Breadcrumb): Int {
+        internal fun breadcrumbPayloadSize(breadcrumb: Breadcrumb): Int {
             val writer = StringWriter()
             val jsonStream = JsonStream(writer)
             breadcrumb.toStream(jsonStream)

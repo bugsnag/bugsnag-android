@@ -13,10 +13,19 @@ internal class BreadcrumbSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateSerializationTestCases(
-            "breadcrumb",
-            Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0))
-        )
+        fun testCases(): Collection<Pair<Breadcrumb, String>> {
+            val timestamp = Date(0)
+            return generateSerializationTestCases(
+                "breadcrumb",
+                Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), timestamp),
+                Breadcrumb(
+                    "metadata",
+                    BreadcrumbType.PROCESS,
+                    mutableMapOf(Pair("foo", true)),
+                    timestamp
+                )
+            )
+        }
     }
 
     @Parameter
