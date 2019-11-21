@@ -47,7 +47,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
     final ImmutableConfig config;
     private Collection<String> projectPackages;
     private final Exceptions exceptions;
-    private Breadcrumbs breadcrumbs;
+    private BreadcrumbState breadcrumbState;
     private final BugsnagException exception;
     private final HandledState handledState;
     private final Session session;
@@ -103,7 +103,7 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
         // Write diagnostics
         writer.name("app").value(appData);
         writer.name("device").value(deviceData);
-        writer.name("breadcrumbs").value(breadcrumbs);
+        writer.name("breadcrumbs").value(breadcrumbState);
         writer.name("groupingHash").value(groupingHash);
 
         if (config.getSendThreads()) {
@@ -367,8 +367,8 @@ public class Event implements JsonStream.Streamable, MetaDataAware {
         this.deviceData = deviceData;
     }
 
-    void setBreadcrumbs(Breadcrumbs breadcrumbs) {
-        this.breadcrumbs = breadcrumbs;
+    void setBreadcrumbs(BreadcrumbState breadcrumbState) {
+        this.breadcrumbState = breadcrumbState;
     }
 
     boolean shouldIgnoreClass() {

@@ -10,9 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -256,11 +261,29 @@ public class NativeBridge implements Observer {
         return is32bit;
     }
 
+    // TODO temporary - will be removed in later commit
+    // SimpleDateFormat isn't thread safe, cache one instance per thread as needed.
+    private static final ThreadLocal<DateFormat> iso8601Holder = new ThreadLocal<DateFormat>() {
+        @NonNull
+        @Override
+        protected DateFormat initialValue() {
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            iso8601.setTimeZone(tz);
+            return iso8601;
+        }
+    };
+
+    static String toIso8601(@NonNull Date date) {
+        return iso8601Holder.get().format(date);
+    }
+
+
     private void handleAddBreadcrumb(Object arg) {
         if (arg instanceof Breadcrumb) {
             Breadcrumb crumb = (Breadcrumb) arg;
             addBreadcrumb(crumb.getMessage(), crumb.getType().toString(),
-                crumb.getTimestamp(), crumb.getMetadata());
+                toIso8601(crumb.getTimestamp()), crumb.getMetadata());
         } else {
             warn("Attempted to add non-breadcrumb: " + arg);
         }

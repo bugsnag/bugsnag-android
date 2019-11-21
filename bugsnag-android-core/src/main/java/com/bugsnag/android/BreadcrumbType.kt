@@ -1,11 +1,9 @@
-package com.bugsnag.android;
-
-import androidx.annotation.NonNull;
+package com.bugsnag.android
 
 /**
  * Recognized types of breadcrumbs
  */
-public enum BreadcrumbType {
+enum class BreadcrumbType(private val type: String) {
     /**
      * An error was sent to Bugsnag (internal use only)
      */
@@ -39,16 +37,6 @@ public enum BreadcrumbType {
      */
     USER("user");
 
-    private final String type;
-
-    BreadcrumbType(@NonNull String type) {
-        this.type = type;
-    }
-
-    @Override
-    @NonNull
-    public String toString() {
-        return type;
-    }
+    override fun toString() = type
 }
 
