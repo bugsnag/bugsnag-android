@@ -44,7 +44,7 @@ public class JsonStream extends JsonWriter {
      * Serialises an arbitrary object as JSON, handling primitive types as well as
      * Collections, Maps, and arrays.
      */
-    public void value(@NonNull Object object) throws IOException {
+    public void value(@Nullable Object object) throws IOException {
         if (object instanceof Streamable) {
             ((Streamable) object).toStream(this);
         } else {

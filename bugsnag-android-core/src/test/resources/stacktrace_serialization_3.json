@@ -1,0 +1,14 @@
+[
+  {
+    "method": "com.bugsnag.android.StacktraceSerializationTest$Companion.inProject",
+    "file": "StacktraceSerializationTest.kt",
+    "lineNumber": 40,
+    "inProject": true
+  },
+  {
+    "method": "com.bugsnag.android.StacktraceSerializationTest$Companion.testCases",
+    "file": "StacktraceSerializationTest.kt",
+    "lineNumber": 29,
+    "inProject": true
+  }
+]
