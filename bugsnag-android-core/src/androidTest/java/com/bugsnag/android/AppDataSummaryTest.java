@@ -54,13 +54,4 @@ public class AppDataSummaryTest {
         assertNull(appData.get("codeBundleId"));
     }
 
-    @Test
-    public void testJsonSerialisation() throws JSONException {
-        JSONObject appDataJson = mapToJson(appData);
-        assertEquals(1, appDataJson.getInt("versionCode"));
-        assertEquals("1.0", appDataJson.get("version"));
-        assertEquals("development", appDataJson.get("releaseStage"));
-        assertEquals("android", appDataJson.get("type"));
-    }
-
 }

@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -68,7 +69,7 @@ class AppData {
         map.put("type", config.getAppType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
-        map.put("versionCode", calculateVersionCode());
+        map.put("versionCode", config.getVersionCode());
         map.put("codeBundleId", config.getCodeBundleId());
         return map;
     }
@@ -120,14 +121,6 @@ class AppData {
 
     String getActiveScreenClass() {
         return sessionTracker.getContextActivity();
-    }
-
-    /**
-     * The version code of the running Android app, from android:versionCode
-     * in AndroidManifest.xml
-     */
-    private int calculateVersionCode() {
-        return config.getVersionCode();
     }
 
     /**

@@ -63,20 +63,4 @@ public class AppDataTest {
         assertEquals(500L, appData.get("durationInForeground"));
         assertTrue((Boolean) appData.get("inForeground"));
     }
-
-    @Test
-    public void testJsonSerialisation() throws JSONException {
-        appData.put("buildUUID", "fa54de");
-        JSONObject appDataJson = mapToJson(appData);
-
-        assertEquals(1, appDataJson.getInt("versionCode"));
-        assertEquals("1.0", appDataJson.get("version"));
-        assertEquals("development", appDataJson.get("releaseStage"));
-        assertEquals("android", appDataJson.get("type"));
-        assertEquals("com.bugsnag.android.core.test", appDataJson.get("id"));
-        assertNotNull(appDataJson.get("buildUUID"));
-        assertTrue(((Long) appData.get("duration")) >= 0);
-        assertEquals(500L, appData.get("durationInForeground"));
-        assertTrue(appDataJson.getBoolean("inForeground"));
-    }
 }
