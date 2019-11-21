@@ -26,9 +26,9 @@ class BreadcrumbFilterTest {
     @Test
     fun zeroBreadcrumbsReceived() {
         client!!.leaveBreadcrumb("Hello")
-        assertEquals(0, client!!.breadcrumbs.store.size.toLong())
+        assertEquals(0, client!!.breadcrumbState.store.size.toLong())
 
         client!!.leaveBreadcrumb("Hello", BreadcrumbType.REQUEST, emptyMap())
-        assertEquals(1, client!!.breadcrumbs.store.size.toLong())
+        assertEquals(1, client!!.breadcrumbState.store.size.toLong())
     }
 }

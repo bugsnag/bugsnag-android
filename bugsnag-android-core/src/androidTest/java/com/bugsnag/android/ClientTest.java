@@ -172,13 +172,13 @@ public class ClientTest {
         config.setAutoCaptureBreadcrumbs(false);
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
-        assertEquals(2, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
 
-        Breadcrumb poll = client.breadcrumbs.store.poll();
+        Breadcrumb poll = client.breadcrumbState.getStore().poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
         assertEquals("manual", poll.getMessage());
         assertEquals("test", poll.getMetadata().get("message"));
@@ -189,13 +189,13 @@ public class ClientTest {
         Configuration config = generateConfiguration();
         config.setAutoCaptureBreadcrumbs(false);
         client = generateClient(config);
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
 
         client.leaveBreadcrumb("test");
-        assertEquals(2, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
 
         client.clearBreadcrumbs();
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals(0, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -235,11 +235,11 @@ public class ClientTest {
     public void testBreadcrumbStoreNotModified() {
         client = generateClient();
         Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-        int breadcrumbCount = client.breadcrumbs.store.size();
+        int breadcrumbCount = client.breadcrumbState.getStore().size();
 
         breadcrumbs.clear(); // only the copy should be cleared
         assertTrue(breadcrumbs.isEmpty());
-        assertEquals(breadcrumbCount, client.breadcrumbs.store.size());
+        assertEquals(breadcrumbCount, client.breadcrumbState.getStore().size());
     }
 
     @Test

@@ -234,7 +234,7 @@ public class NativeInterface {
      */
     @NonNull
     public static List<Breadcrumb> getBreadcrumbs() {
-        Queue<Breadcrumb> store = getClient().breadcrumbs.store;
+        Queue<Breadcrumb> store = getClient().breadcrumbState.getStore();
         return new ArrayList<>(store);
     }
 

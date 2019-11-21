@@ -31,6 +31,7 @@ import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -67,7 +68,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     protected final AppData appData;
 
     @NonNull
-    final Breadcrumbs breadcrumbs;
+    final BreadcrumbState breadcrumbState;
 
     @NonNull
     private User user;
@@ -149,7 +150,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         deviceData = new DeviceData(connectivity, appContext, resources, user.installId);
 
         // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs(immutableConfig.getMaxBreadcrumbs());
+        breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs());
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -207,7 +208,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         Logger.setEnabled(immutableConfig.getLoggingEnabled());
 
         configuration.addObserver(this);
-        breadcrumbs.addObserver(this);
+        breadcrumbState.addObserver(this);
         sessionTracker.addObserver(this);
 
         final Client client = this;
@@ -477,7 +478,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @NonNull
     public Collection<Breadcrumb> getBreadcrumbs() {
-        return new ArrayList<>(breadcrumbs.store);
+        return new ArrayList<>(breadcrumbState.getStore());
     }
 
     @NonNull
@@ -704,7 +705,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         event.addMetadata("app", null, appData.getAppDataMetaData());
 
         // Attach breadcrumbs to the event
-        event.setBreadcrumbs(breadcrumbs);
+        event.setBreadcrumbs(breadcrumbState);
 
         // Attach user info to the event
         event.setUser(user);
@@ -823,7 +824,8 @@ public class Client extends Observable implements Observer, MetaDataAware {
         // Add a breadcrumb for this event occurring
         String msg = event.getExceptionMessage();
         Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-        breadcrumbs.add(new Breadcrumb(event.getExceptionName(), BreadcrumbType.ERROR, message));
+        breadcrumbState.add(new Breadcrumb(event.getExceptionName(),
+                BreadcrumbType.ERROR, message, new Date()));
     }
 
     @NonNull
@@ -888,12 +890,12 @@ public class Client extends Observable implements Observer, MetaDataAware {
     public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, Object> metadata) {
-        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata));
+        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata, new Date()));
     }
 
     private void leaveBreadcrumbInternal(Breadcrumb crumb) {
         if (runBreadcrumbCallbacks(crumb)) {
-            breadcrumbs.add(crumb);
+            breadcrumbState.add(crumb);
         }
     }
 
@@ -901,7 +903,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      * Clear any breadcrumbs that have been left so far.
      */
     public void clearBreadcrumbs() {
-        breadcrumbs.clear();
+        breadcrumbState.clear();
     }
 
     void deliver(@NonNull Report report, @NonNull Event event) {
