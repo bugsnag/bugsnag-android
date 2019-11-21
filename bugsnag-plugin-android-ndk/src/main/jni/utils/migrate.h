@@ -7,6 +7,18 @@
 extern "C" {
 #endif
 
+/**
+ * migrate.h contains definitions of structs that were used in previous versions of a notifier
+ * release.
+ *
+ * Because these structs are serialized to disk directly, we need to retain the original structs
+ * whenever a field is added or changed.
+ *
+ * The bsg_report_header indicates what version was serialized to disk. Knowing this information,
+ * it is possible to migrate old payloads by first serializing them into an old struct, and then
+ * mapping them into the latest version of bugsnag_event.
+ */
+
 typedef struct {
     char name[64];
     char version[16];

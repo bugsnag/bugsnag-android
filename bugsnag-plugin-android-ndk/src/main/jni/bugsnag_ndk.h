@@ -28,7 +28,7 @@ typedef struct {
      * Preferred unwinding style
      */
     bsg_unwinder unwind_style;
-    bsg_report_header report_header;
+    bsg_event_header report_header;
     /**
      * File path on disk where the next crash report will be written if needed.
      */

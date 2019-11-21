@@ -1,5 +1,5 @@
-#ifndef BUGSNAG_ANDROID_NDK_REPORT_API_H
-#define BUGSNAG_ANDROID_NDK_REPORT_API_H
+#ifndef BUGSNAG_ANDROID_NDK_EVENT_API_H
+#define BUGSNAG_ANDROID_NDK_EVENT_API_H
 
 #include <stdbool.h>
 #include <sys/types.h>
@@ -29,7 +29,7 @@
 #define BUGSNAG_DEFAULT_EX_TYPE "c"
 #endif
 /**
- * Version of the bugsnag_report struct. Serialized to report header.
+ * Version of the bugsnag_event struct. Serialized to report header.
  */
 #define BUGSNAG_EVENT_VERSION 3
 
@@ -150,17 +150,13 @@ typedef struct {
     long total_memory;
 } bsg_device_info;
 
-/*********************************
- * (end) NDK-SPECIFIC BITS
- *********************************/
-
 /**
  * Report versioning information, serialized to disk first in a report file,
  * including system info for potential debugging
  */
 typedef struct {
     /**
-     * The value of BUGSNAG_REPORT_VERSION
+     * The value of BUGSNAG_EVENT_VERSION
      */
     int version;
     /**
@@ -171,7 +167,7 @@ typedef struct {
      * The value of device.runtimeVersions.osBuild
      */
     char os_build[64];
-} bsg_report_header;
+} bsg_event_header;
 
 typedef enum {
     BSG_NONE_VALUE,

@@ -1,7 +1,7 @@
 #ifndef BUGSNAG_UTILS_STACK_UNWINDER_LIBCORKSCREW_H
 #define BUGSNAG_UTILS_STACK_UNWINDER_LIBCORKSCREW_H
 
-#include "event.h"
+#include "../event.h"
 #include <signal.h>
 
 bool bsg_configure_libcorkscrew(void);

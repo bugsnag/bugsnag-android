@@ -35,6 +35,10 @@ void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
                                  char *started_at, int handled_count, int unhandled_count);
 bool bugsnag_event_has_session(bugsnag_event *event);
 
+/*********************************
+ * (end) NDK-SPECIFIC BITS
+ *********************************/
+
 #ifdef __cplusplus
 }
 #endif

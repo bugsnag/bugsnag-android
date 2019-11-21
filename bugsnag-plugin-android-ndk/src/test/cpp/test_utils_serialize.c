@@ -118,15 +118,15 @@ TEST test_report_v1_migration(void) {
   bsg_serialize_event_to_file(env);
 
   bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
-  ASSERT(report != NULL);
-  ASSERT(strcmp("f1ab", report->session_id) == 0);
-  ASSERT(strcmp("2019-03-19T12:58:19+00:00", report->session_start) == 0);
-  ASSERT_EQ(1, report->handled_events);
-  ASSERT_EQ(1, report->unhandled_events);
+  ASSERT(event != NULL);
+  ASSERT(strcmp("f1ab", event->session_id) == 0);
+  ASSERT(strcmp("2019-03-19T12:58:19+00:00", event->session_start) == 0);
+  ASSERT_EQ(1, event->handled_events);
+  ASSERT_EQ(1, event->unhandled_events);
 
   free(generated_report);
   free(env);
-  free(report);
+  free(event);
   PASS();
 }
 

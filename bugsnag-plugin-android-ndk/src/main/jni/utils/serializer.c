@@ -13,14 +13,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
+bool bsg_event_write(bsg_event_header *header, bugsnag_event *event,
                      int fd);
 
 bugsnag_event *bsg_event_read(int fd);
 bugsnag_event *bsg_report_v3_read(int fd);
-bsg_report_header *bsg_report_header_read(int fd);
-bugsnag_event *map_v2_to_report(bugsnag_report_v2 *event_v2);
-bugsnag_event *map_v1_to_report(bugsnag_report_v1 *event_v1);
+bsg_event_header *bsg_report_header_read(int fd);
+bugsnag_event *map_v2_to_report(bugsnag_report_v2 *report_v2);
+bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1);
 
 #ifdef __cplusplus
 }
@@ -81,7 +81,7 @@ bugsnag_event *bsg_report_v3_read(int fd) {
 }
 
 bugsnag_event *bsg_event_read(int fd) {
-  bsg_report_header *header = bsg_report_header_read(fd);
+  bsg_event_header *header = bsg_report_header_read(fd);
   if (header == NULL) {
     return NULL;
   }
@@ -102,83 +102,83 @@ bugsnag_event *bsg_event_read(int fd) {
   return event;
 }
 
-bugsnag_event *map_v2_to_report(bugsnag_report_v2 *event_v2) {
-  if (event_v2 == NULL) {
+bugsnag_event *map_v2_to_report(bugsnag_report_v2 *report_v2) {
+  if (report_v2 == NULL) {
     return NULL;
   }
   bugsnag_event *event = malloc(sizeof(bugsnag_event));
 
   if (event != NULL) {
-    event->app = event_v2->app;
-    event->device = event_v2->device;
-    event->user = event_v2->user;
-    event->metadata = event_v2->metadata;
-    event->crumb_count = event_v2->crumb_count;
-    event->crumb_first_index = event_v2->crumb_first_index;
+    event->app = report_v2->app;
+    event->device = report_v2->device;
+    event->user = report_v2->user;
+    event->metadata = report_v2->metadata;
+    event->crumb_count = report_v2->crumb_count;
+    event->crumb_first_index = report_v2->crumb_first_index;
 
     size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
-    memcpy(&event->breadcrumbs, event_v2->breadcrumbs, breadcrumb_size);
+    memcpy(&event->breadcrumbs, report_v2->breadcrumbs, breadcrumb_size);
 
-    strcpy(event->context, event_v2->context);
-    event->severity = event_v2->severity;
-    strcpy(event->session_id, event_v2->session_id);
-    strcpy(event->session_start, event_v2->session_start);
-    event->handled_events = event_v2->handled_events;
-    event->unhandled_events = event_v2->unhandled_events;
+    strcpy(event->context, report_v2->context);
+    event->severity = report_v2->severity;
+    strcpy(event->session_id, report_v2->session_id);
+    strcpy(event->session_start, report_v2->session_start);
+    event->handled_events = report_v2->handled_events;
+    event->unhandled_events = report_v2->unhandled_events;
 
     // migrate changed notifier fields
-    strcpy(event->notifier.version, event_v2->notifier.version);
-    strcpy(event->notifier.name, event_v2->notifier.name);
-    strcpy(event->notifier.url, event_v2->notifier.url);
+    strcpy(event->notifier.version, report_v2->notifier.version);
+    strcpy(event->notifier.name, report_v2->notifier.name);
+    strcpy(event->notifier.url, report_v2->notifier.url);
 
     // migrate changed error fields
-    strcpy(event->error.errorClass, event_v2->exception.name);
-    strcpy(event->error.errorMessage, event_v2->exception.message);
-    strcpy(event->error.type, event_v2->exception.type);
-    event->error.frame_count = event_v2->exception.frame_count;
+    strcpy(event->error.errorClass, report_v2->exception.name);
+    strcpy(event->error.errorMessage, report_v2->exception.message);
+    strcpy(event->error.type, report_v2->exception.type);
+    event->error.frame_count = report_v2->exception.frame_count;
     size_t error_size = sizeof(bsg_stackframe) * BUGSNAG_FRAMES_MAX;
-    memcpy(&event->error.stacktrace, event_v2->exception.stacktrace, error_size);
+    memcpy(&event->error.stacktrace, report_v2->exception.stacktrace, error_size);
   }
-  free(event_v2);
+  free(report_v2);
   return event;
 }
 
-bugsnag_event *map_v1_to_report(bugsnag_report_v1 *event_v1) {
-  if (event_v1 == NULL) {
+bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1) {
+  if (report_v1 == NULL) {
     return NULL;
   }
-  size_t event_size = sizeof(bugsnag_report_v2);
-  bugsnag_report_v2 *event_v2 = malloc(event_size);
+  size_t report_size = sizeof(bugsnag_report_v2);
+  bugsnag_report_v2 *event_v2 = malloc(report_size);
 
   if (event_v2 != NULL) {
-    event_v2->notifier = event_v1->notifier;
-    event_v2->app = event_v1->app;
-    event_v2->device = event_v1->device;
-    event_v2->user = event_v1->user;
-    event_v2->exception = event_v1->exception;
-    event_v2->metadata = event_v1->metadata;
-    event_v2->crumb_count = event_v1->crumb_count;
-    event_v2->crumb_first_index = event_v1->crumb_first_index;
+    event_v2->notifier = report_v1->notifier;
+    event_v2->app = report_v1->app;
+    event_v2->device = report_v1->device;
+    event_v2->user = report_v1->user;
+    event_v2->exception = report_v1->exception;
+    event_v2->metadata = report_v1->metadata;
+    event_v2->crumb_count = report_v1->crumb_count;
+    event_v2->crumb_first_index = report_v1->crumb_first_index;
 
     size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
-    memcpy(&event_v2->breadcrumbs, event_v1->breadcrumbs, breadcrumb_size);
+    memcpy(&event_v2->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
 
-    strcpy(event_v2->context, event_v1->context);
-    event_v2->severity = event_v1->severity;
-    strcpy(event_v2->session_id, event_v1->session_id);
-    strcpy(event_v2->session_start, event_v1->session_start);
-    event_v2->handled_events = event_v1->handled_events;
+    strcpy(event_v2->context, report_v1->context);
+    event_v2->severity = report_v1->severity;
+    strcpy(event_v2->session_id, report_v1->session_id);
+    strcpy(event_v2->session_start, report_v1->session_start);
+    event_v2->handled_events = report_v1->handled_events;
     event_v2->unhandled_events = 1;
 
-    free(event_v1);
+    free(report_v1);
   }
   return map_v2_to_report(event_v2);
 }
 
-bsg_report_header *bsg_report_header_read(int fd) {
-  bsg_report_header *header = malloc(sizeof(bsg_report_header));
-  ssize_t len = read(fd, header, sizeof(bsg_report_header));
-  if (len != sizeof(bsg_report_header)) {
+bsg_event_header *bsg_report_header_read(int fd) {
+  bsg_event_header *header = malloc(sizeof(bsg_event_header));
+  ssize_t len = read(fd, header, sizeof(bsg_event_header));
+  if (len != sizeof(bsg_event_header)) {
     free(header);
     return NULL;
   }
@@ -186,13 +186,13 @@ bsg_report_header *bsg_report_header_read(int fd) {
   return header;
 }
 
-bool bsg_report_header_write(bsg_report_header *header, int fd) {
-  ssize_t len = write(fd, header, sizeof(bsg_report_header));
+bool bsg_report_header_write(bsg_event_header *header, int fd) {
+  ssize_t len = write(fd, header, sizeof(bsg_event_header));
 
-  return len == sizeof(bsg_report_header);
+  return len == sizeof(bsg_event_header);
 }
 
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
+bool bsg_event_write(bsg_event_header *header, bugsnag_event *event,
                      int fd) {
   if (!bsg_report_header_write(header, fd)) {
     return false;
