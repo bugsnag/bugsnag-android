@@ -117,7 +117,7 @@ TEST test_report_v1_migration(void) {
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
   bsg_serialize_event_to_file(env);
 
-  bugsnag_event *report = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
   ASSERT(report != NULL);
   ASSERT(strcmp("f1ab", report->session_id) == 0);
   ASSERT(strcmp("2019-03-19T12:58:19+00:00", report->session_start) == 0);
@@ -295,4 +295,3 @@ SUITE(serialize_utils) {
   RUN_TEST(test_exception_to_json);
   RUN_TEST(test_breadcrumbs_to_json);
 }
-
