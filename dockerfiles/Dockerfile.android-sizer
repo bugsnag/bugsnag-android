@@ -60,4 +60,6 @@ RUN mv bundletool-all-0.10.3.jar bundletool.jar
 RUN gem install bundler
 RUN bundle install
 
+COPY .git .git
+
 CMD bundle exec danger
