@@ -15,7 +15,7 @@ internal class SessionSerializationTest {
         @Parameters
         fun testCases() = generateSerializationTestCases(
             "session",
-            Session("123", Date(0), User(null, null, null), 1, 0)
+            Session("123", Date(0), User("123", "j@example.com", "Jay"), 1, 0)
         )
     }
 
