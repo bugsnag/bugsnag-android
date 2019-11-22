@@ -147,7 +147,8 @@ public class Client extends Observable implements Observer, MetadataAware {
                 immutableConfig.getPersistUserBetweenSessions());
         setUserInternal(userRepository.load());
 
-        deviceData = new DeviceData(connectivity, appContext, resources, user.installId);
+        DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
+        deviceData = new DeviceData(connectivity, appContext, resources, user.installId, info);
 
         // Set up breadcrumbs
         breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs());
