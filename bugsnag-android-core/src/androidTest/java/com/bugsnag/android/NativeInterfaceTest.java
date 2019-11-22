@@ -25,9 +25,9 @@ public class NativeInterfaceTest {
     }
 
     @Test
-    public void getMetaData() {
+    public void getMetadata() {
         NativeInterface.setClient(client);
-        assertNotSame(client.clientState.getMetaData().toMap(), NativeInterface.getMetaData());
+        assertNotSame(client.clientState.getMetadata().toMap(), NativeInterface.getMetadata());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class NativeInterfaceTest {
         NativeInterface.addMetadata("app", "args", "-print 1");
         NativeInterface.addMetadata("info", "cache", false);
 
-        Map<String, Object> metadata = NativeInterface.getMetaData();
+        Map<String, Object> metadata = NativeInterface.getMetadata();
         @SuppressWarnings("unchecked")
         Map<String, Object> app = (Map<String, Object>)metadata.get("app");
         assertSame("0.1", app.get("buildno"));
@@ -57,7 +57,7 @@ public class NativeInterfaceTest {
         NativeInterface.addMetadata("info", "cache", false);
         NativeInterface.clearMetadata("info", null);
 
-        Map<String, Object> metadata = NativeInterface.getMetaData();
+        Map<String, Object> metadata = NativeInterface.getMetadata();
         @SuppressWarnings("unchecked")
         Map<String, Object> app = (Map<String, Object>)metadata.get("app");
         assertSame("0.1", app.get("buildno"));

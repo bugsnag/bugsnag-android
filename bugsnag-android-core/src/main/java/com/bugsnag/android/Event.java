@@ -35,7 +35,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
     private Severity severity;
 
     @NonNull
-    private Metadata metaData;
+    private Metadata metadata;
 
     @Nullable
     private String groupingHash;
@@ -56,7 +56,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
 
     Event(@NonNull ImmutableConfig config, @NonNull Throwable exc,
           HandledState handledState, @NonNull Severity severity,
-          Session session, ThreadState threadState, @NonNull Metadata metaData) {
+          Session session, ThreadState threadState, @NonNull Metadata metadata) {
         this.threadState = threadState;
         this.config = config;
 
@@ -70,7 +70,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
         this.session = session;
 
         projectPackages = config.getProjectPackages();
-        this.metaData = metaData;
+        this.metadata = metadata;
         exceptions = new Exceptions(config, exception);
     }
 
@@ -79,7 +79,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
         // Write error basics
         writer.beginObject();
         writer.name("context").value(context);
-        writer.name("metaData").value(metaData);
+        writer.name("metaData").value(metadata);
 
         writer.name("severity").value(severity);
         writer.name("severityReason").value(handledState);
@@ -263,7 +263,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
     public void addMetadata(@NotNull String section,
                             @Nullable String key,
                             @Nullable Object value) {
-        metaData.addMetadata(section, key, value);
+        metadata.addMetadata(section, key, value);
     }
 
     @Override
@@ -274,7 +274,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
     @Override
     public void clearMetadata(@NotNull String section,
                               @Nullable String key) {
-        metaData.clearMetadata(section, key);
+        metadata.clearMetadata(section, key);
     }
 
     @Nullable
@@ -288,7 +288,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
     @Override
     public Object getMetadata(@NotNull String section,
                               @Nullable String key) {
-        return metaData.getMetadata(section, key);
+        return metadata.getMetadata(section, key);
     }
 
     /**
@@ -405,7 +405,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
         private final SessionTracker sessionTracker;
         private final ThreadState threadState;
         private Severity severity = Severity.WARNING;
-        private Metadata metaData = new Metadata();
+        private Metadata metadata = new Metadata();
         private Metadata globalMetadata;
         private String attributeValue;
 
@@ -449,8 +449,8 @@ public class Event implements JsonStream.Streamable, MetadataAware {
             return this;
         }
 
-        Builder metaData(Metadata metaData) {
-            this.metaData = metaData;
+        Builder metadata(Metadata metadata) {
+            this.metadata = metadata;
             return this;
         }
 
@@ -458,9 +458,9 @@ public class Event implements JsonStream.Streamable, MetadataAware {
             HandledState handledState =
                 HandledState.newInstance(severityReasonType, severity, attributeValue);
             Session session = getSession(handledState);
-            Metadata metaData = Metadata.Companion.merge(globalMetadata, this.metaData);
+            Metadata metadata = Metadata.Companion.merge(globalMetadata, this.metadata);
             return new Event(config, exception, handledState,
-                severity, session, threadState, metaData);
+                severity, session, threadState, metadata);
         }
 
         private Session getSession(HandledState handledState) {

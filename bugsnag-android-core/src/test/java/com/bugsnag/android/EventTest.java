@@ -98,23 +98,23 @@ public class EventTest {
     }
 
     @Test
-    public void testBuilderMetaData() {
+    public void testBuilderMetadata() {
         Event.Builder builder = new Event.Builder(config,
             new RuntimeException("foo"), null,
             Thread.currentThread(), false, new Metadata());
 
-        assertNotNull(builder.metaData(new Metadata()).build());
+        assertNotNull(builder.metadata(new Metadata()).build());
 
-        Metadata metaData = new Metadata();
-        metaData.addMetadata("foo", "bar", true);
+        Metadata metadata = new Metadata();
+        metadata.addMetadata("foo", "bar", true);
 
-        Event event = builder.metaData(metaData).build();
+        Event event = builder.metadata(metadata).build();
         Map<String, Object> foo = (Map<String, Object>) event.getMetadata("foo", null);
         assertEquals(1, foo.size());
     }
 
     @Test
-    public void testErrorMetaData() {
+    public void testErrorMetadata() {
         event.addMetadata("rocks", "geode", "a shiny mineral");
         Map<String, Object> rocks = (Map<String, Object>) event.getMetadata("rocks", null);
         assertNotNull(rocks);

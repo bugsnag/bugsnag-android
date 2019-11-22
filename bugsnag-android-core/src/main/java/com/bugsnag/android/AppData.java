@@ -83,7 +83,7 @@ class AppData {
         return map;
     }
 
-    Map<String, Object> getAppDataMetaData() {
+    Map<String, Object> getAppDataMetadata() {
         Map<String, Object> map = new HashMap<>();
         map.put("name", appName);
         map.put("packageName", packageName);

@@ -34,14 +34,14 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testErrorDefaultMetaData() throws Exception {
+    public void testErrorDefaultMetadata() throws Exception {
         Event event = new Event.Builder(config, throwable, null,
             Thread.currentThread(), false, new Metadata()).build();
         validateDefaultMetadata(event);
     }
 
     @Test
-    public void testSecondErrorDefaultMetaData() throws Exception {
+    public void testSecondErrorDefaultMetadata() throws Exception {
         Event event = new Event.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
             null, Thread.currentThread(), new Metadata()).build();
@@ -51,8 +51,8 @@ public class NullMetadataTest {
     @Test
     public void testConfigSetMetadataRef() throws Exception {
         Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new Metadata());
-        validateDefaultMetadata(configuration.getMetaData());
+        configuration.setMetadata(new Metadata());
+        validateDefaultMetadata(configuration.getMetadata());
     }
 
     private void validateDefaultMetadata(MetadataAware event) {

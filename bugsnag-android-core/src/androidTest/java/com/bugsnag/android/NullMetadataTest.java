@@ -48,19 +48,19 @@ public class NullMetadataTest {
     @Test
     public void testConfigSetNullMetadata() throws Exception {
         Configuration configuration = new Configuration("test");
-        configuration.setMetaData(null);
-        validateDefaultMetadata(configuration.getMetaData());
+        configuration.setMetadata(null);
+        validateDefaultMetadata(configuration.getMetadata());
     }
 
     @Test
-    public void testErrorDefaultMetaData() throws Exception {
+    public void testErrorDefaultMetadata() throws Exception {
         Event event = new Event.Builder(config, throwable, generateSessionTracker(),
             Thread.currentThread(), false, new Metadata()).build();
         validateDefaultMetadata(event);
     }
 
     @Test
-    public void testSecondErrorDefaultMetaData() throws Exception {
+    public void testSecondErrorDefaultMetadata() throws Exception {
         Event event = new Event.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
             generateSessionTracker(), Thread.currentThread(), new Metadata()).build();
@@ -70,8 +70,8 @@ public class NullMetadataTest {
     @Test
     public void testConfigSetMetadataRef() throws Exception {
         Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new Metadata());
-        validateDefaultMetadata(configuration.getMetaData());
+        configuration.setMetadata(new Metadata());
+        validateDefaultMetadata(configuration.getMetadata());
     }
 
     @Test
@@ -88,11 +88,11 @@ public class NullMetadataTest {
         client.notifyInternal(event, DeliveryStyle.ASYNC, null);
     }
 
-    private void validateDefaultMetadata(MetadataAware metaData) {
-        assertNotNull(metaData);
-        assertNull(metaData.getMetadata(TAB_KEY, null));
-        metaData.addMetadata(TAB_KEY, "test", "data");
-        assertEquals("data", metaData.getMetadata(TAB_KEY, "test"));
+    private void validateDefaultMetadata(MetadataAware metadata) {
+        assertNotNull(metadata);
+        assertNull(metadata.getMetadata(TAB_KEY, null));
+        metadata.addMetadata(TAB_KEY, "test", "data");
+        assertEquals("data", metadata.getMetadata(TAB_KEY, "test"));
     }
 
 }

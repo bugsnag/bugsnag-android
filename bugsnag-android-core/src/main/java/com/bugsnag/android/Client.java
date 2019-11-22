@@ -621,7 +621,7 @@ public class Client extends Observable implements Observer, MetadataAware {
      */
     public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
+            Thread.currentThread(), false, clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -654,7 +654,7 @@ public class Client extends Observable implements Observer, MetadataAware {
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), clientState.getMetaData())
+            sessionTracker, Thread.currentThread(), clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -665,13 +665,13 @@ public class Client extends Observable implements Observer, MetadataAware {
      *
      * Should only ever be called from the {@link ExceptionHandler}.
      */
-    void notifyUnhandledException(@NonNull Throwable exception, Metadata metaData,
+    void notifyUnhandledException(@NonNull Throwable exception, Metadata metadata,
                                   @HandledState.SeverityReason String severityReason,
                                   @Nullable String attributeValue, Thread thread) {
         Event event = new Event.Builder(immutableConfig, exception,
-                sessionTracker, thread, true, clientState.getMetaData())
+                sessionTracker, thread, true, clientState.getMetadata())
                 .severity(Severity.ERROR)
-                .metaData(metaData)
+                .metadata(metadata)
                 .severityReasonType(severityReason)
                 .attributeValue(attributeValue)
                 .build();
@@ -694,14 +694,14 @@ public class Client extends Observable implements Observer, MetadataAware {
         // Capture the state of the app and device and attach diagnostics to the event
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         event.setDeviceData(errorDeviceData);
-        event.addMetadata("device", null, deviceData.getDeviceMetaData());
+        event.addMetadata("device", null, deviceData.getDeviceMetadata());
 
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
         event.setAppData(errorAppData);
-        event.addMetadata("app", null, appData.getAppDataMetaData());
+        event.addMetadata("app", null, appData.getAppDataMetadata());
 
         // Attach breadcrumbs to the event
         event.setBreadcrumbs(breadcrumbs);
@@ -846,7 +846,7 @@ public class Client extends Observable implements Observer, MetadataAware {
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        clientState.getMetaData().addMetadata(section, key, value);
+        clientState.getMetadata().addMetadata(section, key, value);
     }
 
     @Override
@@ -856,7 +856,7 @@ public class Client extends Observable implements Observer, MetadataAware {
 
     @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
-        clientState.getMetaData().clearMetadata(section, key);
+        clientState.getMetadata().clearMetadata(section, key);
     }
 
     @Nullable
@@ -868,7 +868,7 @@ public class Client extends Observable implements Observer, MetadataAware {
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return clientState.getMetaData().getMetadata(section, key);
+        return clientState.getMetadata().getMetadata(section, key);
     }
 
     /**

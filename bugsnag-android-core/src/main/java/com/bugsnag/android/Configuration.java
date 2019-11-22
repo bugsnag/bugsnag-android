@@ -53,7 +53,7 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     private boolean autoDetectErrors = true;
 
     @NonNull
-    private Metadata metaData;
+    private Metadata metadata;
     private final Collection<OnError> onErrorTasks = new ConcurrentLinkedQueue<>();
     private final Collection<OnBreadcrumb> breadcrumbCallbacks
         = new ConcurrentLinkedQueue<>();
@@ -77,8 +77,8 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
             throw new IllegalArgumentException("You must provide a Bugsnag API key");
         }
         this.apiKey = apiKey;
-        this.metaData = new Metadata();
-        this.metaData.addObserver(this);
+        this.metadata = new Metadata();
+        this.metadata.addObserver(this);
         enabledBreadcrumbTypes.addAll(Arrays.asList(BreadcrumbType.values()));
 
         try {
@@ -237,30 +237,30 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
     }
 
     /**
-     * Get which keys should be filtered when sending metaData to Bugsnag
+     * Get which keys should be filtered when sending metadata to Bugsnag
      *
      * @return a list of keys that should be redacted from the payload
      */
     @NonNull
     public Collection<String> getRedactKeys() {
-        return Collections.unmodifiableSet(metaData.getRedactKeys());
+        return Collections.unmodifiableSet(metadata.getRedactKeys());
     }
 
     /**
-     * Set which keys should be filtered when sending metaData to Bugsnag.
+     * Set which keys should be filtered when sending metadata to Bugsnag.
      * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metaData you send to Bugsnag.
-     * Any keys in metaData which contain these strings will be marked as
+     * or credit card information is stripped from metadata you send to Bugsnag.
+     * Any keys in metadata which contain these strings will be marked as
      * [FILTERED] when send to Bugsnag.
      * <p/>
      * For example:
      * <p/>
      * client.setRedactKeys("password", "credit_card");
      *
-     * @param redactKeys a list of keys to redact from metaData
+     * @param redactKeys a list of keys to redact from metadata
      */
     public void setRedactKeys(@NonNull Collection<String> redactKeys) {
-        this.metaData.setRedactKeys(redactKeys);
+        this.metadata.setRedactKeys(redactKeys);
     }
 
     /**
@@ -437,21 +437,21 @@ public class Configuration extends Observable implements Observer, BugsnagConfig
      * @return meta data
      */
     @NonNull
-    public Metadata getMetaData() {
-        return metaData;
+    public Metadata getMetadata() {
+        return metadata;
     }
 
     /**
      * Sets any meta data associated with the error
      *
-     * @param metaData meta data
+     * @param metadata meta data
      */
-    public void setMetaData(@NonNull Metadata metaData) {
+    public void setMetadata(@NonNull Metadata metadata) {
         //noinspection ConstantConditions
-        if (metaData == null) {
-            this.metaData = new Metadata();
+        if (metadata == null) {
+            this.metadata = new Metadata();
         } else {
-            this.metaData = metaData;
+            this.metadata = metadata;
         }
     }
 

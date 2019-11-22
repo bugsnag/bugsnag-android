@@ -29,13 +29,13 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         boolean strictModeThrowable = strictModeHandler.isStrictModeThrowable(throwable);
 
         // Notify any subscribed clients of the uncaught exception
-        Metadata metaData = new Metadata();
+        Metadata metadata = new Metadata();
         String violationDesc = null;
 
         if (strictModeThrowable) { // add strictmode policy violation to metadata
             violationDesc = strictModeHandler.getViolationDescription(throwable.getMessage());
-            metaData = new Metadata();
-            metaData.addMetadata(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
+            metadata = new Metadata();
+            metadata.addMetadata(STRICT_MODE_TAB, STRICT_MODE_KEY, violationDesc);
         }
 
         String severityReason = strictModeThrowable
@@ -46,12 +46,12 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
 
             client.notifyUnhandledException(throwable,
-                    metaData, severityReason, violationDesc, thread);
+                    metadata, severityReason, violationDesc, thread);
 
             StrictMode.setThreadPolicy(originalThreadPolicy);
         } else {
             client.notifyUnhandledException(throwable,
-                    metaData, severityReason, violationDesc, thread);
+                    metadata, severityReason, violationDesc, thread);
         }
 
         // Pass exception on to original exception handler

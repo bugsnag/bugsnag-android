@@ -87,7 +87,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetadataSerializationTest_
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadAppMetaDataTestCase(num);
+    test_case->data_ptr = loadAppMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;
@@ -133,7 +133,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetadataSerializationTe
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadDeviceMetaDataTestCase(num);
+    test_case->data_ptr = loadDeviceMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;
@@ -156,7 +156,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetadataSerializationTe
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadCustomMetaDataTestCase(num);
+    test_case->data_ptr = loadCustomMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;

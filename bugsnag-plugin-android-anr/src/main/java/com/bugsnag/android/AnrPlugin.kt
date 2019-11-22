@@ -23,7 +23,8 @@ internal class AnrPlugin : BugsnagPlugin {
         val errMsg = "Application did not respond to UI input"
         val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
         val error = Event.Builder(client.config, exc, client.sessionTracker, thread, true,
-            client.clientState.metaData)
+            client.clientState.metadata
+        )
             .severity(Severity.ERROR)
             .severityReasonType(HandledState.REASON_ANR)
             .build()
