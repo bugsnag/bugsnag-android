@@ -13,12 +13,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-bool bsg_event_write(bsg_event_header *header, bugsnag_event *event,
+bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
                      int fd);
 
 bugsnag_event *bsg_event_read(int fd);
 bugsnag_event *bsg_report_v3_read(int fd);
-bsg_event_header *bsg_report_header_read(int fd);
+bsg_report_header *bsg_report_header_read(int fd);
 bugsnag_event *map_v2_to_report(bugsnag_report_v2 *report_v2);
 bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1);
 
@@ -81,7 +81,7 @@ bugsnag_event *bsg_report_v3_read(int fd) {
 }
 
 bugsnag_event *bsg_event_read(int fd) {
-  bsg_event_header *header = bsg_report_header_read(fd);
+  bsg_report_header *header = bsg_report_header_read(fd);
   if (header == NULL) {
     return NULL;
   }
@@ -175,10 +175,10 @@ bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1) {
   return map_v2_to_report(event_v2);
 }
 
-bsg_event_header *bsg_report_header_read(int fd) {
-  bsg_event_header *header = malloc(sizeof(bsg_event_header));
-  ssize_t len = read(fd, header, sizeof(bsg_event_header));
-  if (len != sizeof(bsg_event_header)) {
+bsg_report_header *bsg_report_header_read(int fd) {
+  bsg_report_header *header = malloc(sizeof(bsg_report_header));
+  ssize_t len = read(fd, header, sizeof(bsg_report_header));
+  if (len != sizeof(bsg_report_header)) {
     free(header);
     return NULL;
   }
@@ -186,13 +186,13 @@ bsg_event_header *bsg_report_header_read(int fd) {
   return header;
 }
 
-bool bsg_report_header_write(bsg_event_header *header, int fd) {
-  ssize_t len = write(fd, header, sizeof(bsg_event_header));
+bool bsg_report_header_write(bsg_report_header *header, int fd) {
+  ssize_t len = write(fd, header, sizeof(bsg_report_header));
 
-  return len == sizeof(bsg_event_header);
+  return len == sizeof(bsg_report_header);
 }
 
-bool bsg_event_write(bsg_event_header *header, bugsnag_event *event,
+bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
                      int fd) {
   if (!bsg_report_header_write(header, fd)) {
     return false;

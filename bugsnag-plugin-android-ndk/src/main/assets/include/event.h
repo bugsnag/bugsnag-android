@@ -18,7 +18,7 @@
 #endif
 #ifndef BUGSNAG_CRUMBS_MAX
 /**
- *  Max number of breadcrumbs in a report. Configures a default if not defined.
+ *  Max number of breadcrumbs in an event. Configures a default if not defined.
  */
 #define BUGSNAG_CRUMBS_MAX 30
 #endif
@@ -167,7 +167,7 @@ typedef struct {
      * The value of device.runtimeVersions.osBuild
      */
     char os_build[64];
-} bsg_event_header;
+} bsg_report_header;
 
 typedef enum {
     BSG_NONE_VALUE,

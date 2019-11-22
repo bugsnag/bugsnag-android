@@ -28,13 +28,16 @@ typedef struct {
      * Preferred unwinding style
      */
     bsg_unwinder unwind_style;
-    bsg_event_header report_header;
+    /**
+     * Records the version of the bugsnag NDK report being serialized to disk.
+     */
+    bsg_report_header report_header;
     /**
      * File path on disk where the next crash report will be written if needed.
      */
     char next_event_path[384];
     /**
-     * Cache of static metadata and report info. Exception/time information is populated at crash time.
+     * Cache of static metadata and event info. Exception/time information is populated at crash time.
      */
     bugsnag_event next_event;
     /**
