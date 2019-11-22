@@ -1,0 +1,23 @@
+{
+  "bool": true,
+  "string": "string",
+  "int": 123,
+  "long": 123,
+  "float": 123.45,
+  "streamable": {
+    "timestamp": "1970-01-01T00:00:00Z",
+    "name": "whoops",
+    "type": "log",
+    "metaData": {}
+  },
+  "map": {
+    "Baz": "What"
+  },
+  "collection": [
+    "bar"
+  ],
+  "array": [
+    "foo"
+  ],
+  "object": "[OBJECT]"
+}
