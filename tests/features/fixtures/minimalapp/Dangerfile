@@ -21,7 +21,7 @@ STANDALONE_ARM64_V8A = "standalone-arm64_v8a_hdpi.apk"
 STANDALONE_ARMEABI = "standalone-armeabi_hdpi.apk"
 STANDALONE_ARMEABI_V7A = "standalone-armeabi_v7a_hdpi.apk"
 STANDALONE_X86_64 = "standalone-x86_64_hdpi.apk"
-STANADLONE_X86 = "standalone-x86_hdpi.apk"
+STANDALONE_X86 = "standalone-x86_hdpi.apk"
 
 
 FileUtils.cp(BASE_TEMPLATE, BUILD_GRADLE)
