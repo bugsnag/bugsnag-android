@@ -10,13 +10,13 @@ import org.junit.Test
 import java.util.HashMap
 import java.util.Locale
 
-class BreadcrumbsTest {
+class BreadcrumbStateTest {
 
-    private lateinit var breadcrumbs: Breadcrumbs
+    private lateinit var breadcrumbState: BreadcrumbState
 
     @Before
     fun setUp() {
-        breadcrumbs = Breadcrumbs(20)
+        breadcrumbState = BreadcrumbState(20)
     }
 
     /**
@@ -24,15 +24,15 @@ class BreadcrumbsTest {
      */
     @Test
     fun testMessageTruncation() {
-        breadcrumbs.add(Breadcrumb("Started app"))
-        breadcrumbs.add(Breadcrumb("Clicked a button"))
+        breadcrumbState.add(Breadcrumb("Started app"))
+        breadcrumbState.add(Breadcrumb("Clicked a button"))
         val longStr = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
                 + " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
                 + "minim veniam, quis nostrud exercitation ullamco laboris nisi"
                 + " ut aliquip ex ea commodo consequat.")
-        breadcrumbs.add(Breadcrumb(longStr))
+        breadcrumbState.add(Breadcrumb(longStr))
 
-        val crumbs = breadcrumbs.store.toList()
+        val crumbs = breadcrumbState.store.toList()
         assertEquals(3, crumbs.size)
         assertEquals(longStr, crumbs[2].metadata["message"])
     }
@@ -42,13 +42,13 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSizeLimitBeforeAdding() {
-        breadcrumbs = Breadcrumbs(5)
+        breadcrumbState = BreadcrumbState(5)
 
         for (k in 1..6) {
-            breadcrumbs.add(Breadcrumb("$k"))
+            breadcrumbState.add(Breadcrumb("$k"))
         }
 
-        val crumbs = breadcrumbs.store.toList()
+        val crumbs = breadcrumbState.store.toList()
         assertEquals("2", crumbs.first().metadata["message"])
         assertEquals("6", crumbs.last().metadata["message"])
     }
@@ -58,10 +58,10 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeEmpty() {
-        breadcrumbs = Breadcrumbs(0)
-        breadcrumbs.add(Breadcrumb("1"))
-        breadcrumbs.add(Breadcrumb("2"))
-        assertTrue(breadcrumbs.store.isEmpty())
+        breadcrumbState = BreadcrumbState(0)
+        breadcrumbState.add(Breadcrumb("1"))
+        breadcrumbState.add(Breadcrumb("2"))
+        assertTrue(breadcrumbState.store.isEmpty())
     }
 
     /**
@@ -69,9 +69,9 @@ class BreadcrumbsTest {
      */
     @Test
     fun testSetSizeNegative() {
-        breadcrumbs = Breadcrumbs(-1)
-        breadcrumbs.add(Breadcrumb("1"))
-        assertEquals(0, breadcrumbs.store.size)
+        breadcrumbState = BreadcrumbState(-1)
+        breadcrumbState.add(Breadcrumb("1"))
+        assertEquals(0, breadcrumbState.store.size)
     }
 
     /**
@@ -79,9 +79,9 @@ class BreadcrumbsTest {
      */
     @Test
     fun testClear() {
-        breadcrumbs.add(Breadcrumb("1"))
-        breadcrumbs.clear()
-        assertTrue(breadcrumbs.store.isEmpty())
+        breadcrumbState.add(Breadcrumb("1"))
+        breadcrumbState.clear()
+        assertTrue(breadcrumbState.store.isEmpty())
     }
 
     /**
@@ -89,8 +89,8 @@ class BreadcrumbsTest {
      */
     @Test
     fun testDefaultBreadcrumbType() {
-        breadcrumbs.add(Breadcrumb("1"))
-        assertEquals(MANUAL, breadcrumbs.store.peek().type)
+        breadcrumbState.add(Breadcrumb("1"))
+        assertEquals(MANUAL, breadcrumbState.store.peek().type)
     }
 
     /**
@@ -98,12 +98,12 @@ class BreadcrumbsTest {
      */
     @Test
     fun testPayloadSizeLimit() {
-        val metadata = HashMap<String, Any>()
+        val metadata = HashMap<String, Any?>()
         for (i in 0..399) {
             metadata[String.format(Locale.US, "%d", i)] = "!!"
         }
-        breadcrumbs.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata))
-        assertTrue(breadcrumbs.store.isEmpty())
+        breadcrumbState.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata))
+        assertTrue(breadcrumbState.store.isEmpty())
     }
 
     /**

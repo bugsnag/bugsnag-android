@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.util.HashMap;
 
 @SmallTest
-public class OnBreadcrumbsTest {
+public class OnBreadcrumbStateTest {
 
     private Client client;
 
@@ -28,7 +28,7 @@ public class OnBreadcrumbsTest {
         Configuration configuration = new Configuration("api-key");
         configuration.setAutoCaptureBreadcrumbs(false);
         client = generateClient();
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @After
@@ -39,7 +39,7 @@ public class OnBreadcrumbsTest {
     @Test
     public void noCallback() throws Exception {
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class OnBreadcrumbsTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class OnBreadcrumbsTest {
         client.leaveBreadcrumb("Hello");
         client.removeOnBreadcrumb(cb);
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbs.store.size());
+        assertEquals(2, client.breadcrumbState.getStore().size());
     }
 
 }
