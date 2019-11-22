@@ -1,0 +1,5 @@
+{
+  "id": "123",
+  "startedAt": "1970-01-01T00:00:00Z",
+  "user": {"id":"123","email":"j@example.com","name":"Jay"}
+}
