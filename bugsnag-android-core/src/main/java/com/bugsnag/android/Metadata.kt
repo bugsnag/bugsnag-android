@@ -25,7 +25,7 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
-        jsonStreamer.objectToStream(store, writer)
+        jsonStreamer.objectToStream(store, writer, true)
     }
 
     override fun addMetadata(section: String, value: Any?) = addMetadata(section, null, value)

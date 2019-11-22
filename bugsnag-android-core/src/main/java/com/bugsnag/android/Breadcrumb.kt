@@ -24,7 +24,7 @@ class Breadcrumb internal constructor(
         writer.name("name").value(message)
         writer.name("type").value(type.toString())
         writer.name("metaData")
-        writer.value(metadata)
+        writer.value(metadata, true)
         writer.endObject()
     }
 }
