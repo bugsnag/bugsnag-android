@@ -208,7 +208,7 @@ public class NativeInterface {
     public static Map<String,Object> getDeviceData() {
         HashMap<String,Object> deviceData = new HashMap<>();
         DeviceData source = getClient().getDeviceData();
-        deviceData.putAll(source.getDeviceMetaData());
+        deviceData.putAll(source.getDeviceMetadata());
         deviceData.putAll(source.getDeviceData()); // wat
         return deviceData;
     }
