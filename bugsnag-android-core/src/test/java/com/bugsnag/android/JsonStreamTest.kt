@@ -57,4 +57,23 @@ class JsonStreamTest {
         stream.endObject()
         validateJson("json_stream.json", writer.toString())
     }
+
+    @Test
+    fun testNullValues() {
+        val writer = StringWriter()
+        val stream = JsonStream(writer)
+        stream.beginObject()
+        stream.name("bool").value(null as Boolean?)
+        stream.name("string").value(null as String?)
+        stream.name("int").value(null as Int?)
+        stream.name("long").value(null as Long?)
+        stream.name("float").value(null as Float?)
+        stream.name("streamable").value(null as JsonStream.Streamable?)
+        stream.name("map").value(null as Map<*, *>?)
+        stream.name("collection").value(null as List<*>?)
+        stream.name("array").value(null as Array<*>?)
+        stream.name("object").value(null as Any?)
+        stream.endObject()
+        validateJson("null_json_stream.json", writer.toString())
+    }
 }
