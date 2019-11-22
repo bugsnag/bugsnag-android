@@ -10,6 +10,7 @@ internal class DeviceBuildInfo(
     val osBuild: String,
     val fingerprint: String,
     val tags: String,
+    val brand: String,
     val cpuAbis: Array<String>
 ) {
     companion object {
@@ -27,6 +28,7 @@ internal class DeviceBuildInfo(
                 Build.DISPLAY,
                 Build.FINGERPRINT,
                 Build.TAGS,
+                Build.BRAND,
                 cpuABis
             )
         }
