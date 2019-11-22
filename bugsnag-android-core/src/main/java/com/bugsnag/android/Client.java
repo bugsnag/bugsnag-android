@@ -49,7 +49,8 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetadataAware, CallbackAware {
+public class Client extends Observable implements Observer, MetadataAware, CallbackAware,
+        UserAware {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -450,6 +451,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param email the email address of the current user
      * @param name  the name of the current user
      */
+    @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         setUserId(id);
         setUserEmail(email);
@@ -463,6 +465,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @return the current user
      */
     @NonNull
+    @Override
     public User getUser() {
         return user;
     }
@@ -504,6 +507,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      *
      * @param id a unique identifier of the current user
      */
+    @Override
     public void setUserId(@Nullable String id) {
         user.setId(id);
         userRepository.save(user);
@@ -515,6 +519,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      *
      * @param email the email address of the current user
      */
+    @Override
     public void setUserEmail(@Nullable String email) {
         user.setEmail(email);
         userRepository.save(user);
@@ -526,6 +531,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      *
      * @param name the name of the current user
      */
+    @Override
     public void setUserName(@Nullable String name) {
         user.setName(name);
         userRepository.save(user);
