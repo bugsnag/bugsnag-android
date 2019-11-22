@@ -13,8 +13,8 @@ class Error @JvmOverloads internal constructor(
 
             var currentEx: Throwable? = exc
             while (currentEx != null) {
-                val trace = Stacktrace(exc.stackTrace, projectPackages)
-                errors.add(Error(exc.javaClass.name, exc.localizedMessage, trace.trace))
+                val trace = Stacktrace(currentEx.stackTrace, projectPackages)
+                errors.add(Error(currentEx.javaClass.name, currentEx.localizedMessage, trace.trace))
                 currentEx = currentEx.cause
             }
             return errors
