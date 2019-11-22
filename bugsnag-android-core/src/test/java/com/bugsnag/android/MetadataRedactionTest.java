@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.JsonUtilsKt.validateJson;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -57,6 +58,12 @@ public class MetadataRedactionTest {
         metadata.addMetadata("foo", "password", "abc123");
         metadata.setRedactKeys(Collections.singleton("bar"));
         verifyJsonRedacted(metadata, "metadata_redaction_4.json");
+    }
+
+    @Test
+    public void testDefaultRedactKeys()  {
+        Metadata metadata = new Metadata();
+        assertEquals(Collections.singleton("password"), metadata.getRedactKeys());
     }
 
     void verifyJsonRedacted(Metadata metadata, String resourceName) throws IOException {
