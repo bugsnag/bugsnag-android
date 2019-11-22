@@ -14,10 +14,10 @@ enum greatest_test_res validate_serialized_json(const test_case *test_case,
                                                 JSON_Value *event_val);
 bsg_user * loadUserTestCase(jint num);
 bsg_app_info * loadAppTestCase(jint num);
-bsg_app_info * loadAppMetaDataTestCase(jint num);
+bsg_app_info * loadAppMetadataTestCase(jint num);
 bsg_device_info * loadDeviceTestCase(jint num);
-bsg_device_info * loadDeviceMetaDataTestCase(jint num);
-bugsnag_metadata * loadCustomMetaDataTestCase(jint num);
+bsg_device_info * loadDeviceMetadataTestCase(jint num);
+bugsnag_metadata * loadCustomMetadataTestCase(jint num);
 bugsnag_report * loadContextTestCase(jint num);
 bugsnag_report * loadHandledStateTestCase(jint num);
 bugsnag_report * loadSessionTestCase(jint num);

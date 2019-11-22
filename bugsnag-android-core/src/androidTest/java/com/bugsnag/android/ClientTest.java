@@ -250,9 +250,9 @@ public class ClientTest {
     }
 
     @Test
-    public void testAppDataMetaData() {
+    public void testAppDataMetadata() {
         client = generateClient();
-        Map<String, Object> app = client.getAppData().getAppDataMetaData();
+        Map<String, Object> app = client.getAppData().getAppDataMetadata();
         assertEquals(6, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
         assertEquals("com.bugsnag.android.core.test", app.get("packageName"));
@@ -272,17 +272,17 @@ public class ClientTest {
     @Test
     public void testPopulateDeviceMetadata() {
         client = generateClient();
-        Map<String, Object> metaData = client.getDeviceData().getDeviceMetadata();
+        Map<String, Object> metadata = client.getDeviceData().getDeviceMetadata();
 
-        assertEquals(9, metaData.size());
-        assertNotNull(metaData.get("batteryLevel"));
-        assertNotNull(metaData.get("charging"));
-        assertNotNull(metaData.get("locationStatus"));
-        assertNotNull(metaData.get("networkAccess"));
-        assertNotNull(metaData.get("brand"));
-        assertNotNull(metaData.get("screenDensity"));
-        assertNotNull(metaData.get("dpi"));
-        assertNotNull(metaData.get("emulator"));
-        assertNotNull(metaData.get("screenResolution"));
+        assertEquals(9, metadata.size());
+        assertNotNull(metadata.get("batteryLevel"));
+        assertNotNull(metadata.get("charging"));
+        assertNotNull(metadata.get("locationStatus"));
+        assertNotNull(metadata.get("networkAccess"));
+        assertNotNull(metadata.get("brand"));
+        assertNotNull(metadata.get("screenDensity"));
+        assertNotNull(metadata.get("dpi"));
+        assertNotNull(metadata.get("emulator"));
+        assertNotNull(metadata.get("screenResolution"));
     }
 }

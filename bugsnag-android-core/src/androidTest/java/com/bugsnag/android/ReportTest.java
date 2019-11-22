@@ -30,7 +30,7 @@ public class ReportTest {
         RuntimeException exception = new RuntimeException("Something broke");
         Event event = new Event.Builder(config, exception,
             BugsnagTestUtils.generateSessionTracker(),
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
         report = new Report("api-key", event);
     }
 

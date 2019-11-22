@@ -82,12 +82,12 @@ TEST test_app_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadAppMetaDataTestCase(num);
+    test_case->data_ptr = loadAppMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;
@@ -128,12 +128,12 @@ TEST test_device_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadDeviceMetaDataTestCase(num);
+    test_case->data_ptr = loadDeviceMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;
@@ -151,12 +151,12 @@ TEST test_custom_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadCustomMetaDataTestCase(num);
+    test_case->data_ptr = loadCustomMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;

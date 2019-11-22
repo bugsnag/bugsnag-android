@@ -8,19 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public class MetaDataTest {
+public class MetadataTest {
 
     @Test
     public void testBasicMerge() {
-        MetaData base = new MetaData();
+        Metadata base = new Metadata();
         base.addMetadata("example", "name", "bob");
         base.addMetadata("example", "awesome", false);
 
-        MetaData overrides = new MetaData();
+        Metadata overrides = new Metadata();
         base.addMetadata("example", "age", 30);
         base.addMetadata("example", "awesome", true);
 
-        MetaData merged = MetaData.Companion.merge(base, overrides);
+        Metadata merged = Metadata.Companion.merge(base, overrides);
         Map<String, Object> tab = (Map<String, Object>) merged.getMetadata("example", null);
         assertEquals("bob", tab.get("name"));
         assertEquals(30, tab.get("age"));
@@ -31,15 +31,15 @@ public class MetaDataTest {
     public void testDeepMerge() {
         Map<String, String> baseMap = new HashMap<>();
         baseMap.put("key", "fromBase");
-        MetaData base = new MetaData();
+        Metadata base = new Metadata();
         base.addMetadata("example", "map", baseMap);
 
         Map<String, String> overridesMap = new HashMap<>();
         baseMap.put("key", "fromOverrides");
-        MetaData overrides = new MetaData();
+        Metadata overrides = new Metadata();
         overrides.addMetadata("example", "map", overridesMap);
 
-        MetaData merged = MetaData.Companion.merge(base, overrides);
+        Metadata merged = Metadata.Companion.merge(base, overrides);
         Map<String, Object> tab = (Map<String, Object>) merged.getMetadata("example", null);
 
         @SuppressWarnings("unchecked")

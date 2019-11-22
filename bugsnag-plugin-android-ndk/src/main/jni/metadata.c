@@ -83,7 +83,7 @@ bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
   jni_cache->get_user_data = (*env)->GetStaticMethodID(
       env, jni_cache->native_interface, "getUserData", "()Ljava/util/Map;");
   jni_cache->get_metadata = (*env)->GetStaticMethodID(
-      env, jni_cache->native_interface, "getMetaData", "()Ljava/util/Map;");
+      env, jni_cache->native_interface, "getMetadata", "()Ljava/util/Map;");
   jni_cache->get_context = (*env)->GetStaticMethodID(
       env, jni_cache->native_interface, "getContext", "()Ljava/lang/String;");
   return jni_cache;

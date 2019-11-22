@@ -49,7 +49,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetaDataAware {
+public class Client extends Observable implements Observer, MetadataAware {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -168,7 +168,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                 // send an internal error to bugsnag with no cache
                 Thread thread = Thread.currentThread();
                 Event err = new Event.Builder(immutableConfig, exc, null, thread,
-                        true, new MetaData()).build();
+                        true, new Metadata()).build();
                 err.setContext(context);
 
                 err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
@@ -623,7 +623,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
      */
     public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetaData())
+            Thread.currentThread(), false, clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -656,7 +656,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
         Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), clientState.getMetaData())
+            sessionTracker, Thread.currentThread(), clientState.getMetadata())
             .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
             .build();
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -667,13 +667,13 @@ public class Client extends Observable implements Observer, MetaDataAware {
      *
      * Should only ever be called from the {@link ExceptionHandler}.
      */
-    void notifyUnhandledException(@NonNull Throwable exception, MetaData metaData,
+    void notifyUnhandledException(@NonNull Throwable exception, Metadata metadata,
                                   @HandledState.SeverityReason String severityReason,
                                   @Nullable String attributeValue, Thread thread) {
         Event event = new Event.Builder(immutableConfig, exception,
-                sessionTracker, thread, true, clientState.getMetaData())
+                sessionTracker, thread, true, clientState.getMetadata())
                 .severity(Severity.ERROR)
-                .metaData(metaData)
+                .metadata(metadata)
                 .severityReasonType(severityReason)
                 .attributeValue(attributeValue)
                 .build();
@@ -703,7 +703,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
         event.setAppData(errorAppData);
-        event.addMetadata("app", null, appData.getAppDataMetaData());
+        event.addMetadata("app", null, appData.getAppDataMetadata());
 
         // Attach breadcrumbs to the event
         event.setBreadcrumbs(breadcrumbState);
@@ -849,7 +849,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        clientState.getMetaData().addMetadata(section, key, value);
+        clientState.getMetadata().addMetadata(section, key, value);
     }
 
     @Override
@@ -859,7 +859,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
 
     @Override
     public void clearMetadata(@NonNull String section, @Nullable String key) {
-        clientState.getMetaData().clearMetadata(section, key);
+        clientState.getMetadata().clearMetadata(section, key);
     }
 
     @Nullable
@@ -871,7 +871,7 @@ public class Client extends Observable implements Observer, MetaDataAware {
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return clientState.getMetaData().getMetadata(section, key);
+        return clientState.getMetadata().getMetadata(section, key);
     }
 
     /**

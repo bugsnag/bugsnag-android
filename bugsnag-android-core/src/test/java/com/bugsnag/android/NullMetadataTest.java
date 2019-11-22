@@ -34,28 +34,28 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testErrorDefaultMetaData() throws Exception {
+    public void testErrorDefaultMetadata() throws Exception {
         Event event = new Event.Builder(config, throwable, null,
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
         validateDefaultMetadata(event);
     }
 
     @Test
-    public void testSecondErrorDefaultMetaData() throws Exception {
+    public void testSecondErrorDefaultMetadata() throws Exception {
         Event event = new Event.Builder(config, "RuntimeException",
             "Something broke", new StackTraceElement[]{},
-            null, Thread.currentThread(), new MetaData()).build();
+            null, Thread.currentThread(), new Metadata()).build();
         validateDefaultMetadata(event);
     }
 
     @Test
     public void testConfigSetMetadataRef() throws Exception {
         Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
-        validateDefaultMetadata(configuration.getMetaData());
+        configuration.setMetadata(new Metadata());
+        validateDefaultMetadata(configuration.getMetadata());
     }
 
-    private void validateDefaultMetadata(MetaDataAware event) {
+    private void validateDefaultMetadata(MetadataAware event) {
         assertNull(event.getMetadata(TAB_KEY, null));
         event.addMetadata(TAB_KEY, "test", "data");
         assertEquals("data", event.getMetadata(TAB_KEY, "test"));

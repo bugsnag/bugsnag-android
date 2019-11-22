@@ -196,7 +196,7 @@ public class NativeInterface {
         HashMap<String,Object> data = new HashMap<>();
         AppData source = getClient().getAppData();
         data.putAll(source.getAppData());
-        data.putAll(source.getAppDataMetaData());
+        data.putAll(source.getAppDataMetadata());
         return data;
     }
 
@@ -225,8 +225,8 @@ public class NativeInterface {
      * Retrieves global metadata from the static Client instance as a Map
      */
     @NonNull
-    public static Map<String, Object> getMetaData() {
-        return new HashMap<>(getClient().clientState.getMetaData().toMap());
+    public static Map<String, Object> getMetadata() {
+        return new HashMap<>(getClient().clientState.getMetadata().toMap());
     }
 
     /**

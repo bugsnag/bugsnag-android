@@ -28,7 +28,7 @@ public class EventTest {
         config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Example message");
         event = new Event.Builder(config, exception, null,
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
     }
 
     @Test
@@ -36,12 +36,12 @@ public class EventTest {
         String msg = "Foo";
         Event err = new Event.Builder(config,
             new RuntimeException(msg), null,
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
         assertEquals(msg, err.getExceptionMessage());
 
         err = new Event.Builder(config,
             new RuntimeException(), null,
-            Thread.currentThread(), false, new MetaData()).build();
+            Thread.currentThread(), false, new Metadata()).build();
         assertEquals("", err.getExceptionMessage());
     }
 
@@ -56,7 +56,7 @@ public class EventTest {
         BugsnagException exception = new BugsnagException("Busgang", "exceptional",
             new StackTraceElement[]{});
         Event err = new Event.Builder(config,
-            exception, null, Thread.currentThread(), false, new MetaData()).build();
+            exception, null, Thread.currentThread(), false, new Metadata()).build();
         assertEquals("Busgang", err.getExceptionName());
     }
 
@@ -98,23 +98,23 @@ public class EventTest {
     }
 
     @Test
-    public void testBuilderMetaData() {
+    public void testBuilderMetadata() {
         Event.Builder builder = new Event.Builder(config,
             new RuntimeException("foo"), null,
-            Thread.currentThread(), false, new MetaData());
+            Thread.currentThread(), false, new Metadata());
 
-        assertNotNull(builder.metaData(new MetaData()).build());
+        assertNotNull(builder.metadata(new Metadata()).build());
 
-        MetaData metaData = new MetaData();
-        metaData.addMetadata("foo", "bar", true);
+        Metadata metadata = new Metadata();
+        metadata.addMetadata("foo", "bar", true);
 
-        Event event = builder.metaData(metaData).build();
+        Event event = builder.metadata(metadata).build();
         Map<String, Object> foo = (Map<String, Object>) event.getMetadata("foo", null);
         assertEquals(1, foo.size());
     }
 
     @Test
-    public void testErrorMetaData() {
+    public void testErrorMetadata() {
         event.addMetadata("rocks", "geode", "a shiny mineral");
         Map<String, Object> rocks = (Map<String, Object>) event.getMetadata("rocks", null);
         assertNotNull(rocks);

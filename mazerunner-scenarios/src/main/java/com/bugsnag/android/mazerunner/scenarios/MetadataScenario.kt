@@ -7,7 +7,7 @@ import com.bugsnag.android.Configuration
 /**
  * Sends a handled exception to Bugsnag, which includes custom metadata
  */
-internal class MetaDataScenario(config: Configuration,
+internal class MetadataScenario(config: Configuration,
                                 context: Context) : Scenario(config, context) {
     init {
         config.setAutoTrackSessions(false)
@@ -15,7 +15,7 @@ internal class MetaDataScenario(config: Configuration,
 
     override fun run() {
         super.run()
-        Bugsnag.notify(RuntimeException("MetaDataScenario"), {
+        Bugsnag.notify(RuntimeException("MetadataScenario"), {
             it.addMetadata("Custom", "foo", "Hello World!")
             true
         })

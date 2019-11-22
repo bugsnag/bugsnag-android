@@ -15,7 +15,9 @@ class EventNameTest {
     fun setUp() {
         val config = BugsnagTestUtils.generateImmutableConfig()
         val exception = RuntimeException("Example message", RuntimeException("Another"))
-        event = Event.Builder(config, exception, null, Thread.currentThread(), false, MetaData()).build()
+        event = Event.Builder(config, exception, null, Thread.currentThread(), false,
+            Metadata()
+        ).build()
     }
 
     @Test
