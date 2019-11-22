@@ -419,16 +419,6 @@ public class Client extends Observable implements Observer, MetadataAware {
     }
 
     /**
-     * Starts tracking a new session only if no sessions have yet been tracked
-     *
-     * This is an integration point for custom libraries implementing automatic session capture
-     * which differs from the default activity-based initialization.
-     */
-    public void startFirstSession(@NonNull Activity activity) {
-        sessionTracker.startFirstSession(activity);
-    }
-
-    /**
      * Gets the context to be sent to Bugsnag.
      *
      * @return Context
@@ -478,17 +468,17 @@ public class Client extends Observable implements Observer, MetadataAware {
     }
 
     @NonNull
-    public Collection<Breadcrumb> getBreadcrumbs() {
+    Collection<Breadcrumb> getBreadcrumbs() {
         return new ArrayList<>(breadcrumbState.getStore());
     }
 
     @NonNull
-    public AppData getAppData() {
+    AppData getAppData() {
         return appData;
     }
 
     @NonNull
-    public DeviceData getDeviceData() {
+    DeviceData getDeviceData() {
         return deviceData;
     }
 
@@ -1015,7 +1005,7 @@ public class Client extends Observable implements Observer, MetadataAware {
      * @return the config
      */
     @NonNull
-    public BugsnagConfiguration getConfiguration() {
+    BugsnagConfiguration getConfiguration() {
         return clientState;
     }
 
