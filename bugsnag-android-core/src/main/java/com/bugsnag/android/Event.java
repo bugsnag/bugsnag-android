@@ -419,7 +419,13 @@ public class Event implements JsonStream.Streamable, MetadataAware {
                 boolean unhandled,
                 Metadata globalMetadata) {
             Throwable exc = unhandled ? exception : null;
-            this.threadState = new ThreadState(config, thread, Thread.getAllStackTraces(), exc);
+            StackTraceElement[] stackTrace;
+            if (exc != null) {
+                stackTrace = exc.getStackTrace();
+            } else {
+                stackTrace = thread.getStackTrace();
+            }
+            this.threadState = new ThreadState(config, stackTrace, thread);
             this.config = config;
             this.exception = exception;
             this.severityReasonType = HandledState.REASON_USER_SPECIFIED; // default
