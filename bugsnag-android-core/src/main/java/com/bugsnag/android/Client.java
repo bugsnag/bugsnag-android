@@ -908,12 +908,10 @@ public class Client extends Observable implements Observer, MetadataAware {
                 leaveErrorBreadcrumb(event);
                 break;
             case UNDELIVERED:
-                if (!report.isCachingDisabled()) {
-                    Logger.warn("Could not send event(s) to Bugsnag,"
-                            + " saving to disk to send later");
-                    eventStore.write(event);
-                    leaveErrorBreadcrumb(event);
-                }
+                Logger.warn("Could not send event(s) to Bugsnag,"
+                        + " saving to disk to send later");
+                eventStore.write(event);
+                leaveErrorBreadcrumb(event);
                 break;
             case FAILURE:
                 Logger.warn("Problem sending event to Bugsnag");
