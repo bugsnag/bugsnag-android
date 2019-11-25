@@ -6,8 +6,6 @@ import org.junit.Assert.assertEquals
 
 import org.junit.Test
 
-import java.lang.Thread
-
 class OnErrorTest {
 
     private val config = generateImmutableConfig()
@@ -21,10 +19,9 @@ class OnErrorTest {
             false
         }
 
-        val event = Event.Builder(config, RuntimeException("Test"), null,
-            Thread.currentThread(), false, Metadata()
-        ).build()
-        onError.run(event)
-        assertEquals(context, event.context)
+        val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+        val error = Event(RuntimeException("Test"), config, handledState)
+        onError.run(error)
+        assertEquals(context, error.context)
     }
 }

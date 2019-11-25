@@ -1,20 +1,19 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.Thread;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
  * <p>
  * See https://github.com/bugsnag/bugsnag-android/issues/194
  */
-@SuppressWarnings("unchecked")
 public class NullMetadataTest {
 
     private static final String TAB_KEY = "tab";
@@ -25,40 +24,36 @@ public class NullMetadataTest {
     /**
      * Generates a bugsnag client with a NOP error api client
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         config = BugsnagTestUtils.generateImmutableConfig();
         throwable = new RuntimeException("Test");
     }
 
     @Test
-    public void testErrorDefaultMetadata() throws Exception {
-        Event event = new Event.Builder(config, throwable, null,
-            Thread.currentThread(), false, new Metadata()).build();
+    public void testErrorDefaultMetadata() {
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(throwable, config, handledState);
         validateDefaultMetadata(event);
     }
 
     @Test
-    public void testSecondErrorDefaultMetadata() throws Exception {
-        Event event = new Event.Builder(config, "RuntimeException",
-            "Something broke", new StackTraceElement[]{},
-            null, Thread.currentThread(), new Metadata()).build();
+    public void testSecondErrorDefaultMetadata() {
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(new RuntimeException(), config, handledState);
+        List<String> projectPackages = Collections.emptyList();
+        Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages);
+        Error err = new Error("RuntimeException", "Something broke",
+                stacktrace.getTrace());
+        event.setErrors(Collections.singletonList(err));
         validateDefaultMetadata(event);
     }
 
-    @Test
-    public void testConfigSetMetadataRef() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetadata(new Metadata());
-        validateDefaultMetadata(configuration.getMetadata());
-    }
-
-    private void validateDefaultMetadata(MetadataAware event) {
-        assertNull(event.getMetadata(TAB_KEY, null));
-        event.addMetadata(TAB_KEY, "test", "data");
-        assertEquals("data", event.getMetadata(TAB_KEY, "test"));
+    private void validateDefaultMetadata(MetadataAware error) {
+        assertNull(error.getMetadata(TAB_KEY, null));
+        error.addMetadata(TAB_KEY, "test", "data");
+        assertEquals("data", error.getMetadata(TAB_KEY, "test"));
     }
 
 }

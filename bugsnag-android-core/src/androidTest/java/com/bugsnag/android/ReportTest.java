@@ -28,9 +28,8 @@ public class ReportTest {
     public void setUp() throws Exception {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Something broke");
-        Event event = new Event.Builder(config, exception,
-            BugsnagTestUtils.generateSessionTracker(),
-            Thread.currentThread(), false, new Metadata()).build();
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_ANR);
+        Event event = new Event(exception, config, handledState);
         report = new Report("api-key", event);
     }
 

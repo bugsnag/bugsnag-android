@@ -27,4 +27,7 @@ object BugsnagPluginInterface {
             null
         }
     }
+
+    fun createAnrEvent(exc: Throwable, client: Client) =
+        Event(exc, client.immutableConfig, HandledState.newInstance(HandledState.REASON_ANR))
 }

@@ -1,0 +1,16 @@
+{
+  "context":"ExampleContext",
+  "metaData": {},
+  "severity": "warning",
+  "severityReason": {
+    "type": "handledException"
+  },
+  "unhandled": false,
+  "projectPackages": [],
+  "exceptions": [],
+  "user": {},
+  "app": {},
+  "device": {},
+  "breadcrumbs": [],
+  "threads": []
+}
