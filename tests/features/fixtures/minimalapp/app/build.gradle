@@ -4,6 +4,12 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+repositories {
+    mavenLocal()
+    google()
+    jcenter()
+}
+
 android {
     compileSdkVersion 28
     buildToolsVersion "29.0.0"
@@ -17,7 +23,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled project.hasProperty("minified")
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -30,4 +36,20 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+if (project.hasProperty("withBugsnag")) {
+    println("Building with Bugsnag")
+
+    dependencies {
+        implementation 'com.bugsnag:bugsnag-android:+'
+    }
+
+    apply plugin: 'com.bugsnag.android.gradle'
+
+    bugsnag {
+        ndk true
+        autoUpload false
+        autoReportBuilds false
+    }
 }
