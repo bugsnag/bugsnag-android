@@ -30,7 +30,7 @@ FileUtils.cp(APP_BASE_TEMPLATE, APP_BUILD_GRADLE)
 `./gradlew clean`
 `./gradlew assembleRelease`
 
-apk_size = `stat --printf="%s" #{RELEASE_APK}`
+apk_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
 
 `./gradlew bundleRelease`
 
@@ -44,7 +44,7 @@ apk_size = `stat --printf="%s" #{RELEASE_APK}`
 
 `unzip -qq #{BUNDLE_DIR + UNBUNDLED_RELEASE} -d #{BUNDLE_DIR}`
 
-aab_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`
+aab_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
 
 `./gradlew clean`
 
@@ -53,7 +53,7 @@ FileUtils.cp(APP_BUGSNAG_TEMPLATE, APP_BUILD_GRADLE)
 
 `./gradlew assembleRelease`
 
-apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`
+apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
 
 `./gradlew bundleRelease`
 
