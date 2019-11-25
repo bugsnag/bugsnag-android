@@ -49,7 +49,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetadataAware {
+public class Client extends Observable implements Observer, MetadataAware, CallbackAware {
 
     private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -553,10 +553,12 @@ public class Client extends Observable implements Observer, MetadataAware {
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnError
      */
+    @Override
     public void addOnError(@NonNull OnError onError) {
         clientState.addOnError(onError);
     }
 
+    @Override
     public void removeOnError(@NonNull OnError onError) {
         clientState.removeOnError(onError);
     }
@@ -579,18 +581,22 @@ public class Client extends Observable implements Observer, MetadataAware {
      * @param onBreadcrumb a callback to run before a breadcrumb is captured
      * @see OnBreadcrumb
      */
+    @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.addOnBreadcrumb(onBreadcrumb);
     }
 
+    @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
         clientState.removeOnBreadcrumb(onBreadcrumb);
     }
 
+    @Override
     public void addOnSession(@NonNull OnSession onSession) {
         clientState.addOnSession(onSession);
     }
 
+    @Override
     public void removeOnSession(@NonNull OnSession onSession) {
         clientState.removeOnSession(onSession);
     }
