@@ -21,7 +21,7 @@ class BugsnagException extends Throwable implements JsonStream.Streamable {
     private String message;
     private final List<Map<String, Object>> customStackframes;
 
-    private String type = Configuration.DEFAULT_EXCEPTION_TYPE;
+    private String type = "android";
 
     private JsonStream.Streamable streamable;
     private Collection<String> projectPackages = new ArrayList<>();

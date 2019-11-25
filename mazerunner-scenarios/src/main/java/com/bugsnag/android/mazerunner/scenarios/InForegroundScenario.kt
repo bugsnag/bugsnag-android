@@ -13,7 +13,7 @@ import com.bugsnag.android.Configuration
 internal class InForegroundScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {

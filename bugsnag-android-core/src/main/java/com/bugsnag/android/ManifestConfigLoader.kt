@@ -88,8 +88,6 @@ internal class ManifestConfigLoader {
             autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
             autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
             autoTrackSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoTrackSessions)
-            autoCaptureBreadcrumbs =
-                data.getBoolean(AUTO_CAPTURE_BREADCRUMBS, autoCaptureBreadcrumbs)
             sendThreads = data.getBoolean(SEND_THREADS, sendThreads)
             persistUserBetweenSessions = data.getBoolean(PERSIST_USER, persistUserBetweenSessions)
         }
@@ -119,7 +117,7 @@ internal class ManifestConfigLoader {
     }
 
     private fun getStrArray(data: Bundle, key: String,
-                            default: Collection<String>): Collection<String> {
+                            default: Set<String>): Set<String> {
         val delimitedStr = data.getString(key)
 
         return when (val ary = delimitedStr?.split(",")) {

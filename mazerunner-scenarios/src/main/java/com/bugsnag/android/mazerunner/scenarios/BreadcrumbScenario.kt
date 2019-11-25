@@ -14,8 +14,8 @@ import java.util.*
 internal class BreadcrumbScenario(config: Configuration,
                                   context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
-        config.setAutoCaptureBreadcrumbs(false)
+        config.autoTrackSessions = false
+        config.enabledBreadcrumbTypes = emptySet()
     }
 
     override fun run() {

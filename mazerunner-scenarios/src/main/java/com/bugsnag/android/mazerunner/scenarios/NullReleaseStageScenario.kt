@@ -13,7 +13,7 @@ internal class NullReleaseStageScenario(config: Configuration,
     init {
         config.autoTrackSessions = false
         config.releaseStage = null
-        config.enabledReleaseStages = listOf("prod")
+        config.enabledReleaseStages = setOf("prod")
     }
 
     override fun run() {

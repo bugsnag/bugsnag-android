@@ -30,7 +30,7 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientNotifyModification() throws Exception {
-        Configuration config = (Configuration) client.getConfiguration();
+        Configuration config = client.getConfiguration();
         final Collection<OnError> onErrorTasks = config.getOnErrorTasks();
         client.addOnError(new OnError() {
             @Override
@@ -46,7 +46,7 @@ public class ConcurrentCallbackTest {
 
     @Test
     public void testClientBreadcrumbModification() throws Exception {
-        Configuration config = (Configuration) client.getConfiguration();
+        Configuration config = client.getConfiguration();
         final Collection<OnBreadcrumb> breadcrumbTasks =
                 config.getBreadcrumbCallbacks();
 

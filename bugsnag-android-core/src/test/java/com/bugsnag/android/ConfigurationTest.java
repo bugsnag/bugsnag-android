@@ -5,11 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import androidx.annotation.NonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class ConfigurationTest {
     private Configuration config;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         config = BugsnagTestUtils.generateConfiguration();
     }
 
@@ -56,7 +57,7 @@ public class ConfigurationTest {
     }
 
     private ImmutableConfig createConfigWithReleaseStages(Configuration config,
-                                                          Collection<String> releaseStages,
+                                                          Set<String> releaseStages,
                                                           String releaseStage) {
         config.setEnabledReleaseStages(releaseStages);
         config.setReleaseStage(releaseStage);
@@ -64,7 +65,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testLaunchThreshold() throws Exception {
+    public void testLaunchThreshold() {
         assertEquals(5000L, config.getLaunchCrashThresholdMs());
 
         config.setLaunchCrashThresholdMs(-5);
@@ -76,46 +77,82 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testAutoTrackSessions() throws Exception {
+    public void testAutoTrackSessions() {
         assertTrue(config.getAutoTrackSessions());
         config.setAutoTrackSessions(false);
         assertFalse(config.getAutoTrackSessions());
     }
 
     @Test
-    public void testOverrideContext() throws Exception {
+    public void testOverrideContext() {
         config.setContext("LevelOne");
         assertEquals("LevelOne", config.getContext());
     }
 
     @Test
-    public void testOverrideRedactKeys() throws Exception {
+    public void testOverrideRedactKeys() {
         config.setRedactKeys(Collections.singleton("Foo"));
         assertEquals(Collections.singleton("Foo"), config.getRedactKeys());
     }
 
     @Test
-    public void testOverrideIgnoreClasses() throws Exception {
+    public void testOverrideIgnoreClasses() {
         config.setIgnoreClasses(Collections.singleton("Bar"));
         assertEquals(Collections.singleton("Bar"), config.getIgnoreClasses());
     }
 
     @Test
-    public void testOverrideEnabledReleaseStages() throws Exception {
+    public void testOverrideEnabledReleaseStages() {
         config.setEnabledReleaseStages(Collections.singleton("Test"));
         assertEquals(Collections.singleton("Test"), config.getEnabledReleaseStages());
     }
 
     @Test
-    public void testOverrideAppType() throws Exception {
+    public void testOverrideAppType() {
         config.setAppType("React Native");
         assertEquals("React Native", config.getAppType());
     }
 
     @Test
-    public void testOverrideCodeBundleId() throws Exception {
+    public void testOverrideCodeBundleId() {
         config.setCodeBundleId("abc123");
         assertEquals("abc123", config.getCodeBundleId());
+    }
+
+    @Test
+    public void testAddOnError() {
+        OnError cb = new OnError() {
+            @Override
+            public boolean run(@NonNull Event event) {
+                return false;
+            }
+        };
+        config.addOnError(cb);
+        config.removeOnError(cb);
+    }
+
+    @Test
+    public void testAddOnSession() {
+        OnSession cb = new OnSession() {
+            @Override
+            public boolean run(@NonNull SessionPayload session) {
+                return false;
+            }
+        };
+        config.addOnSession(cb);
+        config.removeOnSession(cb);
+    }
+
+    @Test
+    public void testAddOnBreadcrumb() {
+        OnBreadcrumb cb = new OnBreadcrumb() {
+            @Override
+            public boolean run(@NonNull Breadcrumb breadcrumb) {
+                return false;
+            }
+        };
+        config.addOnBreadcrumb(cb);
+        config.removeOnBreadcrumb(cb);
     }
 
     @Test
@@ -141,11 +178,6 @@ public class ConfigurationTest {
 
         assertFalse(configuration.getDelivery() instanceof DefaultDelivery);
         assertEquals(delivery, configuration.getDelivery());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetNullDelivery() {
-        config.setDelivery(null);
     }
 
     @Test

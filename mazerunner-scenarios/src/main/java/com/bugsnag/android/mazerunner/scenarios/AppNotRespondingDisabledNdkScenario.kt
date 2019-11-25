@@ -12,7 +12,7 @@ import android.os.Handler
 internal class AppNotRespondingDisabledNdkScenario(config: Configuration,
                                                    context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
         config.autoDetectAnrs = true
         config.autoDetectNdkCrashes = false
     }

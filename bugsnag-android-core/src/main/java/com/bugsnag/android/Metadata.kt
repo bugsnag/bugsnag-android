@@ -21,7 +21,7 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
 
     private val store: MutableMap<String, Any> = ConcurrentHashMap(map)
     internal val jsonStreamer = ObjectJsonStreamer()
-    protected val redactKeys: Set<String> = jsonStreamer.redactKeys
+    val redactKeys: Set<String> = jsonStreamer.redactKeys
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {

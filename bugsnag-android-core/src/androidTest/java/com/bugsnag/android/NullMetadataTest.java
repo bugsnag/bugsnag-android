@@ -46,13 +46,6 @@ public class NullMetadataTest {
     }
 
     @Test
-    public void testConfigSetNullMetadata() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetadata(null);
-        validateDefaultMetadata(configuration.getMetadata());
-    }
-
-    @Test
     public void testErrorDefaultMetadata() throws Exception {
         Event event = new Event.Builder(config, throwable, generateSessionTracker(),
             Thread.currentThread(), false, new Metadata()).build();

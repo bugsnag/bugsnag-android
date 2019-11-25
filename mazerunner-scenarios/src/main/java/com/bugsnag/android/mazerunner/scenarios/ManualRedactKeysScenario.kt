@@ -10,8 +10,8 @@ import com.bugsnag.android.Configuration
 internal class ManualRedactKeysScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
-        config.setRedactKeys(listOf("foo"))
+        config.autoTrackSessions = false
+        config.redactKeys = setOf("foo")
     }
 
     override fun run() {
