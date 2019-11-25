@@ -83,7 +83,7 @@ calculated_sizes = {
 }
 
 def format_kbs(size)
-  (size/1000).round(2)
+  (size/1000.0).round(2)
 end
 
 markdown(%Q{
