@@ -8,7 +8,7 @@ import java.io.IOException
 internal class ThreadState @JvmOverloads constructor
     (
     config: ImmutableConfig,
-    excStacktrace: Array<StackTraceElement>,
+    exc: Throwable?,
     currentThread: java.lang.Thread = java.lang.Thread.currentThread(),
     stackTraces: MutableMap<java.lang.Thread, Array<StackTraceElement>> = java.lang.Thread.getAllStackTraces()
 ) : JsonStream.Streamable {
@@ -16,10 +16,14 @@ internal class ThreadState @JvmOverloads constructor
     internal val threads: MutableList<Thread>
 
     init {
-        // unhandled errors use the exception trace
         // API 24/25 don't record the currentThread, add it in manually
         // https://issuetracker.google.com/issues/64122757
-        stackTraces[currentThread] = excStacktrace
+        if (!stackTraces.containsKey(currentThread)) {
+            stackTraces[currentThread] = currentThread.stackTrace
+        }
+        if (exc != null) { // unhandled errors use the exception trace for thread traces
+            stackTraces[currentThread] = exc.stackTrace
+        }
 
         val currentThreadId = currentThread.id
         threads = stackTraces.keys

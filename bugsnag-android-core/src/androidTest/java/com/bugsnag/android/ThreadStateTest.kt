@@ -15,7 +15,7 @@ import java.lang.Thread
 class ThreadStateTest {
 
     private val configuration = generateImmutableConfig()
-    private val trace = arrayOf(StackTraceElement("Foo", "Bar", "foobar", 5))
+    private val trace: Throwable? = null
 
     private val threadState = ThreadState(configuration, trace)
     private val json = streamableToJsonArray(threadState)
@@ -106,7 +106,7 @@ class ThreadStateTest {
         val exc: Throwable = RuntimeException("Whoops")
         val expectedTrace = exc.stackTrace
 
-        val state = ThreadState(configuration, exc.stackTrace, currentThread, allStackTraces)
+        val state = ThreadState(configuration, exc, currentThread, allStackTraces)
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {
