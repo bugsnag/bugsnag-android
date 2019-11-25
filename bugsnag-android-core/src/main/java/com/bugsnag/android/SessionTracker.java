@@ -50,20 +50,22 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final AtomicReference<Session> currentSession = new AtomicReference<>();
     private final Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
+    final Logger logger;
 
     SessionTracker(ImmutableConfig configuration, Configuration clientState,
-                   Client client, SessionStore sessionStore) {
-        this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore);
+                   Client client, SessionStore sessionStore, Logger logger) {
+        this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore, logger);
     }
 
     SessionTracker(ImmutableConfig configuration, Configuration clientState,
-                   Client client, long timeoutMs, SessionStore sessionStore) {
+                   Client client, long timeoutMs, SessionStore sessionStore, Logger logger) {
         this.configuration = configuration;
         this.clientState = clientState;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
         this.foregroundDetector = new ForegroundDetector(client.appContext);
+        this.logger = logger;
         notifyNdkInForeground();
     }
 
@@ -191,17 +193,17 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                                 case DELIVERED:
                                     break;
                                 case UNDELIVERED:
-                                    Logger.warn("Storing session payload for future delivery");
+                                    logger.w("Storing session payload for future delivery");
                                     sessionStore.write(session);
                                     break;
                                 case FAILURE:
-                                    Logger.warn("Dropping invalid session tracking payload");
+                                    logger.w("Dropping invalid session tracking payload");
                                     break;
                                 default:
                                     break;
                             }
                         } catch (Exception exception) {
-                            Logger.warn("Session tracking payload failed", exception);
+                            logger.w("Session tracking payload failed", exception);
                         }
                     }
                 });
@@ -289,11 +291,11 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                             break;
                         case UNDELIVERED:
                             sessionStore.cancelQueuedFiles(storedFiles);
-                            Logger.warn("Leaving session payload for future delivery");
+                            logger.w("Leaving session payload for future delivery");
                             break;
                         case FAILURE:
                             // drop bad data
-                            Logger.warn("Deleting invalid session tracking payload");
+                            logger.w("Deleting invalid session tracking payload");
                             sessionStore.deleteStoredFiles(storedFiles);
                             break;
                         default:
@@ -366,7 +368,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         try {
             client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
         } catch (Exception ex) {
-            Logger.warn("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
+            logger.w("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
         }
     }
 

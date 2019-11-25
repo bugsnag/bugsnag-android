@@ -31,7 +31,6 @@ public class NativeBridge implements Observer {
     private static final int METADATA_SECTION = 0;
     private static final int METADATA_KEY = 1;
     private static final int METADATA_VALUE = 2;
-    private static final String LOG_TAG = "BugsnagNDK:NativeBridge";
     private static final Lock lock = new ReentrantLock();
     private static final AtomicBoolean installed = new AtomicBoolean(false);
 
@@ -89,7 +88,6 @@ public class NativeBridge implements Observer {
 
     public static native void updateUserName(@NonNull String newValue);
 
-    private boolean loggingEnabled = true;
     private final String reportDirectory;
 
     /**
@@ -98,7 +96,6 @@ public class NativeBridge implements Observer {
      * immediately.
      */
     public NativeBridge() {
-        loggingEnabled = NativeInterface.getLoggingEnabled();
         reportDirectory = NativeInterface.getNativeReportPath();
         File outFile = new File(reportDirectory);
         if (!outFile.exists() && !outFile.mkdirs()) {
@@ -458,8 +455,6 @@ public class NativeBridge implements Observer {
     }
 
     private void warn(String message) {
-        if (loggingEnabled) {
-            Log.w(LOG_TAG, message);
-        }
+        NativeInterface.getLogger().w(message);
     }
 }

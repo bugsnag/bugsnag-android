@@ -43,7 +43,7 @@ public class SessionPayloadTest {
     @Before
     public void setUp() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        sessionStore = new SessionStore(context, null);
+        sessionStore = new SessionStore(context, NoopLogger.INSTANCE, null);
 
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);

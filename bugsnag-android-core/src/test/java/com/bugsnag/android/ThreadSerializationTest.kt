@@ -19,7 +19,11 @@ internal class ThreadSerializationTest {
                 StackTraceElement("App", "launch", "App.java", 70)
             )
 
-            val thread = Thread(24, "main-one", "ando", true, Stacktrace(stacktrace, emptySet()))
+            val thread = Thread(24, "main-one", "ando", true, Stacktrace(
+                stacktrace,
+                emptySet(),
+                NoopLogger
+            ))
 
             val stacktrace1 = arrayOf(
                 StackTraceElement("", "run_func", "librunner.so", 5038),
@@ -27,7 +31,11 @@ internal class ThreadSerializationTest {
                 StackTraceElement("App", "launch", "App.java", 70)
             )
 
-            val thread1 = Thread(24, "main-one", "ando", false, Stacktrace(stacktrace1, emptySet()))
+            val thread1 = Thread(24, "main-one", "ando", false, Stacktrace(
+                stacktrace1,
+                emptySet(),
+                NoopLogger
+            ))
             return generateSerializationTestCases("thread", thread, thread1)
         }
     }

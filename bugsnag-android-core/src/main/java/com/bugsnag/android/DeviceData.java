@@ -62,13 +62,16 @@ class DeviceData {
     @NonNull
     final String[] cpuAbi;
 
+    private final Logger logger;
+
     DeviceData(Connectivity connectivity, Context appContext, Resources resources,
-               String installId, DeviceBuildInfo buildInfo) {
+               String installId, DeviceBuildInfo buildInfo, Logger logger) {
         this.connectivity = connectivity;
         this.appContext = appContext;
         this.resources = resources;
         this.installId = installId;
         this.buildInfo = buildInfo;
+        this.logger = logger;
 
         if (resources != null) {
             displayMetrics = resources.getDisplayMetrics();
@@ -274,7 +277,7 @@ class DeviceData {
             return batteryStatus.getIntExtra("level", -1)
                 / (float) batteryStatus.getIntExtra("scale", -1);
         } catch (Exception exception) {
-            Logger.warn("Could not get batteryLevel");
+            logger.w("Could not get batteryLevel");
         }
         return null;
     }
@@ -292,7 +295,7 @@ class DeviceData {
             return (status == BatteryManager.BATTERY_STATUS_CHARGING
                 || status == BatteryManager.BATTERY_STATUS_FULL);
         } catch (Exception exception) {
-            Logger.warn("Could not get charging status");
+            logger.w("Could not get charging status");
         }
         return null;
     }
@@ -313,7 +316,7 @@ class DeviceData {
                 return "disallowed";
             }
         } catch (Exception exception) {
-            Logger.warn("Could not get locationStatus");
+            logger.w("Could not get locationStatus");
         }
         return null;
     }

@@ -26,7 +26,7 @@ internal data class ImmutableConfig(
     val endpoints: Endpoints,
     val persistUserBetweenSessions: Boolean,
     val launchCrashThresholdMs: Long,
-    val loggingEnabled: Boolean,
+    val logger: Logger,
     val maxBreadcrumbs: Int
 ) {
 
@@ -100,7 +100,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         endpoints = config.endpoints,
         persistUserBetweenSessions = config.persistUserBetweenSessions,
         launchCrashThresholdMs = config.launchCrashThresholdMs,
-        loggingEnabled = config.loggingEnabled,
+        logger = config.logger!!,
         maxBreadcrumbs = config.maxBreadcrumbs,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes.toSet()
     )
@@ -110,9 +110,11 @@ internal fun sanitiseConfiguration(
     appContext: Context, configuration: Configuration,
     connectivity: Connectivity
 ): ImmutableConfig {
+    val logger = configuration.logger!!
+
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
-        configuration.delivery = DefaultDelivery(connectivity)
+        configuration.delivery = DefaultDelivery(connectivity, logger)
     }
     val packageName = appContext.packageName
 
@@ -123,7 +125,7 @@ internal fun sanitiseConfiguration(
             @Suppress("DEPRECATION")
             configuration.versionCode = packageInfo.versionCode
         } catch (ignore: Exception) {
-            Logger.warn("Bugsnag is unable to read version code from manifest.")
+            logger.w("Bugsnag is unable to read version code from manifest.")
         }
     }
 
@@ -143,7 +145,7 @@ internal fun sanitiseConfiguration(
             )
             buildUuid = ai.metaData.getString(ManifestConfigLoader.BUILD_UUID)
         } catch (ignore: Exception) {
-            Logger.warn("Bugsnag is unable to read build UUID from manifest.")
+            logger.w("Bugsnag is unable to read build UUID from manifest.")
         }
 
         if (buildUuid != null) {

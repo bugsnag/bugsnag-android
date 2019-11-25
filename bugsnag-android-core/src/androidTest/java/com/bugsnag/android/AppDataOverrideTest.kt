@@ -29,7 +29,13 @@ class AppDataOverrideTest {
 
         val context = ApplicationProvider.getApplicationContext<Context>()
         val packageManager = context.packageManager
-        val obj = AppData(context, packageManager, BugsnagTestUtils.convert(config), sessionTracker)
+        val obj = AppData(
+            context,
+            packageManager,
+            BugsnagTestUtils.convert(config),
+            sessionTracker,
+            NoopLogger
+        )
         this.appData = obj.appData
     }
 
