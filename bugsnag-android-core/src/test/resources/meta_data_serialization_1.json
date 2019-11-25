@@ -1,0 +1,19 @@
+{
+  "example": {
+    "boolean": true,
+    "string": "value",
+    "array": [
+      "a",
+      "b"
+    ],
+    "double": 123.45,
+    "integer": 123,
+    "collection": [
+      "Hello",
+      "World"
+    ],
+    "map": {
+      "key": "value"
+    }
+  }
+}
