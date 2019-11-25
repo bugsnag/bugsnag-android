@@ -1,5 +1,5 @@
 require 'fileutils'
-
+require 'pp'
 RELEASE_APK = "app/build/outputs/apk/release/app-release-unsigned.apk"
 
 BUNDLE_DIR = "app/build/outputs/bundle/release/"
@@ -34,15 +34,15 @@ def buildOutputs(bugsnag: false, minified: false)
   `unzip -qq #{BUNDLE_DIR + UNBUNDLED_RELEASE} -d #{BUNDLE_DIR}`
 end
 
-buildOutputs(bugsnag: false, minified: true)
+buildOutputs(bugsnag: false, minified: false)
 
 apk_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
-aab_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+aab_size = `stat --printf="%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
 
 buildOutputs(bugsnag: false, minified: true)
 
 min_apk_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
-min_aab_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+min_aab_size = `stat --printf="%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
 
 buildOutputs(bugsnag: true, minified: false)
 
