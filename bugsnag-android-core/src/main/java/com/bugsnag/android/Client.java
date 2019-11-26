@@ -114,9 +114,18 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
+        // if the user has set the releaseStage to production manually, disable logging
+        if (configuration.getLogger() == DebugLogger.INSTANCE
+                && AppData.RELEASE_STAGE_PRODUCTION.equals(configuration.getReleaseStage())) {
+            configuration.setLogger(NoopLogger.INSTANCE);
+        }
         this.logger = configuration.getLogger();
+
+        // set sensible defaults for delivery/project packages etc if not set
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
+        sanitiseConfiguration(configuration);
+
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
@@ -129,8 +138,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             }
         });
 
-        // set sensible defaults for delivery/project packages etc if not set
-        sanitiseConfiguration(configuration);
         clientState = configuration;
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
