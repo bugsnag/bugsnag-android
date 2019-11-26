@@ -75,16 +75,6 @@ class BreadcrumbStateTest {
     }
 
     /**
-     * Verifies that clearing removes all the breadcrumbs
-     */
-    @Test
-    fun testClear() {
-        breadcrumbState.add(Breadcrumb("1"))
-        breadcrumbState.clear()
-        assertTrue(breadcrumbState.store.isEmpty())
-    }
-
-    /**
      * Verifies that the type of a breadcrumb is manual by default
      */
     @Test

@@ -129,9 +129,6 @@ public class NativeBridge implements Observer {
             case ADD_METADATA:
                 handleAddMetadata(arg);
                 break;
-            case CLEAR_BREADCRUMBS:
-                clearBreadcrumbs();
-                break;
             case CLEAR_METADATA_TAB:
                 handleClearMetadataTab(arg);
                 break;

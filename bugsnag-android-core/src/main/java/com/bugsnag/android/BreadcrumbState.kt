@@ -47,16 +47,6 @@ internal class BreadcrumbState(maxBreadcrumbs: Int) : Observable(),
         )
     }
 
-    fun clear() {
-        store.clear()
-        setChanged()
-        notifyObservers(
-            NativeInterface.Message(
-                NativeInterface.MessageType.CLEAR_BREADCRUMBS, null
-            )
-        )
-    }
-
     private fun pruneBreadcrumbs() {
         // Remove oldest breadcrumbState until new max size reached
         while (store.size > maxBreadcrumbs) {
