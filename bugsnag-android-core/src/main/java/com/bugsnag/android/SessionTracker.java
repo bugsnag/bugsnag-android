@@ -64,7 +64,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
-        this.foregroundDetector = new ForegroundDetector(client.appContext);
+        this.foregroundDetector = new ForegroundDetector(client.getAppContext());
         this.logger = logger;
         notifyNdkInForeground();
     }
@@ -179,8 +179,8 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
                         SessionPayload payload =
                             new SessionPayload(session, null,
-                                client.appData.getAppDataSummary(),
-                                    client.deviceData.getDeviceDataSummary());
+                                client.getAppData().getAppDataSummary(),
+                                    client.getDeviceData().getDeviceDataSummary());
 
                         try {
                             for (OnSession mutator : clientState.getSessionCallbacks()) {

@@ -1001,6 +1001,10 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         getAppData().setBinaryArch(binaryArch);
     }
 
+    Context getAppContext() {
+        return appContext;
+    }
+
     void close() {
         orientationListener.disable();
         connectivity.unregisterForNetworkChanges();

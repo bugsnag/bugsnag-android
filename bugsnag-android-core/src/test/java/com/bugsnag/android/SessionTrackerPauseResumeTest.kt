@@ -1,9 +1,8 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.BugsnagTestUtils.generateClient
+import android.app.ActivityManager
+import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-import com.bugsnag.android.BugsnagTestUtils.generateSessionStore
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -12,29 +11,47 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 
-class SessionTrackerPauseResumeTest {
+@RunWith(MockitoJUnitRunner::class)
+internal class SessionTrackerPauseResumeTest {
 
     private val configuration = generateConfiguration().also {
         it.autoTrackSessions = false
     }
-    private val sessionStore = generateSessionStore()
     private lateinit var tracker: SessionTracker
 
-    private var client: Client? = null
+    @Mock
+    lateinit var client: Client
+
+    @Mock
+    internal var appData: AppData? = null
+
+    @Mock
+    internal var deviceData: DeviceData? = null
+
+    @Mock
+    lateinit var context: Context
+
+    @Mock
+    lateinit var activityManager: ActivityManager
+
+    @Mock
+    lateinit var sessionStore: SessionStore
 
     @Before
     fun setUp() {
-        client = generateClient()
+        `when`(client.getAppContext()).thenReturn(context)
+        `when`(client.getAppData()).thenReturn(appData)
+        `when`(client.getDeviceData()).thenReturn(deviceData)
+        `when`(context.getSystemService("activity")).thenReturn(activityManager)
         tracker = SessionTracker(
             BugsnagTestUtils.generateImmutableConfig(),
             configuration, client, sessionStore, NoopLogger
         )
-    }
-
-    @After
-    fun tearDown() {
-        client?.close()
     }
 
     /**
