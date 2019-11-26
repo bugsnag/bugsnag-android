@@ -163,13 +163,6 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testClientClearUserSendsMessage() {
-        client.setUser(null, null, null); // resets to device ID
-        StateEvent.UpdateUserId msg = findMessageInQueue(StateEvent.UpdateUserId.class);
-        assertNull(msg.getId());
-    }
-
-    @Test
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
         Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
@@ -189,18 +182,6 @@ public class ObserverInterfaceTest {
         assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
         assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
-    }
-
-    @Test
-    public void testClearBreadcrumbsSendsMessage() {
-        client.clearBreadcrumbs();
-        findMessageInQueue(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null);
-    }
-
-    @Test
-    public void testClearBreadcrumbsDirectlySendsMessage() {
-        client.breadcrumbState.clear();
-        findMessageInQueue(NativeInterface.MessageType.CLEAR_BREADCRUMBS, null);
     }
 
     @Test

@@ -65,33 +65,7 @@ TEST test_add_breadcrumbs_over_max(void) {
   PASS();
 }
 
-TEST test_clear_empty_breadcrumbs(void) {
-  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
-  bugsnag_report_clear_breadcrumbs(report);
-  ASSERT_EQ(0, report->crumb_count);
-  ASSERT_EQ(0, report->crumb_first_index);
-  PASS();
-}
-
-TEST test_clear_breadcrumbs(void) {
-  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
-  bugsnag_breadcrumb *crumb1 = init_breadcrumb("running!", "this is a drill.", BSG_CRUMB_USER);
-  bugsnag_report_add_breadcrumb(report, crumb1);
-  free(crumb1);
-  bugsnag_breadcrumb *crumb2 = init_breadcrumb("walking...", "this is not a drill.", BSG_CRUMB_USER);
-  bugsnag_report_add_breadcrumb(report, crumb2);
-  bugsnag_report_clear_breadcrumbs(report);
-  ASSERT_EQ(0, report->crumb_count);
-  ASSERT_EQ(0, report->crumb_first_index);
-
-  free(report);
-  free(crumb2);
-  PASS();
-}
-
 SUITE(breadcrumbs) {
   RUN_TEST(test_add_breadcrumb);
   RUN_TEST(test_add_breadcrumbs_over_max);
-  RUN_TEST(test_clear_empty_breadcrumbs);
-  RUN_TEST(test_clear_breadcrumbs);
 }

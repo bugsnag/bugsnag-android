@@ -468,7 +468,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
-     * You can use this to add or modify information attached to an error
+     * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event

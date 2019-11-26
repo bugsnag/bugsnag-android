@@ -303,7 +303,6 @@ void bugsnag_report_add_metadata_bool(bugsnag_report *report, char *section,
                                       char *name, bool value);
 void bugsnag_report_add_breadcrumb(bugsnag_report *report,
                                    bugsnag_breadcrumb *crumb);
-void bugsnag_report_clear_breadcrumbs(bugsnag_report *report);
 void bugsnag_report_remove_metadata(bugsnag_report *report, char *section,
                                     char *name);
 void bugsnag_report_remove_metadata_tab(bugsnag_report *report, char *section);

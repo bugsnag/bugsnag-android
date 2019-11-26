@@ -57,8 +57,6 @@ public class NativeBridge implements Observer {
 
     public static native void addUnhandledEvent();
 
-    public static native void clearBreadcrumbs();
-
     public static native void clearMetadataTab(@NonNull String tab);
 
     public static native void removeMetadata(@NonNull String tab,@NonNull  String key);
