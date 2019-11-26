@@ -230,8 +230,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
      * @param id the id of the user
      */
     public void setUserId(@Nullable String id) {
-        this.user = new User(this.user);
-        this.user.setId(id);
+        this.user = new User(id, user.getEmail(), user.getName());
     }
 
     /**
@@ -240,8 +239,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
      * @param email the email address of the user
      */
     public void setUserEmail(@Nullable String email) {
-        this.user = new User(this.user);
-        this.user.setEmail(email);
+        this.user = new User(user.getId(), email, user.getName());
     }
 
     /**
@@ -250,8 +248,7 @@ public class Event implements JsonStream.Streamable, MetadataAware {
      * @param name the name of the user
      */
     public void setUserName(@Nullable String name) {
-        this.user = new User(this.user);
-        this.user.setName(name);
+        this.user = new User(user.getId(), user.getEmail(), name);
     }
 
     @Override

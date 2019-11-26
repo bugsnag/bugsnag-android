@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
@@ -143,35 +144,29 @@ public class ObserverInterfaceTest {
     @Test
     public void testClientSetUserId() {
         client.setUserId("personX");
-        String value = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_USER_ID, String.class);
-        assertEquals("personX", value);
+        StateEvent.UpdateUserId msg = findMessageInQueue(StateEvent.UpdateUserId.class);
+        assertEquals("personX", msg.getId());
     }
 
     @Test
     public void testClientSetUserEmail() {
         client.setUserEmail("bip@example.com");
-        String value = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_USER_EMAIL, String.class);
-        assertEquals("bip@example.com", value);
+        StateEvent.UpdateUserEmail msg = findMessageInQueue(StateEvent.UpdateUserEmail.class);
+        assertEquals("bip@example.com", msg.getEmail());
     }
 
     @Test
     public void testClientSetUserName() {
         client.setUserName("Loblaw");
-        String value = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_USER_NAME, String.class);
-        assertEquals("Loblaw", value);
+        StateEvent.UpdateUserName msg = findMessageInQueue(StateEvent.UpdateUserName.class);
+        assertEquals("Loblaw", msg.getName());
     }
 
     @Test
     public void testClientClearUserSendsMessage() {
-        client.clearUser(); // resets to device ID
-        String value = (String)findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_ID,
-                                                  String.class);
-        assertEquals(client.getDeviceData().getDeviceData().get("id"), value);
-        findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_EMAIL, null);
-        findMessageInQueue(NativeInterface.MessageType.UPDATE_USER_NAME, null);
+        client.setUser(null, null, null); // resets to device ID
+        StateEvent.UpdateUserId msg = findMessageInQueue(StateEvent.UpdateUserId.class);
+        assertNull(msg.getId());
     }
 
     @Test
@@ -216,6 +211,16 @@ public class ObserverInterfaceTest {
         assertEquals(BreadcrumbType.LOG, crumb.getType());
         assertEquals("Rollback", crumb.getMessage());
         assertEquals(0, crumb.getMetadata().size());
+    }
+
+    @NonNull
+    private <T extends StateEvent> T findMessageInQueue(Class<T> argClass) {
+        for (Object item : observer.observed) {
+            if (item.getClass().equals(argClass)) {
+                return (T) item;
+            }
+        }
+        throw new RuntimeException("Failed to find StateEvent message " + argClass.getSimpleName());
     }
 
     private Object findMessageInQueue(NativeInterface.MessageType type, Class<?> argClass) {

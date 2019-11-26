@@ -34,6 +34,7 @@ public class ClientTest {
     private Context context;
     private Configuration config;
     private Client client;
+    private User user;
 
     /**
      * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
@@ -100,15 +101,11 @@ public class ClientTest {
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         client = new Client(context, config);
 
-        final User user = new User();
-
         client.addOnError(new OnError() {
             @Override
             public boolean run(@NonNull Event event) {
                 // Pull out the user information
-                user.setId(event.getUser().getId());
-                user.setEmail(event.getUser().getEmail());
-                user.setName(event.getUser().getName());
+                ClientTest.this.user = event.getUser();
                 return true;
             }
         });
@@ -155,7 +152,7 @@ public class ClientTest {
 
         // Clear the user using the command
         client = new Client(context, "api-key");
-        client.clearUser();
+        client.setUser(null, null, null);
 
         // Check that there is no user information in the prefs anymore
         SharedPreferences sharedPref = getSharedPrefs(context);
