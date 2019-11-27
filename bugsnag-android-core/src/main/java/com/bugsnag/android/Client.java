@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
 import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
 import static com.bugsnag.android.MapUtils.getStringFromMap;
 
@@ -128,7 +129,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         });
 
         // set sensible defaults for delivery/project packages etc if not set
-        sanitiseConfiguration(configuration);
+        sanitiseConfiguration(appContext, configuration, connectivity);
         clientState = configuration;
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
 
@@ -253,47 +254,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
             } catch (IOException exc) {
                 Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
-            }
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private void sanitiseConfiguration(@NonNull Configuration configuration) {
-        if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(connectivity));
-        }
-
-        String packageName = appContext.getPackageName();
-
-        if (configuration.getVersionCode() == null || configuration.getVersionCode() == 0) {
-            try {
-                PackageManager packageManager = appContext.getPackageManager();
-                PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-                configuration.setVersionCode(packageInfo.versionCode);
-            } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read version code from manifest.");
-            }
-        }
-
-        // Set sensible defaults if project packages not already set
-        if (configuration.getProjectPackages().isEmpty()) {
-            configuration.setProjectPackages(Collections.singleton(packageName));
-        }
-
-        // populate from manifest (in the case where the constructor was called directly by the
-        // User or no UUID was supplied)
-        if (configuration.getBuildUuid() == null) {
-            String buildUuid = null;
-            try {
-                PackageManager packageManager = appContext.getPackageManager();
-                ApplicationInfo ai = packageManager.getApplicationInfo(
-                        packageName, PackageManager.GET_META_DATA);
-                buildUuid = ai.metaData.getString(BUILD_UUID);
-            } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read build UUID from manifest.");
-            }
-            if (buildUuid != null) {
-                configuration.setBuildUuid(buildUuid);
             }
         }
     }
