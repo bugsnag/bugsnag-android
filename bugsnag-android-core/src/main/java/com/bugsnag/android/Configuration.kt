@@ -198,7 +198,7 @@ class Configuration(
      *
      * For example:
      *
-     * client.setIgnoreClasses("java.lang.RuntimeException");
+     * client.setIgnoreClasses("com.example.MyCustomException");
      */
     var ignoreClasses: Set<String> = emptySet()
 

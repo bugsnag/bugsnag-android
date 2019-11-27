@@ -120,42 +120,6 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testAddOnError() {
-        OnError cb = new OnError() {
-            @Override
-            public boolean run(@NonNull Event event) {
-                return false;
-            }
-        };
-        config.addOnError(cb);
-        config.removeOnError(cb);
-    }
-
-    @Test
-    public void testAddOnSession() {
-        OnSession cb = new OnSession() {
-            @Override
-            public boolean run(@NonNull SessionPayload session) {
-                return false;
-            }
-        };
-        config.addOnSession(cb);
-        config.removeOnSession(cb);
-    }
-
-    @Test
-    public void testAddOnBreadcrumb() {
-        OnBreadcrumb cb = new OnBreadcrumb() {
-            @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
-                return false;
-            }
-        };
-        config.addOnBreadcrumb(cb);
-        config.removeOnBreadcrumb(cb);
-    }
-
-    @Test
     public void testSetDelivery() {
         Configuration configuration = new Configuration("api-key");
         assertNull(configuration.getDelivery());
