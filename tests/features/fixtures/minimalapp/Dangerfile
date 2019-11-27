@@ -1,5 +1,5 @@
 require 'fileutils'
-require 'pp'
+
 RELEASE_APK = "app/build/outputs/apk/release/app-release-unsigned.apk"
 
 BUNDLE_DIR = "app/build/outputs/bundle/release/"
@@ -84,7 +84,7 @@ end
 markdown(%Q{
   ### Android notifier sizes
 
-  | Format      | Size (kB)                                     | Minified Size (kB)                                |
+  | Format      | Size impact of Bugsnag (kB)                   | Size impact of Bugsnag when Minified (kB)         |
   |-------------|-----------------------------------------------|---------------------------------------------------|
   | APK         | #{format_kbs(calculated_sizes[:apk])}         | #{format_kbs(calculated_sizes[:min_apk])}         |
   | arm64_v8a   | #{format_kbs(calculated_sizes[:arm64])}       | #{format_kbs(calculated_sizes[:min_arm64])}       |

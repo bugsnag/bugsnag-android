@@ -39,7 +39,7 @@ dependencies {
 }
 
 if (project.hasProperty("withBugsnag")) {
-    println("Building with Bugsnag")
+    project.logger.info("Building with Bugsnag")
 
     dependencies {
         implementation 'com.bugsnag:bugsnag-android:+'
@@ -52,4 +52,6 @@ if (project.hasProperty("withBugsnag")) {
         autoUpload false
         autoReportBuilds false
     }
+} else {
+    project.logger.info("Building without Bugsnag")
 }
