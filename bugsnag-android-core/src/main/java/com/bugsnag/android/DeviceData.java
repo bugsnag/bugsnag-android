@@ -61,11 +61,12 @@ class DeviceData {
 
     @NonNull
     final String[] cpuAbi;
+    private final File dataDirectory;
 
     private final Logger logger;
 
     DeviceData(Connectivity connectivity, Context appContext, Resources resources,
-               String installId, DeviceBuildInfo buildInfo, Logger logger) {
+               String installId, DeviceBuildInfo buildInfo, File dataDirectory, Logger logger) {
         this.connectivity = connectivity;
         this.appContext = appContext;
         this.resources = resources;
@@ -86,6 +87,7 @@ class DeviceData {
         cpuAbi = getCpuAbi();
         emulator = isEmulator();
         rooted = isRooted();
+        this.dataDirectory = dataDirectory;
     }
 
     Map<String, Object> getDeviceDataSummary() {
@@ -109,7 +111,7 @@ class DeviceData {
         map.put("id", installId);
         map.put("freeMemory", calculateFreeMemory());
         map.put("totalMemory", calculateTotalMemory());
-        map.put("freeDisk", calculateFreeDisk());
+        map.put("freeDisk", calculateFreeDisk(dataDirectory));
         map.put("orientation", calculateOrientation());
         map.put("time", getTime());
         map.put("locale", locale);
@@ -224,10 +226,9 @@ class DeviceData {
      * Get the usable disk space on internal storage's data directory
      */
     @SuppressLint("UsableSpace")
-    long calculateFreeDisk() {
+    long calculateFreeDisk(File dataDirectory) {
         // for this specific case we want the currently usable space, not
         // StorageManager#allocatableBytes() as the UsableSpace lint inspection suggests
-        File dataDirectory = Environment.getDataDirectory();
         return dataDirectory.getUsableSpace();
     }
 
