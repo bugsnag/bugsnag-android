@@ -14,13 +14,12 @@ import java.util.HashMap
  */
 class Event @JvmOverloads internal constructor(
     val originalError: Throwable? = null,
-    internal val config: ImmutableConfig,
+    config: ImmutableConfig,
     private var handledState: HandledState,
-    internal val metadata: Metadata = Metadata(),
-    threadState: ThreadState? = if (config.sendThreads) {
-        ThreadState(config, originalError)
-    } else null
+    internal val metadata: Metadata = Metadata()
 ) : JsonStream.Streamable, MetadataAware {
+
+    private val ignoreClasses: Set<String> = config.ignoreClasses.toSet()
 
     var session: Session? = null
 
@@ -52,13 +51,11 @@ class Event @JvmOverloads internal constructor(
         else -> Error.createError(originalError, projectPackages)
     }
 
-    var threads: List<Thread> = threadState?.threads ?: listOf()
+    var threads: List<Thread> = when {
+        config.sendThreads -> ThreadState(config, originalError).threads
+        else -> emptyList()
+    }
 
-    /**
-     * Get the grouping hash associated with this Event.
-     *
-     * @return the grouping hash, if set
-     */
     /**
      * Set a custom grouping hash to use when grouping this Event on the
      * Bugsnag dashboard. By default, we use a combination of error class
@@ -67,9 +64,6 @@ class Event @JvmOverloads internal constructor(
      */
     var groupingHash: String? = null
 
-    /**
-     * Get the context associated with this Event.
-     */
     /**
      * Override the context sent to Bugsnag with this Event. By default we'll
      * attempt to detect the name of the top-most Activity when this error
@@ -84,7 +78,10 @@ class Event @JvmOverloads internal constructor(
     internal var _user = User(null, null, null)
 
     protected fun shouldIgnoreClass(): Boolean {
-        return config.ignoreClasses.contains(errors[0].errorClass)
+        return when {
+            errors.isEmpty() -> true
+            else -> ignoreClasses.contains(errors[0].errorClass)
+        }
     }
 
     @Throws(IOException::class)
@@ -97,10 +94,6 @@ class Event @JvmOverloads internal constructor(
         writer.name("severity").value(severity)
         writer.name("severityReason").value(handledState)
         writer.name("unhandled").value(handledState.isUnhandled)
-
-        writer.name("projectPackages").beginArray()
-        projectPackages.forEach { writer.value(it) }
-        writer.endArray()
 
         // Write exception info
         writer.name("exceptions")
@@ -146,7 +139,7 @@ class Event @JvmOverloads internal constructor(
         this.severity = severity
     }
 
-        /**
+    /**
      * Set user information associated with this Event
      *
      * @param id    the id of the user

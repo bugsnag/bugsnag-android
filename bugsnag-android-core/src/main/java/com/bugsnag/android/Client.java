@@ -598,7 +598,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
         ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
         Event event = new Event(exc, immutableConfig, handledState,
-                clientState.getMetadata(), threadState);
+                clientState.getMetadata());
         notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
@@ -647,7 +647,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
 
         // Run on error tasks, don't notify if any return false
-        if ((onError != null && !onError.run(event)) || !runOnErrorTasks(event)) {
+        if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
             Logger.info("Skipping notification - onError task returned false");
             return;
         }
@@ -655,21 +655,17 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // Build the report
         Report report = new Report(immutableConfig.getApiKey(), event);
 
-        if (event.getSession() != null) {
+        if (event.getSession() != null && currentSession != null) {
             setChanged();
 
             if (event.getUnhandled()) {
+                event.setSession(currentSession.incrementUnhandledAndCopy());
                 notifyObservers(new Message(
                     NativeInterface.MessageType.NOTIFY_UNHANDLED, null));
             } else {
-                List<Error> errors = event.getErrors();
-                String name = "";
-
-                if (errors.size() > 0) {
-                    name = errors.get(0).getErrorClass();
-                }
+                event.setSession(currentSession.incrementHandledAndCopy());
                 notifyObservers(new Message(
-                    NativeInterface.MessageType.NOTIFY_HANDLED, name));
+                    NativeInterface.MessageType.NOTIFY_HANDLED,  null));
             }
         }
 
@@ -760,16 +756,12 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // Add a breadcrumb for this event occurring
         List<Error> errors = event.getErrors();
 
-        String name = "";
-        String msg = "";
-
         if (errors.size() > 0) {
-            name = errors.get(0).getErrorClass();
-            msg = errors.get(0).getErrorMessage();
+            String name = errors.get(0).getErrorClass();
+            String msg = errors.get(0).getErrorMessage();
+            Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
+            breadcrumbState.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
         }
-
-        Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-        breadcrumbState.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
     }
 
     @NonNull

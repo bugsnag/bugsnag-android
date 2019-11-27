@@ -29,7 +29,7 @@ final class HandledState implements JsonStream.Streamable {
     static final String REASON_ANR = "anrError";
 
     @SeverityReason
-    final String severityReasonType;
+    private final String severityReasonType;
 
     @Nullable
     private final String attributeValue;
@@ -106,6 +106,10 @@ final class HandledState implements JsonStream.Streamable {
 
     void setCurrentSeverity(Severity severity) {
         this.currentSeverity = severity;
+    }
+
+    String getSeverityReasonType() {
+        return severityReasonType;
     }
 
     @Override

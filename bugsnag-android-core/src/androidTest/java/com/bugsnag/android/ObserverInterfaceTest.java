@@ -109,8 +109,8 @@ public class ObserverInterfaceTest {
         client.startSession();
         client.notify(new Exception("ruh roh"));
         Object errorClass = findMessageInQueue(
-                NativeInterface.MessageType.NOTIFY_HANDLED, String.class);
-        assertEquals("java.lang.Exception", errorClass);
+                NativeInterface.MessageType.NOTIFY_HANDLED, null);
+        assertNull(errorClass);
     }
 
     @Test
