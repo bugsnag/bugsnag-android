@@ -37,6 +37,21 @@ internal class EventSerializationTest {
                 createEvent {
                     val stacktrace = Stacktrace(arrayOf(), emptySet())
                     it.threads = mutableListOf(Thread(5, "main", "android", true, stacktrace))
+                },
+
+                // threads included
+                createEvent {
+                    it.app["foo"] = 55
+                    it.device["bar"] = true
+                    it.addMetadata("wham", "some_key", "A value")
+                    it.setUserName("Jamie")
+
+                    val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0))
+                    it.breadcrumbs = listOf(crumb)
+
+                    val stacktrace = Stacktrace(arrayOf(), emptySet())
+                    val err = Error("WhoopsException", "Whoops", stacktrace.trace)
+                    it.errors = listOf(err)
                 }
             )
         }

@@ -32,7 +32,13 @@ public class EventTest {
     }
 
     @Test
-    public void testBugsnagExceptionName() {
+    public void checkExceptionMessageNullity() {
+        Event err = new Event(new RuntimeException(), config, handledState);
+        assertNull(err.getErrors().get(0).getErrorMessage());
+    }
+
+    @Test
+    public void testExceptionName() {
         Event err = new Event(new RuntimeException("whoops"), config, handledState);
         err.getErrors().get(0).setErrorClass("Busgang");
         assertEquals("Busgang", err.getErrors().get(0).getErrorClass());

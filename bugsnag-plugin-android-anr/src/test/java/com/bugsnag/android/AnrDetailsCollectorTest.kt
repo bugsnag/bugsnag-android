@@ -23,6 +23,9 @@ class AnrDetailsCollectorTest {
     @Mock
     lateinit var am: ActivityManager
 
+    @Mock
+    lateinit var client: Client
+
     @Before
     fun setUp() {
         stateInfo.pid = PID_EXAMPLE
@@ -56,6 +59,14 @@ class AnrDetailsCollectorTest {
         Mockito.`when`(am.processesInErrorState).thenReturn(listOf(stateInfo, second))
         val captureProcessErrorState = collector.captureProcessErrorState(am, PID_EXAMPLE)
         assertEquals(stateInfo, captureProcessErrorState)
+    }
+
+    @Test
+    fun anrDetailsAltered() {
+        Mockito.`when`(client.config).thenReturn(BugsnagTestUtils.generateImmutableConfig())
+        val event = BugsnagPluginInterface.createEvent(RuntimeException("whoops"), client, HandledState.REASON_ANR)
+        collector.addErrorStateInfo(event, stateInfo)
+        assertEquals(stateInfo.shortMsg.replace("ANR", ""), event.errors[0].errorMessage)
     }
 
 }

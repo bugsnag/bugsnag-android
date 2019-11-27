@@ -658,7 +658,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         if (event.getSession() != null && currentSession != null) {
             setChanged();
 
-            if (event.getUnhandled()) {
+            if (event.isUnhandled()) {
                 event.setSession(currentSession.incrementUnhandledAndCopy());
                 notifyObservers(new Message(
                     NativeInterface.MessageType.NOTIFY_UNHANDLED, null));

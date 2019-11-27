@@ -41,14 +41,13 @@ class Event @JvmOverloads internal constructor(
     var app: MutableMap<String, Any?> = HashMap()
     var device: MutableMap<String, Any?> = HashMap()
 
-    val unhandled = handledState.isUnhandled
+    val isUnhandled = handledState.isUnhandled
 
     var breadcrumbs: List<Breadcrumb> = emptyList()
 
-    var projectPackages: Collection<String> = config.projectPackages
     var errors: List<Error> = when (originalError) {
         null -> listOf()
-        else -> Error.createError(originalError, projectPackages)
+        else -> Error.createError(originalError, config.projectPackages)
     }
 
     var threads: List<Thread> = when {
@@ -112,9 +111,7 @@ class Event @JvmOverloads internal constructor(
 
         writer.name("threads")
         writer.beginArray()
-        for (thread in threads) {
-            writer.value(thread)
-        }
+        threads.forEach { writer.value(it) }
         writer.endArray()
 
         if (session != null) {
