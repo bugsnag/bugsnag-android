@@ -1,0 +1,7 @@
+{
+  "activeScreen": "MyActivity",
+  "name": "MyApp",
+  "packageName": "com.example.foo",
+  "lowMemory": false,
+  "versionName": "1.2.3"
+}

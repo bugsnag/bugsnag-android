@@ -1,5 +1,7 @@
 {
-  "releaseStage": "production",
-  "type": "android",
-  "versionCode": 0
+  "codeBundleId": "foo-99",
+  "releaseStage": "test-stage",
+  "type": "ReactNative",
+  "version": "1.2.3",
+  "versionCode": 55
 }

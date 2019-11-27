@@ -40,10 +40,12 @@ class AppData {
     @Nullable
     private ApplicationInfo applicationInfo;
 
-    private PackageManager packageManager;
+    private final ActivityManager activityManager;
+    private final PackageManager packageManager;
 
     AppData(Context appContext, PackageManager packageManager,
-            ImmutableConfig config, SessionTracker sessionTracker, Logger logger) {
+            ImmutableConfig config, SessionTracker sessionTracker,
+            ActivityManager activityManager, Logger logger) {
         this.appContext = appContext;
         this.packageManager = packageManager;
         this.config = config;
@@ -51,10 +53,10 @@ class AppData {
 
         // cache values which are widely used, expensive to lookup, or unlikely to change
         packageName = appContext.getPackageName();
+        this.activityManager = activityManager;
         this.logger = logger;
 
         try {
-            this.packageManager = packageManager;
             packageInfo = this.packageManager.getPackageInfo(packageName, 0);
             applicationInfo = this.packageManager.getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException exception) {
@@ -93,7 +95,7 @@ class AppData {
         map.put("versionName", calculateVersionName());
         map.put("activeScreen", getActiveScreenClass());
         map.put("memoryUsage", getMemoryUsage());
-        map.put("lowMemory", isLowMemory());
+        map.put("lowMemory", isLowMemory(activityManager));
         return map;
     }
 
@@ -186,11 +188,8 @@ class AppData {
      * Check if the device is currently running low on memory.
      */
     @Nullable
-    private Boolean isLowMemory() {
+    private Boolean isLowMemory(ActivityManager activityManager) {
         try {
-            ActivityManager activityManager =
-                (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-
             if (activityManager != null) {
                 ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
                 activityManager.getMemoryInfo(memInfo);

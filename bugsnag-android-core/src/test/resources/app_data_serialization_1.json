@@ -1,6 +1,14 @@
 {
+  "duration": 0,
+  "codeBundleId": "foo-99",
+  "durationInForeground": 0,
+  "inForeground": false,
   "releaseStage": "test-stage",
-  "type": "android",
+  "buildUUID": "123456",
+  "binaryArch": "x86",
+  "id": "com.example.foo",
+  "packageName": "com.example.foo",
+  "type": "ReactNative",
   "version": "1.2.3",
-  "versionCode": 0
+  "versionCode": 55
 }
