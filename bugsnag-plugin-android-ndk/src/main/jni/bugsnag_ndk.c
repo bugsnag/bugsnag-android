@@ -111,14 +111,21 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
           (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
       jmethodID jdeliver_method =
           (*env)->GetStaticMethodID(env, interface_class, "deliverReport",
-                                    "(Ljava/lang/String;Ljava/lang/String;)V");
-      jstring jpayload = (*env)->NewStringUTF(env, payload);
-      jstring jstage = (*env)->NewStringUTF(env, report->app.release_stage);
+                                    "([B[B)V");
+      size_t payload_length = bsg_strlen(payload);
+      jbyteArray jpayload = (*env)->NewByteArray(env, payload_length);
+      (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length, (jbyte *)payload);
+
+      size_t stage_length = bsg_strlen(report->app.release_stage);
+      jbyteArray jstage = (*env)->NewByteArray(env, stage_length);
+      (*env)->SetByteArrayRegion(env, jstage, 0, stage_length, (jbyte *)report->app.release_stage);
+
       (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
                                    jstage, jpayload);
+      (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload, 0); // <-- frees payload
+      (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)report->app.release_stage, JNI_COMMIT);
       (*env)->DeleteLocalRef(env, jpayload);
       (*env)->DeleteLocalRef(env, jstage);
-      free(payload);
     } else {
       BUGSNAG_LOG("Failed to serialize report as JSON: %s", report_path);
     }

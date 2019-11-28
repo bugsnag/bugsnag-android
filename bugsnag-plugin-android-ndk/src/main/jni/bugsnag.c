@@ -3,6 +3,7 @@
 #include "bugsnag_ndk.h"
 #include "report.h"
 #include "utils/stack_unwinder.h"
+#include "utils/string.h"
 #include "metadata.h"
 #include <jni.h>
 #include <stdio.h>
@@ -60,6 +61,23 @@ jfieldID bsg_parse_jseverity(JNIEnv *env, bsg_severity_t severity,
   }
 }
 
+jbyteArray bsg_byte_ary_from_string(JNIEnv *env, char *text) {
+  if (text == NULL) {
+    return NULL;
+  }
+  size_t text_length = bsg_strlen(text);
+  jbyteArray jtext = (*env)->NewByteArray(env, text_length);
+  (*env)->SetByteArrayRegion(env, jtext, 0, text_length, (jbyte *)text);
+
+  return jtext;
+}
+
+void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
+  if (array != NULL) {
+    (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text, JNI_COMMIT);
+  }
+}
+
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity) {
   bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
@@ -70,8 +88,7 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
   jmethodID notify_method = (*env)->GetStaticMethodID(
       env, interface_class, "notify",
-      "(Ljava/lang/String;Ljava/lang/String;Lcom/bugsnag/android/"
-      "Severity;[Ljava/lang/StackTraceElement;)V");
+      "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
   jclass trace_class = (*env)->FindClass(env, "java/lang/StackTraceElement");
   jclass severity_class =
       (*env)->FindClass(env, "com/bugsnag/android/Severity");
@@ -109,14 +126,19 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
   jobject jseverity = (*env)->GetStaticObjectField(
       env, severity_class, bsg_parse_jseverity(env, severity, severity_class));
 
-  jstring jname = (*env)->NewStringUTF(env, name);
-  jstring jmessage = (*env)->NewStringUTF(env, message);
+  jbyteArray jname = bsg_byte_ary_from_string(env, name);
+  jbyteArray jmessage = bsg_byte_ary_from_string(env, message);
 
   // set application's binary arch
   bugsnag_set_binary_arch(env);
 
   (*env)->CallStaticVoidMethod(env, interface_class, notify_method, jname,
                                jmessage, jseverity, trace);
+
+  bsg_release_byte_ary(env, jname, name);
+  bsg_release_byte_ary(env, jmessage, message);
+  (*env)->DeleteLocalRef(env, jname);
+  (*env)->DeleteLocalRef(env, jmessage);
 
   (*env)->DeleteLocalRef(env, trace_class);
   (*env)->DeleteLocalRef(env, trace);
@@ -142,14 +164,18 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
   jmethodID set_user_method = (*env)->GetStaticMethodID(
       env, interface_class, "setUser",
-      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+      "([B[B[B)V");
 
-  jstring jid = (*env)->NewStringUTF(env, id);
-  jstring jemail = (*env)->NewStringUTF(env, email);
-  jstring jname = (*env)->NewStringUTF(env, name);
+  jbyteArray jid = bsg_byte_ary_from_string(env, id);
+  jbyteArray jemail = bsg_byte_ary_from_string(env, email);
+  jbyteArray jname = bsg_byte_ary_from_string(env, name);
 
   (*env)->CallStaticVoidMethod(env, interface_class, set_user_method, jid,
                                jemail, jname);
+
+  bsg_release_byte_ary(env, jid, id);
+  bsg_release_byte_ary(env, jemail, email);
+  bsg_release_byte_ary(env, jname, name);
 
   (*env)->DeleteLocalRef(env, jid);
   (*env)->DeleteLocalRef(env, jemail);
@@ -185,16 +211,16 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *name,
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
   jmethodID leave_breadcrumb_method = (*env)->GetStaticMethodID(
       env, interface_class, "leaveBreadcrumb",
-      "(Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;)V");
+      "([BLcom/bugsnag/android/BreadcrumbType;)V");
   jclass type_class =
       (*env)->FindClass(env, "com/bugsnag/android/BreadcrumbType");
 
   jobject jtype = (*env)->GetStaticObjectField(
       env, type_class, bsg_parse_jcrumb_type(env, type, type_class));
-  jstring jname = (*env)->NewStringUTF(env, name);
+  jbyteArray jname = bsg_byte_ary_from_string(env, name);
   (*env)->CallStaticVoidMethod(env, interface_class, leave_breadcrumb_method,
                                jname, jtype);
-
+  bsg_release_byte_ary(env, jname, name);
   (*env)->DeleteLocalRef(env, jtype);
   (*env)->DeleteLocalRef(env, jname);
 
