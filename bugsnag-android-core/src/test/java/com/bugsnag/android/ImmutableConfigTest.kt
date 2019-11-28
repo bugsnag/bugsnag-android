@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.content.Context
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -8,15 +9,22 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class ImmutableConfigTest {
+internal class ImmutableConfigTest {
 
     private val seed = Configuration("api-key")
 
     @Mock
     lateinit var delivery: Delivery
+
+    @Mock
+    lateinit var connectivity: Connectivity
+
+    @Mock
+    lateinit var context: Context
 
     @Before
     fun setUp() {
@@ -141,5 +149,15 @@ class ImmutableConfigTest {
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
+    }
+
+    @Test
+    fun configSanitisation() {
+        Mockito.`when`(context.packageName).thenReturn("com.example.foo")
+        val seed = Configuration("api-key")
+        val config = sanitiseConfiguration(context, seed, connectivity)
+        assertEquals(setOf("com.example.foo"), config.projectPackages)
+
+        assertNotNull(config.delivery)
     }
 }

@@ -3,13 +3,18 @@
   <Blacklist></Blacklist>
   <Whitelist>
     <ID>EmptyFunctionBlock:Scenario.kt$Scenario${}</ID>
+    <ID>MagicNumber:AppNotRespondingDisabledNdkScenario.kt$AppNotRespondingDisabledNdkScenario$50000</ID>
+    <ID>MagicNumber:AppNotRespondingDisabledScenario.kt$AppNotRespondingDisabledScenario$50000</ID>
+    <ID>MagicNumber:AppNotRespondingScenario.kt$AppNotRespondingScenario$50000</ID>
     <ID>MagicNumber:BugsnagInitScenario.kt$BugsnagInitScenario$25</ID>
     <ID>MagicNumber:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$6000</ID>
     <ID>MagicNumber:TestHarnessHooks.kt$&lt;no name provided&gt;$500</ID>
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
+    <ID>MatchingDeclarationName:ArrayNotifyReleaseStageScenario.kt$com.bugsnag.android.mazerunner.scenarios.ArrayNotifyReleaseStageScenario.kt</ID>
+    <ID>MatchingDeclarationName:HandledExceptionWithoutMessage.kt$com.bugsnag.android.mazerunner.scenarios.HandledExceptionWithoutMessage.kt</ID>
     <ID>TooGenericExceptionThrown:CrashHandlerScenario.kt$CrashHandlerScenario$throw RuntimeException("CrashHandlerScenario")</ID>
     <ID>TooGenericExceptionThrown:CustomClientErrorFlushScenario.kt$CustomClientErrorFlushScenario$throw RuntimeException("ReportCacheScenario")</ID>
-    <ID>TooGenericExceptionThrown:DisableAutoDetectErrorsScenario.kt$DisableAutoNotifyScenario$throw RuntimeException("Should never appear")</ID>
+    <ID>TooGenericExceptionThrown:DisableAutoDetectErrorsScenario.kt$DisableAutoDetectErrorsScenario$throw RuntimeException("Should never appear")</ID>
     <ID>TooGenericExceptionThrown:IgnoredExceptionScenario.kt$IgnoredExceptionScenario$throw RuntimeException("Should never appear")</ID>
     <ID>TooGenericExceptionThrown:ReportCacheScenario.kt$ReportCacheScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Regular crash")</ID>

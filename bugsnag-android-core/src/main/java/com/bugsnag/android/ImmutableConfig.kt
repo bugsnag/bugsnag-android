@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import android.content.Context
+import android.content.pm.PackageManager
 import java.util.Date
 import java.util.HashMap
 
@@ -37,7 +39,6 @@ internal data class ImmutableConfig(
     /**
      * Checks if the given release stage should be notified or not
      *
-     * @param releaseStage the release stage to check
      * @return true if the release state should be notified else false
      */
     @JvmName("shouldNotifyForReleaseStage")
@@ -48,7 +49,8 @@ internal data class ImmutableConfig(
     internal fun errorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
 
     @JvmName("sessionApiDeliveryParams")
-    internal fun sessionApiDeliveryParams() = DeliveryParams(endpoints.sessions, sessionApiHeaders())
+    internal fun sessionApiDeliveryParams() =
+        DeliveryParams(endpoints.sessions, sessionApiHeaders())
 
     /**
      * Supplies the headers which must be used in any request sent to the Error Reporting API.
@@ -75,7 +77,6 @@ internal data class ImmutableConfig(
         map[HEADER_BUGSNAG_SENT_AT] = DateUtils.toIso8601(Date())
         return map
     }
-
 }
 
 internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
@@ -103,4 +104,51 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         maxBreadcrumbs = config.maxBreadcrumbs,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes.toSet()
     )
+}
+
+internal fun sanitiseConfiguration(
+    appContext: Context, configuration: Configuration,
+    connectivity: Connectivity
+): ImmutableConfig {
+    @Suppress("SENSELESS_COMPARISON")
+    if (configuration.delivery == null) {
+        configuration.delivery = DefaultDelivery(connectivity)
+    }
+    val packageName = appContext.packageName
+
+    if (configuration.versionCode == null || configuration.versionCode == 0) {
+        try {
+            val packageManager = appContext.packageManager
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            @Suppress("DEPRECATION")
+            configuration.versionCode = packageInfo.versionCode
+        } catch (ignore: Exception) {
+            Logger.warn("Bugsnag is unable to read version code from manifest.")
+        }
+    }
+
+    // Set sensible defaults if project packages not already set
+    if (configuration.projectPackages.isEmpty()) {
+        configuration.projectPackages = setOf<String>(packageName)
+    }
+
+    // populate from manifest (in the case where the constructor was called directly by the
+    // User or no UUID was supplied)
+    if (configuration.buildUuid == null) {
+        var buildUuid: String? = null
+        try {
+            val packageManager = appContext.packageManager
+            val ai = packageManager.getApplicationInfo(
+                packageName, PackageManager.GET_META_DATA
+            )
+            buildUuid = ai.metaData.getString(ManifestConfigLoader.BUILD_UUID)
+        } catch (ignore: Exception) {
+            Logger.warn("Bugsnag is unable to read build UUID from manifest.")
+        }
+
+        if (buildUuid != null) {
+            configuration.buildUuid = buildUuid
+        }
+    }
+    return convertToImmutableConfig(configuration)
 }
