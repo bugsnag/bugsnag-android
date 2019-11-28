@@ -11,7 +11,7 @@ internal class ManualRedactKeysScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
-        config.redactKeys = setOf("foo")
+        config.redactedKeys = setOf("foo")
     }
 
     override fun run() {

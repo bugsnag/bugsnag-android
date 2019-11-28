@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import androidx.annotation.NonNull;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,8 +89,8 @@ public class ConfigurationTest {
 
     @Test
     public void testOverrideRedactKeys() {
-        config.setRedactKeys(Collections.singleton("Foo"));
-        assertEquals(Collections.singleton("Foo"), config.getRedactKeys());
+        config.setRedactedKeys(Collections.singleton("Foo"));
+        assertEquals(Collections.singleton("Foo"), config.getRedactedKeys());
     }
 
     @Test

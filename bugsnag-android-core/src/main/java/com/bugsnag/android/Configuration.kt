@@ -116,7 +116,7 @@ class Configuration(
     var codeBundleId: String? = null
 
     /**
-     * Intended for internal use only - sets the type of the notifier (e.g. Android, React Native)
+     * Sets the type of the notifier (e.g. Android, React Native)
      */
     var appType = "android"
 
@@ -169,11 +169,11 @@ class Configuration(
      *
      * For example:
      *
-     * client.setRedactKeys("password", "credit_card");
+     * client.setRedactedKeys("password", "credit_card");
      */
-    var redactKeys: Set<String>
-        get() = Collections.unmodifiableSet(metadata.redactKeys)
-        set(redactKeys) = metadata.setRedactKeys(redactKeys)
+    var redactedKeys: Set<String>
+        get() = Collections.unmodifiableSet(metadata.redactedKeys)
+        set(redactedKeys) = metadata.setRedactedKeys(redactedKeys)
 
 
     var loggingEnabled: Boolean

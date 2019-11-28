@@ -16,7 +16,7 @@ public class MetadataRedactionTest {
     @Test
     public void testBasicRedaction() throws IOException {
         Metadata metadata = new Metadata();
-        metadata.setRedactKeys(Collections.singleton("password"));
+        metadata.setRedactedKeys(Collections.singleton("password"));
         metadata.addMetadata("example", "password", "p4ssw0rd");
         metadata.addMetadata("example", "confirm_password", "p4ssw0rd");
         metadata.addMetadata("example", "normal", "safe");
@@ -31,7 +31,7 @@ public class MetadataRedactionTest {
         sensitiveMap.put("normal", "safe");
 
         Metadata metadata = new Metadata();
-        metadata.setRedactKeys(Collections.singleton("password"));
+        metadata.setRedactedKeys(Collections.singleton("password"));
         metadata.addMetadata("example", "sensitiveMap", sensitiveMap);
         verifyJsonRedacted(metadata, "metadata_redaction_1.json");
     }
@@ -56,14 +56,14 @@ public class MetadataRedactionTest {
         Metadata metadata = new Metadata();
         metadata.addMetadata("foo", "bar", "abc123");
         metadata.addMetadata("foo", "password", "abc123");
-        metadata.setRedactKeys(Collections.singleton("bar"));
+        metadata.setRedactedKeys(Collections.singleton("bar"));
         verifyJsonRedacted(metadata, "metadata_redaction_4.json");
     }
 
     @Test
     public void testDefaultRedactKeys()  {
         Metadata metadata = new Metadata();
-        assertEquals(Collections.singleton("password"), metadata.getRedactKeys());
+        assertEquals(Collections.singleton("password"), metadata.getRedactedKeys());
     }
 
     void verifyJsonRedacted(Metadata metadata, String resourceName) throws IOException {
