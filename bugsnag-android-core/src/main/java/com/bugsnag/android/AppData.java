@@ -95,7 +95,7 @@ class AppData {
         map.put("versionName", calculateVersionName());
         map.put("activeScreen", getActiveScreenClass());
         map.put("memoryUsage", getMemoryUsage());
-        map.put("lowMemory", isLowMemory(activityManager));
+        map.put("lowMemory", isLowMemory());
         return map;
     }
 
@@ -188,7 +188,7 @@ class AppData {
      * Check if the device is currently running low on memory.
      */
     @Nullable
-    private Boolean isLowMemory(ActivityManager activityManager) {
+    private Boolean isLowMemory() {
         try {
             if (activityManager != null) {
                 ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
