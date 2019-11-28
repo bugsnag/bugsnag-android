@@ -10,7 +10,7 @@ public class UserTest {
     private User user;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         user = new User("123", "bob@example.com", "bob smith");
     }
 
@@ -20,23 +20,4 @@ public class UserTest {
         assertEquals("bob smith", user.getName());
         assertEquals("bob@example.com", user.getEmail());
     }
-
-    @Test
-    public void testUserCopy() {
-        user = new User(user);
-        assertEquals("123", user.getId());
-        assertEquals("bob smith", user.getName());
-        assertEquals("bob@example.com", user.getEmail());
-    }
-
-    @Test
-    public void testUserOverride() {
-        user.setId("4fd");
-        user.setName("jane");
-        user.setEmail("jane@example.com");
-        assertEquals("4fd", user.getId());
-        assertEquals("jane", user.getName());
-        assertEquals("jane@example.com", user.getEmail());
-    }
-
 }

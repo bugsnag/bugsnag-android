@@ -58,6 +58,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final Configuration clientState;
     final ImmutableConfig immutableConfig;
 
+    final UserState userState;
+
     final Context appContext;
 
     @NonNull
@@ -68,9 +70,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @NonNull
     final BreadcrumbState breadcrumbState;
-
-    @NonNull
-    private User user;
 
     @NonNull
     protected final EventStore eventStore;
@@ -144,10 +143,11 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUserBetweenSessions());
-        setUserInternal(userRepository.load());
+        userState = new UserState(userRepository);
 
+        String id = userState.getUser().getId();
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
-        deviceData = new DeviceData(connectivity, appContext, resources, user.installId, info);
+        deviceData = new DeviceData(connectivity, appContext, resources, id, info);
 
         // Set up breadcrumbs
         breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs());
@@ -209,6 +209,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         configuration.getMetadata().addObserver(this);
         breadcrumbState.addObserver(this);
         sessionTracker.addObserver(this);
+        userState.addObserver(this);
 
         final Client client = this;
         orientationListener = new OrientationEventListener(appContext) {
@@ -345,10 +346,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @Override
     public void update(@NonNull Observable observable, @NonNull Object arg) {
-        if (arg instanceof Message) {
-            setChanged();
-            super.notifyObservers(arg);
-        }
+        setChanged();
+        super.notifyObservers(arg);
     }
 
     /**
@@ -465,7 +464,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @NonNull
     public User getUser() {
-        return user;
+        return userState.getUser();
     }
 
     @NonNull
@@ -484,18 +483,12 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     private void setUserInternal(User user) {
-        this.user = user;
-        user.addObserver(this);
     }
 
     /**
      * Removes the current user data and sets it back to defaults
      */
     public void clearUser() {
-        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
-        user.setEmail(null);
-        user.setName(null);
-        userRepository.save(user);
     }
 
     /**
@@ -506,8 +499,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param id a unique identifier of the current user
      */
     public void setUserId(@Nullable String id) {
-        user.setId(id);
-        userRepository.save(user);
+        userState.setUserId(id);
     }
 
     /**
@@ -517,8 +509,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param email the email address of the current user
      */
     public void setUserEmail(@Nullable String email) {
-        user.setEmail(email);
-        userRepository.save(user);
+        userState.setUserEmail(email);
     }
 
     /**
@@ -528,8 +519,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param name the name of the current user
      */
     public void setUserName(@Nullable String name) {
-        user.setName(name);
-        userRepository.save(user);
+        userState.setUserName(name);
     }
 
     /**
@@ -706,7 +696,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         event.setBreadcrumbs(breadcrumbState);
 
         // Attach user info to the event
-        event.setUser(user);
+        event.setUser(userState.getUser());
 
         // Attach default context from active activity
         if (TextUtils.isEmpty(event.getContext())) {
