@@ -29,10 +29,6 @@ public class NativeInterface {
          */
         ADD_METADATA,
         /**
-         * Clear all breadcrumbs
-         */
-        CLEAR_BREADCRUMBS,
-        /**
          * Clear all metadata on a tab. The Message object should be the tab
          * name
          */

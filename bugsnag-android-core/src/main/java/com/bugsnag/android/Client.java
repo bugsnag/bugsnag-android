@@ -141,7 +141,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         appData = new AppData(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker);
-        Resources resources = appContext.getResources();
 
         userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUserBetweenSessions());
@@ -149,7 +148,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         String id = userState.getUser().getId();
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
-        deviceData = new DeviceData(connectivity, appContext, resources, id, info);
+        deviceData = new DeviceData(connectivity, appContext, appContext.getResources(), id, info);
 
         // Set up breadcrumbs
         breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs());
@@ -313,7 +312,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     /**
      * Starts tracking a new session. You should disable automatic session tracking via
-     * {@link #setAutoTrackSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to start a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -333,7 +332,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     /**
      * Pauses tracking of a session. You should disable automatic session tracking via
-     * {@link #setAutoTrackSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -346,7 +345,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @see #resumeSession()
      * @see Configuration#setAutoTrackSessions(boolean)
      */
-    public final void pauseSession() {
+    public void pauseSession() {
         sessionTracker.pauseSession();
     }
 
@@ -354,7 +353,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * Resumes a session which has previously been paused, or starts a new session if none exists.
      * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
-     * {@link #setAutoTrackSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * It's important to note that sessions are stored in memory for the lifetime of the
      * application process and are not persisted on disk. Therefore calling this method on app
@@ -372,7 +371,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      *
      * @return true if a previous session was resumed, false if a new session was started.
      */
-    public final boolean resumeSession() {
+    public boolean resumeSession() {
         return sessionTracker.resumeSession();
     }
 
@@ -430,30 +429,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         return userState.getUser();
     }
 
-    @NonNull
-    Collection<Breadcrumb> getBreadcrumbs() {
-        return new ArrayList<>(breadcrumbState.getStore());
-    }
-
-    @NonNull
-    AppData getAppData() {
-        return appData;
-    }
-
-    @NonNull
-    DeviceData getDeviceData() {
-        return deviceData;
-    }
-
-    private void setUserInternal(User user) {
-    }
-
-    /**
-     * Removes the current user data and sets it back to defaults
-     */
-    public void clearUser() {
-    }
-
     /**
      * Set a unique identifier for the user currently using your application.
      * By default, this will be an automatically generated unique id
@@ -487,6 +462,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     public void setUserName(@Nullable String name) {
         userState.setUserName(name);
     }
+
 
     /**
      * Add a "on error" callback, to execute code at the point where an error report is
@@ -783,16 +759,18 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     @NonNull
-    private String getKeyFromClientData(Map<String, Object> clientData,
-                                        String key,
-                                        boolean required) {
-        Object value = clientData.get(key);
-        if (value instanceof String) {
-            return (String) value;
-        } else if (required) {
-            throw new IllegalStateException("Failed to set " + key + " in client data!");
-        }
-        return null;
+    Collection<Breadcrumb> getBreadcrumbs() {
+        return new ArrayList<>(breadcrumbState.getStore());
+    }
+
+    @NonNull
+    AppData getAppData() {
+        return appData;
+    }
+
+    @NonNull
+    DeviceData getDeviceData() {
+        return deviceData;
     }
 
     @Override
@@ -853,13 +831,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
     }
 
-    /**
-     * Clear any breadcrumbs that have been left so far.
-     */
-    public void clearBreadcrumbs() {
-        breadcrumbState.clear();
-    }
-
     void deliver(@NonNull Report report, @NonNull Event event) {
         DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
@@ -882,10 +853,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             default:
                 break;
         }
-    }
-
-    OrientationEventListener getOrientationListener() {
-        return orientationListener; // this only exists for tests
     }
 
     SessionTracker getSessionTracker() {
@@ -919,18 +886,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             }
         }
         return true;
-    }
-
-    /**
-     * Stores the given key value pair into shared preferences
-     *
-     * @param key   The key to store
-     * @param value The value to store
-     */
-    private void storeInSharedPrefs(String key, String value) {
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit().putString(key, value).apply();
     }
 
     EventStore getEventStore() {

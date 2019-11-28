@@ -173,16 +173,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
     bsg_release_env_write_lock();
 }
 
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_clearBreadcrumbs(JNIEnv *env,
-                                                           jobject _this) {
-  if (bsg_global_env == NULL)
-    return;
-  bsg_request_env_write_lock();
-  bugsnag_report_clear_breadcrumbs(&bsg_global_env->next_report);
-  bsg_release_env_write_lock();
-}
-
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
     JNIEnv *env, jobject _this, jstring name_, jstring crumb_type,
     jstring timestamp_, jobject metadata) {

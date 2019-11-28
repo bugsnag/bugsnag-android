@@ -146,23 +146,6 @@ public class ClientTest {
         assertFalse(sharedPref.contains("user.name"));
     }
 
-    @Test
-    public void testClearUser() {
-        // Set a user in prefs
-        setUserPrefs();
-
-        // Clear the user using the command
-        client = new Client(context, "api-key");
-        client.setUser(null, null, null);
-
-        // Check that there is no user information in the prefs anymore
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        assertNotNull(sharedPref.getString("install.iud", null));
-        assertFalse(sharedPref.contains("user.id"));
-        assertFalse(sharedPref.contains("user.email"));
-        assertFalse(sharedPref.contains("user.name"));
-    }
-
     @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
@@ -180,20 +163,6 @@ public class ClientTest {
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
         assertEquals("manual", poll.getMessage());
         assertEquals("test", poll.getMetadata().get("message"));
-    }
-
-    @Test
-    public void testClearBreadcrumbs() {
-        Configuration config = generateConfiguration();
-        config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
-        client = generateClient(config);
-        assertEquals(1, client.breadcrumbState.getStore().size());
-
-        client.leaveBreadcrumb("test");
-        assertEquals(2, client.breadcrumbState.getStore().size());
-
-        client.clearBreadcrumbs();
-        assertEquals(0, client.breadcrumbState.getStore().size());
     }
 
     @Test

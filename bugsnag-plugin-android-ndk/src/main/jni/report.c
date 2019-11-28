@@ -155,11 +155,6 @@ void bugsnag_report_add_breadcrumb(bugsnag_report *report,
   memcpy(&report->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
 }
 
-void bugsnag_report_clear_breadcrumbs(bugsnag_report *report) {
-  report->crumb_count = 0;
-  report->crumb_first_index = 0;
-}
-
 bool bugsnag_report_has_session(bugsnag_report *report) {
     return strlen(report->session_id) > 0;
 }
