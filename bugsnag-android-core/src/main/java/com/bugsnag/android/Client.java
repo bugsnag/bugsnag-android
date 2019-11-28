@@ -840,8 +840,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     @Override
-    public void addMetadata(@NonNull String section, @Nullable Object value) {
-        addMetadata(section, null, value);
+    public void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
+        clientState.getMetadata().addMetadata(section, value);
     }
 
     @Override

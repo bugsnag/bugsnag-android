@@ -255,8 +255,8 @@ public class Event implements JsonStream.Streamable, MetadataAware {
     }
 
     @Override
-    public void addMetadata(@NonNull String section, @Nullable Object value) {
-        addMetadata(section, null, value);
+    public void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
+        metadata.addMetadata(section, value);
     }
 
     @Override

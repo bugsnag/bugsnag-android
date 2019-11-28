@@ -298,7 +298,7 @@ class Configuration(
         sessionCallbacks.remove(onSession)
     }
 
-    override fun addMetadata(section: String, value: Any?) =
+    override fun addMetadata(section: String, value: Map<String, Any?>) =
         metadata.addMetadata(section, value)
     override fun addMetadata(section: String, key: String?, value: Any?) =
         metadata.addMetadata(section, key, value)

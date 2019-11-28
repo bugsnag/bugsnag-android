@@ -269,7 +269,7 @@ public final class Bugsnag {
         getClient().notify(name, message, stacktrace, onError);
     }
 
-    public static void addMetadata(@NonNull String section, @Nullable Object value) {
+    public static void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
         getClient().addMetadata(section, value);
     }
 
