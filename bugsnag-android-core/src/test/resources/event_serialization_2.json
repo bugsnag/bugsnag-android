@@ -1,0 +1,15 @@
+{
+  "metaData": {},
+  "severity": "warning",
+  "severityReason": {
+    "type": "handledException"
+  },
+  "unhandled": false,
+  "exceptions": [],
+  "user": {},
+  "app": {},
+  "device": {},
+  "breadcrumbs": [],
+  "groupingHash": "herpderp",
+  "threads": []
+}

@@ -27,4 +27,11 @@ object BugsnagPluginInterface {
             null
         }
     }
+
+    /**
+     * Constructs an event from an exception, by accessing the internally visible constructor
+     * and returning the created object. This API is intended for internal use only.
+     */
+    fun createEvent(exc: Throwable, client: Client, severityReason: String) =
+        Event(exc, client.getConfig(), HandledState.newInstance(severityReason))
 }

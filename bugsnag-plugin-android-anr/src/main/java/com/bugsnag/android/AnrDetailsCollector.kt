@@ -45,9 +45,12 @@ internal class AnrDetailsCollector {
 
     internal fun addErrorStateInfo(event: Event, anrState: ProcessErrorStateInfo) {
         val msg = anrState.shortMsg
-        event.exceptionMessage = when {
-            msg.startsWith("ANR") -> msg.replaceFirst("ANR", "")
-            else -> msg
+
+        if (event.errors.isNotEmpty()) {
+            event.errors[0].errorMessage = when {
+                msg.startsWith("ANR") -> msg.replaceFirst("ANR", "")
+                else -> msg
+            }
         }
     }
 

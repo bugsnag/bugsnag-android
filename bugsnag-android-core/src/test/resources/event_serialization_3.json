@@ -1,0 +1,14 @@
+{
+  "metaData": {},
+  "severity": "info",
+  "severityReason": {
+    "type": "userCallbackSetSeverity"
+  },
+  "unhandled": false,
+  "exceptions": [],
+  "user": {},
+  "app": {},
+  "device": {},
+  "breadcrumbs": [],
+  "threads": []
+}

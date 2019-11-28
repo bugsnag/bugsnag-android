@@ -1,8 +1,8 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
+import static com.bugsnag.android.HandledState.REASON_UNHANDLED_EXCEPTION;
 import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
-import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
-import static com.bugsnag.android.MapUtils.getStringFromMap;
 
 import com.bugsnag.android.NativeInterface.Message;
 
@@ -11,13 +11,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.storage.StorageManager;
-import android.text.TextUtils;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -166,9 +162,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             @Override
             public void onErrorIOFailure(Exception exc, File errorFile, String context) {
                 // send an internal error to bugsnag with no cache
-                Thread thread = Thread.currentThread();
-                Event err = new Event.Builder(immutableConfig, exc, null, thread,
-                        true, new Metadata()).build();
+                HandledState handledState = HandledState.newInstance(REASON_UNHANDLED_EXCEPTION);
+                Event err = new Event(exc, immutableConfig, handledState);
                 err.setContext(context);
 
                 err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
@@ -546,15 +541,13 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param exception the exception to send to Bugsnag
+     * @param exc the exception to send to Bugsnag
      * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exception, @Nullable OnError onError) {
-        Event event = new Event.Builder(immutableConfig, exception, sessionTracker,
-            Thread.currentThread(), false, clientState.getMetadata())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
+    public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
+        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
+        Event event = new Event(exc, immutableConfig, handledState, clientState.getMetadata());
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
@@ -584,10 +577,12 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
                        @Nullable OnError onError) {
-        Event event = new Event.Builder(immutableConfig, name, message, stacktrace,
-            sessionTracker, Thread.currentThread(), clientState.getMetadata())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
+        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
+        Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages());
+        Error err = new Error(name, message, trace.getTrace());
+        Metadata metadata = clientState.getMetadata();
+        Event event = new Event(null, immutableConfig, handledState, metadata);
+        event.setErrors(Collections.singletonList(err));
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
@@ -596,17 +591,14 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      *
      * Should only ever be called from the {@link ExceptionHandler}.
      */
-    void notifyUnhandledException(@NonNull Throwable exception, Metadata metadata,
+    void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
                                   @HandledState.SeverityReason String severityReason,
                                   @Nullable String attributeValue, Thread thread) {
-        Event event = new Event.Builder(immutableConfig, exception,
-                sessionTracker, thread, true, clientState.getMetadata())
-                .severity(Severity.ERROR)
-                .metadata(metadata)
-                .severityReasonType(severityReason)
-                .attributeValue(attributeValue)
-                .build();
-
+        HandledState handledState
+                = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
+        ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
+        Event event = new Event(exc, immutableConfig, handledState,
+                clientState.getMetadata());
         notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
@@ -622,26 +614,34 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             return;
         }
 
+        // get session for event
+        Session currentSession = sessionTracker.getCurrentSession();
+
+        if (currentSession != null
+                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
+            event.setSession(currentSession);
+        }
+
         // Capture the state of the app and device and attach diagnostics to the event
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
-        event.setDeviceData(errorDeviceData);
+        event.setDevice(errorDeviceData);
         event.addMetadata("device", null, deviceData.getDeviceMetadata());
-
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
-        event.setAppData(errorAppData);
+        event.setApp(errorAppData);
         event.addMetadata("app", null, appData.getAppDataMetadata());
 
-        // Attach breadcrumbs to the event
-        event.setBreadcrumbs(breadcrumbState);
+        // Attach breadcrumbState to the event
+        event.setBreadcrumbs(new ArrayList<>(breadcrumbState.getStore()));
 
         // Attach user info to the event
-        event.setUser(userState.getUser());
+        User user = userState.getUser();
+        event.setUser(user.getId(), user.getEmail(), user.getName());
 
         // Attach default context from active activity
-        if (TextUtils.isEmpty(event.getContext())) {
+        if (Intrinsics.isEmpty(event.getContext())) {
             String context = clientState.getContext();
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
@@ -655,15 +655,17 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // Build the report
         Report report = new Report(immutableConfig.getApiKey(), event);
 
-        if (event.getSession() != null) {
+        if (event.getSession() != null && currentSession != null) {
             setChanged();
 
-            if (event.getHandledState().isUnhandled()) {
+            if (event.isUnhandled()) {
+                event.setSession(currentSession.incrementUnhandledAndCopy());
                 notifyObservers(new Message(
                     NativeInterface.MessageType.NOTIFY_UNHANDLED, null));
             } else {
+                event.setSession(currentSession.incrementHandledAndCopy());
                 notifyObservers(new Message(
-                    NativeInterface.MessageType.NOTIFY_HANDLED, event.getExceptionName()));
+                    NativeInterface.MessageType.NOTIFY_HANDLED,  null));
             }
         }
 
@@ -690,11 +692,11 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         app.put("duration", AppData.getDurationMs());
         app.put("durationInForeground", appData.calculateDurationInForeground());
         app.put("inForeground", sessionTracker.isInForeground());
-        event.setAppData(app);
+        event.setApp(app);
 
         Map<String, Object> device = deviceData.getDeviceDataSummary();
         device.put("freeDisk", deviceData.calculateFreeDisk());
-        event.setDeviceData(device);
+        event.setDevice(device);
 
         Notifier notifier = Notifier.INSTANCE;
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
@@ -752,10 +754,14 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     private void leaveErrorBreadcrumb(@NonNull Event event) {
         // Add a breadcrumb for this event occurring
-        String msg = event.getExceptionMessage();
-        Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-        breadcrumbState.add(new Breadcrumb(event.getExceptionName(),
-                BreadcrumbType.ERROR, message, new Date()));
+        List<Error> errors = event.getErrors();
+
+        if (errors.size() > 0) {
+            String name = errors.get(0).getErrorClass();
+            String msg = errors.get(0).getErrorMessage();
+            Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
+            breadcrumbState.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
+        }
     }
 
     @NonNull

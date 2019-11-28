@@ -10,8 +10,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 
-import java.lang.Thread
-
 @RunWith(MockitoJUnitRunner::class)
 class AnrDetailsCollectorTest {
 
@@ -21,10 +19,12 @@ class AnrDetailsCollectorTest {
 
     private val collector = AnrDetailsCollector()
     private val stateInfo = ActivityManager.ProcessErrorStateInfo()
-    private lateinit var event: Event
 
     @Mock
     lateinit var am: ActivityManager
+
+    @Mock
+    lateinit var client: Client
 
     @Before
     fun setUp() {
@@ -32,15 +32,6 @@ class AnrDetailsCollectorTest {
         stateInfo.tag = "com.bugsnag.android.example/.ExampleActivity"
         stateInfo.shortMsg = "Input dispatching timed out"
         stateInfo.longMsg = "ANR in com.bugsnag.android.example"
-
-        event = Event.Builder(
-            BugsnagTestUtils.generateImmutableConfig(),
-            RuntimeException(),
-            null,
-            Thread.currentThread(),
-            true,
-            Metadata()
-        ).build()
     }
 
     @Test
@@ -72,7 +63,10 @@ class AnrDetailsCollectorTest {
 
     @Test
     fun anrDetailsAltered() {
+        Mockito.`when`(client.config).thenReturn(BugsnagTestUtils.generateImmutableConfig())
+        val event = BugsnagPluginInterface.createEvent(RuntimeException("whoops"), client, HandledState.REASON_ANR)
         collector.addErrorStateInfo(event, stateInfo)
-        assertEquals(stateInfo.shortMsg.replace("ANR", ""), event.exceptionMessage)
+        assertEquals(stateInfo.shortMsg.replace("ANR", ""), event.errors[0].errorMessage)
     }
+
 }

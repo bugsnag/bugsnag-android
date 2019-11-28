@@ -62,8 +62,10 @@ internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDel
 }
 
 internal fun writeErrorToStore(client: Client) {
-    val event = Event.Builder(client.getConfig(), RuntimeException(), null,
-        Thread.currentThread(), false, Metadata()
-    ).build()
+    val event = BugsnagPluginInterface.createEvent(
+        RuntimeException(),
+        client,
+        HandledState.REASON_ANR
+    )
     client.eventStore.write(event)
 }

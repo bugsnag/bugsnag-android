@@ -108,6 +108,10 @@ final class HandledState implements JsonStream.Streamable {
         this.currentSeverity = severity;
     }
 
+    String getSeverityReasonType() {
+        return severityReasonType;
+    }
+
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         writer.beginObject().name("type").value(calculateSeverityReasonType());
