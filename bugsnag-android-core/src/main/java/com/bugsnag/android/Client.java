@@ -6,7 +6,6 @@ import static com.bugsnag.android.MapUtils.getStringFromMap;
 import com.bugsnag.android.NativeInterface.Message;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -207,8 +206,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         connectivity.registerForNetworkChanges();
 
         Logger.setEnabled(immutableConfig.getLoggingEnabled());
-
-        configuration.addObserver(this);
+        configuration.getMetadata().addObserver(this);
         breadcrumbState.addObserver(this);
         sessionTracker.addObserver(this);
 
@@ -436,6 +434,9 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     public void setContext(@Nullable String context) {
         clientState.setContext(context);
+        setChanged();
+        notifyObservers(new NativeInterface.Message(
+                NativeInterface.MessageType.UPDATE_CONTEXT, context));
     }
 
     /**
@@ -784,7 +785,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                         if (delivery instanceof DefaultDelivery) {
                             Map<String, String> headers = params.getHeaders();
                             headers.put("Bugsnag-Internal-Error", "true");
-                            headers.remove(Configuration.HEADER_API_KEY);
+                            headers.remove("Bugsnag-Api-Key");
                             DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
                             defaultDelivery.deliver(params.getEndpoint(), report, headers);
                         }
@@ -839,8 +840,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     @Override
-    public void addMetadata(@NonNull String section, @Nullable Object value) {
-        addMetadata(section, null, value);
+    public void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
+        clientState.getMetadata().addMetadata(section, value);
     }
 
     @Override
@@ -891,7 +892,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     private void leaveBreadcrumbInternal(Breadcrumb crumb) {
-        if (runBreadcrumbCallbacks(crumb)) {
+        if (runOnBreadcrumbTasks(crumb)) {
             breadcrumbState.add(crumb);
         }
     }
@@ -950,7 +951,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         return true;
     }
 
-    private boolean runBreadcrumbCallbacks(@NonNull Breadcrumb breadcrumb) {
+    private boolean runOnBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
         Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
         for (OnBreadcrumb callback : tasks) {
             try {
@@ -1009,7 +1010,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @return the config
      */
     @NonNull
-    BugsnagConfiguration getConfiguration() {
+    Configuration getConfiguration() {
         return clientState;
     }
 

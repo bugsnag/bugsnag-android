@@ -9,7 +9,6 @@ internal data class ImmutableConfig(
     val autoDetectAnrs: Boolean,
     val autoDetectNdkCrashes: Boolean,
     val autoTrackSessions: Boolean,
-    val autoCaptureBreadcrumbs: Boolean,
     val sendThreads: Boolean,
     val ignoreClasses: Collection<String>,
     val enabledReleaseStages: Collection<String>,
@@ -42,7 +41,8 @@ internal data class ImmutableConfig(
      * @return true if the release state should be notified else false
      */
     @JvmName("shouldNotifyForReleaseStage")
-    internal fun shouldNotifyForReleaseStage() = enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
+    internal fun shouldNotifyForReleaseStage() =
+        enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
 
     @JvmName("errorApiDeliveryParams")
     internal fun errorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
@@ -85,7 +85,6 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         autoDetectAnrs = config.autoDetectAnrs,
         autoDetectNdkCrashes = config.autoDetectNdkCrashes,
         autoTrackSessions = config.autoTrackSessions,
-        autoCaptureBreadcrumbs = config.autoCaptureBreadcrumbs,
         sendThreads = config.sendThreads,
         ignoreClasses = config.ignoreClasses.toSet(),
         enabledReleaseStages = config.enabledReleaseStages.toSet(),
@@ -96,7 +95,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         versionCode = config.versionCode!!,
         codeBundleId = config.codeBundleId,
         appType = config.appType,
-        delivery = config.delivery,
+        delivery = config.delivery!!,
         endpoints = config.endpoints,
         persistUserBetweenSessions = config.persistUserBetweenSessions,
         launchCrashThresholdMs = config.launchCrashThresholdMs,

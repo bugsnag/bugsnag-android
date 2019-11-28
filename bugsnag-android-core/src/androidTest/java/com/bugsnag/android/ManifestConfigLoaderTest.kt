@@ -31,7 +31,6 @@ class ManifestConfigLoaderTest {
             assertFalse(autoDetectAnrs)
             assertFalse(autoDetectNdkCrashes)
             assertTrue(autoTrackSessions)
-            assertTrue(autoCaptureBreadcrumbs)
             assertTrue(sendThreads)
             assertFalse(persistUserBetweenSessions)
 
@@ -46,7 +45,7 @@ class ManifestConfigLoaderTest {
             assertEquals(emptySet<String>(), enabledReleaseStages)
             assertEquals(emptySet<String>(), ignoreClasses)
             assertEquals(emptySet<String>(), projectPackages)
-            assertEquals(setOf("password"), redactKeys)
+            assertEquals(setOf("password"), redactedKeys)
 
             // misc
             assertEquals(maxBreadcrumbs, 25)
@@ -80,7 +79,7 @@ class ManifestConfigLoaderTest {
             putString("com.bugsnag.android.ENABLED_RELEASE_STAGES", "beta,production,staging")
             putString("com.bugsnag.android.IGNORE_CLASSES", "com.bugsnag.FooKt,org.example.String")
             putString("com.bugsnag.android.PROJECT_PACKAGES", "com.bugsnag,com.example")
-            putString("com.bugsnag.android.REDACT_KEYS", "password,auth,foo")
+            putString("com.bugsnag.android.REDACTED_KEYS", "password,auth,foo")
 
             // misc
             putInt("com.bugsnag.android.MAX_BREADCRUMBS", 50)
@@ -98,7 +97,6 @@ class ManifestConfigLoaderTest {
             assertTrue(autoDetectAnrs)
             assertTrue(autoDetectNdkCrashes)
             assertFalse(autoTrackSessions)
-            assertFalse(autoCaptureBreadcrumbs)
             assertFalse(sendThreads)
             assertTrue(persistUserBetweenSessions)
 
@@ -113,7 +111,7 @@ class ManifestConfigLoaderTest {
             assertEquals(setOf("beta", "production", "staging"), enabledReleaseStages)
             assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), ignoreClasses)
             assertEquals(setOf("com.bugsnag", "com.example"), projectPackages)
-            assertEquals(setOf("password", "auth", "foo"), redactKeys)
+            assertEquals(setOf("password", "auth", "foo"), redactedKeys)
 
             // misc
             assertEquals(maxBreadcrumbs, 50)

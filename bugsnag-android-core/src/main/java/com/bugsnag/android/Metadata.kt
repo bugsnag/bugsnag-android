@@ -21,14 +21,18 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
 
     private val store: MutableMap<String, Any> = ConcurrentHashMap(map)
     internal val jsonStreamer = ObjectJsonStreamer()
-    protected val redactKeys: Set<String> = jsonStreamer.redactKeys
+    val redactedKeys: Set<String> = jsonStreamer.redactedKeys
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         jsonStreamer.objectToStream(store, writer, true)
     }
 
-    override fun addMetadata(section: String, value: Any?) = addMetadata(section, null, value)
+    override fun addMetadata(section: String, value: Map<String, Any?>) {
+        value.entries.forEach {
+            addMetadata(section, it.key, it.value)
+        }
+    }
     override fun clearMetadata(section: String) = clearMetadata(section, null)
     override fun getMetadata(section: String) = getMetadata(section, null)
 
@@ -100,18 +104,18 @@ class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashM
 
     fun toMap(): Map<String, Any> = HashMap(store)
 
-    fun setRedactKeys(redactKeys: Collection<String>) {
-        val data = HashSet(redactKeys)
-        jsonStreamer.redactKeys.clear()
-        jsonStreamer.redactKeys.addAll(data)
+    fun setRedactedKeys(redactedKeys: Collection<String>) {
+        val data = HashSet(redactedKeys)
+        jsonStreamer.redactedKeys.clear()
+        jsonStreamer.redactedKeys.addAll(data)
     }
 
     companion object {
         fun merge(vararg data: Metadata): Metadata {
             val stores = data.map { it.toMap() }
-            val filters = data.flatMap { it.jsonStreamer.redactKeys }
+            val filters = data.flatMap { it.jsonStreamer.redactedKeys }
             val newMeta = Metadata(mergeMaps(stores))
-            newMeta.setRedactKeys(filters.toSet())
+            newMeta.setRedactedKeys(filters.toSet())
             return newMeta
         }
 

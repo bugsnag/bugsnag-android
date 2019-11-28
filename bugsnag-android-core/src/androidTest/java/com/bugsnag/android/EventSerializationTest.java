@@ -319,7 +319,7 @@ public class EventSerializationTest {
     @Test
     public void shouldIgnoreEmpty() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setIgnoreClasses(Collections.<String>emptyList());
+        configuration.setIgnoreClasses(Collections.<String>emptySet());
 
         event = new Event.Builder(BugsnagTestUtils.convert(configuration), new RuntimeException(),
                 generateSessionTracker(), Thread.currentThread(), false,

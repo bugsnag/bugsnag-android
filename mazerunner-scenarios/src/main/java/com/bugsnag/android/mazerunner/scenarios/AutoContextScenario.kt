@@ -13,7 +13,7 @@ import android.content.Intent
 internal class AutoContextScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
     }
 
     override fun run() {

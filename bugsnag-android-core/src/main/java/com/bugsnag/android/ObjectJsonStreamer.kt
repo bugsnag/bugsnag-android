@@ -10,7 +10,7 @@ internal class ObjectJsonStreamer {
         private const val OBJECT_PLACEHOLDER = "[OBJECT]"
     }
 
-    val redactKeys = mutableSetOf("password")
+    val redactedKeys = mutableSetOf("password")
 
     // Write complex/nested values to a JsonStreamer
     @Throws(IOException::class)
@@ -63,6 +63,6 @@ internal class ObjectJsonStreamer {
     }
 
     // Should this key be redacted
-    private fun isRedactedKey(key: String) = redactKeys.any { key.contains(it) }
+    private fun isRedactedKey(key: String) = redactedKeys.any { key.contains(it) }
 
 }

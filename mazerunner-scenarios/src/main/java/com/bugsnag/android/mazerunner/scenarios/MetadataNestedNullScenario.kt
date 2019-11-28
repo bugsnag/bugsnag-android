@@ -14,7 +14,7 @@ internal class MetadataNestedNullScenario(
 ) : Scenario(config, context) {
 
     init {
-        config.setAutoTrackSessions(false)
+        config.autoTrackSessions = false
 
     }
 
