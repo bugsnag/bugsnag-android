@@ -10,6 +10,7 @@ final class BugsnagTestUtils {
     static Configuration generateConfiguration() {
         Configuration configuration = new Configuration("test");
         configuration.setDelivery(generateDelivery());
+        configuration.setLogger(NoopLogger.INSTANCE);
         return configuration;
     }
 

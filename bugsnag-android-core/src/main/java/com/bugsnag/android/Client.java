@@ -115,11 +115,17 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
         // if the user has set the releaseStage to production manually, disable logging
-        if (configuration.getLogger() == DebugLogger.INSTANCE
-                && AppData.RELEASE_STAGE_PRODUCTION.equals(configuration.getReleaseStage())) {
-            configuration.setLogger(NoopLogger.INSTANCE);
+        if (configuration.getLogger() == null) {
+            String releaseStage = configuration.getReleaseStage();
+            boolean loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+
+            if (loggingEnabled) {
+                configuration.setLogger(DebugLogger.INSTANCE);
+            } else {
+                configuration.setLogger(NoopLogger.INSTANCE);
+            }
         }
-        this.logger = configuration.getLogger();
+        logger = configuration.getLogger();
 
         // set sensible defaults for delivery/project packages etc if not set
         warnIfNotAppContext(androidContext);
