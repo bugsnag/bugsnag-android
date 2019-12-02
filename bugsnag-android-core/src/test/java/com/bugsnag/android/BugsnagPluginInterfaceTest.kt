@@ -26,6 +26,15 @@ class BugsnagPluginInterfaceTest {
         BugsnagPluginInterface.loadPlugin(client, String::class.java)
         BugsnagPluginInterface.unloadPlugin(String::class.java)
     }
+
+    @Test
+    fun registerPluginClass() {
+        BugsnagPluginInterface.registerPlugin(FakePlugin::class.java)
+        BugsnagPluginInterface.loadRegisteredPlugins(client)
+        assertTrue(FakePlugin.active)
+        BugsnagPluginInterface.unloadPlugin(FakePlugin::class.java)
+        assertFalse(FakePlugin.active)
+    }
 }
 
 internal class FakePlugin : BugsnagPlugin {

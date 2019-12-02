@@ -318,6 +318,7 @@ public class Client extends Observable implements Observer {
         NativeInterface.setClient(this);
         enableOrDisableNdkReporting();
         enableOrDisableAnrReporting();
+        BugsnagPluginInterface.INSTANCE.loadRegisteredPlugins(this);
     }
 
     void enableOrDisableNdkReporting() {
