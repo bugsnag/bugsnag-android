@@ -88,6 +88,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final StorageManager storageManager;
     final Logger logger;
 
+    final ClientObservable clientObservable = new ClientObservable();
+
     /**
      * Initialize a Bugsnag client
      *
@@ -225,22 +227,9 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         configuration.getMetadata().addObserver(this);
         breadcrumbState.addObserver(this);
         sessionTracker.addObserver(this);
+        clientObservable.addObserver(this);
         userState.addObserver(this);
-
-        final Client client = this;
-        orientationListener = new OrientationEventListener(appContext) {
-            @Override
-            public void onOrientationChanged(int orientation) {
-                client.setChanged();
-                client.notifyObservers(new Message(
-                    NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
-            }
-        };
-        try {
-            orientationListener.enable();
-        } catch (IllegalStateException ex) {
-            logger.w("Failed to set up orientation tracking: " + ex);
-        }
+        orientationListener = registerOrientationChangeListener();
 
         // filter out any disabled breadcrumb types
         addOnBreadcrumb(new OnBreadcrumb() {
@@ -254,6 +243,21 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         eventStore.flushOnLaunch();
         loadPlugins();
         leaveBreadcrumb("Bugsnag loaded");
+    }
+
+    private OrientationEventListener registerOrientationChangeListener() {
+        OrientationEventListener orientationListener = new OrientationEventListener(appContext) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                clientObservable.postOrientationChange(orientation);
+            }
+        };
+        try {
+            orientationListener.enable();
+        } catch (IllegalStateException ex) {
+            logger.w("Failed to set up orientation tracking: " + ex);
+        }
+        return orientationListener;
     }
 
     void recordStorageCacheBehavior(Event event) {
@@ -337,27 +341,17 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     void sendNativeSetupNotification() {
-        setChanged();
-        ArrayList<Object> messageArgs = new ArrayList<>();
-        messageArgs.add(clientState);
-
-        super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
+        clientObservable.postNdkInstall(immutableConfig);
         try {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    enqueuePendingNativeReports();
+                    clientObservable.postNdkDeliverPending();
                 }
             });
         } catch (RejectedExecutionException ex) {
             logger.w("Failed to enqueue native reports, will retry next launch: ", ex);
         }
-    }
-
-    void enqueuePendingNativeReports() {
-        setChanged();
-        notifyObservers(new Message(
-            NativeInterface.MessageType.DELIVER_PENDING, null));
     }
 
     @Override
