@@ -113,23 +113,20 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testStartSessionSendsMessage() throws InterruptedException {
+    public void testStartSessionSendsMessage() {
         client.startSession();
-        List<Object> sessionInfo = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.START_SESSION, List.class);
-        assertEquals(4, sessionInfo.size());
-        assertTrue(sessionInfo.get(0) instanceof String);
-        assertTrue(sessionInfo.get(1) instanceof String);
-        assertTrue(sessionInfo.get(2) instanceof Integer);
-        assertTrue(sessionInfo.get(3) instanceof Integer);
+        StateEvent.StartSession sessionInfo = findMessageInQueue(StateEvent.StartSession.class);
+        assertNotNull(sessionInfo.getId());
+        assertNotNull(sessionInfo.getStartedAt());
+        assertEquals(0, sessionInfo.getHandledCount());
+        assertEquals(0, sessionInfo.getUnhandledCount());
     }
 
     @Test
-    public void testPauseSessionSendsmessage() {
+    public void testPauseSessionSendsMessage() {
         client.startSession();
         client.pauseSession();
-        Object msg = findMessageInQueue(NativeInterface.MessageType.PAUSE_SESSION, null);
-        assertNull(msg);
+        assertNotNull(findMessageInQueue(StateEvent.PauseSession.class));
     }
 
     @Test
