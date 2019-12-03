@@ -20,10 +20,6 @@ public class NativeInterface {
 
     public enum MessageType {
         /**
-         * Add a breadcrumb. The Message object should be the breadcrumb
-         */
-        ADD_BREADCRUMB,
-        /**
          * Add a new metadata value. The Message object should be an array
          * containing [tab, key, value]
          */
