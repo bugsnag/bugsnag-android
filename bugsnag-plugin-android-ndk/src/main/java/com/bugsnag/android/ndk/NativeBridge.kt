@@ -1,7 +1,6 @@
 package com.bugsnag.android.ndk
 
 import android.os.Build
-import android.util.Log
 import com.bugsnag.android.NativeInterface
 import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.*
@@ -20,6 +19,7 @@ class NativeBridge : Observer {
     private val lock = ReentrantLock()
     private val installed = AtomicBoolean(false)
     private val reportDirectory: String = NativeInterface.getNativeReportPath()
+    private val logger = NativeInterface.getLogger()
 
     private val is32bit: Boolean
         get() {
@@ -30,7 +30,8 @@ class NativeBridge : Observer {
     external fun install(
         reportingDirectory: String,
         autoDetectNdkCrashes: Boolean,
-        apiLevel: Int, is32bit: Boolean,
+        apiLevel: Int,
+        is32bit: Boolean,
         appVersion: String,
         buildUuid: String,
         releaseStage: String
@@ -61,6 +62,7 @@ class NativeBridge : Observer {
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
 
+
     /**
      * Creates a new native bridge for interacting with native components.
      * Configures logging and ensures that the reporting directory exists
@@ -68,8 +70,9 @@ class NativeBridge : Observer {
      */
     init {
         val outFile = File(reportDirectory)
+        NativeInterface.getLogger()
         if (!outFile.exists() && !outFile.mkdirs()) {
-            warn("The native reporting directory cannot be created.")
+            logger.w("The native reporting directory cannot be created.")
         }
     }
 
@@ -102,11 +105,11 @@ class NativeBridge : Observer {
             return true
         }
         if (!installed.get() && msg !is Install) {
-            warn("Received message before INSTALL: $msg")
+            logger.w("Received message before INSTALL: $msg")
             return true
         }
 
-        warn(String.format("Received NDK message %s", msg))
+        logger.i(String.format("Received NDK message %s", msg))
         return false
     }
 
@@ -122,10 +125,10 @@ class NativeBridge : Observer {
                     }
                 }
             } else {
-                warn("Report directory does not exist, cannot read pending reports")
+                logger.w("Report directory does not exist, cannot read pending reports")
             }
         } catch (ex: Exception) {
-            warn("Failed to parse/write pending reports: $ex")
+            logger.w("Failed to parse/write pending reports: $ex")
         } finally {
             lock.unlock()
         }
@@ -135,13 +138,14 @@ class NativeBridge : Observer {
         lock.lock()
         try {
             if (installed.get()) {
-                warn("Received duplicate setup message with arg: $arg")
+                logger.w("Received duplicate setup message with arg: $arg")
+            } else {
+                val reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash"
+                install(reportPath, arg.autoDetectNdkCrashes, Build.VERSION.SDK_INT, is32bit,
+                    arg.appVersion ?: "", arg.buildUuid ?: "", arg.releaseStage ?: ""
+                )
+                installed.set(true)
             }
-            val reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash"
-            install(reportPath, arg.autoDetectNdkCrashes, Build.VERSION.SDK_INT, is32bit,
-                arg.appVersion ?: "", arg.buildUuid ?: "", arg.releaseStage ?: ""
-            )
-            installed.set(true)
         } finally {
             lock.unlock()
         }
@@ -158,7 +162,4 @@ class NativeBridge : Observer {
         }
     }
 
-    private fun warn(msg: String) {
-        Log.d("Bugsnag", msg)
-    }
 }
