@@ -15,7 +15,8 @@ object BugsnagPluginInterface {
         registeredPluginClasses.add(clz)
     }
 
-    fun loadRegisteredPlugins(client: Client) {
+    @JvmName("loadRegisteredPlugins")
+    internal fun loadRegisteredPlugins(client: Client) {
         registeredPluginClasses.forEach { loadPlugin(client, it) }
     }
 
