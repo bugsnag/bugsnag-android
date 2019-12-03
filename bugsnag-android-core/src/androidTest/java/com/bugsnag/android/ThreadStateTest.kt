@@ -16,8 +16,7 @@ class ThreadStateTest {
 
     private val configuration = generateImmutableConfig()
     private val trace: Throwable? = null
-
-    private val threadState = ThreadState(configuration, trace)
+    private val threadState = ThreadState(configuration, null, Thread.currentThread(), Thread.getAllStackTraces(), NoopLogger)
     private val json = streamableToJsonArray(threadState)
 
     /**
@@ -40,7 +39,7 @@ class ThreadStateTest {
             .map { it.key }
             .first()
 
-        val state = ThreadState(configuration, trace, otherThread, Thread.getAllStackTraces())
+        val state = ThreadState(configuration, trace, otherThread, Thread.getAllStackTraces(), NoopLogger)
         val json = streamableToJsonArray(state)
         verifyCurrentThreadStructure(json, otherThread.id)
     }
@@ -55,7 +54,7 @@ class ThreadStateTest {
         val missingTraces = Thread.getAllStackTraces()
         missingTraces.remove(currentThread)
 
-        val state = ThreadState(configuration, trace, currentThread, missingTraces)
+        val state = ThreadState(configuration, trace, currentThread, missingTraces, NoopLogger)
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {
@@ -70,8 +69,7 @@ class ThreadStateTest {
     fun testHandledStacktrace() {
         val currentThread = Thread.currentThread()
         val allStackTraces = Thread.getAllStackTraces()
-        val state = ThreadState(configuration,
-            trace, currentThread, allStackTraces)
+        val state = ThreadState(configuration, trace, currentThread, allStackTraces, NoopLogger)
         val json = streamableToJsonArray(state)
 
         // find the stack trace for the current thread that was passed as a parameter
@@ -106,7 +104,7 @@ class ThreadStateTest {
         val exc: Throwable = RuntimeException("Whoops")
         val expectedTrace = exc.stackTrace
 
-        val state = ThreadState(configuration, exc, currentThread, allStackTraces)
+        val state = ThreadState(configuration, exc, currentThread, allStackTraces, NoopLogger)
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {

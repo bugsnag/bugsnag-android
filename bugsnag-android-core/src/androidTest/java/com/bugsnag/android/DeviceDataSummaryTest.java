@@ -25,7 +25,7 @@ public class DeviceDataSummaryTest {
         Context context = ApplicationProvider.getApplicationContext();
         Resources resources = context.getResources();
         DeviceData deviceData = new DeviceData(connectivity, context, resources,
-                "123", DeviceBuildInfo.Companion.defaultInfo());
+                "123", DeviceBuildInfo.Companion.defaultInfo(), NoopLogger.INSTANCE);
         this.deviceData = deviceData.getDeviceDataSummary();
     }
 

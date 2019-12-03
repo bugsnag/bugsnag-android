@@ -1,6 +1,11 @@
 Upgrading Guide
 ===============
 
+Upgrade from 4.X to 5.X
+-----------------------
+
+- The `BugsnagNDK:NativeBridge` log tag has changed to `Bugsnag`
+
 Upgrade bugsnag-android-ndk from 1.x to 4.x
 -----------------------
 

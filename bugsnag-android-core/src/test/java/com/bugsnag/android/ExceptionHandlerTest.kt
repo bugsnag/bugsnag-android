@@ -36,13 +36,13 @@ internal class ExceptionHandlerTest {
 
     @Test
     fun handlerInstalled() {
-        val exceptionHandler = ExceptionHandler(client)
+        val exceptionHandler = ExceptionHandler(client, NoopLogger)
         assertSame(exceptionHandler, Thread.getDefaultUncaughtExceptionHandler())
     }
 
     @Test
     fun uncaughtException() {
-        val exceptionHandler = ExceptionHandler(client)
+        val exceptionHandler = ExceptionHandler(client, NoopLogger)
         val thread = Thread.currentThread()
         val exc = RuntimeException("Whoops")
         exceptionHandler.uncaughtException(thread, exc)
@@ -59,7 +59,7 @@ internal class ExceptionHandlerTest {
     fun exceptionPropagated() {
         var propagated = false
         Thread.setDefaultUncaughtExceptionHandler { _, _ -> propagated = true }
-        val exceptionHandler = ExceptionHandler(client)
+        val exceptionHandler = ExceptionHandler(client, NoopLogger)
         val thread = Thread.currentThread()
         exceptionHandler.uncaughtException(thread, RuntimeException("Whoops"))
         assertTrue(propagated)

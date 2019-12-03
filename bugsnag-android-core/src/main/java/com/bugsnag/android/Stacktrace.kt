@@ -14,15 +14,22 @@ internal class Stacktrace : JsonStream.Streamable {
     }
 
     val trace: List<Stackframe>
+    val logger: Logger
 
-    constructor(stacktrace: Array<StackTraceElement>, projectPackages: Collection<String>) {
+    constructor(
+        stacktrace: Array<StackTraceElement>,
+        projectPackages: Collection<String>,
+        logger: Logger
+    ) {
         trace = limitTraceLength(stacktrace
             .mapNotNull { serializeStackframe(it, projectPackages) }
         ).map { mapToStackframe(it) }
+        this.logger = logger
     }
 
-    constructor(frames: List<Map<String, Any?>>) {
+    constructor(frames: List<Map<String, Any?>>, logger: Logger) {
         trace = limitTraceLength(frames).map { mapToStackframe(it) }
+        this.logger = logger
     }
 
     private fun mapToStackframe(it: Map<String, Any?>) =
@@ -67,7 +74,7 @@ internal class Stacktrace : JsonStream.Streamable {
             }
             return map
         } catch (lineEx: Exception) {
-            Logger.warn("Failed to serialize stacktrace", lineEx)
+            logger.w("Failed to serialize stacktrace", lineEx)
             return null
         }
     }

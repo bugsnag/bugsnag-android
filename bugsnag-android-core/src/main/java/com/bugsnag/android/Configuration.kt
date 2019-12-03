@@ -121,6 +121,12 @@ class Configuration(
     var appType = "android"
 
     /**
+     * Sets the logger used for logging internal messages within the bugsnag SDK to a custom
+     * implementation. If set to null, no log messages will be logged.
+     */
+    var logger: Logger? = null
+
+    /**
      * Sets the delivery used to make HTTP requests to Bugsnag. A default implementation is
      * provided, but you may wish to use your own implementation if you have requirements such
      * as pinning SSL certificates, for example.

@@ -159,8 +159,9 @@ public class NativeInterface {
         return getClient().getContext();
     }
 
-    public static boolean getLoggingEnabled() {
-        return Logger.getEnabled();
+    @NonNull
+    public static Logger getLogger() {
+        return getClient().immutableConfig.getLogger();
     }
 
     @NonNull

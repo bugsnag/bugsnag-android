@@ -61,6 +61,7 @@ final class BugsnagTestUtils {
     static Configuration generateConfiguration() {
         Configuration configuration = new Configuration("test");
         configuration.setDelivery(generateDelivery());
+        configuration.setLogger(NoopLogger.INSTANCE);
         return configuration;
     }
 
@@ -76,7 +77,7 @@ final class BugsnagTestUtils {
     static SessionTracker generateSessionTracker() {
         Configuration config = generateConfiguration();
         return new SessionTracker(convert(config), config, BugsnagTestUtils.generateClient(),
-            generateSessionStore());
+            generateSessionStore(), NoopLogger.INSTANCE);
     }
 
     static Connectivity generateConnectivity() {
@@ -86,7 +87,7 @@ final class BugsnagTestUtils {
     @NonNull
     static SessionStore generateSessionStore() {
         Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(applicationContext, null);
+        return new SessionStore(applicationContext, NoopLogger.INSTANCE, null);
     }
 
     public static Delivery generateDelivery() {

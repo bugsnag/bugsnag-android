@@ -10,19 +10,19 @@ import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
 import java.nio.charset.Charset
 
-internal class DefaultDelivery(private val connectivity: Connectivity?) : Delivery {
+internal class DefaultDelivery(private val connectivity: Connectivity?, val logger: Logger) : Delivery {
 
     override fun deliver(payload: SessionPayload,
                          deliveryParams: DeliveryParams
     ): DeliveryStatus {
         val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
-        Logger.info("Session API request finished with status $status")
+        logger.i("Session API request finished with status $status")
         return status
     }
 
     override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
         val status = deliver(deliveryParams.endpoint, report, deliveryParams.headers)
-        Logger.info("Error API request finished with status $status")
+        logger.i("Error API request finished with status $status")
         return status
     }
 
@@ -66,10 +66,10 @@ internal class DefaultDelivery(private val connectivity: Connectivity?) : Delive
             logRequestInfo(responseCode, conn, status)
             return status
         } catch (exception: IOException) {
-            Logger.warn("IOException encountered in request", exception)
+            logger.w("IOException encountered in request", exception)
             return DeliveryStatus.UNDELIVERED
         } catch (exception: Exception) {
-            Logger.warn("Unexpected error delivering payload", exception)
+            logger.w("Unexpected error delivering payload", exception)
             return DeliveryStatus.FAILURE
         } finally {
             IOUtils.close(conn)
@@ -77,7 +77,7 @@ internal class DefaultDelivery(private val connectivity: Connectivity?) : Delive
     }
 
     private fun logRequestInfo(code: Int, conn: HttpURLConnection, status: DeliveryStatus) {
-        Logger.info(
+        logger.i(
             "Request completed with code $code, " +
                     "message: ${conn.responseMessage}, " +
                     "headers: ${conn.headerFields}"
@@ -85,7 +85,7 @@ internal class DefaultDelivery(private val connectivity: Connectivity?) : Delive
 
         if (status != DeliveryStatus.DELIVERED) {
             val errBody = conn.errorStream.bufferedReader().readText()
-            Logger.warn("Request error details: $errBody")
+            logger.w("Request error details: $errBody")
         }
     }
 

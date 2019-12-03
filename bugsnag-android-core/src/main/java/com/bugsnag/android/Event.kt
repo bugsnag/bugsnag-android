@@ -47,7 +47,7 @@ class Event @JvmOverloads internal constructor(
 
     var errors: List<Error> = when (originalError) {
         null -> listOf()
-        else -> Error.createError(originalError, config.projectPackages)
+        else -> Error.createError(originalError, config.projectPackages, config.logger)
     }
 
     var threads: List<Thread> = when {

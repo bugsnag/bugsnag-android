@@ -6,7 +6,7 @@ import java.util.Observable
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
-internal class BreadcrumbState(maxBreadcrumbs: Int) : Observable(),
+internal class BreadcrumbState(maxBreadcrumbs: Int, val logger: Logger) : Observable(),
     JsonStream.Streamable {
     val store: Queue<Breadcrumb> = ConcurrentLinkedQueue()
 
@@ -30,11 +30,11 @@ internal class BreadcrumbState(maxBreadcrumbs: Int) : Observable(),
     fun add(breadcrumb: Breadcrumb) {
         try {
             if (breadcrumbPayloadSize(breadcrumb) > MAX_PAYLOAD_SIZE) {
-                Logger.warn("Dropping breadcrumb because payload exceeds 4KB limit")
+                logger.w("Dropping breadcrumb because payload exceeds 4KB limit")
                 return
             }
         } catch (ex: IOException) {
-            Logger.warn("Dropping breadcrumb because it could not be serialized", ex)
+            logger.w("Dropping breadcrumb because it could not be serialized", ex)
         }
 
         store.add(breadcrumb)

@@ -33,7 +33,7 @@ class SystemBroadcastReceiverTest {
         `when`(intent.action).thenReturn("android.intent.action.AIRPLANE_MODE")
 
 
-        val receiver = SystemBroadcastReceiver(client)
+        val receiver = SystemBroadcastReceiver(client, NoopLogger)
         receiver.onReceive(context, intent)
 
         val metadata = mapOf(Pair("Intent Action", "android.intent.action.AIRPLANE_MODE"))
@@ -47,7 +47,7 @@ class SystemBroadcastReceiverTest {
         `when`(bundle.keySet()).thenReturn(setOf("foo"))
         `when`(bundle.get("foo")).thenReturn(setOf("bar"))
 
-        val receiver = SystemBroadcastReceiver(client)
+        val receiver = SystemBroadcastReceiver(client, NoopLogger)
         receiver.onReceive(context, intent)
 
         val metadata = mapOf(Pair("Intent Action", "SomeTitle"), Pair("foo", "[bar]"))

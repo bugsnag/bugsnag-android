@@ -8,12 +8,12 @@ class Error @JvmOverloads internal constructor(
 ): JsonStream.Streamable {
 
     companion object {
-        fun createError(exc: Throwable, projectPackages: Collection<String>): List<Error> {
+        fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): List<Error> {
             val errors = mutableListOf<Error>()
 
             var currentEx: Throwable? = exc
             while (currentEx != null) {
-                val trace = Stacktrace(currentEx.stackTrace, projectPackages)
+                val trace = Stacktrace(currentEx.stackTrace, projectPackages, logger)
                 errors.add(Error(currentEx.javaClass.name, currentEx.localizedMessage, trace.trace))
                 currentEx = currentEx.cause
             }
