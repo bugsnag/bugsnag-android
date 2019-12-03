@@ -51,7 +51,7 @@ class Event @JvmOverloads internal constructor(
     }
 
     var threads: List<Thread> = when {
-        config.sendThreads -> ThreadState(config, originalError).threads
+        config.sendThreads -> ThreadState(config, if (isUnhandled) originalError else null).threads
         else -> emptyList()
     }
 
