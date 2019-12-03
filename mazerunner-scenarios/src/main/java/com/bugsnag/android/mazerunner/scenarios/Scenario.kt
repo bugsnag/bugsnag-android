@@ -62,11 +62,6 @@ abstract class Scenario(
         }
     }
 
-    internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
-        val clz = java.lang.Class.forName("com.bugsnag.android.DefaultDelivery")
-        return clz.constructors[0].newInstance(null) as Delivery
-    }
-
     /**
      * Returns a throwable with the message as the current classname
      */
