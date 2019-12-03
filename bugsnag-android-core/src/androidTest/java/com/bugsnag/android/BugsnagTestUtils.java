@@ -76,8 +76,8 @@ final class BugsnagTestUtils {
 
     static SessionTracker generateSessionTracker() {
         Configuration config = generateConfiguration();
-        return new SessionTracker(convert(config), config, BugsnagTestUtils.generateClient(),
-            generateSessionStore(), NoopLogger.INSTANCE);
+        return new SessionTracker(convert(config), config.callbackState,
+                BugsnagTestUtils.generateClient(), generateSessionStore(), NoopLogger.INSTANCE);
     }
 
     static Connectivity generateConnectivity() {

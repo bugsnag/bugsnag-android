@@ -63,6 +63,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final ImmutableConfig immutableConfig;
 
     final ContextState contextState;
+    final CallbackState callbackState;
     final UserState userState;
 
     final Context appContext;
@@ -154,8 +155,10 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
 
+        callbackState = configuration.callbackState.copy();
+
         sessionStore = new SessionStore(appContext, logger, null);
-        sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore,
+        sessionTracker = new SessionTracker(immutableConfig, callbackState, this, sessionStore,
                 logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
@@ -544,12 +547,12 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @Override
     public void addOnError(@NonNull OnError onError) {
-        clientState.addOnError(onError);
+        callbackState.addOnError(onError);
     }
 
     @Override
     public void removeOnError(@NonNull OnError onError) {
-        clientState.removeOnError(onError);
+        callbackState.removeOnError(onError);
     }
 
     /**
@@ -572,22 +575,22 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        clientState.addOnBreadcrumb(onBreadcrumb);
+        callbackState.addOnBreadcrumb(onBreadcrumb);
     }
 
     @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
-        clientState.removeOnBreadcrumb(onBreadcrumb);
+        callbackState.removeOnBreadcrumb(onBreadcrumb);
     }
 
     @Override
     public void addOnSession(@NonNull OnSession onSession) {
-        clientState.addOnSession(onSession);
+        callbackState.addOnSession(onSession);
     }
 
     @Override
     public void removeOnSession(@NonNull OnSession onSession) {
-        clientState.removeOnSession(onSession);
+        callbackState.removeOnSession(onSession);
     }
 
     /**
@@ -709,7 +712,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
 
         // Run on error tasks, don't notify if any return false
-        if (!runOnErrorTasks(event) || (onError != null && !onError.run(event))) {
+        if (!callbackState.runOnErrorTasks(event, logger)
+                || (onError != null && !onError.run(event))) {
             logger.i("Skipping notification - onError task returned false");
             return;
         }
@@ -892,7 +896,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     private void leaveBreadcrumbInternal(Breadcrumb crumb) {
-        if (runOnBreadcrumbTasks(crumb)) {
+        if (callbackState.runOnBreadcrumbTasks(crumb, logger)) {
             breadcrumbState.add(crumb);
         }
     }
@@ -923,35 +927,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     SessionTracker getSessionTracker() {
         return sessionTracker;
-    }
-
-    private boolean runOnErrorTasks(Event event) {
-        for (OnError onError : clientState.getOnErrorTasks()) {
-            try {
-                if (!onError.run(event)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                logger.w("OnError threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the event to be sent if there were no objections
-        return true;
-    }
-
-    private boolean runOnBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<OnBreadcrumb> tasks = clientState.getBreadcrumbCallbacks();
-        for (OnBreadcrumb callback : tasks) {
-            try {
-                if (!callback.run(breadcrumb)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                logger.w("OnBreadcrumb threw an Exception", ex);
-            }
-        }
-        return true;
     }
 
     EventStore getEventStore() {

@@ -16,11 +16,10 @@ class Configuration(
     val apiKey: String
 ) : CallbackAware, MetadataAware {
 
-    var metadata = Metadata()
+    @JvmField
+    internal val callbackState: CallbackState
 
-    protected val onErrorTasks = ConcurrentLinkedQueue<OnError>()
-    protected val breadcrumbCallbacks = ConcurrentLinkedQueue<OnBreadcrumb>()
-    protected val sessionCallbacks = ConcurrentLinkedQueue<OnSession>()
+    var metadata = Metadata()
 
     /**
      * Set the buildUUID to your own value. This is used to identify proguard
@@ -187,6 +186,7 @@ class Configuration(
 
     init {
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
+        this.callbackState = CallbackState()
 
         autoDetectNdkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
@@ -256,55 +256,39 @@ class Configuration(
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnError
      */
-    override fun addOnError(onError: OnError) {
-        if (!onErrorTasks.contains(onError)) {
-            onErrorTasks.add(onError)
-        }
-    }
+    override fun addOnError(onError: OnError) = callbackState.addOnError(onError)
 
-    override fun removeOnError(onError: OnError) {
-        onErrorTasks.remove(onError)
-    }
+    override fun removeOnError(onError: OnError) = callbackState.removeOnError(onError)
 
     /**
      * Adds an on breadcrumb callback
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
-    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb) {
-        if (!breadcrumbCallbacks.contains(onBreadcrumb)) {
-            breadcrumbCallbacks.add(onBreadcrumb)
-        }
-    }
+    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
+        callbackState.addOnBreadcrumb(onBreadcrumb)
 
     /**
      * Removes an on breadcrumb callback
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
-    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb) {
-        breadcrumbCallbacks.remove(onBreadcrumb)
-    }
+    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
+        callbackState.removeOnBreadcrumb(onBreadcrumb)
 
     /**
      * Adds an on session callback
      *
      * @param onSession the on session callback
      */
-    override fun addOnSession(onSession: OnSession) {
-        if (!sessionCallbacks.contains(onSession)) {
-            sessionCallbacks.add(onSession)
-        }
-    }
+    override fun addOnSession(onSession: OnSession) = callbackState.addOnSession(onSession)
 
     /**
      * Removes an on session callback
      *
      * @param onSession the on session callback
      */
-    override fun removeOnSession(onSession: OnSession) {
-        sessionCallbacks.remove(onSession)
-    }
+    override fun removeOnSession(onSession: OnSession) = callbackState.removeOnSession(onSession)
 
     override fun addMetadata(section: String, value: Map<String, Any?>) =
         metadata.addMetadata(section, value)
