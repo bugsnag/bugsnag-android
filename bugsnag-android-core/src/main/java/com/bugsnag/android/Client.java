@@ -60,6 +60,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final Configuration clientState;
     final ImmutableConfig immutableConfig;
 
+    final ContextState contextState;
     final UserState userState;
 
     final Context appContext;
@@ -148,6 +149,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         clientState = configuration;
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
+        contextState = configuration.contextState.copy();
 
         sessionStore = new SessionStore(appContext, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore,
@@ -229,6 +231,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         sessionTracker.addObserver(this);
         clientObservable.addObserver(this);
         userState.addObserver(this);
+        contextState.addObserver(this);
         orientationListener = registerOrientationChangeListener();
 
         // filter out any disabled breadcrumb types
@@ -431,7 +434,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @return Context
      */
     @Nullable public String getContext() {
-        return clientState.getContext();
+        return contextState.getContext();
     }
 
     /**
@@ -442,10 +445,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      * @param context set what was happening at the time of a crash
      */
     public void setContext(@Nullable String context) {
-        clientState.setContext(context);
-        setChanged();
-        notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.UPDATE_CONTEXT, context));
+        contextState.setContext(context);
     }
 
     /**

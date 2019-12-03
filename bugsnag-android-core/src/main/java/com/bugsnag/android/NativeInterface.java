@@ -59,10 +59,6 @@ public class NativeInterface {
         PAUSE_SESSION,
 
         /**
-         * Set a new context. The message object should be the new context
-         */
-        UPDATE_CONTEXT,
-        /**
          * Set a new value for `app.inForeground`. The message object should be a
          * List containing the values [inForeground (Boolean),
          * foregroundActivityName (String)]

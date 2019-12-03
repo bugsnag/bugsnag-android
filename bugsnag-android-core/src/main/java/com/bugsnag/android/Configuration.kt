@@ -17,6 +17,10 @@ class Configuration(
 ) : CallbackAware, MetadataAware {
 
     var metadata = Metadata()
+
+    @JvmField
+    internal val contextState: ContextState
+
     protected val onErrorTasks = ConcurrentLinkedQueue<OnError>()
     protected val breadcrumbCallbacks = ConcurrentLinkedQueue<OnBreadcrumb>()
     protected val sessionCallbacks = ConcurrentLinkedQueue<OnSession>()
@@ -164,7 +168,11 @@ class Configuration(
      * name of the top-most activity at the time of a report, and use this
      * as the context, but sometime this is not possible.
      */
-    var context: String? = null
+    var context: String?
+        get() = contextState.context
+        set(context) {
+            contextState.context = context
+        }
 
     /**
      * Set which keys should be redacted when sending metadata to Bugsnag.
@@ -186,6 +194,8 @@ class Configuration(
 
     init {
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
+        this.contextState = ContextState()
+
         autoDetectNdkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
             // or bugsnag-android-ndk
