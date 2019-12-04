@@ -130,6 +130,12 @@ public class ObserverInterfaceTest {
     }
 
     @Test
+    public void testRegisterSessionSendsMessage() {
+        client.sessionTracker.registerExistingSession(null, null, null, 0, 1);
+        assertNotNull(findMessageInQueue(StateEvent.PauseSession.class));
+    }
+
+    @Test
     public void testClientSetContextSendsMessage() {
         client.setContext("Pod Bay");
         StateEvent.UpdateContext msg = findMessageInQueue(StateEvent.UpdateContext.class);
