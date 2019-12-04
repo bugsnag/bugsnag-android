@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -108,9 +109,7 @@ public class ObserverInterfaceTest {
     public void testNotifySendsMessage() {
         client.startSession();
         client.notify(new Exception("ruh roh"));
-        Object errorClass = findMessageInQueue(
-                NativeInterface.MessageType.NOTIFY_HANDLED, null);
-        assertNull(errorClass);
+        assertNotNull(findMessageInQueue(StateEvent.NotifyHandled.class));
     }
 
     @Test
