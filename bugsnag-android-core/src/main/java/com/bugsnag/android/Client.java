@@ -149,7 +149,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         clientState = configuration;
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
-        contextState = configuration.contextState.copy();
+        contextState = new ContextState();
+        contextState.setContext(configuration.getContext());
 
         sessionStore = new SessionStore(appContext, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, clientState, this, sessionStore,
@@ -698,7 +699,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
         // Attach default context from active activity
         if (Intrinsics.isEmpty(event.getContext())) {
-            String context = clientState.getContext();
+            String context = contextState.getContext();
             event.setContext(context != null ? context : appData.getActiveScreenClass());
         }
 
