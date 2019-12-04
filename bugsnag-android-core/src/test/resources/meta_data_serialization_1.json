@@ -13,6 +13,18 @@
       "World"
     ],
     "map": {
+      "boolean": true,
+      "string": "value",
+      "array": [
+        "a",
+        "b"
+      ],
+      "double": 123.45,
+      "integer": 123,
+      "collection": [
+        "Hello",
+        "World"
+      ],
       "key": "value"
     }
   }

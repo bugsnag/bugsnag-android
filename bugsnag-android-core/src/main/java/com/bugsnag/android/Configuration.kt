@@ -19,7 +19,8 @@ class Configuration(
     @JvmField
     internal val callbackState: CallbackState
 
-    var metadata = Metadata()
+    @JvmField
+    internal val metadataState: MetadataState
 
     /**
      * Set the buildUUID to your own value. This is used to identify proguard
@@ -178,8 +179,8 @@ class Configuration(
      * client.setRedactedKeys("password", "credit_card");
      */
     var redactedKeys: Set<String>
-        get() = Collections.unmodifiableSet(metadata.redactedKeys)
-        set(redactedKeys) = metadata.setRedactedKeys(redactedKeys)
+        get() = Collections.unmodifiableSet(metadataState.metadata.redactedKeys)
+        set(redactedKeys) = metadataState.metadata.setRedactedKeys(redactedKeys)
 
 
     var loggingEnabled: Boolean
@@ -187,6 +188,7 @@ class Configuration(
     init {
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
         this.callbackState = CallbackState()
+        this.metadataState = MetadataState()
 
         autoDetectNdkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
@@ -291,16 +293,15 @@ class Configuration(
     override fun removeOnSession(onSession: OnSession) = callbackState.removeOnSession(onSession)
 
     override fun addMetadata(section: String, value: Map<String, Any?>) =
-        metadata.addMetadata(section, value)
-    override fun addMetadata(section: String, key: String?, value: Any?) =
-        metadata.addMetadata(section, key, value)
+        metadataState.addMetadata(section, value)
+    override fun addMetadata(section: String, key: String, value: Any?) =
+        metadataState.addMetadata(section, key, value)
 
-    override fun clearMetadata(section: String) = metadata.clearMetadata(section)
-    override fun clearMetadata(section: String, key: String?) =
-        metadata.clearMetadata(section, key)
+    override fun clearMetadata(section: String) = metadataState.clearMetadata(section)
+    override fun clearMetadata(section: String, key: String) = metadataState.clearMetadata(section, key)
 
-    override fun getMetadata(section: String) = metadata.getMetadata(section)
-    override fun getMetadata(section: String, key: String?) =metadata.getMetadata(section, key)
+    override fun getMetadata(section: String) = metadataState.getMetadata(section)
+    override fun getMetadata(section: String, key: String) = metadataState.getMetadata(section, key)
 
     companion object {
         private const val DEFAULT_MAX_SIZE = 25

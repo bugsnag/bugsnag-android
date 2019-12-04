@@ -21,7 +21,7 @@ public class MetadataTest {
         base.addMetadata("example", "awesome", true);
 
         Metadata merged = Metadata.Companion.merge(base, overrides);
-        Map<String, Object> tab = (Map<String, Object>) merged.getMetadata("example", null);
+        Map<String, Object> tab = merged.getMetadata("example");
         assertEquals("bob", tab.get("name"));
         assertEquals(30, tab.get("age"));
         assertEquals(true, tab.get("awesome"));
@@ -40,7 +40,7 @@ public class MetadataTest {
         overrides.addMetadata("example", "map", overridesMap);
 
         Metadata merged = Metadata.Companion.merge(base, overrides);
-        Map<String, Object> tab = (Map<String, Object>) merged.getMetadata("example", null);
+        Map<String, Object> tab = merged.getMetadata("example");
 
         @SuppressWarnings("unchecked")
         Map<String, String> mergedMap = (Map<String, String>) tab.get("map");

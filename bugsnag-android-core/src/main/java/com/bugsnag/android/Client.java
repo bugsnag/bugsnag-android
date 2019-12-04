@@ -62,6 +62,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     final Configuration clientState;
     final ImmutableConfig immutableConfig;
 
+    final MetadataState metadataState;
+
     final ContextState contextState;
     final CallbackState callbackState;
     final UserState userState;
@@ -162,6 +164,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
+        metadataState = configuration.metadataState.copy(configuration.metadataState.getMetadata());
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
@@ -235,7 +238,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
         connectivity.registerForNetworkChanges();
 
-        configuration.getMetadata().addObserver(this);
+        metadataState.addObserver(this);
         breadcrumbState.addObserver(this);
         sessionTracker.addObserver(this);
         clientObservable.addObserver(this);
@@ -611,7 +614,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Event event = new Event(exc, immutableConfig, handledState, clientState.getMetadata());
+        Event event = new Event(exc, immutableConfig, handledState, metadataState.getMetadata());
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
     }
 
@@ -645,7 +648,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages(),
                 immutableConfig.getLogger());
         Error err = new Error(name, message, trace.getTrace());
-        Metadata metadata = clientState.getMetadata();
+        Metadata metadata = metadataState.getMetadata();
         Event event = new Event(null, immutableConfig, handledState, metadata);
         event.setErrors(Collections.singletonList(err));
         notifyInternal(event, DeliveryStyle.ASYNC, onError);
@@ -663,7 +666,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
         ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
         Event event = new Event(exc, immutableConfig, handledState,
-                clientState.getMetadata());
+                metadataState.getMetadata());
         notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
@@ -690,13 +693,13 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // Capture the state of the app and device and attach diagnostics to the event
         Map<String, Object> errorDeviceData = deviceData.getDeviceData();
         event.setDevice(errorDeviceData);
-        event.addMetadata("device", null, deviceData.getDeviceMetadata());
+        event.addMetadata("device", deviceData.getDeviceMetadata());
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
         Map<String, Object> errorAppData = appData.getAppData();
         event.setApp(errorAppData);
-        event.addMetadata("app", null, appData.getAppDataMetadata());
+        event.addMetadata("app", appData.getAppDataMetadata());
 
         // Attach breadcrumbState to the event
         event.setBreadcrumbs(new ArrayList<>(breadcrumbState.getStore()));
@@ -845,34 +848,34 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     @Override
     public void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
-        clientState.getMetadata().addMetadata(section, value);
+        metadataState.addMetadata(section, value);
     }
 
     @Override
-    public void addMetadata(@NonNull String section, @Nullable String key, @Nullable Object value) {
-        clientState.getMetadata().addMetadata(section, key, value);
+    public void addMetadata(@NonNull String section, @NonNull String key, @Nullable Object value) {
+        metadataState.addMetadata(section, key, value);
     }
 
     @Override
     public void clearMetadata(@NonNull String section) {
-        clearMetadata(section, null);
+        metadataState.clearMetadata(section);
     }
 
     @Override
-    public void clearMetadata(@NonNull String section, @Nullable String key) {
-        clientState.getMetadata().clearMetadata(section, key);
+    public void clearMetadata(@NonNull String section, @NonNull String key) {
+        metadataState.clearMetadata(section, key);
     }
 
     @Nullable
     @Override
-    public Object getMetadata(@NonNull String section) {
-        return getMetadata(section, null);
+    public Map<String, Object> getMetadata(@NonNull String section) {
+        return metadataState.getMetadata(section);
     }
 
     @Override
     @Nullable
-    public Object getMetadata(@NonNull String section, @Nullable String key) {
-        return clientState.getMetadata().getMetadata(section, key);
+    public Object getMetadata(@NonNull String section, @NonNull String key) {
+        return metadataState.getMetadata(section, key);
     }
 
     /**

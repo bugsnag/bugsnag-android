@@ -162,7 +162,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetadata() {
-        return new HashMap<>(getClient().clientState.getMetadata().toMap());
+        return new HashMap<>(getClient().metadataState.getMetadata().toMap());
     }
 
     /**
@@ -214,7 +214,11 @@ public class NativeInterface {
      * Remove metadata from subsequent exception reports
      */
     public static void clearMetadata(@NonNull String section, @Nullable String key) {
-        getClient().clearMetadata(section, key);
+        if (key == null) {
+            getClient().clearMetadata(section);
+        } else {
+            getClient().clearMetadata(section, key);
+        }
     }
 
     /**

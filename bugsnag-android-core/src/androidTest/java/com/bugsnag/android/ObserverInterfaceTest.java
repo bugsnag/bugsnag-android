@@ -50,59 +50,42 @@ public class ObserverInterfaceTest {
     @Test
     public void testAddMetadataToClientSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.ADD_METADATA, List.class);
-        assertEquals(3, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
-        assertEquals("baz", metadataItem.get(2));
+        StateEvent.AddMetadata msg = findMessageInQueue(StateEvent.AddMetadata.class);
+        assertEquals("foo", msg.getSection());
+        assertEquals("bar", msg.getKey());
+        assertEquals("baz", msg.getValue());
     }
 
     @Test
     public void testAddNullMetadataToClientSendsMessage() {
         client.addMetadata("foo", "bar", null);
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.REMOVE_METADATA, List.class);
-        assertEquals(2, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
+        StateEvent.RemoveMetadata msg = findMessageInQueue(StateEvent.RemoveMetadata.class);
+        assertEquals("foo", msg.getSection());
+        assertEquals("bar", msg.getKey());
     }
 
     @Test
     public void testAddMetadataToMetadataSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.ADD_METADATA, List.class);
-        assertEquals(3, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
-        assertEquals("baz", metadataItem.get(2));
+        StateEvent.AddMetadata metadataItem = findMessageInQueue(StateEvent.AddMetadata.class);
+        assertEquals("foo", metadataItem.getSection());
+        assertEquals("bar", metadataItem.getKey());
+        assertEquals("baz", metadataItem.getValue());
     }
 
     @Test
     public void testClearTabFromClientSendsMessage() {
-        client.clearMetadata("axis", null);
-        Object value = findMessageInQueue(
-                NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
-        assertEquals("axis", value);
-    }
-
-    @Test
-    public void testClearTabFromMetadataSendsMessage() {
-        client.clearMetadata("axis", null);
-        Object value =  findMessageInQueue(
-                NativeInterface.MessageType.CLEAR_METADATA_TAB, String.class);
-        assertEquals("axis", value);
+        client.clearMetadata("axis");
+        StateEvent.ClearMetadataTab value = findMessageInQueue(StateEvent.ClearMetadataTab.class);
+        assertEquals("axis", value.getSection());
     }
 
     @Test
     public void testAddNullMetadataToMetadataSendsMessage() {
         client.addMetadata("foo", "bar", null);
-        List<Object> metadataItem = (List<Object>)findMessageInQueue(
-                NativeInterface.MessageType.REMOVE_METADATA, List.class);
-        assertEquals(2, metadataItem.size());
-        assertEquals("foo", metadataItem.get(0));
-        assertEquals("bar", metadataItem.get(1));
+        StateEvent.RemoveMetadata msg = findMessageInQueue(StateEvent.RemoveMetadata.class);
+        assertEquals("foo", msg.getSection());
+        assertEquals("bar", msg.getKey());
     }
 
     @Test
