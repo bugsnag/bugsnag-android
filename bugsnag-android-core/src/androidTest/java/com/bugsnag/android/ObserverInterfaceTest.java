@@ -166,8 +166,7 @@ public class ObserverInterfaceTest {
     @Test
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
-        Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
-                NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
+        StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
         assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
@@ -177,8 +176,7 @@ public class ObserverInterfaceTest {
     @Test
     public void testLeaveStringBreadcrumbDirectlySendsMessage() {
         client.breadcrumbState.add(new Breadcrumb("Drift 4 units left"));
-        Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
-                NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
+        StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
         assertEquals("manual", crumb.getMessage());
         assertEquals(1, crumb.getMetadata().size());
@@ -188,8 +186,7 @@ public class ObserverInterfaceTest {
     @Test
     public void testLeaveBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, Object>());
-        Breadcrumb crumb = (Breadcrumb)findMessageInQueue(
-                NativeInterface.MessageType.ADD_BREADCRUMB, Breadcrumb.class);
+        StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.LOG, crumb.getType());
         assertEquals("Rollback", crumb.getMessage());
         assertEquals(0, crumb.getMetadata().size());
