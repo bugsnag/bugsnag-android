@@ -2,8 +2,6 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
@@ -15,7 +13,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -48,7 +45,7 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testAddMetadataToClientSendsMessage() {
+    public void testAddMetadataSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
         StateEvent.AddMetadata msg = findMessageInQueue(StateEvent.AddMetadata.class);
         assertEquals("foo", msg.getSection());
@@ -57,7 +54,8 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testAddNullMetadataToClientSendsMessage() {
+    public void testAddNullMetadataSendsMessage() {
+        client.addMetadata("foo", "bar", "baz");
         client.addMetadata("foo", "bar", null);
         StateEvent.RemoveMetadata msg = findMessageInQueue(StateEvent.RemoveMetadata.class);
         assertEquals("foo", msg.getSection());
@@ -65,27 +63,18 @@ public class ObserverInterfaceTest {
     }
 
     @Test
-    public void testAddMetadataToMetadataSendsMessage() {
-        client.addMetadata("foo", "bar", "baz");
-        StateEvent.AddMetadata metadataItem = findMessageInQueue(StateEvent.AddMetadata.class);
-        assertEquals("foo", metadataItem.getSection());
-        assertEquals("bar", metadataItem.getKey());
-        assertEquals("baz", metadataItem.getValue());
-    }
-
-    @Test
-    public void testClearTabFromClientSendsMessage() {
+    public void testClearTopLevelTabSendsMessage() {
         client.clearMetadata("axis");
         StateEvent.ClearMetadataTab value = findMessageInQueue(StateEvent.ClearMetadataTab.class);
         assertEquals("axis", value.getSection());
     }
 
     @Test
-    public void testAddNullMetadataToMetadataSendsMessage() {
-        client.addMetadata("foo", "bar", null);
-        StateEvent.RemoveMetadata msg = findMessageInQueue(StateEvent.RemoveMetadata.class);
-        assertEquals("foo", msg.getSection());
-        assertEquals("bar", msg.getKey());
+    public void testClearTabSendsMessage() {
+        client.clearMetadata("axis", "foo");
+        StateEvent.RemoveMetadata value = findMessageInQueue(StateEvent.RemoveMetadata.class);
+        assertEquals("axis", value.getSection());
+        assertEquals("foo", value.getKey());
     }
 
     @Test
@@ -183,27 +172,6 @@ public class ObserverInterfaceTest {
             }
         }
         throw new RuntimeException("Failed to find StateEvent message " + argClass.getSimpleName());
-    }
-
-    private Object findMessageInQueue(NativeInterface.MessageType type, Class<?> argClass) {
-        for (Object item : observer.observed) {
-            if (item instanceof  NativeInterface.Message) {
-                NativeInterface.Message message = (NativeInterface.Message)item;
-                if (message.type != type) {
-                    continue;
-                }
-                if (argClass == null) {
-                    if (((NativeInterface.Message)item).value == null) {
-                        return null;
-                    }
-                } else if (argClass.isInstance(message.value)) {
-                    return message.value;
-                }
-            }
-        }
-        assertTrue("Failed to find message matching " + type, false);
-
-        return null;
     }
 
     static class BugsnagTestObserver implements Observer {
