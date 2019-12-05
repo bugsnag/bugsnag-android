@@ -16,7 +16,6 @@ internal data class MetadataState(val metadata: Metadata = Metadata()) : BaseObs
     override fun clearMetadata(section: String) {
         metadata.clearMetadata(section)
         notifyClear(section, null)
-        notifyObservers(StateEvent.ClearMetadataTab(section))
     }
     override fun clearMetadata(section: String, key: String) {
         metadata.clearMetadata(section, key)
