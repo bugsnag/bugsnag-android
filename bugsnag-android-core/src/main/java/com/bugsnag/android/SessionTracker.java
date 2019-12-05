@@ -36,7 +36,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
     private final long timeoutMs;
 
     final ImmutableConfig configuration;
-    final Configuration clientState;
+    final CallbackState callbackState;
     final Client client;
     final SessionStore sessionStore;
 
@@ -50,15 +50,15 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
     private final ForegroundDetector foregroundDetector;
     final Logger logger;
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+    SessionTracker(ImmutableConfig configuration, CallbackState callbackState,
                    Client client, SessionStore sessionStore, Logger logger) {
-        this(configuration, clientState, client, DEFAULT_TIMEOUT_MS, sessionStore, logger);
+        this(configuration, callbackState, client, DEFAULT_TIMEOUT_MS, sessionStore, logger);
     }
 
-    SessionTracker(ImmutableConfig configuration, Configuration clientState,
+    SessionTracker(ImmutableConfig configuration, CallbackState callbackState,
                    Client client, long timeoutMs, SessionStore sessionStore, Logger logger) {
         this.configuration = configuration;
-        this.clientState = clientState;
+        this.callbackState = callbackState;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
@@ -156,9 +156,14 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
     private void trackSessionIfNeeded(final Session session) {
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
-        if (notifyForRelease
-            && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
-            && session.isTracked().compareAndSet(false, true)) {
+        final SessionPayload payload = new SessionPayload(session, null,
+                client.getAppData().getAppDataSummary(),
+                client.getDeviceData().getDeviceDataSummary());
+        boolean deliverSession = callbackState.runOnSessionTasks(payload, logger);
+
+        if (deliverSession && notifyForRelease
+                && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
+                && session.isTracked().compareAndSet(false, true)) {
             notifySessionStartObserver(session);
 
             try {
@@ -168,21 +173,10 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
-                        SessionPayload payload =
-                            new SessionPayload(session, null,
-                                client.getAppData().getAppDataSummary(),
-                                    client.getDeviceData().getDeviceDataSummary());
-
                         try {
-                            for (OnSession mutator : clientState.getSessionCallbacks()) {
-                                mutator.run(payload);
-                            }
-
                             DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
 
                             switch (deliveryStatus) {
-                                case DELIVERED:
-                                    break;
                                 case UNDELIVERED:
                                     logger.w("Storing session payload for future delivery");
                                     sessionStore.write(session);
@@ -190,6 +184,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
                                 case FAILURE:
                                     logger.w("Dropping invalid session tracking payload");
                                     break;
+                                case DELIVERED:
                                 default:
                                     break;
                             }

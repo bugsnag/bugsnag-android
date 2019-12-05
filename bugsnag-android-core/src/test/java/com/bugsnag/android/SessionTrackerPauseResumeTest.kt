@@ -50,7 +50,7 @@ internal class SessionTrackerPauseResumeTest {
         `when`(context.getSystemService("activity")).thenReturn(activityManager)
         tracker = SessionTracker(
             BugsnagTestUtils.generateImmutableConfig(),
-            configuration, client, sessionStore, NoopLogger
+            configuration.callbackState, client, sessionStore, NoopLogger
         )
     }
 

@@ -46,7 +46,7 @@ internal class SessionTrackerBreadcrumbTest {
         `when`(context.getSystemService("activity")).thenReturn(activityManager)
         tracker = SessionTracker(
             BugsnagTestUtils.generateImmutableConfig(),
-            BugsnagTestUtils.generateConfiguration(),
+            BugsnagTestUtils.generateConfiguration().callbackState,
             client,
             sessionStore,
             NoopLogger
