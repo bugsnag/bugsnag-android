@@ -135,9 +135,8 @@ public class ObserverInterfaceTest {
     @Test
     public void testClientSetContextSendsMessage() {
         client.setContext("Pod Bay");
-        String context = (String)findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_CONTEXT, String.class);
-        assertEquals("Pod Bay", context);
+        StateEvent.UpdateContext msg = findMessageInQueue(StateEvent.UpdateContext.class);
+        assertEquals("Pod Bay", msg.getContext());
     }
 
     @Test

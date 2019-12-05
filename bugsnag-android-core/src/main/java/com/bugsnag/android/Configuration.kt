@@ -17,6 +17,7 @@ class Configuration(
 ) : CallbackAware, MetadataAware {
 
     var metadata = Metadata()
+
     protected val onErrorTasks = ConcurrentLinkedQueue<OnError>()
     protected val breadcrumbCallbacks = ConcurrentLinkedQueue<OnBreadcrumb>()
     protected val sessionCallbacks = ConcurrentLinkedQueue<OnSession>()
@@ -186,6 +187,7 @@ class Configuration(
 
     init {
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
+
         autoDetectNdkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
             // or bugsnag-android-ndk

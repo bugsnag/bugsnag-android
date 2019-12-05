@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import android.content.Context;
 
@@ -38,7 +39,7 @@ public class ClientConfigTest {
     public void testSetContext() throws Exception {
         client.setContext("JunitTest");
         assertEquals("JunitTest", client.getContext());
-        assertEquals("JunitTest", config.getContext());
+        assertNull(config.getContext());
     }
 
     @Test
