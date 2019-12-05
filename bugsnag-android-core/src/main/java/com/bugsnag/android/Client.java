@@ -759,7 +759,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         event.setApp(app);
 
         Map<String, Object> device = deviceData.getDeviceDataSummary();
-        device.put("freeDisk", deviceData.calculateFreeDisk(Environment.getDataDirectory()));
+        device.put("freeDisk", deviceData.calculateFreeDisk());
         event.setDevice(device);
 
         Notifier notifier = Notifier.INSTANCE;

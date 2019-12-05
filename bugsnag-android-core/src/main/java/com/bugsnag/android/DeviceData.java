@@ -111,7 +111,7 @@ class DeviceData {
         map.put("id", installId);
         map.put("freeMemory", calculateFreeMemory());
         map.put("totalMemory", calculateTotalMemory());
-        map.put("freeDisk", calculateFreeDisk(dataDirectory));
+        map.put("freeDisk", calculateFreeDisk());
         map.put("orientation", calculateOrientation());
         map.put("time", getTime());
         map.put("locale", locale);
@@ -226,7 +226,7 @@ class DeviceData {
      * Get the usable disk space on internal storage's data directory
      */
     @SuppressLint("UsableSpace")
-    long calculateFreeDisk(File dataDirectory) {
+    long calculateFreeDisk() {
         // for this specific case we want the currently usable space, not
         // StorageManager#allocatableBytes() as the UsableSpace lint inspection suggests
         return dataDirectory.getUsableSpace();
