@@ -7,6 +7,8 @@ import static com.bugsnag.android.ManifestConfigLoader.BUILD_UUID;
 import com.bugsnag.android.NativeInterface.Message;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -160,8 +162,11 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
+        ActivityManager am =
+                (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+
         appData = new AppData(appContext, appContext.getPackageManager(),
-                immutableConfig, sessionTracker, logger);
+                immutableConfig, sessionTracker, am, logger);
 
         userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUserBetweenSessions());

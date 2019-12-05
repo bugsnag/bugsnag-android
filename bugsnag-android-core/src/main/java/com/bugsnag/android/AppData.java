@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -39,10 +40,12 @@ class AppData {
     @Nullable
     private ApplicationInfo applicationInfo;
 
-    private PackageManager packageManager;
+    private final ActivityManager activityManager;
+    private final PackageManager packageManager;
 
     AppData(Context appContext, PackageManager packageManager,
-            ImmutableConfig config, SessionTracker sessionTracker, Logger logger) {
+            ImmutableConfig config, SessionTracker sessionTracker,
+            ActivityManager activityManager, Logger logger) {
         this.appContext = appContext;
         this.packageManager = packageManager;
         this.config = config;
@@ -50,10 +53,10 @@ class AppData {
 
         // cache values which are widely used, expensive to lookup, or unlikely to change
         packageName = appContext.getPackageName();
+        this.activityManager = activityManager;
         this.logger = logger;
 
         try {
-            this.packageManager = packageManager;
             packageInfo = this.packageManager.getPackageInfo(packageName, 0);
             applicationInfo = this.packageManager.getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException exception) {
@@ -68,7 +71,7 @@ class AppData {
         map.put("type", config.getAppType());
         map.put("releaseStage", guessReleaseStage());
         map.put("version", calculateVersionName());
-        map.put("versionCode", calculateVersionCode());
+        map.put("versionCode", config.getVersionCode());
         map.put("codeBundleId", config.getCodeBundleId());
         return map;
     }
@@ -120,14 +123,6 @@ class AppData {
 
     String getActiveScreenClass() {
         return sessionTracker.getContextActivity();
-    }
-
-    /**
-     * The version code of the running Android app, from android:versionCode
-     * in AndroidManifest.xml
-     */
-    private int calculateVersionCode() {
-        return config.getVersionCode();
     }
 
     /**
@@ -195,9 +190,6 @@ class AppData {
     @Nullable
     private Boolean isLowMemory() {
         try {
-            ActivityManager activityManager =
-                (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-
             if (activityManager != null) {
                 ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
                 activityManager.getMemoryInfo(memInfo);
