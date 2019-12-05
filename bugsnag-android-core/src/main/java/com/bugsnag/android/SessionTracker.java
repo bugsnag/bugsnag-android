@@ -10,13 +10,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -24,7 +22,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-class SessionTracker extends Observable implements Application.ActivityLifecycleCallbacks {
+class SessionTracker extends BaseObservable implements Application.ActivityLifecycleCallbacks {
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
@@ -97,9 +95,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
 
         if (session != null) {
             session.isPaused.set(true);
-            setChanged();
-            notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.PAUSE_SESSION, null));
+            notifyObservers(StateEvent.PauseSession.INSTANCE);
         }
     }
 
@@ -121,12 +117,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     }
 
     private void notifySessionStartObserver(Session session) {
-        setChanged();
         String startedAt = DateUtils.toIso8601(session.getStartedAt());
-        notifyObservers(new NativeInterface.Message(
-            NativeInterface.MessageType.START_SESSION,
-            Arrays.asList(session.getId(), startedAt,
-                session.getHandledCount(), session.getUnhandledCount())));
+        notifyObservers(new StateEvent.StartSession(session.getId(), startedAt,
+                session.getHandledCount(), session.getUnhandledCount()));
     }
 
     /**
@@ -148,9 +141,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             session = new Session(sessionId, date, user, unhandledCount, handledCount);
             notifySessionStartObserver(session);
         } else {
-            setChanged();
-            notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.PAUSE_SESSION, null));
+            notifyObservers(StateEvent.PauseSession.INSTANCE);
         }
         currentSession.set(session);
         return session;
@@ -411,9 +402,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     }
 
     private void notifyNdkInForeground() {
-        notifyObservers(new NativeInterface.Message(
-            NativeInterface.MessageType.UPDATE_IN_FOREGROUND,
-            Arrays.asList(isInForeground(), getContextActivity())));
+        notifyObservers(new StateEvent.UpdateInForeground(isInForeground(), getContextActivity()));
     }
 
     boolean isInForeground() {
