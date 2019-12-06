@@ -64,7 +64,7 @@ internal class MetadataSerializationTest {
         private fun clearedTab(): Metadata {
             val metadata = Metadata()
             metadata.addMetadata("example", "string", "value")
-            metadata.clearMetadata("example", null)
+            metadata.clearMetadata("example", "string")
             return metadata
         }
     }

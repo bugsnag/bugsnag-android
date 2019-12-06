@@ -84,11 +84,11 @@ public class EventTest {
     @Test
     public void testErrorMetadata() {
         event.addMetadata("rocks", "geode", "a shiny mineral");
-        Map<String, Object> rocks = (Map<String, Object>) event.getMetadata("rocks", null);
+        Map<String, Object> rocks = event.getMetadata("rocks");
         assertNotNull(rocks);
 
-        event.clearMetadata("rocks", null);
+        event.clearMetadata("rocks");
         assertFalse(rocks.isEmpty());
-        assertNull(event.getMetadata("rocks", null));
+        assertNull(event.getMetadata("rocks"));
     }
 }

@@ -47,7 +47,7 @@ public class MetadataRedactionTest {
     public void testClearTab() throws IOException {
         Metadata metadata = new Metadata();
         metadata.addMetadata("example", "string", "value");
-        metadata.clearMetadata("example", null);
+        metadata.clearMetadata("example");
         verifyJsonRedacted(metadata, "metadata_redaction_3.json");
     }
 

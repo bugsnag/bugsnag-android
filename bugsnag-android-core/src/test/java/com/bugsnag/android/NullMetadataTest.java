@@ -52,7 +52,7 @@ public class NullMetadataTest {
     }
 
     private void validateDefaultMetadata(MetadataAware error) {
-        assertNull(error.getMetadata(TAB_KEY, null));
+        assertNull(error.getMetadata(TAB_KEY));
         error.addMetadata(TAB_KEY, "test", "data");
         assertEquals("data", error.getMetadata(TAB_KEY, "test"));
     }

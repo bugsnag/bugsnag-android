@@ -169,7 +169,7 @@ public class ClientTest {
     public void testClientAddToTab() {
         client = generateClient();
         client.addMetadata("drink", "cola", "cherry");
-        assertNotNull(client.getMetadata("drink", null));
+        assertNotNull(client.getMetadata("drink"));
     }
 
     @Test
@@ -177,8 +177,8 @@ public class ClientTest {
         client = generateClient();
         client.addMetadata("drink", "cola", "cherry");
 
-        client.clearMetadata("drink", null);
-        assertNull(client.getMetadata("drink", null));
+        client.clearMetadata("drink");
+        assertNull(client.getMetadata("drink"));
     }
 
     @Test

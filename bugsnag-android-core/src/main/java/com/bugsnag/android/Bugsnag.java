@@ -267,7 +267,7 @@ public final class Bugsnag {
         getClient().addMetadata(section, value);
     }
 
-    public static void addMetadata(@NonNull String section, @Nullable String key,
+    public static void addMetadata(@NonNull String section, @NonNull String key,
                                    @Nullable Object value) {
         getClient().addMetadata(section, key, value);
     }
@@ -276,17 +276,17 @@ public final class Bugsnag {
         getClient().clearMetadata(section);
     }
 
-    public static void clearMetadata(@NonNull String section, @Nullable String key) {
+    public static void clearMetadata(@NonNull String section, @NonNull String key) {
         getClient().clearMetadata(section, key);
     }
 
     @Nullable
-    public static Object getMetadata(@NonNull String section) {
+    public static Map<String, Object> getMetadata(@NonNull String section) {
         return getClient().getMetadata(section);
     }
 
     @Nullable
-    public static Object getMetadata(@NonNull String section, @Nullable String key) {
+    public static Object getMetadata(@NonNull String section, @NonNull String key) {
         return getClient().getMetadata(section, key);
     }
 
