@@ -19,8 +19,8 @@ bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
 bugsnag_event *bsg_event_read(int fd);
 bugsnag_event *bsg_report_v3_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
-bugsnag_event *map_v2_to_report(bugsnag_report_v2 *report_v2);
-bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1);
+bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
+bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
 
 #ifdef __cplusplus
 }
@@ -92,17 +92,17 @@ bugsnag_event *bsg_event_read(int fd) {
 
   if (event_version == 1) { // 'event->unhandled_events' was added in v2
     bugsnag_report_v1 *report_v1 = bsg_report_v1_read(fd);
-    event = map_v1_to_report(report_v1);
+    event = bsg_map_v1_to_report(report_v1);
   } else if (event_version == 2) {
     bugsnag_report_v2 *report_v2 = bsg_report_v2_read(fd);
-    event = map_v2_to_report(report_v2);
+    event = bsg_map_v2_to_report(report_v2);
   } else {
     event = bsg_report_v3_read(fd);
   }
   return event;
 }
 
-bugsnag_event *map_v2_to_report(bugsnag_report_v2 *report_v2) {
+bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   if (report_v2 == NULL) {
     return NULL;
   }
@@ -143,7 +143,7 @@ bugsnag_event *map_v2_to_report(bugsnag_report_v2 *report_v2) {
   return event;
 }
 
-bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1) {
+bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
   if (report_v1 == NULL) {
     return NULL;
   }
@@ -172,7 +172,7 @@ bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1) {
 
     free(report_v1);
   }
-  return map_v2_to_report(event_v2);
+  return bsg_map_v2_to_report(event_v2);
 }
 
 bsg_report_header *bsg_report_header_read(int fd) {
