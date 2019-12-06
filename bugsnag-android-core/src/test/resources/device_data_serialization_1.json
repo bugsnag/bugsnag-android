@@ -1,0 +1,16 @@
+{
+  "orientation": "landscape",
+  "jailbroken": false,
+  "runtimeVersions": {
+    "osBuild": "bulldog",
+    "androidApiLevel": 24
+  },
+  "osName": "android",
+  "manufacturer": "samsung",
+  "cpuAbi": [
+    "armeabi-v7a"
+  ],
+  "osVersion": "7.1",
+  "model": "s7",
+  "id": "123"
+}

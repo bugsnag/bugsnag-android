@@ -18,6 +18,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
@@ -181,7 +182,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         String id = userState.getUser().getId();
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
-        deviceData = new DeviceData(connectivity, appContext, resources, id, info, logger);
+        deviceData = new DeviceData(connectivity, appContext, resources, id, info,
+                Environment.getDataDirectory(), logger);
 
         // Set up breadcrumbs
         breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs(), logger);
