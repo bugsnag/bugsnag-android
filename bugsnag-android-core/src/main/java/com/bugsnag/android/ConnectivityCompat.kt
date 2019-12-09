@@ -10,7 +10,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.annotation.RequiresApi
 
-typealias NetworkChangeCallback = (connected: Boolean) -> Unit
+internal typealias NetworkChangeCallback = (connected: Boolean) -> Unit
 
 internal interface Connectivity {
     fun registerForNetworkChanges()

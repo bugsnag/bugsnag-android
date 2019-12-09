@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Session implements JsonStream.Streamable {
+public final class Session implements JsonStream.Streamable {
 
     private final String id;
     private final Date startedAt;
