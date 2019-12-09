@@ -915,17 +915,17 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
     }
 
-    /**
-     * Returns the configuration used to initialise the client
-     * @return the config
-     */
-    @NonNull
-    Configuration getConfiguration() {
-        return clientState;
-    }
-
     ImmutableConfig getConfig() {
         return immutableConfig;
+    }
+
+    MetadataState getMetadataState() {
+        return metadataState;
+    }
+
+    @NonNull
+    BreadcrumbState getBreadcrumbState() {
+        return breadcrumbState;
     }
 
     void setBinaryArch(String binaryArch) {

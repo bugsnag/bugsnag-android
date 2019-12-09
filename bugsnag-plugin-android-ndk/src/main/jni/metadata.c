@@ -77,11 +77,11 @@ bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
   jni_cache->native_interface =
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
   jni_cache->get_app_data = (*env)->GetStaticMethodID(
-      env, jni_cache->native_interface, "getAppData", "()Ljava/util/Map;");
+      env, jni_cache->native_interface, "getApp", "()Ljava/util/Map;");
   jni_cache->get_device_data = (*env)->GetStaticMethodID(
-      env, jni_cache->native_interface, "getDeviceData", "()Ljava/util/Map;");
+      env, jni_cache->native_interface, "getDevice", "()Ljava/util/Map;");
   jni_cache->get_user_data = (*env)->GetStaticMethodID(
-      env, jni_cache->native_interface, "getUserData", "()Ljava/util/Map;");
+      env, jni_cache->native_interface, "getUser", "()Ljava/util/Map;");
   jni_cache->get_metadata = (*env)->GetStaticMethodID(
       env, jni_cache->native_interface, "getMetadata", "()Ljava/util/Map;");
   jni_cache->get_context = (*env)->GetStaticMethodID(
