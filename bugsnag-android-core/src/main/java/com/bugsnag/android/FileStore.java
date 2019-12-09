@@ -21,9 +21,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-abstract class FileStore<T extends JsonStream.Streamable> {
-
-    protected final Logger logger;
+abstract class FileStore {
 
     interface Delegate {
 
@@ -44,6 +42,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
     final Lock lock = new ReentrantLock();
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
+    private final Logger logger;
     protected final EventStore.Delegate delegate;
 
 
@@ -120,7 +119,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             stream = new JsonStream(out);
             stream.value(streamable);
-            logger.w(String.format("Saved unsent payload to disk (%s) ", filename));
+            logger.i(String.format("Saved unsent payload to disk (%s) ", filename));
             return filename;
         } catch (FileNotFoundException exc) {
             logger.w("Ignoring FileNotFoundException - unable to create file", exc);
