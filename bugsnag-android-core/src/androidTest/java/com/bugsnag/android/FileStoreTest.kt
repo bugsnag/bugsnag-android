@@ -12,8 +12,7 @@ import java.lang.RuntimeException
 import java.util.Comparator
 
 class FileStoreTest {
-    val appContext = ApplicationProvider.getApplicationContext<Context>()
-    val config = Configuration("api-key")
+    private val appContext: Context = ApplicationProvider.getApplicationContext<Context>()
 
     @Test
     fun sendsInternalErrorReport() {
@@ -58,16 +57,16 @@ class CustomDelegate: FileStore.Delegate {
     }
 }
 
-class CustomStreamable(val exc: Throwable) : JsonStream.Streamable {
+class CustomStreamable(private val exc: Throwable) : JsonStream.Streamable {
     override fun toStream(stream: JsonStream) = throw exc
 }
 
 internal class CustomFileStore(
     appContext: Context,
-    val folder: String?,
+    private val folder: String?,
     maxStoreCount: Int,
     comparator: Comparator<File>?,
     delegate: Delegate?
-) : FileStore<CustomStreamable>(appContext, folder, maxStoreCount, comparator, NoopLogger, delegate) {
+) : FileStore(appContext, folder, maxStoreCount, comparator, NoopLogger, delegate) {
     override fun getFilename(`object`: Any?) = "$folder/foo.json"
 }

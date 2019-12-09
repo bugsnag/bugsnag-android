@@ -218,7 +218,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 Client.this.reportInternalBugsnagError(err);
             }
         };
-        eventStore = new EventStore(immutableConfig, clientState, appContext, logger, delegate);
+        eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
 
         // Install a default exception handler with this client
         if (immutableConfig.getAutoDetectErrors()) {
