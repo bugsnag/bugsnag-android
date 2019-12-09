@@ -32,7 +32,8 @@ internal data class ImmutableConfig(
 
     companion object {
         private const val HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version"
-        private const val HEADER_API_KEY = "Bugsnag-Api-Key"
+        internal const val HEADER_API_KEY = "Bugsnag-Api-Key"
+        internal const val HEADER_INTERNAL_ERROR = "Bugsnag-Internal-Error"
         private const val HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At"
     }
 
