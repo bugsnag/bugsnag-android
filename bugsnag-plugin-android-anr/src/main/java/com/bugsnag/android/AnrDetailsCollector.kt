@@ -68,7 +68,7 @@ internal class AnrDetailsCollector {
                     }
                 } else {
                     addErrorStateInfo(event, anrDetails)
-                    client.notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null)
+                    client.notifyInternal(event, null)
                 }
             }
         })
