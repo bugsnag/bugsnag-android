@@ -103,7 +103,7 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetadata() {
-        return new HashMap<>(getClient().getMetadataState().getMetadata().toMap());
+        return getClient().getMetadata();
     }
 
     /**
@@ -111,8 +111,7 @@ public class NativeInterface {
      */
     @NonNull
     public static List<Breadcrumb> getBreadcrumbs() {
-        Queue<Breadcrumb> store = getClient().getBreadcrumbState().getStore();
-        return new ArrayList<>(store);
+        return getClient().getBreadcrumbs();
     }
 
     /**

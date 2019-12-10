@@ -787,7 +787,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     @NonNull
-    Collection<Breadcrumb> getBreadcrumbs() {
+    List<Breadcrumb> getBreadcrumbs() {
         return new ArrayList<>(breadcrumbState.getStore());
     }
 
@@ -831,6 +831,11 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     @Nullable
     public Object getMetadata(@NonNull String section, @NonNull String key) {
         return metadataState.getMetadata(section, key);
+    }
+
+    @NonNull
+    Map<String, Object> getMetadata() {
+        return metadataState.getMetadata().toMap();
     }
 
     /**
@@ -917,15 +922,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     ImmutableConfig getConfig() {
         return immutableConfig;
-    }
-
-    MetadataState getMetadataState() {
-        return metadataState;
-    }
-
-    @NonNull
-    BreadcrumbState getBreadcrumbState() {
-        return breadcrumbState;
     }
 
     void setBinaryArch(String binaryArch) {

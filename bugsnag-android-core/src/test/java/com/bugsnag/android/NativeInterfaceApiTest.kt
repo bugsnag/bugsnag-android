@@ -106,19 +106,16 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun getMetadata() {
-        val state = MetadataState()
-        state.addMetadata("Foo", mapOf(Pair("wham", "bar")))
-        `when`(client.getMetadataState()).thenReturn(state)
-        assertEquals(mapOf(Pair("Foo", mapOf(Pair("wham", "bar")))), NativeInterface.getMetadata())
+        val map = mapOf(Pair("Foo", mapOf(Pair("wham", "bar"))))
+        `when`(client.metadata).thenReturn(map)
+        assertEquals(map, NativeInterface.getMetadata())
     }
 
     @Test
     fun getBreadcrumbs() {
-        val breadcrumbState = BreadcrumbState(50, NoopLogger)
-        `when`(client.getBreadcrumbState()).thenReturn(breadcrumbState)
-        val breadcrumb = Breadcrumb("Whoops")
-        breadcrumbState.add(breadcrumb)
-        assertEquals(listOf(breadcrumb), NativeInterface.getBreadcrumbs())
+        val breadcrumbs = listOf(Breadcrumb("Whoops"))
+        `when`(client.breadcrumbs).thenReturn(breadcrumbs)
+        assertEquals(breadcrumbs[0], NativeInterface.getBreadcrumbs()[0])
     }
 
     @Test
