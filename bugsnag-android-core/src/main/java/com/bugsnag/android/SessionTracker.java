@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
@@ -10,11 +8,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -23,10 +23,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 class SessionTracker extends BaseObservable implements Application.ActivityLifecycleCallbacks {
-
-    private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
-    private static final String HEADER_API_KEY = "Bugsnag-Api-Key";
-    private static final String HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At";
 
     private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
@@ -198,21 +194,6 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
                 sessionStore.write(session);
             }
         }
-    }
-
-    /**
-     * Track a new session when auto capture is enabled via config after initialisation.
-     */
-    void onAutoCaptureEnabled() {
-        Session session = currentSession.get();
-        if (session != null && !foregroundActivities.isEmpty()) {
-            // If there is no session we will wait for one to be created
-            trackSessionIfNeeded(session);
-        }
-    }
-
-    private String getReleaseStage() {
-        return getStringFromMap("releaseStage", client.appData.getAppDataSummary());
     }
 
     @Nullable
@@ -392,7 +373,6 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
                 lastExitedForegroundMs.set(nowMs);
             }
         }
-        setChanged();
         notifyNdkInForeground();
     }
 
