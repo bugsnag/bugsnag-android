@@ -56,21 +56,18 @@ final class HandledState implements JsonStream.Streamable {
 
         switch (severityReasonType) {
             case REASON_UNHANDLED_EXCEPTION:
+            case REASON_PROMISE_REJECTION:
+            case REASON_ANR:
                 return new HandledState(severityReasonType, Severity.ERROR, true, null);
             case REASON_STRICT_MODE:
                 return new HandledState(severityReasonType, Severity.WARNING, true, attributeValue);
             case REASON_HANDLED_EXCEPTION:
                 return new HandledState(severityReasonType, Severity.WARNING, false, null);
             case REASON_USER_SPECIFIED:
-                return new HandledState(severityReasonType, severity, false, null);
             case REASON_CALLBACK_SPECIFIED:
                 return new HandledState(severityReasonType, severity, false, null);
-            case REASON_PROMISE_REJECTION:
-                return new HandledState(severityReasonType, Severity.ERROR, true, null);
             case REASON_LOG:
                 return new HandledState(severityReasonType, severity, false, attributeValue);
-            case REASON_ANR:
-                return new HandledState(severityReasonType, Severity.ERROR, true, null);
             default:
                 String msg = String.format("Invalid argument '%s' for severityReason",
                     severityReasonType);
