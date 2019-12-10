@@ -4,6 +4,7 @@ import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import androidx.test.filters.SmallTest;
 import org.json.JSONArray;
@@ -33,7 +34,7 @@ public class ThreadTest {
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
         assertEquals("ando", result.getString("type"));
-        assertEquals(true, result.getBoolean("errorReportingThread"));
+        assertTrue(result.getBoolean("errorReportingThread"));
 
         JSONArray frames = result.getJSONArray("stacktrace");
         assertEquals(3, frames.length());
