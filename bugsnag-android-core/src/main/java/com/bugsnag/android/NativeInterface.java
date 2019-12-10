@@ -107,7 +107,7 @@ public class NativeInterface {
     }
 
     /**
-     * Retrieves breadcrumbState from the static Client instance as a Map
+     * Retrieves a list of stored breadcrumbs from the static Client instance
      */
     @NonNull
     public static List<Breadcrumb> getBreadcrumbs() {
