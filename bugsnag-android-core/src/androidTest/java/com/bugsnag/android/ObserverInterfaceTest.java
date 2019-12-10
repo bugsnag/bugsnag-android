@@ -26,10 +26,9 @@ public class ObserverInterfaceTest {
     /**
      * Configures a new AppData for testing accessors + serialisation
      *
-     * @throws Exception if setup failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Configuration config = new Configuration("some-api-key");
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         config.setAutoDetectErrors(false);

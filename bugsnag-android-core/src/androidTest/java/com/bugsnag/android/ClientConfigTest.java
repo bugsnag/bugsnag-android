@@ -21,10 +21,9 @@ public class ClientConfigTest {
 
     /**
      * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Context context = ApplicationProvider.getApplicationContext();
         config = new Configuration("api-key");
         client = new Client(context, config);
@@ -36,7 +35,7 @@ public class ClientConfigTest {
     }
 
     @Test
-    public void testSetContext() throws Exception {
+    public void testSetContext() {
         client.setContext("JunitTest");
         assertEquals("JunitTest", client.getContext());
         assertNull(config.getContext());

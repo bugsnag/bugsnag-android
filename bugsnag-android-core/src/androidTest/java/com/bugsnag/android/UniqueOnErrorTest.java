@@ -34,7 +34,7 @@ public class UniqueOnErrorTest {
     private Client client;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         callbackCount = 0;
         client = BugsnagTestUtils.generateClient();
     }

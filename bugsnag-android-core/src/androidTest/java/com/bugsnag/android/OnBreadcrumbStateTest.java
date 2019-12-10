@@ -22,10 +22,9 @@ public class OnBreadcrumbStateTest {
     /**
      * Configures a client which does not automatically record breadcrumbs
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Configuration configuration = new Configuration("api-key");
         configuration.setEnabledBreadcrumbTypes(Collections.<BreadcrumbType>emptySet());
         client = generateClient();
@@ -38,13 +37,13 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void noCallback() throws Exception {
+    public void noCallback() {
         client.leaveBreadcrumb("Hello");
         assertEquals(2, client.breadcrumbState.getStore().size());
     }
 
     @Test
-    public void falseCallback() throws Exception {
+    public void falseCallback() {
         client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
             public boolean run(@NonNull Breadcrumb breadcrumb) {
@@ -56,7 +55,7 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void trueCallback() throws Exception {
+    public void trueCallback() {
         client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
             public boolean run(@NonNull Breadcrumb breadcrumb) {
@@ -68,7 +67,7 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void multipleCallbacks() throws Exception {
+    public void multipleCallbacks() {
         client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
             public boolean run(@NonNull Breadcrumb breadcrumb) {
@@ -86,7 +85,7 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void ensureBothCalled() throws Exception {
+    public void ensureBothCalled() {
         final int[] count = {1};
         client.addOnBreadcrumb(new OnBreadcrumb() {
             @Override
@@ -109,7 +108,7 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void ensureOnlyCalledOnce() throws Exception {
+    public void ensureOnlyCalledOnce() {
         final int[] count = {1};
 
         OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
@@ -126,7 +125,7 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void checkBreadcrumbFields() throws Exception {
+    public void checkBreadcrumbFields() {
         final int[] count = {1};
 
         OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
@@ -145,7 +144,7 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void removedCallback() throws Exception {
+    public void removedCallback() {
         OnBreadcrumb cb = new OnBreadcrumb() {
             @Override
             public boolean run(@NonNull Breadcrumb breadcrumb) {
