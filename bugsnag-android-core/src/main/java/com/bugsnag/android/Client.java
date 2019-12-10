@@ -787,7 +787,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     }
 
     @NonNull
-    Collection<Breadcrumb> getBreadcrumbs() {
+    List<Breadcrumb> getBreadcrumbs() {
         return new ArrayList<>(breadcrumbState.getStore());
     }
 
@@ -831,6 +831,11 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     @Nullable
     public Object getMetadata(@NonNull String section, @NonNull String key) {
         return metadataState.getMetadata(section, key);
+    }
+
+    @NonNull
+    Map<String, Object> getMetadata() {
+        return metadataState.getMetadata().toMap();
     }
 
     /**
@@ -913,15 +918,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             logger.w("Warning - Non-Application context detected! Please ensure that you are "
                 + "initializing Bugsnag from a custom Application class.");
         }
-    }
-
-    /**
-     * Returns the configuration used to initialise the client
-     * @return the config
-     */
-    @NonNull
-    Configuration getConfiguration() {
-        return clientState;
     }
 
     ImmutableConfig getConfig() {

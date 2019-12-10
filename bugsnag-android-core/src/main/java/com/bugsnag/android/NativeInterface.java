@@ -18,59 +18,6 @@ import java.util.Queue;
  */
 public class NativeInterface {
 
-    public enum MessageType {
-        /**
-         * Add a new metadata value. The Message object should be an array
-         * containing [tab, key, value]
-         */
-        ADD_METADATA,
-        /**
-         * Clear all metadata on a tab. The Message object should be the tab
-         * name
-         */
-        CLEAR_METADATA_TAB,
-        /**
-         * Remove a metadata value. The Message object should be a string array
-         * containing [tab, key]
-         */
-        REMOVE_METADATA,
-        /**
-         * A new session was started. The Message object should be a string
-         * array
-         * containing [id, startDateIsoString]
-         */
-        START_SESSION,
-
-        /**
-         * A session was paused.
-         */
-        PAUSE_SESSION,
-
-        /**
-         * Set a new value for `app.inForeground`. The message object should be a
-         * List containing the values [inForeground (Boolean),
-         * foregroundActivityName (String)]
-         */
-        UPDATE_IN_FOREGROUND,
-    }
-
-    /**
-     * Wrapper for messages sent to native observers
-     */
-    public static class Message {
-
-        @NonNull
-        public final MessageType type;
-
-        @Nullable
-        public final Object value;
-
-        public Message(@NonNull MessageType type, @Nullable Object value) {
-            this.type = type;
-            this.value = value;
-        }
-    }
-
     /**
      * Static reference used if not using Bugsnag.init()
      */
@@ -99,13 +46,8 @@ public class NativeInterface {
     }
 
     @NonNull
-    public static Logger getLogger() {
-        return getClient().immutableConfig.getLogger();
-    }
-
-    @NonNull
     public static String getNativeReportPath() {
-        return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
+        return getClient().getAppContext().getCacheDir().getAbsolutePath() + "/bugsnag-native/";
     }
 
     /**
@@ -113,13 +55,12 @@ public class NativeInterface {
      */
     @NonNull
     @SuppressWarnings("unused")
-    public static Map<String,String> getUserData() {
+    public static Map<String,String> getUser() {
         HashMap<String, String> userData = new HashMap<>();
         User user = getClient().getUser();
         userData.put("id", user.getId());
         userData.put("name", user.getName());
         userData.put("email", user.getEmail());
-
         return userData;
     }
 
@@ -128,7 +69,7 @@ public class NativeInterface {
      */
     @NonNull
     @SuppressWarnings("unused")
-    public static Map<String,Object> getAppData() {
+    public static Map<String,Object> getApp() {
         HashMap<String,Object> data = new HashMap<>();
         AppData source = getClient().getAppData();
         data.putAll(source.getAppData());
@@ -141,7 +82,7 @@ public class NativeInterface {
      */
     @NonNull
     @SuppressWarnings("unused")
-    public static Map<String,Object> getDeviceData() {
+    public static Map<String,Object> getDevice() {
         HashMap<String,Object> deviceData = new HashMap<>();
         DeviceData source = getClient().getDeviceData();
         deviceData.putAll(source.getDeviceMetadata());
@@ -154,7 +95,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String[] getCpuAbi() {
-        return getClient().deviceData.cpuAbi;
+        return getClient().getDeviceData().getCpuAbi();
     }
 
     /**
@@ -162,16 +103,15 @@ public class NativeInterface {
      */
     @NonNull
     public static Map<String, Object> getMetadata() {
-        return new HashMap<>(getClient().metadataState.getMetadata().toMap());
+        return getClient().getMetadata();
     }
 
     /**
-     * Retrieves breadcrumbs from the static Client instance as a Map
+     * Retrieves a list of stored breadcrumbs from the static Client instance
      */
     @NonNull
     public static List<Breadcrumb> getBreadcrumbs() {
-        Queue<Breadcrumb> store = getClient().breadcrumbState.getStore();
-        return new ArrayList<>(store);
+        return getClient().getBreadcrumbs();
     }
 
     /**
@@ -225,8 +165,8 @@ public class NativeInterface {
      * Add metadata to subsequent exception reports
      */
     public static void addMetadata(@NonNull final String tab,
-                                  @Nullable final String key,
-                                  @Nullable final Object value) {
+                                   @Nullable final String key,
+                                   @Nullable final Object value) {
         getClient().addMetadata(tab, key, value);
     }
 
@@ -293,7 +233,7 @@ public class NativeInterface {
         User user = client.getUser();
         Date startDate = startedAt > 0 ? new Date(startedAt) : null;
         client.getSessionTracker().registerExistingSession(startDate, sessionId, user,
-                                                           unhandledCount, handledCount);
+                unhandledCount, handledCount);
     }
 
     /**
@@ -307,8 +247,8 @@ public class NativeInterface {
     public static void deliverReport(@Nullable String releaseStage, @NonNull String payload) {
         Client client = getClient();
         if (releaseStage == null
-            || releaseStage.length() == 0
-            || client.getConfig().shouldNotifyForReleaseStage()) {
+                || releaseStage.length() == 0
+                || client.getConfig().shouldNotifyForReleaseStage()) {
             client.getEventStore().enqueueContentForDelivery(payload);
             client.getEventStore().flushAsync();
         }
@@ -338,5 +278,10 @@ public class NativeInterface {
                 return true;
             }
         });
+    }
+
+    @NonNull
+    public static Logger getLogger() {
+        return getClient().getConfig().getLogger();
     }
 }
