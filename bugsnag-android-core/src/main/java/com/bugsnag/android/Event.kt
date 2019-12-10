@@ -17,7 +17,7 @@ class Event @JvmOverloads internal constructor(
     config: ImmutableConfig,
     private var handledState: HandledState,
     internal val metadata: Metadata = Metadata()
-) : JsonStream.Streamable, MetadataAware {
+) : JsonStream.Streamable, MetadataAware, UserAware {
 
     private val ignoreClasses: Set<String> = config.ignoreClasses.toSet()
 
@@ -143,14 +143,14 @@ class Event @JvmOverloads internal constructor(
      * @param email the email address of the user
      * @param name  the name of the user
      */
-    fun setUser(id: String?, email: String?, name: String?) {
+    override fun setUser(id: String?, email: String?, name: String?) {
         _user = User(id, email, name)
     }
 
-    fun getUser() = _user
-    fun setUserId(id: String?) = setUser(id, _user.email, _user.name)
-    fun setUserEmail(email: String?) = setUser(_user.id, email, _user.name)
-    fun setUserName(name: String?) = setUser(_user.id, _user.email, name)
+    override fun getUser() = _user
+    override fun setUserId(id: String?) = setUser(id, _user.email, _user.name)
+    override fun setUserEmail(email: String?) = setUser(_user.id, email, _user.name)
+    override fun setUserName(name: String?) = setUser(_user.id, _user.email, name)
 
     override fun addMetadata(section: String, value: Map<String, Any?>) = metadata.addMetadata(section, value)
     override fun addMetadata(section: String, key: String, value: Any?) =
