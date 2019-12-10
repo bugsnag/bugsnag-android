@@ -15,7 +15,6 @@ public class EventStateTest {
 
     private HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
-    private ImmutableConfig config;
     private Event event;
 
     /**
@@ -24,7 +23,7 @@ public class EventStateTest {
     @Before
     public void setUp() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        this.config = convert(configuration);
+        ImmutableConfig config = convert(configuration);
         RuntimeException exception = new RuntimeException("Example message");
         event = new Event(exception, config, handledState);
     }

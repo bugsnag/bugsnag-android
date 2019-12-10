@@ -20,7 +20,6 @@ import java.util.Observer;
 @SuppressWarnings("unchecked")
 public class ObserverInterfaceTest {
 
-    private Configuration config;
     private Client client;
     private BugsnagTestObserver observer;
 
@@ -31,7 +30,7 @@ public class ObserverInterfaceTest {
      */
     @Before
     public void setUp() throws Exception {
-        config = new Configuration("some-api-key");
+        Configuration config = new Configuration("some-api-key");
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         config.setAutoDetectErrors(false);
         client = new Client(ApplicationProvider.getApplicationContext(), config);

@@ -75,7 +75,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
-    private UserRepository userRepository;
     final StorageManager storageManager;
     final Logger logger;
 
@@ -159,7 +158,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         appData = new AppData(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker, am, logger);
 
-        userRepository = new UserRepository(sharedPrefs,
+        UserRepository userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUserBetweenSessions());
         userState = new UserState(userRepository);
 
