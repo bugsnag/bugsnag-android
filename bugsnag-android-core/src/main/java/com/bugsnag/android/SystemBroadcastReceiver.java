@@ -62,7 +62,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    static boolean isAndroidKey(@NonNull String actionName) {
+    private static boolean isAndroidKey(@NonNull String actionName) {
         return actionName.startsWith("android.");
     }
 

@@ -47,19 +47,19 @@ class DeviceData {
     private final boolean rooted;
 
     @Nullable
-    final Float screenDensity;
+    private final Float screenDensity;
 
     @Nullable
-    final Integer dpi;
+    private final Integer dpi;
 
     @Nullable
-    final String screenResolution;
+    private final String screenResolution;
 
     @NonNull
-    final String locale;
+    private final String locale;
 
     @NonNull
-    final String[] cpuAbi;
+    private final String[] cpuAbi;
     private final File dataDirectory;
 
     private final Logger logger;
