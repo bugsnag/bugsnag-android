@@ -89,7 +89,8 @@ internal class ImmutableConfigTest {
         seed.codeBundleId = "codebundle123"
         seed.appType = "custom"
 
-        seed.endpoints = Endpoints("http://example.com:1234", "http://example.com:1235")
+        val endpoints = Endpoints("http://example.com:1234", "http://example.com:1235")
+        seed.endpoints = endpoints
         seed.launchCrashThresholdMs = 7000
         seed.maxBreadcrumbs = 37
         seed.persistUserBetweenSessions = true
@@ -119,10 +120,8 @@ internal class ImmutableConfigTest {
             assertEquals("custom", seed.appType)
 
             // network config
-            assertEquals(
-                seed.endpoints,
-                Endpoints("http://example.com:1234", "http://example.com:1235")
-            )
+            assertEquals(seed.endpoints.notify, endpoints.notify)
+            assertEquals(seed.endpoints.sessions, endpoints.sessions)
 
             // behaviour
             assertEquals(7000, seed.launchCrashThresholdMs)
