@@ -7,7 +7,7 @@ class Error @JvmOverloads internal constructor(
     var type: String = "android"
 ): JsonStream.Streamable {
 
-    companion object {
+    internal companion object {
         fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): List<Error> {
             val errors = mutableListOf<Error>()
 

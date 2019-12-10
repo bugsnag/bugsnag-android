@@ -7,9 +7,9 @@ import java.io.IOException
  */
 internal object Notifier : JsonStream.Streamable {
 
-    var name = "Android Bugsnag Notifier"
-    var version = "4.21.0"
-    var url = "https://bugsnag.com"
+    var name: String = "Android Bugsnag Notifier"
+    var version: String = "4.21.0"
+    var url: String = "https://bugsnag.com"
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
