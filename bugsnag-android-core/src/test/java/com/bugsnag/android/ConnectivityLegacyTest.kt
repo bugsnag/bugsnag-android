@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.net.ConnectivityManager
-import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

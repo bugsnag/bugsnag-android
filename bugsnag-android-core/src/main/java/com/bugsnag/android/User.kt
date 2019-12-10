@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import java.io.IOException
-import java.util.Observable
 
 /**
  * Information about the current user of your application.
