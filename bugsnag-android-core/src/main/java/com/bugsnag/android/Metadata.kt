@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashMap()) :
+internal class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashMap()) :
     JsonStream.Streamable, MetadataAware {
 
     private val store: MutableMap<String, Any> = ConcurrentHashMap(map)

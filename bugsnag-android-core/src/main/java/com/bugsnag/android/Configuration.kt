@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import android.content.Context
 import android.text.TextUtils
 import java.util.Collections
 
@@ -308,15 +307,5 @@ class Configuration(
         private const val MIN_BREADCRUMBS = 0
         private const val MAX_BREADCRUMBS = 100
         private const val MIN_LAUNCH_CRASH_THRESHOLD_MS: Long = 0
-
-        /**
-         * Constructs a new Bugsnag Configuration object by looking for meta-data elements in
-         * the AndroidManifest.xml
-         *
-         * @return a new Configuration object
-         */
-        fun loadConfig(ctx: Context): Configuration {
-            return ManifestConfigLoader().load(ctx)
-        }
     }
 }
