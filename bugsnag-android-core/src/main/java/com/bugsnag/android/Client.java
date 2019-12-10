@@ -621,7 +621,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
         ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
         Event event = new Event(exc, immutableConfig, handledState,
-                metadataState.getMetadata());
+                Metadata.Companion.merge(metadataState.getMetadata(), metadata));
         notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);
     }
 
