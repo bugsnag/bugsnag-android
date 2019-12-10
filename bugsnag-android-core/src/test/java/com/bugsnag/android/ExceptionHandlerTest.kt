@@ -48,8 +48,7 @@ internal class ExceptionHandlerTest {
             eq(exc),
             any(),
             eq(HandledState.REASON_UNHANDLED_EXCEPTION),
-            eq(null),
-            eq(thread)
+            eq(null)
         )
     }
 

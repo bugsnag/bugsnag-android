@@ -22,9 +22,7 @@ import kotlin.jvm.functions.Function1;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.Thread;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -48,12 +46,10 @@ import java.util.concurrent.RejectedExecutionException;
 public class Client extends Observable implements Observer, MetadataAware, CallbackAware,
         UserAware {
 
-    private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
-    final Configuration clientState;
     final ImmutableConfig immutableConfig;
 
     final MetadataState metadataState;
@@ -147,7 +143,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         ImmutableConfigKt.sanitiseConfiguration(appContext, configuration, connectivity);
 
 
-        clientState = configuration;
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
@@ -616,10 +611,9 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
      */
     void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
                                   @HandledState.SeverityReason String severityReason,
-                                  @Nullable String attributeValue, Thread thread) {
+                                  @Nullable String attributeValue) {
         HandledState handledState
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
-        ThreadState threadState = new ThreadState(immutableConfig, exc, thread);
         Event event = new Event(exc, immutableConfig, handledState,
                 Metadata.Companion.merge(metadataState.getMetadata(), metadata));
         notifyInternal(event, DeliveryStyle.ASYNC_WITH_CACHE, null);

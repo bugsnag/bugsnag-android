@@ -23,7 +23,6 @@ class AppData {
     static final String RELEASE_STAGE_DEVELOPMENT = "development";
     static final String RELEASE_STAGE_PRODUCTION = "production";
 
-    private final Context appContext;
     private final ImmutableConfig config;
     private final SessionTracker sessionTracker;
 
@@ -46,7 +45,6 @@ class AppData {
     AppData(Context appContext, PackageManager packageManager,
             ImmutableConfig config, SessionTracker sessionTracker,
             ActivityManager activityManager, Logger logger) {
-        this.appContext = appContext;
         this.packageManager = packageManager;
         this.config = config;
         this.sessionTracker = sessionTracker;
