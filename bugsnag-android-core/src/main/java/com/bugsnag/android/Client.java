@@ -790,6 +790,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         return sessionTracker;
     }
 
+    @NonNull
     EventStore getEventStore() {
         return eventStore;
     }

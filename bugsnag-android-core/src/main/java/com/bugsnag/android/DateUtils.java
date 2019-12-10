@@ -21,7 +21,12 @@ class DateUtils {
         }
     };
 
+    @NonNull
     static String toIso8601(@NonNull Date date) {
-        return iso8601Holder.get().format(date);
+        DateFormat dateFormat = iso8601Holder.get();
+        if (dateFormat == null) {
+            throw new IllegalStateException("Unable to find valid dateformatter");
+        }
+        return dateFormat.format(date);
     }
 }

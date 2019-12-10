@@ -274,8 +274,10 @@ class DeviceData {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
-            return batteryStatus.getIntExtra("level", -1)
-                / (float) batteryStatus.getIntExtra("scale", -1);
+            if (batteryStatus != null) {
+                return batteryStatus.getIntExtra("level", -1)
+                        / (float) batteryStatus.getIntExtra("scale", -1);
+            }
         } catch (Exception exception) {
             logger.w("Could not get batteryLevel");
         }
@@ -291,9 +293,11 @@ class DeviceData {
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = appContext.registerReceiver(null, ifilter);
 
-            int status = batteryStatus.getIntExtra("status", -1);
-            return (status == BatteryManager.BATTERY_STATUS_CHARGING
-                || status == BatteryManager.BATTERY_STATUS_FULL);
+            if (batteryStatus != null) {
+                int status = batteryStatus.getIntExtra("status", -1);
+                return (status == BatteryManager.BATTERY_STATUS_CHARGING
+                        || status == BatteryManager.BATTERY_STATUS_FULL);
+            }
         } catch (Exception exception) {
             logger.w("Could not get charging status");
         }
@@ -324,7 +328,7 @@ class DeviceData {
     /**
      * Get the current status of network access, eg "cellular"
      */
-    @Nullable
+    @NonNull
     private String getNetworkAccess() {
         return connectivity.retrieveNetworkAccessState();
     }
