@@ -13,7 +13,7 @@ import java.util.Collections;
 
 public class EventStateTest {
 
-    private HandledState handledState
+    private final HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
     private Event event;
 

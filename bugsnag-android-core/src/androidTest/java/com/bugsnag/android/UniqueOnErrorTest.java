@@ -16,14 +16,14 @@ import org.junit.Test;
 @SmallTest
 public class UniqueOnErrorTest {
 
-    private OnError firstCb = new OnError() {
+    private final OnError firstCb = new OnError() {
         @Override
         public boolean run(@NonNull Event event) {
             return handleCallback();
         }
     };
 
-    private OnError secondCb = new OnError() {
+    private final OnError secondCb = new OnError() {
         @Override
         public boolean run(@NonNull Event event) {
             return handleCallback();
