@@ -66,7 +66,7 @@ public class MetadataRedactionTest {
         assertEquals(Collections.singleton("password"), metadata.getRedactedKeys());
     }
 
-    void verifyJsonRedacted(Metadata metadata, String resourceName) throws IOException {
+    private void verifyJsonRedacted(Metadata metadata, String resourceName) throws IOException {
         StringWriter writer = new StringWriter();
         JsonStream stream = new JsonStream(writer);
         metadata.toStream(stream);

@@ -40,11 +40,10 @@ abstract class FileStore {
     private final int maxStoreCount;
     private final Comparator<File> comparator;
 
-    final Lock lock = new ReentrantLock();
-    final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
+    private final Lock lock = new ReentrantLock();
+    private final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
     private final Logger logger;
-    protected final EventStore.Delegate delegate;
-
+    private final EventStore.Delegate delegate;
 
     FileStore(@NonNull Context appContext, String folder,
               int maxStoreCount, Comparator<File> comparator, Logger logger, Delegate delegate) {

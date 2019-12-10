@@ -36,13 +36,23 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
         try {
             Map<String, Object> meta = new HashMap<>();
             String fullAction = intent.getAction();
-            String shortAction = shortenActionNameIfNeeded(intent.getAction());
+
+            if (fullAction == null) {
+                return;
+            }
+
+            String shortAction = shortenActionNameIfNeeded(fullAction);
             meta.put(INTENT_ACTION_KEY, fullAction); // always add the Intent Action
 
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 for (String key : extras.keySet()) {
-                    String val = extras.get(key).toString();
+                    Object valObj = extras.get(key);
+                    if (valObj == null) {
+                        continue;
+                    }
+
+                    String val = valObj.toString();
 
                     if (isAndroidKey(key)) { // shorten the Intent action
                         meta.put("Extra", String.format("%s: %s", shortAction, val));
@@ -51,9 +61,11 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
                     }
                 }
             }
+            BreadcrumbType type = actions.get(fullAction);
 
-            BreadcrumbType type =
-                actions.containsKey(fullAction) ? actions.get(fullAction) : BreadcrumbType.LOG;
+            if (type == null) {
+                type = BreadcrumbType.LOG;
+            }
             client.leaveBreadcrumb(shortAction, type, meta);
 
         } catch (Exception ex) {
@@ -62,7 +74,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    static boolean isAndroidKey(@NonNull String actionName) {
+    private static boolean isAndroidKey(@NonNull String actionName) {
         return actionName.startsWith("android.");
     }
 

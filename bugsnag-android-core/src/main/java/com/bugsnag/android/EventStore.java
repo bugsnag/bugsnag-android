@@ -194,21 +194,19 @@ class EventStore extends FileStore {
     @NonNull
     @Override
     String getFilename(Object object) {
-        String suffix = "";
+        String suffix = "not-jvm";
 
         if (object instanceof Event) {
             Event event = (Event) object;
 
             Map<String, Object> appData = event.getApp();
-            if (appData instanceof Map) {
-                Object duration = appData.get("duration");
-                if (duration instanceof Number
-                    && isStartupCrash(((Number) appData.get("duration")).longValue())) {
+            Object duration = appData.get("duration");
+            if (duration instanceof Number) {
+                Number ms = (Number) duration;
+                if (isStartupCrash(ms.longValue())) {
                     suffix = STARTUP_CRASH;
                 }
             }
-        } else {
-            suffix = "not-jvm";
         }
         String uuid = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();

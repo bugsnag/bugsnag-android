@@ -144,8 +144,7 @@ public class NativeInterface {
                                        @NonNull String type,
                                        @NonNull Map<String, Object> metadata) {
         String typeName = type.toUpperCase(Locale.US);
-        Map<String, Object> map = metadata == null ? new HashMap<String, Object>() : metadata;
-        getClient().leaveBreadcrumb(message, BreadcrumbType.valueOf(typeName), map);
+        getClient().leaveBreadcrumb(message, BreadcrumbType.valueOf(typeName), metadata);
     }
 
     /**
@@ -209,7 +208,7 @@ public class NativeInterface {
     /**
      * Return the client report app version
      */
-    @NonNull
+    @Nullable
     public static String getAppVersion() {
         return getClient().getConfig().getAppVersion();
     }
@@ -217,7 +216,7 @@ public class NativeInterface {
     /**
      * Return which release stages notify
      */
-    @Nullable
+    @NonNull
     public static Collection<String> getEnabledReleaseStages() {
         return getClient().getConfig().getEnabledReleaseStages();
     }

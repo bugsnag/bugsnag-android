@@ -17,8 +17,6 @@ import androidx.annotation.Nullable;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -49,17 +47,17 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
 
     final MetadataState metadataState;
 
-    final ContextState contextState;
-    final CallbackState callbackState;
-    final UserState userState;
+    private final ContextState contextState;
+    private final CallbackState callbackState;
+    private final UserState userState;
 
     final Context appContext;
 
     @NonNull
-    protected final DeviceData deviceData;
+    final DeviceData deviceData;
 
     @NonNull
-    protected final AppData appData;
+    final AppData appData;
 
     @NonNull
     final BreadcrumbState breadcrumbState;
@@ -67,16 +65,15 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     @NonNull
     protected final EventStore eventStore;
 
-    final SessionStore sessionStore;
+    private final SessionStore sessionStore;
 
     final SystemBroadcastReceiver systemBroadcastReceiver;
     final SessionTracker sessionTracker;
-    final SharedPreferences sharedPrefs;
+    private final SharedPreferences sharedPrefs;
 
     private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
-    private UserRepository userRepository;
-    final StorageManager storageManager;
+    private final StorageManager storageManager;
     final Logger logger;
 
     final ClientObservable clientObservable = new ClientObservable();
@@ -159,7 +156,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         appData = new AppData(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker, am, logger);
 
-        userRepository = new UserRepository(sharedPrefs,
+        UserRepository userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUserBetweenSessions());
         userState = new UserState(userRepository);
 
@@ -793,6 +790,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         return sessionTracker;
     }
 
+    @NonNull
     EventStore getEventStore() {
         return eventStore;
     }

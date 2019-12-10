@@ -55,7 +55,7 @@ public class SessionPayloadTest {
     }
 
     private SessionPayload generatePayloadFromSession(Context context,
-                                                      Session session) throws Exception {
+                                                      Session session) {
         appData = client.getAppData();
         deviceData = client.deviceData;
         return new SessionPayload(session, null, appData.getAppDataSummary(),

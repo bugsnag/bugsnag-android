@@ -39,10 +39,9 @@ public class ClientTest {
 
     /**
      * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         context = ApplicationProvider.getApplicationContext();
         clearSharedPrefs();
         config = new Configuration("api-key");
@@ -50,10 +49,9 @@ public class ClientTest {
 
     /**
      * Clears sharedPreferences to remove any values persisted
-     * @throws Exception if IO to sharedPrefs failed
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         clearSharedPrefs();
         if (client != null) {
             client.close();

@@ -20,7 +20,7 @@ class AppData {
 
     private static final long startTimeMs = SystemClock.elapsedRealtime();
 
-    static final String RELEASE_STAGE_DEVELOPMENT = "development";
+    private static final String RELEASE_STAGE_DEVELOPMENT = "development";
     static final String RELEASE_STAGE_PRODUCTION = "production";
 
     private final ImmutableConfig config;
@@ -31,7 +31,7 @@ class AppData {
     private String binaryArch = null;
 
     @Nullable
-    final String appName;
+    private final String appName;
 
     @Nullable
     private PackageInfo packageInfo;

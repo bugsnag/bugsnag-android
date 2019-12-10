@@ -29,9 +29,9 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
         foregroundActivities = new ConcurrentLinkedQueue<>();
     private final long timeoutMs;
 
-    final ImmutableConfig configuration;
-    final CallbackState callbackState;
-    final Client client;
+    private final ImmutableConfig configuration;
+    private final CallbackState callbackState;
+    private final Client client;
     final SessionStore sessionStore;
 
     // This most recent time an Activity was stopped.

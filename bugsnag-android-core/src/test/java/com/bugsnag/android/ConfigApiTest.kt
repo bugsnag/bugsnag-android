@@ -17,8 +17,8 @@ import org.mockito.junit.MockitoJUnitRunner
 internal class ConfigApiTest {
 
     lateinit var config: Configuration
-    lateinit var callbackState: CallbackState
-    lateinit var metadataState: MetadataState
+    private lateinit var callbackState: CallbackState
+    private lateinit var metadataState: MetadataState
 
     @Before
     fun setUp() {
