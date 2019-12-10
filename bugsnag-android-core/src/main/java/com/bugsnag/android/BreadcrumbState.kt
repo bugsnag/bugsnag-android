@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import java.io.IOException
 import java.io.StringWriter
-import java.util.Observable
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 

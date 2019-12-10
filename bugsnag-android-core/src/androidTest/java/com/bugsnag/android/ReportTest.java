@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.Thread;
 
 @SmallTest
 public class ReportTest {

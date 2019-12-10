@@ -3,7 +3,6 @@ package com.bugsnag.android
 import android.content.Context
 import android.text.TextUtils
 import java.util.Collections
-import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * User-specified configuration storage object, contains information

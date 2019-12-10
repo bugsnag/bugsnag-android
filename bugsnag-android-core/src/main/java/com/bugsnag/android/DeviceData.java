@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.BatteryManager;
-import android.os.Environment;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 
