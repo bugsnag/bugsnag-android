@@ -50,6 +50,8 @@ class ManifestConfigLoaderTest {
             // misc
             assertEquals(maxBreadcrumbs, 25)
             assertEquals(launchCrashThresholdMs, 5000)
+            assertEquals("android", appType)
+            assertNull(codeBundleId)
         }
     }
 
@@ -63,7 +65,7 @@ class ManifestConfigLoaderTest {
             putBoolean("com.bugsnag.android.AUTO_DETECT_ERRORS", false)
             putBoolean("com.bugsnag.android.AUTO_DETECT_ANRS", true)
             putBoolean("com.bugsnag.android.AUTO_DETECT_NDK_CRASHES", true)
-            putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", false)
+            putBoolean("com.bugsnag.android.AUTO_TRACK_SESSIONS", false)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_BREADCRUMBS", false)
             putBoolean("com.bugsnag.android.SEND_THREADS", false)
             putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true)
@@ -84,6 +86,8 @@ class ManifestConfigLoaderTest {
             // misc
             putInt("com.bugsnag.android.MAX_BREADCRUMBS", 50)
             putInt("com.bugsnag.android.LAUNCH_CRASH_THRESHOLD_MS", 7000)
+            putString("com.bugsnag.android.APP_TYPE", "react-native")
+            putString("com.bugsnag.android.CODE_BUNDLE_ID", "123")
         }
 
         val config = configLoader.load(data)
@@ -116,6 +120,8 @@ class ManifestConfigLoaderTest {
             // misc
             assertEquals(maxBreadcrumbs, 50)
             assertEquals(launchCrashThresholdMs, 7000)
+            assertEquals("react-native", appType)
+            assertEquals("123", codeBundleId)
         }
     }
 

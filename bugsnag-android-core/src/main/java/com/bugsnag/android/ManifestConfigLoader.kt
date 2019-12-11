@@ -18,7 +18,7 @@ internal class ManifestConfigLoader {
         private const val AUTO_DETECT_ERRORS = "$BUGSNAG_NS.AUTO_DETECT_ERRORS"
         private const val AUTO_DETECT_ANRS = "$BUGSNAG_NS.AUTO_DETECT_ANRS"
         private const val AUTO_DETECT_NDK_CRASHES = "$BUGSNAG_NS.AUTO_DETECT_NDK_CRASHES"
-        private const val AUTO_CAPTURE_SESSIONS = "$BUGSNAG_NS.AUTO_CAPTURE_SESSIONS"
+        private const val AUTO_TRACK_SESSIONS = "$BUGSNAG_NS.AUTO_TRACK_SESSIONS"
         private const val SEND_THREADS = "$BUGSNAG_NS.SEND_THREADS"
         private const val PERSIST_USER = "$BUGSNAG_NS.PERSIST_USER_BETWEEN_SESSIONS"
 
@@ -38,6 +38,8 @@ internal class ManifestConfigLoader {
         // misc
         private const val MAX_BREADCRUMBS = "$BUGSNAG_NS.MAX_BREADCRUMBS"
         private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"
+        private const val CODE_BUNDLE_ID = "$BUGSNAG_NS.CODE_BUNDLE_ID"
+        private const val APP_TYPE = "$BUGSNAG_NS.APP_TYPE"
 
         // deprecated aliases
         private const val ENABLE_EXCEPTION_HANDLER = "$BUGSNAG_NS.ENABLE_EXCEPTION_HANDLER"
@@ -86,7 +88,7 @@ internal class ManifestConfigLoader {
             autoDetectErrors = data.getBoolean(AUTO_DETECT_ERRORS, autoDetectErrors)
             autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
             autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
-            autoTrackSessions = data.getBoolean(AUTO_CAPTURE_SESSIONS, autoTrackSessions)
+            autoTrackSessions = data.getBoolean(AUTO_TRACK_SESSIONS, autoTrackSessions)
             sendThreads = data.getBoolean(SEND_THREADS, sendThreads)
             persistUserBetweenSessions = data.getBoolean(PERSIST_USER, persistUserBetweenSessions)
         }
@@ -104,6 +106,8 @@ internal class ManifestConfigLoader {
         with(config) {
             releaseStage = data.getString(RELEASE_STAGE, config.releaseStage)
             appVersion = data.getString(APP_VERSION, config.appVersion)
+            appType = data.getString(APP_TYPE, config.appType)
+            codeBundleId = data.getString(CODE_BUNDLE_ID, config.codeBundleId)
 
             if (data.containsKey(VERSION_CODE)) {
                 versionCode = data.getInt(VERSION_CODE)

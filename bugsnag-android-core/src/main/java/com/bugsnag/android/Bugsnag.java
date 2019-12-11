@@ -35,7 +35,7 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext) {
-        return init(androidContext, new ManifestConfigLoader().load(androidContext));
+        return init(androidContext, Configuration.load(androidContext));
     }
 
     /**
