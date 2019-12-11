@@ -158,7 +158,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 immutableConfig, sessionTracker, am, logger);
 
         UserRepository userRepository = new UserRepository(sharedPrefs,
-                immutableConfig.getPersistUserBetweenSessions());
+                immutableConfig.getPersistUser());
         userState = new UserState(userRepository);
 
         String id = userState.getUser().getId();

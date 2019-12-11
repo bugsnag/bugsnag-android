@@ -32,7 +32,7 @@ class ManifestConfigLoaderTest {
             assertFalse(autoDetectNdkCrashes)
             assertTrue(autoTrackSessions)
             assertTrue(sendThreads)
-            assertFalse(persistUserBetweenSessions)
+            assertFalse(persistUser)
 
             // endpoints
             assertEquals(endpoints.notify, "https://notify.bugsnag.com")
@@ -66,7 +66,7 @@ class ManifestConfigLoaderTest {
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", false)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_BREADCRUMBS", false)
             putBoolean("com.bugsnag.android.SEND_THREADS", false)
-            putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true)
+            putBoolean("com.bugsnag.android.PERSIST_USER", true)
 
             // endpoints
             putString("com.bugsnag.android.ENDPOINT", "http://localhost:1234")
@@ -98,7 +98,7 @@ class ManifestConfigLoaderTest {
             assertTrue(autoDetectNdkCrashes)
             assertFalse(autoTrackSessions)
             assertFalse(sendThreads)
-            assertTrue(persistUserBetweenSessions)
+            assertTrue(persistUser)
 
             // endpoints
             assertEquals(endpoints.notify, "http://localhost:1234")

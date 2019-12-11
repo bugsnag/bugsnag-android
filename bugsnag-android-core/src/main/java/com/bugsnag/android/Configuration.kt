@@ -59,7 +59,7 @@ class Configuration(
      * Set whether or not Bugsnag should persist user information between application settings
      * if set then any user information set will be re-used until
      */
-    var persistUserBetweenSessions: Boolean = false
+    var persistUser: Boolean = false
 
     /**
      * Sets the threshold in ms for an uncaught error to be considered as a crash on launch.

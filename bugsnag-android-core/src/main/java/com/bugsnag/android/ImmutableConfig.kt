@@ -24,7 +24,7 @@ internal data class ImmutableConfig(
     val appType: String,
     val delivery: Delivery,
     val endpoints: Endpoints,
-    val persistUserBetweenSessions: Boolean,
+    val persistUser: Boolean,
     val launchCrashThresholdMs: Long,
     val logger: Logger,
     val maxBreadcrumbs: Int
@@ -99,7 +99,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         appType = config.appType,
         delivery = config.delivery!!,
         endpoints = config.endpoints,
-        persistUserBetweenSessions = config.persistUserBetweenSessions,
+        persistUser = config.persistUser,
         launchCrashThresholdMs = config.launchCrashThresholdMs,
         logger = config.logger!!,
         maxBreadcrumbs = config.maxBreadcrumbs,
