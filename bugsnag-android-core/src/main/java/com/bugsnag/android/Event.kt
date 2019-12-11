@@ -79,7 +79,7 @@ class Event @JvmOverloads internal constructor(
     protected fun shouldIgnoreClass(): Boolean {
         return when {
             errors.isEmpty() -> true
-            else -> ignoreClasses.contains(errors[0].errorClass)
+            else -> errors.any { ignoreClasses.contains(it.errorClass) }
         }
     }
 
