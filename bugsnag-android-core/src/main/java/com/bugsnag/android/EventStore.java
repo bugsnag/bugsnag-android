@@ -26,6 +26,7 @@ class EventStore extends FileStore {
     private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
+    private static final int MAX_EVENT_COUNT = 32;
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
@@ -53,7 +54,7 @@ class EventStore extends FileStore {
 
     EventStore(@NonNull ImmutableConfig config,
                @NonNull Context appContext, @NonNull Logger logger, Delegate delegate) {
-        super(appContext, "/bugsnag-errors/", 128, EVENT_COMPARATOR, logger, delegate);
+        super(appContext, "/bugsnag-errors/", MAX_EVENT_COUNT, EVENT_COMPARATOR, logger, delegate);
         this.config = config;
         this.logger = logger;
         this.delegate = delegate;
