@@ -63,7 +63,7 @@ public class UniqueOnErrorTest {
         client.addOnError(secondCb);
         client.addOnError(secondCb);
         client.notify(new Throwable());
-        assertEquals(2, callbackCount);
+        assertEquals(4, callbackCount);
     }
 
     @Test

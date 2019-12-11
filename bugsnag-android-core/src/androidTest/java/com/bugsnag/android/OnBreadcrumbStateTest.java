@@ -108,7 +108,7 @@ public class OnBreadcrumbStateTest {
     }
 
     @Test
-    public void ensureOnlyCalledOnce() {
+    public void ensureCalledTwice() {
         final int[] count = {1};
 
         OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
@@ -121,7 +121,7 @@ public class OnBreadcrumbStateTest {
         client.addOnBreadcrumb(onBreadcrumb);
         client.addOnBreadcrumb(onBreadcrumb);
         client.leaveBreadcrumb("Foo");
-        assertEquals(2, count[0]);
+        assertEquals(3, count[0]);
     }
 
     @Test
