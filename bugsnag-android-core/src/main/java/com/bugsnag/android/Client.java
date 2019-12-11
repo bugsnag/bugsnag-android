@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -38,8 +37,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer, MetadataAware, CallbackAware,
-        UserAware {
+public class Client implements MetadataAware, CallbackAware, UserAware {
 
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
@@ -205,13 +203,6 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
         connectivity.registerForNetworkChanges();
 
-        metadataState.addObserver(this);
-        breadcrumbState.addObserver(this);
-        sessionTracker.addObserver(this);
-        clientObservable.addObserver(this);
-        userState.addObserver(this);
-        contextState.addObserver(this);
-        deliveryDelegate.addObserver(this);
         orientationListener = registerOrientationChangeListener();
 
         // filter out any disabled breadcrumb types
@@ -280,10 +271,14 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         }
     }
 
-    @Override
-    public void update(@NonNull Observable observable, @NonNull Object arg) {
-        setChanged();
-        super.notifyObservers(arg);
+    void registerObserver(Observer observer) {
+        metadataState.addObserver(observer);
+        breadcrumbState.addObserver(observer);
+        sessionTracker.addObserver(observer);
+        clientObservable.addObserver(observer);
+        userState.addObserver(observer);
+        contextState.addObserver(observer);
+        deliveryDelegate.addObserver(observer);
     }
 
     /**

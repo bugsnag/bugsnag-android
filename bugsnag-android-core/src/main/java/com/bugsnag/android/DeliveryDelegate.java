@@ -30,8 +30,6 @@ class DeliveryDelegate extends BaseObservable {
         Session session = event.getSession();
 
         if (session != null) {
-            setChanged();
-
             if (event.isUnhandled()) {
                 event.setSession(session.incrementUnhandledAndCopy());
                 notifyObservers(StateEvent.NotifyUnhandled.INSTANCE);

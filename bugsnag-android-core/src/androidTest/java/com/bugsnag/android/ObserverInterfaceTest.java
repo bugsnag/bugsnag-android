@@ -34,7 +34,7 @@ public class ObserverInterfaceTest {
         config.setAutoDetectErrors(false);
         client = new Client(ApplicationProvider.getApplicationContext(), config);
         observer = new BugsnagTestObserver();
-        client.addObserver(observer);
+        client.registerObserver(observer);
     }
 
     @After
