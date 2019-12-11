@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BreadcrumbType.MANUAL
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -84,7 +85,7 @@ class BreadcrumbStateTest {
     }
 
     /**
-     * Ensures a breadcrumb is dropped if it exceeds the payload size limit
+     * Ensures a breadcrumb is not dropped if it contains a large amount of metadata
      */
     @Test
     fun testPayloadSizeLimit() {
@@ -93,7 +94,7 @@ class BreadcrumbStateTest {
             metadata[String.format(Locale.US, "%d", i)] = "!!"
         }
         breadcrumbState.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata))
-        assertTrue(breadcrumbState.store.isEmpty())
+        assertFalse(breadcrumbState.store.isEmpty())
     }
 
     /**

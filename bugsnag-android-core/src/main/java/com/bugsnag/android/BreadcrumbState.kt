@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import java.io.IOException
-import java.io.StringWriter
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -27,15 +26,6 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, val logger: Logger) : BaseOb
     }
 
     fun add(breadcrumb: Breadcrumb) {
-        try {
-            if (breadcrumbPayloadSize(breadcrumb) > MAX_PAYLOAD_SIZE) {
-                logger.w("Dropping breadcrumb because payload exceeds 4KB limit")
-                return
-            }
-        } catch (ex: IOException) {
-            logger.w("Dropping breadcrumb because it could not be serialized", ex)
-        }
-
         store.add(breadcrumb)
         pruneBreadcrumbs()
         notifyObservers(
@@ -52,18 +42,6 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, val logger: Logger) : BaseOb
         // Remove oldest breadcrumbState until new max size reached
         while (store.size > maxBreadcrumbs) {
             store.poll()
-        }
-    }
-
-    companion object {
-        private const val MAX_PAYLOAD_SIZE = 4096
-
-        @Throws(IOException::class)
-        internal fun breadcrumbPayloadSize(breadcrumb: Breadcrumb): Int {
-            val writer = StringWriter()
-            val jsonStream = JsonStream(writer)
-            breadcrumb.toStream(jsonStream)
-            return writer.toString().length
         }
     }
 }
