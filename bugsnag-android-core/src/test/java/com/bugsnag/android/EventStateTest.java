@@ -38,10 +38,30 @@ public class EventStateTest {
     }
 
     @Test
+    public void shouldIgnoreMatchesMultiple() {
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        configuration.setIgnoreClasses(Collections.singleton("java.io.IOException"));
+
+        RuntimeException exc = new RuntimeException(new IOException());
+        event = new Event(exc, BugsnagTestUtils.convert(configuration), handledState);
+        assertTrue(event.shouldIgnoreClass());
+    }
+
+    @Test
     public void shouldIgnoreDoesNotMatch() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setIgnoreClasses(Collections.<String>emptySet());
         event = new Event(new IOException(), BugsnagTestUtils.convert(configuration), handledState);
+        assertFalse(event.shouldIgnoreClass());
+    }
+
+    @Test
+    public void shouldIgnoreDoesNotMatchMultiple() {
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        configuration.setIgnoreClasses(Collections.<String>emptySet());
+        RuntimeException exc = new RuntimeException(new IllegalStateException());
+
+        event = new Event(exc, BugsnagTestUtils.convert(configuration), handledState);
         assertFalse(event.shouldIgnoreClass());
     }
 
