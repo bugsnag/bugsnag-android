@@ -41,7 +41,7 @@ class Event @JvmOverloads internal constructor(
     var app: MutableMap<String, Any?> = HashMap()
     var device: MutableMap<String, Any?> = HashMap()
 
-    val isUnhandled = handledState.isUnhandled
+    val isUnhandled: Boolean = handledState.isUnhandled
 
     var breadcrumbs: List<Breadcrumb> = emptyList()
 

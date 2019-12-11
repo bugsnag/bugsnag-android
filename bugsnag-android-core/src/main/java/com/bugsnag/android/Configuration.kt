@@ -53,13 +53,13 @@ class Configuration(
      * Set whether to send thread-state with report.
      * By default, this will be true.
      */
-    var sendThreads = true
+    var sendThreads: Boolean = true
 
     /**
      * Set whether or not Bugsnag should persist user information between application settings
      * if set then any user information set will be re-used until
      */
-    var persistUserBetweenSessions = false
+    var persistUserBetweenSessions: Boolean = false
 
     /**
      * Sets the threshold in ms for an uncaught error to be considered as a crash on launch.
@@ -84,7 +84,7 @@ class Configuration(
      *
      * By default this behavior is enabled.
      */
-    var autoTrackSessions = true
+    var autoTrackSessions: Boolean = true
 
     /**
      * Sets whether [ANRs](https://developer.android.com/topic/performance/vitals/anr)
@@ -93,7 +93,7 @@ class Configuration(
      *
      * If you wish to enable ANR detection, you should set this property to true.
      */
-    var autoDetectAnrs = false
+    var autoDetectAnrs: Boolean = false
 
     /**
      * Determines whether NDK crashes such as signals and exceptions should be reported by bugsnag.
@@ -107,7 +107,7 @@ class Configuration(
      * Sets whether Bugsnag should automatically capture and report unhandled errors.
      * By default, this value is true.
      */
-    var autoDetectErrors = true
+    var autoDetectErrors: Boolean = true
 
     /**
      * Intended for internal use only - sets the code bundle id for React Native
@@ -117,7 +117,7 @@ class Configuration(
     /**
      * Sets the type of the notifier (e.g. Android, React Native)
      */
-    var appType = "android"
+    var appType: String = "android"
 
     /**
      * Sets the logger used for logging internal messages within the bugsnag SDK to a custom
@@ -142,14 +142,14 @@ class Configuration(
      * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
      * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.
      */
-    var endpoints = Endpoints()
+    var endpoints: Endpoints = Endpoints()
 
     /**
      * Set the maximum number of breadcrumbState to keep and sent to Bugsnag.
      * By default, we'll keep and send the 25 most recent breadcrumb log
      * messages.
      */
-    var maxBreadcrumbs = DEFAULT_MAX_SIZE
+    var maxBreadcrumbs: Int = DEFAULT_MAX_SIZE
         set(numBreadcrumbs) {
             field = when {
                 numBreadcrumbs <= MIN_BREADCRUMBS -> MIN_BREADCRUMBS
@@ -301,7 +301,7 @@ class Configuration(
     override fun getMetadata(section: String) = metadataState.getMetadata(section)
     override fun getMetadata(section: String, key: String) = metadataState.getMetadata(section, key)
 
-    companion object {
+    private companion object {
         private const val DEFAULT_MAX_SIZE = 25
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
         private const val MIN_BREADCRUMBS = 0
