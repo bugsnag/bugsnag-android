@@ -135,7 +135,7 @@ internal class ImmutableConfigTest {
     @Test
     fun verifyErrorApiHeaders() {
         val config = convertToImmutableConfig(seed)
-        val headers = config.errorApiDeliveryParams().headers
+        val headers = config.getErrorApiDeliveryParams().headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
@@ -144,7 +144,7 @@ internal class ImmutableConfigTest {
     @Test
     fun verifySessionApiHeaders() {
         val config = convertToImmutableConfig(seed)
-        val headers = config.sessionApiDeliveryParams().headers
+        val headers = config.getSessionApiDeliveryParams().headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])

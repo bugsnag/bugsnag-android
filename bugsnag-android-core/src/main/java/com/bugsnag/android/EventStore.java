@@ -144,7 +144,7 @@ class EventStore extends FileStore {
     private void flushEventFile(File eventFile) {
         try {
             Report report = new Report(config.getApiKey(), eventFile);
-            DeliveryParams deliveryParams = config.errorApiDeliveryParams();
+            DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
 
             switch (deliveryStatus) {

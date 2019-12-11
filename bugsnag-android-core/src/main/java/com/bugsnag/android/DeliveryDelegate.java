@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import java.util.Collections;
 import java.util.Date;
@@ -8,22 +9,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
-class ReportDeliveryDelegate extends BaseObservable {
+class DeliveryDelegate extends BaseObservable {
 
     final Logger logger;
-    final EventStore eventStore;
-    final ImmutableConfig immutableConfig;
+    private final EventStore eventStore;
+    private final ImmutableConfig immutableConfig;
     final BreadcrumbState breadcrumbState;
 
-    ReportDeliveryDelegate(Logger logger, EventStore eventStore,
-                           ImmutableConfig immutableConfig, BreadcrumbState breadcrumbState) {
+    DeliveryDelegate(Logger logger, EventStore eventStore,
+                     ImmutableConfig immutableConfig, BreadcrumbState breadcrumbState) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
         this.breadcrumbState = breadcrumbState;
     }
 
-    void deliverEvent(@NonNull Event event) {
+    void deliver(@NonNull Event event) {
         // Build the report
         Report report = new Report(immutableConfig.getApiKey(), event);
         Session session = event.getSession();
@@ -39,8 +40,11 @@ class ReportDeliveryDelegate extends BaseObservable {
                 notifyObservers(StateEvent.NotifyHandled.INSTANCE);
             }
         }
+        cacheEvent(event, report, event.isUnhandled());
+    }
 
-        if (event.isUnhandled()) {
+    private void cacheEvent(@NonNull Event event, Report report, boolean persistImmediately) {
+        if (persistImmediately) {
             eventStore.write(event);
             eventStore.flushAsync();
         } else {
@@ -57,7 +61,7 @@ class ReportDeliveryDelegate extends BaseObservable {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    deliver(finalReport, finalEvent);
+                    deliverReportInternal(finalReport, finalEvent);
                 }
             });
         } catch (RejectedExecutionException exception) {
@@ -66,8 +70,9 @@ class ReportDeliveryDelegate extends BaseObservable {
         }
     }
 
-    DeliveryStatus deliver(@NonNull Report report, @NonNull Event event) {
-        DeliveryParams deliveryParams = immutableConfig.errorApiDeliveryParams();
+    @VisibleForTesting
+    DeliveryStatus deliverReportInternal(@NonNull Report report, @NonNull Event event) {
+        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
 
@@ -95,15 +100,11 @@ class ReportDeliveryDelegate extends BaseObservable {
         // Add a breadcrumb for this event occurring
         List<Error> errors = event.getErrors();
 
-        String name = "";
-        String msg = "";
-
         if (errors.size() > 0) {
-            name = errors.get(0).getErrorClass();
-            msg = errors.get(0).getErrorMessage();
+            String name = errors.get(0).getErrorClass();
+            String msg = errors.get(0).getErrorMessage();
+            Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
+            breadcrumbState.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
         }
-
-        Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-        breadcrumbState.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
     }
 }

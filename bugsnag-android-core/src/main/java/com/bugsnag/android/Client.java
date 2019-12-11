@@ -75,7 +75,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
     private final Connectivity connectivity;
     private final StorageManager storageManager;
     final Logger logger;
-    final ReportDeliveryDelegate reportDeliveryDelegate;
+    final DeliveryDelegate deliveryDelegate;
 
     final ClientObservable clientObservable = new ClientObservable();
 
@@ -182,7 +182,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
                 logger, immutableConfig, storageManager, appData, deviceData, sessionTracker);
         eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
 
-        reportDeliveryDelegate = new ReportDeliveryDelegate(logger, eventStore,
+        deliveryDelegate = new DeliveryDelegate(logger, eventStore,
                 immutableConfig, breadcrumbState);
 
         // Install a default exception handler with this client
@@ -211,7 +211,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         clientObservable.addObserver(this);
         userState.addObserver(this);
         contextState.addObserver(this);
-        reportDeliveryDelegate.addObserver(this);
+        deliveryDelegate.addObserver(this);
         orientationListener = registerOrientationChangeListener();
 
         // filter out any disabled breadcrumb types
@@ -630,7 +630,7 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
             return;
         }
 
-        reportDeliveryDelegate.deliverEvent(event);
+        deliveryDelegate.deliver(event);
     }
 
     @NonNull

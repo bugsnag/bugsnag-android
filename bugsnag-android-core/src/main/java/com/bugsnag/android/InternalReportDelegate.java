@@ -112,7 +112,7 @@ class InternalReportDelegate implements EventStore.Delegate {
                 public void run() {
                     try {
                         Delivery delivery = immutableConfig.getDelivery();
-                        DeliveryParams params = immutableConfig.errorApiDeliveryParams();
+                        DeliveryParams params = immutableConfig.getErrorApiDeliveryParams();
 
                         // can only modify headers if DefaultDelivery is in use
                         if (delivery instanceof DefaultDelivery) {

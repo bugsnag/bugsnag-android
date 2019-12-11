@@ -274,7 +274,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
     }
 
     DeliveryStatus deliverSessionPayload(SessionPayload payload) {
-        DeliveryParams params = configuration.sessionApiDeliveryParams();
+        DeliveryParams params = configuration.getSessionApiDeliveryParams();
         Delivery delivery = configuration.getDelivery();
         return delivery.deliver(payload, params);
     }
