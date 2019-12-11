@@ -9,9 +9,7 @@ internal data class CallbackState(
 ): CallbackAware {
 
     override fun addOnError(onError: OnError) {
-        if (!onErrorTasks.contains(onError)) {
-            onErrorTasks.add(onError)
-        }
+        onErrorTasks.add(onError)
     }
 
     override fun removeOnError(onError: OnError) {
@@ -19,9 +17,7 @@ internal data class CallbackState(
     }
 
     override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb) {
-        if (!onBreadcrumbTasks.contains(onBreadcrumb)) {
-            onBreadcrumbTasks.add(onBreadcrumb)
-        }
+        onBreadcrumbTasks.add(onBreadcrumb)
     }
 
     override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb) {
@@ -29,9 +25,7 @@ internal data class CallbackState(
     }
 
     override fun addOnSession(onSession: OnSession) {
-        if (!onSessionTasks.contains(onSession)) {
-            onSessionTasks.add(onSession)
-        }
+        onSessionTasks.add(onSession)
     }
 
     override fun removeOnSession(onSession: OnSession) {
