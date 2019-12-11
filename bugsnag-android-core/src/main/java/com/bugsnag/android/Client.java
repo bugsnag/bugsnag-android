@@ -225,7 +225,8 @@ public class Client extends Observable implements Observer, MetadataAware, Callb
         // Flush any on-disk errors
         eventStore.flushOnLaunch();
         loadPlugins();
-        leaveBreadcrumb("Bugsnag loaded");
+        Map<String, Object> data = Collections.emptyMap();
+        leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.NAVIGATION, data);
     }
 
     private OrientationEventListener registerOrientationChangeListener() {

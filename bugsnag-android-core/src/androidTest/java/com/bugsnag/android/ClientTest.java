@@ -20,9 +20,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("unchecked")
 @SmallTest
@@ -144,11 +148,12 @@ public class ClientTest {
         assertFalse(sharedPref.contains("user.name"));
     }
 
-    @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
+        List<BreadcrumbType> breadcrumbTypes
+                = Arrays.asList(BreadcrumbType.MANUAL, BreadcrumbType.NAVIGATION);
+        config.setEnabledBreadcrumbTypes(new HashSet<>(breadcrumbTypes));
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
         assertEquals(1, client.breadcrumbState.getStore().size());
