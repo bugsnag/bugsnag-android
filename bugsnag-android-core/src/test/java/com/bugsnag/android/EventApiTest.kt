@@ -39,24 +39,6 @@ internal class EventApiTest {
     }
 
     @Test
-    fun setUserId() {
-        event.setUserId("99")
-        assertEquals(User("99", "fred@example.com", "Fred"), event._user)
-    }
-
-    @Test
-    fun setUserEmail() {
-        event.setUserEmail("joe@test.com")
-        assertEquals(User("1", "joe@test.com", "Fred"), event._user)
-    }
-
-    @Test
-    fun setUserName() {
-        event.setUserName("Jacinta Barltrop")
-        assertEquals(User("1", "fred@example.com", "Jacinta Barltrop"), event._user)
-    }
-
-    @Test
     fun addMetadataTopLevel() {
         event.addMetadata("foo", mapOf(Pair("wham", "bar")))
         assertEquals(mapOf(Pair("wham", "bar")), event.metadata.getMetadata("foo"))

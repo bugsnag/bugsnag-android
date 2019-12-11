@@ -44,7 +44,7 @@ internal class EventSerializationTest {
                     it.app["foo"] = 55
                     it.device["bar"] = true
                     it.addMetadata("wham", "some_key", "A value")
-                    it.setUserName("Jamie")
+                    it.setUser(null, null, "Jamie")
 
                     val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0))
                     it.breadcrumbs = listOf(crumb)

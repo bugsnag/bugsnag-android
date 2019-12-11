@@ -124,9 +124,7 @@ public class NativeInterface {
                                @Nullable final String email,
                                @Nullable final String name) {
         Client client = getClient();
-        client.setUserId(id);
-        client.setUserEmail(email);
-        client.setUserName(name);
+        client.setUser(id, email, name);
     }
 
     /**

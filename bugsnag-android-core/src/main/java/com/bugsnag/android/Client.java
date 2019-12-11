@@ -380,9 +380,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
-        setUserId(id);
-        setUserEmail(email);
-        setUserName(name);
+        userState.setUser(id, email, name);
     }
 
     /**
@@ -396,41 +394,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     public User getUser() {
         return userState.getUser();
     }
-
-    /**
-     * Set a unique identifier for the user currently using your application.
-     * By default, this will be an automatically generated unique id
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param id a unique identifier of the current user
-     */
-    @Override
-    public void setUserId(@Nullable String id) {
-        userState.setUserId(id);
-    }
-
-    /**
-     * Set the email address of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param email the email address of the current user
-     */
-    @Override
-    public void setUserEmail(@Nullable String email) {
-        userState.setUserEmail(email);
-    }
-
-    /**
-     * Set the name of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param name the name of the current user
-     */
-    @Override
-    public void setUserName(@Nullable String name) {
-        userState.setUserName(name);
-    }
-
 
     /**
      * Add a "on error" callback, to execute code at the point where an error report is

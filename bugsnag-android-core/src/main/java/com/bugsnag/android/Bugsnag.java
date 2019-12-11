@@ -117,37 +117,6 @@ public final class Bugsnag {
     }
 
     /**
-     * Set a unique identifier for the user currently using your application.
-     * By default, this will be an automatically generated unique id
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param id a unique identifier of the current user
-     */
-    public static void setUserId(@Nullable final String id) {
-        getClient().setUserId(id);
-    }
-
-    /**
-     * Set the email address of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param email the email address of the current user
-     */
-    public static void setUserEmail(@Nullable final String email) {
-        getClient().setUserEmail(email);
-    }
-
-    /**
-     * Set the name of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param name the name of the current user
-     */
-    public static void setUserName(@Nullable final String name) {
-        getClient().setUserName(name);
-    }
-
-    /**
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
