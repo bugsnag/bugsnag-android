@@ -46,11 +46,11 @@ internal data class ImmutableConfig(
     internal fun shouldNotifyForReleaseStage() =
         enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
 
-    @JvmName("errorApiDeliveryParams")
-    internal fun errorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
+    @JvmName("getErrorApiDeliveryParams")
+    internal fun getErrorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
 
-    @JvmName("sessionApiDeliveryParams")
-    internal fun sessionApiDeliveryParams() =
+    @JvmName("getSessionApiDeliveryParams")
+    internal fun getSessionApiDeliveryParams() =
         DeliveryParams(endpoints.sessions, sessionApiHeaders())
 
     /**
