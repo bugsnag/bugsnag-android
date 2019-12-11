@@ -50,24 +50,6 @@ class BugsnagApiTest {
     }
 
     @Test
-    fun setUserId() {
-        Bugsnag.setUserId("123")
-        verify(client, times(1)).setUserId("123")
-    }
-
-    @Test
-    fun setUserEmail() {
-        Bugsnag.setUserEmail("foo@example.com")
-        verify(client, times(1)).setUserEmail("foo@example.com")
-    }
-
-    @Test
-    fun setUserName() {
-        Bugsnag.setUserName("Bob")
-        verify(client, times(1)).setUserName("Bob")
-    }
-
-    @Test
     fun addOnError() {
         Bugsnag.addOnError { true }
         Bugsnag.addOnError(OnError { true })

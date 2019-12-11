@@ -148,9 +148,6 @@ class Event @JvmOverloads internal constructor(
     }
 
     override fun getUser() = _user
-    override fun setUserId(id: String?) = setUser(id, _user.email, _user.name)
-    override fun setUserEmail(email: String?) = setUser(_user.id, email, _user.name)
-    override fun setUserName(name: String?) = setUser(_user.id, _user.email, name)
 
     override fun addMetadata(section: String, value: Map<String, Any?>) = metadata.addMetadata(section, value)
     override fun addMetadata(section: String, key: String, value: Any?) =

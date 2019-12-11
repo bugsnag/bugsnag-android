@@ -114,23 +114,15 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testClientSetUserId() {
-        client.setUserId("personX");
-        StateEvent.UpdateUserId msg = findMessageInQueue(StateEvent.UpdateUserId.class);
-        assertEquals("personX", msg.getId());
-    }
+        client.setUser("personX", "bip@example.com", "Loblaw");
+        StateEvent.UpdateUserId idMsg = findMessageInQueue(StateEvent.UpdateUserId.class);
+        assertEquals("personX", idMsg.getId());
 
-    @Test
-    public void testClientSetUserEmail() {
-        client.setUserEmail("bip@example.com");
-        StateEvent.UpdateUserEmail msg = findMessageInQueue(StateEvent.UpdateUserEmail.class);
-        assertEquals("bip@example.com", msg.getEmail());
-    }
+        StateEvent.UpdateUserEmail emailMsg = findMessageInQueue(StateEvent.UpdateUserEmail.class);
+        assertEquals("bip@example.com", emailMsg.getEmail());
 
-    @Test
-    public void testClientSetUserName() {
-        client.setUserName("Loblaw");
-        StateEvent.UpdateUserName msg = findMessageInQueue(StateEvent.UpdateUserName.class);
-        assertEquals("Loblaw", msg.getName());
+        StateEvent.UpdateUserName nameMsg = findMessageInQueue(StateEvent.UpdateUserName.class);
+        assertEquals("Loblaw", nameMsg.getName());
     }
 
     @Test

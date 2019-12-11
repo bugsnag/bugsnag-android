@@ -155,9 +155,7 @@ internal class NativeInterfaceApiTest {
     @Test
     fun setUser() {
         NativeInterface.setUser("9", "bob@example.com", "Bob")
-        verify(client, times(1)).setUserId("9")
-        verify(client, times(1)).setUserEmail("bob@example.com")
-        verify(client, times(1)).setUserName("Bob")
+        verify(client, times(1)).setUser("9", "bob@example.com", "Bob")
     }
 
     @Test
