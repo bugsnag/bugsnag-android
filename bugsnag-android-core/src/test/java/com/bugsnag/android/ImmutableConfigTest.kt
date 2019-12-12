@@ -66,7 +66,7 @@ internal class ImmutableConfigTest {
             assertEquals(seed.launchCrashThresholdMs, launchCrashThresholdMs)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(seed.maxBreadcrumbs, maxBreadcrumbs)
-            assertEquals(seed.persistUserBetweenSessions, persistUserBetweenSessions)
+            assertEquals(seed.persistUser, persistUser)
             assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
         }
     }
@@ -93,7 +93,7 @@ internal class ImmutableConfigTest {
         seed.endpoints = endpoints
         seed.launchCrashThresholdMs = 7000
         seed.maxBreadcrumbs = 37
-        seed.persistUserBetweenSessions = true
+        seed.persistUser = true
         seed.enabledBreadcrumbTypes = emptySet()
 
         // verify overrides are copied across
@@ -127,7 +127,7 @@ internal class ImmutableConfigTest {
             assertEquals(7000, seed.launchCrashThresholdMs)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)
-            assertTrue(seed.persistUserBetweenSessions)
+            assertTrue(seed.persistUser)
             assertTrue(seed.enabledBreadcrumbTypes.isEmpty())
         }
     }

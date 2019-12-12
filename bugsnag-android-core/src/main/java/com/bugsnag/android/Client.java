@@ -156,7 +156,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 immutableConfig, sessionTracker, am, logger);
 
         UserRepository userRepository = new UserRepository(sharedPrefs,
-                immutableConfig.getPersistUserBetweenSessions());
+                immutableConfig.getPersistUser());
         userState = new UserState(userRepository);
 
         String id = userState.getUser().getId();

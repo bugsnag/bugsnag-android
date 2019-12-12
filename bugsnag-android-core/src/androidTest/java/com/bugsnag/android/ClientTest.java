@@ -96,7 +96,7 @@ public class ClientTest {
     public void testRestoreUserFromPrefs() {
         setUserPrefs();
 
-        config.setPersistUserBetweenSessions(true);
+        config.setPersistUser(true);
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         client = new Client(context, config);
 
@@ -119,7 +119,7 @@ public class ClientTest {
 
     @Test
     public void testStoreUserInPrefs() {
-        config.setPersistUserBetweenSessions(true);
+        config.setPersistUser(true);
         client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
@@ -132,7 +132,7 @@ public class ClientTest {
 
     @Test
     public void testStoreUserInPrefsDisabled() {
-        config.setPersistUserBetweenSessions(false);
+        config.setPersistUser(false);
         client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
