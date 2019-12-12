@@ -29,11 +29,11 @@ public class ThreadTest {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList(),
                 NoopLogger.INSTANCE);
-        Thread thread = new Thread(24, "main-one", "ando", true, trace);
+        Thread thread = new Thread(24, "main-one", Thread.Type.Android, true, trace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
-        assertEquals("ando", result.getString("type"));
+        assertEquals("android", result.getString("type"));
         assertTrue(result.getBoolean("errorReportingThread"));
 
         JSONArray frames = result.getJSONArray("stacktrace");
@@ -60,11 +60,11 @@ public class ThreadTest {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList(),
                 NoopLogger.INSTANCE);
-        Thread thread = new Thread(24, "main-one", "ando",false, trace);
+        Thread thread = new Thread(24, "main-one", Thread.Type.Android,false, trace);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
-        assertEquals("ando", result.getString("type"));
+        assertEquals("android", result.getString("type"));
         assertFalse("Error reporting thread should not be set when false",
                     result.has("errorReportingThread"));
 

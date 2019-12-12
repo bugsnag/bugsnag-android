@@ -36,7 +36,7 @@ internal class EventSerializationTest {
                 // threads included
                 createEvent {
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
-                    it.threads = mutableListOf(Thread(5, "main", "android", true, stacktrace))
+                    it.threads = mutableListOf(Thread(5, "main", Thread.Type.Android, true, stacktrace))
                 },
 
                 // threads included
