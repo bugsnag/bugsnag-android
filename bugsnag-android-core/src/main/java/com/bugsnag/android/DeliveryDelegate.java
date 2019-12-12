@@ -38,13 +38,9 @@ class DeliveryDelegate extends BaseObservable {
                 notifyObservers(StateEvent.NotifyHandled.INSTANCE);
             }
         }
-        cacheEvent(event, report, event.isUnhandled());
-    }
 
-    private void cacheEvent(@NonNull Event event, Report report, boolean persistImmediately) {
-        if (persistImmediately) {
-            eventStore.write(event);
-            eventStore.flushAsync();
+        if (event.isUnhandled()) {
+            cacheEvent(event, true);
         } else {
             deliverReportAsync(event, report);
         }
@@ -63,7 +59,7 @@ class DeliveryDelegate extends BaseObservable {
                 }
             });
         } catch (RejectedExecutionException exception) {
-            eventStore.write(event);
+            cacheEvent(event, false);
             logger.w("Exceeded max queue count, saving to disk to send later");
         }
     }
@@ -82,7 +78,7 @@ class DeliveryDelegate extends BaseObservable {
             case UNDELIVERED:
                 logger.w("Could not send event(s) to Bugsnag,"
                         + " saving to disk to send later");
-                eventStore.write(event);
+                cacheEvent(event, false);
                 leaveErrorBreadcrumb(event);
                 break;
             case FAILURE:
@@ -92,6 +88,13 @@ class DeliveryDelegate extends BaseObservable {
                 break;
         }
         return deliveryStatus;
+    }
+
+    private void cacheEvent(@NonNull Event event, boolean attemptSend) {
+        eventStore.write(event);
+        if (attemptSend) {
+            eventStore.flushAsync();
+        }
     }
 
     private void leaveErrorBreadcrumb(@NonNull Event event) {
