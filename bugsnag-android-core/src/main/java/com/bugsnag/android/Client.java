@@ -166,7 +166,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 Environment.getDataDirectory(), logger);
 
         // Set up breadcrumbs
-        breadcrumbState = new BreadcrumbState(immutableConfig.getMaxBreadcrumbs(), logger);
+        int maxBreadcrumbs = immutableConfig.getMaxBreadcrumbs();
+        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -650,7 +651,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param message the log message to leave (max 140 chars)
      */
     public void leaveBreadcrumb(@NonNull String message) {
-        leaveBreadcrumbInternal(new Breadcrumb(message));
+        breadcrumbState.add(new Breadcrumb(message));
     }
 
     /**
@@ -660,13 +661,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, Object> metadata) {
-        leaveBreadcrumbInternal(new Breadcrumb(message, type, metadata, new Date()));
-    }
-
-    private void leaveBreadcrumbInternal(Breadcrumb crumb) {
-        if (callbackState.runOnBreadcrumbTasks(crumb, logger)) {
-            breadcrumbState.add(crumb);
-        }
+        breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date()));
     }
 
     SessionTracker getSessionTracker() {

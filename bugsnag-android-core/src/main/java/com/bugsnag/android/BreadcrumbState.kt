@@ -4,8 +4,12 @@ import java.io.IOException
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
-internal class BreadcrumbState(maxBreadcrumbs: Int, val logger: Logger) : BaseObservable(),
-    JsonStream.Streamable {
+internal class BreadcrumbState(
+    maxBreadcrumbs: Int,
+    val callbackState: CallbackState,
+    val logger: Logger
+) : BaseObservable(), JsonStream.Streamable {
+
     val store: Queue<Breadcrumb> = ConcurrentLinkedQueue()
 
     private val maxBreadcrumbs: Int
@@ -26,6 +30,10 @@ internal class BreadcrumbState(maxBreadcrumbs: Int, val logger: Logger) : BaseOb
     }
 
     fun add(breadcrumb: Breadcrumb) {
+        if (!callbackState.runOnBreadcrumbTasks(breadcrumb, logger)) {
+            return
+        }
+
         store.add(breadcrumb)
         pruneBreadcrumbs()
         notifyObservers(

@@ -18,7 +18,7 @@ class BreadcrumbStateTest {
 
     @Before
     fun setUp() {
-        breadcrumbState = BreadcrumbState(20, NoopLogger)
+        breadcrumbState = BreadcrumbState(20, CallbackState(), NoopLogger)
         client = generateClient()
     }
 
