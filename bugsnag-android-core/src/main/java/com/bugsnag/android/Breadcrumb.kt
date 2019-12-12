@@ -19,12 +19,16 @@ class Breadcrumb internal constructor(
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
+        val data = metadata.filter {
+            it.value is String || it.value is Boolean || it.value is Number
+        }
+
         writer.beginObject()
         writer.name("timestamp").value(DateUtils.toIso8601(timestamp))
         writer.name("name").value(message)
         writer.name("type").value(type.toString())
         writer.name("metaData")
-        writer.value(metadata, true)
+        writer.value(data, true)
         writer.endObject()
     }
 }
