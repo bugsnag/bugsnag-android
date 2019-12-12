@@ -107,19 +107,6 @@ class BugsnagApiTest {
     }
 
     @Test
-    fun notify3() {
-        Bugsnag.notify("LeakException", "whoops", arrayOf())
-        verify(client, times(1)).notify("LeakException", "whoops", arrayOf())
-    }
-
-    @Test
-    fun notify4() {
-        val onError = OnErrorCallback { true }
-        Bugsnag.notify("LeakException", "whoops", arrayOf(), onError)
-        verify(client, times(1)).notify("LeakException", "whoops", arrayOf(), onError)
-    }
-
-    @Test
     fun addMetadataTopLevel() {
         val map = mutableMapOf(Pair("bar", "wham"))
         Bugsnag.addMetadata("foo", map)

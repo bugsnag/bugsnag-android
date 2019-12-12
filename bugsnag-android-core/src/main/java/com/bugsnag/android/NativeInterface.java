@@ -261,14 +261,22 @@ public class NativeInterface {
                               @NonNull final String message,
                               @NonNull final Severity severity,
                               @NonNull final StackTraceElement[] stacktrace) {
+        Throwable exc = new RuntimeException();
+        exc.setStackTrace(stacktrace);
 
-        getClient().notify(name, message, stacktrace, new OnErrorCallback() {
+        getClient().notify(exc, new OnErrorCallback() {
             @Override
             public boolean onError(@NonNull Event event) {
                 event.updateSeverityInternal(severity);
+                List<Error> errors = event.getErrors();
 
-                for (Error error : event.getErrors()) {
-                    error.setType(Error.Type.C);
+                if (!errors.isEmpty()) {
+                    errors.get(0).setErrorClass(name);
+                    errors.get(0).setErrorMessage(message);
+
+                    for (Error error : errors) {
+                        error.setType(Error.Type.C);
+                    }
                 }
                 return true;
             }

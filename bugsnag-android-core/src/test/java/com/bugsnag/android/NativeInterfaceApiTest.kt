@@ -219,6 +219,6 @@ internal class NativeInterfaceApiTest {
     @Test
     fun notifyCall() {
         NativeInterface.notify("SIGPIPE", "SIGSEGV 11", Severity.ERROR, arrayOf())
-        verify(client, times(1)).notify(eq("SIGPIPE"), eq("SIGSEGV 11"), eq(arrayOf()), any())
+        verify(client, times(1)).notify(any(), any())
     }
 }

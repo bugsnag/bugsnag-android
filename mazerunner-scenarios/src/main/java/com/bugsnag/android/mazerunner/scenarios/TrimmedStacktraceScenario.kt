@@ -22,8 +22,14 @@ internal class TrimmedStacktraceScenario(config: Configuration,
             stacktrace.add(StackTraceElement("SomeClass",
                 "someRecursiveMethod", "Foo.kt", lineNumber))
         }
+        val exc = RuntimeException()
+        exc.stackTrace = stacktrace.toTypedArray()
 
-        Bugsnag.notify("CustomException", "foo", stacktrace.toTypedArray(), null)
+        Bugsnag.notify(exc){
+            it.errors[0].errorClass = "CustomException"
+            it.errors[0].errorMessage = "foo"
+            true
+        }
     }
 
 }
