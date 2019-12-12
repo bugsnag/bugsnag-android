@@ -152,7 +152,7 @@ public class ClientTest {
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
         List<BreadcrumbType> breadcrumbTypes
-                = Arrays.asList(BreadcrumbType.MANUAL, BreadcrumbType.NAVIGATION);
+                = Arrays.asList(BreadcrumbType.MANUAL, BreadcrumbType.STATE);
         config.setEnabledBreadcrumbTypes(new HashSet<>(breadcrumbTypes));
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
