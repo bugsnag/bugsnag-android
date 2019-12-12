@@ -18,7 +18,7 @@ internal class DeliveryDelegateTest {
     lateinit var eventStore: EventStore
 
     val config = generateImmutableConfig()
-    val breadcrumbState = BreadcrumbState(50, NoopLogger)
+    val breadcrumbState = BreadcrumbState(50, CallbackState(), NoopLogger)
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION)

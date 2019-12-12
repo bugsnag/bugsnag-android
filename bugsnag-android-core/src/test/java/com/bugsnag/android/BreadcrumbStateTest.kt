@@ -17,7 +17,7 @@ class BreadcrumbStateTest {
 
     @Before
     fun setUp() {
-        breadcrumbState = BreadcrumbState(20, NoopLogger)
+        breadcrumbState = BreadcrumbState(20, CallbackState(), NoopLogger)
     }
 
     /**
@@ -43,7 +43,7 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testSizeLimitBeforeAdding() {
-        breadcrumbState = BreadcrumbState(5, NoopLogger)
+        breadcrumbState = BreadcrumbState(5, CallbackState(), NoopLogger)
 
         for (k in 1..6) {
             breadcrumbState.add(Breadcrumb("$k"))
@@ -59,7 +59,7 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testSetSizeEmpty() {
-        breadcrumbState = BreadcrumbState(0, NoopLogger)
+        breadcrumbState = BreadcrumbState(0, CallbackState(), NoopLogger)
         breadcrumbState.add(Breadcrumb("1"))
         breadcrumbState.add(Breadcrumb("2"))
         assertTrue(breadcrumbState.store.isEmpty())
@@ -70,7 +70,7 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testSetSizeNegative() {
-        breadcrumbState = BreadcrumbState(-1, NoopLogger)
+        breadcrumbState = BreadcrumbState(-1, CallbackState(), NoopLogger)
         breadcrumbState.add(Breadcrumb("1"))
         assertEquals(0, breadcrumbState.store.size)
     }
@@ -113,5 +113,15 @@ class BreadcrumbStateTest {
 
         config.maxBreadcrumbs = -5
         assertEquals(0, config.maxBreadcrumbs)
+    }
+
+    /**
+     * Verifies that an [OnBreadcrumb] callback is run when specified in [BreadcrumbState]
+     */
+    @Test
+    fun testOnBreadcrumbCallback() {
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumb { false })
+        breadcrumbState.add(Breadcrumb("Whoops"))
+        assertTrue(breadcrumbState.store.isEmpty())
     }
 }
