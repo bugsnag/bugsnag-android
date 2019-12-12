@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -18,7 +19,7 @@ public class ConfigurationTest {
 
     @Before
     public void setUp() {
-        config = BugsnagTestUtils.generateConfiguration();
+        config = generateConfiguration();
     }
 
     @Test
@@ -119,7 +120,7 @@ public class ConfigurationTest {
 
     @Test
     public void testSetDelivery() {
-        Configuration configuration = new Configuration("api-key");
+        Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
         assertNull(configuration.getDelivery());
         Delivery delivery = new Delivery() {
             @NotNull
@@ -144,7 +145,7 @@ public class ConfigurationTest {
 
     @Test
     public void testVersionCode() {
-        Configuration configuration = new Configuration("api-key");
+        Configuration configuration = generateConfiguration();
         assertEquals(0, (int) configuration.getVersionCode()); // populated in client ctor if null
         configuration.setVersionCode(577);
         assertEquals(577, (int) configuration.getVersionCode());

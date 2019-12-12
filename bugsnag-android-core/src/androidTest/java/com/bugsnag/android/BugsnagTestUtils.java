@@ -51,7 +51,7 @@ final class BugsnagTestUtils {
     }
 
     static Client generateClient() {
-        return generateClient(new Configuration("api-key"));
+        return generateClient(new Configuration("5d1ec5bd39a74caa1267142706a7fb21"));
     }
 
     static Session generateSession() {
@@ -59,7 +59,7 @@ final class BugsnagTestUtils {
     }
 
     static Configuration generateConfiguration() {
-        Configuration configuration = new Configuration("test");
+        Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
         configuration.setDelivery(generateDelivery());
         configuration.setLogger(NoopLogger.INSTANCE);
         return configuration;

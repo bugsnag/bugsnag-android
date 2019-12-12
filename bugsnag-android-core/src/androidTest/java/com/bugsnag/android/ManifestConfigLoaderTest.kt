@@ -13,17 +13,17 @@ class ManifestConfigLoaderTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun testMissingApiKey() {
-        configLoader.load(Bundle())
+        configLoader.load(Bundle(), null)
     }
 
     @Test
     fun testManifestLoadsDefaults() {
         val data = Bundle()
-        data.putString("com.bugsnag.android.API_KEY", "abc123")
-        val config = configLoader.load(data)
+        data.putString("com.bugsnag.android.API_KEY", "5d1ec5bd39a74caa1267142706a7fb21")
+        val config = configLoader.load(data, null)
 
         with(config) {
-            assertEquals(apiKey, "abc123")
+            assertEquals(apiKey, "5d1ec5bd39a74caa1267142706a7fb21")
             assertNull(buildUuid)
 
             // detection
@@ -58,7 +58,7 @@ class ManifestConfigLoaderTest {
     @Test
     fun testManifestOverridesDefaults() {
         val data = Bundle().apply {
-            putString("com.bugsnag.android.API_KEY", "abc123")
+            putString("com.bugsnag.android.API_KEY", "5d1ec5bd39a74caa1267142706a7fb21")
             putString("com.bugsnag.android.BUILD_UUID", "fgh123456")
 
             // detection
@@ -90,10 +90,10 @@ class ManifestConfigLoaderTest {
             putString("com.bugsnag.android.CODE_BUNDLE_ID", "123")
         }
 
-        val config = configLoader.load(data)
+        val config = configLoader.load(data, null)
 
         with(config) {
-            assertEquals("abc123", apiKey)
+            assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
             assertEquals("fgh123456", buildUuid)
 
             // detection
@@ -128,14 +128,14 @@ class ManifestConfigLoaderTest {
     @Test
     fun testManifestAliases() {
         val data = Bundle().apply {
-            putString("com.bugsnag.android.API_KEY", "abc123")
+            putString("com.bugsnag.android.API_KEY", "5d1ec5bd39a74caa1267142706a7fb21")
             putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false)
         }
 
-        val config = configLoader.load(data)
+        val config = configLoader.load(data, null)
 
         with(config) {
-            assertEquals("abc123", apiKey)
+            assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
             assertFalse(autoDetectErrors)
         }
     }

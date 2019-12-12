@@ -70,7 +70,7 @@ internal class InternalReportDelegateTest {
         // metadata
         assertNotNull(event.getMetadata("BugsnagDiagnostics", "notifierName"))
         assertNotNull(event.getMetadata("BugsnagDiagnostics", "notifierVersion"))
-        assertEquals("test", event.getMetadata("BugsnagDiagnostics", "apiKey"))
+        assertEquals("5d1ec5bd39a74caa1267142706a7fb21", event.getMetadata("BugsnagDiagnostics", "apiKey"))
         assertEquals("com.example", event.getMetadata("BugsnagDiagnostics", "packageName"))
     }
 }

@@ -44,7 +44,7 @@ public class ClientTest {
     public void setUp() {
         context = ApplicationProvider.getApplicationContext();
         clearSharedPrefs();
-        config = new Configuration("api-key");
+        config = generateConfiguration();
     }
 
     /**
@@ -80,7 +80,7 @@ public class ClientTest {
         return sharedPref;
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNullContext() {
         client = new Client(null, "api-key");
     }

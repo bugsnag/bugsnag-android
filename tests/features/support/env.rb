@@ -6,7 +6,7 @@ bs_device = ENV['DEVICE_TYPE']
 app_location = ENV['APP_LOCATION']
 
 # Set this explicitly
-$api_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
+$api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
 
 After do |scenario|
   $driver.reset
