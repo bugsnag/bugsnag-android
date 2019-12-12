@@ -9,6 +9,16 @@ interface BugsnagPlugin {
 object BugsnagPluginInterface {
 
     private var plugins = mutableMapOf<Class<*>, BugsnagPlugin>()
+    private var registeredPluginClasses = mutableSetOf<Class<*>>()
+
+    fun registerPlugin(clz: Class<*>) {
+        registeredPluginClasses.add(clz)
+    }
+
+    @JvmName("loadRegisteredPlugins")
+    internal fun loadRegisteredPlugins(client: Client) {
+        registeredPluginClasses.forEach { loadPlugin(client, it) }
+    }
 
     @JvmName("loadPlugin")
     internal fun loadPlugin(client: Client, clz: Class<*>) {
