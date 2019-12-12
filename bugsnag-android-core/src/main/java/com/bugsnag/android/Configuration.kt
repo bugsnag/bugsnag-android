@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.content.Context
 import android.text.TextUtils
 import java.util.Collections
 
@@ -180,9 +181,6 @@ class Configuration(
         get() = Collections.unmodifiableSet(metadataState.metadata.redactedKeys)
         set(redactedKeys) = metadataState.metadata.setRedactedKeys(redactedKeys)
 
-
-    var loggingEnabled: Boolean
-
     init {
         require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
         this.callbackState = CallbackState()
@@ -197,8 +195,6 @@ class Configuration(
         } catch (exc: Throwable) {
             false
         }
-
-        loggingEnabled = AppData.RELEASE_STAGE_PRODUCTION != releaseStage
     }
 
     /**
@@ -301,11 +297,14 @@ class Configuration(
     override fun getMetadata(section: String) = metadataState.getMetadata(section)
     override fun getMetadata(section: String, key: String) = metadataState.getMetadata(section, key)
 
-    private companion object {
+    companion object {
         private const val DEFAULT_MAX_SIZE = 25
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
         private const val MIN_BREADCRUMBS = 0
         private const val MAX_BREADCRUMBS = 100
         private const val MIN_LAUNCH_CRASH_THRESHOLD_MS: Long = 0
+
+        @JvmStatic
+        fun load(context: Context): Configuration = ManifestConfigLoader().load(context)
     }
 }
