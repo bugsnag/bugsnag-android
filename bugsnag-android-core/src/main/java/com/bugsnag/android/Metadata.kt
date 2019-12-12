@@ -13,12 +13,11 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
-internal class Metadata @JvmOverloads constructor(map: Map<String, Any> = ConcurrentHashMap()) :
-    JsonStream.Streamable, MetadataAware {
-
-    private val store: MutableMap<String, Any> = ConcurrentHashMap(map)
-    internal val jsonStreamer = ObjectJsonStreamer()
+internal data class Metadata @JvmOverloads constructor(
+    private val store: MutableMap<String, Any> = ConcurrentHashMap(),
+    val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer(),
     val redactedKeys: Set<String> = jsonStreamer.redactedKeys
+) : JsonStream.Streamable, MetadataAware {
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
@@ -80,7 +79,17 @@ internal class Metadata @JvmOverloads constructor(map: Map<String, Any> = Concur
         }
     }
 
-    fun toMap(): Map<String, Any> = HashMap(store)
+    fun toMap(): Map<String, Any> {
+        val hashMap = HashMap(store)
+
+        // deep copy each section
+        store.entries.forEach {
+            if (it.value is ConcurrentHashMap<*, *>) {
+                hashMap[it.key] = ConcurrentHashMap(it.value as ConcurrentHashMap<*, *>)
+            }
+        }
+        return hashMap
+    }
 
     fun setRedactedKeys(redactKeys: Collection<String>) {
         val data = HashSet(redactKeys)
@@ -97,7 +106,7 @@ internal class Metadata @JvmOverloads constructor(map: Map<String, Any> = Concur
             return newMeta
         }
 
-        internal fun mergeMaps(data: List<Map<String, Any>>): Map<String, Any> {
+        internal fun mergeMaps(data: List<Map<String, Any>>): MutableMap<String, Any> {
             val keys = data.flatMap { it.keys }.toSet()
             val result = ConcurrentHashMap<String, Any>()
 
@@ -133,4 +142,10 @@ internal class Metadata @JvmOverloads constructor(map: Map<String, Any> = Concur
             }
         }
     }
+
+    fun copy() = this.copy(
+        store = toMap().toMutableMap(),
+        jsonStreamer = jsonStreamer,
+        redactedKeys = redactedKeys
+    )
 }

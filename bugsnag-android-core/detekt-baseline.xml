@@ -13,5 +13,7 @@
     <ID>TooGenericExceptionCaught:DefaultDelivery.kt$DefaultDelivery$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
     <ID>TooManyFunctions:Configuration.kt$Configuration : CallbackAwareMetadataAware</ID>
-  </Whitelist>
+    <ID>TooManyFunctions:Event.kt$Event : StreamableMetadataAwareUserAware</ID>
+    <ID>TooManyFunctions:Metadata.kt$Metadata : StreamableMetadataAware</ID>
+    </Whitelist>
 </SmellBaseline>

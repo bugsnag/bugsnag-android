@@ -145,7 +145,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
-        metadataState = configuration.metadataState.copy(configuration.metadataState.getMetadata());
+        // performs deep copy of metadata to preserve immutability of Configuration interface
+        Metadata orig = configuration.metadataState.getMetadata();
+        Metadata copy = orig.copy();
+        metadataState = configuration.metadataState.copy(copy);
+
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
