@@ -4,12 +4,12 @@ class Error @JvmOverloads internal constructor(
     var errorClass: String,
     var errorMessage: String?,
     var stacktrace: List<Stackframe>,
-    var type: Type = Type.Android
+    var type: Type = Type.ANDROID
 ): JsonStream.Streamable {
 
     enum class Type(internal val desc: String) {
-        Android("android"),
-        BrowserJs("browserjs"),
+        ANDROID("android"),
+        BROWSER_JS("browserjs"),
         C("c")
     }
 
