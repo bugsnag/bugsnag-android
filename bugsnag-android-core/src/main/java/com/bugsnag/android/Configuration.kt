@@ -142,7 +142,7 @@ class Configuration(
      * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
      * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.
      */
-    var endpoints: Endpoints = Endpoints()
+    var endpoints: EndpointConfiguration = EndpointConfiguration()
 
     /**
      * Set the maximum number of breadcrumbState to keep and sent to Bugsnag.

@@ -51,7 +51,7 @@ internal class NativeInterfaceApiTest {
         `when`(client.getSessionTracker()).thenReturn(sessionTracker)
         `when`(client.getEventStore()).thenReturn(eventStore)
         `when`(immutableConfig.endpoints).thenReturn(
-            Endpoints(
+            EndpointConfiguration(
                 "http://notify.bugsnag.com",
                 "http://sessions.bugsnag.com"
             )

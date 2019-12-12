@@ -26,7 +26,7 @@ public class ConfigurationTest {
     public void testEndpoints() {
         String notify = "https://notify.myexample.com";
         String sessions = "https://sessions.myexample.com";
-        config.setEndpoints(new Endpoints(notify, sessions));
+        config.setEndpoints(new EndpointConfiguration(notify, sessions));
 
         assertEquals(notify, config.getEndpoints().getNotify());
         assertEquals(sessions, config.getEndpoints().getSessions());

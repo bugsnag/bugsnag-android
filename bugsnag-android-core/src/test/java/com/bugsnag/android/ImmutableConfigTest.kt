@@ -90,7 +90,7 @@ internal class ImmutableConfigTest {
         seed.codeBundleId = "codebundle123"
         seed.appType = "custom"
 
-        val endpoints = Endpoints("http://example.com:1234", "http://example.com:1235")
+        val endpoints = EndpointConfiguration("http://example.com:1234", "http://example.com:1235")
         seed.endpoints = endpoints
         seed.launchCrashThresholdMs = 7000
         seed.maxBreadcrumbs = 37
