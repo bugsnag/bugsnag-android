@@ -1,7 +1,7 @@
 {
   "id": 24,
   "name": "main-one",
-  "type": "ando",
+  "type": "android",
   "stacktrace": [
     {
       "method": "run_func",

@@ -268,7 +268,7 @@ public class NativeInterface {
                 event.updateSeverityInternal(severity);
 
                 for (Error error : event.getErrors()) {
-                    error.setType("c");
+                    error.setType(Error.Type.C);
                 }
                 return true;
             }

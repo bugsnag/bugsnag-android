@@ -4,8 +4,14 @@ class Error @JvmOverloads internal constructor(
     var errorClass: String,
     var errorMessage: String?,
     var stacktrace: List<Stackframe>,
-    var type: String = "android"
+    var type: Type = Type.Android
 ): JsonStream.Streamable {
+
+    enum class Type(internal val desc: String) {
+        Android("android"),
+        BrowserJs("browserjs"),
+        C("c")
+    }
 
     internal companion object {
         fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): List<Error> {
@@ -25,7 +31,7 @@ class Error @JvmOverloads internal constructor(
         writer.beginObject()
         writer.name("errorClass").value(errorClass)
         writer.name("message").value(errorMessage)
-        writer.name("type").value(type)
+        writer.name("type").value(type.desc)
         writer.name("stacktrace").value(stacktrace)
         writer.endObject()
     }

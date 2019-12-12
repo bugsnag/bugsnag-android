@@ -8,10 +8,15 @@ import java.io.IOException
 class Thread internal constructor(
     val id: Long,
     val name: String,
-    val type: String,
+    val type: Type,
     val isErrorReportingThread: Boolean,
     stacktrace: Stacktrace
 ) : JsonStream.Streamable {
+
+    enum class Type(internal val desc: String) {
+        Android("android"),
+        BrowserJs("browserjs")
+    }
 
     var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
 
@@ -20,7 +25,7 @@ class Thread internal constructor(
         writer.beginObject()
         writer.name("id").value(id)
         writer.name("name").value(name)
-        writer.name("type").value(type)
+        writer.name("type").value(type.desc)
 
         writer.name("stacktrace")
         writer.beginArray()
