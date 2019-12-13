@@ -171,11 +171,11 @@ public final class Bugsnag {
         getClient().removeOnBreadcrumb(onBreadcrumb);
     }
 
-    public static void addOnSession(@NonNull OnSession onSession) {
+    public static void addOnSession(@NonNull OnSessionCallback onSession) {
         getClient().addOnSession(onSession);
     }
 
-    public static void removeOnSession(@NonNull OnSession onSession) {
+    public static void removeOnSession(@NonNull OnSessionCallback onSession) {
         getClient().removeOnSession(onSession);
     }
 

@@ -80,14 +80,14 @@ class BugsnagApiTest {
     @Test
     fun addOnSession() {
         Bugsnag.addOnSession { true }
-        Bugsnag.addOnSession(OnSession { true })
+        Bugsnag.addOnSession(OnSessionCallback { true })
         verify(client, times(2)).addOnSession(ArgumentMatchers.any())
     }
 
     @Test
     fun removeOnSession() {
         Bugsnag.removeOnSession { true }
-        Bugsnag.removeOnSession(OnSession { true })
+        Bugsnag.removeOnSession(OnSessionCallback { true })
         verify(client, times(2)).removeOnSession(ArgumentMatchers.any())
     }
 

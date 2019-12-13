@@ -457,12 +457,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     @Override
-    public void addOnSession(@NonNull OnSession onSession) {
+    public void addOnSession(@NonNull OnSessionCallback onSession) {
         callbackState.addOnSession(onSession);
     }
 
     @Override
-    public void removeOnSession(@NonNull OnSession onSession) {
+    public void removeOnSession(@NonNull OnSessionCallback onSession) {
         callbackState.removeOnSession(onSession);
     }
 

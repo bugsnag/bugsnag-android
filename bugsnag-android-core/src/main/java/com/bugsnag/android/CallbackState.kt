@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 internal data class CallbackState(
     val onErrorTasks: MutableCollection<OnErrorCallback> = ConcurrentLinkedQueue<OnErrorCallback>(),
     val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = ConcurrentLinkedQueue<OnBreadcrumbCallback>(),
-    val onSessionTasks: MutableCollection<OnSession> = ConcurrentLinkedQueue()
+    val onSessionTasks: MutableCollection<OnSessionCallback> = ConcurrentLinkedQueue()
 ): CallbackAware {
 
     override fun addOnError(onError: OnErrorCallback) {
@@ -24,11 +24,11 @@ internal data class CallbackState(
         onBreadcrumbTasks.remove(onBreadcrumb)
     }
 
-    override fun addOnSession(onSession: OnSession) {
+    override fun addOnSession(onSession: OnSessionCallback) {
         onSessionTasks.add(onSession)
     }
 
-    override fun removeOnSession(onSession: OnSession) {
+    override fun removeOnSession(onSession: OnSessionCallback) {
         onSessionTasks.remove(onSession)
     }
 
@@ -62,11 +62,11 @@ internal data class CallbackState(
     fun runOnSessionTasks(sessionPayload: SessionPayload, logger: Logger): Boolean {
         onSessionTasks.forEach {
             try {
-                if (!it.run(sessionPayload)) {
+                if (!it.onSession(sessionPayload)) {
                     return false
                 }
             } catch (ex: Throwable) {
-                logger.w("OnSession threw an Exception", ex)
+                logger.w("OnSessionCallback threw an Exception", ex)
             }
         }
         return true

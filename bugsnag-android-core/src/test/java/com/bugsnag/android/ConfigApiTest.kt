@@ -60,14 +60,14 @@ internal class ConfigApiTest {
 
     @Test
     fun addOnSession() {
-        val onSession = OnSession { true }
+        val onSession = OnSessionCallback { true }
         config.addOnSession(onSession)
         assertTrue(callbackState.onSessionTasks.contains(onSession))
     }
 
     @Test
     fun removeOnSession() {
-        val onSession = OnSession { true }
+        val onSession = OnSessionCallback { true }
         config.addOnSession(onSession)
         config.removeOnSession(onSession)
         assertFalse(callbackState.onSessionTasks.contains(onSession))

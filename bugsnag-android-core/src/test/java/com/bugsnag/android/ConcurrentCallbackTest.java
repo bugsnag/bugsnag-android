@@ -59,16 +59,16 @@ public class ConcurrentCallbackTest {
     @Test
     public void testOnSessionConcurrentModification() {
         CallbackState config = new CallbackState();
-        final Collection<OnSession> tasks = config.getOnSessionTasks();
-        config.addOnSession(new OnSession() {
+        final Collection<OnSessionCallback> tasks = config.getOnSessionTasks();
+        config.addOnSession(new OnSessionCallback() {
             @Override
-            public boolean run(@NonNull SessionPayload event) {
-                tasks.add(new OnSessionSkeleton());
+            public boolean onSession(@NonNull SessionPayload event) {
+                tasks.add(new OnSessionCallbackSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        config.addOnSession(new OnSessionSkeleton());
+        config.addOnSession(new OnSessionCallbackSkeleton());
         config.runOnSessionTasks(sessionPayload, NoopLogger.INSTANCE);
     }
 
@@ -86,9 +86,9 @@ public class ConcurrentCallbackTest {
         }
     }
 
-    static class OnSessionSkeleton implements OnSession {
+    static class OnSessionCallbackSkeleton implements OnSessionCallback {
         @Override
-        public boolean run(@NonNull SessionPayload sessionPayload) {
+        public boolean onSession(@NonNull SessionPayload sessionPayload) {
             return true;
         }
     }

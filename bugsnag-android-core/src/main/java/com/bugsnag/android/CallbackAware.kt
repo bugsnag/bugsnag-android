@@ -5,6 +5,6 @@ internal interface CallbackAware {
     fun removeOnError(onError: OnErrorCallback)
     fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback)
     fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback)
-    fun addOnSession(onSession: OnSession)
-    fun removeOnSession(onSession: OnSession)
+    fun addOnSession(onSession: OnSessionCallback)
+    fun removeOnSession(onSession: OnSessionCallback)
 }

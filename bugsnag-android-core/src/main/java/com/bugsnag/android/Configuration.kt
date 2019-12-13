@@ -276,14 +276,14 @@ class Configuration(
      *
      * @param onSession the on session callback
      */
-    override fun addOnSession(onSession: OnSession) = callbackState.addOnSession(onSession)
+    override fun addOnSession(onSession: OnSessionCallback) = callbackState.addOnSession(onSession)
 
     /**
      * Removes an on session callback
      *
      * @param onSession the on session callback
      */
-    override fun removeOnSession(onSession: OnSession) = callbackState.removeOnSession(onSession)
+    override fun removeOnSession(onSession: OnSessionCallback) = callbackState.removeOnSession(onSession)
 
     override fun addMetadata(section: String, value: Map<String, Any?>) =
         metadataState.addMetadata(section, value)

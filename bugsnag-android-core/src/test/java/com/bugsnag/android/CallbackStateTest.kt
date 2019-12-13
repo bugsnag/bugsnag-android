@@ -22,7 +22,7 @@ class CallbackStateTest {
         val state = CallbackState()
         state.addOnError(OnErrorCallback { true })
         state.addOnBreadcrumb(OnBreadcrumbCallback { true })
-        state.addOnSession(OnSession { true })
+        state.addOnSession(OnSessionCallback { true })
 
         val copy = state.copy()
         assertEquals(1, copy.onErrorTasks.size)
@@ -58,8 +58,8 @@ class CallbackStateTest {
     @Test
     fun onSessionExcThrown() {
         val state = CallbackState()
-        state.addOnSession(OnSession { true })
-        state.addOnSession(OnSession { throw RuntimeException() })
+        state.addOnSession(OnSessionCallback { true })
+        state.addOnSession(OnSessionCallback { throw RuntimeException() })
 
         val logger = InterceptingLogger()
         assertNull(logger.msg)
@@ -71,8 +71,8 @@ class CallbackStateTest {
     fun onSessionFalseReturned() {
         val state = CallbackState()
         var count = 0
-        state.addOnSession(OnSession { false })
-        state.addOnSession(OnSession {
+        state.addOnSession(OnSessionCallback { false })
+        state.addOnSession(OnSessionCallback {
             count = 1
             true
         })
