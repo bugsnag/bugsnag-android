@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -22,7 +23,7 @@ internal class ConfigApiTest {
 
     @Before
     fun setUp() {
-        config = Configuration("api-key")
+        config = generateConfiguration()
         callbackState = config.callbackState
         metadataState = config.metadataState
     }

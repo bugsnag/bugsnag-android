@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 
 import androidx.annotation.VisibleForTesting
+import java.lang.IllegalArgumentException
 
 internal class ManifestConfigLoader {
 
@@ -45,13 +46,13 @@ internal class ManifestConfigLoader {
         private const val ENABLE_EXCEPTION_HANDLER = "$BUGSNAG_NS.ENABLE_EXCEPTION_HANDLER"
     }
 
-    fun load(ctx: Context): Configuration {
+    fun load(ctx: Context, userSuppliedApiKey: String?): Configuration {
         try {
             val packageManager = ctx.packageManager
             val packageName = ctx.packageName
             val ai = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             val data = ai.metaData
-            return load(data)
+            return load(data, userSuppliedApiKey)
         } catch (ignore: Exception) {
             throw IllegalStateException("Bugsnag is unable to read config from manifest.")
         }
@@ -63,9 +64,10 @@ internal class ManifestConfigLoader {
      * @param data   the manifest bundle
      */
     @VisibleForTesting
-    internal fun load(data: Bundle): Configuration {
-        val apiKey = data.getString(API_KEY)
-            ?: throw IllegalArgumentException("You must provide a Bugsnag API key")
+    internal fun load(data: Bundle, userSuppliedApiKey: String?): Configuration {
+        // get the api key from the JVM call, or lookup in the manifest if null
+        val apiKey = (userSuppliedApiKey ?: data.getString(API_KEY))
+            ?: throw IllegalArgumentException("No Bugsnag API key set")
         val config = Configuration(apiKey)
 
         loadDetectionConfig(config, data)

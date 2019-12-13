@@ -83,7 +83,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param androidContext an Android context, usually <code>this</code>
      */
     public Client(@NonNull Context androidContext) {
-        this(androidContext, new ManifestConfigLoader().load(androidContext));
+        this(androidContext, Configuration.load(androidContext));
     }
 
     /**
@@ -93,7 +93,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
     public Client(@NonNull Context androidContext, @NonNull String apiKey) {
-        this(androidContext, new Configuration(apiKey));
+        this(androidContext, Configuration.load(androidContext, apiKey));
     }
 
     /**

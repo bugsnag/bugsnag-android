@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -15,7 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 internal class ImmutableConfigTest {
 
-    private val seed = Configuration("api-key")
+    private val seed = generateConfiguration()
 
     @Mock
     lateinit var delivery: Delivery
@@ -37,7 +38,7 @@ internal class ImmutableConfigTest {
     @Test
     fun defaultConversion() {
         with(convertToImmutableConfig(seed)) {
-            assertEquals("api-key", apiKey)
+            assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
 
             // detection
             assertTrue(autoTrackSessions)
@@ -98,7 +99,7 @@ internal class ImmutableConfigTest {
 
         // verify overrides are copied across
         with(convertToImmutableConfig(seed)) {
-            assertEquals("api-key", apiKey)
+            assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
 
             // detection
             assertFalse(autoTrackSessions)
@@ -153,7 +154,7 @@ internal class ImmutableConfigTest {
     @Test
     fun configSanitisation() {
         Mockito.`when`(context.packageName).thenReturn("com.example.foo")
-        val seed = Configuration("api-key")
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         seed.logger = NoopLogger
         val config = sanitiseConfiguration(context, seed, connectivity)
         assertEquals(setOf("com.example.foo"), config.projectPackages)

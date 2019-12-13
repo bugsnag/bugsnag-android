@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -25,7 +26,7 @@ public class ClientConfigTest {
     @Before
     public void setUp() {
         Context context = ApplicationProvider.getApplicationContext();
-        config = new Configuration("api-key");
+        config = generateConfiguration();
         client = new Client(context, config);
     }
 
@@ -44,7 +45,7 @@ public class ClientConfigTest {
     @Test
     public void testCustomDeliveryOverride() {
         Context context = ApplicationProvider.getApplicationContext();
-        config = BugsnagTestUtils.generateConfiguration();
+        config = generateConfiguration();
         Delivery customDelivery = new Delivery() {
             @NotNull
             @Override

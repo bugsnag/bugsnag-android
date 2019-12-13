@@ -46,7 +46,7 @@ public final class Bugsnag {
      */
     @NonNull
     public static Client init(@NonNull Context androidContext, @NonNull String apiKey) {
-        return init(androidContext, new Configuration(apiKey));
+        return init(androidContext, Configuration.load(androidContext, apiKey));
     }
 
     /**

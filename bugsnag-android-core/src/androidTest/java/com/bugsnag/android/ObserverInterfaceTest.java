@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -29,7 +30,7 @@ public class ObserverInterfaceTest {
      */
     @Before
     public void setUp() {
-        Configuration config = new Configuration("some-api-key");
+        Configuration config = generateConfiguration();
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         config.setAutoDetectErrors(false);
         client = new Client(ApplicationProvider.getApplicationContext(), config);

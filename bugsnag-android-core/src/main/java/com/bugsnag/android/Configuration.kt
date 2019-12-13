@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.content.Context
-import android.text.TextUtils
 import java.util.Collections
 
 /**
@@ -182,7 +181,7 @@ class Configuration(
         set(redactedKeys) = metadataState.metadata.setRedactedKeys(redactedKeys)
 
     init {
-        require(!TextUtils.isEmpty(apiKey)) { "You must provide a Bugsnag API key" }
+        require(apiKey.matches(API_KEY_REGEX.toRegex())) { "You must provide a valid Bugsnag API key" }
         this.callbackState = CallbackState()
         this.metadataState = MetadataState()
 
@@ -303,8 +302,14 @@ class Configuration(
         private const val MIN_BREADCRUMBS = 0
         private const val MAX_BREADCRUMBS = 100
         private const val MIN_LAUNCH_CRASH_THRESHOLD_MS: Long = 0
+        private const val API_KEY_REGEX = "[A-Fa-f0-9]{32}"
 
         @JvmStatic
-        fun load(context: Context): Configuration = ManifestConfigLoader().load(context)
+        fun load(context: Context): Configuration = load(context, null)
+
+        @JvmStatic
+        protected fun load(context: Context, apiKey: String?): Configuration {
+            return ManifestConfigLoader().load(context, apiKey)
+        }
     }
 }

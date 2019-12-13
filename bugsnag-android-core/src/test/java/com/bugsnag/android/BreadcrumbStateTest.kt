@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BreadcrumbType.MANUAL
+import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 
@@ -102,7 +103,7 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testMaxBreadcrumbAccessors() {
-        val config = Configuration("api-key")
+        val config = generateConfiguration()
         assertEquals(25, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = 50
