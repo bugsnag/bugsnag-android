@@ -217,7 +217,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // Flush any on-disk errors
         eventStore.flushOnLaunch();
         loadPlugins();
-        leaveBreadcrumb("Bugsnag loaded");
+        Map<String, Object> data = Collections.emptyMap();
+        leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
     }
 
     private OrientationEventListener registerOrientationChangeListener() {
