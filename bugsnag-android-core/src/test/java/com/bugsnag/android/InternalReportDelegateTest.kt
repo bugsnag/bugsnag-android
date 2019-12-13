@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import android.os.storage.StorageManager
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,7 +18,7 @@ internal class InternalReportDelegateTest {
     lateinit var context: Context
 
     @Mock
-    lateinit var appData: AppData
+    lateinit var appDataCollector: AppDataCollector
 
     @Mock
     lateinit var deviceData: DeviceData
@@ -30,12 +31,10 @@ internal class InternalReportDelegateTest {
 
     @Test
     fun onErrorIOFailure() {
-        val app = HashMap<String, Any>()
-        app["foo"] = 2
-        `when`(this.appData.appDataSummary).thenReturn(app)
-        `when`(this.appData.appData).thenReturn(mapOf(Pair("packageName", "com.example")))
-        `when`(this.appData.calculateDurationInForeground()).thenReturn(500)
-        `when`(sessionTracker.isInForeground).thenReturn(true)
+        val app = generateAppWithState()
+        `when`(this.appDataCollector.generateAppWithState()).thenReturn(app)
+        app.durationInForeground = 500L
+        app.inForeground = true
 
         val device = HashMap<String, Any>()
         device["id"] = "234"
@@ -49,7 +48,7 @@ internal class InternalReportDelegateTest {
             NoopLogger,
             config,
             storageManager,
-            appData,
+            appDataCollector,
             deviceData,
             sessionTracker
         )
@@ -59,9 +58,9 @@ internal class InternalReportDelegateTest {
         delegate.reportInternalBugsnagError(event)
 
         // app
-        assertEquals(2, event.app["foo"])
-        assertEquals(500L, event.app["durationInForeground"])
-        assertEquals(true, event.app["inForeground"])
+        assertEquals(500L, event.app.durationInForeground)
+        assertEquals(true, event.app.inForeground)
+        assertNotNull(event.app)
 
         // device
         assertEquals("234", event.device["id"])
@@ -71,6 +70,5 @@ internal class InternalReportDelegateTest {
         assertNotNull(event.getMetadata("BugsnagDiagnostics", "notifierName"))
         assertNotNull(event.getMetadata("BugsnagDiagnostics", "notifierVersion"))
         assertEquals("5d1ec5bd39a74caa1267142706a7fb21", event.getMetadata("BugsnagDiagnostics", "apiKey"))
-        assertEquals("com.example", event.getMetadata("BugsnagDiagnostics", "packageName"))
     }
 }

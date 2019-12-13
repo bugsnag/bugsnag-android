@@ -4,7 +4,10 @@
     "version": "9.9.9",
     "url": "https://bugsnag.com"
   },
-  "app": {},
+  "app": {
+    "type": "android",
+    "versionCode": 0
+  },
   "device": {},
   "sessions": []
 }

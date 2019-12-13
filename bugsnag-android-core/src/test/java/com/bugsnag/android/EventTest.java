@@ -47,7 +47,6 @@ public class EventTest {
     @Test
     public void testNullContext() {
         event.setContext(null);
-        event.setApp(Collections.<String, Object>emptyMap());
         assertNull(event.getContext());
     }
 

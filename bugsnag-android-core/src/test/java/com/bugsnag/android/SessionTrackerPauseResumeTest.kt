@@ -28,7 +28,7 @@ internal class SessionTrackerPauseResumeTest {
     lateinit var client: Client
 
     @Mock
-    internal var appData: AppData? = null
+    lateinit var appDataCollector: AppDataCollector
 
     @Mock
     internal var deviceData: DeviceData? = null
@@ -42,10 +42,14 @@ internal class SessionTrackerPauseResumeTest {
     @Mock
     lateinit var sessionStore: SessionStore
 
+    @Mock
+    lateinit var app: App
+
     @Before
     fun setUp() {
         `when`(client.getAppContext()).thenReturn(context)
-        `when`(client.getAppData()).thenReturn(appData)
+        `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
+        `when`(appDataCollector.generateApp()).thenReturn(app)
         `when`(client.getDeviceData()).thenReturn(deviceData)
         `when`(context.getSystemService("activity")).thenReturn(activityManager)
         tracker = SessionTracker(

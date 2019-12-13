@@ -55,7 +55,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final DeviceData deviceData;
 
     @NonNull
-    final AppData appData;
+    final AppDataCollector appDataCollector;
 
     @NonNull
     final BreadcrumbState breadcrumbState;
@@ -106,7 +106,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // if the user has set the releaseStage to production manually, disable logging
         if (configuration.getLogger() == null) {
             String releaseStage = configuration.getReleaseStage();
-            boolean loggingEnabled = !AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+            boolean loggingEnabled
+                    = !AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
 
             if (loggingEnabled) {
                 configuration.setLogger(DebugLogger.INSTANCE);
@@ -141,8 +142,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         callbackState = configuration.callbackState.copy();
 
         sessionStore = new SessionStore(appContext, logger, null);
-        sessionTracker = new SessionTracker(immutableConfig, callbackState, this, sessionStore,
-                logger);
+        sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
+                sessionStore, logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
         metadataState = configuration.metadataState.copy(configuration.metadataState.getMetadata());
@@ -152,7 +153,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         ActivityManager am =
                 (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
 
-        appData = new AppData(appContext, appContext.getPackageManager(),
+        appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker, am, logger);
 
         UserRepository userRepository = new UserRepository(sharedPrefs,
@@ -177,8 +178,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 + "breadcrumbs on API Levels below 14.");
         }
 
-        InternalReportDelegate delegate = new InternalReportDelegate(appContext,
-                logger, immutableConfig, storageManager, appData, deviceData, sessionTracker);
+        InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
+                immutableConfig, storageManager, appDataCollector, deviceData, sessionTracker);
         eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
@@ -565,9 +566,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
-        Map<String, Object> errorAppData = appData.getAppData();
-        event.setApp(errorAppData);
-        event.addMetadata("app", appData.getAppDataMetadata());
+        event.setApp(appDataCollector.generateAppWithState());
+        event.addMetadata("app", appDataCollector.getAppDataMetadata());
 
         // Attach breadcrumbState to the event
         event.setBreadcrumbs(new ArrayList<>(breadcrumbState.getStore()));
@@ -579,7 +579,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // Attach default context from active activity
         if (Intrinsics.isEmpty(event.getContext())) {
             String context = contextState.getContext();
-            event.setContext(context != null ? context : appData.getActiveScreenClass());
+            event.setContext(context != null ? context : appDataCollector.getActiveScreenClass());
         }
 
         // Run on error tasks, don't notify if any return false
@@ -598,8 +598,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     @NonNull
-    AppData getAppData() {
-        return appData;
+    AppDataCollector getAppDataCollector() {
+        return appDataCollector;
     }
 
     @NonNull
@@ -702,7 +702,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     void setBinaryArch(String binaryArch) {
-        getAppData().setBinaryArch(binaryArch);
+        getAppDataCollector().setBinaryArch(binaryArch);
     }
 
     Context getAppContext() {

@@ -210,18 +210,16 @@ public class ClientTest {
     @Test
     public void testAppDataCollection() {
         client = generateClient();
-        AppData appData = client.getAppData();
-        assertEquals(client.getAppData(), appData);
+        AppDataCollector appDataCollector = client.getAppDataCollector();
+        assertEquals(client.getAppDataCollector(), appDataCollector);
     }
 
     @Test
     public void testAppDataMetadata() {
         client = generateClient();
-        Map<String, Object> app = client.getAppData().getAppDataMetadata();
-        assertEquals(6, app.size());
+        Map<String, Object> app = client.getAppDataCollector().getAppDataMetadata();
+        assertEquals(4, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
-        assertEquals("com.bugsnag.android.core.test", app.get("packageName"));
-        assertEquals("1.0", app.get("versionName"));
         assertNotNull(app.get("memoryUsage"));
         assertTrue(app.containsKey("activeScreen"));
         assertNotNull(app.get("lowMemory"));

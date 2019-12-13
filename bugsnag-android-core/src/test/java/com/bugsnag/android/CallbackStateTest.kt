@@ -6,16 +6,29 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 import java.util.ArrayList
 import java.util.HashMap
 
+@RunWith(MockitoJUnitRunner::class)
 class CallbackStateTest {
+
+    @Mock
+    lateinit var app: App
 
     private val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
     private val event = Event(RuntimeException(), config = generateImmutableConfig(), handledState = handledState)
     private val breadcrumb = Breadcrumb("")
-    private val sessionPayload = SessionPayload(null, ArrayList(), HashMap(), HashMap())
+    lateinit var sessionPayload: SessionPayload
+
+    @Before
+    fun setUp() {
+        sessionPayload = SessionPayload(null, ArrayList(), app, HashMap())
+    }
 
     @Test
     fun testCopy() {

@@ -151,7 +151,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
         final SessionPayload payload = new SessionPayload(session, null,
-                client.getAppData().getAppDataSummary(),
+                client.getAppDataCollector().generateApp(),
                 client.getDeviceData().getDeviceDataSummary());
         boolean deliverSession = callbackState.runOnSessionTasks(payload, logger);
 
@@ -245,7 +245,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
                 if (!storedFiles.isEmpty()) {
                     SessionPayload payload =
                         new SessionPayload(null, storedFiles,
-                            client.appData.getAppDataSummary(),
+                            client.appDataCollector.generateApp(),
                                 client.deviceData.getDeviceDataSummary());
 
                     DeliveryStatus deliveryStatus = deliverSessionPayload(payload);

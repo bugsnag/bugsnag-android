@@ -120,7 +120,7 @@ Then("the report in request {int} contains the required fields") do |index|
     Then the payload field "events.0.unhandled" is not null for request #{index}
     And the payload field "events.0.app.duration" is not null for request #{index}
     And the payload field "events.0.app.durationInForeground" is not null for request #{index}
-    And the payload field "events.0.app.id" is not null for request #{index}
+    And the payload field "events.0.app.id" equals "com.bugsnag.android.mazerunner" for request #{index}
     And the payload field "events.0.app.inForeground" is not null for request #{index}
     And the payload field "events.0.app.releaseStage" is not null for request #{index}
     And the payload field "events.0.app.type" equals "android" for request #{index}
@@ -136,8 +136,6 @@ Then("the report in request {int} contains the required fields") do |index|
     And the payload field "events.0.device.totalMemory" is not null for request #{index}
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null for request #{index}
     And the payload field "events.0.metaData.app.name" equals "MazeRunner" for request #{index}
-    And the payload field "events.0.metaData.app.packageName" equals "com.bugsnag.android.mazerunner" for request #{index}
-    And the payload field "events.0.metaData.app.versionName" is not null for request #{index}
     And the payload field "events.0.metaData.device.brand" is not null for request #{index}
     And the payload field "events.0.metaData.device.dpi" is not null for request #{index}
     And the payload field "events.0.metaData.device.emulator" is true for request #{index}

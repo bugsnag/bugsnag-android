@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,8 +42,8 @@ internal class EventSerializationTest {
 
                 // threads included
                 createEvent {
-                    it.app["foo"] = 55
-                    it.device["bar"] = true
+                    it.addMetadata("app", "foo", 55)
+                    it.addMetadata("device", "bar", true)
                     it.addMetadata("wham", "some_key", "A value")
                     it.setUser(null, null, "Jamie")
 
@@ -63,6 +64,7 @@ internal class EventSerializationTest {
                 HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
             )
             event.threads = emptyList()
+            event.app = generateAppWithState()
             cb(event)
             return event
         }

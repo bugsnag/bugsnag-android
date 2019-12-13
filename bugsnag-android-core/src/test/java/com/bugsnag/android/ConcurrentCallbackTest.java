@@ -4,7 +4,11 @@ import static com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig;
 
 import androidx.annotation.NonNull;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,14 +19,23 @@ import java.util.HashMap;
  * Ensures that if a callback is added or removed during iteration, a
  * {@link java.util.ConcurrentModificationException} is not thrown
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ConcurrentCallbackTest {
+
+    @Mock
+    App app;
 
     private final HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
     private final Event event = new Event(new RuntimeException(),
             generateImmutableConfig(), handledState);
-    private final SessionPayload sessionPayload = new SessionPayload(null,
-            new ArrayList<File>(), new HashMap<String, Object>(), new HashMap<String, Object>());
+    private SessionPayload sessionPayload;
+
+    @Before
+    public void setUp() throws Exception {
+        sessionPayload = new SessionPayload(null,
+                new ArrayList<File>(), app, new HashMap<String, Object>());
+    }
 
     @Test
     public void testOnErrorConcurrentModification() {

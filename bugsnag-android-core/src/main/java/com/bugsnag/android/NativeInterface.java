@@ -69,8 +69,18 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static Map<String,Object> getApp() {
         HashMap<String,Object> data = new HashMap<>();
-        AppData source = getClient().getAppData();
-        data.putAll(source.getAppData());
+        AppDataCollector source = getClient().getAppDataCollector();
+        AppWithState app = source.generateAppWithState();
+        data.put("version", app.getVersion());
+        data.put("releaseStage", app.getReleaseStage());
+        data.put("id", app.getId());
+        data.put("type", app.getType());
+        data.put("buildUUID", app.getBuildUuid());
+        data.put("duration", app.getDuration());
+        data.put("durationInForeground", app.getDurationInForeground());
+        data.put("versionCode", app.getVersionCode());
+        data.put("inForeground", app.getInForeground());
+        data.put("binaryArch", app.getBinaryArch());
         data.putAll(source.getAppDataMetadata());
         return data;
     }

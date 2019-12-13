@@ -16,7 +16,8 @@ class ThreadStateTest {
 
     private val configuration = generateImmutableConfig()
     private val trace: Throwable? = null
-    private val threadState = ThreadState(configuration, null, Thread.currentThread(), Thread.getAllStackTraces(), NoopLogger)
+    private val threadState = ThreadState(configuration,
+        null, Thread.currentThread(), Thread.getAllStackTraces(), NoopLogger)
     private val json = streamableToJsonArray(threadState)
 
     /**
