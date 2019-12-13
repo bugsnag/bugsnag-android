@@ -27,16 +27,16 @@ public class ConcurrentCallbackTest {
     @Test
     public void testOnErrorConcurrentModification() {
         CallbackState config = new CallbackState();
-        final Collection<OnError> tasks = config.getOnErrorTasks();
-        config.addOnError(new OnError() {
+        final Collection<OnErrorCallback> tasks = config.getOnErrorTasks();
+        config.addOnError(new OnErrorCallback() {
             @Override
-            public boolean run(@NonNull Event event) {
-                tasks.add(new OnErrorSkeleton());
+            public boolean onError(@NonNull Event event) {
+                tasks.add(new OnErrorCallbackSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        config.addOnError(new OnErrorSkeleton());
+        config.addOnError(new OnErrorCallbackSkeleton());
         config.runOnErrorTasks(event, NoopLogger.INSTANCE);
     }
 
@@ -72,9 +72,9 @@ public class ConcurrentCallbackTest {
         config.runOnSessionTasks(sessionPayload, NoopLogger.INSTANCE);
     }
 
-    static class OnErrorSkeleton implements OnError {
+    static class OnErrorCallbackSkeleton implements OnErrorCallback {
         @Override
-        public boolean run(@NonNull Event event) {
+        public boolean onError(@NonNull Event event) {
             return true;
         }
     }

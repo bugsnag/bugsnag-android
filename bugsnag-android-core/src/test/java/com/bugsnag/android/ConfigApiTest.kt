@@ -30,14 +30,14 @@ internal class ConfigApiTest {
 
     @Test
     fun addOnError() {
-        val onError = OnError { true }
+        val onError = OnErrorCallback { true }
         config.addOnError(onError)
         assertTrue(callbackState.onErrorTasks.contains(onError))
     }
 
     @Test
     fun removeOnError() {
-        val onError = OnError { true }
+        val onError = OnErrorCallback { true }
         config.addOnError(onError)
         config.removeOnError(onError)
         assertFalse(callbackState.onErrorTasks.contains(onError))

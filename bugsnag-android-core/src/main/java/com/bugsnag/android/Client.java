@@ -408,7 +408,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addOnError(new OnError() {
+     * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
      * return true;
@@ -416,15 +416,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * })
      *
      * @param onError a callback to run before sending errors to Bugsnag
-     * @see OnError
+     * @see OnErrorCallback
      */
     @Override
-    public void addOnError(@NonNull OnError onError) {
+    public void addOnError(@NonNull OnErrorCallback onError) {
         callbackState.addOnError(onError);
     }
 
     @Override
-    public void removeOnError(@NonNull OnError onError) {
+    public void removeOnError(@NonNull OnErrorCallback onError) {
         callbackState.removeOnError(onError);
     }
 
@@ -482,7 +482,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exc, @Nullable OnError onError) {
+    public void notify(@NonNull Throwable exc, @Nullable OnErrorCallback onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
         Event event = new Event(exc, immutableConfig, handledState, metadataState.getMetadata());
         notifyInternal(event, onError);
@@ -513,7 +513,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     public void notify(@NonNull String name,
                        @NonNull String message,
                        @NonNull StackTraceElement[] stacktrace,
-                       @Nullable OnError onError) {
+                       @Nullable OnErrorCallback onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
         Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages(),
                 immutableConfig.getLogger());
@@ -540,7 +540,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     void notifyInternal(@NonNull Event event,
-                        @Nullable OnError onError) {
+                        @Nullable OnErrorCallback onError) {
         // Don't notify if this event class should be ignored
         if (event.shouldIgnoreClass()) {
             return;
@@ -584,7 +584,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Run on error tasks, don't notify if any return false
         if (!callbackState.runOnErrorTasks(event, logger)
-                || (onError != null && !onError.run(event))) {
+                || (onError != null && !onError.onError(event))) {
             logger.i("Skipping notification - onError task returned false");
             return;
         }

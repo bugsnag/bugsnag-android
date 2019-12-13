@@ -262,9 +262,9 @@ public class NativeInterface {
                               @NonNull final Severity severity,
                               @NonNull final StackTraceElement[] stacktrace) {
 
-        getClient().notify(name, message, stacktrace, new OnError() {
+        getClient().notify(name, message, stacktrace, new OnErrorCallback() {
             @Override
-            public boolean run(@NonNull Event event) {
+            public boolean onError(@NonNull Event event) {
                 event.updateSeverityInternal(severity);
 
                 for (Error error : event.getErrors()) {

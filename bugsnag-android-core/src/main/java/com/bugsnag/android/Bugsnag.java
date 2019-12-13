@@ -126,7 +126,7 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addOnError(new OnError() {
+     * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
      * return true;
@@ -135,13 +135,13 @@ public final class Bugsnag {
      *
      * @param onError a callback to run before sending errors to Bugsnag
      * <p/>
-     * @see OnError
+     * @see OnErrorCallback
      */
-    public static void addOnError(@NonNull OnError onError) {
+    public static void addOnError(@NonNull OnErrorCallback onError) {
         getClient().addOnError(onError);
     }
 
-    public static void removeOnError(@NonNull OnError onError) {
+    public static void removeOnError(@NonNull OnErrorCallback onError) {
         getClient().removeOnError(onError);
     }
 
@@ -196,7 +196,7 @@ public final class Bugsnag {
      *                  additional modification
      */
     public static void notify(@NonNull final Throwable exception,
-                              @Nullable final OnError onError) {
+                              @Nullable final OnErrorCallback onError) {
         getClient().notify(exception, onError);
     }
 
@@ -226,7 +226,7 @@ public final class Bugsnag {
     public static void notify(@NonNull String name,
                               @NonNull String message,
                               @NonNull StackTraceElement[] stacktrace,
-                              @Nullable OnError onError) {
+                              @Nullable OnErrorCallback onError) {
         getClient().notify(name, message, stacktrace, onError);
     }
 

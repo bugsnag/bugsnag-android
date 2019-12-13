@@ -7,10 +7,10 @@ import java.util.HashMap
  * Information and associated diagnostics relating to a handled or unhandled
  * Exception.
  *
- * This object is made available in OnError callbacks, so you can
+ * This object is made available in OnErrorCallback callbacks, so you can
  * inspect and modify it before it is delivered to Bugsnag.
  *
- * @see OnError
+ * @see OnErrorCallback
  */
 class Event @JvmOverloads internal constructor(
     val originalError: Throwable? = null,

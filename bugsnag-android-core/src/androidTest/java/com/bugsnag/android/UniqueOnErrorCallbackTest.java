@@ -10,22 +10,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Ensures that OnError is only called once,
+ * Ensures that OnErrorCallback is only called once,
  * and that the callbacks are called in insertion order.
  */
 @SmallTest
-public class UniqueOnErrorTest {
+public class UniqueOnErrorCallbackTest {
 
-    private final OnError firstCb = new OnError() {
+    private final OnErrorCallback firstCb = new OnErrorCallback() {
         @Override
-        public boolean run(@NonNull Event event) {
+        public boolean onError(@NonNull Event event) {
             return handleCallback();
         }
     };
 
-    private final OnError secondCb = new OnError() {
+    private final OnErrorCallback secondCb = new OnErrorCallback() {
         @Override
-        public boolean run(@NonNull Event event) {
+        public boolean onError(@NonNull Event event) {
             return handleCallback();
         }
     };
@@ -68,17 +68,17 @@ public class UniqueOnErrorTest {
 
     @Test
     public void testCallbackOrder() {
-        client.addOnError(new OnError() {
+        client.addOnError(new OnErrorCallback() {
             @Override
-            public boolean run(@NonNull Event event) {
+            public boolean onError(@NonNull Event event) {
                 assertEquals(0, callbackCount);
                 callbackCount++;
                 return false;
             }
         });
-        client.addOnError(new OnError() {
+        client.addOnError(new OnErrorCallback() {
             @Override
-            public boolean run(@NonNull Event event) {
+            public boolean onError(@NonNull Event event) {
                 assertEquals(1, callbackCount);
                 return false;
             }

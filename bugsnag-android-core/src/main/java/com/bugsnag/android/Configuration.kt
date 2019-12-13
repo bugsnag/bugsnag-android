@@ -241,7 +241,7 @@ class Configuration(
      *
      * For example:
      *
-     * Bugsnag.addOnError(new OnError() {
+     * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
      * return true;
@@ -249,11 +249,11 @@ class Configuration(
      * })
      *
      * @param onError a callback to run before sending errors to Bugsnag
-     * @see OnError
+     * @see OnErrorCallback
      */
-    override fun addOnError(onError: OnError) = callbackState.addOnError(onError)
+    override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)
 
-    override fun removeOnError(onError: OnError) = callbackState.removeOnError(onError)
+    override fun removeOnError(onError: OnErrorCallback) = callbackState.removeOnError(onError)
 
     /**
      * Adds an on breadcrumb callback

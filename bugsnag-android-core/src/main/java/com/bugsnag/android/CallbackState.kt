@@ -3,16 +3,16 @@ package com.bugsnag.android
 import java.util.concurrent.ConcurrentLinkedQueue
 
 internal data class CallbackState(
-    val onErrorTasks: MutableCollection<OnError> = ConcurrentLinkedQueue<OnError>(),
+    val onErrorTasks: MutableCollection<OnErrorCallback> = ConcurrentLinkedQueue<OnErrorCallback>(),
     val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = ConcurrentLinkedQueue<OnBreadcrumbCallback>(),
     val onSessionTasks: MutableCollection<OnSession> = ConcurrentLinkedQueue()
 ): CallbackAware {
 
-    override fun addOnError(onError: OnError) {
+    override fun addOnError(onError: OnErrorCallback) {
         onErrorTasks.add(onError)
     }
 
-    override fun removeOnError(onError: OnError) {
+    override fun removeOnError(onError: OnErrorCallback) {
         onErrorTasks.remove(onError)
     }
 
@@ -36,7 +36,7 @@ internal data class CallbackState(
     fun runOnErrorTasks(event: Event, logger: Logger): Boolean {
         onErrorTasks.forEach {
             try {
-                if (!it.run(event)) {
+                if (!it.onError(event)) {
                     return false
                 }
             } catch (ex: Throwable) {
