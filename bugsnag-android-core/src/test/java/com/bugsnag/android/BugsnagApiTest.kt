@@ -66,14 +66,14 @@ class BugsnagApiTest {
     @Test
     fun addOnBreadcrumb() {
         Bugsnag.addOnBreadcrumb { true }
-        Bugsnag.addOnBreadcrumb(OnBreadcrumb { true })
+        Bugsnag.addOnBreadcrumb(OnBreadcrumbCallback { true })
         verify(client, times(2)).addOnBreadcrumb(ArgumentMatchers.any())
     }
 
     @Test
     fun removeOnBreadcrumb() {
         Bugsnag.removeOnBreadcrumb { true }
-        Bugsnag.removeOnBreadcrumb(OnBreadcrumb { true })
+        Bugsnag.removeOnBreadcrumb(OnBreadcrumbCallback { true })
         verify(client, times(2)).removeOnBreadcrumb(ArgumentMatchers.any())
     }
 

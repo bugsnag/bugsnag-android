@@ -45,14 +45,14 @@ internal class ConfigApiTest {
 
     @Test
     fun addOnBreadcrumb() {
-        val onBreadcrumb = OnBreadcrumb { true }
+        val onBreadcrumb = OnBreadcrumbCallback { true }
         config.addOnBreadcrumb(onBreadcrumb)
         assertTrue(callbackState.onBreadcrumbTasks.contains(onBreadcrumb))
     }
 
     @Test
     fun removeOnBreadcrumb() {
-        val onBreadcrumb = OnBreadcrumb { true }
+        val onBreadcrumb = OnBreadcrumbCallback { true }
         config.addOnBreadcrumb(onBreadcrumb)
         config.removeOnBreadcrumb(onBreadcrumb)
         assertFalse(callbackState.onBreadcrumbTasks.contains(onBreadcrumb))

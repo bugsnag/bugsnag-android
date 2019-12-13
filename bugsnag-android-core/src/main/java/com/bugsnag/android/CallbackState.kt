@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 internal data class CallbackState(
     val onErrorTasks: MutableCollection<OnError> = ConcurrentLinkedQueue<OnError>(),
-    val onBreadcrumbTasks: MutableCollection<OnBreadcrumb> = ConcurrentLinkedQueue<OnBreadcrumb>(),
+    val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = ConcurrentLinkedQueue<OnBreadcrumbCallback>(),
     val onSessionTasks: MutableCollection<OnSession> = ConcurrentLinkedQueue()
 ): CallbackAware {
 
@@ -16,11 +16,11 @@ internal data class CallbackState(
         onErrorTasks.remove(onError)
     }
 
-    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb) {
+    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
         onBreadcrumbTasks.add(onBreadcrumb)
     }
 
-    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb) {
+    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
         onBreadcrumbTasks.remove(onBreadcrumb)
     }
 
@@ -40,7 +40,7 @@ internal data class CallbackState(
                     return false
                 }
             } catch (ex: Throwable) {
-                logger.w("OnBreadcrumb threw an Exception", ex)
+                logger.w("OnBreadcrumbCallback threw an Exception", ex)
             }
         }
         return true
@@ -49,11 +49,11 @@ internal data class CallbackState(
     fun runOnBreadcrumbTasks(breadcrumb: Breadcrumb, logger: Logger): Boolean {
         onBreadcrumbTasks.forEach {
             try {
-                if (!it.run(breadcrumb)) {
+                if (!it.onBreadcrumb(breadcrumb)) {
                     return false
                 }
             } catch (ex: Throwable) {
-                logger.w("OnBreadcrumb threw an Exception", ex)
+                logger.w("OnBreadcrumbCallback threw an Exception", ex)
             }
         }
         return true

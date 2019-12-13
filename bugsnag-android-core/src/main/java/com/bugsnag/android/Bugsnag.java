@@ -154,20 +154,20 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
      * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
      * @param onBreadcrumb a callback to run before a breadcrumb is captured
-     * @see OnBreadcrumb
+     * @see OnBreadcrumbCallback
      */
-    public static void addOnBreadcrumb(@NonNull final OnBreadcrumb onBreadcrumb) {
+    public static void addOnBreadcrumb(@NonNull final OnBreadcrumbCallback onBreadcrumb) {
         getClient().addOnBreadcrumb(onBreadcrumb);
     }
 
-    public static void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    public static void removeOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
         getClient().removeOnBreadcrumb(onBreadcrumb);
     }
 

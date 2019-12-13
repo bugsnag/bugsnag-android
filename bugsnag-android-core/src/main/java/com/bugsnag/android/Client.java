@@ -207,9 +207,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         orientationListener = registerOrientationChangeListener();
 
         // filter out any disabled breadcrumb types
-        addOnBreadcrumb(new OnBreadcrumb() {
+        addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
             }
         });
@@ -437,22 +437,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
      * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
      * @param onBreadcrumb a callback to run before a breadcrumb is captured
-     * @see OnBreadcrumb
+     * @see OnBreadcrumbCallback
      */
     @Override
-    public void addOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    public void addOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
         callbackState.addOnBreadcrumb(onBreadcrumb);
     }
 
     @Override
-    public void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
         callbackState.removeOnBreadcrumb(onBreadcrumb);
     }
 

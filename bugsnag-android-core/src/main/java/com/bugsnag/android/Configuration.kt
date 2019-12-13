@@ -260,7 +260,7 @@ class Configuration(
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
-    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
+    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) =
         callbackState.addOnBreadcrumb(onBreadcrumb)
 
     /**
@@ -268,7 +268,7 @@ class Configuration(
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
-    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
+    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) =
         callbackState.removeOnBreadcrumb(onBreadcrumb)
 
     /**

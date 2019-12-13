@@ -43,16 +43,16 @@ public class ConcurrentCallbackTest {
     @Test
     public void testOnBreadcrumbConcurrentModification() {
         CallbackState config = new CallbackState();
-        final Collection<OnBreadcrumb> tasks = config.getOnBreadcrumbTasks();
-        config.addOnBreadcrumb(new OnBreadcrumb() {
+        final Collection<OnBreadcrumbCallback> tasks = config.getOnBreadcrumbTasks();
+        config.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
-                tasks.add(new OnBreadcrumbSkeleton());
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                tasks.add(new OnBreadcrumbCallbackSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        config.addOnBreadcrumb(new OnBreadcrumbSkeleton());
+        config.addOnBreadcrumb(new OnBreadcrumbCallbackSkeleton());
         config.runOnBreadcrumbTasks(new Breadcrumb("Foo"), NoopLogger.INSTANCE);
     }
 
@@ -79,9 +79,9 @@ public class ConcurrentCallbackTest {
         }
     }
 
-    static class OnBreadcrumbSkeleton implements OnBreadcrumb {
+    static class OnBreadcrumbCallbackSkeleton implements OnBreadcrumbCallback {
         @Override
-        public boolean run(@NonNull Breadcrumb breadcrumb) {
+        public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
             return true;
         }
     }
