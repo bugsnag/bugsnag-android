@@ -30,14 +30,14 @@ internal class ConfigApiTest {
 
     @Test
     fun addOnError() {
-        val onError = OnError { true }
+        val onError = OnErrorCallback { true }
         config.addOnError(onError)
         assertTrue(callbackState.onErrorTasks.contains(onError))
     }
 
     @Test
     fun removeOnError() {
-        val onError = OnError { true }
+        val onError = OnErrorCallback { true }
         config.addOnError(onError)
         config.removeOnError(onError)
         assertFalse(callbackState.onErrorTasks.contains(onError))
@@ -45,14 +45,14 @@ internal class ConfigApiTest {
 
     @Test
     fun addOnBreadcrumb() {
-        val onBreadcrumb = OnBreadcrumb { true }
+        val onBreadcrumb = OnBreadcrumbCallback { true }
         config.addOnBreadcrumb(onBreadcrumb)
         assertTrue(callbackState.onBreadcrumbTasks.contains(onBreadcrumb))
     }
 
     @Test
     fun removeOnBreadcrumb() {
-        val onBreadcrumb = OnBreadcrumb { true }
+        val onBreadcrumb = OnBreadcrumbCallback { true }
         config.addOnBreadcrumb(onBreadcrumb)
         config.removeOnBreadcrumb(onBreadcrumb)
         assertFalse(callbackState.onBreadcrumbTasks.contains(onBreadcrumb))
@@ -60,14 +60,14 @@ internal class ConfigApiTest {
 
     @Test
     fun addOnSession() {
-        val onSession = OnSession { true }
+        val onSession = OnSessionCallback { true }
         config.addOnSession(onSession)
         assertTrue(callbackState.onSessionTasks.contains(onSession))
     }
 
     @Test
     fun removeOnSession() {
-        val onSession = OnSession { true }
+        val onSession = OnSessionCallback { true }
         config.addOnSession(onSession)
         config.removeOnSession(onSession)
         assertFalse(callbackState.onSessionTasks.contains(onSession))

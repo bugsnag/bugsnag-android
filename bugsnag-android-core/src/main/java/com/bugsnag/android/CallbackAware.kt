@@ -1,10 +1,10 @@
 package com.bugsnag.android
 
 internal interface CallbackAware {
-    fun addOnError(onError: OnError)
-    fun removeOnError(onError: OnError)
-    fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb)
-    fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb)
-    fun addOnSession(onSession: OnSession)
-    fun removeOnSession(onSession: OnSession)
+    fun addOnError(onError: OnErrorCallback)
+    fun removeOnError(onError: OnErrorCallback)
+    fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback)
+    fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback)
+    fun addOnSession(onSession: OnSessionCallback)
+    fun removeOnSession(onSession: OnSessionCallback)
 }

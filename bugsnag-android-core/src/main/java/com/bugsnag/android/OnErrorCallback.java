@@ -10,15 +10,15 @@ import androidx.annotation.NonNull;
  * <code>false</code> from any callback to halt execution.
  * <p>"on error" callbacks added via the JVM API do not run when a fatal C/C++ crash occurs.
  */
-public interface OnError {
+public interface OnErrorCallback {
 
     /**
      * Runs the "on error" callback. If the callback returns
-     * <code>false</code> any further OnError callbacks will not be called
+     * <code>false</code> any further OnErrorCallback callbacks will not be called
      * and the event will not be sent to Bugsnag.
      *
      * @param event the event to be sent to Bugsnag
      * @see Event
      */
-    boolean run(@NonNull Event event);
+    boolean onError(@NonNull Event event);
 }

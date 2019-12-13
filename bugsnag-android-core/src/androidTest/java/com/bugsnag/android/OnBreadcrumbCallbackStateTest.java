@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 @SmallTest
-public class OnBreadcrumbStateTest {
+public class OnBreadcrumbCallbackStateTest {
 
     private Client client;
 
@@ -45,9 +45,9 @@ public class OnBreadcrumbStateTest {
 
     @Test
     public void falseCallback() {
-        client.addOnBreadcrumb(new OnBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         });
@@ -57,9 +57,9 @@ public class OnBreadcrumbStateTest {
 
     @Test
     public void trueCallback() {
-        client.addOnBreadcrumb(new OnBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
@@ -69,15 +69,15 @@ public class OnBreadcrumbStateTest {
 
     @Test
     public void multipleCallbacks() {
-        client.addOnBreadcrumb(new OnBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 return true;
             }
         });
-        client.addOnBreadcrumb(new OnBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         });
@@ -88,16 +88,16 @@ public class OnBreadcrumbStateTest {
     @Test
     public void ensureBothCalled() {
         final int[] count = {1};
-        client.addOnBreadcrumb(new OnBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
         });
-        client.addOnBreadcrumb(new OnBreadcrumb() {
+        client.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
@@ -112,9 +112,9 @@ public class OnBreadcrumbStateTest {
     public void ensureCalledTwice() {
         final int[] count = {1};
 
-        OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
+        OnBreadcrumbCallback onBreadcrumb = new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 return true;
             }
@@ -129,9 +129,9 @@ public class OnBreadcrumbStateTest {
     public void checkBreadcrumbFields() {
         final int[] count = {1};
 
-        OnBreadcrumb onBreadcrumb = new OnBreadcrumb() {
+        OnBreadcrumbCallback onBreadcrumb = new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 count[0] += 1;
                 assertEquals("Hello", breadcrumb.getMessage());
                 assertEquals(BreadcrumbType.MANUAL, breadcrumb.getType());
@@ -146,9 +146,9 @@ public class OnBreadcrumbStateTest {
 
     @Test
     public void removedCallback() {
-        OnBreadcrumb cb = new OnBreadcrumb() {
+        OnBreadcrumbCallback cb = new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 return false;
             }
         };

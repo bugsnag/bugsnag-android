@@ -52,42 +52,42 @@ class BugsnagApiTest {
     @Test
     fun addOnError() {
         Bugsnag.addOnError { true }
-        Bugsnag.addOnError(OnError { true })
+        Bugsnag.addOnError(OnErrorCallback { true })
         verify(client, times(2)).addOnError(ArgumentMatchers.any())
     }
 
     @Test
     fun removeOnError() {
         Bugsnag.removeOnError { true }
-        Bugsnag.removeOnError(OnError { true })
+        Bugsnag.removeOnError(OnErrorCallback { true })
         verify(client, times(2)).removeOnError(ArgumentMatchers.any())
     }
 
     @Test
     fun addOnBreadcrumb() {
         Bugsnag.addOnBreadcrumb { true }
-        Bugsnag.addOnBreadcrumb(OnBreadcrumb { true })
+        Bugsnag.addOnBreadcrumb(OnBreadcrumbCallback { true })
         verify(client, times(2)).addOnBreadcrumb(ArgumentMatchers.any())
     }
 
     @Test
     fun removeOnBreadcrumb() {
         Bugsnag.removeOnBreadcrumb { true }
-        Bugsnag.removeOnBreadcrumb(OnBreadcrumb { true })
+        Bugsnag.removeOnBreadcrumb(OnBreadcrumbCallback { true })
         verify(client, times(2)).removeOnBreadcrumb(ArgumentMatchers.any())
     }
 
     @Test
     fun addOnSession() {
         Bugsnag.addOnSession { true }
-        Bugsnag.addOnSession(OnSession { true })
+        Bugsnag.addOnSession(OnSessionCallback { true })
         verify(client, times(2)).addOnSession(ArgumentMatchers.any())
     }
 
     @Test
     fun removeOnSession() {
         Bugsnag.removeOnSession { true }
-        Bugsnag.removeOnSession(OnSession { true })
+        Bugsnag.removeOnSession(OnSessionCallback { true })
         verify(client, times(2)).removeOnSession(ArgumentMatchers.any())
     }
 
@@ -101,7 +101,7 @@ class BugsnagApiTest {
     @Test
     fun notify2() {
         val exc = RuntimeException()
-        val onError = OnError { true }
+        val onError = OnErrorCallback { true }
         Bugsnag.notify(exc, onError)
         verify(client, times(1)).notify(exc, onError)
     }
@@ -114,7 +114,7 @@ class BugsnagApiTest {
 
     @Test
     fun notify4() {
-        val onError = OnError { true }
+        val onError = OnErrorCallback { true }
         Bugsnag.notify("LeakException", "whoops", arrayOf(), onError)
         verify(client, times(1)).notify("LeakException", "whoops", arrayOf(), onError)
     }

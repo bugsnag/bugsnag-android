@@ -117,11 +117,11 @@ class BreadcrumbStateTest {
     }
 
     /**
-     * Verifies that an [OnBreadcrumb] callback is run when specified in [BreadcrumbState]
+     * Verifies that an [OnBreadcrumbCallback] callback is run when specified in [BreadcrumbState]
      */
     @Test
     fun testOnBreadcrumbCallback() {
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumb { false })
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { false })
         breadcrumbState.add(Breadcrumb("Whoops"))
         assertTrue(breadcrumbState.store.isEmpty())
     }

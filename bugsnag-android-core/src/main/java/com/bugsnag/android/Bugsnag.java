@@ -126,7 +126,7 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addOnError(new OnError() {
+     * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
      * return true;
@@ -135,13 +135,13 @@ public final class Bugsnag {
      *
      * @param onError a callback to run before sending errors to Bugsnag
      * <p/>
-     * @see OnError
+     * @see OnErrorCallback
      */
-    public static void addOnError(@NonNull OnError onError) {
+    public static void addOnError(@NonNull OnErrorCallback onError) {
         getClient().addOnError(onError);
     }
 
-    public static void removeOnError(@NonNull OnError onError) {
+    public static void removeOnError(@NonNull OnErrorCallback onError) {
         getClient().removeOnError(onError);
     }
 
@@ -154,28 +154,28 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.onBreadcrumb(new OnBreadcrumb() {
+     * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
      * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
      * @param onBreadcrumb a callback to run before a breadcrumb is captured
-     * @see OnBreadcrumb
+     * @see OnBreadcrumbCallback
      */
-    public static void addOnBreadcrumb(@NonNull final OnBreadcrumb onBreadcrumb) {
+    public static void addOnBreadcrumb(@NonNull final OnBreadcrumbCallback onBreadcrumb) {
         getClient().addOnBreadcrumb(onBreadcrumb);
     }
 
-    public static void removeOnBreadcrumb(@NonNull OnBreadcrumb onBreadcrumb) {
+    public static void removeOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
         getClient().removeOnBreadcrumb(onBreadcrumb);
     }
 
-    public static void addOnSession(@NonNull OnSession onSession) {
+    public static void addOnSession(@NonNull OnSessionCallback onSession) {
         getClient().addOnSession(onSession);
     }
 
-    public static void removeOnSession(@NonNull OnSession onSession) {
+    public static void removeOnSession(@NonNull OnSessionCallback onSession) {
         getClient().removeOnSession(onSession);
     }
 
@@ -196,7 +196,7 @@ public final class Bugsnag {
      *                  additional modification
      */
     public static void notify(@NonNull final Throwable exception,
-                              @Nullable final OnError onError) {
+                              @Nullable final OnErrorCallback onError) {
         getClient().notify(exception, onError);
     }
 
@@ -226,7 +226,7 @@ public final class Bugsnag {
     public static void notify(@NonNull String name,
                               @NonNull String message,
                               @NonNull StackTraceElement[] stacktrace,
-                              @Nullable OnError onError) {
+                              @Nullable OnErrorCallback onError) {
         getClient().notify(name, message, stacktrace, onError);
     }
 

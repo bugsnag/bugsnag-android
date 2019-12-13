@@ -17,16 +17,16 @@ import androidx.annotation.NonNull;
  * }
  * })
  */
-public interface OnBreadcrumb {
+public interface OnBreadcrumbCallback {
 
     /**
      * Runs the "on breadcrumb" callback. If the callback returns
-     * <code>false</code> any further OnBreadcrumb callbacks will not be called
+     * <code>false</code> any further OnBreadcrumbCallback callbacks will not be called
      * and the breadcrumb will not be captured by Bugsnag.
      *
      * @param breadcrumb the breadcrumb to be captured by Bugsnag
      * @see Breadcrumb
      */
-    boolean run(@NonNull Breadcrumb breadcrumb);
+    boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb);
 
 }

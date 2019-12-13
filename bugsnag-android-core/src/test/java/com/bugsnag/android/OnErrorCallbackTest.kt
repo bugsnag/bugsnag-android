@@ -6,7 +6,7 @@ import org.junit.Assert.assertEquals
 
 import org.junit.Test
 
-class OnErrorTest {
+class OnErrorCallbackTest {
 
     private val config = generateImmutableConfig()
 
@@ -14,14 +14,14 @@ class OnErrorTest {
     fun testRunModifiesError() {
         val context = "new-context"
 
-        val onError = OnError {
+        val onError = OnErrorCallback {
             it.context = context
             false
         }
 
         val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         val error = Event(RuntimeException("Test"), config, handledState)
-        onError.run(error)
+        onError.onError(error)
         assertEquals(context, error.context)
     }
 }

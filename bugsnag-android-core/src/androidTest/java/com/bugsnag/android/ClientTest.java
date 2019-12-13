@@ -104,9 +104,9 @@ public class ClientTest {
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         client = new Client(context, config);
 
-        client.addOnError(new OnError() {
+        client.addOnError(new OnErrorCallback() {
             @Override
-            public boolean run(@NonNull Event event) {
+            public boolean onError(@NonNull Event event) {
                 // Pull out the user information
                 ClientTest.this.user = event.getUser();
                 return true;

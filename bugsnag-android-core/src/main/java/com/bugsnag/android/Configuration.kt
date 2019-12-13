@@ -241,7 +241,7 @@ class Configuration(
      *
      * For example:
      *
-     * Bugsnag.addOnError(new OnError() {
+     * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
      * return true;
@@ -249,18 +249,18 @@ class Configuration(
      * })
      *
      * @param onError a callback to run before sending errors to Bugsnag
-     * @see OnError
+     * @see OnErrorCallback
      */
-    override fun addOnError(onError: OnError) = callbackState.addOnError(onError)
+    override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)
 
-    override fun removeOnError(onError: OnError) = callbackState.removeOnError(onError)
+    override fun removeOnError(onError: OnErrorCallback) = callbackState.removeOnError(onError)
 
     /**
      * Adds an on breadcrumb callback
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
-    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
+    override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) =
         callbackState.addOnBreadcrumb(onBreadcrumb)
 
     /**
@@ -268,7 +268,7 @@ class Configuration(
      *
      * @param onBreadcrumb the on breadcrumb callback
      */
-    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumb) =
+    override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) =
         callbackState.removeOnBreadcrumb(onBreadcrumb)
 
     /**
@@ -276,14 +276,14 @@ class Configuration(
      *
      * @param onSession the on session callback
      */
-    override fun addOnSession(onSession: OnSession) = callbackState.addOnSession(onSession)
+    override fun addOnSession(onSession: OnSessionCallback) = callbackState.addOnSession(onSession)
 
     /**
      * Removes an on session callback
      *
      * @param onSession the on session callback
      */
-    override fun removeOnSession(onSession: OnSession) = callbackState.removeOnSession(onSession)
+    override fun removeOnSession(onSession: OnSessionCallback) = callbackState.removeOnSession(onSession)
 
     override fun addMetadata(section: String, value: Map<String, Any?>) =
         metadataState.addMetadata(section, value)

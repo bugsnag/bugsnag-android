@@ -27,68 +27,68 @@ public class ConcurrentCallbackTest {
     @Test
     public void testOnErrorConcurrentModification() {
         CallbackState config = new CallbackState();
-        final Collection<OnError> tasks = config.getOnErrorTasks();
-        config.addOnError(new OnError() {
+        final Collection<OnErrorCallback> tasks = config.getOnErrorTasks();
+        config.addOnError(new OnErrorCallback() {
             @Override
-            public boolean run(@NonNull Event event) {
-                tasks.add(new OnErrorSkeleton());
+            public boolean onError(@NonNull Event event) {
+                tasks.add(new OnErrorCallbackSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        config.addOnError(new OnErrorSkeleton());
+        config.addOnError(new OnErrorCallbackSkeleton());
         config.runOnErrorTasks(event, NoopLogger.INSTANCE);
     }
 
     @Test
     public void testOnBreadcrumbConcurrentModification() {
         CallbackState config = new CallbackState();
-        final Collection<OnBreadcrumb> tasks = config.getOnBreadcrumbTasks();
-        config.addOnBreadcrumb(new OnBreadcrumb() {
+        final Collection<OnBreadcrumbCallback> tasks = config.getOnBreadcrumbTasks();
+        config.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public boolean run(@NonNull Breadcrumb breadcrumb) {
-                tasks.add(new OnBreadcrumbSkeleton());
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                tasks.add(new OnBreadcrumbCallbackSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        config.addOnBreadcrumb(new OnBreadcrumbSkeleton());
+        config.addOnBreadcrumb(new OnBreadcrumbCallbackSkeleton());
         config.runOnBreadcrumbTasks(new Breadcrumb("Foo"), NoopLogger.INSTANCE);
     }
 
     @Test
     public void testOnSessionConcurrentModification() {
         CallbackState config = new CallbackState();
-        final Collection<OnSession> tasks = config.getOnSessionTasks();
-        config.addOnSession(new OnSession() {
+        final Collection<OnSessionCallback> tasks = config.getOnSessionTasks();
+        config.addOnSession(new OnSessionCallback() {
             @Override
-            public boolean run(@NonNull SessionPayload event) {
-                tasks.add(new OnSessionSkeleton());
+            public boolean onSession(@NonNull SessionPayload event) {
+                tasks.add(new OnSessionCallbackSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
-        config.addOnSession(new OnSessionSkeleton());
+        config.addOnSession(new OnSessionCallbackSkeleton());
         config.runOnSessionTasks(sessionPayload, NoopLogger.INSTANCE);
     }
 
-    static class OnErrorSkeleton implements OnError {
+    static class OnErrorCallbackSkeleton implements OnErrorCallback {
         @Override
-        public boolean run(@NonNull Event event) {
+        public boolean onError(@NonNull Event event) {
             return true;
         }
     }
 
-    static class OnBreadcrumbSkeleton implements OnBreadcrumb {
+    static class OnBreadcrumbCallbackSkeleton implements OnBreadcrumbCallback {
         @Override
-        public boolean run(@NonNull Breadcrumb breadcrumb) {
+        public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
             return true;
         }
     }
 
-    static class OnSessionSkeleton implements OnSession {
+    static class OnSessionCallbackSkeleton implements OnSessionCallback {
         @Override
-        public boolean run(@NonNull SessionPayload sessionPayload) {
+        public boolean onSession(@NonNull SessionPayload sessionPayload) {
             return true;
         }
     }
