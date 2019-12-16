@@ -25,7 +25,7 @@ class InternalReportDelegate implements EventStore.Delegate {
     final StorageManager storageManager;
 
     final AppDataCollector appDataCollector;
-    final DeviceData deviceData;
+    final DeviceDataCollector deviceDataCollector;
     final Context appContext;
     final SessionTracker sessionTracker;
 
@@ -34,13 +34,13 @@ class InternalReportDelegate implements EventStore.Delegate {
                            ImmutableConfig immutableConfig,
                            StorageManager storageManager,
                            AppDataCollector appDataCollector,
-                           DeviceData deviceData,
+                           DeviceDataCollector deviceDataCollector,
                            SessionTracker sessionTracker) {
         this.logger = logger;
         this.immutableConfig = immutableConfig;
         this.storageManager = storageManager;
         this.appDataCollector = appDataCollector;
-        this.deviceData = deviceData;
+        this.deviceDataCollector = deviceDataCollector;
         this.appContext = context;
         this.sessionTracker = sessionTracker;
     }
@@ -88,10 +88,7 @@ class InternalReportDelegate implements EventStore.Delegate {
      */
     void reportInternalBugsnagError(@NonNull Event event) {
         event.setApp(appDataCollector.generateAppWithState());
-
-        Map<String, Object> device = deviceData.getDeviceDataSummary();
-        device.put("freeDisk", deviceData.calculateFreeDisk());
-        event.setDevice(device);
+        event.setDevice(deviceDataCollector.generateDeviceWithState());
 
         Notifier notifier = Notifier.INSTANCE;
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());

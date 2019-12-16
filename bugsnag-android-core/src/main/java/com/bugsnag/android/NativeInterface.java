@@ -91,10 +91,24 @@ public class NativeInterface {
     @NonNull
     @SuppressWarnings("unused")
     public static Map<String,Object> getDevice() {
-        HashMap<String,Object> deviceData = new HashMap<>();
-        DeviceData source = getClient().getDeviceData();
-        deviceData.putAll(source.getDeviceMetadata());
-        deviceData.putAll(source.getDeviceData()); // wat
+        DeviceDataCollector source = getClient().getDeviceDataCollector();
+        HashMap<String, Object> deviceData = new HashMap<>(source.getDeviceMetadata());
+
+        DeviceWithState src = source.generateDeviceWithState();
+        deviceData.put("freeDisk", src.getFreeDisk());
+        deviceData.put("freeMemory", src.getFreeMemory());
+        deviceData.put("orientation", src.getOrientation());
+        deviceData.put("time", src.getTime());
+        deviceData.put("cpuAbi", src.getCpuAbi());
+        deviceData.put("jailbroken", src.getJailbroken());
+        deviceData.put("id", src.getId());
+        deviceData.put("locale", src.getLocale());
+        deviceData.put("manufacturer", src.getManufacturer());
+        deviceData.put("model", src.getModel());
+        deviceData.put("osName", src.getOsName());
+        deviceData.put("osVersion", src.getOsVersion());
+        deviceData.put("runtimeVersions", src.getRuntimeVersions());
+        deviceData.put("totalMemory", src.getTotalMemory());
         return deviceData;
     }
 
@@ -103,7 +117,7 @@ public class NativeInterface {
      */
     @NonNull
     public static String[] getCpuAbi() {
-        return getClient().getDeviceData().getCpuAbi();
+        return getClient().getDeviceDataCollector().getCpuAbi();
     }
 
     /**

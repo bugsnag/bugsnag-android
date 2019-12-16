@@ -25,6 +25,9 @@ public class ConcurrentCallbackTest {
     @Mock
     App app;
 
+    @Mock
+    Device device;
+
     private final HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
     private final Event event = new Event(new RuntimeException(),
@@ -32,9 +35,8 @@ public class ConcurrentCallbackTest {
     private SessionPayload sessionPayload;
 
     @Before
-    public void setUp() throws Exception {
-        sessionPayload = new SessionPayload(null,
-                new ArrayList<File>(), app, new HashMap<String, Object>());
+    public void setUp() {
+        sessionPayload = new SessionPayload(null, new ArrayList<File>(), app, device);
     }
 
     @Test

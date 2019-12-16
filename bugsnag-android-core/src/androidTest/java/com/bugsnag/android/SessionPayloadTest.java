@@ -32,7 +32,7 @@ public class SessionPayloadTest {
     private SessionStore sessionStore;
     private File storageDir;
     private SessionPayload payload;
-    private DeviceData deviceData;
+    private DeviceDataCollector deviceDataCollector;
     private Client client;
 
     /**
@@ -57,9 +57,9 @@ public class SessionPayloadTest {
     private SessionPayload generatePayloadFromSession(Context context,
                                                       Session session) {
         appDataCollector = client.getAppDataCollector();
-        deviceData = client.deviceData;
+        deviceDataCollector = client.deviceDataCollector;
         return new SessionPayload(session, null, appDataCollector.generateApp(),
-                deviceData.getDeviceDataSummary());
+                deviceDataCollector.generateDevice());
     }
 
     /**
@@ -83,7 +83,7 @@ public class SessionPayloadTest {
         List<File> storedFiles = sessionStore.findStoredFiles();
 
         SessionPayload payload = new SessionPayload(null,
-            storedFiles, appDataCollector.generateApp(), deviceData.getDeviceDataSummary());
+            storedFiles, appDataCollector.generateApp(), deviceDataCollector.generateDevice());
         rootNode = streamableToJson(payload);
 
         assertNotNull(rootNode);

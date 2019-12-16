@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
+import com.bugsnag.android.BugsnagTestUtils.generateDevice
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +25,7 @@ internal class SessionTrackerBreadcrumbTest {
     lateinit var appDataCollector: AppDataCollector
 
     @Mock
-    internal var deviceData: DeviceData? = null
+    lateinit var deviceDataCollector: DeviceDataCollector
 
     @Mock
     lateinit var context: Context
@@ -46,7 +47,8 @@ internal class SessionTrackerBreadcrumbTest {
         `when`(client.getAppContext()).thenReturn(context)
         `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
         `when`(appDataCollector.generateApp()).thenReturn(app)
-        `when`(client.getDeviceData()).thenReturn(deviceData)
+        `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
+        `when`(deviceDataCollector.generateDevice()).thenReturn(generateDevice())
         `when`(context.getSystemService("activity")).thenReturn(activityManager)
         tracker = SessionTracker(
             BugsnagTestUtils.generateImmutableConfig(),

@@ -5,21 +5,24 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.DisplayMetrics
+import com.bugsnag.android.BugsnagTestUtils.generateDeviceBuildInfo
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.mock
 import java.io.File
 
 @RunWith(Parameterized::class)
-internal class DeviceDataSerializationTest {
+internal class DeviceDataCollectorSerializationTest {
 
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases(): Collection<Pair<Map<String, Any>, String>> {
+        fun testCases(): Collection<Pair<Device, String>> {
             val context = mock(Context::class.java)
             val res = mock(Resources::class.java)
             val conf = mock(Configuration::class.java)
@@ -31,10 +34,7 @@ internal class DeviceDataSerializationTest {
             `when`(editor.putString(anyString(), anyString()))
                 .thenReturn(editor)
 
-            val buildInfo = DeviceBuildInfo(
-                "samsung", "s7", "7.1", 24, "bulldog",
-                "foo-google", "prod,build", "google", arrayOf("armeabi-v7a")
-            )
+            val buildInfo = generateDeviceBuildInfo()
 
             // regular fields
             `when`(res.configuration).thenReturn(conf)
@@ -48,27 +48,39 @@ internal class DeviceDataSerializationTest {
             `when`(connectivity.retrieveNetworkAccessState()).thenReturn("unknown")
 
             // construct devicedata object
-            val deviceData = DeviceData(connectivity, context, res, "123", buildInfo, File(""), NoopLogger)
-
-            // serializes the 3 different maps that DeviceData can generate:
-            // 1. summary (used in session payloads)
-            // 2. regular (used in event payloads)
-            // 3. metadata (used in event payloads)
-            val regularMap = deviceData.deviceData
-            arrayOf("freeDisk", "freeMemory", "totalMemory", "locale", "time").forEach { regularMap.remove(it) }
+            val deviceData = DeviceDataCollector(
+                connectivity,
+                context,
+                res,
+                "123",
+                buildInfo,
+                File(""),
+                NoopLogger
+            )
 
             return generateSerializationTestCases(
                 "device_data",
-                deviceData.deviceDataSummary,
-                regularMap,
-                deviceData.deviceMetadata
+                deviceData.generateDevice(),
+                deviceData.generateDeviceWithState()
             )
         }
     }
 
     @Parameter
-    lateinit var testCase: Pair<Map<String, Any>, String>
+    lateinit var testCase: Pair<Device, String>
 
     @Test
-    fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+    fun testJsonSerialisation() {
+        // sanitise device-specific fields before serializing
+        val device = testCase.first
+        device.totalMemory = 502934020442
+        device.locale = "en_GB"
+
+        if (device is DeviceWithState) {
+            device.freeMemory = 2234092234234
+            device.freeDisk = 120935100007
+        }
+
+        verifyJsonMatches(device, testCase.second)
+    }
 }

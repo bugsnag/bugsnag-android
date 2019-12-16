@@ -2,6 +2,8 @@ package com.bugsnag.android;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Date;
+
 final class BugsnagTestUtils {
 
     static Configuration generateConfiguration() {
@@ -18,6 +20,24 @@ final class BugsnagTestUtils {
 
     static ImmutableConfig convert(Configuration config) {
         return ImmutableConfigKt.convertToImmutableConfig(config);
+    }
+
+    static DeviceBuildInfo generateDeviceBuildInfo() {
+        return new DeviceBuildInfo(
+                "samsung", "s7", "7.1", 24, "bulldog",
+                "foo-google", "prod,build", "google", new String[]{"armeabi-v7a"}
+        );
+    }
+
+    static Device generateDevice() {
+        DeviceBuildInfo buildInfo = generateDeviceBuildInfo();
+        return new Device(buildInfo, new String[]{}, null, null, null, 10923250000L);
+    }
+
+    static DeviceWithState generateDeviceWithState() {
+        DeviceBuildInfo buildInfo = generateDeviceBuildInfo();
+        return new DeviceWithState(buildInfo, new String[]{}, null, null, null,
+                109230923452L, 22234423124L, 92340255592L, "portrait", new Date(0));
     }
 
     public static Delivery generateDelivery() {

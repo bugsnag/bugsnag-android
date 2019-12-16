@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.BugsnagTestUtils.generateDevice;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +36,7 @@ public class SessionTrackerTest {
     AppDataCollector appDataCollector;
 
     @Mock
-    DeviceData deviceData;
+    DeviceDataCollector deviceDataCollector;
 
     @Mock
     Context context;
@@ -57,7 +58,8 @@ public class SessionTrackerTest {
         when(client.getAppContext()).thenReturn(context);
         when(client.getAppDataCollector()).thenReturn(appDataCollector);
         when(appDataCollector.generateApp()).thenReturn(app);
-        when(client.getDeviceData()).thenReturn(deviceData);
+        when(client.getDeviceDataCollector()).thenReturn(deviceDataCollector);
+        when(deviceDataCollector.generateDevice()).thenReturn(generateDevice());
         when(context.getSystemService("activity")).thenReturn(activityManager);
 
         configuration = BugsnagTestUtils.generateConfiguration();

@@ -11,14 +11,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import java.lang.IllegalArgumentException
 import java.util.ArrayList
-import java.util.HashMap
 
 @RunWith(MockitoJUnitRunner::class)
 class CallbackStateTest {
 
     @Mock
     lateinit var app: App
+
+    @Mock
+    lateinit var device: Device
 
     private val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
     private val event = Event(RuntimeException(), config = generateImmutableConfig(), handledState = handledState)
@@ -27,7 +30,7 @@ class CallbackStateTest {
 
     @Before
     fun setUp() {
-        sessionPayload = SessionPayload(null, ArrayList(), app, HashMap())
+        sessionPayload = SessionPayload(null, ArrayList(), app, device)
     }
 
     @Test
@@ -47,7 +50,7 @@ class CallbackStateTest {
     fun onErrorExcThrown() {
         val state = CallbackState()
         state.addOnError(OnErrorCallback { true })
-        state.addOnError(OnErrorCallback { throw RuntimeException() })
+        state.addOnError(OnErrorCallback { throw IllegalArgumentException() })
 
         val logger = InterceptingLogger()
         assertNull(logger.msg)
@@ -72,7 +75,7 @@ class CallbackStateTest {
     fun onSessionExcThrown() {
         val state = CallbackState()
         state.addOnSession(OnSessionCallback { true })
-        state.addOnSession(OnSessionCallback { throw RuntimeException() })
+        state.addOnSession(OnSessionCallback { throw IllegalArgumentException() })
 
         val logger = InterceptingLogger()
         assertNull(logger.msg)
@@ -97,7 +100,7 @@ class CallbackStateTest {
     fun onBreadcrumbExcThrown() {
         val state = CallbackState()
         state.addOnBreadcrumb(OnBreadcrumbCallback { true })
-        state.addOnBreadcrumb(OnBreadcrumbCallback { throw RuntimeException() })
+        state.addOnBreadcrumb(OnBreadcrumbCallback { throw IllegalArgumentException() })
 
         val logger = InterceptingLogger()
         assertNull(logger.msg)

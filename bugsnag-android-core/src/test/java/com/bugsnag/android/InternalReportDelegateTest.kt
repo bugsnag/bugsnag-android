@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.os.storage.StorageManager
+import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import org.junit.Assert.*
@@ -21,7 +22,7 @@ internal class InternalReportDelegateTest {
     lateinit var appDataCollector: AppDataCollector
 
     @Mock
-    lateinit var deviceData: DeviceData
+    lateinit var deviceDataCollector: DeviceDataCollector
 
     @Mock
     lateinit var sessionTracker: SessionTracker
@@ -35,12 +36,7 @@ internal class InternalReportDelegateTest {
         `when`(this.appDataCollector.generateAppWithState()).thenReturn(app)
         app.durationInForeground = 500L
         app.inForeground = true
-
-        val device = HashMap<String, Any>()
-        device["id"] = "234"
-
-        `when`(deviceData.deviceDataSummary).thenReturn(device)
-        `when`(deviceData.calculateFreeDisk()).thenReturn(10592342221)
+        `when`(deviceDataCollector.generateDeviceWithState()).thenReturn(generateDeviceWithState())
 
         val config = generateImmutableConfig()
         val delegate = InternalReportDelegate(
@@ -49,7 +45,7 @@ internal class InternalReportDelegateTest {
             config,
             storageManager,
             appDataCollector,
-            deviceData,
+            deviceDataCollector,
             sessionTracker
         )
 
@@ -63,8 +59,7 @@ internal class InternalReportDelegateTest {
         assertNotNull(event.app)
 
         // device
-        assertEquals("234", event.device["id"])
-        assertEquals(10592342221, event.device["freeDisk"])
+        assertEquals(22234423124, event.device.freeDisk)
 
         // metadata
         assertNotNull(event.getMetadata("BugsnagDiagnostics", "notifierName"))

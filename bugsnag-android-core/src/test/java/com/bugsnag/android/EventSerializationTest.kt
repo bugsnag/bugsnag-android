@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
+import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,6 +66,7 @@ internal class EventSerializationTest {
             )
             event.threads = emptyList()
             event.app = generateAppWithState()
+            event.device = generateDeviceWithState()
             cb(event)
             return event
         }

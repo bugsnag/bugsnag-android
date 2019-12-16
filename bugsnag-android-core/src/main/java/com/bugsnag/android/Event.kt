@@ -40,7 +40,7 @@ class Event @JvmOverloads internal constructor(
     var apiKey: String = config.apiKey
 
     lateinit var app: AppWithState
-    var device: MutableMap<String, Any?> = HashMap()
+    lateinit var device: DeviceWithState
 
     val isUnhandled: Boolean = handledState.isUnhandled
 
