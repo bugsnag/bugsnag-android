@@ -23,7 +23,7 @@ internal data class ImmutableConfig(
     val codeBundleId: String?,
     val appType: String,
     val delivery: Delivery,
-    val endpoints: Endpoints,
+    val endpoints: EndpointConfiguration,
     val persistUser: Boolean,
     val launchCrashThresholdMs: Long,
     val logger: Logger,

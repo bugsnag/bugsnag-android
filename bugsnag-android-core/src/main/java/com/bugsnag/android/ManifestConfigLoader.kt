@@ -100,7 +100,7 @@ internal class ManifestConfigLoader {
         if (data.containsKey(ENDPOINT_NOTIFY)) {
             val endpoint = data.getString(ENDPOINT_NOTIFY, config.endpoints.notify)
             val sessionEndpoint = data.getString(ENDPOINT_SESSIONS, config.endpoints.sessions)
-            config.endpoints = Endpoints(endpoint, sessionEndpoint)
+            config.endpoints = EndpointConfiguration(endpoint, sessionEndpoint)
         }
     }
 

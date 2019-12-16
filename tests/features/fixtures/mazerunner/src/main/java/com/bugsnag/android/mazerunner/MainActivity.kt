@@ -8,7 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.Endpoints
+import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
@@ -74,7 +74,7 @@ class MainActivity : Activity() {
 
     private fun prepareConfig(): Configuration {
         val config = Configuration("a35a2a72bd230ac0aa0f52715bbdc6aa")
-        config.endpoints = Endpoints("http://bs-local.com:9339", "http://bs-local.com:9339")
+        config.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
         config.autoDetectNdkCrashes = true
         config.autoDetectAnrs = true
         return config

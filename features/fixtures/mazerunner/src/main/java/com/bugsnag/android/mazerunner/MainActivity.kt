@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.Endpoints
+import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
@@ -45,7 +45,7 @@ class MainActivity : Activity() {
         val eventType = intent.getStringExtra("EVENT_TYPE")
         val config = Configuration(intent.getStringExtra("BUGSNAG_API_KEY"))
         val port = intent.getStringExtra("BUGSNAG_PORT")
-        config.endpoints = Endpoints("${findHostname()}:$port", "${findHostname()}:$port")
+        config.endpoints = EndpointConfiguration("${findHostname()}:$port", "${findHostname()}:$port")
         config.autoDetectNdkCrashes = true
         config.autoDetectAnrs = true
         return config
