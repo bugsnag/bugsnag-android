@@ -111,7 +111,7 @@ Then("the report contains the required fields") do
     And the payload field "events.0.unhandled" is not null
     And the payload field "events.0.app.duration" is not null
     And the payload field "events.0.app.durationInForeground" is not null
-    And the payload field "events.0.app.id" is not null
+    And the payload field "events.0.app.id" equals "com.bugsnag.android.mazerunner"
     And the payload field "events.0.app.inForeground" is not null
     And the payload field "events.0.app.releaseStage" is not null
     And the payload field "events.0.app.type" equals "android"
@@ -127,8 +127,6 @@ Then("the report contains the required fields") do
     And the payload field "events.0.device.totalMemory" is not null
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null
     And the payload field "events.0.metaData.app.name" equals "MazeRunner"
-    And the payload field "events.0.metaData.app.packageName" equals "com.bugsnag.android.mazerunner"
-    And the payload field "events.0.metaData.app.versionName" is not null
     And the payload field "events.0.metaData.device.brand" is not null
     And the payload field "events.0.metaData.device.dpi" is not null
     And the payload field "events.0.metaData.device.locationStatus" is not null

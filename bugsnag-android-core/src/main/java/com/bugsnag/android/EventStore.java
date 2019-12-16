@@ -200,13 +200,9 @@ class EventStore extends FileStore {
         if (object instanceof Event) {
             Event event = (Event) object;
 
-            Map<String, Object> appData = event.getApp();
-            Object duration = appData.get("duration");
-            if (duration instanceof Number) {
-                Number ms = (Number) duration;
-                if (isStartupCrash(ms.longValue())) {
-                    suffix = STARTUP_CRASH;
-                }
+            Number duration = event.getApp().getDuration();
+            if (duration != null && isStartupCrash(duration.longValue())) {
+                suffix = STARTUP_CRASH;
             }
         }
         String uuid = UUID.randomUUID().toString();

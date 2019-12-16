@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -33,7 +34,7 @@ internal class NativeInterfaceApiTest {
     lateinit var context: Context
 
     @Mock
-    lateinit var appData: AppData
+    lateinit var appDataCollector: AppDataCollector
 
     @Mock
     lateinit var deviceData: DeviceData
@@ -57,7 +58,7 @@ internal class NativeInterfaceApiTest {
             )
         )
 
-        `when`(client.getAppData()).thenReturn(appData)
+        `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
         `when`(client.getDeviceData()).thenReturn(deviceData)
         `when`(client.getUser()).thenReturn(User("123", "tod@example.com", "Tod"))
 
@@ -84,10 +85,10 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun getAppData() {
-        `when`(appData.appData).thenReturn(mapOf(Pair("og", true)))
-        `when`(appData.appDataMetadata).thenReturn(mapOf(Pair("metadata", true)))
-        val expected = mapOf(Pair("og", true), Pair("metadata", true))
-        assertEquals(expected, NativeInterface.getApp())
+        `when`(appDataCollector.generateAppWithState()).thenReturn(generateAppWithState())
+        `when`(appDataCollector.getAppDataMetadata()).thenReturn(mutableMapOf(Pair("metadata", true)))
+        val expected = mapOf(Pair("metadata", true), Pair("type", "android"), Pair("versionCode", 0))
+        assertEquals(expected, NativeInterface.getApp().filter { it.value != null })
     }
 
     @Test

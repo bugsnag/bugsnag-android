@@ -13,12 +13,12 @@ import org.junit.runners.Parameterized.Parameters
 import org.mockito.Mockito.*
 
 @RunWith(Parameterized::class)
-internal class AppDataSerializationTest {
+internal class AppDataCollectorSerializationTest {
 
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases(): Collection<Pair<Map<String, Any>, String>> {
+        fun testCases(): Collection<Pair<App, String>> {
             val context = mock(Context::class.java)
             val pm = mock(PackageManager::class.java)
             val am = mock(ActivityManager::class.java)
@@ -41,28 +41,33 @@ internal class AppDataSerializationTest {
             `when`(pm.getApplicationInfo(any(), anyInt())).thenReturn(ApplicationInfo())
             `when`(pm.getApplicationLabel(any())).thenReturn("MyApp")
 
-            // construct AppData object
-            val appData = AppData(context, pm, convert(config), sessionTracker, am, NoopLogger)
+            // construct AppDataCollector object
+            val appData = AppDataCollector(
+                context,
+                pm,
+                convert(config),
+                sessionTracker,
+                am,
+                NoopLogger
+            )
             appData.setBinaryArch("x86")
 
-            // serializes the 3 different maps that AppData can generate:
+            // serializes the 3 different maps that AppDataCollector can generate:
             // 1. summary (used in session payloads)
             // 2. regular (used in event payloads)
-            // 3. metadata (used in event payloads)
-            val metadata = appData.appDataMetadata
+            val metadata = appData.getAppDataMetadata()
             metadata.remove("memoryUsage")
 
             return generateSerializationTestCases(
                 "app_data",
-                appData.appDataSummary,
-                appData.appData,
-                metadata
+                appData.generateApp(),
+                appData.generateAppWithState()
             )
         }
     }
 
     @Parameter
-    lateinit var testCase: Pair<Map<String, Any>, String>
+    lateinit var testCase: Pair<App, String>
 
     @Test
     fun testJsonSerialisation() {

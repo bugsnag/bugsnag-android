@@ -32,7 +32,7 @@ public class SessionTrackerTest {
     Client client;
 
     @Mock
-    AppData appData;
+    AppDataCollector appDataCollector;
 
     @Mock
     DeviceData deviceData;
@@ -46,13 +46,17 @@ public class SessionTrackerTest {
     @Mock
     SessionStore sessionStore;
 
+    @Mock
+    App app;
+
     /**
      * Configures a session tracker that automatically captures sessions
      */
     @Before
     public void setUp() {
         when(client.getAppContext()).thenReturn(context);
-        when(client.getAppData()).thenReturn(appData);
+        when(client.getAppDataCollector()).thenReturn(appDataCollector);
+        when(appDataCollector.generateApp()).thenReturn(app);
         when(client.getDeviceData()).thenReturn(deviceData);
         when(context.getSystemService("activity")).thenReturn(activityManager);
 

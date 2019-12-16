@@ -7,7 +7,10 @@
   "unhandled": false,
   "exceptions": [],
   "user": {},
-  "app": {},
+  "app": {
+    "type": "android",
+    "versionCode": 0
+  },
   "device": {},
   "breadcrumbs": [],
   "threads": []

@@ -24,7 +24,7 @@ class InternalReportDelegate implements EventStore.Delegate {
     final ImmutableConfig immutableConfig;
     final StorageManager storageManager;
 
-    final AppData appData;
+    final AppDataCollector appDataCollector;
     final DeviceData deviceData;
     final Context appContext;
     final SessionTracker sessionTracker;
@@ -33,13 +33,13 @@ class InternalReportDelegate implements EventStore.Delegate {
                            Logger logger,
                            ImmutableConfig immutableConfig,
                            StorageManager storageManager,
-                           AppData appData,
+                           AppDataCollector appDataCollector,
                            DeviceData deviceData,
                            SessionTracker sessionTracker) {
         this.logger = logger;
         this.immutableConfig = immutableConfig;
         this.storageManager = storageManager;
-        this.appData = appData;
+        this.appDataCollector = appDataCollector;
         this.deviceData = deviceData;
         this.appContext = context;
         this.sessionTracker = sessionTracker;
@@ -87,11 +87,7 @@ class InternalReportDelegate implements EventStore.Delegate {
      * This is intended for internal use only, and reports will not be visible to end-users.
      */
     void reportInternalBugsnagError(@NonNull Event event) {
-        Map<String, Object> app = appData.getAppDataSummary();
-        app.put("duration", AppData.getDurationMs());
-        app.put("durationInForeground", appData.calculateDurationInForeground());
-        app.put("inForeground", sessionTracker.isInForeground());
-        event.setApp(app);
+        event.setApp(appDataCollector.generateAppWithState());
 
         Map<String, Object> device = deviceData.getDeviceDataSummary();
         device.put("freeDisk", deviceData.calculateFreeDisk());
@@ -101,9 +97,6 @@ class InternalReportDelegate implements EventStore.Delegate {
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());
-
-        Object packageName = appData.getAppData().get("packageName");
-        event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
 
         final Report report = new Report(null, event);
         try {

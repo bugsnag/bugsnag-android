@@ -1,5 +1,8 @@
 {
+  "binaryArch": "x86",
+  "buildUUID": "123456",
   "codeBundleId": "foo-99",
+  "id": "com.example.foo",
   "releaseStage": "test-stage",
   "type": "ReactNative",
   "version": "1.2.3",
