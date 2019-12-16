@@ -14,8 +14,8 @@ class Thread internal constructor(
 ) : JsonStream.Streamable {
 
     enum class Type(internal val desc: String) {
-        Android("android"),
-        BrowserJs("browserjs")
+        ANDROID("android"),
+        BROWSER_JS("browserjs")
     }
 
     var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
