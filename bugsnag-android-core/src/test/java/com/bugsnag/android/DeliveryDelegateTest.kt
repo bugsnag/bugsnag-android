@@ -4,6 +4,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -92,7 +93,10 @@ internal class DeliveryDelegateTest {
         val breadcrumb = breadcrumbState.store.peek()
         assertEquals(BreadcrumbType.ERROR, breadcrumb.type)
         assertEquals("java.lang.RuntimeException", breadcrumb.message)
+        assertEquals("java.lang.RuntimeException", breadcrumb.metadata["errorClass"])
         assertEquals("Whoops!", breadcrumb.metadata["message"])
+        assertEquals("true", breadcrumb.metadata["unhandled"])
+        assertEquals("ERROR", breadcrumb.metadata["severity"])
     }
 
     private class InterceptingLogger : Logger {

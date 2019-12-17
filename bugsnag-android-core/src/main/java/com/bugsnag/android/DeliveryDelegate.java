@@ -5,6 +5,7 @@ import androidx.annotation.VisibleForTesting;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
@@ -102,10 +103,15 @@ class DeliveryDelegate extends BaseObservable {
         List<Error> errors = event.getErrors();
 
         if (errors.size() > 0) {
-            String name = errors.get(0).getErrorClass();
-            String msg = errors.get(0).getErrorMessage();
-            Map<String, Object> message = Collections.<String, Object>singletonMap("message", msg);
-            breadcrumbState.add(new Breadcrumb(name, BreadcrumbType.ERROR, message, new Date()));
+            String errorClass = errors.get(0).getErrorClass();
+            String message = errors.get(0).getErrorMessage();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("errorClass", errorClass);
+            data.put("message", message);
+            data.put("unhandled", String.valueOf(event.isUnhandled()));
+            data.put("severity", event.getSeverity().toString());
+            breadcrumbState.add(new Breadcrumb(errorClass, BreadcrumbType.ERROR, data, new Date()));
         }
     }
 }
