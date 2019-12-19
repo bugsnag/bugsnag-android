@@ -7,13 +7,19 @@
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
+    <ID>MaxLineLength:ThreadStateTest.kt$ThreadStateTest$private val threadState = ThreadState(configuration, null, Thread.currentThread(), Thread.getAllStackTraces(), NoopLogger)</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String&gt; ): DeliveryStatus</ID>
+    <ID>ReturnCount:DeviceDataCollector.kt$DeviceDataCollector$ private fun isRooted(): Boolean</ID>
     <ID>TooGenericExceptionCaught:BugsnagPluginInterface.kt$BugsnagPluginInterface$exc: Exception</ID>
+    <ID>TooGenericExceptionCaught:CallbackState.kt$CallbackState$ex: Throwable</ID>
     <ID>TooGenericExceptionCaught:Configuration.kt$Configuration$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultDelivery.kt$DefaultDelivery$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
     <ID>TooManyFunctions:Configuration.kt$Configuration : CallbackAwareMetadataAware</ID>
     <ID>TooManyFunctions:Event.kt$Event : StreamableMetadataAwareUserAware</ID>
+    <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
     <ID>TooManyFunctions:Metadata.kt$Metadata : StreamableMetadataAware</ID>
-    </Whitelist>
+    <ID>VariableNaming:Event.kt$Event$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
+  </Whitelist>
 </SmellBaseline>

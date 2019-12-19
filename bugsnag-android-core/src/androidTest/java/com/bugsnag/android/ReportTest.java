@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateAppWithState;
+import static com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 
@@ -30,6 +31,7 @@ public class ReportTest {
         HandledState handledState = HandledState.newInstance(HandledState.REASON_ANR);
         Event event = new Event(exception, config, handledState);
         event.setApp(generateAppWithState());
+        event.setDevice(generateDeviceWithState());
         report = new Report("api-key", event);
     }
 

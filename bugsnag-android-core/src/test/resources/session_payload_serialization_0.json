@@ -8,6 +8,17 @@
     "type": "android",
     "versionCode": 0
   },
-  "device": {},
+  "device": {
+    "cpuAbi": [],
+    "manufacturer": "samsung",
+    "model": "s7",
+    "osName": "android",
+    "osVersion": "7.1",
+    "runtimeVersions": {
+      "androidApiLevel": 24,
+      "osBuild": "bulldog"
+    },
+    "totalMemory": 10923250000
+  },
   "sessions": []
 }

@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateApp
+import com.bugsnag.android.BugsnagTestUtils.generateDevice
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -21,6 +22,7 @@ internal class SessionPayloadSerializationTest {
             Notifier.url = "https://bugsnag.com"
 
             val app = generateApp()
+            val device = generateDevice()
 
             return generateSerializationTestCases(
                 "session_payload",
@@ -28,7 +30,7 @@ internal class SessionPayloadSerializationTest {
                     session,
                     emptyList(),
                     app,
-                    mutableMapOf()
+                    device
                 )
             )
         }

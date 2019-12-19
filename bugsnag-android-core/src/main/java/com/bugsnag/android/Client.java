@@ -52,7 +52,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final Context appContext;
 
     @NonNull
-    final DeviceData deviceData;
+    final DeviceDataCollector deviceDataCollector;
 
     @NonNull
     final AppDataCollector appDataCollector;
@@ -167,7 +167,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         String id = userState.getUser().getId();
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
-        deviceData = new DeviceData(connectivity, appContext, resources, id, info,
+        deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
                 Environment.getDataDirectory(), logger);
 
         // Set up breadcrumbs
@@ -183,7 +183,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
 
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
-                immutableConfig, storageManager, appDataCollector, deviceData, sessionTracker);
+                immutableConfig, storageManager, appDataCollector, deviceDataCollector,
+                sessionTracker);
         eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
@@ -565,9 +566,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
 
         // Capture the state of the app and device and attach diagnostics to the event
-        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
-        event.setDevice(errorDeviceData);
-        event.addMetadata("device", deviceData.getDeviceMetadata());
+        event.setDevice(deviceDataCollector.generateDeviceWithState());
+        event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
 
         // add additional info that belongs in metadata
         // generate new object each time, as this can be mutated by end-users
@@ -608,8 +608,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     @NonNull
-    DeviceData getDeviceData() {
-        return deviceData;
+    DeviceDataCollector getDeviceDataCollector() {
+        return deviceDataCollector;
     }
 
     @Override

@@ -234,14 +234,14 @@ public class ClientTest {
     @Test
     public void testDeviceDataCollection() {
         client = generateClient();
-        DeviceData deviceData = client.getDeviceData();
-        assertEquals(client.getDeviceData(), deviceData);
+        DeviceDataCollector deviceDataCollector = client.getDeviceDataCollector();
+        assertEquals(client.getDeviceDataCollector(), deviceDataCollector);
     }
 
     @Test
     public void testPopulateDeviceMetadata() {
         client = generateClient();
-        Map<String, Object> metadata = client.getDeviceData().getDeviceMetadata();
+        Map<String, Object> metadata = client.getDeviceDataCollector().getDeviceMetadata();
 
         assertEquals(9, metadata.size());
         assertNotNull(metadata.get("batteryLevel"));

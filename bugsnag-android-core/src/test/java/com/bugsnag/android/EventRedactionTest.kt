@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import org.junit.Test
@@ -16,6 +17,7 @@ internal class EventRedactionTest {
             HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         )
         event.app = generateAppWithState()
+        event.device = generateDeviceWithState()
 
         event.addMetadata("app", "password", "foo")
         event.addMetadata("device", "password", "bar")
@@ -23,7 +25,6 @@ internal class EventRedactionTest {
         val metadata = mutableMapOf<String, Any?>(Pair("password", "whoops"))
         event.breadcrumbs = listOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0)))
         event.threads = emptyList()
-
 
         val writer = StringWriter()
         val stream = JsonStream(writer)

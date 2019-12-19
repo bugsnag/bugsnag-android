@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
+import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -37,7 +38,7 @@ internal class NativeInterfaceApiTest {
     lateinit var appDataCollector: AppDataCollector
 
     @Mock
-    lateinit var deviceData: DeviceData
+    lateinit var deviceDataCollector: DeviceDataCollector
 
     @Mock
     lateinit var sessionTracker: SessionTracker
@@ -59,7 +60,7 @@ internal class NativeInterfaceApiTest {
         )
 
         `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
-        `when`(client.getDeviceData()).thenReturn(deviceData)
+        `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
         `when`(client.getUser()).thenReturn(User("123", "tod@example.com", "Tod"))
 
     }
@@ -93,15 +94,14 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun getDeviceData() {
-        `when`(deviceData.deviceData).thenReturn(mapOf(Pair("og", true)))
-        `when`(deviceData.deviceMetadata).thenReturn(mapOf(Pair("metadata", true)))
-        val expected = mapOf(Pair("og", true), Pair("metadata", true))
-        assertEquals(expected, NativeInterface.getDevice())
+        `when`(deviceDataCollector.generateDeviceWithState()).thenReturn(generateDeviceWithState())
+        `when`(deviceDataCollector.getDeviceMetadata()).thenReturn(mapOf(Pair("metadata", true)))
+        assertTrue(NativeInterface.getDevice()["metadata"] as Boolean)
     }
 
     @Test
     fun getCpuAbi() {
-        `when`(deviceData.getCpuAbi()).thenReturn(arrayOf("x86"))
+        `when`(deviceDataCollector.getCpuAbi()).thenReturn(arrayOf("x86"))
         assertArrayEquals(arrayOf("x86"), NativeInterface.getCpuAbi())
     }
 

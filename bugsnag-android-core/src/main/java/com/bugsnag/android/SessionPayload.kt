@@ -7,7 +7,7 @@ class SessionPayload internal constructor(
     internal val session: Session?,
     private val files: List<File>?,
     val app: App,
-    val device: MutableMap<String, Any>
+    val device: Device
 ) : JsonStream.Streamable {
 
     @Throws(IOException::class)

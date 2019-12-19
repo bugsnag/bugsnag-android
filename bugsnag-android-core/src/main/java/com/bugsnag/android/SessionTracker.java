@@ -152,7 +152,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
 
         final SessionPayload payload = new SessionPayload(session, null,
                 client.getAppDataCollector().generateApp(),
-                client.getDeviceData().getDeviceDataSummary());
+                client.getDeviceDataCollector().generateDevice());
         boolean deliverSession = callbackState.runOnSessionTasks(payload, logger);
 
         if (deliverSession && notifyForRelease
@@ -246,7 +246,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
                     SessionPayload payload =
                         new SessionPayload(null, storedFiles,
                             client.appDataCollector.generateApp(),
-                                client.deviceData.getDeviceDataSummary());
+                                client.deviceDataCollector.generateDevice());
 
                     DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
 

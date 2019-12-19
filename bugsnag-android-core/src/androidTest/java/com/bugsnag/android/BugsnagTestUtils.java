@@ -84,6 +84,12 @@ final class BugsnagTestUtils {
         return new ConnectivityCompat(ApplicationProvider.getApplicationContext(), null);
     }
 
+    static DeviceWithState generateDeviceWithState() {
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        return new DeviceWithState(buildInfo, new String[]{}, null, null, null,
+                109230923452L, 22234423124L, 92340255592L, "portrait", new Date(0));
+    }
+
     @NonNull
     static SessionStore generateSessionStore() {
         Context applicationContext = ApplicationProvider.getApplicationContext();
