@@ -58,18 +58,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_disableCrashReporting(
   bsg_handler_uninstall_cpp();
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_enableAnrReporting(
-    JNIEnv *env, jobject _this, jobject anr_buffer) {
-  if (bsg_global_env == NULL) {
-    BUGSNAG_LOG("Attempted to enable ANR reporting without first calling install()");
-    return;
-  }
-  // only install if provided a buffer
-  if (!(*env)->IsSameObject(env, anr_buffer, NULL)) {
-    bsg_handler_install_anr((*env)->GetDirectBufferAddress(env, anr_buffer));
-  }
-}
-
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_enableCrashReporting(
     JNIEnv *env, jobject _this) {
   if (bsg_global_env == NULL) {
@@ -78,11 +66,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_enableCrashRepo
   }
   bsg_handler_install_signal(bsg_global_env);
   bsg_handler_install_cpp(bsg_global_env);
-}
-
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableAnrReporting(
-    JNIEnv *env, jobject _this) {
-  bsg_handler_uninstall_anr();
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(

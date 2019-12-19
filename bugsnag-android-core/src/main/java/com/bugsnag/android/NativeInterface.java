@@ -47,14 +47,6 @@ public class NativeInterface {
          */
         INSTALL,
         /**
-         * Turn on detection for ANRs
-         */
-        ENABLE_ANR_REPORTING,
-        /**
-         * Turn off detection for ANRs
-         */
-        DISABLE_ANR_REPORTING,
-        /**
          * Turn on detection for C/C++ crashes
          */
         ENABLE_NATIVE_CRASH_REPORTING,
@@ -132,11 +124,6 @@ public class NativeInterface {
          * the new release stage
          */
         UPDATE_RELEASE_STAGE,
-        /**
-         * Set a new value for `app.notifyReleaseStages`. The message object should be
-         * the Configuration object
-         */
-        UPDATE_NOTIFY_RELEASE_STAGES,
         /**
          * Set a new value for user email. The message object is a string
          */
@@ -473,48 +460,6 @@ public class NativeInterface {
     }
 
     /**
-     * Enable automatic reporting of ANRs.
-     */
-    public static void enableAnrReporting() {
-        getClient().enableAnrReporting();
-    }
-
-    /**
-     * Disable automatic reporting of ANRs.
-     */
-    public static void disableAnrReporting() {
-        getClient().disableAnrReporting();
-    }
-
-    /**
-     * Enable automatic reporting of C/C++ crashes.
-     */
-    public static void enableNdkCrashReporting() {
-        getClient().enableNdkCrashReporting();
-    }
-
-    /**
-     * Disable automatic reporting of C/C++ crashes.
-     */
-    public static void disableNdkCrashReporting() {
-        getClient().disableNdkCrashReporting();
-    }
-
-    /**
-     * Enable automatic reporting of uncaught Java exceptions.
-     */
-    public static void enableUncaughtJavaExceptionReporting() {
-        getClient().enableExceptionHandler();
-    }
-
-    /**
-     * Disable automatic reporting of uncaught Java exceptions.
-     */
-    public static void disableUncaughtJavaExceptionReporting() {
-        getClient().disableExceptionHandler();
-    }
-
-    /**
      * Return the client report app version
      */
     @NonNull
@@ -549,7 +494,8 @@ public class NativeInterface {
                                                            unhandledCount, handledCount);
     }
 
-    /** Deliver a report, serialized as an event JSON payload.
+    /**
+     * Deliver a report, serialized as an event JSON payload.
      *
      * @param releaseStageBytes The release stage in which the event was
      *                          captured. Used to determine whether the report
@@ -565,8 +511,8 @@ public class NativeInterface {
         }
         String payload = new String(payloadBytes, UTF8Charset);
         String releaseStage = releaseStageBytes == null
-            ? null
-            : new String(releaseStageBytes, UTF8Charset);
+                ? null
+                : new String(releaseStageBytes, UTF8Charset);
         Client client = getClient();
         if (releaseStage == null
             || releaseStage.length() == 0

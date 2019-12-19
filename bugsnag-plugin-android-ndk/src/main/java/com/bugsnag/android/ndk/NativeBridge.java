@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -37,10 +36,6 @@ public class NativeBridge implements Observer {
 
     public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
                                       int apiLevel, boolean is32bit);
-
-    public static native void enableAnrReporting(@Nullable ByteBuffer anrSentinel);
-
-    public static native void disableAnrReporting();
 
     public static native void enableCrashReporting();
 
@@ -126,12 +121,6 @@ public class NativeBridge implements Observer {
         switch (message.type) {
             case INSTALL:
                 handleInstallMessage(arg);
-                break;
-            case ENABLE_ANR_REPORTING:
-                handleEnableAnrMessage(arg);
-                break;
-            case DISABLE_ANR_REPORTING:
-                disableAnrReporting();
                 break;
             case ENABLE_NATIVE_CRASH_REPORTING:
                 enableCrashReporting();
@@ -286,12 +275,6 @@ public class NativeBridge implements Observer {
         return is32bit;
     }
 
-    private void handleEnableAnrMessage(Object arg) {
-        if (arg instanceof ByteBuffer) {
-            enableAnrReporting((ByteBuffer) arg);
-        }
-    }
-
     private void handleAddBreadcrumb(Object arg) {
         if (arg instanceof Breadcrumb) {
             Breadcrumb crumb = (Breadcrumb) arg;
@@ -303,6 +286,7 @@ public class NativeBridge implements Observer {
                     }
                 }
             }
+
             addBreadcrumb(crumb.getName(), crumb.getType().toString(),
                 crumb.getTimestamp(), metadata);
         } else {
@@ -318,6 +302,7 @@ public class NativeBridge implements Observer {
                 && values.get(METADATA_KEY) instanceof String) {
                 String section = makeSafe((String)values.get(METADATA_SECTION));
                 String key = makeSafe((String)values.get(METADATA_KEY));
+
                 if (values.get(METADATA_VALUE) instanceof String) {
                     addMetadataString(section, key,
                         makeSafe((String) values.get(METADATA_VALUE)));
@@ -426,7 +411,6 @@ public class NativeBridge implements Observer {
             // TODO enable ANRs in future when supported in Unity
         } else {
             disableCrashReporting();
-            disableAnrReporting();
         }
     }
 

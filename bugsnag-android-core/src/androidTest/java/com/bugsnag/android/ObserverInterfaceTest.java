@@ -144,9 +144,9 @@ public class ObserverInterfaceTest {
     @Test
     public void settingNotifyReleaseStageSendsMessage() {
         client.getConfig().setNotifyReleaseStages(new String[]{"prod-2", "dev-4"});
-        String[] value = (String[]) findMessageInQueue(
-                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, String[].class);
-        assertArrayEquals(new String[]{"prod-2", "dev-4"}, value);
+        Configuration value = (Configuration) findMessageInQueue(
+                NativeInterface.MessageType.UPDATE_NOTIFY_RELEASE_STAGES, Configuration.class);
+        assertArrayEquals(new String[]{"prod-2", "dev-4"}, value.getNotifyReleaseStages());
     }
 
     @Test
