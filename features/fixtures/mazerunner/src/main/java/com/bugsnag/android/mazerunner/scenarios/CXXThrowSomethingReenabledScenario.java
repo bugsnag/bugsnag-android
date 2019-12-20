@@ -29,6 +29,7 @@ public class CXXThrowSomethingReenabledScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
+        Bugsnag.getClient().getConfig().setReleaseStage("production");
         Bugsnag.getClient().getConfig().setNotifyReleaseStages(new String[]{"fee-fi-fo-fum"});
         Bugsnag.getClient().getConfig().setNotifyReleaseStages(new String[]{"production"});
         crash(23);
