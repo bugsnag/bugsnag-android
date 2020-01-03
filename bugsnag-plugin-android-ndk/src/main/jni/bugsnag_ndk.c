@@ -58,6 +58,22 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_disableCrashReporting(
   bsg_handler_uninstall_cpp();
 }
 
+JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_enableCrashReporting(
+    JNIEnv *env, jobject _this) {
+  if (bsg_global_env == NULL) {
+    BUGSNAG_LOG("Attempted to enable crash reporting without first calling install()");
+    return;
+  }
+  bsg_handler_install_signal(bsg_global_env);
+  bsg_handler_install_cpp(bsg_global_env);
+}
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(
+    JNIEnv *env, jobject _this) {
+  bsg_handler_uninstall_signal();
+  bsg_handler_uninstall_cpp();
+}
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
     jint _api_level, jboolean is32bit) {

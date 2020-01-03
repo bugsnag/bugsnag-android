@@ -37,6 +37,10 @@ public class NativeBridge implements Observer {
     public static native void install(@NonNull String reportingDirectory, boolean autoNotify,
                                       int apiLevel, boolean is32bit);
 
+    public static native void enableCrashReporting();
+
+    public static native void disableCrashReporting();
+
     public static native void deliverReportAtPath(@NonNull String filePath);
 
     public static native void addBreadcrumb(@NonNull String name, @NonNull String type,
@@ -118,6 +122,12 @@ public class NativeBridge implements Observer {
             case INSTALL:
                 handleInstallMessage(arg);
                 break;
+            case ENABLE_NATIVE_CRASH_REPORTING:
+                enableCrashReporting();
+                break;
+            case DISABLE_NATIVE_CRASH_REPORTING:
+                disableCrashReporting();
+                break;
             case DELIVER_PENDING:
                 deliverPendingReports();
                 break;
@@ -171,6 +181,9 @@ public class NativeBridge implements Observer {
                 break;
             case UPDATE_RELEASE_STAGE:
                 handleReleaseStageChange(arg);
+                break;
+            case UPDATE_NOTIFY_RELEASE_STAGES:
+                handleNotifyReleaseStagesChange(arg);
                 break;
             case UPDATE_USER_ID:
                 handleUserIdChange(arg);
@@ -372,10 +385,32 @@ public class NativeBridge implements Observer {
     }
 
     private void handleReleaseStageChange(Object arg) {
-        if (arg instanceof String) {
-            updateReleaseStage(makeSafe((String)arg));
+        if (arg instanceof Configuration) {
+            Configuration config = (Configuration) arg;
+            String releaseStage = config.getReleaseStage();
+            updateReleaseStage(makeSafe(releaseStage));
+            enableOrDisableReportingIfNeeded(config);
         } else {
             warn("UPDATE_RELEASE_STAGE object is invalid: " + arg);
+        }
+    }
+
+    private void handleNotifyReleaseStagesChange(Object arg) {
+        if (arg instanceof Configuration) {
+            enableOrDisableReportingIfNeeded((Configuration) arg);
+        } else {
+            warn("UPDATE_NOTIFY_RELEASE_STAGES object is invalid: " + arg);
+        }
+    }
+
+    private void enableOrDisableReportingIfNeeded(Configuration config) {
+        if (config.shouldNotifyForReleaseStage(config.getReleaseStage())) {
+            if (config.getDetectNdkCrashes()) {
+                enableCrashReporting();
+            }
+            // TODO enable ANRs in future when supported in Unity
+        } else {
+            disableCrashReporting();
         }
     }
 
@@ -461,7 +496,7 @@ public class NativeBridge implements Observer {
     }
 
     private void handleUpdateMetadata(Object arg) {
-        if (arg instanceof MetaData) {
+        if (arg instanceof Map) {
             updateMetadata(arg);
         } else {
             warn("UPDATE_METADATA object is invalid: " + arg);

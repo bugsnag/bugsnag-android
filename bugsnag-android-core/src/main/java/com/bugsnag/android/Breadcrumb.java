@@ -48,6 +48,12 @@ public final class Breadcrumb implements JsonStream.Streamable {
                @NonNull BreadcrumbType type,
                @NonNull Date captureDate,
                @NonNull Map<String, String> metadata) {
+        if (captureDate == null) {
+            captureDate = new Date();
+        }
+        if (metadata == null) {
+            metadata = new HashMap<>();
+        }
         this.timestamp = DateUtils.toIso8601(captureDate);
         this.type = type;
         this.name = name;

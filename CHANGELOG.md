@@ -7,6 +7,26 @@
 * Catch throwables when invoking methods on system services
   [#623](https://github.com/bugsnag/bugsnag-android/pull/623)
 
+* Fix possible crash when recording reports and breadcrumbs containing values
+  using different text encodings or UTF-8 control characters, followed by a 
+  C/C++ crash.
+  [#584](https://github.com/bugsnag/bugsnag-android/pull/584)
+* Fix crash when calling `NativeInterface.clearTab()` (from an integration
+  library)
+  [#582](https://github.com/bugsnag/bugsnag-android/pull/582)
+* Fix abort() in native code when storing breadcrumbs with null values in
+  metadata
+  [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
+* Fix potential segfaults when adding breadcrumb with NDK
+  [#546](https://github.com/bugsnag/bugsnag-android/pull/546)
+* Convert metadata to map when notifying the NDK observer
+  [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
+* Prevent overwrite of signal mask when installing ANR handler
+  [#520](https://github.com/bugsnag/bugsnag-android/pull/520)
+* Fix possible null pointer exception when creating a breadcrumb without
+  metadata
+  [#585](https://github.com/bugsnag/bugsnag-android/pull/585)
+
 ## 4.21.1 (2019-10-15)
 
 * Fix a packaging issue on Maven Central in v4.21.0

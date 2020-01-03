@@ -47,6 +47,14 @@ public class NativeInterface {
          */
         INSTALL,
         /**
+         * Turn on detection for C/C++ crashes
+         */
+        ENABLE_NATIVE_CRASH_REPORTING,
+        /**
+         * Turn off detection for C/C++ crashes
+         */
+        DISABLE_NATIVE_CRASH_REPORTING,
+        /**
          * Send a report for a handled Java exception
          */
         NOTIFY_HANDLED,
