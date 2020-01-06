@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Fix: address CVE-2019-10101 by increasing Kotlin version to 1.3.61
+  [#739](https://github.com/bugsnag/bugsnag-android/pull/739)
+
 * Catch throwables when invoking methods on system services
   [#623](https://github.com/bugsnag/bugsnag-android/pull/623)
 
