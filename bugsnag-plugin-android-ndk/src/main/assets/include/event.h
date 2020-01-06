@@ -1,5 +1,5 @@
-#ifndef BUGSNAG_ANDROID_NDK_REPORT_API_H
-#define BUGSNAG_ANDROID_NDK_REPORT_API_H
+#ifndef BUGSNAG_ANDROID_NDK_EVENT_API_H
+#define BUGSNAG_ANDROID_NDK_EVENT_API_H
 
 typedef enum {
   /** An unhandled exception */
@@ -46,4 +46,5 @@ typedef enum {
    */
   BSG_CRUMB_USER,
 } bsg_breadcrumb_t;
+
 #endif

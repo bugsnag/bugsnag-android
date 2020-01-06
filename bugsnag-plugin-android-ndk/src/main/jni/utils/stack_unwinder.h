@@ -1,7 +1,7 @@
 #ifndef BSG_STACK_UNWINDER_H
 #define BSG_STACK_UNWINDER_H
 
-#include <report.h>
+#include <event.h>
 #include <signal.h>
 #include "build.h"
 
