@@ -22,7 +22,7 @@ internal class AnrDetailsCollector {
         handlerThread.start()
     }
 
-    fun collectAnrDetails(ctx: Context): ProcessErrorStateInfo? {
+    internal fun collectAnrDetails(ctx: Context): ProcessErrorStateInfo? {
         val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         return captureProcessErrorState(am, Process.myPid())
     }
