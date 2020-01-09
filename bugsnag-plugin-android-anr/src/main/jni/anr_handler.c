@@ -17,6 +17,7 @@ static pthread_mutex_t bsg_anr_handler_config = PTHREAD_MUTEX_INITIALIZER;
 // on the sigquit-watching thread
 static bool enabled = false;
 static bool installed = false;
+static bool invokePrevHandler = true;
 
 static JavaVM *bsg_jvm = NULL;
 static jmethodID mthd_notify_anr_detected = NULL;
@@ -61,14 +62,18 @@ void bsg_handle_sigquit(int signum, siginfo_t *info, void *user_context) {
   }
 
   // Invoke previous handler, if a custom handler has been set
-  struct sigaction previous = bsg_sigquit_sigaction_previous;
-  if (previous.sa_flags & SA_SIGINFO) {
-    previous.sa_sigaction(SIGQUIT, info, user_context);
-  } else if (previous.sa_handler == SIG_DFL) {
-    // Do nothing, the default action is nothing
-  } else if (previous.sa_handler != SIG_IGN) {
-    void (*previous_handler)(int) = previous.sa_handler;
-    previous_handler(signum);
+  // This can be conditionally switched off on certain platforms (e.g. Unity) where
+  // this behaviour is not desirable due to Unity's implementation failing with a SIGSEGV
+  if (invokePrevHandler) {
+    struct sigaction previous = bsg_sigquit_sigaction_previous;
+    if (previous.sa_flags & SA_SIGINFO) {
+      previous.sa_sigaction(SIGQUIT, info, user_context);
+    } else if (previous.sa_handler == SIG_DFL) {
+      // Do nothing, the default action is nothing
+    } else if (previous.sa_handler != SIG_IGN) {
+      void (*previous_handler)(int) = previous.sa_handler;
+      previous_handler(signum);
+    }
   }
 }
 
@@ -92,8 +97,9 @@ void *bsg_monitor_anrs(void *_arg) {
   return NULL;
 }
 
-bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
+bool bsg_handler_install_anr(JNIEnv *env, jobject plugin, jboolean callPreviousSigquitHandler) {
   pthread_mutex_lock(&bsg_anr_handler_config);
+  invokePrevHandler = callPreviousSigquitHandler;
 
   if (!installed && bsg_configure_anr_jni(env)) {
     obj_plugin = (*env)->NewGlobalRef(env, plugin);
