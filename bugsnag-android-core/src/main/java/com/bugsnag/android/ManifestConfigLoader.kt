@@ -53,8 +53,8 @@ internal class ManifestConfigLoader {
             val ai = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             val data = ai.metaData
             return load(data, userSuppliedApiKey)
-        } catch (ignore: Exception) {
-            throw IllegalStateException("Bugsnag is unable to read config from manifest.")
+        } catch (exc: Exception) {
+            throw IllegalStateException("Bugsnag is unable to read config from manifest.", exc)
         }
     }
 
