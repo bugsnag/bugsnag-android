@@ -8,6 +8,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef bool (*bsg_on_error)(void *);
+
 /**
  * Configure the Bugsnag interface, optionally including the JNI environment.
  * @param env  The JNI environment to use when using convenience methods
@@ -35,6 +38,12 @@ void bugsnag_set_user_env(JNIEnv *env, char* id, char* email, char* name);
  */
 void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type);
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message, bsg_breadcrumb_t type);
+
+void bugsnag_add_on_error(bsg_on_error on_error);
+void bugsnag_remove_on_error(bsg_on_error on_error);
+
+char *bugsnag_event_get_context(void *event_ptr);
+void bugsnag_event_set_context(void *event_ptr, char *value);
 
 #ifdef __cplusplus
 }

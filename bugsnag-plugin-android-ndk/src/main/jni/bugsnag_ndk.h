@@ -9,6 +9,7 @@
 
 #include "event.h"
 #include "utils/stack_unwinder.h"
+#include "../assets/include/bugsnag.h"
 
 #ifndef BUGSNAG_LOG
 #define BUGSNAG_LOG(fmt, ...)                                                  \
@@ -57,9 +58,13 @@ typedef struct {
      * true if a handler has completed crash handling
      */
     bool crash_handled;
+
+    bsg_on_error on_error;
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();
+
+bool bsg_run_on_error();
 
 #ifdef __cplusplus
 }

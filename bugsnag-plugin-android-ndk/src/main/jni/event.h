@@ -260,7 +260,6 @@ void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
 void bugsnag_event_remove_metadata(bugsnag_event *event, char *section,
                                    char *name);
 void bugsnag_event_remove_metadata_tab(bugsnag_event *event, char *section);
-void bugsnag_event_set_context(bugsnag_event *event, char *value);
 void bugsnag_event_set_orientation(bugsnag_event *event, int value);
 void bugsnag_event_set_app_version(bugsnag_event *event, char *value);
 void bugsnag_event_set_build_uuid(bugsnag_event *event, char *value);
