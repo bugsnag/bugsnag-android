@@ -228,11 +228,3 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
   (*env)->DeleteLocalRef(env, type_class);
   (*env)->DeleteLocalRef(env, interface_class);
 }
-
-void bugsnag_add_on_error(bsg_on_error on_error) {
-  bugsnag_add_on_error_env(bsg_global_jni_env, on_error);
-}
-
-void bugsnag_remove_on_error(bsg_on_error on_error) {
-  bugsnag_remove_on_error_env(bsg_global_jni_env, on_error);
-}

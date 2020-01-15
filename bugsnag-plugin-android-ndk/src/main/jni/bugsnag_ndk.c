@@ -282,7 +282,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
                     ? NULL
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  bugsnag_event_set_app_version(&bsg_global_env->next_event, value);
+  bugsnag_app_set_version(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -297,7 +297,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateBuildUUID(JNIEnv *env,
                     ? NULL
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  bugsnag_event_set_build_uuid(&bsg_global_env->next_event, value);
+  bugsnag_app_set_build_uuid(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, new_value, value);
 }
@@ -376,7 +376,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateReleaseStage(
                     ? NULL
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  bugsnag_event_set_release_stage(&bsg_global_env->next_event, value);
+  bugsnag_app_set_release_stage(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     (*env)->ReleaseStringUTFChars(env, new_value, value);
