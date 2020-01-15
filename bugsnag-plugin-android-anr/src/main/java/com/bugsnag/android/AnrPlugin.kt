@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.os.Handler
 import android.os.Looper
 
 internal class AnrPlugin : BugsnagPlugin {
@@ -14,13 +15,17 @@ internal class AnrPlugin : BugsnagPlugin {
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
 
-    private external fun enableAnrReporting()
+    private external fun enableAnrReporting(callPreviousSigquitHandler: Boolean)
     private external fun disableAnrReporting()
 
     override fun loadPlugin(client: Client) {
-        enableAnrReporting()
-        Logger.info("Initialised ANR Plugin")
-        this.client = client
+        // this must be run from the main thread as the SIGQUIT is sent to the main thread,
+        // and if the handler is installed on a background thread instead we receive no signal
+        Handler(Looper.getMainLooper()).post(Runnable {
+            this.client = client
+            enableAnrReporting(client.config.callPreviousSigquitHandler)
+            Logger.warn("Initialised ANR Plugin")
+        })
     }
 
     override fun unloadPlugin() = disableAnrReporting()

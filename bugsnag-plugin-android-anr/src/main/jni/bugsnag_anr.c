@@ -8,8 +8,8 @@ extern "C" {
 #endif
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_AnrPlugin_enableAnrReporting(
-        JNIEnv *env, jobject _this) {
-    bsg_handler_install_anr(env, _this);
+        JNIEnv *env, jobject _this, jboolean callPreviousSigquitHandler) {
+    bsg_handler_install_anr(env, _this, callPreviousSigquitHandler);
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_AnrPlugin_disableAnrReporting(

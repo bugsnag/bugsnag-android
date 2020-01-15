@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -49,6 +49,7 @@ public class Configuration extends Observable implements Observer {
     private boolean autoCaptureSessions = true;
     private boolean automaticallyCollectBreadcrumbs = true;
 
+    private boolean callPreviousSigquitHandler = true;
     private boolean detectAnrs = false;
     private boolean detectNdkCrashes;
     private long anrThresholdMs = 5000;
@@ -703,6 +704,14 @@ public class Configuration extends Observable implements Observer {
      */
     public void setDetectAnrs(boolean detectAnrs) {
         this.detectAnrs = detectAnrs;
+    }
+
+    boolean getCallPreviousSigquitHandler() {
+        return callPreviousSigquitHandler;
+    }
+
+    void setCallPreviousSigquitHandler(boolean callPreviousSigquitHandler) {
+        this.callPreviousSigquitHandler = callPreviousSigquitHandler;
     }
 
     /**

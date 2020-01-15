@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Allow disabling previous signal handler invocation for Unity ANRs
+  [#743](https://github.com/bugsnag/bugsnag-android/pull/743)
+
 * Avoid polling when detecting ANRs by invoking JNI from SIGQUIT handler
   [#741](https://github.com/bugsnag/bugsnag-android/pull/741)
 
