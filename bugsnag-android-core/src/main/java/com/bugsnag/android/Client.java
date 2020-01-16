@@ -496,42 +496,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     */
-    public void notify(@NonNull String name,
-                       @NonNull String message,
-                       @NonNull StackTraceElement[] stacktrace) {
-        notify(name, message, stacktrace, null);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param onError   callback invoked on the generated error report for
-     *                   additional modification
-     */
-    public void notify(@NonNull String name,
-                       @NonNull String message,
-                       @NonNull StackTraceElement[] stacktrace,
-                       @Nullable OnErrorCallback onError) {
-        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Stacktrace trace = new Stacktrace(stacktrace, immutableConfig.getProjectPackages(),
-                immutableConfig.getLogger());
-        Error err = new Error(name, message, trace.getTrace());
-        Metadata metadata = metadataState.getMetadata();
-        Event event = new Event(null, immutableConfig, handledState, metadata);
-        event.setErrors(Collections.singletonList(err));
-        notifyInternal(event, onError);
-    }
-
-    /**
      * Caches an error then attempts to notify.
      *
      * Should only ever be called from the {@link ExceptionHandler}.

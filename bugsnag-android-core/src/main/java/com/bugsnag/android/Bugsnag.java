@@ -200,36 +200,6 @@ public final class Bugsnag {
         getClient().notify(exception, onError);
     }
 
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     *
-     */
-    public static void notify(@NonNull String name,
-                              @NonNull String message,
-                              @NonNull StackTraceElement[] stacktrace) {
-        getClient().notify(name, message, stacktrace);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param onError   callback invoked on the generated error report for
-     *                   additional modification
-     */
-    public static void notify(@NonNull String name,
-                              @NonNull String message,
-                              @NonNull StackTraceElement[] stacktrace,
-                              @Nullable OnErrorCallback onError) {
-        getClient().notify(name, message, stacktrace, onError);
-    }
-
     public static void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
         getClient().addMetadata(section, value);
     }
