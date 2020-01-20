@@ -22,4 +22,6 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
 
 char *bsg_binary_arch();
 
+char *bsg_os_name();
+
 #endif

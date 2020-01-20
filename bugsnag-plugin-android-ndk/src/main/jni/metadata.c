@@ -266,6 +266,10 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   (*env)->DeleteLocalRef(env, data);
 }
 
+char *bsg_os_name() {
+  return "android";
+}
+
 void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                               bugsnag_event *event) {
   jobject data = (*env)->CallStaticObjectMethod(
@@ -297,6 +301,7 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   bsg_copy_map_value_string(env, jni_cache, data, "screenResolution",
                             event->device.screen_resolution,
                             sizeof(event->device.screen_resolution));
+  bsg_strcpy(event->device.os_name, bsg_os_name());
   event->device.emulator =
       bsg_get_map_value_bool(env, jni_cache, data, "emulator");
   event->device.jailbroken =

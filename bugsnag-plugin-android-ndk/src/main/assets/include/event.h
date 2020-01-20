@@ -54,6 +54,7 @@ typedef enum {
 extern "C" {
 #endif
 
+
 /**
  * Retrieves the event context
  * @param event_ptr a pointer to the event supplied in an on_error callback
@@ -101,6 +102,40 @@ void bugsnag_app_set_duration_in_foreground(void *event_ptr, time_t value);
 
 bool bugsnag_app_get_in_foreground(void *event_ptr);
 void bugsnag_app_set_in_foreground(void *event_ptr, bool value);
+
+
+/* Accessors for event.device */
+
+
+bool bugsnag_device_get_jailbroken(void *event_ptr);
+void bugsnag_device_set_jailbroken(void *event_ptr, bool value);
+
+char *bugsnag_device_get_id(void *event_ptr);
+void bugsnag_device_set_id(void *event_ptr, char *value);
+
+char *bugsnag_device_get_locale(void *event_ptr);
+void bugsnag_device_set_locale(void *event_ptr, char *value);
+
+char *bugsnag_device_get_manufacturer(void *event_ptr);
+void bugsnag_device_set_manufacturer(void *event_ptr, char *value);
+
+char *bugsnag_device_get_model(void *event_ptr);
+void bugsnag_app_set_model(void *event_ptr, char *value);
+
+char *bugsnag_device_get_os_version(void *event_ptr);
+void bugsnag_device_set_os_version(void *event_ptr, char *value);
+
+long bugsnag_device_get_total_memory(void *event_ptr);
+void bugsnag_device_set_total_memory(void *event_ptr, long value);
+
+char *bugsnag_device_get_orientation(void *event_ptr);
+void bugsnag_device_set_orientation(void *event_ptr, char *value);
+
+time_t bugsnag_device_get_time(void *event_ptr);
+void bugsnag_device_set_time(void *event_ptr, time_t value);
+
+char *bugsnag_device_get_os_name(void *event_ptr);
+void bugsnag_device_set_os_name(void *event_ptr, char *value);
 
 #ifdef __cplusplus
 }

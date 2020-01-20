@@ -46,9 +46,33 @@ typedef struct {
 } bsg_exception;
 
 typedef struct {
+    int api_level;
+    double battery_level;
+    char brand[64];
+    int cpu_abi_count;
+    bsg_cpu_abi cpu_abi[8];
+    int dpi;
+    bool emulator;
+    char orientation[32];
+    time_t time;
+    char id[64];
+    bool jailbroken;
+    char locale[32];
+    char location_status[32];
+    char manufacturer[64];
+    char model[64];
+    char network_access[64];
+    char os_build[64];
+    char os_version[64];
+    float screen_density;
+    char screen_resolution[32];
+    long total_memory;
+} bsg_device_info_v1;
+
+typedef struct {
     bsg_library notifier;
     bsg_app_info app;
-    bsg_device_info device;
+    bsg_device_info_v1 device;
     bsg_user user;
     bsg_exception exception;
     bugsnag_metadata metadata;
@@ -70,7 +94,7 @@ typedef struct {
 typedef struct {
     bsg_library notifier;
     bsg_app_info app;
-    bsg_device_info device;
+    bsg_device_info_v1 device;
     bsg_user user;
     bsg_exception exception;
     bugsnag_metadata metadata;

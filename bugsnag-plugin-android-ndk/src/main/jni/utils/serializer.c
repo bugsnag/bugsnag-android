@@ -1,4 +1,5 @@
 #include "serializer.h"
+#include "string.h"
 
 #include <fcntl.h>
 #include <parson/parson.h>
@@ -9,6 +10,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <utils/migrate.h>
+#include <metadata.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,6 +23,8 @@ bugsnag_event *bsg_report_v3_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
+
+void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 
 #ifdef __cplusplus
 }
@@ -110,11 +114,12 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
 
   if (event != NULL) {
     event->app = report_v2->app;
-    event->device = report_v2->device;
     event->user = report_v2->user;
     event->metadata = report_v2->metadata;
     event->crumb_count = report_v2->crumb_count;
     event->crumb_first_index = report_v2->crumb_first_index;
+
+    migrate_device_v1(report_v2, event);
 
     size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
     memcpy(&event->breadcrumbs, report_v2->breadcrumbs, breadcrumb_size);
@@ -141,6 +146,37 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   }
   free(report_v2);
   return event;
+}
+
+void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
+  bsg_strcpy(event->device.os_name, bsg_os_name()); // os_name was not a field in v2
+  event->device.api_level = report_v2->device.api_level;
+  event->device.battery_level = report_v2->device.battery_level;
+  event->device.cpu_abi_count = report_v2->device.cpu_abi_count;
+  event->device.dpi = report_v2->device.dpi;
+  event->device.emulator = report_v2->device.emulator;
+  event->device.time = report_v2->device.time;
+  event->device.jailbroken = report_v2->device.jailbroken;
+  event->device.screen_density = report_v2->device.screen_density;
+  event->device.total_memory = report_v2->device.total_memory;
+
+  for (int k = 0;
+       k < report_v2->device.cpu_abi_count && k < sizeof(report_v2->device.cpu_abi); k++) {
+    bsg_strcpy(event->device.cpu_abi[k].value, report_v2->device.cpu_abi[k].value);
+    event->device.cpu_abi_count++;
+  }
+
+  bsg_strcpy(event->device.brand, report_v2->device.brand);
+  bsg_strcpy(event->device.orientation, report_v2->device.orientation);
+  bsg_strcpy(event->device.id, report_v2->device.id);
+  bsg_strcpy(event->device.locale, report_v2->device.locale);
+  bsg_strcpy(event->device.location_status, report_v2->device.location_status);
+  bsg_strcpy(event->device.manufacturer, report_v2->device.manufacturer);
+  bsg_strcpy(event->device.model, report_v2->device.model);
+  bsg_strcpy(event->device.network_access, report_v2->device.network_access);
+  bsg_strcpy(event->device.os_build, report_v2->device.os_build);
+  bsg_strcpy(event->device.os_version, report_v2->device.os_version);
+  bsg_strcpy(event->device.screen_resolution, report_v2->device.screen_resolution);
 }
 
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
@@ -277,7 +313,7 @@ void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event_obj) 
 }
 
 void bsg_serialize_device(const bsg_device_info device, JSON_Object *event_obj) {
-  json_object_dotset_string(event_obj, "device.osName", "android");
+  json_object_dotset_string(event_obj, "device.osName", device.os_name);
   json_object_dotset_string(event_obj, "device.id", device.id);
   json_object_dotset_string(event_obj, "device.locale", device.locale);
   json_object_dotset_string(event_obj, "device.osVersion", device.os_version);

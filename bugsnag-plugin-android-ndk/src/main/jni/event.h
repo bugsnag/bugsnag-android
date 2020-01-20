@@ -107,6 +107,7 @@ typedef struct {
     char network_access[64];
     char os_build[64];
     char os_version[64];
+    char os_name[64];
     float screen_density;
     char screen_resolution[32];
     long total_memory;
@@ -258,7 +259,6 @@ void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
 void bugsnag_event_remove_metadata(bugsnag_event *event, char *section,
                                    char *name);
 void bugsnag_event_remove_metadata_tab(bugsnag_event *event, char *section);
-void bugsnag_event_set_orientation(bugsnag_event *event, int value);
 void bugsnag_event_set_user_email(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_id(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_name(bugsnag_event *event, char *value);
