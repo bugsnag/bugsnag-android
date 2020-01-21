@@ -9,6 +9,10 @@ steps:
           cache-from:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+
+  - label: ':docker: Push Android base image'
+    timeout_in_minutes: 20
+    plugins:
       - docker-compose#v2.6.0:
           push:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -27,6 +31,10 @@ steps:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+
+  - label: ':docker: Push Android jvm test image'
+    timeout_in_minutes: 40
+    plugins:
       - docker-compose#v2.6.0:
           push:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -42,6 +50,10 @@ steps:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+
+  - label: ':docker: Push Android instrumentation image'
+    timeout_in_minutes: 20
+    plugins:
       - docker-compose#v2.6.0:
           push:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -57,6 +69,10 @@ steps:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+
+  - label: ':docker: Push Android apk builder image'
+    timeout_in_minutes: 20
+    plugins:
       - docker-compose#v2.6.0:
           push:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
@@ -105,6 +121,10 @@ steps:
             - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
+
+  - label: ':docker: Push Android sizer image'
+    timeout_in_minutes: 20
+    plugins:
       - docker-compose#v2.6.0:
           push:
             - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-${BRANCH_NAME}
