@@ -221,6 +221,29 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingScenario_crash(JN
   printf("This one here: %ld\n", (long) trigger_an_exception(num > 0));
 }
 
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingReenabledScenario_crash(JNIEnv *env,
+                                                                                       jobject instance,
+                                                                                       jint num) {
+  printf("This one here: %ld\n", (long) throw_an_object((num - 10) > 0, num));
+  printf("This one here: %ld\n", (long) trigger_an_exception(num > 0));
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingOutsideReleaseStagesScenario_crash(JNIEnv *env,
+                                                                                                  jobject instance,
+                                                                                                  jint num) {
+  printf("This one here: %ld\n", (long) throw_an_object((num - 10) > 0, num));
+  printf("This one here: %ld\n", (long) trigger_an_exception(num > 0));
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXTrapOutsideReleaseStagesScenario_crash(JNIEnv *env,
+                                                                                        jobject instance) {
+  printf("This one here: %ld\n", (long) crash_trap());
+}
+
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXStackoverflowScenario_crash(JNIEnv *env,
                                                                              jobject instance,

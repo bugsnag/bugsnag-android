@@ -26,7 +26,7 @@ Scenario: Reenabling native crash reporting before a native C++ crash
     When I run "CXXThrowSomethingReenabledScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
     And I run "CXXThrowSomethingReenabledScenario"
-    Then I should receive a request
+    Then I wait to receive a request
 
 Scenario: Changing release stage to exclude the current stage settings before a POSIX signal
     When I run "CXXTrapOutsideReleaseStagesScenario" and relaunch the app
