@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.22.3 (2020-01-20)
+## 4.22.3 (2020-01-22)
 
 * Allow disabling previous signal handler invocation for Unity ANRs
   [#743](https://github.com/bugsnag/bugsnag-android/pull/743)
