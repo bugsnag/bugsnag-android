@@ -22,8 +22,12 @@ internal class ClientConfigObserver(
 
     private fun handleNotifyReleaseStages() {
         if (config.shouldNotifyForReleaseStage(config.releaseStage)) {
-            client.enableAnrReporting()
-            client.enableNdkCrashReporting()
+            if (config.detectAnrs) {
+                client.enableAnrReporting()
+            }
+            if (config.detectNdkCrashes) {
+                client.enableNdkCrashReporting()
+            }
         } else {
             client.disableAnrReporting()
             client.disableNdkCrashReporting()

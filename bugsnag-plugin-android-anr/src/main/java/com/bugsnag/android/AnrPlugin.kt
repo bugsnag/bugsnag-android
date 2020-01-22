@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
-import java.nio.ByteBuffer
+import android.os.Handler
+import android.os.Looper
 
 internal class AnrPlugin : BugsnagPlugin {
 
@@ -11,28 +12,31 @@ internal class AnrPlugin : BugsnagPlugin {
     }
 
     override var loaded = false
+    private lateinit var client: Client
+    private val collector = AnrDetailsCollector()
 
-    private external fun enableAnrReporting(sentinelBuffer: ByteBuffer)
+    private external fun enableAnrReporting(callPreviousSigquitHandler: Boolean)
     private external fun disableAnrReporting()
 
-    private val collector = AnrDetailsCollector()
-    private var monitor: AppNotRespondingMonitor? = null
-
     override fun loadPlugin(client: Client) {
-        if (monitor == null) {
-            val delegate: (Thread) -> Unit = { handleAnr(it, client) }
-            monitor = AppNotRespondingMonitor(delegate)
-            monitor?.start()
-        }
-        if (monitor != null) {
-            enableAnrReporting(monitor!!.sentinelBuffer)
-            Logger.info("Initialised ANR Plugin")
-        }
+        // this must be run from the main thread as the SIGQUIT is sent to the main thread,
+        // and if the handler is installed on a background thread instead we receive no signal
+        Handler(Looper.getMainLooper()).post(Runnable {
+            this.client = client
+            enableAnrReporting(client.config.callPreviousSigquitHandler)
+            Logger.warn("Initialised ANR Plugin")
+        })
     }
 
     override fun unloadPlugin() = disableAnrReporting()
 
-    private fun handleAnr(thread: Thread, client: Client) {
+    /**
+     * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
+     * with details of the ANR. Intended for internal use only.
+     */
+    private fun notifyAnrDetected() {
+        val thread = Looper.getMainLooper().thread
+
         // generate a full report as soon as possible, then wait for extra process error info
         val errMsg = "Application did not respond to UI input"
         val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
@@ -45,4 +49,5 @@ internal class AnrPlugin : BugsnagPlugin {
         // is displayed
         collector.collectAnrErrorDetails(client, error)
     }
+
 }

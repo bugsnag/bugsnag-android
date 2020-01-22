@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.22.3 (2020-01-22)
+
+* Allow disabling previous signal handler invocation for Unity ANRs
+  [#743](https://github.com/bugsnag/bugsnag-android/pull/743)
+
+* Avoid polling when detecting ANRs by invoking JNI from SIGQUIT handler
+  [#741](https://github.com/bugsnag/bugsnag-android/pull/741)
+
 ## 4.22.2 (2020-01-06)
 
 ### Bug fixes
