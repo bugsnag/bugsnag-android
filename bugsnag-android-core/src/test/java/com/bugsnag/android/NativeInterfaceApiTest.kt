@@ -213,7 +213,7 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun deliverReport() {
-        NativeInterface.deliverReport(null, "{}")
+        NativeInterface.deliverReport(null, "{}".toByteArray())
         verify(eventStore, times(1)).enqueueContentForDelivery("{}")
     }
 

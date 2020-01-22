@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,9 @@ import java.util.Map;
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
  */
 public class NativeInterface {
+
+    // The default charset on Android is always UTF-8
+    private static Charset UTF8Charset = Charset.defaultCharset();
 
     /**
      * Static reference used if not using Bugsnag.init()
@@ -152,10 +156,42 @@ public class NativeInterface {
     }
 
     /**
+     * Sets the user
+     *
+     * @param idBytes id
+     * @param emailBytes email
+     * @param nameBytes name
+     */
+    @SuppressWarnings("unused")
+    public static void setUser(@Nullable final byte[] idBytes,
+                               @Nullable final byte[] emailBytes,
+                               @Nullable final byte[] nameBytes) {
+        String id = idBytes == null ? null : new String(idBytes, UTF8Charset);
+        String email = emailBytes == null ? null : new String(emailBytes, UTF8Charset);
+        String name = nameBytes == null ? null : new String(nameBytes, UTF8Charset);
+        setUser(id, email, name);
+    }
+
+    /**
      * Leave a "breadcrumb" log message
      */
     public static void leaveBreadcrumb(@NonNull final String name,
                                        @NonNull final BreadcrumbType type) {
+        if (name == null) {
+            return;
+        }
+        getClient().leaveBreadcrumb(name, type, new HashMap<String, Object>());
+    }
+
+    /**
+     * Leave a "breadcrumb" log message
+     */
+    public static void leaveBreadcrumb(@NonNull final byte[] nameBytes,
+                                       @NonNull final BreadcrumbType type) {
+        if (nameBytes == null) {
+            return;
+        }
+        String name = new String(nameBytes, UTF8Charset);
         getClient().leaveBreadcrumb(name, type, new HashMap<String, Object>());
     }
 
@@ -258,12 +294,22 @@ public class NativeInterface {
     /**
      * Deliver a report, serialized as an event JSON payload.
      *
-     * @param releaseStage The release stage in which the event was captured. Used to determin
-     *                     whether the report should be discarded, based on configured release
-     *                     stages
+     * @param releaseStageBytes The release stage in which the event was
+     *                          captured. Used to determine whether the report
+     *                          should be discarded, based on configured release
+     *                          stages
+     * @param payloadBytes The raw JSON payload of the event
      */
     @SuppressWarnings("unused")
-    public static void deliverReport(@Nullable String releaseStage, @NonNull String payload) {
+    public static void deliverReport(@Nullable byte[] releaseStageBytes,
+                                     @NonNull byte[] payloadBytes) {
+        if (payloadBytes == null) {
+            return;
+        }
+        String payload = new String(payloadBytes, UTF8Charset);
+        String releaseStage = releaseStageBytes == null
+                ? null
+                : new String(releaseStageBytes, UTF8Charset);
         Client client = getClient();
         if (releaseStage == null
                 || releaseStage.length() == 0
@@ -271,6 +317,26 @@ public class NativeInterface {
             client.getEventStore().enqueueContentForDelivery(payload);
             client.getEventStore().flushAsync();
         }
+    }
+
+    /**
+     * Notifies using the Android SDK
+     *
+     * @param nameBytes the error name
+     * @param messageBytes the error message
+     * @param severity the error severity
+     * @param stacktrace a stacktrace
+     */
+    public static void notify(@NonNull final byte[] nameBytes,
+                              @NonNull final byte[] messageBytes,
+                              @NonNull final Severity severity,
+                              @NonNull final StackTraceElement[] stacktrace) {
+        if (nameBytes == null || messageBytes == null || stacktrace == null) {
+            return;
+        }
+        String name = new String(nameBytes, UTF8Charset);
+        String message = new String(messageBytes, UTF8Charset);
+        notify(name, message, severity, stacktrace);
     }
 
     /**

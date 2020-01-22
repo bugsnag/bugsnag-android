@@ -1,0 +1,95 @@
+require 'fileutils'
+
+RELEASE_APK = "app/build/outputs/apk/release/app-release-unsigned.apk"
+
+BUNDLE_DIR = "app/build/outputs/bundle/release/"
+RELEASE_BUNDLE = "app.aab"
+UNBUNDLED_RELEASE = "app.apks"
+
+STANDALONE_DIR = BUNDLE_DIR + "standalones/"
+STANDALONE_HDPI_BASE = "standalone-hdpi.apk"
+STANDALONE_ARM64_V8A = "standalone-arm64_v8a_hdpi.apk"
+STANDALONE_ARMEABI = "standalone-armeabi_hdpi.apk"
+STANDALONE_ARMEABI_V7A = "standalone-armeabi_v7a_hdpi.apk"
+STANDALONE_X86_64 = "standalone-x86_64_hdpi.apk"
+STANDALONE_X86 = "standalone-x86_hdpi.apk"
+
+BUGSNAG_PROP = "-P withBugsnag=true"
+MINIFIED_PROP = "-P minified=true"
+
+def buildOutputs(bugsnag: false, minified: false)
+  opts = "#{bugsnag ? BUGSNAG_PROP : ''} #{minified ? MINIFIED_PROP : ''}"
+  `./gradlew clean`
+  `./gradlew assembleRelease #{opts}`
+  `./gradlew bundleRelease #{opts}`
+
+  `java -jar bundletool.jar build-apks \
+    --bundle=#{BUNDLE_DIR + RELEASE_BUNDLE} \
+    --output=#{BUNDLE_DIR + UNBUNDLED_RELEASE} \
+    --ks=app/fakekeys.jks \
+    --ks-pass=pass:password \
+    --ks-key-alias=password \
+    --key-pass=pass:password`
+
+  `unzip -qq #{BUNDLE_DIR + UNBUNDLED_RELEASE} -d #{BUNDLE_DIR}`
+end
+
+buildOutputs(bugsnag: false, minified: false)
+
+apk_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
+aab_size = `stat --printf="%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+
+buildOutputs(bugsnag: false, minified: true)
+
+min_apk_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
+min_aab_size = `stat --printf="%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+
+buildOutputs(bugsnag: true, minified: false)
+
+apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
+arm64_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
+armeabi_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI}`.to_i
+armeabi_v7a_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
+x86_64_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
+x86_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
+
+buildOutputs(bugsnag: true, minified: true)
+
+min_apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
+min_arm64_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
+min_armeabi_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI}`.to_i
+min_armeabi_v7a_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
+min_x86_64_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
+min_x86_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
+
+calculated_sizes = {
+  :arm64 => arm64_bugsnag_size - aab_size,
+  :armeabi => armeabi_bugsnag_size - aab_size,
+  :armeabi_v7a => armeabi_v7a_bugsnag_size - aab_size,
+  :x86_64 => x86_64_bugsnag_size - aab_size,
+  :x86 => x86_bugsnag_size - aab_size,
+  :apk => apk_bugsnag_size - apk_size,
+  :min_arm64 => min_arm64_bugsnag_size - min_aab_size,
+  :min_armeabi => min_armeabi_bugsnag_size - min_aab_size,
+  :min_armeabi_v7a => min_armeabi_v7a_bugsnag_size - min_aab_size,
+  :min_x86_64 => min_x86_64_bugsnag_size - min_aab_size,
+  :min_x86 => min_x86_bugsnag_size - min_aab_size,
+  :min_apk => min_apk_bugsnag_size - min_apk_size
+}
+
+def format_kbs(size)
+  (size/1000.0).round(2)
+end
+
+markdown(%Q{
+  ### Android notifier sizes
+
+  | Format      | Size impact of Bugsnag (kB)                   | Size impact of Bugsnag when Minified (kB)         |
+  |-------------|-----------------------------------------------|---------------------------------------------------|
+  | APK         | #{format_kbs(calculated_sizes[:apk])}         | #{format_kbs(calculated_sizes[:min_apk])}         |
+  | arm64_v8a   | #{format_kbs(calculated_sizes[:arm64])}       | #{format_kbs(calculated_sizes[:min_arm64])}       |
+  | armeabi     | #{format_kbs(calculated_sizes[:armeabi])}     | #{format_kbs(calculated_sizes[:min_armeabi])}     |
+  | armeabi_v7a | #{format_kbs(calculated_sizes[:armeabi_v7a])} | #{format_kbs(calculated_sizes[:min_armeabi_v7a])} |
+  | x86         | #{format_kbs(calculated_sizes[:x86])}         | #{format_kbs(calculated_sizes[:min_x86])}         |
+  | x86_64      | #{format_kbs(calculated_sizes[:x86_64])}      | #{format_kbs(calculated_sizes[:min_x86_64])}      |
+})

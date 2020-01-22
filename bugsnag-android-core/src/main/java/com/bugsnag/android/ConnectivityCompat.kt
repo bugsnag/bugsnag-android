@@ -31,10 +31,23 @@ internal class ConnectivityCompat(
             else -> ConnectivityLegacy(context, cm, callback)
         }
 
-    override fun registerForNetworkChanges() = connectivity.registerForNetworkChanges()
-    override fun hasNetworkConnection() = connectivity.hasNetworkConnection()
-    override fun unregisterForNetworkChanges() = connectivity.unregisterForNetworkChanges()
-    override fun retrieveNetworkAccessState() = connectivity.retrieveNetworkAccessState()
+    override fun registerForNetworkChanges() {
+        runCatching { connectivity.registerForNetworkChanges() }
+    }
+
+    override fun hasNetworkConnection(): Boolean {
+        val result = runCatching { connectivity.hasNetworkConnection() }
+        return result.getOrElse { true } // allow network requests to be made if state unknown
+    }
+
+    override fun unregisterForNetworkChanges() {
+        runCatching { connectivity.unregisterForNetworkChanges() }
+    }
+
+    override fun retrieveNetworkAccessState(): String {
+        val result = runCatching { connectivity.retrieveNetworkAccessState() }
+        return result.getOrElse { "unknown" }
+    }
 }
 
 @Suppress("DEPRECATION")

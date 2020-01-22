@@ -81,7 +81,7 @@ internal class AppDataCollector(
      *
      * @return the duration in ms
      */
-    internal fun calculateDurationInForeground(): Long {
+    internal fun calculateDurationInForeground(): Long? {
         val nowMs = System.currentTimeMillis()
         return sessionTracker.getDurationInForegroundMs(nowMs)
     }

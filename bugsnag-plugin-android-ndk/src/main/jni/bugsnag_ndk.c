@@ -42,6 +42,38 @@ bsg_unwinder bsg_configured_unwind_style() {
   return BSG_CUSTOM_UNWIND;
 }
 
+JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_enableCrashReporting(
+        JNIEnv *env, jobject _this) {
+  if (bsg_global_env == NULL) {
+    BUGSNAG_LOG("Attempted to enable crash reporting without first calling install()");
+    return;
+  }
+  bsg_handler_install_signal(bsg_global_env);
+  bsg_handler_install_cpp(bsg_global_env);
+}
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_disableCrashReporting(
+        JNIEnv *env, jobject _this) {
+  bsg_handler_uninstall_signal();
+  bsg_handler_uninstall_cpp();
+}
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_enableCrashReporting(
+    JNIEnv *env, jobject _this) {
+  if (bsg_global_env == NULL) {
+    BUGSNAG_LOG("Attempted to enable crash reporting without first calling install()");
+    return;
+  }
+  bsg_handler_install_signal(bsg_global_env);
+  bsg_handler_install_cpp(bsg_global_env);
+}
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(
+    JNIEnv *env, jobject _this) {
+  bsg_handler_uninstall_signal();
+  bsg_handler_uninstall_cpp();
+}
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _event_path, jboolean auto_detect_ndk_crashes,
     jint _api_level, jboolean is32bit) {
@@ -95,14 +127,21 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
           (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
       jmethodID jdeliver_method =
           (*env)->GetStaticMethodID(env, interface_class, "deliverReport",
-                                    "(Ljava/lang/String;Ljava/lang/String;)V");
-      jstring jpayload = (*env)->NewStringUTF(env, payload);
-      jstring jstage = (*env)->NewStringUTF(env, event->app.release_stage);
+                                    "([B[B)V");
+      size_t payload_length = bsg_strlen(payload);
+      jbyteArray jpayload = (*env)->NewByteArray(env, payload_length);
+      (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length, (jbyte *)payload);
+
+      size_t stage_length = bsg_strlen(event->app.release_stage);
+      jbyteArray jstage = (*env)->NewByteArray(env, stage_length);
+      (*env)->SetByteArrayRegion(env, jstage, 0, stage_length, (jbyte *)event->app.release_stage);
+
       (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
                                    jstage, jpayload);
+      (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload, 0); // <-- frees payload
+      (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
       (*env)->DeleteLocalRef(env, jpayload);
       (*env)->DeleteLocalRef(env, jstage);
-      free(payload);
     } else {
       BUGSNAG_LOG("Failed to serialize event as JSON: %s", event_path);
     }

@@ -17,7 +17,7 @@ internal class EmptySessionScenario(config: Configuration,
         config.autoTrackSessions = false
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
             val dir = File(context.cacheDir, "bugsnag-sessions")
 
             if (eventMetaData != "non-crashy") {

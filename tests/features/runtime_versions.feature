@@ -8,8 +8,8 @@ Scenario: Runtime versions included in JVM exception
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null
 
 Scenario: Runtime versions included in NDK error
-    When I configure the app to run in the "non-crashy" state
     And I run "CXXNullPointerScenario" and relaunch the app
+    When I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "CXXNullPointerScenario"
     Then I wait to receive a request
     And the request payload contains a completed unhandled native report

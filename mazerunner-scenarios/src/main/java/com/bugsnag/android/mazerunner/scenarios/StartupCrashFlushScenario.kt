@@ -9,7 +9,7 @@ import com.bugsnag.android.Configuration
 /**
  * Generates an uncaught exception, catches it, and persists it to disc, preventing any delivery.
  *
- * To generate a startup crash, set "eventMetaData" to "StartupCrash", otherwise the default
+ * To generate a startup crash, set "EVENT_METADATA" to "StartupCrash", otherwise the default
  * behaviour is to report a normal crash.
  *
  * The mazerunner scenario that tests this works in 3 parts:

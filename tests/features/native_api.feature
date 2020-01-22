@@ -16,6 +16,7 @@ Feature: Native API
 
     Scenario: Adding user information in Java followed by a C crash
         And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed handled native report
@@ -49,6 +50,7 @@ Feature: Native API
 
     Scenario: Update context in Java followed by crashing in C
         When I run "CXXUpdateContextCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXUpdateContextCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed handled native report
@@ -71,6 +73,7 @@ Feature: Native API
 
     Scenario: Leaving a breadcrumb followed by a C crash
         When I run "CXXNativeBreadcrumbNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNativeBreadcrumbNativeCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed handled native report
@@ -96,6 +99,7 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in Java and C followed by a C crash
         When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaBreadcrumbNativeBreadcrumbScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -120,6 +124,7 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in Java followed by a C crash
         When I run "CXXJavaBreadcrumbNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaBreadcrumbNativeCrashScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -132,6 +137,7 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in C followed by a Java crash
         When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNativeBreadcrumbJavaCrashScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -153,6 +159,7 @@ Feature: Native API
 
     Scenario: Set extraordinarily long app information
         When I run "CXXExtraordinaryLongStringScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExtraordinaryLongStringScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -177,6 +184,7 @@ Feature: Native API
 
     Scenario: Add custom metadata followed by a C crash
         When I run "CXXCustomMetadataNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXCustomMetadataNativeCrashScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report

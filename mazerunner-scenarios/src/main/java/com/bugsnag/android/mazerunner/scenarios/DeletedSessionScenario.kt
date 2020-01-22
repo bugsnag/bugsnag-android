@@ -22,7 +22,7 @@ internal class DeletedSessionScenario(config: Configuration,
         config.autoTrackSessions = false
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("eventMetaData")
+            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
 
             if (eventMetaData != "non-crashy") {
                 disableAllDelivery(config)

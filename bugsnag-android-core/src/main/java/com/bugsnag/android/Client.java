@@ -77,6 +77,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final ClientObservable clientObservable = new ClientObservable();
 
+    @Nullable
+    private Class<?> ndkPluginClz;
+
+    @Nullable
+    private Class<?> anrPluginClz;
+
     /**
      * Initialize a Bugsnag client
      *
@@ -195,6 +201,20 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             new ExceptionHandler(this, logger);
         }
 
+        try {
+            ndkPluginClz = Class.forName("com.bugsnag.android.NdkPlugin");
+        } catch (ClassNotFoundException exc) {
+            logger.w("bugsnag-plugin-android-ndk artefact not found on classpath, "
+                    + "NDK errors will not be captured.");
+        }
+
+        try {
+            anrPluginClz = Class.forName("com.bugsnag.android.AnrPlugin");
+        } catch (ClassNotFoundException exc) {
+            logger.w("bugsnag-plugin-android-anr artefact not found on classpath, "
+                    + "ANR errors will not be captured.");
+        }
+
         // register a receiver for automatic breadcrumbs
 
         try {
@@ -244,25 +264,31 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     private void loadPlugins() {
         NativeInterface.setClient(this);
-        BugsnagPluginInterface pluginInterface = BugsnagPluginInterface.INSTANCE;
+        enableOrDisableNdkReporting();
+        enableOrDisableAnrReporting();
+        BugsnagPluginInterface.INSTANCE.loadRegisteredPlugins(this);
+    }
 
+    void enableOrDisableNdkReporting() {
+        if (ndkPluginClz == null) {
+            return;
+        }
         if (immutableConfig.getAutoDetectNdkCrashes()) {
-            try {
-                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.NdkPlugin"));
-            } catch (ClassNotFoundException exc) {
-                logger.w("bugsnag-plugin-android-ndk artefact not found on classpath, "
-                    + "NDK errors will not be captured.");
-            }
+            BugsnagPluginInterface.INSTANCE.loadPlugin(this, ndkPluginClz);
+        } else {
+            BugsnagPluginInterface.INSTANCE.unloadPlugin(ndkPluginClz);
+        }
+    }
+
+    void enableOrDisableAnrReporting() {
+        if (anrPluginClz == null) {
+            return;
         }
         if (immutableConfig.getAutoDetectAnrs()) {
-            try {
-                pluginInterface.registerPlugin(Class.forName("com.bugsnag.android.AnrPlugin"));
-            } catch (ClassNotFoundException exc) {
-                logger.w("bugsnag-plugin-android-anr artefact not found on classpath, "
-                    + "ANR errors will not be captured.");
-            }
+            BugsnagPluginInterface.INSTANCE.loadPlugin(this, anrPluginClz);
+        } else {
+            BugsnagPluginInterface.INSTANCE.unloadPlugin(anrPluginClz);
         }
-        pluginInterface.loadPlugins(this);
     }
 
     void sendNativeSetupNotification() {

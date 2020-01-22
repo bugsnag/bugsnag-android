@@ -5,6 +5,7 @@ import com.bugsnag.android.NativeInterface
 import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.*
 import java.io.File
+import java.nio.charset.Charset
 import java.util.Observable
 import java.util.Observer
 import java.util.UUID
@@ -84,19 +85,19 @@ class NativeBridge : Observer {
             DeliverPending -> deliverPendingReports()
             is AddMetadata -> handleAddMetadata(msg)
             ClearBreadcrumbs -> clearBreadcrumbs()
-            is ClearMetadataTab -> clearMetadataTab(msg.section)
-            is RemoveMetadata -> removeMetadata(msg.section, msg.key ?: "")
-            is AddBreadcrumb -> addBreadcrumb(msg.message, msg.type.toString(), msg.timestamp, msg.metadata)
+            is ClearMetadataTab -> clearMetadataTab(makeSafe(msg.section))
+            is RemoveMetadata -> removeMetadata(makeSafe(msg.section), makeSafe(msg.key ?: ""))
+            is AddBreadcrumb -> addBreadcrumb(makeSafe(msg.message), makeSafe(msg.type.toString()), makeSafe(msg.timestamp), msg.metadata)
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
             PauseSession -> pausedSession()
-            is StartSession -> startedSession(msg.id, msg.startedAt, msg.handledCount, msg.unhandledCount)
-            is UpdateContext -> updateContext(msg.context ?: "")
-            is UpdateInForeground -> updateInForeground(msg.inForeground, msg.contextActivity ?: "")
+            is StartSession -> startedSession(makeSafe(msg.id), makeSafe(msg.startedAt), msg.handledCount, msg.unhandledCount)
+            is UpdateContext -> updateContext(makeSafe(msg.context ?: ""))
+            is UpdateInForeground -> updateInForeground(msg.inForeground, makeSafe(msg.contextActivity ?: ""))
             is UpdateOrientation -> updateOrientation(msg.orientation)
-            is UpdateUserEmail -> updateUserEmail(msg.email ?: "")
-            is UpdateUserName -> updateUserName(msg.name ?: "")
-            is UpdateUserId -> updateUserId(msg.id ?: "")
+            is UpdateUserEmail -> updateUserEmail(makeSafe(msg.email ?: ""))
+            is UpdateUserName -> updateUserName(makeSafe(msg.name ?: ""))
+            is UpdateUserId -> updateUserId(makeSafe(msg.id ?: ""))
         }
     }
 
@@ -142,7 +143,9 @@ class NativeBridge : Observer {
             } else {
                 val reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash"
                 install(reportPath, arg.autoDetectNdkCrashes, Build.VERSION.SDK_INT, is32bit,
-                    arg.appVersion ?: "", arg.buildUuid ?: "", arg.releaseStage ?: ""
+                    makeSafe(arg.appVersion ?: ""),
+                    makeSafe(arg.buildUuid ?: ""),
+                    makeSafe(arg.releaseStage ?: "")
                 )
                 installed.set(true)
             }
@@ -154,12 +157,21 @@ class NativeBridge : Observer {
     private fun handleAddMetadata(arg: AddMetadata) {
         if (arg.key != null) {
             when (val newValue = arg.value) {
-                is String -> addMetadataString(arg.section, arg.key!!, newValue)
+                is String -> addMetadataString(arg.section, arg.key!!, makeSafe(newValue))
                 is Boolean -> addMetadataBoolean(arg.section, arg.key!!, newValue)
                 is Number -> addMetadataDouble(arg.section, arg.key!!, newValue.toDouble())
                 else -> Unit
             }
         }
+    }
+
+    /**
+     * Ensure the string is safe to be passed to native layer by forcing the encoding
+     * to UTF-8.
+     */
+    private fun makeSafe(text: String): String {
+        // The Android platform default charset is always UTF-8
+        return String(text.toByteArray(Charset.defaultCharset()))
     }
 
 }

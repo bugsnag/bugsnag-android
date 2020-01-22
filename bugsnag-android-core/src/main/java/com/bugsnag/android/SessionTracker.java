@@ -375,19 +375,28 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
     }
 
     private void notifyNdkInForeground() {
-        notifyObservers(new StateEvent.UpdateInForeground(isInForeground(), getContextActivity()));
+        Boolean inForeground = isInForeground();
+        boolean foreground = inForeground != null ? inForeground : false;
+        notifyObservers(new StateEvent.UpdateInForeground(foreground, getContextActivity()));
     }
 
-    boolean isInForeground() {
+    @Nullable
+    Boolean isInForeground() {
         return foregroundDetector.isInForeground();
     }
 
     //FUTURE:SM This shouldnt be here
-    long getDurationInForegroundMs(long nowMs) {
+    @Nullable
+    Long getDurationInForegroundMs(long nowMs) {
         long durationMs = 0;
         long sessionStartTimeMs = lastEnteredForegroundMs.get();
 
-        if (isInForeground() && sessionStartTimeMs != 0) {
+        Boolean inForeground = isInForeground();
+
+        if (inForeground == null) {
+            return null;
+        }
+        if (inForeground && sessionStartTimeMs != 0) {
             durationMs = nowMs - sessionStartTimeMs;
         }
         return durationMs > 0 ? durationMs : 0;

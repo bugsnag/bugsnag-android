@@ -1,24 +1,42 @@
 package com.bugsnag.android
 
-import java.lang.Thread
-import java.nio.ByteBuffer
+import android.os.Handler
+import android.os.Looper
 
 internal class AnrPlugin : BugsnagPlugin {
 
-    private external fun installAnrDetection(sentinelBuffer: ByteBuffer)
-
-    private val collector = AnrDetailsCollector()
-
-    override fun initialisePlugin(client: Client) {
-        System.loadLibrary("bugsnag-plugin-android-anr")
-        val delegate: (Thread) -> Unit = { handleAnr(it, client) }
-        val monitor = AppNotRespondingMonitor(delegate)
-        monitor.start()
-        installAnrDetection(monitor.sentinelBuffer)
-        NativeInterface.getLogger().i("Initialised ANR Plugin")
+    companion object {
+        init {
+            System.loadLibrary("bugsnag-plugin-android-anr")
+        }
     }
 
-    private fun handleAnr(thread: Thread, client: Client) {
+    override var loaded = false
+    private lateinit var client: Client
+    private val collector = AnrDetailsCollector()
+
+    private external fun enableAnrReporting(callPreviousSigquitHandler: Boolean)
+    private external fun disableAnrReporting()
+
+    override fun loadPlugin(client: Client) {
+        // this must be run from the main thread as the SIGQUIT is sent to the main thread,
+        // and if the handler is installed on a background thread instead we receive no signal
+        Handler(Looper.getMainLooper()).post(Runnable {
+            this.client = client
+            enableAnrReporting(true)
+            client.logger.w("Initialised ANR Plugin")
+        })
+    }
+
+    override fun unloadPlugin() = disableAnrReporting()
+
+    /**
+     * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
+     * with details of the ANR. Intended for internal use only.
+     */
+    private fun notifyAnrDetected() {
+        val thread = Looper.getMainLooper().thread
+
         // generate a full report as soon as possible, then wait for extra process error info
         val exc = RuntimeException()
         exc.stackTrace = thread.stackTrace
@@ -32,4 +50,5 @@ internal class AnrPlugin : BugsnagPlugin {
         // is displayed
         collector.collectAnrErrorDetails(client, event)
     }
+
 }
