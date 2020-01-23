@@ -12,7 +12,7 @@ import java.util.Map;
  * Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app.
  * For example:
  * <p>
- * Bugsnag.init(this, "your-api-key");
+ * Bugsnag.start(this, "your-api-key");
  * Bugsnag.notify(new RuntimeException("something broke!"));
  *
  * @see Client
@@ -34,8 +34,8 @@ public final class Bugsnag {
      * @param androidContext an Android context, usually <code>this</code>
      */
     @NonNull
-    public static Client init(@NonNull Context androidContext) {
-        return init(androidContext, Configuration.load(androidContext));
+    public static Client start(@NonNull Context androidContext) {
+        return start(androidContext, Configuration.load(androidContext));
     }
 
     /**
@@ -45,8 +45,8 @@ public final class Bugsnag {
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
     @NonNull
-    public static Client init(@NonNull Context androidContext, @NonNull String apiKey) {
-        return init(androidContext, Configuration.load(androidContext, apiKey));
+    public static Client start(@NonNull Context androidContext, @NonNull String apiKey) {
+        return start(androidContext, Configuration.load(androidContext, apiKey));
     }
 
     /**
@@ -56,7 +56,7 @@ public final class Bugsnag {
      * @param config         a configuration for the Client
      */
     @NonNull
-    public static Client init(@NonNull Context androidContext, @NonNull Configuration config) {
+    public static Client start(@NonNull Context androidContext, @NonNull Configuration config) {
         synchronized (lock) {
             if (client == null) {
                 client = new Client(androidContext, config);
@@ -68,7 +68,7 @@ public final class Bugsnag {
     }
 
     private static void logClientInitWarning() {
-        getClient().logger.w("Multiple Bugsnag.init calls detected. Ignoring.");
+        getClient().logger.w("Multiple Bugsnag.start calls detected. Ignoring.");
     }
 
     /**
@@ -322,7 +322,7 @@ public final class Bugsnag {
     @NonNull
     public static Client getClient() {
         if (client == null) {
-            throw new IllegalStateException("You must call Bugsnag.init before any"
+            throw new IllegalStateException("You must call Bugsnag.start before any"
                 + " other Bugsnag methods");
         }
 

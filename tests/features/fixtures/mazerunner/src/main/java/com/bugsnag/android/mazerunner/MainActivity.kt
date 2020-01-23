@@ -44,14 +44,14 @@ class MainActivity : Activity() {
         val config = prepareConfig()
         loadScenario(config, eventType, metaData)
 
-        Bugsnag.init(this, config)
+        Bugsnag.start(this, config)
     }
 
     private fun executeScenario(eventType: String, metaData: String) {
         val config = prepareConfig()
         val testCase = loadScenario(config, eventType, metaData)
 
-        Bugsnag.init(this, config)
+        Bugsnag.start(this, config)
 
         /**
          * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping

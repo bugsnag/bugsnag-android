@@ -14,7 +14,7 @@ static JNIEnv *bsg_global_jni_env = NULL;
 
 void bugsnag_set_binary_arch(JNIEnv *env);
 
-void bugsnag_init(JNIEnv *env) { bsg_global_jni_env = env; }
+void bugsnag_start(JNIEnv *env) { bsg_global_jni_env = env; }
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity);
@@ -26,7 +26,7 @@ void bugsnag_notify(char *name, char *message, bsg_severity_t severity) {
   if (bsg_global_jni_env != NULL) {
     bugsnag_notify_env(bsg_global_jni_env, name, message, severity);
   } else {
-    BUGSNAG_LOG("Cannot bugsnag_notify before initializing with bugsnag_init");
+    BUGSNAG_LOG("Cannot bugsnag_notify before initializing with bugsnag_start");
   }
 }
 
@@ -35,7 +35,7 @@ void bugsnag_set_user(char *id, char *email, char *name) {
     bugsnag_set_user_env(bsg_global_jni_env, id, email, name);
   } else {
     BUGSNAG_LOG(
-        "Cannot bugsnag_set_user before initializing with bugsnag_init");
+        "Cannot bugsnag_set_user before initializing with bugsnag_start");
   }
 }
 
@@ -44,7 +44,7 @@ void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type) {
     bugsnag_leave_breadcrumb_env(bsg_global_jni_env, message, type);
   } else {
     BUGSNAG_LOG("Cannot bugsnag_leave_breadcrumb_env before initializing with "
-                "bugsnag_init");
+                "bugsnag_start");
   }
 }
 

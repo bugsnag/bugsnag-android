@@ -12,7 +12,7 @@ extern "C" {
  * Configure the Bugsnag interface, optionally including the JNI environment.
  * @param env  The JNI environment to use when using convenience methods
  */
-void bugsnag_init(JNIEnv *env);
+void bugsnag_start(JNIEnv *env);
 /**
  * Sends an error report to Bugsnag
  * @param name     The name of the error
