@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.JavaHooks.generateAppWithState
+import com.bugsnag.android.JavaHooks.generateDeviceWithState
 import java.lang.Thread
 
 /**
@@ -70,11 +72,17 @@ internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDel
     }) as Delivery
 }
 
-internal fun writeErrorToStore(client: Client) {
+internal fun writeErrorToStore(client: Client, event: Event) {
+    client.eventStore.write(event)
+}
+
+fun generateEvent(client: Client): Event {
     val event = BugsnagPluginInterface.createEvent(
         RuntimeException(),
         client,
         HandledState.REASON_ANR
     )
-    client.eventStore.write(event)
+    event.app = generateAppWithState()
+    event.device = generateDeviceWithState()
+    return event
 }

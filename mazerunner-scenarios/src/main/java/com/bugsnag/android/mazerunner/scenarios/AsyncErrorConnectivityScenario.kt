@@ -18,8 +18,9 @@ internal class AsyncErrorConnectivityScenario(config: Configuration,
 
     override fun run() {
         super.run()
-
-        writeErrorToStore(Bugsnag.getClient())
+        val event = generateEvent(Bugsnag.getClient())
+        event.context = "AsyncErrorConnectivityScenario"
+        writeErrorToStore(Bugsnag.getClient(), event)
         flushErrorStoreAsync(Bugsnag.getClient())
         flushErrorStoreOnLaunch(Bugsnag.getClient())
     }
