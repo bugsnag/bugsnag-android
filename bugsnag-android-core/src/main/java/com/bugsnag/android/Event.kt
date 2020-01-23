@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.Thread.ThreadSendPolicy.*
 import java.io.IOException
 import java.util.HashMap
 
@@ -51,9 +52,15 @@ class Event @JvmOverloads internal constructor(
         else -> Error.createError(originalError, config.projectPackages, config.logger)
     }
 
-    var threads: List<Thread> = when {
-        config.sendThreads -> ThreadState(config, if (isUnhandled) originalError else null).threads
-        else -> emptyList()
+    var threads: List<Thread>
+
+    init {
+        val recordThreads = config.sendThreads == ALWAYS || (config.sendThreads == UNHANDLED_ONLY && isUnhandled)
+
+        threads = when {
+            recordThreads -> ThreadState(config, if (isUnhandled) originalError else null).threads
+            else -> emptyList()
+        }
     }
 
     /**

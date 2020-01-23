@@ -45,7 +45,7 @@ internal class ImmutableConfigTest {
             assertTrue(autoDetectErrors)
             assertFalse(autoDetectAnrs)
             assertFalse(autoDetectNdkCrashes)
-            assertTrue(sendThreads)
+            assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
 
             // release stages
             assertTrue(ignoreClasses.isEmpty())
@@ -78,7 +78,7 @@ internal class ImmutableConfigTest {
         seed.autoDetectErrors = false
         seed.autoDetectAnrs = true
         seed.autoDetectNdkCrashes = true
-        seed.sendThreads = false
+        seed.sendThreads = Thread.ThreadSendPolicy.UNHANDLED_ONLY
 
         seed.ignoreClasses = setOf("foo")
         seed.enabledReleaseStages = setOf("bar")
@@ -106,7 +106,7 @@ internal class ImmutableConfigTest {
             assertFalse(autoDetectErrors)
             assertTrue(autoDetectAnrs)
             assertTrue(autoDetectNdkCrashes)
-            assertFalse(sendThreads)
+            assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages
             assertEquals(setOf("foo"), ignoreClasses)

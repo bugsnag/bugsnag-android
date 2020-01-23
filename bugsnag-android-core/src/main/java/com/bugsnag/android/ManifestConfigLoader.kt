@@ -20,7 +20,6 @@ internal class ManifestConfigLoader {
         private const val AUTO_DETECT_ANRS = "$BUGSNAG_NS.AUTO_DETECT_ANRS"
         private const val AUTO_DETECT_NDK_CRASHES = "$BUGSNAG_NS.AUTO_DETECT_NDK_CRASHES"
         private const val AUTO_TRACK_SESSIONS = "$BUGSNAG_NS.AUTO_TRACK_SESSIONS"
-        private const val SEND_THREADS = "$BUGSNAG_NS.SEND_THREADS"
         private const val PERSIST_USER = "$BUGSNAG_NS.PERSIST_USER"
 
         // endpoints
@@ -91,7 +90,6 @@ internal class ManifestConfigLoader {
             autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
             autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
             autoTrackSessions = data.getBoolean(AUTO_TRACK_SESSIONS, autoTrackSessions)
-            sendThreads = data.getBoolean(SEND_THREADS, sendThreads)
             persistUser = data.getBoolean(PERSIST_USER, persistUser)
         }
     }

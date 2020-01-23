@@ -18,6 +18,12 @@ class Thread internal constructor(
         BROWSER_JS("browserjs")
     }
 
+    enum class ThreadSendPolicy {
+        ALWAYS,
+        UNHANDLED_ONLY,
+        NEVER
+    }
+
     var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
 
     @Throws(IOException::class)
