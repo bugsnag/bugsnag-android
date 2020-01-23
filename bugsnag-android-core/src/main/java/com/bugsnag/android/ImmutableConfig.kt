@@ -11,7 +11,7 @@ internal data class ImmutableConfig(
     val autoDetectAnrs: Boolean,
     val autoDetectNdkCrashes: Boolean,
     val autoTrackSessions: Boolean,
-    val sendThreads: Boolean,
+    val sendThreads: Thread.ThreadSendPolicy,
     val ignoreClasses: Collection<String>,
     val enabledReleaseStages: Collection<String>,
     val projectPackages: Collection<String>,

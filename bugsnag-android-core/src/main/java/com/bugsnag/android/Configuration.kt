@@ -51,9 +51,9 @@ class Configuration(
 
     /**
      * Set whether to send thread-state with report.
-     * By default, this will be true.
+     * By default, this will be [Thread.ThreadSendPolicy.ALWAYS].
      */
-    var sendThreads: Boolean = true
+    var sendThreads: Thread.ThreadSendPolicy = Thread.ThreadSendPolicy.ALWAYS
 
     /**
      * Set whether or not Bugsnag should persist user information between application settings

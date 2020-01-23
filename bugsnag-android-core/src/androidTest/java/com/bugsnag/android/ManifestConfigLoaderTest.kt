@@ -31,7 +31,7 @@ class ManifestConfigLoaderTest {
             assertFalse(autoDetectAnrs)
             assertFalse(autoDetectNdkCrashes)
             assertTrue(autoTrackSessions)
-            assertTrue(sendThreads)
+            assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
             assertFalse(persistUser)
 
             // endpoints
@@ -67,7 +67,6 @@ class ManifestConfigLoaderTest {
             putBoolean("com.bugsnag.android.AUTO_DETECT_NDK_CRASHES", true)
             putBoolean("com.bugsnag.android.AUTO_TRACK_SESSIONS", false)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_BREADCRUMBS", false)
-            putBoolean("com.bugsnag.android.SEND_THREADS", false)
             putBoolean("com.bugsnag.android.PERSIST_USER", true)
 
             // endpoints
@@ -101,7 +100,7 @@ class ManifestConfigLoaderTest {
             assertTrue(autoDetectAnrs)
             assertTrue(autoDetectNdkCrashes)
             assertFalse(autoTrackSessions)
-            assertFalse(sendThreads)
+            assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
             assertTrue(persistUser)
 
             // endpoints
