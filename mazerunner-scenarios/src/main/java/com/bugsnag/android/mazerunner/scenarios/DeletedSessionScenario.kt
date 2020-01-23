@@ -12,6 +12,7 @@ import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.Report
 import com.bugsnag.android.SessionPayload
+import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.flushAllSessions
 import java.io.File
 
@@ -27,9 +28,7 @@ internal class DeletedSessionScenario(config: Configuration,
             if (eventMetaData != "non-crashy") {
                 disableAllDelivery(config)
             } else {
-                val ctor = Class.forName("com.bugsnag.android.DefaultDelivery").declaredConstructors[0]
-                ctor.isAccessible = true
-                val baseDelivery = ctor.newInstance(null) as Delivery
+                val baseDelivery = createDefaultDelivery()
                 val errDir = File(context.cacheDir, "bugsnag-sessions")
 
                 config.delivery = object: Delivery {
