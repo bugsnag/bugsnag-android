@@ -26,9 +26,9 @@ internal class BugsnagInitScenario(
         val callables = mutableListOf<Callable<Client?>>()
 
         IntRange(1, 25).forEach {
-            callables.add(Callable { Bugsnag.init(context) })
-            callables.add(Callable { Bugsnag.init(context, config.apiKey) })
-            callables.add(Callable { Bugsnag.init(context, Configuration(config.apiKey)) })
+            callables.add(Callable { Bugsnag.start(context) })
+            callables.add(Callable { Bugsnag.start(context, config.apiKey) })
+            callables.add(Callable { Bugsnag.start(context, Configuration(config.apiKey)) })
         }
 
         val futures = threadPool.invokeAll(callables)

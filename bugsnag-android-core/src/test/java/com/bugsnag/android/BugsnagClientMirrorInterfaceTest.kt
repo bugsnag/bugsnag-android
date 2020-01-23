@@ -15,7 +15,7 @@ import java.lang.reflect.Method
  */
 class BugsnagClientMirrorInterfaceTest {
 
-    private val bugsnagBlacklist = setOf("init", "getClient")
+    private val bugsnagBlacklist = setOf("start", "getClient")
     private val clientBlacklist = setOf(
         "update",
         "notifyObservers",

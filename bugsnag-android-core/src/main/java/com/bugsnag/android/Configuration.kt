@@ -65,7 +65,7 @@ class Configuration(
      * Sets the threshold in ms for an uncaught error to be considered as a crash on launch.
      * If a crash is detected on launch, Bugsnag will attempt to send the report synchronously.
      *
-     * The app's launch time is tracked as the time at which [Bugsnag.init] was
+     * The app's launch time is tracked as the time at which [Bugsnag.start] was
      * called.
      *
      * By default, this value is set at 5,000ms.

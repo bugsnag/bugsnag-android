@@ -21,7 +21,7 @@ public class NativeInterface {
     private static Charset UTF8Charset = Charset.defaultCharset();
 
     /**
-     * Static reference used if not using Bugsnag.init()
+     * Static reference used if not using Bugsnag.start()
      */
     @SuppressLint("StaticFieldLeak")
     private static Client client;
