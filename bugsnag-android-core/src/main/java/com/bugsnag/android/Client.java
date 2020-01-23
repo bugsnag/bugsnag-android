@@ -169,6 +169,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         UserRepository userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUser());
         userState = new UserState(userRepository);
+        User user = configuration.getUser();
+
+        if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
+            userState.setUser(user.getId(), user.getEmail(), user.getName());
+        }
 
         String id = userState.getUser().getId();
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
