@@ -274,7 +274,7 @@ public class NativeInterface {
     /**
      * Return which release stages notify
      */
-    @NonNull
+    @Nullable
     public static Collection<String> getEnabledReleaseStages() {
         return getClient().getConfig().getEnabledReleaseStages();
     }

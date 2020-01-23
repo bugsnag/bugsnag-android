@@ -42,7 +42,7 @@ class ManifestConfigLoaderTest {
             assertNull(appVersion)
             assertEquals(0, versionCode)
             assertNull(releaseStage)
-            assertEquals(emptySet<String>(), enabledReleaseStages)
+            assertNull(enabledReleaseStages)
             assertEquals(emptySet<String>(), ignoreClasses)
             assertEquals(emptySet<String>(), projectPackages)
             assertEquals(setOf("password"), redactedKeys)

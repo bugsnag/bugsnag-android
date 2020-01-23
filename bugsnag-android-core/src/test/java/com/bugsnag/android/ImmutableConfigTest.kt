@@ -5,6 +5,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -49,7 +50,7 @@ internal class ImmutableConfigTest {
 
             // release stages
             assertTrue(ignoreClasses.isEmpty())
-            assertTrue(enabledReleaseStages.isEmpty())
+            assertNull(enabledReleaseStages)
             assertTrue(projectPackages.isEmpty())
             assertEquals(seed.releaseStage, releaseStage)
 
@@ -129,7 +130,7 @@ internal class ImmutableConfigTest {
             assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)
             assertTrue(seed.persistUser)
-            assertTrue(seed.enabledBreadcrumbTypes.isEmpty())
+            assertTrue(seed.enabledBreadcrumbTypes!!.isEmpty())
         }
     }
 

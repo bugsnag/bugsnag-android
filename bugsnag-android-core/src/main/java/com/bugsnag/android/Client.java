@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -236,7 +237,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
             public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                return immutableConfig.getEnabledBreadcrumbTypes().contains(breadcrumb.getType());
+                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
             }
         });
 

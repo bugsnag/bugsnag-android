@@ -13,9 +13,9 @@ internal data class ImmutableConfig(
     val autoTrackSessions: Boolean,
     val sendThreads: Thread.ThreadSendPolicy,
     val ignoreClasses: Collection<String>,
-    val enabledReleaseStages: Collection<String>,
+    val enabledReleaseStages: Collection<String>?,
     val projectPackages: Collection<String>,
-    val enabledBreadcrumbTypes: Set<BreadcrumbType>,
+    val enabledBreadcrumbTypes: Set<BreadcrumbType>?,
     val releaseStage: String?,
     val buildUuid: String?,
     val appVersion: String?,
@@ -44,7 +44,11 @@ internal data class ImmutableConfig(
      */
     @JvmName("shouldNotifyForReleaseStage")
     internal fun shouldNotifyForReleaseStage() =
-        enabledReleaseStages.isEmpty() || enabledReleaseStages.contains(releaseStage)
+        enabledReleaseStages == null || enabledReleaseStages.contains(releaseStage)
+
+    @JvmName("shouldRecordBreadcrumbType")
+    internal fun shouldRecordBreadcrumbType(type: BreadcrumbType) =
+        enabledBreadcrumbTypes == null || enabledBreadcrumbTypes.contains(type)
 
     @JvmName("getErrorApiDeliveryParams")
     internal fun getErrorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
@@ -89,7 +93,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         autoTrackSessions = config.autoTrackSessions,
         sendThreads = config.sendThreads,
         ignoreClasses = config.ignoreClasses.toSet(),
-        enabledReleaseStages = config.enabledReleaseStages.toSet(),
+        enabledReleaseStages = config.enabledReleaseStages?.toSet(),
         projectPackages = config.projectPackages.toSet(),
         releaseStage = config.releaseStage,
         buildUuid = config.buildUuid,
@@ -103,7 +107,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         launchCrashThresholdMs = config.launchCrashThresholdMs,
         logger = config.logger!!,
         maxBreadcrumbs = config.maxBreadcrumbs,
-        enabledBreadcrumbTypes = config.enabledBreadcrumbTypes.toSet()
+        enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet()
     )
 }
 
