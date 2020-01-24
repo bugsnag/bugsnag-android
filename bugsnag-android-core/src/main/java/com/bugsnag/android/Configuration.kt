@@ -215,9 +215,9 @@ class Configuration(
      *
      * client.setEnabledReleaseStages("production");
      */
-    var enabledReleaseStages: Set<String> = emptySet()
+    var enabledReleaseStages: Set<String>? = null
 
-    var enabledBreadcrumbTypes: Set<BreadcrumbType> = BreadcrumbType.values().toSet()
+    var enabledBreadcrumbTypes: Set<BreadcrumbType>? = BreadcrumbType.values().toSet()
 
     /**
      * Set which packages should be considered part of your application.
