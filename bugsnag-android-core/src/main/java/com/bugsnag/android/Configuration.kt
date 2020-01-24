@@ -12,7 +12,9 @@ class Configuration(
      * Gets the API key to send reports to
      */
     val apiKey: String
-) : CallbackAware, MetadataAware {
+) : CallbackAware, MetadataAware, UserAware {
+
+    private var user = User()
 
     @JvmField
     internal val callbackState: CallbackState
@@ -295,6 +297,11 @@ class Configuration(
 
     override fun getMetadata(section: String) = metadataState.getMetadata(section)
     override fun getMetadata(section: String, key: String) = metadataState.getMetadata(section, key)
+
+    override fun getUser(): User = user
+    override fun setUser(id: String?, email: String?, name: String?) {
+        user = User(id, email, name)
+    }
 
     companion object {
         private const val DEFAULT_MAX_SIZE = 25

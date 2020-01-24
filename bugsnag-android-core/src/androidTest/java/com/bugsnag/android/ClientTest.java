@@ -281,4 +281,23 @@ public class ClientTest {
         data.put("second", "another value");
         assertEquals(data, client.getMetadata("test_section"));
     }
+
+    @Test
+    public void testUserCloned() {
+        config.setUser("123", "test@example.com", "Tess Derby");
+        client = new Client(context, config);
+        User user = client.getUser();
+        assertEquals("123", user.getId());
+        assertEquals("Tess Derby", user.getName());
+        assertEquals("test@example.com", user.getEmail());
+    }
+
+    @Test
+    public void testUserNotCloned() {
+        client = new Client(context, config);
+        User user = client.getUser();
+        assertNotNull(user.getId()); // use an auto-generated-id
+        assertNull(user.getName());
+        assertNull(user.getEmail());
+    }
 }
