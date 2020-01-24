@@ -10,10 +10,7 @@ Scenario: Exception not reported when release stage null
 
 Scenario: Exception reported when release stages empty
     When I run "EmptyEnabledReleaseStageScenario"
-    Then I should receive a request
-    And the request is a valid for the error reporting API
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "EmptyEnabledReleaseStageScenario"
+    Then I should receive no requests
 
 Scenario: Exception reported when inside release stage
     When I run "InsideReleaseStageScenario"

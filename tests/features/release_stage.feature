@@ -11,10 +11,7 @@ Scenario: Exception not reported when release stage null
 
 Scenario: Exception reported when release stages empty
     When I run "EmptyEnabledReleaseStageScenario"
-    Then I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "EmptyEnabledReleaseStageScenario"
+    Then I should receive no requests
 
 Scenario: Exception reported when inside release stage
     When I run "InsideReleaseStageScenario"
