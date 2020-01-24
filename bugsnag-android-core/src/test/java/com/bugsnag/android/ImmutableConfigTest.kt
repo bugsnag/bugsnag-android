@@ -4,7 +4,9 @@ import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -43,9 +45,9 @@ internal class ImmutableConfigTest {
 
             // detection
             assertTrue(autoTrackSessions)
-            assertTrue(autoDetectErrors)
-            assertFalse(autoDetectAnrs)
-            assertFalse(autoDetectNdkCrashes)
+            assertTrue(enabledErrorTypes.unhandledExceptions)
+            assertTrue(enabledErrorTypes.anrs)
+            assertFalse(enabledErrorTypes.ndkCrashes)
             assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
 
             // release stages
@@ -76,9 +78,9 @@ internal class ImmutableConfigTest {
     @Test
     fun convertWithOverrides() {
         seed.autoTrackSessions = false
-        seed.autoDetectErrors = false
-        seed.autoDetectAnrs = true
-        seed.autoDetectNdkCrashes = true
+        seed.enabledErrorTypes.unhandledExceptions = false
+        seed.enabledErrorTypes.anrs = false
+        seed.enabledErrorTypes.ndkCrashes = true
         seed.sendThreads = Thread.ThreadSendPolicy.UNHANDLED_ONLY
 
         seed.ignoreClasses = setOf("foo")
@@ -104,9 +106,10 @@ internal class ImmutableConfigTest {
 
             // detection
             assertFalse(autoTrackSessions)
-            assertFalse(autoDetectErrors)
-            assertTrue(autoDetectAnrs)
-            assertTrue(autoDetectNdkCrashes)
+            assertNotSame(seed.enabledErrorTypes, enabledErrorTypes)
+            assertFalse(enabledErrorTypes.unhandledExceptions)
+            assertFalse(enabledErrorTypes.anrs)
+            assertTrue(enabledErrorTypes.ndkCrashes)
             assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages

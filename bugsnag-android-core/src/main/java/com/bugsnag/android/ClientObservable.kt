@@ -9,7 +9,7 @@ internal class ClientObservable : BaseObservable() {
     fun postNdkInstall(conf: ImmutableConfig) {
         notifyObservers(
             StateEvent.Install(
-                conf.autoDetectNdkCrashes, conf.appVersion,
+                conf.enabledErrorTypes.ndkCrashes, conf.appVersion,
                 conf.buildUuid, conf.releaseStage
             )
         )

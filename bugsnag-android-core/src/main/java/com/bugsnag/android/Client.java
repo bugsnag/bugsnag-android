@@ -203,7 +203,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 immutableConfig, breadcrumbState);
 
         // Install a default exception handler with this client
-        if (immutableConfig.getAutoDetectErrors()) {
+        if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
             new ExceptionHandler(this, logger);
         }
 
@@ -279,7 +279,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         if (ndkPluginClz == null) {
             return;
         }
-        if (immutableConfig.getAutoDetectNdkCrashes()) {
+        if (immutableConfig.getEnabledErrorTypes().getNdkCrashes()) {
             BugsnagPluginInterface.INSTANCE.loadPlugin(this, ndkPluginClz);
         } else {
             BugsnagPluginInterface.INSTANCE.unloadPlugin(ndkPluginClz);
@@ -290,7 +290,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         if (anrPluginClz == null) {
             return;
         }
-        if (immutableConfig.getAutoDetectAnrs()) {
+        if (immutableConfig.getEnabledErrorTypes().getAnrs()) {
             BugsnagPluginInterface.INSTANCE.loadPlugin(this, anrPluginClz);
         } else {
             BugsnagPluginInterface.INSTANCE.unloadPlugin(anrPluginClz);

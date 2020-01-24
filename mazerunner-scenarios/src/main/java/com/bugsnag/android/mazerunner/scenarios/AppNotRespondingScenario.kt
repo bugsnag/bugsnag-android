@@ -13,7 +13,7 @@ internal class AppNotRespondingScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
-        config.autoDetectAnrs = true
+        config.enabledErrorTypes.anrs = true
     }
 
     override fun run() {
