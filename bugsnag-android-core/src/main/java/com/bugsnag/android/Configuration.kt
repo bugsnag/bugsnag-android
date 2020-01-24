@@ -88,28 +88,7 @@ class Configuration(
      */
     var autoTrackSessions: Boolean = true
 
-    /**
-     * Sets whether [ANRs](https://developer.android.com/topic/performance/vitals/anr)
-     * should be reported to Bugsnag. When enabled, Bugsnag will record an ANR whenever the main
-     * thread has been blocked for 5000 milliseconds or longer.
-     *
-     * If you wish to enable ANR detection, you should set this property to true.
-     */
-    var autoDetectAnrs: Boolean = false
-
-    /**
-     * Determines whether NDK crashes such as signals and exceptions should be reported by bugsnag.
-     *
-     * If you are using bugsnag-android this flag is false by default; if you are using
-     * bugsnag-android-ndk this flag is true by default.
-     */
-    var autoDetectNdkCrashes: Boolean = false
-
-    /**
-     * Sets whether Bugsnag should automatically capture and report unhandled errors.
-     * By default, this value is true.
-     */
-    var autoDetectErrors: Boolean = true
+    var enabledErrorTypes: ErrorTypes = ErrorTypes()
 
     /**
      * Intended for internal use only - sets the code bundle id for React Native
@@ -187,7 +166,7 @@ class Configuration(
         this.callbackState = CallbackState()
         this.metadataState = MetadataState()
 
-        autoDetectNdkCrashes = try {
+        enabledErrorTypes.ndkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
             // or bugsnag-android-ndk
             val clz = Class.forName("com.bugsnag.android.BuildConfig")

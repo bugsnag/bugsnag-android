@@ -74,8 +74,8 @@ class MainActivity : Activity() {
     private fun prepareConfig(): Configuration {
         val config = Configuration("a35a2a72bd230ac0aa0f52715bbdc6aa")
         config.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
-        config.autoDetectNdkCrashes = true
-        config.autoDetectAnrs = true
+        config.enabledErrorTypes.ndkCrashes = true
+        config.enabledErrorTypes.anrs = true
         return config
     }
 

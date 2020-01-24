@@ -16,9 +16,6 @@ internal class ManifestConfigLoader {
         internal const val BUILD_UUID = "$BUGSNAG_NS.BUILD_UUID"
 
         // detection
-        private const val AUTO_DETECT_ERRORS = "$BUGSNAG_NS.AUTO_DETECT_ERRORS"
-        private const val AUTO_DETECT_ANRS = "$BUGSNAG_NS.AUTO_DETECT_ANRS"
-        private const val AUTO_DETECT_NDK_CRASHES = "$BUGSNAG_NS.AUTO_DETECT_NDK_CRASHES"
         private const val AUTO_TRACK_SESSIONS = "$BUGSNAG_NS.AUTO_TRACK_SESSIONS"
         private const val PERSIST_USER = "$BUGSNAG_NS.PERSIST_USER"
 
@@ -40,9 +37,6 @@ internal class ManifestConfigLoader {
         private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"
         private const val CODE_BUNDLE_ID = "$BUGSNAG_NS.CODE_BUNDLE_ID"
         private const val APP_TYPE = "$BUGSNAG_NS.APP_TYPE"
-
-        // deprecated aliases
-        private const val ENABLE_EXCEPTION_HANDLER = "$BUGSNAG_NS.ENABLE_EXCEPTION_HANDLER"
     }
 
     fun load(ctx: Context, userSuppliedApiKey: String?): Configuration {
@@ -85,10 +79,6 @@ internal class ManifestConfigLoader {
 
     private fun loadDetectionConfig(config: Configuration, data: Bundle) {
         with(config) {
-            autoDetectErrors = data.getBoolean(ENABLE_EXCEPTION_HANDLER, autoDetectErrors)
-            autoDetectErrors = data.getBoolean(AUTO_DETECT_ERRORS, autoDetectErrors)
-            autoDetectAnrs = data.getBoolean(AUTO_DETECT_ANRS, autoDetectAnrs)
-            autoDetectNdkCrashes = data.getBoolean(AUTO_DETECT_NDK_CRASHES, autoDetectNdkCrashes)
             autoTrackSessions = data.getBoolean(AUTO_TRACK_SESSIONS, autoTrackSessions)
             persistUser = data.getBoolean(PERSIST_USER, persistUser)
         }

@@ -11,7 +11,7 @@ internal class DisableAutoDetectErrorsScenario(config: Configuration,
                                                context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
-        config.autoDetectErrors = false
+        config.enabledErrorTypes.unhandledExceptions = false
     }
 
     override fun run() {

@@ -13,8 +13,8 @@ internal class AppNotRespondingDisabledNdkScenario(config: Configuration,
                                                    context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
-        config.autoDetectAnrs = true
-        config.autoDetectNdkCrashes = false
+        config.enabledErrorTypes.anrs = true
+        config.enabledErrorTypes.ndkCrashes = false
     }
 
     override fun run() {

@@ -21,7 +21,7 @@ public class AutoDetectNdkEnabledScenario extends Scenario {
     public AutoDetectNdkEnabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
-        config.setAutoDetectNdkCrashes(true);
+        config.getEnabledErrorTypes().setNdkCrashes(true);
     }
 
     @Override

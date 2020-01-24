@@ -33,7 +33,7 @@ public class ObserverInterfaceTest {
     public void setUp() {
         Configuration config = generateConfiguration();
         config.setDelivery(BugsnagTestUtils.generateDelivery());
-        config.setAutoDetectErrors(false);
+        config.getEnabledErrorTypes().setUnhandledExceptions(false);
         client = new Client(ApplicationProvider.getApplicationContext(), config);
         observer = new BugsnagTestObserver();
         client.registerObserver(observer);
