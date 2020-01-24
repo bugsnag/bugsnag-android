@@ -48,7 +48,7 @@ void bugsnag_add_on_error(bsg_on_error on_error) {
   }
 }
 
-void bugsnag_remove_on_error(bsg_on_error on_error) {
+void bugsnag_remove_on_error() {
   if (bsg_global_env != NULL) {
     bsg_global_env->on_error = NULL;
   }
