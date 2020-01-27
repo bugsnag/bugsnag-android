@@ -25,5 +25,7 @@ class ErrorTypes(
      */
     var unhandledExceptions: Boolean = true
 ) {
+    internal constructor(detectErrors: Boolean) : this(detectErrors, detectErrors, detectErrors)
+
     internal fun copy() = ErrorTypes(anrs, ndkCrashes, unhandledExceptions)
 }

@@ -17,6 +17,7 @@ internal class ManifestConfigLoader {
 
         // detection
         private const val AUTO_TRACK_SESSIONS = "$BUGSNAG_NS.AUTO_TRACK_SESSIONS"
+        private const val AUTO_DETECT_ERRORS = "$BUGSNAG_NS.AUTO_DETECT_ERRORS"
         private const val PERSIST_USER = "$BUGSNAG_NS.PERSIST_USER"
 
         // endpoints
@@ -80,6 +81,7 @@ internal class ManifestConfigLoader {
     private fun loadDetectionConfig(config: Configuration, data: Bundle) {
         with(config) {
             autoTrackSessions = data.getBoolean(AUTO_TRACK_SESSIONS, autoTrackSessions)
+            autoDetectErrors = data.getBoolean(AUTO_DETECT_ERRORS, autoDetectErrors)
             persistUser = data.getBoolean(PERSIST_USER, persistUser)
         }
     }

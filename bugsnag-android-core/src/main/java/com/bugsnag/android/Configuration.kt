@@ -89,6 +89,7 @@ class Configuration(
     var autoTrackSessions: Boolean = true
 
     var enabledErrorTypes: ErrorTypes = ErrorTypes()
+    var autoDetectErrors: Boolean = true
 
     /**
      * Intended for internal use only - sets the code bundle id for React Native
