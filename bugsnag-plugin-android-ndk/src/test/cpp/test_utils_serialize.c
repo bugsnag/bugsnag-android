@@ -19,11 +19,9 @@ void generate_basic_report(bugsnag_event *event) {
   strcpy(event->error.stacktrace[0].method, "makinBacon");
   strcpy(event->app.name, "PhotoSnap Plus");
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
-  strcpy(event->app.package_name, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.version, "2.0.52");
   event->app.version_code = 57;
-  strcpy(event->app.version_name, "2.0");
   strcpy(event->app.build_uuid, "1234-9876-adfe");
   strcpy(event->device.manufacturer, "HI-TEC™");
   strcpy(event->device.model, "Rasseur");
@@ -66,6 +64,9 @@ bugsnag_report_v2 *bsg_generate_report_v2(void) {
   report->exception.frame_count = 1;
   strcpy(report->exception.type, "C");
   strcpy(report->exception.stacktrace[0].method, "makinBacon");
+
+  strcpy(report->app.package_name, "com.example.foo");
+  strcpy(report->app.version_name, "2.5");
   return report;
 }
 
@@ -170,6 +171,10 @@ TEST test_report_v2_migration(void) {
   // event.device
   ASSERT_STR_EQ("android", event->device.os_name);
 
+  // package_name/version_name are migrated to metadata
+  ASSERT_STR_EQ("com.example.foo", event->metadata.values[0].char_value);
+  ASSERT_STR_EQ("2.5", event->metadata.values[1].char_value);
+
   free(generated_report);
   free(env);
   free(event);
@@ -191,11 +196,9 @@ TEST test_app_info_to_json(void) {
   JSON_Object *event = json_value_get_object(root_value);
   ASSERT(strcmp("2.0.52", json_object_dotget_string(event, "app.version")) == 0);
   ASSERT(strcmp( "PhotoSnap Plus", json_object_dotget_string(event, "metaData.app.name")) == 0);
-  ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "metaData.app.packageName")) == 0);
   ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "app.id")) == 0);
   ASSERT(strcmp( "リリース", json_object_dotget_string(event, "app.releaseStage")) == 0);
   ASSERT_EQ(57, json_object_dotget_number(event, "app.versionCode"));
-  ASSERT(strcmp( "2.0", json_object_dotget_string(event, "metaData.app.versionName")) == 0);
   ASSERT(strcmp( "1234-9876-adfe", json_object_dotget_string(event, "app.buildUUID")) == 0);
   json_value_free(root_value);
   PASS();

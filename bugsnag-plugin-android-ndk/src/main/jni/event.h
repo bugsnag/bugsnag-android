@@ -56,11 +56,9 @@ typedef struct {
 typedef struct {
     char name[64];
     char id[64];
-    char package_name[64];
     char release_stage[64];
     char type[32];
     char version[32];
-    char version_name[32];
     char active_screen[64];
     int version_code;
     char build_uuid[64];
@@ -81,7 +79,7 @@ typedef struct {
     bool in_foreground;
     bool low_memory;
     size_t memory_usage;
-    char binaryArch[32];
+    char binary_arch[32];
 } bsg_app_info;
 
 typedef struct {

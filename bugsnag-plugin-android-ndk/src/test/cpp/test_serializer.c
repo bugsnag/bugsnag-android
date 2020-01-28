@@ -38,7 +38,7 @@ bsg_app_info * loadAppTestCase(jint num) {
     strcpy(app->release_stage, "prod");
     app->version_code = 55;
     strcpy(app->build_uuid, "1234-uuid");
-    strcpy(app->binaryArch, "x86");
+    strcpy(app->binary_arch, "x86");
     app->duration = 6502;
     app->duration_in_foreground = 6502;
     app->in_foreground = true;
@@ -47,8 +47,6 @@ bsg_app_info * loadAppTestCase(jint num) {
 
 bsg_app_info * loadAppMetadataTestCase(jint num) {
     bsg_app_info *app = malloc(sizeof(bsg_app_info));
-    strcpy(app->package_name, "com.bugsnag.example");
-    strcpy(app->version_name, "5.0");
     strcpy(app->active_screen, "MainActivity");
     strcpy(app->name, "PhotoSnap");
     app->low_memory = true;
