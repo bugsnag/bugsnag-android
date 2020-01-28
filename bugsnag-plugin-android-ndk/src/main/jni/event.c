@@ -343,3 +343,33 @@ void bugsnag_device_set_os_name(void *event_ptr, char *value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   bsg_strncpy_safe(event->device.os_name, value, sizeof(event->device.os_name));
 }
+
+char *bugsnag_error_get_error_class(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->error.errorClass;
+}
+
+void bugsnag_error_set_error_class(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->error.errorClass, value, sizeof(event->error.errorClass));
+}
+
+char *bugsnag_error_get_error_message(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->error.errorMessage;
+}
+
+void bugsnag_error_set_error_message(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->error.errorMessage, value, sizeof(event->error.errorMessage));
+}
+
+char *bugsnag_error_get_error_type(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->error.type;
+}
+
+void bugsnag_error_set_error_type(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->error.type, value, sizeof(event->error.type));
+}
