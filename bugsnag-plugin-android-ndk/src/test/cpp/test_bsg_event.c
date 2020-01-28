@@ -7,6 +7,9 @@
 bugsnag_event *init_event() {
     bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
     bsg_strncpy_safe(event->context, "Foo", sizeof(event->context));
+    bsg_strncpy_safe(event->user.id, "123", sizeof(event->user.id));
+    bsg_strncpy_safe(event->user.email, "bob@example.com", sizeof(event->user.email));
+    bsg_strncpy_safe(event->user.name, "Bob Bobbiton", sizeof(event->user.name));
 
     bsg_strncpy_safe(event->app.binaryArch, "x86", sizeof(event->app.binaryArch));
     bsg_strncpy_safe(event->app.build_uuid, "123", sizeof(event->app.build_uuid));
@@ -253,8 +256,22 @@ TEST test_error_type(void) {
     PASS();
 }
 
+TEST test_event_user(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_STR_EQ("123", event->user.id);
+    ASSERT_STR_EQ("bob@example.com", event->user.email);
+    ASSERT_STR_EQ("Bob Bobbiton", event->user.name);
+    bugsnag_event_set_user(event, "456", "sue@example.com", "Sue Smith");
+    ASSERT_STR_EQ("456", event->user.id);
+    ASSERT_STR_EQ("sue@example.com", event->user.email);
+    ASSERT_STR_EQ("Sue Smith", event->user.name);
+    free(event);
+    PASS();
+}
+
 SUITE(event_mutators) {
     RUN_TEST(test_event_context);
+    RUN_TEST(test_event_user);
     RUN_TEST(test_app_binary_arch);
     RUN_TEST(test_app_build_uuid);
     RUN_TEST(test_app_id);

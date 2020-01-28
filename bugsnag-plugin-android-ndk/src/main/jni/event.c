@@ -113,6 +113,13 @@ void bugsnag_event_set_user_id(bugsnag_event *event, char *value) {
   bsg_strncpy_safe(event->user.id, value, sizeof(event->user.id));
 }
 
+void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bugsnag_event_set_user_id(event, id);
+  bugsnag_event_set_user_email(event, email);
+  bugsnag_event_set_user_name(event, name);
+}
+
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
                                   bugsnag_breadcrumb *crumb) {
   int crumb_index;
