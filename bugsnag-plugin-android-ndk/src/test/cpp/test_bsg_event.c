@@ -7,6 +7,8 @@
 bugsnag_event *init_event() {
     bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
     bsg_strncpy_safe(event->context, "Foo", sizeof(event->context));
+    event->severity = BSG_SEVERITY_INFO;
+    event->unhandled = true;
     bsg_strncpy_safe(event->user.id, "123", sizeof(event->user.id));
     bsg_strncpy_safe(event->user.email, "bob@example.com", sizeof(event->user.email));
     bsg_strncpy_safe(event->user.name, "Bob Bobbiton", sizeof(event->user.name));
@@ -44,6 +46,15 @@ TEST test_event_context(void) {
     ASSERT_STR_EQ("Foo", bugsnag_event_get_context(event));
     bugsnag_event_set_context(event, "SomeContext");
     ASSERT_STR_EQ("SomeContext", bugsnag_event_get_context(event));
+    free(event);
+    PASS();
+}
+
+TEST test_event_severity(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_EQ(BSG_SEVERITY_INFO, event->severity);
+    bugsnag_event_set_severity(event, BSG_SEVERITY_ERR);
+    ASSERT_EQ(BSG_SEVERITY_ERR, bugsnag_event_get_severity(event));
     free(event);
     PASS();
 }
@@ -269,8 +280,16 @@ TEST test_event_user(void) {
     PASS();
 }
 
+TEST test_event_unhandled(void) {
+    bugsnag_event *event = init_event();
+    bugsnag_event_is_unhandled(event);
+    free(event);
+    PASS();
+}
 SUITE(event_mutators) {
     RUN_TEST(test_event_context);
+    RUN_TEST(test_event_severity);
+    RUN_TEST(test_event_unhandled);
     RUN_TEST(test_event_user);
     RUN_TEST(test_app_binary_arch);
     RUN_TEST(test_app_build_uuid);

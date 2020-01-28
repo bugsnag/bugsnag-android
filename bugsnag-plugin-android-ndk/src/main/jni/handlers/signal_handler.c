@@ -179,6 +179,7 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   }
 
   bsg_global_env->handling_crash = true;
+  bsg_global_env->next_event.unhandled = true;
   bsg_populate_event_as(bsg_global_env);
   bsg_global_env->next_event.unhandled_events++;
   bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(

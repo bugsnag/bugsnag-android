@@ -148,7 +148,13 @@ void bugsnag_error_set_error_type(void *event_ptr, char *value);
 
 void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name);
 
+bsg_severity_t bugsnag_event_get_severity(void *event_ptr);
+void bugsnag_event_set_severity(void *event_ptr, bsg_severity_t value);
+
+bool bugsnag_event_is_unhandled(void *event_ptr);
+
 #ifdef __cplusplus
 }
 #endif
+
 #endif
