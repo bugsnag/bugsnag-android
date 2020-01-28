@@ -17,7 +17,9 @@ internal class AsyncErrorDoubleFlushScenario(config: Configuration,
     override fun run() {
         super.run()
 
-        writeErrorToStore(Bugsnag.getClient())
+        val event = generateEvent(Bugsnag.getClient())
+        event.context = "AsyncErrorDoubleFlushScenario"
+        writeErrorToStore(Bugsnag.getClient(), event)
         flushErrorStoreAsync(Bugsnag.getClient())
         flushErrorStoreAsync(Bugsnag.getClient())
     }

@@ -18,7 +18,9 @@ internal class AsyncErrorLaunchScenario(config: Configuration,
     override fun run() {
         super.run()
 
-        writeErrorToStore(Bugsnag.getClient())
+        val event = generateEvent(Bugsnag.getClient())
+        event.context = "AsyncErrorLaunchScenario"
+        writeErrorToStore(Bugsnag.getClient(), event)
         flushErrorStoreOnLaunch(Bugsnag.getClient())
         flushErrorStoreAsync(Bugsnag.getClient())
     }
