@@ -56,6 +56,12 @@ services:
       BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
       DEVICE_TYPE:
       APP_LOCATION:
+      BUILDKITE_BRANCH:
+      BUILDKITE_PIPELINE_NAME:
+      BUILDKITE_RETRY_COUNT:
+      BUILDKITE:
+      BUILDKITE_BUILD_NUMBER:
+      BUILDKITE_STEP_KEY:
     command: --tags ~@ignore
     volumes:
       - ./build:/app/build
