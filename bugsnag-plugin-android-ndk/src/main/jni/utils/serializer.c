@@ -282,6 +282,12 @@ void bsg_serialize_context(const bugsnag_event *event, JSON_Object *event_obj) {
   }
 }
 
+void bsg_serialize_grouping_hash(const bugsnag_event *event, JSON_Object *event_obj) {
+  if (strlen(event->grouping_hash) > 0) {
+    json_object_set_string(event_obj, "groupingHash", event->grouping_hash);
+  }
+}
+
 void bsg_serialize_handled_state(const bugsnag_event *event, JSON_Object *event_obj) {
   // FUTURE(dm): severityReason/unhandled attributes are currently
   // over-optimized for signal handling. in the future we may want to handle
@@ -481,6 +487,7 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
   char *serialized_string = NULL;
   {
     bsg_serialize_context(event, event_obj);
+    bsg_serialize_grouping_hash(event, event_obj);
     bsg_serialize_handled_state(event, event_obj);
     bsg_serialize_app(event->app, event_obj);
     bsg_serialize_app_metadata(event->app, event_obj);

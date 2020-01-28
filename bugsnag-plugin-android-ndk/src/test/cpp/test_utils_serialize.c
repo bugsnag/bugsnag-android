@@ -8,6 +8,7 @@
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type);
 
 void generate_basic_report(bugsnag_event *event) {
+  strcpy(event->grouping_hash, "foo-hash");
   strcpy(event->context, "SomeActivity");
   strcpy(event->error.errorClass, "SIGBUS");
   strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
@@ -210,6 +211,14 @@ TEST test_session_handled_counts(void) {
   PASS();
 }
 
+TEST test_grouping_hash_to_json(void) {
+  JSON_Value *root_value = bsg_generate_json();
+  JSON_Object *event = json_value_get_object(root_value);
+  ASSERT(event != NULL);
+  ASSERT_STR_EQ("foo-hash", json_object_get_string(event, "groupingHash"));
+  PASS();
+}
+
 TEST test_context_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
   JSON_Object *event = json_value_get_object(root_value);
@@ -302,6 +311,7 @@ SUITE(serialize_utils) {
   RUN_TEST(test_report_v2_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_context_to_json);
+  RUN_TEST(test_grouping_hash_to_json);
   RUN_TEST(test_app_info_to_json);
   RUN_TEST(test_device_info_to_json);
   RUN_TEST(test_user_info_to_json);
