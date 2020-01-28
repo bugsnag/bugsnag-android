@@ -13,6 +13,7 @@
 SUITE(string_utils);
 SUITE(serialize_utils);
 SUITE(breadcrumbs);
+SUITE(event_mutators);
 
 GREATEST_MAIN_DEFS();
 
@@ -24,6 +25,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCXXTest_run(
     RUN_SUITE(string_utils);
     RUN_SUITE(serialize_utils);
     RUN_SUITE(breadcrumbs);
+    RUN_SUITE(event_mutators);
     GREATEST_MAIN_END();
 }
 

@@ -91,7 +91,13 @@ void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
   event->unhandled_events = unhandled_count;
 }
 
-void bugsnag_event_set_context(bugsnag_event *event, char *value) {
+char *bugsnag_event_get_context(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->context;
+}
+
+void bugsnag_event_set_context(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   bsg_strncpy_safe(event->context, value, sizeof(event->context));
 }
 

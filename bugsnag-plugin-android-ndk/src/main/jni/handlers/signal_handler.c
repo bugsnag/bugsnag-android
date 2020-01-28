@@ -195,7 +195,9 @@ void bsg_handle_signal(int signum, siginfo_t *info,
       break;
     }
   }
-  bsg_serialize_event_to_file(bsg_global_env);
+  if (bsg_run_on_error()) {
+    bsg_serialize_event_to_file(bsg_global_env);
+  }
   bsg_handler_uninstall_signal();
   bsg_invoke_previous_signal_handler(signum, info, user_context);
 }

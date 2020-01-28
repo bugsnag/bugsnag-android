@@ -42,6 +42,26 @@ bsg_unwinder bsg_configured_unwind_style() {
   return BSG_CUSTOM_UNWIND;
 }
 
+void bugsnag_add_on_error(bsg_on_error on_error) {
+  if (bsg_global_env != NULL) {
+    bsg_global_env->on_error = on_error;
+  }
+}
+
+void bugsnag_remove_on_error() {
+  if (bsg_global_env != NULL) {
+    bsg_global_env->on_error = NULL;
+  }
+}
+
+bool bsg_run_on_error() {
+  bsg_on_error on_error = bsg_global_env->on_error;
+  if (on_error != NULL) {
+      return on_error(&bsg_global_env->next_event);
+  }
+  return true;
+}
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_enableCrashReporting(
         JNIEnv *env, jobject _this) {
   if (bsg_global_env == NULL) {

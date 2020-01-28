@@ -5,6 +5,7 @@
 #include "utils/stack_unwinder.h"
 #include "utils/string.h"
 #include "metadata.h"
+#include "../assets/include/bugsnag.h"
 #include <jni.h>
 #include <stdio.h>
 #include <stdlib.h>

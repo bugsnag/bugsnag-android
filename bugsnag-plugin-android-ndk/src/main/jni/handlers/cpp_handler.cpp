@@ -107,7 +107,9 @@ void bsg_handle_cpp_terminate() {
   bsg_strncpy(bsg_global_env->next_event.error.errorMessage, (char *)message,
               message_length);
 
-  bsg_serialize_event_to_file(bsg_global_env);
+  if (bsg_run_on_error()) {
+    bsg_serialize_event_to_file(bsg_global_env);
+  }
   bsg_global_env->crash_handled = true;
   bsg_handler_uninstall_cpp();
   if (bsg_global_terminate_previous != NULL) {
