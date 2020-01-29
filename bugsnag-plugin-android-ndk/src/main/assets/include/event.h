@@ -160,6 +160,9 @@ void bugsnag_event_set_severity(void *event_ptr, bsg_severity_t value);
 
 bool bugsnag_event_is_unhandled(void *event_ptr);
 
+char *bugsnag_event_get_grouping_hash(void *event_ptr);
+void bugsnag_event_set_grouping_hash(void *event_ptr, char *value);
+
 #ifdef __cplusplus
 }
 #endif

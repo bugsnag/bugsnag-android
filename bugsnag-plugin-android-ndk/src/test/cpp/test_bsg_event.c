@@ -26,6 +26,7 @@ bugsnag_event *init_event() {
     event->app.duration = 9019;
     event->app.duration_in_foreground = 7017;
     event->app.in_foreground = true;
+    bsg_strncpy_safe(event->grouping_hash, "Bar", sizeof(event->grouping_hash));
 
     event->device.jailbroken = true;
     event->device.total_memory = 1095092340;
@@ -132,6 +133,15 @@ TEST test_event_user(void) {
     ASSERT_STR_EQ("456", user.id);
     ASSERT_STR_EQ("sue@example.com", user.email);
     ASSERT_STR_EQ("Sue Smith", user.name);
+    free(event);
+    PASS();
+}
+
+TEST test_event_grouping_hash(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_STR_EQ("Bar", event->grouping_hash);
+    bugsnag_event_set_grouping_hash(event, "Wham");
+    ASSERT_STR_EQ("Wham", bugsnag_event_get_grouping_hash(event));
     free(event);
     PASS();
 }
@@ -292,6 +302,7 @@ SUITE(event_mutators) {
     RUN_TEST(test_event_severity);
     RUN_TEST(test_event_unhandled);
     RUN_TEST(test_event_user);
+    RUN_TEST(test_event_grouping_hash);
     RUN_TEST(test_app_binary_arch);
     RUN_TEST(test_app_build_uuid);
     RUN_TEST(test_app_id);

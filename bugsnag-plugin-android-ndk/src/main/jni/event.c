@@ -400,3 +400,13 @@ bsg_user_t bugsnag_event_get_user(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   return event->user;
 }
+
+char *bugsnag_event_get_grouping_hash(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->grouping_hash;
+}
+
+void bugsnag_event_set_grouping_hash(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->grouping_hash, value, sizeof(event->grouping_hash));
+}

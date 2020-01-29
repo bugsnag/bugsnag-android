@@ -239,6 +239,7 @@ typedef struct {
     char session_start[33];
     int handled_events;
     int unhandled_events;
+    char grouping_hash[64];
     bool unhandled;
 } bugsnag_event;
 
