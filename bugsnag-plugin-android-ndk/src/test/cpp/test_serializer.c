@@ -103,6 +103,7 @@ bugsnag_event * loadContextTestCase(jint num) {
 
 bugsnag_event * loadHandledStateTestCase(jint num) {
     bugsnag_event *data = malloc(sizeof(bugsnag_event));
+    data->unhandled = true;
     return data;
 }
 

@@ -380,3 +380,18 @@ void bugsnag_error_set_error_type(void *event_ptr, char *value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   bsg_strncpy_safe(event->error.type, value, sizeof(event->error.type));
 }
+
+bsg_severity_t bugsnag_event_get_severity(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->severity;
+}
+
+void bugsnag_event_set_severity(void *event_ptr, bsg_severity_t value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->severity = value;
+}
+
+bool bugsnag_event_is_unhandled(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->unhandled;
+}

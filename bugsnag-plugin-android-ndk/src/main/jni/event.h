@@ -245,6 +245,7 @@ typedef struct {
     char session_start[33];
     int handled_events;
     int unhandled_events;
+    bool unhandled;
 } bugsnag_event;
 
 void bugsnag_event_add_metadata_double(bugsnag_event *event, char *section,

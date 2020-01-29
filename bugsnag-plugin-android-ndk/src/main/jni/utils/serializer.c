@@ -143,6 +143,10 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     event->error.frame_count = report_v2->exception.frame_count;
     size_t error_size = sizeof(bsg_stackframe) * BUGSNAG_FRAMES_MAX;
     memcpy(&event->error.stacktrace, report_v2->exception.stacktrace, error_size);
+
+    // Fatal C errors are always true by default, previously this was hardcoded and
+    // not a field on the struct
+    event->unhandled = true;
   }
   free(report_v2);
   return event;
@@ -283,7 +287,7 @@ void bsg_serialize_handled_state(const bugsnag_event *event, JSON_Object *event_
   // over-optimized for signal handling. in the future we may want to handle
   // C++ exceptions, etc as well.
   json_object_set_string(event_obj, "severity", bsg_severity_string(event->severity));
-  json_object_dotset_boolean(event_obj, "unhandled", true);
+  json_object_dotset_boolean(event_obj, "unhandled", event->unhandled);
   json_object_dotset_string(event_obj, "severityReason.type", "signal");
   json_object_dotset_string(event_obj, "severityReason.attributes.signalType", event->error.errorClass);
 }
