@@ -101,26 +101,6 @@ void bugsnag_event_set_context(void *event_ptr, char *value) {
   bsg_strncpy_safe(event->context, value, sizeof(event->context));
 }
 
-const char *bsg_orientation_from_degrees(int orientation) {
-  if (orientation < 0) {
-    return "unknown";
-  } else if (orientation >= 315 || orientation <= 45) {
-    return "portrait";
-  } else if (orientation <= 135) {
-    return "landscape";
-  } else if (orientation <= 225) {
-    return "portrait";
-  } else {
-    return "landscape";
-  }
-}
-
-void bugsnag_event_set_orientation(bugsnag_event *event, int value) {
-  bsg_strncpy_safe(event->device.orientation,
-                   (char *)bsg_orientation_from_degrees(value),
-                   sizeof(event->device.orientation));
-}
-
 void bugsnag_event_set_user_email(bugsnag_event *event, char *value) {
   bsg_strncpy_safe(event->user.email, value, sizeof(event->user.email));
 }
@@ -258,4 +238,108 @@ bool bugsnag_app_get_in_foreground(void *event_ptr) {
 void bugsnag_app_set_in_foreground(void *event_ptr, bool value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   event->app.in_foreground = value;
+}
+
+
+/* Accessors for event.device */
+
+
+bool bugsnag_device_get_jailbroken(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.jailbroken;
+}
+
+void bugsnag_device_set_jailbroken(void *event_ptr, bool value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->device.jailbroken = value;
+}
+
+char *bugsnag_device_get_id(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.id;
+}
+
+void bugsnag_device_set_id(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->device.id, value, sizeof(event->device.id));
+}
+
+char *bugsnag_device_get_locale(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.locale;
+}
+
+void bugsnag_device_set_locale(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->device.locale, value, sizeof(event->device.locale));
+}
+
+char *bugsnag_device_get_manufacturer(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.manufacturer;
+}
+
+void bugsnag_device_set_manufacturer(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->device.manufacturer, value, sizeof(event->device.manufacturer));
+}
+
+char *bugsnag_device_get_model(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.model;
+}
+
+void bugsnag_app_set_model(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->device.model, value, sizeof(event->device.model));
+}
+
+char *bugsnag_device_get_os_version(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.os_version;
+}
+
+void bugsnag_device_set_os_version(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->device.os_version, value, sizeof(event->device.os_version));
+}
+
+long bugsnag_device_get_total_memory(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.total_memory;
+}
+
+void bugsnag_device_set_total_memory(void *event_ptr, long value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->device.total_memory = value;
+}
+
+char *bugsnag_device_get_orientation(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.orientation;
+}
+
+void bugsnag_device_set_orientation(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->device.orientation, value, sizeof(event->device.orientation));
+}
+
+time_t bugsnag_device_get_time(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.time;
+}
+
+void bugsnag_device_set_time(void *event_ptr, time_t value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->device.time = value;
+}
+
+char *bugsnag_device_get_os_name(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->device.os_name;
+}
+
+void bugsnag_device_set_os_name(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->device.os_name, value, sizeof(event->device.os_name));
 }

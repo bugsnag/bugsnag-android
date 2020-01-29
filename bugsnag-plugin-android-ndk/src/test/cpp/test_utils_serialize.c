@@ -27,6 +27,7 @@ void generate_basic_report(bugsnag_event *event) {
   strcpy(event->device.manufacturer, "HI-TEC™");
   strcpy(event->device.model, "Rasseur");
   strcpy(event->device.locale, "en_AU#Melbun");
+  strcpy(event->device.os_name, "android");
   strcpy(event->user.email, "fenton@io.example.com");
   strcpy(event->user.id, "fex");
   event->device.total_memory = 234678100;
@@ -57,12 +58,21 @@ void generate_basic_report(bugsnag_event *event) {
 bugsnag_report_v2 *bsg_generate_report_v2(void) {
   bugsnag_report_v2 *report = calloc(1, sizeof(bugsnag_report_v2));
   generate_basic_report((bugsnag_event *) report);
+
+  strcpy(report->exception.name, "SIGBUS");
+  strcpy(report->exception.message, "POSIX is serious about oncoming traffic");
+  report->exception.stacktrace[0].frame_address = 454379;
+  report->exception.frame_count = 1;
+  strcpy(report->exception.type, "C");
+  strcpy(report->exception.stacktrace[0].method, "makinBacon");
   return report;
 }
 
 bugsnag_report_v1 *bsg_generate_report_v1(void) {
   bugsnag_report_v1 *report = calloc(1, sizeof(bugsnag_report_v1));
-  generate_basic_report((bugsnag_event *) report);
+  strcpy(report->session_id, "f1ab");
+  strcpy(report->session_start, "2019-03-19T12:58:19+00:00");
+  report->handled_events = 1;
   return report;
 }
 
@@ -141,24 +151,27 @@ TEST test_report_v2_migration(void) {
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
   bsg_serialize_event_to_file(env);
 
-  bugsnag_event *report = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
-  ASSERT(report != NULL);
+  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(event != NULL);
 
   // bsg_library -> bsg_notifier
-  ASSERT_STR_EQ("Test Notifier", report->notifier.name);
-  ASSERT_STR_EQ("bugsnag.com", report->notifier.url);
-  ASSERT_STR_EQ("1.0", report->notifier.version);
+  ASSERT_STR_EQ("Test Notifier", event->notifier.name);
+  ASSERT_STR_EQ("bugsnag.com", event->notifier.url);
+  ASSERT_STR_EQ("1.0", event->notifier.version);
 
   // bsg_exception -> bsg_error
-  ASSERT_STR_EQ("SIGBUS", report->error.errorClass);
-  ASSERT_STR_EQ("POSIX is serious about oncoming traffic", report->error.errorMessage);
-  ASSERT_STR_EQ("C", report->error.type);
-  ASSERT(454379 == report->error.frame_count);
-  ASSERT_STR_EQ("makinBacon", report->error.stacktrace[0].method);
+  ASSERT_STR_EQ("SIGBUS", event->error.errorClass);
+  ASSERT_STR_EQ("POSIX is serious about oncoming traffic", event->error.errorMessage);
+  ASSERT_STR_EQ("C", event->error.type);
+  ASSERT_EQ(1, event->error.frame_count);
+  ASSERT_STR_EQ("makinBacon", event->error.stacktrace[0].method);
+
+  // event.device
+  ASSERT_STR_EQ("android", event->device.os_name);
 
   free(generated_report);
   free(env);
-  free(report);
+  free(event);
   PASS();
 }
 
@@ -286,6 +299,7 @@ SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
   RUN_TEST(test_report_v1_migration);
+  RUN_TEST(test_report_v2_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_context_to_json);
   RUN_TEST(test_app_info_to_json);

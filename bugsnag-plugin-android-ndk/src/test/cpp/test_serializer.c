@@ -58,6 +58,7 @@ bsg_app_info * loadAppMetadataTestCase(jint num) {
 bsg_device_info * loadDeviceTestCase(jint num) {
     bsg_device_info *device = malloc(sizeof(bsg_device_info));
     strcpy(device->id, "f5gh7");
+    strcpy(device->os_name, "android");
     strcpy(device->os_version, "8.1");
     strcpy(device->manufacturer, "Samsung");
     strcpy(device->model, "S7");
