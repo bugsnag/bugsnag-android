@@ -146,6 +146,8 @@ void bugsnag_error_set_error_message(void *event_ptr, char *value);
 char *bugsnag_error_get_error_type(void *event_ptr);
 void bugsnag_error_set_error_type(void *event_ptr, char *value);
 
+void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name);
+
 #ifdef __cplusplus
 }
 #endif
