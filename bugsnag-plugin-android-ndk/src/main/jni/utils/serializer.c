@@ -379,7 +379,7 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object 
   }
 }
 
-void bsg_serialize_user(const bsg_user user, JSON_Object *event_obj) {
+void bsg_serialize_user(const bsg_user_t user, JSON_Object *event_obj) {
   if (strlen(user.name) > 0)
     json_object_dotset_string(event_obj, "user.name", user.name);
   if (strlen(user.email) > 0)

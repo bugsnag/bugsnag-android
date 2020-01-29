@@ -34,7 +34,7 @@
  */
 #define BUGSNAG_EVENT_VERSION 3
 
-#define BUGSNAG_USER_INFO_LEN 64
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -176,12 +176,6 @@ typedef struct {
     bsg_metadata_value values[BUGSNAG_METADATA_MAX];
 } bugsnag_metadata;
 
-typedef struct {
-    char name[BUGSNAG_USER_INFO_LEN];
-    char email[BUGSNAG_USER_INFO_LEN];
-    char id[BUGSNAG_USER_INFO_LEN];
-} bsg_user;
-
 /** a Bugsnag exception */
 typedef struct {
     /** The exception name or stringified code */
@@ -228,7 +222,7 @@ typedef struct {
     bsg_notifier notifier;
     bsg_app_info app;
     bsg_device_info device;
-    bsg_user user;
+    bsg_user_t user;
     bsg_error error;
     bugsnag_metadata metadata;
 

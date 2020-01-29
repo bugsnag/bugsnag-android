@@ -73,7 +73,7 @@ typedef struct {
     bsg_library notifier;
     bsg_app_info app;
     bsg_device_info_v1 device;
-    bsg_user user;
+    bsg_user_t user;
     bsg_exception exception;
     bugsnag_metadata metadata;
 
@@ -95,7 +95,7 @@ typedef struct {
     bsg_library notifier;
     bsg_app_info app;
     bsg_device_info_v1 device;
-    bsg_user user;
+    bsg_user_t user;
     bsg_exception exception;
     bugsnag_metadata metadata;
 

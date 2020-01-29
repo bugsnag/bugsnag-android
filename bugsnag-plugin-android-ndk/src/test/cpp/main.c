@@ -32,7 +32,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCXXTest_run(
 TEST test_user_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
     JSON_Object *event = json_value_get_object(event_val);
-    bsg_user *user = test_case->data_ptr;
+    bsg_user_t *user = test_case->data_ptr;
     bsg_serialize_user(*user, event);
     free(user);
     return validate_serialized_json(test_case, event_val);

@@ -50,10 +50,17 @@ typedef enum {
   BSG_CRUMB_USER,
 } bsg_breadcrumb_t;
 
+typedef struct {
+    char name[64];
+    char email[64];
+    char id[64];
+} bsg_user_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+bsg_user_t bugsnag_event_get_user(void *event_ptr);
 
 /**
  * Retrieves the event context
