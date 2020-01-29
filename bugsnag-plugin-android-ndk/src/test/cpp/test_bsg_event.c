@@ -30,6 +30,9 @@ bugsnag_event *init_event() {
     bsg_strncpy_safe(event->device.orientation, "portrait", sizeof(event->device.orientation));
     event->device.time = 7609;
 
+    bsg_strncpy_safe(event->error.errorClass, "SIGSEGV", sizeof(event->error.errorClass));
+    bsg_strncpy_safe(event->error.errorMessage, "Whoops!", sizeof(event->error.errorMessage));
+    bsg_strncpy_safe(event->error.type, "C", sizeof(event->error.type));
     return event;
 }
 
@@ -223,6 +226,33 @@ TEST test_device_os_name(void) {
     PASS();
 }
 
+TEST test_error_class(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_STR_EQ("SIGSEGV", event->error.errorClass);
+    bugsnag_error_set_error_class(event, "SIGTRAP");
+    ASSERT_STR_EQ("SIGTRAP", bugsnag_error_get_error_class(event));
+    free(event);
+    PASS();
+}
+
+TEST test_error_message(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_STR_EQ("Whoops!", event->error.errorMessage);
+    bugsnag_error_set_error_message(event, "Invalid Foo");
+    ASSERT_STR_EQ("Invalid Foo", bugsnag_error_get_error_message(event));
+    free(event);
+    PASS();
+}
+
+TEST test_error_type(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_STR_EQ("C", event->error.type);
+    bugsnag_error_set_error_type(event, "C++");
+    ASSERT_STR_EQ("C++", bugsnag_error_get_error_type(event));
+    free(event);
+    PASS();
+}
+
 SUITE(event_mutators) {
     RUN_TEST(test_event_context);
     RUN_TEST(test_app_binary_arch);
@@ -245,4 +275,7 @@ SUITE(event_mutators) {
     RUN_TEST(test_device_orientation);
     RUN_TEST(test_device_time);
     RUN_TEST(test_device_os_name);
+    RUN_TEST(test_error_class);
+    RUN_TEST(test_error_message);
+    RUN_TEST(test_error_type);
 }

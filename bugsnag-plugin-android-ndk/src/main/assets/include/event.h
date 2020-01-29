@@ -137,8 +137,16 @@ void bugsnag_device_set_time(void *event_ptr, time_t value);
 char *bugsnag_device_get_os_name(void *event_ptr);
 void bugsnag_device_set_os_name(void *event_ptr, char *value);
 
+char *bugsnag_error_get_error_class(void *event_ptr);
+void bugsnag_error_set_error_class(void *event_ptr, char *value);
+
+char *bugsnag_error_get_error_message(void *event_ptr);
+void bugsnag_error_set_error_message(void *event_ptr, char *value);
+
+char *bugsnag_error_get_error_type(void *event_ptr);
+void bugsnag_error_set_error_type(void *event_ptr, char *value);
+
 #ifdef __cplusplus
 }
 #endif
-
 #endif
