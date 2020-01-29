@@ -13,7 +13,7 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-internal class InternalReportDelegateTest {
+internal class InternalEventPayloadDelegateTest {
 
     @Mock
     lateinit var context: Context

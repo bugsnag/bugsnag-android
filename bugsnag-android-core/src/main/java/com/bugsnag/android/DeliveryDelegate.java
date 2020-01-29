@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +25,8 @@ class DeliveryDelegate extends BaseObservable {
     }
 
     void deliver(@NonNull Event event) {
-        // Build the report
-        Report report = new Report(immutableConfig.getApiKey(), event);
+        // Build the eventPayload
+        EventPayload eventPayload = new EventPayload(immutableConfig.getApiKey(), event);
         Session session = event.getSession();
 
         if (session != null) {
@@ -43,20 +42,20 @@ class DeliveryDelegate extends BaseObservable {
         if (event.isUnhandled()) {
             cacheEvent(event, true);
         } else {
-            deliverReportAsync(event, report);
+            deliverPayloadAsync(event, eventPayload);
         }
     }
 
-    private void deliverReportAsync(@NonNull Event event, Report report) {
-        final Report finalReport = report;
+    private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload) {
+        final EventPayload finalEventPayload = eventPayload;
         final Event finalEvent = event;
 
-        // Attempt to send the report in the background
+        // Attempt to send the eventPayload in the background
         try {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    deliverReportInternal(finalReport, finalEvent);
+                    deliverPayloadInternal(finalEventPayload, finalEvent);
                 }
             });
         } catch (RejectedExecutionException exception) {
@@ -66,10 +65,10 @@ class DeliveryDelegate extends BaseObservable {
     }
 
     @VisibleForTesting
-    DeliveryStatus deliverReportInternal(@NonNull Report report, @NonNull Event event) {
+    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
         DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
-        DeliveryStatus deliveryStatus = delivery.deliver(report, deliveryParams);
+        DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
 
         switch (deliveryStatus) {
             case DELIVERED:

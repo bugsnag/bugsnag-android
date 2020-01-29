@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
@@ -144,9 +143,9 @@ class EventStore extends FileStore {
 
     private void flushEventFile(File eventFile) {
         try {
-            Report report = new Report(config.getApiKey(), eventFile);
+            EventPayload payload = new EventPayload(config.getApiKey(), eventFile);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
-            DeliveryStatus deliveryStatus = config.getDelivery().deliver(report, deliveryParams);
+            DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 
             switch (deliveryStatus) {
                 case DELIVERED:
@@ -159,7 +158,7 @@ class EventStore extends FileStore {
                             + " to Bugsnag, will try again later");
                     break;
                 case FAILURE:
-                    Exception exc = new RuntimeException("Failed to deliver report");
+                    Exception exc = new RuntimeException("Failed to deliver event payload");
                     handleEventFlushFailure(exc, eventFile);
                     break;
                 default:

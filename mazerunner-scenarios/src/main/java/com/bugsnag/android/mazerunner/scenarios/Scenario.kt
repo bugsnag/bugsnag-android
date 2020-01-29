@@ -24,8 +24,8 @@ abstract class Scenario(
     protected fun disableSessionDelivery(config: Configuration) {
         val baseDelivery = createDefaultDelivery()
         config.delivery = object: Delivery {
-            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(report, deliveryParams)
+            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                return baseDelivery.deliver(payload, deliveryParams)
             }
 
             override fun deliver(payload: SessionPayload, deliveryParams: DeliveryParams): DeliveryStatus {
@@ -40,7 +40,7 @@ abstract class Scenario(
     protected fun disableReportDelivery(config: Configuration) {
         val baseDelivery = createDefaultDelivery()
         config.delivery = object: Delivery {
-            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED
             }
 
@@ -52,7 +52,7 @@ abstract class Scenario(
 
     protected fun disableAllDelivery(config: Configuration) {
         config.delivery = object: Delivery {
-            override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED
             }
 

@@ -126,7 +126,7 @@ class NativeBridge : Observer {
                     }
                 }
             } else {
-                logger.w("Report directory does not exist, cannot read pending reports")
+                logger.w("Payload directory does not exist, cannot read pending reports")
             }
         } catch (ex: Exception) {
             logger.w("Failed to parse/write pending reports: $ex")

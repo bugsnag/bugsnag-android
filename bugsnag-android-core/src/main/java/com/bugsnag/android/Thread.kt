@@ -3,7 +3,7 @@ package com.bugsnag.android
 import java.io.IOException
 
 /**
- * A representation of a thread recorded in a [Report]
+ * A representation of a thread recorded in an [Event]
  */
 class Thread internal constructor(
     val id: Long,

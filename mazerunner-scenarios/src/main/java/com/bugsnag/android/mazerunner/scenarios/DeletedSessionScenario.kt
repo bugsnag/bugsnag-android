@@ -10,7 +10,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
-import com.bugsnag.android.Report
+import com.bugsnag.android.EventPayload
 import com.bugsnag.android.SessionPayload
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.flushAllSessions
@@ -42,8 +42,8 @@ internal class DeletedSessionScenario(config: Configuration,
                         return baseDelivery.deliver(payload, deliveryParams)
                     }
 
-                    override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
-                        return baseDelivery.deliver(report, deliveryParams)
+                    override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                        return baseDelivery.deliver(payload, deliveryParams)
                     }
                 }
             }
