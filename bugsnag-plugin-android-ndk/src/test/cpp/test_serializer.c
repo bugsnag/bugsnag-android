@@ -13,16 +13,16 @@ enum greatest_test_res validate_serialized_json(const test_case *test_case,
     PASS();
 }
 
-bsg_user * loadUserTestCase(jint num) {
-    bsg_user *user;
+bsg_user_t * loadUserTestCase(jint num) {
+    bsg_user_t *user;
 
     if (num == 0) {
-        user = malloc(sizeof(bsg_user));
+        user = malloc(sizeof(bsg_user_t));
         strcpy(user->id, "1234");
         strcpy(user->email, "fenton@io.example.com");
         strcpy(user->name, "Fenton");
     } else {
-        user = malloc(sizeof(bsg_user));
+        user = malloc(sizeof(bsg_user_t));
         strcpy(user->id, "456");
         strcpy(user->email, "jamie@bugsnag.com");
         strcpy(user->name, "Jamie");

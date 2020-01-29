@@ -7,6 +7,9 @@
 bugsnag_event *init_event() {
     bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
     bsg_strncpy_safe(event->context, "Foo", sizeof(event->context));
+    bsg_strncpy_safe(event->user.id, "123", sizeof(event->user.id));
+    bsg_strncpy_safe(event->user.email, "jane@example.com", sizeof(event->user.email));
+    bsg_strncpy_safe(event->user.name, "Jane Doe", sizeof(event->user.name));
     event->severity = BSG_SEVERITY_INFO;
     event->unhandled = true;
     bsg_strncpy_safe(event->user.id, "123", sizeof(event->user.id));
@@ -118,6 +121,17 @@ TEST test_app_version_code(void) {
     ASSERT_EQ(55, bugsnag_app_get_version_code(event));
     bugsnag_app_set_version_code(event, 99);
     ASSERT_EQ(99, bugsnag_app_get_version_code(event));
+    free(event);
+    PASS();
+}
+
+TEST test_event_user(void) {
+    bugsnag_event *event = init_event();
+    bugsnag_event_set_user(event, "456", "sue@example.com", "Sue Smith");
+    bsg_user_t user = bugsnag_event_get_user(event);
+    ASSERT_STR_EQ("456", user.id);
+    ASSERT_STR_EQ("sue@example.com", user.email);
+    ASSERT_STR_EQ("Sue Smith", user.name);
     free(event);
     PASS();
 }
@@ -263,19 +277,6 @@ TEST test_error_type(void) {
     ASSERT_STR_EQ("C", event->error.type);
     bugsnag_error_set_error_type(event, "C++");
     ASSERT_STR_EQ("C++", bugsnag_error_get_error_type(event));
-    free(event);
-    PASS();
-}
-
-TEST test_event_user(void) {
-    bugsnag_event *event = init_event();
-    ASSERT_STR_EQ("123", event->user.id);
-    ASSERT_STR_EQ("bob@example.com", event->user.email);
-    ASSERT_STR_EQ("Bob Bobbiton", event->user.name);
-    bugsnag_event_set_user(event, "456", "sue@example.com", "Sue Smith");
-    ASSERT_STR_EQ("456", event->user.id);
-    ASSERT_STR_EQ("sue@example.com", event->user.email);
-    ASSERT_STR_EQ("Sue Smith", event->user.name);
     free(event);
     PASS();
 }

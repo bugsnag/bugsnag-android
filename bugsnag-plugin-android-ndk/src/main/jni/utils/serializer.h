@@ -24,7 +24,7 @@ void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event_obj);
 void bsg_serialize_device(const bsg_device_info device, JSON_Object *event_obj);
 void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event_obj);
 void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event_obj);
-void bsg_serialize_user(const bsg_user user, JSON_Object *event_obj);
+void bsg_serialize_user(const bsg_user_t user, JSON_Object *event_obj);
 void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj);
 void bsg_serialize_stackframe(bsg_stackframe *stackframe, JSON_Array *stacktrace);
 void bsg_serialize_error(bsg_error exc, JSON_Object *exception, JSON_Array *stacktrace);

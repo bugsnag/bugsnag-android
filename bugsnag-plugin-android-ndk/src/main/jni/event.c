@@ -395,3 +395,8 @@ bool bugsnag_event_is_unhandled(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   return event->unhandled;
 }
+
+bsg_user_t bugsnag_event_get_user(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->user;
+}
