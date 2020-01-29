@@ -121,16 +121,6 @@ void bugsnag_event_set_orientation(bugsnag_event *event, int value) {
                    sizeof(event->device.orientation));
 }
 
-void bugsnag_event_set_build_uuid(bugsnag_event *event, char *value) {
-  bsg_strncpy_safe(event->app.build_uuid, value,
-                   sizeof(event->app.build_uuid));
-}
-
-void bugsnag_event_set_release_stage(bugsnag_event *event, char *value) {
-  bsg_strncpy_safe(event->app.release_stage, value,
-                   sizeof(event->app.release_stage));
-}
-
 void bugsnag_event_set_user_email(bugsnag_event *event, char *value) {
   bsg_strncpy_safe(event->user.email, value, sizeof(event->user.email));
 }
@@ -141,10 +131,6 @@ void bugsnag_event_set_user_name(bugsnag_event *event, char *value) {
 
 void bugsnag_event_set_user_id(bugsnag_event *event, char *value) {
   bsg_strncpy_safe(event->user.id, value, sizeof(event->user.id));
-}
-
-void bugsnag_event_set_app_version(bugsnag_event *event, char *value) {
-  bsg_strncpy_safe(event->app.version, value, sizeof(event->app.version));
 }
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
@@ -168,4 +154,108 @@ void bugsnag_event_clear_breadcrumbs(bugsnag_event *event) {
 
 bool bugsnag_event_has_session(bugsnag_event *event) {
     return strlen(event->session_id) > 0;
+}
+
+
+/* Accessors for event.app */
+
+
+char *bugsnag_app_get_binary_arch(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.binaryArch;
+}
+
+void bugsnag_app_set_binary_arch(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->app.binaryArch, value, sizeof(event->app.binaryArch));
+}
+
+char *bugsnag_app_get_build_uuid(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.build_uuid;
+}
+
+void bugsnag_app_set_build_uuid(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->app.build_uuid, value, sizeof(event->app.build_uuid));
+}
+
+char *bugsnag_app_get_id(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.id;
+}
+
+void bugsnag_app_set_id(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->app.id, value, sizeof(event->app.id));
+}
+
+char *bugsnag_app_get_release_stage(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.release_stage;
+}
+
+void bugsnag_app_set_release_stage(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->app.release_stage, value, sizeof(event->app.release_stage));
+}
+
+char *bugsnag_app_get_type(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.type;
+}
+
+void bugsnag_app_set_type(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->app.type, value, sizeof(event->app.type));
+}
+
+char *bugsnag_app_get_version(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.version;
+}
+
+void bugsnag_app_set_version(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->app.version, value, sizeof(event->app.version));
+}
+
+int bugsnag_app_get_version_code(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.version_code;
+}
+
+void bugsnag_app_set_version_code(void *event_ptr, int value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->app.version_code = value;
+}
+
+time_t bugsnag_app_get_duration(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.duration;
+}
+
+void bugsnag_app_set_duration(void *event_ptr, time_t value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->app.duration = value;
+}
+
+time_t bugsnag_app_get_duration_in_foreground(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.duration_in_foreground;
+}
+
+void bugsnag_app_set_duration_in_foreground(void *event_ptr, time_t value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->app.duration_in_foreground = value;
+}
+
+bool bugsnag_app_get_in_foreground(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->app.in_foreground;
+}
+
+void bugsnag_app_set_in_foreground(void *event_ptr, bool value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->app.in_foreground = value;
 }

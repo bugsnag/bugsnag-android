@@ -35,8 +35,6 @@
 #define BUGSNAG_EVENT_VERSION 3
 
 #define BUGSNAG_USER_INFO_LEN 64
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -261,9 +259,6 @@ void bugsnag_event_remove_metadata(bugsnag_event *event, char *section,
                                    char *name);
 void bugsnag_event_remove_metadata_tab(bugsnag_event *event, char *section);
 void bugsnag_event_set_orientation(bugsnag_event *event, int value);
-void bugsnag_event_set_app_version(bugsnag_event *event, char *value);
-void bugsnag_event_set_build_uuid(bugsnag_event *event, char *value);
-void bugsnag_event_set_release_stage(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_email(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_id(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_name(bugsnag_event *event, char *value);

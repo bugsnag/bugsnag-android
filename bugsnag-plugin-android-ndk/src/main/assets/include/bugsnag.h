@@ -51,20 +51,6 @@ void bugsnag_add_on_error(bsg_on_error on_error);
  */
 void bugsnag_remove_on_error();
 
-/**
- * Retrieves the event context
- * @param event_ptr a pointer to the event supplied in an on_error callback
- * @return the event context, or NULL if this has not been set
- */
-char *bugsnag_event_get_context(void *event_ptr);
-
-/**
- * Sets the event context
- * @param event_ptr a pointer to the event supplied in an on_error callback
- * @param value the new event context value, which can be NULL
- */
-void bugsnag_event_set_context(void *event_ptr, char *value);
-
 #ifdef __cplusplus
 }
 #endif
