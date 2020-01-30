@@ -8,12 +8,12 @@ __This version contains many breaking changes__. It is part of an effort to unif
 
 # Interfaces
 
-## Bugsnag
+## Bugsnag interface
 
 `Bugsnag.init()` has been renamed to `Bugsnag.start()`.
 
-Many of the previous methods on `Bugsnag` should now be called on `Configuration` instead.
-For example, `maxBreadcrumbs` can now only be set on `Configuration` before `Bugsnag` is started:
+Many of the previous methods on `Bugsnag` must now be called on `Configuration` and provided before Bugsnag starts instead.
+For example, `maxBreadcrumbs` can now only be set on `Configuration` and supplied as part of the `start` method:
 
 ```kotlin
 val config = Configuration("my-api-key")
@@ -68,70 +68,22 @@ The full list of altered methods and their intended replacements can be found be
 
 See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
 
-## Client
+## `Client` access
 
-You should should use the static `Bugsnag` interface rather than instantiating `Client` directly. 
+`Client` instances no longer need to be instantiated or referenced directly. 
 
-Many of the previous methods on `Client` should now be called on `Configuration` instead.
-For example, `maxBreadcrumbs` can now only be set on `Configuration` before `Bugsnag` is started:
+Use the `Bugsnag` interface to access all public functionality:
 
-```kotlin
-val config = Configuration("my-api-key")
-config.maxBreadcrumbs = 35
-Client(this, config)
+```diff
+-Client(this, "my-api-key")
++Bugsnag.start(this, "my-api-key")
 ```
-
-The full list of altered methods and their intended replacements can be found below:
 
 | v4.x API  | v5.x API |
 | ------------- | ------------- |
 | `Client#Client(Context, String, boolean)`  | `Bugsnag#start(Context, Configuration)` |
-| `Client#addToTab`  | `Bugsnag#addMetadata(String, String, Object)` and `Configuration#addMetadata` |
-| `Client#beforeNotify`  | `Bugsnag#addOnError` and `Configuration#addOnError` |
-| `Client#beforeRecordBreadcrumb`  | `Bugsnag#addOnBreadcrumb` and `Configuration#addOnBreadcrumb` |
-| `Client#clearBreadcrumbs`  | `Bugsnag#addOnBreadcrumb/Configuration#setMaxBreadcrumbs` |
-| `Client#clearTab`  | `Bugsnag#clearMetadata(String)` and `Configuration#clearMetadata` |
-| `Client#clearUser`  | `Bugsnag#setUser` and `Configuration#setUser` |
-| `Client#disableExceptionHandler`  | `Configuration#setEnabledErrorTypes` and `Configuration#setAutoDetectErrors` |
-| `Client#enableExceptionHandler`  | `Configuration#setEnabledErrorTypes` and `Configuration#setAutoDetectErrors` |
 | `Client#getConfig`  | Method removed as `Configuration` is now considered immutable after starting `Bugsnag`. |
-| `Client#getMetaData`  | `Bugsnag#getMetaData` and `Configuration#getMetaData` |
-| `Client#leaveBreadcrumb(String, BreadcrumbType, Map<String,String>)`  | `Bugsnag#leaveBreadcrumb(String, BreadcrumbType, Map<String,Object>)` |
-| `Client#notify(String, String, StackTraceElement[], Callback)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notify(String, String, StackTraceElement[], Severity, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notify(String, String, String, StackTraceElement[], Severity, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notify(Throwable)`  | `Bugsnag#notify(Throwable)` |
-| `Client#notify(Throwable, Callback)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notify(Throwable, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notify(Throwable, Severity)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notify(Throwable, Severity, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(String, String, StackTraceElement[], Callback)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(String, String, StackTraceElement[], Severity, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(String, String, String, StackTraceElement[], Severity, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(Throwable)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(Throwable, Callback)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(Throwable, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(Throwable, Severity)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#notifyBlocking(Throwable, Severity, MetaData)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
-| `Client#setAppVersion`  | `Configuration#setAppVersion` |
-| `Client#setAutoCaptureSessions`  | `Configuration#setAutoTrackSessions` |
-| `Client#setBuildUUID`  | `Configuration#setBuildUuid` |
-| `Client#setEndpoint`  | `Configuration#setEndpoints` |
-| `Client#setFilters`  | `Configuration#setRedactedKeys` |
-| `Client#setIgnoreClasses`  | `Configuration#setIgnoreClasses` |
-| `Client#setLoggingEnabled`  | `Configuration#setLogger` |
-| `Client#setMaxBreadcrumbs`  | `Configuration#setMaxBreadcrumbs` |
-| `Client#setMetaData`  | `Configuration#addMetadata` |
-| `Client#setNotifyReleaseStages`  | `Configuration#setEnabledReleaseStages` |
-| `Client#setProjectPackages`  | `Configuration#setProjectPackages` |
-| `Client#setReleaseStage`  | `Configuration#setReleaseStage` |
-| `Client#setSendThreads`  | `Configuration#setSendThreads` |
-| `Client#setUserEmail`  | `Bugsnag#setUser` and `Configuration#setUser` |
-| `Client#setUserId`  | `Bugsnag#setUser` and `Configuration#setUser` |
-| `Client#setUserName`  | `Bugsnag#setUser` and `Configuration#setUser` |
-| `Client#stopSession`  | `Bugsnag#pauseSession` and `Configuration#setUser` |
-
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
+| `Client#notifyBlocking(*)`  | `Bugsnag#notify(Throwable, OnErrorCallback)` |
 
 ## Configuration
 
@@ -159,8 +111,6 @@ It is also possible to supply primitive configuration values via your `AndroidMa
 Bugsnag.start(this)
 ```
 
-
-
 Several methods on `Configuration` have been renamed for greater API consistency. A full list is shown below:
 
 | v4.x API  | v5.x API |
@@ -185,7 +135,7 @@ Several methods on `Configuration` have been renamed for greater API consistency
 
 See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
 
-## Error
+## Events & Errors
 
 `Error` has been replaced by `Event`, which represents a JSON payload that will be sent to Bugsnag's API.
 A large number of new accessors have been added to the `Event` class to allow for greater customization of error reports in callbacks.
@@ -210,46 +160,40 @@ Several existing methods have been renamed, a full list of which is shown below:
 
 See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
 
-## BeforeNotify/BeforeSend/Callback
+## Event callbacks
 
-These three callbacks have been superseded and replaced by `OnError`, a single callback which runs immediately after an error has occurred. This can run globally on all errors, or on an individual error.
+`BeforeNotify` and `BeforeSend` callbacks have been superseded and replaced by `OnError`, a single callback which runs immediately after an error has occurred. This can run globally on all errors, or on an individual handled error:
 
 ```kotlin
 val config = Configuration("my-api-key")
-config.maxBreadcrumbs = 35
-config.addOnError { event -> // run on all errors
+
+// run on all errors
+config.addOnError { event ->
     event.context = "Some Custom context"
     return true
 }
 Bugsnag.start(this, config)
 
-// run on single error only
+// run on handled error
 Bugsnag.notify(myThrowable) { event ->
     event.context = "My Unique context"
     return true
 }
 ```
 
-If you use the NDK, you will need to implement your own native `on_error` callback _in addition_ to any JVM callbacks. This native `on_error` callback will run for fatal C/C++ errors only.
+If you use the NDK, implement the native `on_error` callback which will be run for fatal C/C++ errors only.
 
 See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
 
-## Breadcrumb
+## Breadcrumbs
 
 Breadcrumbs now contain a message rather than a name:
 
 | v4.x API  | v5.x API |
 | ------------- | ------------- |
-| `Breadcrumb#getName`  | `Breadcrumb#getMessage` |
+| `Breadcrumb#getName`  | `Breadcrumb#getMessage` |`
 
-## SessionTrackingPayload
-`SessionTrackingPayload` is now called `SessionPayload`.
-
-It is now possible to redact the `app` and `device` information captured on sessions via an `OnSessionCallback`.
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
-
-## BeforeRecordBreadcrumb
-`BeforeRecordBreadcrumb` is now called `OnBreadcrumbCallback`.
+The callback `BeforeRecordBreadcrumb`, triggered when a breadcrumb left, is now called `OnBreadcrumbCallback`.
 
 | v4.x API  | v5.x API |
 | ------------- | ------------- |
@@ -257,38 +201,33 @@ See the [full documentation](https://docs.bugsnag.com/platforms/android) for mor
 
 ## Delivery
 
+The signature for providing a custom delivery mechanism has changed:
+
 | v4.x API  | v5.x API |
 | ------------- | ------------- |
-| `Delivery#deliver(Report, Configuration)` | `Delivery#deliver(SessionPayload, DeliveryParams)` |
-| `Delivery#deliver(SessionTrackingPayload, Configuration)` | `Delivery#deliver(Report, DeliveryParams)` |
+| `Delivery#deliver(Report, Configuration)` | `Delivery#deliver(EventPayload, DeliveryParams)` |
+| `Delivery#deliver(SessionTrackingPayload, Configuration)` | `Delivery#deliver(SessionPayload, DeliveryParams)` |
 
-## Report
-`Report` is now called `EventPayload`.
+## Session payload & callbacks
 
-The `Event` class should now be used to alter the details of an error report. The report class
-is no longer accessible in callbacks as end-users should not need to set its values.
+`SessionTrackingPayload` is now called `SessionPayload`. It is now possible to redact the `app` and `device` information captured on sessions via an `OnSessionCallback`.
+
+See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.`
 
 ## Removed from public API
 
-### MetaData
-`MetaData` is no longer publicly accessible, and should be added via the `Bugsnag` interface or via an `OnError` callback.
-
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
-
-### ErrorReportApiClient/SessionTrackingApiClient
-Previously deprecated, use `Delivery` interface instead.
-
-### BadResponseException/DeliveryFailureException/NetworkException
-Previously deprecated, use `Delivery` interface instead.
-
-### Notifier
-This class is no longer publicly accessible as end-users should not need to set its values.
-
-### BugsnagException
-This class is no longer required - you should use your own `Throwable` instead.
-
-### EventReceiver
-This class is no longer publicly accessible as end-users should not need to set its values.
+| v4.x API  | v5.x API |
+| ------------- | ------------- |
+| `MetaData` | No longer publicly accessible, and should be added via the `Bugsnag` interface or via an `OnError` callback. |
+| `Report` | This class is no longer publicly accessible as end-users should not need to set its values. The `Event` class should now be used to alter the details of an error report.  |
+| `ErrorReportApiClient` | Previously deprecated, use `Delivery` interface instead. |
+| `SessionTrackingApiClient` | Previously deprecated, use `Delivery` interface instead. |
+| `BadResponseException` | Previously deprecated, use `Delivery` interface instead. |
+| `DeliveryFailureException` | Previously deprecated, use `Delivery` interface instead. |
+| `NetworkException` | Previously deprecated, use `Delivery` interface instead. |
+| `Notifier` | This class is no longer publicly accessible as end-users should not need to set its values. |
+| `EventReceiver` | This class is no longer publicly accessible as end-users should not need to set its values. |
+| `BugsnagException` | This class is no longer required - you should use your own `Throwable` instead. |
 
 Upgrade bugsnag-android-ndk from 1.x to 4.x
 -----------------------
