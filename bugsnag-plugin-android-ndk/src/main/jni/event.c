@@ -149,12 +149,12 @@ bool bugsnag_event_has_session(bugsnag_event *event) {
 
 char *bugsnag_app_get_binary_arch(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
-  return event->app.binaryArch;
+  return event->app.binary_arch;
 }
 
 void bugsnag_app_set_binary_arch(void *event_ptr, char *value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
-  bsg_strncpy_safe(event->app.binaryArch, value, sizeof(event->app.binaryArch));
+  bsg_strncpy_safe(event->app.binary_arch, value, sizeof(event->app.binary_arch));
 }
 
 char *bugsnag_app_get_build_uuid(void *event_ptr) {

@@ -16,7 +16,7 @@ bugsnag_event *init_event() {
     bsg_strncpy_safe(event->user.email, "bob@example.com", sizeof(event->user.email));
     bsg_strncpy_safe(event->user.name, "Bob Bobbiton", sizeof(event->user.name));
 
-    bsg_strncpy_safe(event->app.binaryArch, "x86", sizeof(event->app.binaryArch));
+    bsg_strncpy_safe(event->app.binary_arch, "x86", sizeof(event->app.binary_arch));
     bsg_strncpy_safe(event->app.build_uuid, "123", sizeof(event->app.build_uuid));
     bsg_strncpy_safe(event->app.id, "fa02", sizeof(event->app.id));
     bsg_strncpy_safe(event->app.release_stage, "dev", sizeof(event->app.release_stage));

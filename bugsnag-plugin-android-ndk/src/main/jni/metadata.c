@@ -233,12 +233,6 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
       env, jni_cache->native_interface, jni_cache->get_app_data);
   bsg_copy_map_value_string(env, jni_cache, data, "version",
                             event->app.version, sizeof(event->app.version));
-  bsg_copy_map_value_string(env, jni_cache, data, "versionName",
-                            event->app.version_name,
-                            sizeof(event->app.version_name));
-  bsg_copy_map_value_string(env, jni_cache, data, "packageName",
-                            event->app.package_name,
-                            sizeof(event->app.package_name));
   bsg_copy_map_value_string(env, jni_cache, data, "releaseStage",
                             event->app.release_stage,
                             sizeof(event->app.release_stage));
@@ -260,9 +254,9 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   event->app.in_foreground =
       bsg_get_map_value_bool(env, jni_cache, data, "inForeground");
 
-  bsg_strncpy_safe(event->app.binaryArch,
+  bsg_strncpy_safe(event->app.binary_arch,
                      bsg_binary_arch(),
-                     sizeof(event->app.binaryArch));
+                     sizeof(event->app.binary_arch));
   (*env)->DeleteLocalRef(env, data);
 }
 

@@ -24,6 +24,7 @@ bsg_report_header *bsg_report_header_read(int fd);
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
 
+void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 
 #ifdef __cplusplus
@@ -113,13 +114,13 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   bugsnag_event *event = malloc(sizeof(bugsnag_event));
 
   if (event != NULL) {
-    event->app = report_v2->app;
-    event->user = report_v2->user;
+    // assign metadata first as old app/device fields are migrated there
     event->metadata = report_v2->metadata;
+    migrate_app_v1(report_v2, event);
+    migrate_device_v1(report_v2, event);
+    event->user = report_v2->user;
     event->crumb_count = report_v2->crumb_count;
     event->crumb_first_index = report_v2->crumb_first_index;
-
-    migrate_device_v1(report_v2, event);
 
     size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
     memcpy(&event->breadcrumbs, report_v2->breadcrumbs, breadcrumb_size);
@@ -150,6 +151,29 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   }
   free(report_v2);
   return event;
+}
+
+void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
+  bsg_strcpy(event->app.name, report_v2->app.name);
+  bsg_strcpy(event->app.id, report_v2->app.id);
+  bsg_strcpy(event->app.release_stage, report_v2->app.release_stage);
+  bsg_strcpy(event->app.type, report_v2->app.type);
+  bsg_strcpy(event->app.version, report_v2->app.version);
+  bsg_strcpy(event->app.active_screen, report_v2->app.active_screen);
+  bsg_strcpy(event->app.build_uuid, report_v2->app.build_uuid);
+  bsg_strcpy(event->app.binary_arch, report_v2->app.binaryArch);
+  event->app.version_code = report_v2->app.version_code;
+  event->app.duration = report_v2->app.duration;
+  event->app.duration_in_foreground = report_v2->app.duration_in_foreground;
+  event->app.duration_ms_offset = report_v2->app.duration_ms_offset;
+  event->app.duration_in_foreground_ms_offset = report_v2->app.duration_in_foreground_ms_offset;
+  event->app.in_foreground = report_v2->app.in_foreground;
+  event->app.low_memory = report_v2->app.low_memory;
+  event->app.memory_usage = report_v2->app.memory_usage;
+
+  // migrate legacy fields to metadata
+  bugsnag_event_add_metadata_string(event, "app", "packageName", report_v2->app.package_name);
+  bugsnag_event_add_metadata_string(event, "app", "versionName", report_v2->app.version_name);
 }
 
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
@@ -308,15 +332,13 @@ void bsg_serialize_app(const bsg_app_info app, JSON_Object *event_obj) {
   if (strlen(app.build_uuid) > 0) {
     json_object_dotset_string(event_obj, "app.buildUUID", app.build_uuid);
   }
-  json_object_dotset_string(event_obj, "app.binaryArch", app.binaryArch);
+  json_object_dotset_string(event_obj, "app.binaryArch", app.binary_arch);
   json_object_dotset_number(event_obj, "app.duration", app.duration);
   json_object_dotset_number(event_obj, "app.durationInForeground", app.duration_in_foreground);
   json_object_dotset_boolean(event_obj, "app.inForeground", app.in_foreground);
 }
 
 void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event_obj) {
-  json_object_dotset_string(event_obj, "metaData.app.packageName", app.package_name);
-  json_object_dotset_string(event_obj, "metaData.app.versionName", app.version_name);
   json_object_dotset_string(event_obj, "metaData.app.activeScreen", app.active_screen);
   json_object_dotset_string(event_obj, "metaData.app.name", app.name);
   json_object_dotset_boolean(event_obj, "metaData.app.lowMemory", app.low_memory);
