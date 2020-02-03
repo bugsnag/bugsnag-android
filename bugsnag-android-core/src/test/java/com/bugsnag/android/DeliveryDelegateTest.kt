@@ -4,7 +4,6 @@ import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -86,7 +85,7 @@ internal class DeliveryDelegateTest {
 
     @Test
     fun deliverReport() {
-        val status = deliveryDelegate.deliverReportInternal(Report("api-key", event), event)
+        val status = deliveryDelegate.deliverPayloadInternal(EventPayload("api-key", event), event)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
 

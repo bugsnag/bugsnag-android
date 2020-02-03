@@ -100,7 +100,7 @@ final class BugsnagTestUtils {
         return new Delivery() {
             @NotNull
             @Override
-            public DeliveryStatus deliver(@NonNull Report report,
+            public DeliveryStatus deliver(@NonNull EventPayload payload,
                                           @NonNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }

@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.convert;
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -163,7 +162,7 @@ public class ConfigurationTest {
 
             @NotNull
             @Override
-            public DeliveryStatus deliver(@NotNull Report report,
+            public DeliveryStatus deliver(@NotNull EventPayload payload,
                                           @NotNull DeliveryParams deliveryParams) {
                 return null;
             }

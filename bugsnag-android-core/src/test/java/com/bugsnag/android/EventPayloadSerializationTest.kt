@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
 @RunWith(Parameterized::class)
-internal class ReportSerializationTest {
+internal class EventPayloadSerializationTest {
 
     companion object {
         @JvmStatic
@@ -19,13 +19,13 @@ internal class ReportSerializationTest {
             Notifier.url = "https://bugsnag.com"
             return generateSerializationTestCases(
                 "report",
-                Report("api-key", File(""))
+                EventPayload("api-key", File(""))
             )
         }
     }
 
     @Parameter
-    lateinit var testCase: Pair<Report, String>
+    lateinit var testCase: Pair<EventPayload, String>
 
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)

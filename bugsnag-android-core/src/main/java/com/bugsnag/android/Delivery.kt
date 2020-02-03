@@ -57,9 +57,9 @@ interface Delivery {
      * See [https://docs.bugsnag.com/api/error-reporting/]
      * (https://docs.bugsnag.com/api/error-reporting/)
      *
-     * @param report         The error report
+     * @param payload         The error payload
      * @param deliveryParams The delivery parameters to be used for this request
      * @return the end-result of your delivery attempt
      */
-    fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus
+    fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus
 }

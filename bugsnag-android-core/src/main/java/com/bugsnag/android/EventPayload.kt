@@ -9,7 +9,7 @@ import java.io.IOException
  * This payload contains an error report and identifies the source application
  * using your API key.
  */
-class Report : JsonStream.Streamable {
+class EventPayload : JsonStream.Streamable {
 
     var apiKey: String?
     private val eventFile: File?

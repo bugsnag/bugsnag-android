@@ -16,12 +16,12 @@ import org.junit.Test;
 import java.io.IOException;
 
 @SmallTest
-public class ReportTest {
+public class EventPayloadTest {
 
-    private Report report;
+    private EventPayload eventPayload;
 
     /**
-     * Generates a report
+     * Generates a eventPayload
      *
      */
     @Before
@@ -32,21 +32,21 @@ public class ReportTest {
         Event event = new Event(exception, config, handledState);
         event.setApp(generateAppWithState());
         event.setDevice(generateDeviceWithState());
-        report = new Report("api-key", event);
+        eventPayload = new EventPayload("api-key", event);
     }
 
     @Test
     public void testInMemoryError() throws JSONException, IOException {
-        JSONObject reportJson = streamableToJson(report);
+        JSONObject reportJson = streamableToJson(eventPayload);
         assertEquals(1, reportJson.getJSONArray("events").length());
     }
 
     @Test
     public void testModifyingGroupingHash() throws JSONException, IOException {
         String groupingHash = "File.java:300429";
-        report.getEvent().setGroupingHash(groupingHash);
+        eventPayload.getEvent().setGroupingHash(groupingHash);
 
-        JSONObject reportJson = streamableToJson(report);
+        JSONObject reportJson = streamableToJson(eventPayload);
         JSONArray events = reportJson.getJSONArray("events");
         JSONObject event = events.getJSONObject(0);
         assertEquals(groupingHash, event.getString("groupingHash"));

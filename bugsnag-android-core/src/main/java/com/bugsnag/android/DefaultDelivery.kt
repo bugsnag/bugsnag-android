@@ -20,8 +20,8 @@ internal class DefaultDelivery(private val connectivity: Connectivity?, val logg
         return status
     }
 
-    override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
-        val status = deliver(deliveryParams.endpoint, report, deliveryParams.headers)
+    override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+        val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
         logger.i("Error API request finished with status $status")
         return status
     }

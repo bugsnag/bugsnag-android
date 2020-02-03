@@ -8,7 +8,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
-import com.bugsnag.android.Report
+import com.bugsnag.android.EventPayload
 import com.bugsnag.android.SessionPayload
 import com.bugsnag.android.createDefaultDelivery
 import java.io.File
@@ -33,13 +33,13 @@ internal class DeletedReportScenario(config: Configuration,
                         return baseDelivery.deliver(payload, deliveryParams)
                     }
 
-                    override fun deliver(report: Report, deliveryParams: DeliveryParams): DeliveryStatus {
+                    override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                         // delete files before they can be delivered
                         val files = errDir.listFiles()
                         files.forEach {
                             it.delete()
                         }
-                        return baseDelivery.deliver(report, deliveryParams)
+                        return baseDelivery.deliver(payload, deliveryParams)
                     }
                 }
             }
