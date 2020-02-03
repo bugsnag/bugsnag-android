@@ -15,8 +15,9 @@ int bsg_find_next_free_metadata_index(bugsnag_event *event) {
   return -1;
 }
 
-int bugsnag_event_add_metadata_value(bugsnag_event *event, char *section,
+int bugsnag_event_add_metadata_value(void *event_ptr, char *section,
                                      char *name) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   int index = bsg_find_next_free_metadata_index(event);
   if (index < 0) {
     return index;
@@ -30,8 +31,9 @@ int bugsnag_event_add_metadata_value(bugsnag_event *event, char *section,
   }
   return index;
 }
-void bugsnag_event_add_metadata_double(bugsnag_event *event, char *section,
+void bugsnag_event_add_metadata_double(void *event_ptr, char *section,
                                        char *name, double value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   int index = bugsnag_event_add_metadata_value(event, section, name);
   if (index >= 0) {
     event->metadata.values[index].type = BSG_NUMBER_VALUE;
@@ -39,8 +41,9 @@ void bugsnag_event_add_metadata_double(bugsnag_event *event, char *section,
   }
 }
 
-void bugsnag_event_add_metadata_string(bugsnag_event *event, char *section,
+void bugsnag_event_add_metadata_string(void *event_ptr, char *section,
                                        char *name, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   int index = bugsnag_event_add_metadata_value(event, section, name);
   if (index >= 0) {
     event->metadata.values[index].type = BSG_CHAR_VALUE;
@@ -49,8 +52,9 @@ void bugsnag_event_add_metadata_string(bugsnag_event *event, char *section,
   }
 }
 
-void bugsnag_event_add_metadata_bool(bugsnag_event *event, char *section,
+void bugsnag_event_add_metadata_bool(void *event_ptr, char *section,
                                      char *name, bool value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   int index = bugsnag_event_add_metadata_value(event, section, name);
   if (index >= 0) {
     event->metadata.values[index].type = BSG_BOOL_VALUE;
@@ -58,8 +62,8 @@ void bugsnag_event_add_metadata_bool(bugsnag_event *event, char *section,
   }
 }
 
-void bugsnag_event_remove_metadata(bugsnag_event *event, char *section,
-                                   char *name) {
+void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   for (int i = 0; i < event->metadata.value_count; ++i) {
     if (strcmp(event->metadata.values[i].section, section) == 0 &&
         strcmp(event->metadata.values[i].name, name) == 0) {
@@ -74,12 +78,61 @@ void bugsnag_event_remove_metadata(bugsnag_event *event, char *section,
   }
 }
 
-void bugsnag_event_remove_metadata_tab(bugsnag_event *event, char *section) {
+void bugsnag_event_clear_metadata_section(void *event_ptr, char *section) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   for (int i = 0; i < event->metadata.value_count; ++i) {
     if (strcmp(event->metadata.values[i].section, section) == 0) {
       event->metadata.values[i].type = BSG_NONE_VALUE;
     }
   }
+}
+
+bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr, char *section, char *name) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+
+  for (int k = 0; k < event->metadata.value_count; ++k) {
+    bsg_metadata_value val = event->metadata.values[k];
+    if (strcmp(val.section, section) == 0 && strcmp(val.name, name) == 0) {
+      return val;
+    }
+  }
+  bsg_metadata_value data;
+  data.type = BSG_NONE_VALUE;
+  return data;
+}
+
+bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name) {
+  return bugsnag_get_metadata_value(event_ptr, section, name).type;
+}
+
+double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name) {
+  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_NUMBER_VALUE) {
+    bsg_metadata_value value = bugsnag_get_metadata_value(event_ptr, section, name);
+    return value.double_value;
+  }
+  return 0.0;
+}
+
+char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name) {
+  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_CHAR_VALUE) {
+    bugsnag_event *event = (bugsnag_event *) event_ptr;
+
+    for (int k = 0; k < event->metadata.value_count; ++k) {
+      if (strcmp(event->metadata.values[k].section, section) == 0 && strcmp(
+              event->metadata.values[k].name, name) == 0) {
+        return event->metadata.values[k].char_value;
+      }
+    }
+  }
+  return NULL;
+}
+
+bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name) {
+  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_BOOL_VALUE) {
+    bsg_metadata_value value = bugsnag_get_metadata_value(event_ptr, section, name);
+    return value.bool_value;
+  }
+  return false;
 }
 
 void bugsnag_event_start_session(bugsnag_event *event, char *session_id,

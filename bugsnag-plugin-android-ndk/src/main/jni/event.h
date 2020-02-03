@@ -130,13 +130,6 @@ typedef struct {
     char os_build[64];
 } bsg_report_header;
 
-typedef enum {
-    BSG_NONE_VALUE,
-    BSG_BOOL_VALUE,
-    BSG_CHAR_VALUE,
-    BSG_NUMBER_VALUE,
-} bsg_metadata_t;
-
 /**
  * A single value in metadata
  */
@@ -241,18 +234,9 @@ typedef struct {
     bool unhandled;
 } bugsnag_event;
 
-void bugsnag_event_add_metadata_double(bugsnag_event *event, char *section,
-                                       char *name, double value);
-void bugsnag_event_add_metadata_string(bugsnag_event *event, char *section,
-                                       char *name, char *value);
-void bugsnag_event_add_metadata_bool(bugsnag_event *event, char *section,
-                                     char *name, bool value);
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
                                   bugsnag_breadcrumb *crumb);
 void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
-void bugsnag_event_remove_metadata(bugsnag_event *event, char *section,
-                                   char *name);
-void bugsnag_event_remove_metadata_tab(bugsnag_event *event, char *section);
 void bugsnag_event_set_user_email(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_id(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_name(bugsnag_event *event, char *value);

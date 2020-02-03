@@ -56,6 +56,13 @@ typedef struct {
     char id[64];
 } bsg_user_t;
 
+typedef enum {
+    BSG_NONE_VALUE,
+    BSG_BOOL_VALUE,
+    BSG_CHAR_VALUE,
+    BSG_NUMBER_VALUE,
+} bsg_metadata_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -162,6 +169,20 @@ bool bugsnag_event_is_unhandled(void *event_ptr);
 
 char *bugsnag_event_get_grouping_hash(void *event_ptr);
 void bugsnag_event_set_grouping_hash(void *event_ptr, char *value);
+
+/* Metadata */
+
+void bugsnag_event_add_metadata_double(void *event_ptr, char *section, char *name, double value);
+void bugsnag_event_add_metadata_string(void *event_ptr, char *section, char *name, char *value);
+void bugsnag_event_add_metadata_bool(void *event_ptr, char *section, char *name, bool value);
+
+void bugsnag_event_clear_metadata_section(void *event_ptr, char *section);
+void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name);
+
+bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name);
+double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name);
+char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name);
+bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name);
 
 #ifdef __cplusplus
 }

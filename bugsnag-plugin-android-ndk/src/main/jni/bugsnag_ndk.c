@@ -500,7 +500,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_clearMetadataTab(JNIEnv *env,
     return;
   char *tab = (char *)(*env)->GetStringUTFChars(env, tab_, 0);
   bsg_request_env_write_lock();
-  bugsnag_event_remove_metadata_tab(&bsg_global_env->next_event, tab);
+  bugsnag_event_clear_metadata_section(&bsg_global_env->next_event, tab);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, tab_, tab);
 }
@@ -513,7 +513,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_removeMetadata(
   char *key = (char *)(*env)->GetStringUTFChars(env, key_, 0);
 
   bsg_request_env_write_lock();
-  bugsnag_event_remove_metadata(&bsg_global_env->next_event, tab, key);
+  bugsnag_event_clear_metadata(&bsg_global_env->next_event, tab, key);
   bsg_release_env_write_lock();
 
   (*env)->ReleaseStringUTFChars(env, tab_, tab);
