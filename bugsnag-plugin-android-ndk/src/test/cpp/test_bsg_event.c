@@ -42,6 +42,10 @@ bugsnag_event *init_event() {
     bsg_strncpy_safe(event->error.errorClass, "SIGSEGV", sizeof(event->error.errorClass));
     bsg_strncpy_safe(event->error.errorMessage, "Whoops!", sizeof(event->error.errorMessage));
     bsg_strncpy_safe(event->error.type, "C", sizeof(event->error.type));
+
+    event->device.cpu_abi_count = 2;
+    bsg_strncpy_safe(event->device.cpu_abi[0].value, "x86", sizeof(event->device.cpu_abi[0].value));
+    bsg_strncpy_safe(event->device.cpu_abi[1].value, "armeabi-v7a", sizeof(event->device.cpu_abi[1].value));
     return event;
 }
 
@@ -297,6 +301,26 @@ TEST test_event_unhandled(void) {
     free(event);
     PASS();
 }
+
+TEST test_device_cpu_abi(void) {
+    bugsnag_event *event = init_event();
+
+    char dst[8][32];
+    bugsnag_device_get_cpu_abi(event, dst);
+    ASSERT_STR_EQ("x86", dst[0]);
+    ASSERT_STR_EQ("armeabi-v7a", dst[1]);
+
+    // test setting cpuabi
+    bsg_strncpy_safe(dst[1], "mips", sizeof(dst[1]));
+    bugsnag_device_set_cpu_abi(event, dst);
+    bugsnag_device_get_cpu_abi(event, dst);
+    ASSERT_STR_EQ("x86", dst[0]);
+    ASSERT_STR_EQ("mips", dst[1]);
+
+    free(event);
+    PASS();
+}
+
 SUITE(event_mutators) {
     RUN_TEST(test_event_context);
     RUN_TEST(test_event_severity);
@@ -323,6 +347,7 @@ SUITE(event_mutators) {
     RUN_TEST(test_device_orientation);
     RUN_TEST(test_device_time);
     RUN_TEST(test_device_os_name);
+    RUN_TEST(test_device_cpu_abi);
     RUN_TEST(test_error_class);
     RUN_TEST(test_error_message);
     RUN_TEST(test_error_type);

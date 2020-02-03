@@ -250,6 +250,29 @@ void bugsnag_app_set_in_foreground(void *event_ptr, bool value) {
 
 /* Accessors for event.device */
 
+void bugsnag_device_get_cpu_abi(void *event_ptr, char value[8][32]) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+
+  for (int k = 0; k < 8; k++) {
+    if (k < event->device.cpu_abi_count) {
+      bsg_strncpy_safe(value[k], event->device.cpu_abi[k].value, sizeof(value[k]));
+    } else {
+      bsg_strncpy_safe(value[k], NULL, sizeof(value[k]));
+    }
+  }
+}
+
+void bugsnag_device_set_cpu_abi(void *event_ptr, char value[8][32]) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+
+  for (int k = 0; k < 8; k++) {
+    if (k < event->device.cpu_abi_count && value[k] != NULL) {
+      bsg_strncpy_safe(event->device.cpu_abi[k].value, value[k], sizeof(value[k]));
+    } else {
+      bsg_strncpy_safe(event->device.cpu_abi[k].value, NULL, sizeof(event->device.cpu_abi[k].value));
+    }
+  }
+}
 
 bool bugsnag_device_get_jailbroken(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;

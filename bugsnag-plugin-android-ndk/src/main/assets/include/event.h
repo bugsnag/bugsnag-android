@@ -113,6 +113,8 @@ void bugsnag_app_set_in_foreground(void *event_ptr, bool value);
 
 /* Accessors for event.device */
 
+void bugsnag_device_get_cpu_abi(void *event_ptr, char value[8][32]);
+void bugsnag_device_set_cpu_abi(void *event_ptr, char value[8][32]);
 
 bool bugsnag_device_get_jailbroken(void *event_ptr);
 void bugsnag_device_set_jailbroken(void *event_ptr, bool value);
