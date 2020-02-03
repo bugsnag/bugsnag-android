@@ -4,6 +4,6 @@
 #include "../event.h"
 #include <signal.h>
 
-ssize_t bsg_unwind_stack_simple(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+ssize_t bsg_unwind_stack_simple(bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                                 siginfo_t *info, void *user_context);
 #endif

@@ -56,6 +56,16 @@ typedef struct {
     char id[64];
 } bsg_user_t;
 
+typedef struct {
+    uintptr_t frame_address;
+    uintptr_t symbol_address;
+    uintptr_t load_address;
+    uintptr_t line_number;
+
+    char filename[256];
+    char method[256];
+} bsg_stackframe_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -153,6 +163,9 @@ void bugsnag_error_set_error_message(void *event_ptr, char *value);
 char *bugsnag_error_get_error_type(void *event_ptr);
 void bugsnag_error_set_error_type(void *event_ptr, char *value);
 
+void bugsnag_error_get_stacktrace(void *event_ptr, bsg_stackframe_t value[200]);
+void bugsnag_error_set_stacktrace(void *event_ptr, bsg_stackframe_t value[200]);
+
 void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name);
 
 bsg_severity_t bugsnag_event_get_severity(void *event_ptr);
@@ -162,6 +175,7 @@ bool bugsnag_event_is_unhandled(void *event_ptr);
 
 char *bugsnag_event_get_grouping_hash(void *event_ptr);
 void bugsnag_event_set_grouping_hash(void *event_ptr, char *value);
+
 
 #ifdef __cplusplus
 }

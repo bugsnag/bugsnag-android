@@ -42,6 +42,11 @@ bugsnag_event *init_event() {
     bsg_strncpy_safe(event->error.errorClass, "SIGSEGV", sizeof(event->error.errorClass));
     bsg_strncpy_safe(event->error.errorMessage, "Whoops!", sizeof(event->error.errorMessage));
     bsg_strncpy_safe(event->error.type, "C", sizeof(event->error.type));
+
+    event->error.frame_count = 1;
+    bsg_strncpy_safe(event->error.stacktrace->method, "foo()", sizeof(event->error.stacktrace->method));
+    bsg_strncpy_safe(event->error.stacktrace->filename, "Something.c", sizeof(event->error.stacktrace->filename));
+    event->error.stacktrace->line_number = 58;
     return event;
 }
 
@@ -297,6 +302,27 @@ TEST test_event_unhandled(void) {
     free(event);
     PASS();
 }
+
+TEST test_error_stacktrace(void) {
+    bugsnag_event *event = init_event();
+    bsg_stackframe_t trace[200];
+    bugsnag_error_get_stacktrace(event, trace);
+
+    bsg_stackframe_t frame = trace[0];
+    ASSERT_STR_EQ("foo()", frame.method);
+    ASSERT_STR_EQ("Something.c", frame.filename);
+    ASSERT_EQ(58, frame.line_number);
+
+    // modify and copy into a new array
+    bsg_strncpy_safe(trace[0].method, "bar()", sizeof(trace[0].method));
+    bugsnag_error_set_stacktrace(event, trace);
+    bugsnag_error_get_stacktrace(event, trace);
+    ASSERT_STR_EQ("bar()", trace[0].method);
+
+    free(event);
+    PASS();
+}
+
 SUITE(event_mutators) {
     RUN_TEST(test_event_context);
     RUN_TEST(test_event_severity);
@@ -326,4 +352,5 @@ SUITE(event_mutators) {
     RUN_TEST(test_error_class);
     RUN_TEST(test_error_message);
     RUN_TEST(test_error_type);
+    RUN_TEST(test_error_stacktrace);
 }

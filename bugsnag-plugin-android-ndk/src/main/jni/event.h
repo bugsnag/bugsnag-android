@@ -15,7 +15,7 @@
 /**
  *  Number of frames in a stacktrace. Configures a default if not defined.
  */
-#define BUGSNAG_FRAMES_MAX 192
+#define BUGSNAG_FRAMES_MAX 200
 #endif
 #ifndef BUGSNAG_CRUMBS_MAX
 /**
@@ -42,16 +42,6 @@ extern "C" {
 /*********************************
  * (start) NDK-SPECIFIC BITS
  *********************************/
-
-typedef struct {
-    uintptr_t frame_address;
-    uintptr_t symbol_address;
-    uintptr_t load_address;
-    uintptr_t line_number;
-
-    char filename[256];
-    char method[256];
-} bsg_stackframe;
 
 typedef struct {
     char name[64];
@@ -191,7 +181,7 @@ typedef struct {
     /**
      * An ordered list of stack frames from the oldest to the most recent
      */
-    bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+    bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX];
 } bsg_error;
 
 typedef struct {

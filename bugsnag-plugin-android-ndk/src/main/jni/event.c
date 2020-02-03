@@ -381,6 +381,36 @@ void bugsnag_error_set_error_type(void *event_ptr, char *value) {
   bsg_strncpy_safe(event->error.type, value, sizeof(event->error.type));
 }
 
+void bsg_copy_stacktrace(bsg_stackframe_t dst[200], bsg_stackframe_t *src, ssize_t frame_count) {
+  for (int k = 0; k < 200; k++) {
+    if (k < frame_count) {
+      bsg_strncpy_safe(dst[k].method, src->method, sizeof(dst[k].method));
+      bsg_strncpy_safe(dst[k].filename, src->filename, sizeof(dst[k].filename));
+      dst[k].line_number = src->line_number;
+      dst[k].load_address = src->load_address;
+      dst[k].symbol_address = src->symbol_address;
+      dst[k].frame_address = src->frame_address;
+    } else {
+      bsg_strncpy_safe(dst[k].method, NULL, sizeof(dst[k].method));
+      bsg_strncpy_safe(dst[k].filename, NULL, sizeof(dst[k].filename));
+      dst[k].line_number = 0;
+      dst[k].load_address = 0;
+      dst[k].symbol_address = 0;
+      dst[k].frame_address = 0;
+    }
+  }
+}
+
+void bugsnag_error_get_stacktrace(void *event_ptr, bsg_stackframe_t value[200]) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_copy_stacktrace(value, event->error.stacktrace, event->error.frame_count);
+}
+
+void bugsnag_error_set_stacktrace(void *event_ptr, bsg_stackframe_t value[200]) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_copy_stacktrace(event->error.stacktrace, value, 200);
+}
+
 bsg_severity_t bugsnag_event_get_severity(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   return event->severity;

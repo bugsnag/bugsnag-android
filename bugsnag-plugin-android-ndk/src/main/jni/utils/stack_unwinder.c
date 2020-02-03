@@ -42,7 +42,7 @@ void bsg_set_unwind_types(int apiLevel, bool is32bit, bsg_unwinder *signal_type,
 }
 
 void bsg_insert_fileinfo(ssize_t frame_count,
-                         bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX]) {
+                         bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX]) {
   static Dl_info info;
   for (int i = 0; i < frame_count; ++i) {
     if (dladdr((void *)stacktrace[i].frame_address, &info) != 0) {
@@ -61,7 +61,7 @@ void bsg_insert_fileinfo(ssize_t frame_count,
 }
 
 ssize_t bsg_unwind_stack(bsg_unwinder unwind_style,
-                         bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                         bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                          siginfo_t *info, void *user_context) {
   ssize_t frame_count = 0;
   if (unwind_style == BSG_LIBUNWINDSTACK) {

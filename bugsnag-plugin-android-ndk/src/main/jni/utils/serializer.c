@@ -142,7 +142,7 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     strcpy(event->error.errorMessage, report_v2->exception.message);
     strcpy(event->error.type, report_v2->exception.type);
     event->error.frame_count = report_v2->exception.frame_count;
-    size_t error_size = sizeof(bsg_stackframe) * BUGSNAG_FRAMES_MAX;
+    size_t error_size = sizeof(bsg_stackframe_t) * BUGSNAG_FRAMES_MAX;
     memcpy(&event->error.stacktrace, report_v2->exception.stacktrace, error_size);
 
     // Fatal C errors are always true by default, previously this was hardcoded and
@@ -432,12 +432,12 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception, JSON_Array *stac
   json_object_set_string(exception, "message", exc.errorMessage);
   json_object_set_string(exception, "type", "c");
   for (int findex = 0; findex < exc.frame_count; findex++) {
-    bsg_stackframe stackframe = exc.stacktrace[findex];
+    bsg_stackframe_t stackframe = exc.stacktrace[findex];
     bsg_serialize_stackframe(&stackframe, stacktrace);
   }
 }
 
-void bsg_serialize_stackframe(bsg_stackframe *stackframe, JSON_Array *stacktrace) {
+void bsg_serialize_stackframe(bsg_stackframe_t *stackframe, JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
   json_object_set_number(frame, "frameAddress", (*stackframe).frame_address);
