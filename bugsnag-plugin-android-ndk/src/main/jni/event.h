@@ -44,7 +44,6 @@ extern "C" {
  *********************************/
 
 typedef struct {
-    char name[64];
     char id[64];
     char release_stage[64];
     char type[32];
@@ -67,8 +66,6 @@ typedef struct {
      */
     time_t duration_in_foreground_ms_offset;
     bool in_foreground;
-    bool low_memory;
-    size_t memory_usage;
     char binary_arch[32];
 } bsg_app_info;
 
@@ -78,26 +75,18 @@ typedef struct {
 
 typedef struct {
     int api_level;
-    double battery_level;
-    char brand[64];
     int cpu_abi_count;
     bsg_cpu_abi cpu_abi[8];
-    int dpi;
-    bool emulator;
     char orientation[32];
     time_t time;
     char id[64];
     bool jailbroken;
     char locale[32];
-    char location_status[32];
     char manufacturer[64];
     char model[64];
-    char network_access[64];
     char os_build[64];
     char os_version[64];
     char os_name[64];
-    float screen_density;
-    char screen_resolution[32];
     long total_memory;
 } bsg_device_info;
 

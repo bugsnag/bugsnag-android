@@ -7,6 +7,44 @@
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type);
 
+
+bool bsg_report_header_write(bsg_report_header *header, int fd);
+
+bool bsg_report_v1_write(bsg_report_header *header, bugsnag_report_v1 *report,
+                         int fd) {
+  if (!bsg_report_header_write(header, fd)) {
+    return false;
+  }
+  ssize_t len = write(fd, report, sizeof(bugsnag_report_v1));
+  return len == sizeof(bugsnag_report_v1);
+}
+
+bool bsg_report_v2_write(bsg_report_header *header, bugsnag_report_v2 *report,
+                         int fd) {
+  if (!bsg_report_header_write(header, fd)) {
+    return false;
+  }
+  ssize_t len = write(fd, report, sizeof(bugsnag_report_v2));
+  return len == sizeof(bugsnag_report_v2);
+}
+
+bool bsg_serialize_report_v1_to_file(bsg_environment *env, bugsnag_report_v1 *report) {
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  if (fd == -1) {
+    return false;
+  }
+  return bsg_report_v1_write(&env->report_header, report, fd);
+}
+
+bool bsg_serialize_report_v2_to_file(bsg_environment *env, bugsnag_report_v2 *report) {
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  if (fd == -1) {
+    return false;
+  }
+  return bsg_report_v2_write(&env->report_header, report, fd);
+}
+
+
 void generate_basic_report(bugsnag_event *event) {
   strcpy(event->grouping_hash, "foo-hash");
   strcpy(event->context, "SomeActivity");
@@ -17,7 +55,6 @@ void generate_basic_report(bugsnag_event *event) {
   event->error.frame_count = 2;
   strcpy(event->error.type, "C");
   strcpy(event->error.stacktrace[0].method, "makinBacon");
-  strcpy(event->app.name, "PhotoSnap Plus");
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.version, "2.0.52");
@@ -32,8 +69,6 @@ void generate_basic_report(bugsnag_event *event) {
   event->device.total_memory = 234678100;
   event->app.duration = 6502;
   event->app.in_foreground = true;
-  event->app.low_memory = false;
-  event->app.memory_usage = 456009;
   bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
   bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
@@ -127,7 +162,7 @@ TEST test_report_v1_migration(void) {
   bugsnag_report_v1 *generated_report = bsg_generate_report_v1();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v1));
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
-  bsg_serialize_event_to_file(env);
+  bsg_serialize_report_v1_to_file(env, generated_report);
 
   bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
   ASSERT(event != NULL);
@@ -151,7 +186,7 @@ TEST test_report_v2_migration(void) {
   bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v2));
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
-  bsg_serialize_event_to_file(env);
+  bsg_serialize_report_v2_to_file(env, generated_report);
 
   bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
   ASSERT(event != NULL);
@@ -195,8 +230,6 @@ TEST test_app_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
   JSON_Object *event = json_value_get_object(root_value);
   ASSERT(strcmp("2.0.52", json_object_dotget_string(event, "app.version")) == 0);
-  ASSERT(strcmp( "PhotoSnap Plus", json_object_dotget_string(event, "metaData.app.name")) == 0);
-  ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "app.id")) == 0);
   ASSERT(strcmp( "リリース", json_object_dotget_string(event, "app.releaseStage")) == 0);
   ASSERT_EQ(57, json_object_dotget_number(event, "app.versionCode"));
   ASSERT(strcmp( "1234-9876-adfe", json_object_dotget_string(event, "app.buildUUID")) == 0);

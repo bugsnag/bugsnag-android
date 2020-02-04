@@ -154,7 +154,6 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
 }
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
-  bsg_strcpy(event->app.name, report_v2->app.name);
   bsg_strcpy(event->app.id, report_v2->app.id);
   bsg_strcpy(event->app.release_stage, report_v2->app.release_stage);
   bsg_strcpy(event->app.type, report_v2->app.type);
@@ -168,24 +167,19 @@ void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
   event->app.duration_ms_offset = report_v2->app.duration_ms_offset;
   event->app.duration_in_foreground_ms_offset = report_v2->app.duration_in_foreground_ms_offset;
   event->app.in_foreground = report_v2->app.in_foreground;
-  event->app.low_memory = report_v2->app.low_memory;
-  event->app.memory_usage = report_v2->app.memory_usage;
 
   // migrate legacy fields to metadata
   bugsnag_event_add_metadata_string(event, "app", "packageName", report_v2->app.package_name);
   bugsnag_event_add_metadata_string(event, "app", "versionName", report_v2->app.version_name);
+  bugsnag_event_add_metadata_string(event, "app", "name", report_v2->app.name);
 }
 
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
   bsg_strcpy(event->device.os_name, bsg_os_name()); // os_name was not a field in v2
   event->device.api_level = report_v2->device.api_level;
-  event->device.battery_level = report_v2->device.battery_level;
   event->device.cpu_abi_count = report_v2->device.cpu_abi_count;
-  event->device.dpi = report_v2->device.dpi;
-  event->device.emulator = report_v2->device.emulator;
   event->device.time = report_v2->device.time;
   event->device.jailbroken = report_v2->device.jailbroken;
-  event->device.screen_density = report_v2->device.screen_density;
   event->device.total_memory = report_v2->device.total_memory;
 
   for (int k = 0;
@@ -194,17 +188,23 @@ void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
     event->device.cpu_abi_count++;
   }
 
-  bsg_strcpy(event->device.brand, report_v2->device.brand);
   bsg_strcpy(event->device.orientation, report_v2->device.orientation);
   bsg_strcpy(event->device.id, report_v2->device.id);
   bsg_strcpy(event->device.locale, report_v2->device.locale);
-  bsg_strcpy(event->device.location_status, report_v2->device.location_status);
   bsg_strcpy(event->device.manufacturer, report_v2->device.manufacturer);
   bsg_strcpy(event->device.model, report_v2->device.model);
-  bsg_strcpy(event->device.network_access, report_v2->device.network_access);
   bsg_strcpy(event->device.os_build, report_v2->device.os_build);
   bsg_strcpy(event->device.os_version, report_v2->device.os_version);
-  bsg_strcpy(event->device.screen_resolution, report_v2->device.screen_resolution);
+
+  // migrate legacy fields to metadata
+  bugsnag_event_add_metadata_bool(event, "device", "emulator", report_v2->device.emulator);
+  bugsnag_event_add_metadata_double(event, "device", "dpi", report_v2->device.dpi);
+  bugsnag_event_add_metadata_double(event, "device", "screenDensity", report_v2->device.screen_density);
+  bugsnag_event_add_metadata_double(event, "device", "batteryLevel", report_v2->device.battery_level);
+  bugsnag_event_add_metadata_string(event, "device", "locationStatus", report_v2->device.location_status);
+  bugsnag_event_add_metadata_string(event, "device", "brand", report_v2->device.brand);
+  bugsnag_event_add_metadata_string(event, "device", "networkAccess", report_v2->device.network_access);
+  bugsnag_event_add_metadata_string(event, "device", "screenResolution", report_v2->device.screen_resolution);
 }
 
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
@@ -340,8 +340,6 @@ void bsg_serialize_app(const bsg_app_info app, JSON_Object *event_obj) {
 
 void bsg_serialize_app_metadata(const bsg_app_info app, JSON_Object *event_obj) {
   json_object_dotset_string(event_obj, "metaData.app.activeScreen", app.active_screen);
-  json_object_dotset_string(event_obj, "metaData.app.name", app.name);
-  json_object_dotset_boolean(event_obj, "metaData.app.lowMemory", app.low_memory);
 }
 
 void bsg_serialize_device(const bsg_device_info device, JSON_Object *event_obj) {
@@ -363,6 +361,7 @@ void bsg_serialize_device(const bsg_device_info device, JSON_Object *event_obj) 
   }
 
   json_object_dotset_number(event_obj, "device.totalMemory", device.total_memory);
+  json_object_dotset_boolean(event_obj, "device.jailbroken", device.jailbroken);
 
   char report_time[sizeof "2018-10-08T12:07:09Z"];
   if (device.time > 0) {
@@ -372,14 +371,6 @@ void bsg_serialize_device(const bsg_device_info device, JSON_Object *event_obj) 
 }
 
 void bsg_serialize_device_metadata(const bsg_device_info device, JSON_Object *event_obj) {
-  json_object_dotset_string(event_obj, "metaData.device.brand", device.brand);
-  json_object_dotset_boolean(event_obj, "metaData.device.emulator", device.emulator);
-  json_object_dotset_boolean(event_obj, "metaData.device.jailbroken", device.jailbroken);
-  json_object_dotset_string(event_obj, "metaData.device.locationStatus", device.location_status);
-  json_object_dotset_string(event_obj, "metaData.device.networkAccess", device.network_access);
-  json_object_dotset_number(event_obj, "metaData.device.dpi", device.dpi);
-  json_object_dotset_number(event_obj, "metaData.device.screenDensity", device.screen_density);
-  json_object_dotset_string(event_obj, "metaData.device.screenResolution", device.screen_resolution);
 }
 
 void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object *event_obj) {
