@@ -21,7 +21,11 @@ class Thread internal constructor(
     enum class ThreadSendPolicy {
         ALWAYS,
         UNHANDLED_ONLY,
-        NEVER
+        NEVER;
+
+        internal companion object {
+            fun fromString(str: String) = values().find { it.name == str } ?: ALWAYS
+        }
     }
 
     var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()

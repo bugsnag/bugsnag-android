@@ -64,10 +64,11 @@ class ManifestConfigLoaderTest {
             putBoolean("com.bugsnag.android.AUTO_DETECT_ERRORS", false)
             putBoolean("com.bugsnag.android.AUTO_CAPTURE_BREADCRUMBS", false)
             putBoolean("com.bugsnag.android.PERSIST_USER", true)
+            putString("com.bugsnag.android.SEND_THREADS", "UNHANDLED_ONLY")
 
             // endpoints
-            putString("com.bugsnag.android.ENDPOINT", "http://localhost:1234")
-            putString("com.bugsnag.android.SESSIONS_ENDPOINT", "http://localhost:2345")
+            putString("com.bugsnag.android.ENDPOINT_NOTIFY", "http://localhost:1234")
+            putString("com.bugsnag.android.ENDPOINT_SESSIONS", "http://localhost:2345")
 
             // app/project packages
             putString("com.bugsnag.android.APP_VERSION", "5.23.7")
@@ -94,7 +95,7 @@ class ManifestConfigLoaderTest {
             // detection
             assertFalse(autoDetectErrors)
             assertFalse(autoTrackSessions)
-            assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
+            assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
             assertTrue(persistUser)
 
             // endpoints
