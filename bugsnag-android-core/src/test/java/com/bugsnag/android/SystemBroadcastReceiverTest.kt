@@ -50,7 +50,7 @@ class SystemBroadcastReceiverTest {
         receiver.onReceive(context, intent)
 
         val metadata = mapOf(Pair("Intent Action", "SomeTitle"), Pair("foo", "[bar]"))
-        verify(client, times(1)).leaveBreadcrumb("SomeTitle", BreadcrumbType.LOG, metadata)
+        verify(client, times(1)).leaveBreadcrumb("SomeTitle", BreadcrumbType.STATE, metadata)
     }
 
     @Test
