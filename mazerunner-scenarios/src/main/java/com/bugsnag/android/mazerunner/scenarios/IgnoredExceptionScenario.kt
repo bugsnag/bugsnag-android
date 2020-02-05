@@ -11,7 +11,7 @@ internal class IgnoredExceptionScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
-        config.ignoreClasses = setOf("java.lang.RuntimeException")
+        config.discardClasses = setOf("java.lang.RuntimeException")
     }
 
     override fun run() {

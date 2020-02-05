@@ -183,9 +183,9 @@ class Configuration(
      *
      * For example:
      *
-     * client.setIgnoreClasses("com.example.MyCustomException");
+     * client.setDiscardClasses("com.example.MyCustomException");
      */
-    var ignoreClasses: Set<String> = emptySet()
+    var discardClasses: Set<String> = emptySet()
 
     /**
      * Set for which releaseStages errors should be sent to Bugsnag.

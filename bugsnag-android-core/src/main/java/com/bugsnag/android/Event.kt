@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.Thread.ThreadSendPolicy.*
 import java.io.IOException
-import java.util.HashMap
 
 /**
  * Information and associated diagnostics relating to a handled or unhandled
@@ -21,7 +20,7 @@ class Event @JvmOverloads internal constructor(
 ) : JsonStream.Streamable, MetadataAware, UserAware {
 
     internal val metadata: Metadata = data.copy()
-    private val ignoreClasses: Set<String> = config.ignoreClasses.toSet()
+    private val discardClasses: Set<String> = config.discardClasses.toSet()
 
     var session: Session? = null
 
@@ -84,10 +83,10 @@ class Event @JvmOverloads internal constructor(
      */
     internal var _user = User(null, null, null)
 
-    protected fun shouldIgnoreClass(): Boolean {
+    protected fun shouldDiscardClass(): Boolean {
         return when {
             errors.isEmpty() -> true
-            else -> errors.any { ignoreClasses.contains(it.errorClass) }
+            else -> errors.any { discardClasses.contains(it.errorClass) }
         }
     }
 

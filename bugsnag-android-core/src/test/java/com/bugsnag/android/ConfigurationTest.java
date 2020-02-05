@@ -125,9 +125,9 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testOverrideIgnoreClasses() {
-        config.setIgnoreClasses(Collections.singleton("Bar"));
-        assertEquals(Collections.singleton("Bar"), config.getIgnoreClasses());
+    public void testOverrideDiscardClasses() {
+        config.setDiscardClasses(Collections.singleton("Bar"));
+        assertEquals(Collections.singleton("Bar"), config.getDiscardClasses());
     }
 
     @Test

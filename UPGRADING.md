@@ -53,7 +53,7 @@ The full list of altered methods and their intended replacements can be found be
 | `Bugsnag#setEndpoint` | `Configuration#setEndpoints` |
 | `Bugsnag#setErrorReportApiClient` | `Configuration#setDelivery` |
 | `Bugsnag#setFilters` | `Configuration#setRedactedKeys` |
-| `Bugsnag#setIgnoreClasses` | `Configuration#setIgnoreClasses` |
+| `Bugsnag#setIgnoreClasses` | `Configuration#setDiscardClasses` |
 | `Bugsnag#setLoggingEnabled` | `Configuration#setLogger` |
 | `Bugsnag#setMaxBreadcrumbs` | `Configuration#setMaxBreadcrumbs` |
 | `Bugsnag#setMetaData` | `Bugsnag#addMetadata(String, String, Object)` and `Configuration#addMetadata` |
@@ -118,7 +118,7 @@ The full list of altered methods and their intended replacements can be found be
 | `Client#setBuildUUID`  | `Configuration#setBuildUuid` |
 | `Client#setEndpoint`  | `Configuration#setEndpoints` |
 | `Client#setFilters`  | `Configuration#setRedactedKeys` |
-| `Client#setIgnoreClasses`  | `Configuration#setIgnoreClasses` |
+| `Client#setIgnoreClasses`  | `Configuration#setDiscardClasses` |
 | `Client#setLoggingEnabled`  | `Configuration#setLogger` |
 | `Client#setMaxBreadcrumbs`  | `Configuration#setMaxBreadcrumbs` |
 | `Client#setMetaData`  | `Configuration#addMetadata` |
