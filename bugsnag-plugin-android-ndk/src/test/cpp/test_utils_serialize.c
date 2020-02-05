@@ -5,7 +5,7 @@
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
-bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type);
+bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_type_t type);
 
 void generate_basic_report(bugsnag_event *event) {
   strcpy(event->grouping_hash, "foo-hash");
@@ -67,6 +67,11 @@ bugsnag_report_v2 *bsg_generate_report_v2(void) {
 
   strcpy(report->app.package_name, "com.example.foo");
   strcpy(report->app.version_name, "2.5");
+
+  report->crumb_first_index = 0;
+  report->crumb_count = 1;
+  report->breadcrumbs[0].type = BSG_CRUMB_STATE;
+  strcpy(report->breadcrumbs[0].message, "decrease torque");
   return report;
 }
 
@@ -174,6 +179,10 @@ TEST test_report_v2_migration(void) {
   // package_name/version_name are migrated to metadata
   ASSERT_STR_EQ("com.example.foo", event->metadata.values[0].char_value);
   ASSERT_STR_EQ("2.5", event->metadata.values[1].char_value);
+
+  // event.breadcrumbs
+  ASSERT_STR_EQ("decrease torque", event->breadcrumbs[0].message);
+  ASSERT_EQ(BSG_CRUMB_STATE, event->breadcrumbs[0].type);
 
   free(generated_report);
   free(env);

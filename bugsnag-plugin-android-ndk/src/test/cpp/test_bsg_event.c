@@ -42,6 +42,12 @@ bugsnag_event *init_event() {
     bsg_strncpy_safe(event->error.errorClass, "SIGSEGV", sizeof(event->error.errorClass));
     bsg_strncpy_safe(event->error.errorMessage, "Whoops!", sizeof(event->error.errorMessage));
     bsg_strncpy_safe(event->error.type, "C", sizeof(event->error.type));
+
+    bugsnag_breadcrumb crumb;
+    crumb.type = BSG_CRUMB_ERROR;
+    bsg_strncpy_safe(crumb.message, "My Breadcrumb", sizeof(crumb.message));
+    bsg_strncpy_safe(crumb.timestamp, "2018-10-08T12:07:09Z", sizeof(crumb.timestamp));
+    bugsnag_event_add_breadcrumb(event, &crumb);
     return event;
 }
 
@@ -340,6 +346,39 @@ TEST test_event_metadata(void) {
     PASS();
 }
 
+TEST test_event_clear_breadcrumbs(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_EQ(1, bugsnag_event_get_breadcrumbs_size(event));
+    bugsnag_event_clear_breadcrumbs(event);
+    ASSERT_EQ(0, bugsnag_event_get_breadcrumbs_size(event));
+    free(event);
+    PASS();
+}
+
+TEST test_event_mutate_breadcrumbs(void) {
+    bugsnag_event *event = init_event();
+
+    // get crumb
+    bsg_breadcrumb_t crumb = bugsnag_event_get_breadcrumb(event, 0);
+    ASSERT_EQ(BSG_CRUMB_ERROR, crumb.type);
+    ASSERT_STR_EQ("My Breadcrumb", crumb.message);
+    ASSERT_STR_EQ("2018-10-08T12:07:09Z", crumb.timestamp);
+
+    // set crumb
+    crumb.type = BSG_CRUMB_NAVIGATION;
+    bsg_strncpy_safe(crumb.message, "Whoops", sizeof(crumb.message));
+    bsg_strncpy_safe(crumb.timestamp, "2000-01-01T12:07:09Z", sizeof(crumb.timestamp));
+    bugsnag_event_set_breadcrumb(event, crumb, 0);
+
+    // verify changes applied
+    crumb = bugsnag_event_get_breadcrumb(event, 0);
+    ASSERT_EQ(BSG_CRUMB_NAVIGATION, crumb.type);
+    ASSERT_STR_EQ("Whoops", crumb.message);
+    ASSERT_STR_EQ("2000-01-01T12:07:09Z", crumb.timestamp);
+    free(event);
+    PASS();
+}
+
 SUITE(event_mutators) {
     RUN_TEST(test_event_context);
     RUN_TEST(test_event_severity);
@@ -370,4 +409,6 @@ SUITE(event_mutators) {
     RUN_TEST(test_error_message);
     RUN_TEST(test_error_type);
     RUN_TEST(test_event_metadata);
+    RUN_TEST(test_event_clear_breadcrumbs);
+    RUN_TEST(test_event_mutate_breadcrumbs);
 }

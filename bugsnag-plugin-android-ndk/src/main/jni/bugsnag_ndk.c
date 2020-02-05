@@ -241,7 +241,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
   const char *type = (*env)->GetStringUTFChars(env, crumb_type, 0);
   const char *timestamp = (*env)->GetStringUTFChars(env, timestamp_, 0);
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
-  strncpy(crumb->name, name, sizeof(crumb->name));
+  strncpy(crumb->message, name, sizeof(crumb->message));
   strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
   if (strcmp(type, "user") == 0) {
     crumb->type = BSG_CRUMB_USER;

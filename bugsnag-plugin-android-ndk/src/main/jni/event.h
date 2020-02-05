@@ -193,9 +193,9 @@ typedef struct {
 } bsg_char_metadata_pair;
 
 typedef struct {
-    char name[33];
+    char message[128];
     char timestamp[37];
-    bsg_breadcrumb_t type;
+    bsg_breadcrumb_type_t type;
 
     /**
      * Key/value pairs of related information for debugging
@@ -236,7 +236,6 @@ typedef struct {
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
                                   bugsnag_breadcrumb *crumb);
-void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
 void bugsnag_event_set_user_email(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_id(bugsnag_event *event, char *value);
 void bugsnag_event_set_user_name(bugsnag_event *event, char *value);

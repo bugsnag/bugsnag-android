@@ -27,6 +27,8 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 
+void migrate_breadcrumbs_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
+
 #ifdef __cplusplus
 }
 #endif
@@ -119,11 +121,8 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     migrate_app_v1(report_v2, event);
     migrate_device_v1(report_v2, event);
     event->user = report_v2->user;
-    event->crumb_count = report_v2->crumb_count;
-    event->crumb_first_index = report_v2->crumb_first_index;
 
-    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
-    memcpy(&event->breadcrumbs, report_v2->breadcrumbs, breadcrumb_size);
+    migrate_breadcrumbs_v1(report_v2, event);
 
     strcpy(event->context, report_v2->context);
     event->severity = report_v2->severity;
@@ -151,6 +150,27 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   }
   free(report_v2);
   return event;
+}
+
+void migrate_breadcrumbs_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
+  // copy old breadcrumbs into old struct
+  bugsnag_breadcrumb_v1 stale_crumbs[BUGSNAG_CRUMBS_MAX];
+  memcpy(&stale_crumbs, report_v2->breadcrumbs, sizeof(bugsnag_breadcrumb_v1) * BUGSNAG_CRUMBS_MAX);
+
+  // copy old breadcrumbs into new struct, then add to even
+  for (int k = 0; k < BUGSNAG_CRUMBS_MAX; k++) {
+    bugsnag_breadcrumb_v1 old_crumb = stale_crumbs[k];
+    bugsnag_breadcrumb new_crumb;
+
+    // the message size limit changed in v3
+    bsg_strncpy_safe(new_crumb.message, old_crumb.message, sizeof(new_crumb.message));
+    bsg_strncpy_safe(new_crumb.timestamp, old_crumb.timestamp, sizeof(new_crumb.timestamp));
+    new_crumb.type = old_crumb.type;
+    memcpy(&old_crumb.metadata, new_crumb.metadata, sizeof(bsg_char_metadata_pair) * 8);
+    bugsnag_event_add_breadcrumb(event, &new_crumb);
+  }
+
+  memcpy(&stale_crumbs, report_v2->breadcrumbs, sizeof(bugsnag_breadcrumb_v1) * BUGSNAG_CRUMBS_MAX);
 }
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
@@ -224,7 +244,7 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
     event_v2->crumb_count = report_v1->crumb_count;
     event_v2->crumb_first_index = report_v1->crumb_first_index;
 
-    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb_v1) * BUGSNAG_CRUMBS_MAX;
     memcpy(&event_v2->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
 
     strcpy(event_v2->context, report_v1->context);
@@ -266,7 +286,7 @@ bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
   return len == sizeof(bugsnag_event);
 }
 
-const char *bsg_crumb_type_string(bsg_breadcrumb_t type) {
+const char *bsg_crumb_type_string(bsg_breadcrumb_type_t type) {
   switch (type) {
   case BSG_CRUMB_ERROR:
     return "error";
@@ -468,7 +488,7 @@ void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
       JSON_Object *crumb = json_value_get_object(crumb_val);
       json_array_append_value(crumbs, crumb_val);
       bugsnag_breadcrumb breadcrumb = event->breadcrumbs[current_index];
-      json_object_set_string(crumb, "name", breadcrumb.name);
+      json_object_set_string(crumb, "name", breadcrumb.message);
       json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
       json_object_set_string(crumb, "type",
                              bsg_crumb_type_string(breadcrumb.type));

@@ -187,9 +187,31 @@ void bugsnag_event_add_breadcrumb(bugsnag_event *event,
   memcpy(&event->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
 }
 
-void bugsnag_event_clear_breadcrumbs(bugsnag_event *event) {
+void bugsnag_event_clear_breadcrumbs(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
   event->crumb_count = 0;
   event->crumb_first_index = 0;
+}
+
+int bugsnag_event_get_breadcrumbs_size(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->crumb_count;
+}
+
+bsg_breadcrumb_t bugsnag_event_get_breadcrumb(void *event_ptr, int index) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_breadcrumb_t crumb;
+  crumb.type = event->breadcrumbs[index].type;
+  bsg_strncpy_safe(crumb.timestamp, event->breadcrumbs[index].timestamp, sizeof(event->breadcrumbs[index].timestamp));
+  bsg_strncpy_safe(crumb.message, event->breadcrumbs[index].message, sizeof(event->breadcrumbs[index].message));
+  return crumb;
+}
+
+void bugsnag_event_set_breadcrumb(void *event_ptr, bsg_breadcrumb_t breadcrumb, int index) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  event->breadcrumbs[index].type = breadcrumb.type;
+  bsg_strncpy_safe(event->breadcrumbs[index].timestamp, breadcrumb.timestamp, sizeof(breadcrumb.timestamp));
+  bsg_strncpy_safe(event->breadcrumbs[index].message, breadcrumb.message, sizeof(breadcrumb.message));
 }
 
 bool bugsnag_event_has_session(bugsnag_event *event) {

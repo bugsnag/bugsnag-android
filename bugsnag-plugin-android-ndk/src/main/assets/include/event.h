@@ -48,6 +48,12 @@ typedef enum {
    *  User event, such as authentication or control events
    */
   BSG_CRUMB_USER,
+} bsg_breadcrumb_type_t;
+
+typedef struct {
+    char message[128];
+    char timestamp[37];
+    bsg_breadcrumb_type_t type;
 } bsg_breadcrumb_t;
 
 typedef struct {
@@ -183,6 +189,13 @@ bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *
 double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name);
 char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name);
 bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name);
+
+/* Breadcrumbs */
+
+void bugsnag_event_clear_breadcrumbs(void *event_ptr);
+int bugsnag_event_get_breadcrumbs_size(void *event_ptr);
+bsg_breadcrumb_t bugsnag_event_get_breadcrumb(void *event_ptr, int index);
+void bugsnag_event_set_breadcrumb(void *event_ptr, bsg_breadcrumb_t breadcrumb, int index);
 
 #ifdef __cplusplus
 }

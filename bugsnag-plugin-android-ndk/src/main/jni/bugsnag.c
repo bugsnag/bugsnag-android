@@ -21,7 +21,7 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity);
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name);
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
-                                  bsg_breadcrumb_t type);
+                                  bsg_breadcrumb_type_t type);
 
 void bugsnag_notify(char *name, char *message, bsg_severity_t severity) {
   if (bsg_global_jni_env != NULL) {
@@ -40,7 +40,7 @@ void bugsnag_set_user(char *id, char *email, char *name) {
   }
 }
 
-void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type) {
+void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_type_t type) {
   if (bsg_global_jni_env != NULL) {
     bugsnag_leave_breadcrumb_env(bsg_global_jni_env, message, type);
   } else {
@@ -184,7 +184,7 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   (*env)->DeleteLocalRef(env, interface_class);
 }
 
-jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bsg_breadcrumb_t type,
+jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bsg_breadcrumb_type_t type,
                                jclass type_class) {
   const char *type_sig = "Lcom/bugsnag/android/BreadcrumbType;";
   if (type == BSG_CRUMB_USER) {
@@ -207,7 +207,7 @@ jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bsg_breadcrumb_t type,
 }
 
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
-                                  bsg_breadcrumb_t type) {
+                                  bsg_breadcrumb_type_t type) {
   jclass interface_class =
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
   jmethodID leave_breadcrumb_method = (*env)->GetStaticMethodID(

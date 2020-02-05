@@ -2,10 +2,10 @@
 #include <event.h>
 #include <time.h>
 
-bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type) {
+bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_type_t type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
   crumb->type = type;
-  strcpy(crumb->name, name);
+  strcpy(crumb->message, name);
   strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
   strcpy(crumb->metadata[0].key, "message");
   strcpy(crumb->metadata[0].value, message);
@@ -19,7 +19,7 @@ TEST test_add_breadcrumb(void) {
   bugsnag_event_add_breadcrumb(event, crumb);
   ASSERT_EQ(1, event->crumb_count);
   ASSERT_EQ(0, event->crumb_first_index);
-  ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
+  ASSERT(strcmp("stroll", event->breadcrumbs[0].message) == 0);
   ASSERT(strcmp("message", event->breadcrumbs[0].metadata[0].key) == 0);
   ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata[0].value) == 0);
   free(crumb);
@@ -27,10 +27,10 @@ TEST test_add_breadcrumb(void) {
   bugsnag_event_add_breadcrumb(event, crumb2);
   ASSERT_EQ(2, event->crumb_count);
   ASSERT_EQ(0, event->crumb_first_index);
-  ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
+  ASSERT(strcmp("stroll", event->breadcrumbs[0].message) == 0);
   ASSERT(strcmp("message", event->breadcrumbs[0].metadata[0].key) == 0);
   ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata[0].value) == 0);
-  ASSERT(strcmp("walking...", event->breadcrumbs[1].name) == 0);
+  ASSERT(strcmp("walking...", event->breadcrumbs[1].message) == 0);
   ASSERT(strcmp("message", event->breadcrumbs[1].metadata[0].key) == 0);
   ASSERT(strcmp("this is not a drill.", event->breadcrumbs[1].metadata[0].value) == 0);
 
@@ -51,14 +51,14 @@ TEST test_add_breadcrumbs_over_max(void) {
     free(crumb);
     free(format);
   }
-  ASSERT(strcmp("crumb: 60", event->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("crumb: 61", event->breadcrumbs[1].name) == 0);
-  ASSERT(strcmp("crumb: 62", event->breadcrumbs[2].name) == 0);
-  ASSERT(strcmp("crumb: 63", event->breadcrumbs[3].name) == 0);
-  ASSERT(strcmp("crumb: 34", event->breadcrumbs[4].name) == 0);
-  ASSERT(strcmp("crumb: 35", event->breadcrumbs[5].name) == 0);
-  ASSERT(strcmp("crumb: 58", event->breadcrumbs[28].name) == 0);
-  ASSERT(strcmp("crumb: 59", event->breadcrumbs[29].name) == 0);
+  ASSERT(strcmp("crumb: 60", event->breadcrumbs[0].message) == 0);
+  ASSERT(strcmp("crumb: 61", event->breadcrumbs[1].message) == 0);
+  ASSERT(strcmp("crumb: 62", event->breadcrumbs[2].message) == 0);
+  ASSERT(strcmp("crumb: 63", event->breadcrumbs[3].message) == 0);
+  ASSERT(strcmp("crumb: 34", event->breadcrumbs[4].message) == 0);
+  ASSERT(strcmp("crumb: 35", event->breadcrumbs[5].message) == 0);
+  ASSERT(strcmp("crumb: 58", event->breadcrumbs[28].message) == 0);
+  ASSERT(strcmp("crumb: 59", event->breadcrumbs[29].message) == 0);
   ASSERT_EQ(BUGSNAG_CRUMBS_MAX, event->crumb_count);
   ASSERT_EQ(4, event->crumb_first_index);
   free(event);
