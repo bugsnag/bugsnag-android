@@ -19,10 +19,11 @@ internal class ManifestConfigLoader {
         private const val AUTO_TRACK_SESSIONS = "$BUGSNAG_NS.AUTO_TRACK_SESSIONS"
         private const val AUTO_DETECT_ERRORS = "$BUGSNAG_NS.AUTO_DETECT_ERRORS"
         private const val PERSIST_USER = "$BUGSNAG_NS.PERSIST_USER"
+        private const val SEND_THREADS = "$BUGSNAG_NS.SEND_THREADS"
 
         // endpoints
-        private const val ENDPOINT_NOTIFY = "$BUGSNAG_NS.ENDPOINT"
-        private const val ENDPOINT_SESSIONS = "$BUGSNAG_NS.SESSIONS_ENDPOINT"
+        private const val ENDPOINT_NOTIFY = "$BUGSNAG_NS.ENDPOINT_NOTIFY"
+        private const val ENDPOINT_SESSIONS = "$BUGSNAG_NS.ENDPOINT_SESSIONS"
 
         // app/project packages
         private const val APP_VERSION = "$BUGSNAG_NS.APP_VERSION"
@@ -83,6 +84,12 @@ internal class ManifestConfigLoader {
             autoTrackSessions = data.getBoolean(AUTO_TRACK_SESSIONS, autoTrackSessions)
             autoDetectErrors = data.getBoolean(AUTO_DETECT_ERRORS, autoDetectErrors)
             persistUser = data.getBoolean(PERSIST_USER, persistUser)
+
+            val str = data.getString(SEND_THREADS)
+
+            if (str != null) {
+                sendThreads = Thread.ThreadSendPolicy.fromString(str)
+            }
         }
     }
 
