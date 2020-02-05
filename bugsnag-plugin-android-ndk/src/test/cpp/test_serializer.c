@@ -115,8 +115,8 @@ bugsnag_event * loadBreadcrumbsTestCase(jint num) {
     return data;
 }
 
-bsg_stackframe * loadStackframeTestCase(jint num) {
-    bsg_stackframe *data = malloc(sizeof(bsg_stackframe));
+bsg_stackframe_t * loadStackframeTestCase(jint num) {
+    bsg_stackframe_t *data = malloc(sizeof(bsg_stackframe_t));
     data->frame_address = 0x20000000;
     data->symbol_address = 0x16000000;
     data->load_address = 0x12000000;

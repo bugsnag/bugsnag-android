@@ -463,3 +463,18 @@ void bugsnag_event_set_grouping_hash(void *event_ptr, char *value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   bsg_strncpy_safe(event->grouping_hash, value, sizeof(event->grouping_hash));
 }
+
+int bugsnag_event_get_stacktrace_size(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->error.frame_count;
+}
+
+bsg_stackframe_t *bugsnag_event_get_stackframe(void *event_ptr, int index) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  if (index >= 0 && index < event->error.frame_count) {
+    return &event->error.stacktrace[index];
+  } else {
+    return NULL;
+  }
+}
+

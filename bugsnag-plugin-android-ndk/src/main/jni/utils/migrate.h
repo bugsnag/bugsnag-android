@@ -42,7 +42,7 @@ typedef struct {
     /**
      * An ordered list of stack frames from the oldest to the most recent
      */
-    bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+    bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX];
 } bsg_exception;
 
 typedef struct {

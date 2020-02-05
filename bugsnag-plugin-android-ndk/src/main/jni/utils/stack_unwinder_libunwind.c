@@ -41,7 +41,7 @@ bsg_libunwind_callback(struct _Unwind_Context *context, void *arg) __asyncsafe {
 
 #if defined(__arm__)
 ssize_t
-bsg_unwind_stack_libunwind_arm32(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+bsg_unwind_stack_libunwind_arm32(bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                                  siginfo_t *info, void *user_context) __asyncsafe {
   unw_cursor_t cursor;
   unw_context_t uc;
@@ -94,7 +94,7 @@ bsg_unwind_stack_libunwind_arm32(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
 }
 #endif
 ssize_t
-bsg_unwind_stack_libunwind(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+bsg_unwind_stack_libunwind(bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                            siginfo_t *info, void *user_context) {
 #if defined(__arm__)
   if (bsg_libunwind_global_is32bit) { // avoid this code path if a 64-bit device
