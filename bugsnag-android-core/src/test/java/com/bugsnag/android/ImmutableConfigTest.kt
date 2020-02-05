@@ -4,7 +4,6 @@ import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
@@ -51,7 +50,7 @@ internal class ImmutableConfigTest {
             assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
 
             // release stages
-            assertTrue(ignoreClasses.isEmpty())
+            assertTrue(discardClasses.isEmpty())
             assertNull(enabledReleaseStages)
             assertTrue(projectPackages.isEmpty())
             assertEquals(seed.releaseStage, releaseStage)
@@ -83,7 +82,7 @@ internal class ImmutableConfigTest {
         seed.enabledErrorTypes.ndkCrashes = true
         seed.sendThreads = Thread.ThreadSendPolicy.UNHANDLED_ONLY
 
-        seed.ignoreClasses = setOf("foo")
+        seed.discardClasses = setOf("foo")
         seed.enabledReleaseStages = setOf("bar")
         seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
@@ -113,7 +112,7 @@ internal class ImmutableConfigTest {
             assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages
-            assertEquals(setOf("foo"), ignoreClasses)
+            assertEquals(setOf("foo"), discardClasses)
             assertEquals(setOf("bar"), enabledReleaseStages)
             assertEquals(setOf("com.example"), projectPackages)
             assertEquals("wham", releaseStage)

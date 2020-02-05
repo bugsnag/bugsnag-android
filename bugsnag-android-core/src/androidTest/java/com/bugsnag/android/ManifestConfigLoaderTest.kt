@@ -41,7 +41,7 @@ class ManifestConfigLoaderTest {
             assertEquals(0, versionCode)
             assertNull(releaseStage)
             assertNull(enabledReleaseStages)
-            assertEquals(emptySet<String>(), ignoreClasses)
+            assertEquals(emptySet<String>(), discardClasses)
             assertEquals(emptySet<String>(), projectPackages)
             assertEquals(setOf("password"), redactedKeys)
 
@@ -75,7 +75,7 @@ class ManifestConfigLoaderTest {
             putInt("com.bugsnag.android.VERSION_CODE", 55)
             putString("com.bugsnag.android.RELEASE_STAGE", "beta")
             putString("com.bugsnag.android.ENABLED_RELEASE_STAGES", "beta,production,staging")
-            putString("com.bugsnag.android.IGNORE_CLASSES", "com.bugsnag.FooKt,org.example.String")
+            putString("com.bugsnag.android.DISCARD_CLASSES", "com.bugsnag.FooKt,org.example.String")
             putString("com.bugsnag.android.PROJECT_PACKAGES", "com.bugsnag,com.example")
             putString("com.bugsnag.android.REDACTED_KEYS", "password,auth,foo")
 
@@ -107,7 +107,7 @@ class ManifestConfigLoaderTest {
             assertEquals(55, versionCode)
             assertEquals("beta", releaseStage)
             assertEquals(setOf("beta", "production", "staging"), enabledReleaseStages)
-            assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), ignoreClasses)
+            assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), discardClasses)
             assertEquals(setOf("com.bugsnag", "com.example"), projectPackages)
             assertEquals(setOf("password", "auth", "foo"), redactedKeys)
 

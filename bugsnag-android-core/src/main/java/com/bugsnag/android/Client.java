@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
-import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -545,7 +544,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     void notifyInternal(@NonNull Event event,
                         @Nullable OnErrorCallback onError) {
         // Don't notify if this event class should be ignored
-        if (event.shouldIgnoreClass()) {
+        if (event.shouldDiscardClass()) {
             return;
         }
 
