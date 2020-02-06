@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Remove unnecessary uses-library android.test.runner from AndroidManifest
+  [#783](https://github.com/bugsnag/bugsnag-android/pull/783)
+
 ## 4.22.3 (2020-01-22)
 
 * Allow disabling previous signal handler invocation for Unity ANRs
