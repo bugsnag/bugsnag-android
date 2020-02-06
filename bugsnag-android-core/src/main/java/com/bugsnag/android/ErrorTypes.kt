@@ -4,10 +4,9 @@ class ErrorTypes(
 
     /**
      * Sets whether [ANRs](https://developer.android.com/topic/performance/vitals/anr)
-     * should be reported to Bugsnag. When enabled, Bugsnag will record an ANR whenever the main
-     * thread has been blocked for 5000 milliseconds or longer.
+     * should be reported to Bugsnag.
      *
-     * If you wish to enable ANR detection, you should set this property to true.
+     * If you wish to disable ANR detection, you should set this property to false.
      */
     var anrs: Boolean = true,
 
