@@ -64,7 +64,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
             BreadcrumbType type = actions.get(fullAction);
 
             if (type == null) {
-                type = BreadcrumbType.LOG;
+                type = BreadcrumbType.STATE;
             }
             client.leaveBreadcrumb(shortAction, type, meta);
 
