@@ -44,7 +44,7 @@ internal class DeviceDataCollector(
         calculateTotalMemory()
     )
 
-    fun generateDeviceWithState() = DeviceWithState(
+    fun generateDeviceWithState(now: Long) = DeviceWithState(
         buildInfo,
         cpuAbi,
         rooted,
@@ -54,7 +54,7 @@ internal class DeviceDataCollector(
         calculateFreeMemory(),
         calculateFreeDisk(),
         calculateOrientation(),
-        Date(0)
+        Date(now)
     )
 
     fun getDeviceMetadata(): Map<String, Any?> {

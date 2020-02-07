@@ -8,6 +8,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
@@ -36,7 +37,7 @@ internal class InternalEventPayloadDelegateTest {
         `when`(this.appDataCollector.generateAppWithState()).thenReturn(app)
         app.durationInForeground = 500L
         app.inForeground = true
-        `when`(deviceDataCollector.generateDeviceWithState()).thenReturn(generateDeviceWithState())
+        `when`(deviceDataCollector.generateDeviceWithState(ArgumentMatchers.anyLong())).thenReturn(generateDeviceWithState())
 
         val config = generateImmutableConfig()
         val delegate = InternalReportDelegate(

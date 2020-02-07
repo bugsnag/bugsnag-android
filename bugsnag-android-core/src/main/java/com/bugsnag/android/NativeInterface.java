@@ -98,7 +98,7 @@ public class NativeInterface {
         DeviceDataCollector source = getClient().getDeviceDataCollector();
         HashMap<String, Object> deviceData = new HashMap<>(source.getDeviceMetadata());
 
-        DeviceWithState src = source.generateDeviceWithState();
+        DeviceWithState src = source.generateDeviceWithState(new Date().getTime());
         deviceData.put("freeDisk", src.getFreeDisk());
         deviceData.put("freeMemory", src.getFreeMemory());
         deviceData.put("orientation", src.getOrientation());

@@ -61,7 +61,7 @@ internal class DeviceDataCollectorSerializationTest {
             return generateSerializationTestCases(
                 "device_data",
                 deviceData.generateDevice(),
-                deviceData.generateDeviceWithState()
+                deviceData.generateDeviceWithState(0)
             )
         }
     }

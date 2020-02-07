@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -94,7 +95,7 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun getDeviceData() {
-        `when`(deviceDataCollector.generateDeviceWithState()).thenReturn(generateDeviceWithState())
+        `when`(deviceDataCollector.generateDeviceWithState(anyLong())).thenReturn(generateDeviceWithState())
         `when`(deviceDataCollector.getDeviceMetadata()).thenReturn(mapOf(Pair("metadata", true)))
         assertTrue(NativeInterface.getDevice()["metadata"] as Boolean)
     }
