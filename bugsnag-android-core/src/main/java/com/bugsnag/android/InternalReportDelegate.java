@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -88,7 +89,7 @@ class InternalReportDelegate implements EventStore.Delegate {
      */
     void reportInternalBugsnagError(@NonNull Event event) {
         event.setApp(appDataCollector.generateAppWithState());
-        event.setDevice(deviceDataCollector.generateDeviceWithState());
+        event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
 
         Notifier notifier = Notifier.INSTANCE;
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());

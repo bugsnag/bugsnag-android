@@ -561,7 +561,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
 
         // Capture the state of the app and device and attach diagnostics to the event
-        event.setDevice(deviceDataCollector.generateDeviceWithState());
+        event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
         event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
 
         // add additional info that belongs in metadata
