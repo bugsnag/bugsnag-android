@@ -81,7 +81,7 @@ void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity) {
-  bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+  bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX];
   ssize_t frame_count =
       bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, NULL, NULL);
 
@@ -101,7 +101,7 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
       (*env)->FindClass(env, "java/lang/StackTraceElement"), NULL);
 
   for (int i = 0; i < frame_count; i++) {
-    bsg_stackframe frame = stacktrace[i];
+    bsg_stackframe_t frame = stacktrace[i];
     jstring class = (*env)->NewStringUTF(env, "");
     jstring filename = (*env)->NewStringUTF(env, frame.filename);
     jstring method;

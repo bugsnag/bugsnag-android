@@ -7,7 +7,7 @@
 bool bsg_configure_libunwind(bool is32bit);
 
 ssize_t
-bsg_unwind_stack_libunwind(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+bsg_unwind_stack_libunwind(bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                            siginfo_t *info, void *user_context);
 
 #endif

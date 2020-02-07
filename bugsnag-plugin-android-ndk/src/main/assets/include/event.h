@@ -63,6 +63,16 @@ typedef enum {
     BSG_NUMBER_VALUE,
 } bsg_metadata_t;
 
+typedef struct {
+    uintptr_t frame_address;
+    uintptr_t symbol_address;
+    uintptr_t load_address;
+    uintptr_t line_number;
+
+    char filename[256];
+    char method[256];
+} bsg_stackframe_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -183,6 +193,11 @@ bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *
 double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name);
 char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name);
 bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name);
+
+/* Stacktrace */
+
+int bugsnag_event_get_stacktrace_size(void *event_ptr);
+bsg_stackframe_t *bugsnag_event_get_stackframe(void *event_ptr, int index);
 
 #ifdef __cplusplus
 }

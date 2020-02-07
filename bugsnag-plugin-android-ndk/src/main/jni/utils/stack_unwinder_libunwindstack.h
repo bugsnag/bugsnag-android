@@ -8,6 +8,6 @@
 extern "C"
 #endif
 ssize_t
-bsg_unwind_stack_libunwindstack(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+bsg_unwind_stack_libunwindstack(bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                                 siginfo_t *info, void *user_context);
 #endif

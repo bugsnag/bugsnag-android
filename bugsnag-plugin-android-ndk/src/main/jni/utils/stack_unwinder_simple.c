@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <ucontext.h>
 
-ssize_t bsg_unwind_stack_simple(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+ssize_t bsg_unwind_stack_simple(bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                                 siginfo_t *info, void *user_context) {
   if (user_context != NULL) {
     // program counter / instruction pointer

@@ -37,7 +37,7 @@ void bsg_set_unwind_types(int apiLevel, bool is32bit,
  * @return the number of frames
  */
 ssize_t bsg_unwind_stack(bsg_unwinder unwind_style,
-                     bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                     bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX],
                          siginfo_t *info, void *user_context) __asyncsafe;
 
 #ifdef __cplusplus
