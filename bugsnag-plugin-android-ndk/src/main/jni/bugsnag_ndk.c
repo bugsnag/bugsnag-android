@@ -351,7 +351,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
   if (bsg_global_env == NULL)
     return;
   bsg_request_env_write_lock();
-  bsg_global_env->next_event.app.low_memory = (bool)new_value;
+  bugsnag_event_add_metadata_bool(&bsg_global_env->next_event, "app", "lowMemory", (bool)new_value);
   bsg_release_env_write_lock();
 }
 
