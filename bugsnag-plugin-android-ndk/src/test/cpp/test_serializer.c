@@ -13,16 +13,16 @@ enum greatest_test_res validate_serialized_json(const test_case *test_case,
     PASS();
 }
 
-bsg_user_t * loadUserTestCase(jint num) {
-    bsg_user_t *user;
+bugsnag_user * loadUserTestCase(jint num) {
+    bugsnag_user *user;
 
     if (num == 0) {
-        user = malloc(sizeof(bsg_user_t));
+        user = malloc(sizeof(bugsnag_user));
         strcpy(user->id, "1234");
         strcpy(user->email, "fenton@io.example.com");
         strcpy(user->name, "Fenton");
     } else {
-        user = malloc(sizeof(bsg_user_t));
+        user = malloc(sizeof(bugsnag_user));
         strcpy(user->id, "456");
         strcpy(user->email, "jamie@bugsnag.com");
         strcpy(user->name, "Jamie");
@@ -101,8 +101,8 @@ bugsnag_event * loadBreadcrumbsTestCase(jint num) {
     return data;
 }
 
-bsg_stackframe_t * loadStackframeTestCase(jint num) {
-    bsg_stackframe_t *data = malloc(sizeof(bsg_stackframe_t));
+bugsnag_stackframe * loadStackframeTestCase(jint num) {
+    bugsnag_stackframe *data = malloc(sizeof(bugsnag_stackframe));
     data->frame_address = 0x20000000;
     data->symbol_address = 0x16000000;
     data->load_address = 0x12000000;

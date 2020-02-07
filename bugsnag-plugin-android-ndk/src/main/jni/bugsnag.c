@@ -18,12 +18,12 @@ void bugsnag_set_binary_arch(JNIEnv *env);
 void bugsnag_start(JNIEnv *env) { bsg_global_jni_env = env; }
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
-                        bsg_severity_t severity);
+                        bugsnag_severity severity);
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name);
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
-                                  bsg_breadcrumb_t type);
+                                  bugsnag_breadcrumb_type type);
 
-void bugsnag_notify(char *name, char *message, bsg_severity_t severity) {
+void bugsnag_notify(char *name, char *message, bugsnag_severity severity) {
   if (bsg_global_jni_env != NULL) {
     bugsnag_notify_env(bsg_global_jni_env, name, message, severity);
   } else {
@@ -40,7 +40,7 @@ void bugsnag_set_user(char *id, char *email, char *name) {
   }
 }
 
-void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type) {
+void bugsnag_leave_breadcrumb(char *message, bugsnag_breadcrumb_type type) {
   if (bsg_global_jni_env != NULL) {
     bugsnag_leave_breadcrumb_env(bsg_global_jni_env, message, type);
   } else {
@@ -49,7 +49,7 @@ void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type) {
   }
 }
 
-jfieldID bsg_parse_jseverity(JNIEnv *env, bsg_severity_t severity,
+jfieldID bsg_parse_jseverity(JNIEnv *env, bugsnag_severity severity,
                              jclass severity_class) {
   const char *severity_sig = "Lcom/bugsnag/android/Severity;";
   if (severity == BSG_SEVERITY_ERR) {
@@ -80,8 +80,8 @@ void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
 }
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
-                        bsg_severity_t severity) {
-  bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX];
+                        bugsnag_severity severity) {
+  bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
   ssize_t frame_count =
       bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, NULL, NULL);
 
@@ -101,7 +101,7 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
       (*env)->FindClass(env, "java/lang/StackTraceElement"), NULL);
 
   for (int i = 0; i < frame_count; i++) {
-    bsg_stackframe_t frame = stacktrace[i];
+    bugsnag_stackframe frame = stacktrace[i];
     jstring class = (*env)->NewStringUTF(env, "");
     jstring filename = (*env)->NewStringUTF(env, frame.filename);
     jstring method;
@@ -184,7 +184,7 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   (*env)->DeleteLocalRef(env, interface_class);
 }
 
-jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bsg_breadcrumb_t type,
+jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bugsnag_breadcrumb_type type,
                                jclass type_class) {
   const char *type_sig = "Lcom/bugsnag/android/BreadcrumbType;";
   if (type == BSG_CRUMB_USER) {
@@ -207,7 +207,7 @@ jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bsg_breadcrumb_t type,
 }
 
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
-                                  bsg_breadcrumb_t type) {
+                                  bugsnag_breadcrumb_type type) {
   jclass interface_class =
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
   jmethodID leave_breadcrumb_method = (*env)->GetStaticMethodID(

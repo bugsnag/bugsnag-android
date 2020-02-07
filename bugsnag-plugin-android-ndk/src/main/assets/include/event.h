@@ -11,7 +11,7 @@ typedef enum {
   BSG_SEVERITY_WARN,
   /** Custom, notable error messages */
   BSG_SEVERITY_INFO,
-} bsg_severity_t;
+} bugsnag_severity;
 
 typedef enum {
   /**
@@ -48,20 +48,20 @@ typedef enum {
    *  User event, such as authentication or control events
    */
   BSG_CRUMB_USER,
-} bsg_breadcrumb_t;
+} bugsnag_breadcrumb_type;
 
 typedef struct {
     char name[64];
     char email[64];
     char id[64];
-} bsg_user_t;
+} bugsnag_user;
 
 typedef enum {
     BSG_METADATA_NONE_VALUE,
     BSG_METADATA_BOOL_VALUE,
     BSG_METADATA_CHAR_VALUE,
     BSG_METADATA_NUMBER_VALUE,
-} bsg_metadata_t;
+} bugsnag_metadata_type;
 
 typedef struct {
     uintptr_t frame_address;
@@ -71,7 +71,7 @@ typedef struct {
 
     char filename[256];
     char method[256];
-} bsg_stackframe_t;
+} bugsnag_stackframe;
 
 #ifdef __cplusplus
 extern "C" {
@@ -210,15 +210,15 @@ void bugsnag_error_set_error_type(void *event_ptr, char *value);
  * @param event_ptr - a pointer to the bugsnag event
  * @return the user in the event, represented as a struct
  */
-bsg_user_t bugsnag_event_get_user(void *event_ptr);
+bugsnag_user bugsnag_event_get_user(void *event_ptr);
 void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name);
 
 
 /* Accessors for event.severity */
 
 
-bsg_severity_t bugsnag_event_get_severity(void *event_ptr);
-void bugsnag_event_set_severity(void *event_ptr, bsg_severity_t value);
+bugsnag_severity bugsnag_event_get_severity(void *event_ptr);
+void bugsnag_event_set_severity(void *event_ptr, bugsnag_severity value);
 
 
 /* Accessors for event.unhandled */
@@ -289,7 +289,7 @@ bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name)
 
 
 int bugsnag_event_get_stacktrace_size(void *event_ptr);
-bsg_stackframe_t *bugsnag_event_get_stackframe(void *event_ptr, int index);
+bugsnag_stackframe *bugsnag_event_get_stackframe(void *event_ptr, int index);
 
 #ifdef __cplusplus
 }

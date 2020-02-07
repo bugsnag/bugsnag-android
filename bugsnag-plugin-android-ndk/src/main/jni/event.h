@@ -163,7 +163,7 @@ typedef struct {
     /**
      * An ordered list of stack frames from the oldest to the most recent
      */
-    bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX];
+    bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
 } bsg_error;
 
 typedef struct {
@@ -174,7 +174,7 @@ typedef struct {
 typedef struct {
     char name[33];
     char timestamp[37];
-    bsg_breadcrumb_t type;
+    bugsnag_breadcrumb_type type;
 
     /**
      * Key/value pairs of related information for debugging
@@ -192,7 +192,7 @@ typedef struct {
     bsg_notifier notifier;
     bsg_app_info app;
     bsg_device_info device;
-    bsg_user_t user;
+    bugsnag_user user;
     bsg_error error;
     bugsnag_metadata metadata;
 
@@ -203,7 +203,7 @@ typedef struct {
     bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
 
     char context[64];
-    bsg_severity_t severity;
+    bugsnag_severity severity;
 
     char session_id[33];
     char session_start[33];

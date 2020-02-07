@@ -22,8 +22,8 @@ void bugsnag_start(JNIEnv *env);
  * @param message  The error message
  * @param severity The severity of the error
  */
-void bugsnag_notify(char* name, char* message, bsg_severity_t severity);
-void bugsnag_notify_env(JNIEnv *env, char* name, char* message, bsg_severity_t severity);
+void bugsnag_notify(char* name, char* message, bugsnag_severity severity);
+void bugsnag_notify_env(JNIEnv *env, char* name, char* message, bugsnag_severity severity);
 /**
  * Set the current user
  * @param id    The identifier of the user
@@ -36,8 +36,8 @@ void bugsnag_set_user_env(JNIEnv *env, char* id, char* email, char* name);
  * Leave a breadcrumb, indicating an event of significance which will be logged in subsequent
  * error reports
  */
-void bugsnag_leave_breadcrumb(char *message, bsg_breadcrumb_t type);
-void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message, bsg_breadcrumb_t type);
+void bugsnag_leave_breadcrumb(char *message, bugsnag_breadcrumb_type type);
+void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message, bugsnag_breadcrumb_type type);
 
 /**
  * Adds a callback which is invoked whenever a fatal error occurs. The callback will be passed a

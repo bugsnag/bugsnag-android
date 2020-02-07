@@ -142,7 +142,7 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     strcpy(event->error.errorMessage, report_v2->exception.message);
     strcpy(event->error.type, report_v2->exception.type);
     event->error.frame_count = report_v2->exception.frame_count;
-    size_t error_size = sizeof(bsg_stackframe_t) * BUGSNAG_FRAMES_MAX;
+    size_t error_size = sizeof(bugsnag_stackframe) * BUGSNAG_FRAMES_MAX;
     memcpy(&event->error.stacktrace, report_v2->exception.stacktrace, error_size);
 
     // Fatal C errors are always true by default, previously this was hardcoded and
@@ -266,7 +266,7 @@ bool bsg_event_write(bsg_report_header *header, bugsnag_event *event,
   return len == sizeof(bugsnag_event);
 }
 
-const char *bsg_crumb_type_string(bsg_breadcrumb_t type) {
+const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
   switch (type) {
   case BSG_CRUMB_ERROR:
     return "error";
@@ -287,7 +287,7 @@ const char *bsg_crumb_type_string(bsg_breadcrumb_t type) {
   }
 }
 
-const char *bsg_severity_string(bsg_severity_t type) {
+const char *bsg_severity_string(bugsnag_severity type) {
   switch (type) {
   case BSG_SEVERITY_INFO:
     return "info";
@@ -398,7 +398,7 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object 
   }
 }
 
-void bsg_serialize_user(const bsg_user_t user, JSON_Object *event_obj) {
+void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj) {
   if (strlen(user.name) > 0)
     json_object_dotset_string(event_obj, "user.name", user.name);
   if (strlen(user.email) > 0)
@@ -423,12 +423,12 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception, JSON_Array *stac
   json_object_set_string(exception, "message", exc.errorMessage);
   json_object_set_string(exception, "type", "c");
   for (int findex = 0; findex < exc.frame_count; findex++) {
-    bsg_stackframe_t stackframe = exc.stacktrace[findex];
+    bugsnag_stackframe stackframe = exc.stacktrace[findex];
     bsg_serialize_stackframe(&stackframe, stacktrace);
   }
 }
 
-void bsg_serialize_stackframe(bsg_stackframe_t *stackframe, JSON_Array *stacktrace) {
+void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
   json_object_set_number(frame, "frameAddress", (*stackframe).frame_address);
