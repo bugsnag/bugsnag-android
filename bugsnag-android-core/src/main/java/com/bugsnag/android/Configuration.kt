@@ -9,7 +9,7 @@ import java.util.Collections
  */
 class Configuration(
     /**
-     * Gets the API key to send reports to
+     * Changes the API key used for events sent to Bugsnag.
      */
     val apiKey: String
 ) : CallbackAware, MetadataAware, UserAware {
@@ -23,7 +23,9 @@ class Configuration(
     internal val metadataState: MetadataState
 
     /**
-     * Set the buildUUID to your own value. This is used to identify proguard
+     * Sets a unique identifier for the app build to be included in all events sent to Bugsnag.
+     *
+     * This is used to identify proguard
      * mapping files in the case that you publish multiple different apps with
      * the same appId and versionCode. The default value is read from the
      * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
@@ -31,46 +33,53 @@ class Configuration(
     var buildUuid: String? = null
 
     /**
-     * Set the application version sent to Bugsnag. By default we'll pull this
-     * from your AndroidManifest.xml
+     * Set the application version sent to Bugsnag. We'll automatically pull your app version
+     * from the versionName field in your AndroidManifest.xml file.
      */
     var appVersion: String? = null
 
     /**
-     * Set the version code sent to Bugsnag. By default we'll pull this
-     * from your AndroidManifest.xml
+     * We'll automatically pull your [versionCode] from the versionCode field
+     * in your AndroidManifest.xml file. If you'd like to override this you
+     * can set this property.
      */
     var versionCode: Int? = 0
 
     /**
-     * Set the current "release stage" of your application.
-     * By default, we'll set this to "development" for debug builds and
-     * "production" for non-debug builds.
+     * If you would like to distinguish between errors that happen in different stages of the
+     * application release process (development, production, etc) you can set the [releaseStage]
+     * that is reported to Bugsnag.
      *
-     * @see .setEnabledReleaseStages
+     * If you are running a debug build, we'll automatically set this to "development",
+     * otherwise it is set to "production". You can control whether events are sent for
+     * specific release stages using the [enabledReleaseStages] option.
      */
     var releaseStage: String? = null
 
     /**
-     * Set whether to send thread-state with report.
-     * By default, this will be [Thread.ThreadSendPolicy.ALWAYS].
+     * Controls whether we should capture and serialize the state of all threads at the time
+     * of an error.
+     *
+     * By default [sendThreads] is set to [Thread.ThreadSendPolicy.ALWAYS]. This can be set to
+     * [Thread.ThreadSendPolicy.NEVER] to disable or [Thread.ThreadSendPolicy.UNHANDLED_ONLY]
+     * to only do so for unhandled errors.
      */
     var sendThreads: Thread.ThreadSendPolicy = Thread.ThreadSendPolicy.ALWAYS
 
     /**
-     * Set whether or not Bugsnag should persist user information between application settings
-     * if set then any user information set will be re-used until
+     * Set whether or not Bugsnag should persist user information between application sessions.
+     *
+     * If enabled then any user information set will be re-used until the user information is
+     * removed manually by calling [Bugsnag.setUser] with null arguments.
      */
     var persistUser: Boolean = false
 
     /**
-     * Sets the threshold in ms for an uncaught error to be considered as a crash on launch.
-     * If a crash is detected on launch, Bugsnag will attempt to send the report synchronously.
+     * Sets the threshold in milliseconds for an uncaught error to be considered as a crash on
+     * launch. If a crash is detected on launch, Bugsnag will attempt to send the event
+     * synchronously.
      *
-     * The app's launch time is tracked as the time at which [Bugsnag.start] was
-     * called.
-     *
-     * By default, this value is set at 5,000ms.
+     * By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.
      */
     var launchCrashThresholdMs: Long = DEFAULT_LAUNCH_CRASH_THRESHOLD_MS
         set(launchCrashThresholdMs) {
@@ -88,7 +97,19 @@ class Configuration(
      */
     var autoTrackSessions: Boolean = true
 
+    /**
+     * Bugsnag will automatically detect different types of error in your application.
+     * If you wish to control exactly which types are enabled, set this property.
+     */
     var enabledErrorTypes: ErrorTypes = ErrorTypes()
+
+    /**
+     * If you want to disable automatic detection of all errors, you can set this property to false.
+     * By default this property is true.
+     *
+     * Setting [autoDetectErrors] to false will disable all automatic errors, regardless of the
+     * error types enabled by [enabledErrorTypes]
+     */
     var autoDetectErrors: Boolean = true
 
     /**
@@ -97,25 +118,46 @@ class Configuration(
     var codeBundleId: String? = null
 
     /**
-     * Sets the type of the notifier (e.g. Android, React Native)
+     * If your app's codebase contains different entry-points/processes, but reports to a single
+     * Bugsnag project, you might want to add information denoting the type of process the error
+     * came from.
+     *
+     * This information can be used in the dashboard to filter errors and to determine whether
+     * an error is limited to a subset of appTypes.
+     *
+     * By default, this value is set to 'android'.
      */
     var appType: String = "android"
 
     /**
-     * Sets the logger used for logging internal messages within the bugsnag SDK to a custom
-     * implementation. If set to null, no log messages will be logged.
+     * By default, the notifier's log messages will be logged using [android.util.Log]
+     * with a "Bugsnag" tag unless the [releaseStage] is "production".
+     *
+     * To override this behavior, an alternative instance can be provided that implements the
+     * [Logger] interface.
      */
     var logger: Logger? = null
 
     /**
-     * Sets the delivery used to make HTTP requests to Bugsnag. A default implementation is
-     * provided, but you may wish to use your own implementation if you have requirements such
-     * as pinning SSL certificates, for example.
+     * The Delivery implementation used to make network calls to the Bugsnag
+     * [Error Reporting](https://docs.bugsnag.com/api/error-reporting/)
+     * and [Sessions API](https://docs.bugsnag.com/api/sessions/).
      *
-     * Any custom implementation must be capable of sending
-     * [Error Reports](https://docs.bugsnag.com/api/error-reporting/)
-     * and [Sessions](https://docs.bugsnag.com/api/sessions/) as
-     * documented at [https://docs.bugsnag.com/api/](https://docs.bugsnag.com/api/)
+     * This may be useful if you have requirements such as certificate pinning and rotation,
+     * which are not supported by the default implementation.
+     *
+     * To provide custom delivery functionality, create a class which implements the [Delivery]
+     * interface. Please note that request bodies must match the structure specified in the
+     * [Error Reporting](https://docs.bugsnag.com/api/error-reporting/) and
+     * [Sessions API](https://bugsnagsessiontrackingapi.docs.apiary.io/) documentation.
+     *
+     * You can use the return type from the `deliver` functions to control the strategy for
+     * retrying the transmission at a later date.
+     *
+     * If [DeliveryStatus.UNDELIVERED] is returned, the notifier will automatically cache
+     * the payload and trigger delivery later on. Otherwise, if either [DeliveryStatus.DELIVERED]
+     * or [DeliveryStatus.FAILURE] is returned the notifier will removed any cached payload
+     * and no further delivery will be attempted.
      */
     var delivery: Delivery? = null
 
@@ -127,9 +169,10 @@ class Configuration(
     var endpoints: EndpointConfiguration = EndpointConfiguration()
 
     /**
-     * Set the maximum number of breadcrumbState to keep and sent to Bugsnag.
-     * By default, we'll keep and send the 25 most recent breadcrumb log
-     * messages.
+     * Sets the maximum number of breadcrumbs which will be stored. Once the threshold is reached,
+     * the oldest breadcrumbs will be deleted.
+     *
+     * By default, 25 breadcrumbs are stored: this can be amended up to a maximum of 100.
      */
     var maxBreadcrumbs: Int = DEFAULT_MAX_SIZE
         set(numBreadcrumbs) {
@@ -141,22 +184,21 @@ class Configuration(
         }
 
     /**
-     * Set the context sent to Bugsnag. By default we'll attempt to detect the
-     * name of the top-most activity at the time of a report, and use this
-     * as the context, but sometime this is not possible.
+     * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
+     * represent what was happening in your application at the time an error occurs.
+     *
+     * In an android app the "context" is automatically set as the foreground Activity.
+     * If you would like to set this value manually, you should alter this property.
      */
     var context: String? = null
 
     /**
-     * Set which keys should be redacted when sending metadata to Bugsnag.
-     * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metadata you send to Bugsnag.
-     * Any keys in metadata which contain these strings will be marked as
-     * REDACTED when send to Bugsnag.
+     * Sets which values should be removed from any Metadata objects before
+     * sending them to Bugsnag. Use this if you want to ensure you don't send
+     * sensitive data such as passwords, and credit card numbers to our
+     * servers. Any keys which contain these strings will be filtered.
      *
-     * For example:
-     *
-     * client.setRedactedKeys("password", "credit_card");
+     * By default, [redactedKeys] is set to "password"
      */
     var redactedKeys: Set<String>
         get() = Collections.unmodifiableSet(metadataState.metadata.redactedKeys)
@@ -179,35 +221,42 @@ class Configuration(
     }
 
     /**
-     * Set which exception classes should be ignored (not sent) by Bugsnag.
-     *
-     * For example:
-     *
-     * client.setDiscardClasses("com.example.MyCustomException");
+     * Allows you to specify the fully-qualified name of error classes that will be discarded
+     * before being sent to Bugsnag if they are detected. The notifier performs an exact
+     * match against the canonical class name.
      */
     var discardClasses: Set<String> = emptySet()
 
     /**
-     * Set for which releaseStages errors should be sent to Bugsnag.
-     * Use this to stop errors from development builds being sent.
-     *
-     * For example:
-     *
-     * client.setEnabledReleaseStages("production");
+     * By default, Bugsnag will be notified of events that happen in any [releaseStage].
+     * If you would like to change which release stages notify Bugsnag you can set this property.
      */
     var enabledReleaseStages: Set<String>? = null
 
+    /**
+     * By default we will automatically add breadcrumbs for common application events such as
+     * activity lifecycle events and system intents. To amend this behavior,
+     * override the enabled breadcrumb types. All breadcrumbs can be disabled by providing an
+     * empty set.
+     *
+     * The following breadcrumb types can be enabled:
+     *
+     * - Captured errors: left when an error event is sent to the Bugsnag API.
+     * - Manual breadcrumbs: left via the [Bugsnag.leaveBreadcrumb] function.
+     * - Navigation changes: left for Activity Lifecycle events to track the user's journey in the app.
+     * - State changes: state breadcrumbs are left for system broadcast events. For example:
+     * battery warnings, airplane mode, etc.
+     * - User interaction: left when the user performs certain system operations.
+     */
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = BreadcrumbType.values().toSet()
 
     /**
-     * Set which packages should be considered part of your application.
-     * Bugsnag uses this to help with error grouping, and stacktrace display.
+     * Sets which package names Bugsnag should consider as a part of the
+     * running application. We mark stacktrace lines as in-project if they
+     * originate from any of these packages and this allows us to improve
+     * the visual display of the stacktrace on the dashboard.
      *
-     * For example:
-     *
-     * client.setProjectPackages("com.example.myapp");
-     *
-     * By default, we'll mark the current package name as part of you app.
+     * By default, [projectPackages] is set to be the package you called [Bugsnag.start] from.
      */
     var projectPackages: Set<String> = emptySet()
 
