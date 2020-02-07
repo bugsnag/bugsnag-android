@@ -231,34 +231,37 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                            bugsnag_event *event) {
   jobject data = (*env)->CallStaticObjectMethod(
       env, jni_cache->native_interface, jni_cache->get_app_data);
-  bsg_copy_map_value_string(env, jni_cache, data, "version",
-                            event->app.version, sizeof(event->app.version));
-  bsg_copy_map_value_string(env, jni_cache, data, "releaseStage",
-                            event->app.release_stage,
-                            sizeof(event->app.release_stage));
-  bsg_copy_map_value_string(env, jni_cache, data, "id", event->app.id,
-                            sizeof(event->app.id));
-  bsg_copy_map_value_string(env, jni_cache, data, "type", event->app.type,
-                            sizeof(event->app.type));
+
+  bsg_strncpy_safe(event->app.binary_arch,
+                   bsg_binary_arch(),
+                   sizeof(event->app.binary_arch));
+
   bsg_copy_map_value_string(env, jni_cache, data, "buildUUID",
                             event->app.build_uuid,
                             sizeof(event->app.build_uuid));
   event->app.duration_ms_offset =
-      bsg_get_map_value_long(env, jni_cache, data, "duration");
+          bsg_get_map_value_long(env, jni_cache, data, "duration");
   event->app.duration_in_foreground_ms_offset =
-      bsg_get_map_value_long(env, jni_cache, data, "durationInForeground");
-  event->app.version_code =
-      bsg_get_map_value_int(env, jni_cache, data, "versionCode");
-  event->app.in_foreground =
-      bsg_get_map_value_bool(env, jni_cache, data, "inForeground");
+          bsg_get_map_value_long(env, jni_cache, data, "durationInForeground");
 
-  bsg_strncpy_safe(event->app.binary_arch,
-                     bsg_binary_arch(),
-                     sizeof(event->app.binary_arch));
+  bsg_copy_map_value_string(env, jni_cache, data, "id", event->app.id,
+                            sizeof(event->app.id));
+  event->app.in_foreground =
+          bsg_get_map_value_bool(env, jni_cache, data, "inForeground");
 
   char name[64];
   bsg_copy_map_value_string(env, jni_cache, data, "name", name, sizeof(name));
   bugsnag_event_add_metadata_string(event, "app", "name", name);
+
+  bsg_copy_map_value_string(env, jni_cache, data, "releaseStage",
+                            event->app.release_stage,
+                            sizeof(event->app.release_stage));
+  bsg_copy_map_value_string(env, jni_cache, data, "type", event->app.type,
+                            sizeof(event->app.type));
+  bsg_copy_map_value_string(env, jni_cache, data, "version",
+                            event->app.version, sizeof(event->app.version));
+  event->app.version_code =
+      bsg_get_map_value_int(env, jni_cache, data, "versionCode");
 
   (*env)->DeleteLocalRef(env, data);
 }
@@ -267,35 +270,59 @@ char *bsg_os_name() {
   return "android";
 }
 
+void populate_device_metadata(JNIEnv *env, bsg_jni_cache *jni_cache,
+                              bugsnag_event *event, void *data) {
+  char brand[64];
+  bsg_copy_map_value_string(env, jni_cache, data, "brand", brand, sizeof(brand));
+  bugsnag_event_add_metadata_string(event, "device", "brand", brand);
+
+  bugsnag_event_add_metadata_double(event, "device", "dpi", bsg_get_map_value_int(env, jni_cache, data, "dpi"));
+  bugsnag_event_add_metadata_bool(event, "device", "emulator", bsg_get_map_value_bool(env, jni_cache, data, "emulator"));
+
+  char location_status[32];
+  bsg_copy_map_value_string(env, jni_cache, data, "locationStatus", location_status, sizeof(location_status));
+  bugsnag_event_add_metadata_string(event, "device", "locationStatus", location_status);
+
+  char network_access[64];
+  bsg_copy_map_value_string(env, jni_cache, data, "networkAccess", network_access, sizeof(network_access));
+  bugsnag_event_add_metadata_string(event, "device", "networkAccess", network_access);
+
+  bugsnag_event_add_metadata_double(event, "device", "screenDensity", bsg_get_map_value_float(env, jni_cache, data, "screenDensity"));
+
+  char screen_resolution[32];
+  bsg_copy_map_value_string(env, jni_cache, data, "screenResolution", screen_resolution,
+                            sizeof(screen_resolution));
+  bugsnag_event_add_metadata_string(event, "device", "screenResolution", screen_resolution);
+}
+
 void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                               bugsnag_event *event) {
   jobject data = (*env)->CallStaticObjectMethod(
       env, jni_cache->native_interface, jni_cache->get_device_data);
+
+  bsg_populate_cpu_abi_from_map(env, jni_cache, data, &event->device);
+
+  bsg_copy_map_value_string(env, jni_cache, data, "id", event->device.id,
+                            sizeof(event->device.id));
+  event->device.jailbroken = bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
+
+  bsg_copy_map_value_string(env, jni_cache, data, "locale",
+                            event->device.locale,
+                            sizeof(event->device.locale));
+
   bsg_copy_map_value_string(env, jni_cache, data, "manufacturer",
                             event->device.manufacturer,
                             sizeof(event->device.manufacturer));
   bsg_copy_map_value_string(env, jni_cache, data, "model", event->device.model,
                             sizeof(event->device.model));
+
   bsg_copy_map_value_string(env, jni_cache, data, "orientation",
                             event->device.orientation,
                             sizeof(event->device.orientation));
-  bsg_copy_map_value_string(env, jni_cache, data, "id", event->device.id,
-                            sizeof(event->device.id));
-  bsg_copy_map_value_string(env, jni_cache, data, "locale",
-                            event->device.locale,
-                            sizeof(event->device.locale));
-
+  bsg_strcpy(event->device.os_name, bsg_os_name());
   bsg_copy_map_value_string(env, jni_cache, data, "osVersion",
                             event->device.os_version,
                             sizeof(event->device.os_version));
-
-  bsg_strcpy(event->device.os_name, bsg_os_name());
-  event->device.jailbroken =
-      bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
-  event->device.total_memory =
-      bsg_get_map_value_long(env, jni_cache, data, "totalMemory");
-
-  bsg_populate_cpu_abi_from_map(env, jni_cache, data, &event->device);
 
   jobject _runtime_versions = bsg_get_map_value_obj(env, jni_cache, data, "runtimeVersions");
 
@@ -307,27 +334,10 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
     event->device.api_level = bsg_get_map_value_int(env, jni_cache, _runtime_versions, "androidApiLevel");
     (*env)->DeleteLocalRef(env, _runtime_versions);
   }
+  event->device.total_memory = bsg_get_map_value_long(env, jni_cache, data, "totalMemory");
 
-  bugsnag_event_add_metadata_bool(event, "device", "emulator", bsg_get_map_value_bool(env, jni_cache, data, "emulator"));
-  bugsnag_event_add_metadata_double(event, "device", "dpi", bsg_get_map_value_int(env, jni_cache, data, "dpi"));
-  bugsnag_event_add_metadata_double(event, "device", "screenDensity", bsg_get_map_value_float(env, jni_cache, data, "screenDensity"));
-
-  char location_status[32];
-  bsg_copy_map_value_string(env, jni_cache, data, "locationStatus", location_status, sizeof(location_status));
-  bugsnag_event_add_metadata_string(event, "device", "locationStatus", location_status);
-
-  char brand[64];
-  bsg_copy_map_value_string(env, jni_cache, data, "brand", brand, sizeof(brand));
-  bugsnag_event_add_metadata_string(event, "device", "brand", brand);
-
-  char network_access[64];
-  bsg_copy_map_value_string(env, jni_cache, data, "networkAccess", network_access, sizeof(network_access));
-  bugsnag_event_add_metadata_string(event, "device", "networkAccess", network_access);
-
-  char screen_resolution[32];
-  bsg_copy_map_value_string(env, jni_cache, data, "screenResolution", screen_resolution, sizeof(screen_resolution));
-  bugsnag_event_add_metadata_string(event, "device", "screenResolution", screen_resolution);
-
+  // add fields to device metadata
+  populate_device_metadata(env, jni_cache, event, data);
   (*env)->DeleteLocalRef(env, data);
 }
 

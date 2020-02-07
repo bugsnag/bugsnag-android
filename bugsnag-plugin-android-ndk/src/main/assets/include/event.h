@@ -108,7 +108,7 @@ typedef struct {
 extern "C" {
 #endif
 
-bsg_user_t bugsnag_event_get_user(void *event_ptr);
+/* Accessors for event.context */
 
 /**
  * Retrieves the event context
@@ -134,8 +134,17 @@ void bugsnag_app_set_binary_arch(void *event_ptr, char *value);
 char *bugsnag_app_get_build_uuid(void *event_ptr);
 void bugsnag_app_set_build_uuid(void *event_ptr, char *value);
 
+time_t bugsnag_app_get_duration(void *event_ptr);
+void bugsnag_app_set_duration(void *event_ptr, time_t value);
+
+time_t bugsnag_app_get_duration_in_foreground(void *event_ptr);
+void bugsnag_app_set_duration_in_foreground(void *event_ptr, time_t value);
+
 char *bugsnag_app_get_id(void *event_ptr);
 void bugsnag_app_set_id(void *event_ptr, char *value);
+
+bool bugsnag_app_get_in_foreground(void *event_ptr);
+void bugsnag_app_set_in_foreground(void *event_ptr, bool value);
 
 char *bugsnag_app_get_release_stage(void *event_ptr);
 void bugsnag_app_set_release_stage(void *event_ptr, char *value);
@@ -148,15 +157,6 @@ void bugsnag_app_set_version(void *event_ptr, char *value);
 
 int bugsnag_app_get_version_code(void *event_ptr);
 void bugsnag_app_set_version_code(void *event_ptr, int value);
-
-time_t bugsnag_app_get_duration(void *event_ptr);
-void bugsnag_app_set_duration(void *event_ptr, time_t value);
-
-time_t bugsnag_app_get_duration_in_foreground(void *event_ptr);
-void bugsnag_app_set_duration_in_foreground(void *event_ptr, time_t value);
-
-bool bugsnag_app_get_in_foreground(void *event_ptr);
-void bugsnag_app_set_in_foreground(void *event_ptr, bool value);
 
 
 /* Accessors for event.device */
@@ -192,6 +192,10 @@ void bugsnag_device_set_time(void *event_ptr, time_t value);
 char *bugsnag_device_get_os_name(void *event_ptr);
 void bugsnag_device_set_os_name(void *event_ptr, char *value);
 
+
+/* Accessors for event.error */
+
+
 char *bugsnag_error_get_error_class(void *event_ptr);
 void bugsnag_error_set_error_class(void *event_ptr, char *value);
 
@@ -201,17 +205,36 @@ void bugsnag_error_set_error_message(void *event_ptr, char *value);
 char *bugsnag_error_get_error_type(void *event_ptr);
 void bugsnag_error_set_error_type(void *event_ptr, char *value);
 
+
+/* Accessors for event.user */
+
+
+bsg_user_t bugsnag_event_get_user(void *event_ptr);
 void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name);
+
+
+/* Accessors for event.severity */
+
 
 bsg_severity_t bugsnag_event_get_severity(void *event_ptr);
 void bugsnag_event_set_severity(void *event_ptr, bsg_severity_t value);
 
+
+/* Accessors for event.unhandled */
+
+
 bool bugsnag_event_is_unhandled(void *event_ptr);
+
+
+/* Accessors for event.groupingHash */
+
 
 char *bugsnag_event_get_grouping_hash(void *event_ptr);
 void bugsnag_event_set_grouping_hash(void *event_ptr, char *value);
 
-/* Metadata */
+
+/* Accessors for event.metadata */
+
 
 void bugsnag_event_add_metadata_double(void *event_ptr, char *section, char *name, double value);
 void bugsnag_event_add_metadata_string(void *event_ptr, char *section, char *name, char *value);
@@ -219,10 +242,11 @@ void bugsnag_event_add_metadata_bool(void *event_ptr, char *section, char *name,
 
 void bugsnag_event_clear_metadata_section(void *event_ptr, char *section);
 void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name);
-
 bsg_metadata_value *bugsnag_event_get_metadata(void *event_ptr, char *section, char *name);
 
-/* Stacktrace */
+
+/* Accessors for event.error.stacktrace */
+
 
 int bugsnag_event_get_stacktrace_size(void *event_ptr);
 bsg_stackframe_t *bugsnag_event_get_stackframe(void *event_ptr, int index);

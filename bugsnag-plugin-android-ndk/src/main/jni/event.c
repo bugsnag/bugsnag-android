@@ -121,23 +121,11 @@ void bugsnag_event_set_context(void *event_ptr, char *value) {
   bsg_strncpy_safe(event->context, value, sizeof(event->context));
 }
 
-void bugsnag_event_set_user_email(bugsnag_event *event, char *value) {
-  bsg_strncpy_safe(event->user.email, value, sizeof(event->user.email));
-}
-
-void bugsnag_event_set_user_name(bugsnag_event *event, char *value) {
-  bsg_strncpy_safe(event->user.name, value, sizeof(event->user.name));
-}
-
-void bugsnag_event_set_user_id(bugsnag_event *event, char *value) {
-  bsg_strncpy_safe(event->user.id, value, sizeof(event->user.id));
-}
-
 void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
-  bugsnag_event_set_user_id(event, id);
-  bugsnag_event_set_user_email(event, email);
-  bugsnag_event_set_user_name(event, name);
+  bsg_strncpy_safe(event->user.id, id, sizeof(event->user.id));
+  bsg_strncpy_safe(event->user.email, email, sizeof(event->user.email));
+  bsg_strncpy_safe(event->user.name, name, sizeof(event->user.name));
 }
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
