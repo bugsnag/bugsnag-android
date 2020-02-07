@@ -16,10 +16,12 @@ import androidx.annotation.Nullable;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
@@ -129,23 +131,39 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
-        connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
+        // Set up breadcrumbs
+        callbackState = configuration.callbackState.copy();
+        int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
+        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
+
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
-            public Unit invoke(Boolean connected) {
-                if (connected) {
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
+            }
+        });
+
+        connectivity = new ConnectivityCompat(appContext, new Function2<Boolean, String, Unit>() {
+            @Override
+            public Unit invoke(Boolean hasConnection, String networkState) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("hasConnection", hasConnection);
+                data.put("networkState", networkState);
+                leaveBreadcrumb("Connectivity change", BreadcrumbType.STATE, data);
+
+                if (hasConnection) {
                     eventStore.flushAsync();
                 }
                 return null;
             }
         });
+
         ImmutableConfigKt.sanitiseConfiguration(appContext, configuration, connectivity);
-
-
         immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
+
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
-
-        callbackState = configuration.callbackState.copy();
 
         sessionStore = new SessionStore(appContext, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
@@ -180,10 +198,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         Resources resources = appContext.getResources();
         deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
                 Environment.getDataDirectory(), logger);
-
-        // Set up breadcrumbs
-        int maxBreadcrumbs = immutableConfig.getMaxBreadcrumbs();
-        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -236,14 +250,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         connectivity.registerForNetworkChanges();
 
         orientationListener = registerOrientationChangeListener();
-
-        // filter out any disabled breadcrumb types
-        addOnBreadcrumb(new OnBreadcrumbCallback() {
-            @Override
-            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
-            }
-        });
 
         // Flush any on-disk errors
         eventStore.flushOnLaunch();

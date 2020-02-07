@@ -15,8 +15,10 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 @SmallTest
 @SuppressWarnings("unchecked")
@@ -34,6 +36,11 @@ public class ObserverInterfaceTest {
         Configuration config = generateConfiguration();
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         config.getEnabledErrorTypes().setUnhandledExceptions(false);
+
+        Set<BreadcrumbType> breadcrumbTypes = new HashSet<>();
+        breadcrumbTypes.add(BreadcrumbType.LOG);
+        breadcrumbTypes.add(BreadcrumbType.MANUAL);
+        config.setEnabledBreadcrumbTypes(breadcrumbTypes);
         client = new Client(ApplicationProvider.getApplicationContext(), config);
         observer = new BugsnagTestObserver();
         client.registerObserver(observer);

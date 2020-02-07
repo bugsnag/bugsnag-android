@@ -10,7 +10,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.annotation.RequiresApi
 
-internal typealias NetworkChangeCallback = (connected: Boolean) -> Unit
+internal typealias NetworkChangeCallback = (hasConnection: Boolean, networkState: String) -> Unit
 
 internal interface Connectivity {
     fun registerForNetworkChanges()
@@ -82,7 +82,7 @@ internal class ConnectivityLegacy(
     private inner class ConnectivityChangeReceiver(private val cb: NetworkChangeCallback?) :
         BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            cb?.invoke(hasNetworkConnection())
+            cb?.invoke(hasNetworkConnection(), retrieveNetworkAccessState())
         }
     }
 }
@@ -120,13 +120,13 @@ internal class ConnectivityApi24(
         override fun onUnavailable() {
             super.onUnavailable()
             activeNetwork = null
-            cb?.invoke(false)
+            cb?.invoke(false, retrieveNetworkAccessState())
         }
 
         override fun onAvailable(network: Network?) {
             super.onAvailable(network)
             activeNetwork = network
-            cb?.invoke(true)
+            cb?.invoke(true, retrieveNetworkAccessState())
         }
     }
 }
