@@ -7,7 +7,7 @@ int bsg_find_next_free_metadata_index(bugsnag_event *event) {
     return event->metadata.value_count;
   } else {
     for (int i = 0; i < event->metadata.value_count; i++) {
-      if (event->metadata.values[i].type == BSG_NONE_VALUE) {
+      if (event->metadata.values[i].type == BSG_METADATA_NONE_VALUE) {
         return i;
       }
     }
@@ -36,7 +36,7 @@ void bugsnag_event_add_metadata_double(void *event_ptr, char *section,
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   int index = bugsnag_event_add_metadata_value(event, section, name);
   if (index >= 0) {
-    event->metadata.values[index].type = BSG_NUMBER_VALUE;
+    event->metadata.values[index].type = BSG_METADATA_NUMBER_VALUE;
     event->metadata.values[index].double_value = value;
   }
 }
@@ -46,7 +46,7 @@ void bugsnag_event_add_metadata_string(void *event_ptr, char *section,
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   int index = bugsnag_event_add_metadata_value(event, section, name);
   if (index >= 0) {
-    event->metadata.values[index].type = BSG_CHAR_VALUE;
+    event->metadata.values[index].type = BSG_METADATA_CHAR_VALUE;
     bsg_strncpy_safe(event->metadata.values[index].char_value, value,
                      sizeof(event->metadata.values[index].char_value));
   }
@@ -57,7 +57,7 @@ void bugsnag_event_add_metadata_bool(void *event_ptr, char *section,
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   int index = bugsnag_event_add_metadata_value(event, section, name);
   if (index >= 0) {
-    event->metadata.values[index].type = BSG_BOOL_VALUE;
+    event->metadata.values[index].type = BSG_METADATA_BOOL_VALUE;
     event->metadata.values[index].bool_value = value;
   }
 }
@@ -71,7 +71,7 @@ void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name) {
              &event->metadata.values[event->metadata.value_count - 1],
              sizeof(bsg_metadata_value));
       event->metadata.values[event->metadata.value_count - 1].type =
-          BSG_NONE_VALUE;
+          BSG_METADATA_NONE_VALUE;
       event->metadata.value_count--;
       break;
     }
@@ -82,7 +82,7 @@ void bugsnag_event_clear_metadata_section(void *event_ptr, char *section) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   for (int i = 0; i < event->metadata.value_count; ++i) {
     if (strcmp(event->metadata.values[i].section, section) == 0) {
-      event->metadata.values[i].type = BSG_NONE_VALUE;
+      event->metadata.values[i].type = BSG_METADATA_NONE_VALUE;
     }
   }
 }
@@ -97,7 +97,7 @@ bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr, char *section, ch
     }
   }
   bsg_metadata_value data;
-  data.type = BSG_NONE_VALUE;
+  data.type = BSG_METADATA_NONE_VALUE;
   return data;
 }
 
@@ -106,7 +106,7 @@ bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *
 }
 
 double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name) {
-  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_NUMBER_VALUE) {
+  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_METADATA_NUMBER_VALUE) {
     bsg_metadata_value value = bugsnag_get_metadata_value(event_ptr, section, name);
     return value.double_value;
   }
@@ -114,7 +114,7 @@ double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *n
 }
 
 char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name) {
-  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_CHAR_VALUE) {
+  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_METADATA_CHAR_VALUE) {
     bugsnag_event *event = (bugsnag_event *) event_ptr;
 
     for (int k = 0; k < event->metadata.value_count; ++k) {
@@ -128,7 +128,7 @@ char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *na
 }
 
 bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name) {
-  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_BOOL_VALUE) {
+  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_METADATA_BOOL_VALUE) {
     bsg_metadata_value value = bugsnag_get_metadata_value(event_ptr, section, name);
     return value.bool_value;
   }

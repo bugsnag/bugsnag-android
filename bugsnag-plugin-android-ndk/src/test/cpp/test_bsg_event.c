@@ -312,10 +312,10 @@ TEST test_event_metadata(void) {
     bugsnag_event_add_metadata_bool(event, "bool", "foo", true);
 
     // check key exists
-    ASSERT_EQ(BSG_NONE_VALUE, bugsnag_event_has_metadata(event, "non-existent", "foo"));
-    ASSERT_EQ(BSG_CHAR_VALUE, bugsnag_event_has_metadata(event, "str", "foo"));
-    ASSERT_EQ(BSG_NUMBER_VALUE, bugsnag_event_has_metadata(event, "double", "foo"));
-    ASSERT_EQ(BSG_BOOL_VALUE, bugsnag_event_has_metadata(event, "bool", "foo"));
+    ASSERT_EQ(BSG_METADATA_NONE_VALUE, bugsnag_event_has_metadata(event, "non-existent", "foo"));
+    ASSERT_EQ(BSG_METADATA_CHAR_VALUE, bugsnag_event_has_metadata(event, "str", "foo"));
+    ASSERT_EQ(BSG_METADATA_NUMBER_VALUE, bugsnag_event_has_metadata(event, "double", "foo"));
+    ASSERT_EQ(BSG_METADATA_BOOL_VALUE, bugsnag_event_has_metadata(event, "bool", "foo"));
 
     // test return value for missing key
     ASSERT_EQ(NULL, bugsnag_event_get_metadata_string(event, "non-existent", "foo"));
@@ -329,18 +329,18 @@ TEST test_event_metadata(void) {
 
     // test clearing one value
     bugsnag_event_clear_metadata(event, "str", "foo3");
-    ASSERT_EQ(BSG_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo3"));
-    ASSERT_EQ(BSG_CHAR_VALUE, bugsnag_event_has_metadata(event, "str", "foo2"));
-    ASSERT_EQ(BSG_CHAR_VALUE, bugsnag_event_has_metadata(event, "str", "foo"));
+    ASSERT_EQ(BSG_METADATA_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo3"));
+    ASSERT_EQ(BSG_METADATA_CHAR_VALUE, bugsnag_event_has_metadata(event, "str", "foo2"));
+    ASSERT_EQ(BSG_METADATA_CHAR_VALUE, bugsnag_event_has_metadata(event, "str", "foo"));
 
     // test clearing section values
     bugsnag_event_clear_metadata_section(event, "str");
-    ASSERT_EQ(BSG_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo3"));
-    ASSERT_EQ(BSG_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo2"));
-    ASSERT_EQ(BSG_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo"));
+    ASSERT_EQ(BSG_METADATA_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo3"));
+    ASSERT_EQ(BSG_METADATA_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo2"));
+    ASSERT_EQ(BSG_METADATA_NONE_VALUE, bugsnag_event_has_metadata(event, "str", "foo"));
 
     bugsnag_event_clear_metadata_section(event, "bool");
-    ASSERT_EQ(BSG_NONE_VALUE, bugsnag_event_has_metadata(event, "bool", "foo"));
+    ASSERT_EQ(BSG_METADATA_NONE_VALUE, bugsnag_event_has_metadata(event, "bool", "foo"));
     free(event);
     PASS();
 }

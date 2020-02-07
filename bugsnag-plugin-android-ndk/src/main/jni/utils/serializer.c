@@ -379,15 +379,15 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object 
     bsg_metadata_value value = metadata.values[i];
 
     switch (value.type) {
-      case BSG_BOOL_VALUE:
+      case BSG_METADATA_BOOL_VALUE:
         sprintf(format, "metaData.%s.%s", value.section, value.name);
             json_object_dotset_boolean(event_obj, format, value.bool_value);
             break;
-      case BSG_CHAR_VALUE:
+      case BSG_METADATA_CHAR_VALUE:
         sprintf(format, "metaData.%s.%s", value.section, value.name);
             json_object_dotset_string(event_obj, format, value.char_value);
             break;
-      case BSG_NUMBER_VALUE:
+      case BSG_METADATA_NUMBER_VALUE:
         sprintf(format, "metaData.%s.%s", value.section, value.name);
             json_object_dotset_number(event_obj, format, value.double_value);
             break;

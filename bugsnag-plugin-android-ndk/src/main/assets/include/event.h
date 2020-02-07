@@ -57,10 +57,10 @@ typedef struct {
 } bsg_user_t;
 
 typedef enum {
-    BSG_NONE_VALUE,
-    BSG_BOOL_VALUE,
-    BSG_CHAR_VALUE,
-    BSG_NUMBER_VALUE,
+    BSG_METADATA_NONE_VALUE,
+    BSG_METADATA_BOOL_VALUE,
+    BSG_METADATA_CHAR_VALUE,
+    BSG_METADATA_NUMBER_VALUE,
 } bsg_metadata_t;
 
 typedef struct {
