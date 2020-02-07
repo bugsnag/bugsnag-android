@@ -337,7 +337,7 @@ char *bugsnag_device_get_model(void *event_ptr) {
   return event->device.model;
 }
 
-void bugsnag_app_set_model(void *event_ptr, char *value) {
+void bugsnag_device_set_model(void *event_ptr, char *value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   bsg_strncpy_safe(event->device.model, value, sizeof(event->device.model));
 }

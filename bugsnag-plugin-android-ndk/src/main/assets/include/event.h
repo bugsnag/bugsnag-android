@@ -166,7 +166,7 @@ char *bugsnag_device_get_manufacturer(void *event_ptr);
 void bugsnag_device_set_manufacturer(void *event_ptr, char *value);
 
 char *bugsnag_device_get_model(void *event_ptr);
-void bugsnag_app_set_model(void *event_ptr, char *value);
+void bugsnag_device_set_model(void *event_ptr, char *value);
 
 char *bugsnag_device_get_os_version(void *event_ptr);
 void bugsnag_device_set_os_version(void *event_ptr, char *value);

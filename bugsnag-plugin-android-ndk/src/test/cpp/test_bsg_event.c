@@ -218,7 +218,7 @@ TEST test_device_manufacturer(void) {
 TEST test_device_model(void) {
     bugsnag_event *event = init_event();
     ASSERT_STR_EQ("Nexus", event->device.model);
-    bugsnag_app_set_model(event, "Pixel");
+    bugsnag_device_set_model(event, "Pixel");
     ASSERT_STR_EQ("Pixel", bugsnag_device_get_model(event));
     free(event);
     PASS();
