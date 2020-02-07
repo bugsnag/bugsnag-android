@@ -81,58 +81,25 @@ void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name) {
 void bugsnag_event_clear_metadata_section(void *event_ptr, char *section) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   for (int i = 0; i < event->metadata.value_count; ++i) {
-    if (strcmp(event->metadata.values[i].section, section) == 0) {
-      event->metadata.values[i].type = BSG_METADATA_NONE_VALUE;
+    bsg_metadata_value val = event->metadata.values[i];
+
+    if (strcmp(val.section, section) == 0) {
+      val.type = BSG_METADATA_NONE_VALUE;
+      bugsnag_event_clear_metadata(event_ptr, section, val.name);
     }
   }
 }
 
-bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr, char *section, char *name) {
+bsg_metadata_value *bugsnag_event_get_metadata(void *event_ptr, char *section, char *name) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
 
   for (int k = 0; k < event->metadata.value_count; ++k) {
     bsg_metadata_value val = event->metadata.values[k];
     if (strcmp(val.section, section) == 0 && strcmp(val.name, name) == 0) {
-      return val;
-    }
-  }
-  bsg_metadata_value data;
-  data.type = BSG_METADATA_NONE_VALUE;
-  return data;
-}
-
-bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name) {
-  return bugsnag_get_metadata_value(event_ptr, section, name).type;
-}
-
-double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name) {
-  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_METADATA_NUMBER_VALUE) {
-    bsg_metadata_value value = bugsnag_get_metadata_value(event_ptr, section, name);
-    return value.double_value;
-  }
-  return 0.0;
-}
-
-char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name) {
-  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_METADATA_CHAR_VALUE) {
-    bugsnag_event *event = (bugsnag_event *) event_ptr;
-
-    for (int k = 0; k < event->metadata.value_count; ++k) {
-      if (strcmp(event->metadata.values[k].section, section) == 0 && strcmp(
-              event->metadata.values[k].name, name) == 0) {
-        return event->metadata.values[k].char_value;
-      }
+      return &event->metadata.values[k];
     }
   }
   return NULL;
-}
-
-bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name) {
-  if (bugsnag_event_has_metadata(event_ptr, section, name) == BSG_METADATA_BOOL_VALUE) {
-    bsg_metadata_value value = bugsnag_get_metadata_value(event_ptr, section, name);
-    return value.bool_value;
-  }
-  return false;
 }
 
 void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
