@@ -63,37 +63,6 @@ typedef enum {
     BSG_METADATA_NUMBER_VALUE,
 } bsg_metadata_t;
 
-/**
- * A single value in metadata
- */
-typedef struct {
-    /**
-     * The key identifying this metadata entry
-     */
-    char name[32];
-    /**
-     * The metadata tab
-     */
-    char section[32];
-    /**
-     * The value type from bool, char, number
-     */
-    bsg_metadata_t type;
-
-    /**
-     * Value if type is BSG_BOOL_VALUE
-     */
-    bool bool_value;
-    /**
-     * Value if type is BSG_CHAR_VALUE
-     */
-    char char_value[64];
-    /**
-     * Value if type is BSG_DOUBLE_VALUE
-     */
-    double double_value;
-} bsg_metadata_value;
-
 typedef struct {
     uintptr_t frame_address;
     uintptr_t symbol_address;
@@ -242,7 +211,11 @@ void bugsnag_event_add_metadata_bool(void *event_ptr, char *section, char *name,
 
 void bugsnag_event_clear_metadata_section(void *event_ptr, char *section);
 void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name);
-bsg_metadata_value *bugsnag_event_get_metadata(void *event_ptr, char *section, char *name);
+
+bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name);
+double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name);
+char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name);
+bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name);
 
 
 /* Accessors for event.error.stacktrace */

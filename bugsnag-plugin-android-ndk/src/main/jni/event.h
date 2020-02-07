@@ -109,6 +109,36 @@ typedef struct {
     char os_build[64];
 } bsg_report_header;
 
+/**
+ * A single value in metadata
+ */
+typedef struct {
+    /**
+     * The key identifying this metadata entry
+     */
+    char name[32];
+    /**
+     * The metadata tab
+     */
+    char section[32];
+    /**
+     * The value type from bool, char, number
+     */
+    bsg_metadata_t type;
+
+    /**
+     * Value if type is BSG_BOOL_VALUE
+     */
+    bool bool_value;
+    /**
+     * Value if type is BSG_CHAR_VALUE
+     */
+    char char_value[64];
+    /**
+     * Value if type is BSG_DOUBLE_VALUE
+     */
+    double double_value;
+} bsg_metadata_value;
 
 typedef struct {
     /** The number of values in use */
