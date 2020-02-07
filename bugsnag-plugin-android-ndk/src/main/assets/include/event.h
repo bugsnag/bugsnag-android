@@ -97,7 +97,29 @@ void bugsnag_event_set_context(void *event_ptr, char *value);
 /* Accessors for event.app */
 
 
+/**
+ * Retrieves the binary_arch value reported for this event.
+ *
+ * To obtain a pointer to the bugsnag event you are modifying, you will need to implement an
+ * on_error callback. on_error callbacks are executed from within a signal handler so your implementation must
+ * be async-safe, otherwise the process may terminate before an error report can be captured.
+ *
+ * @param event_ptr - a pointer to the bugsnag event
+ * @return the binary_arch in the event
+ */
 char *bugsnag_app_get_binary_arch(void *event_ptr);
+
+
+/**
+ * Sets a new value for the binary_arch value reported for this event.
+ *
+ * To obtain a pointer to the bugsnag event you are modifying, you will need to implement an
+ * on_error callback. on_error callbacks are executed from within a signal handler so your implementation must
+ * be async-safe, otherwise the process may terminate before an error report can be captured.
+ *
+ * @param event_ptr - a pointer to the bugsnag event
+ * @param value - the new value for the binary_arch field (nullable)
+ */
 void bugsnag_app_set_binary_arch(void *event_ptr, char *value);
 
 char *bugsnag_app_get_build_uuid(void *event_ptr);
@@ -178,6 +200,16 @@ void bugsnag_error_set_error_type(void *event_ptr, char *value);
 /* Accessors for event.user */
 
 
+/**
+ * Retrieves the user value reported for this event. The user struct has an ID, email, and name.
+ *
+ * To obtain a pointer to the bugsnag event you are modifying, you will need to implement an
+ * on_error callback. on_error callbacks are executed from within a signal handler so your implementation must
+ * be async-safe, otherwise the process may terminate before an error report can be captured.
+ *
+ * @param event_ptr - a pointer to the bugsnag event
+ * @return the user in the event, represented as a struct
+ */
 bsg_user_t bugsnag_event_get_user(void *event_ptr);
 void bugsnag_event_set_user(void *event_ptr, char* id, char* email, char* name);
 
@@ -204,7 +236,6 @@ void bugsnag_event_set_grouping_hash(void *event_ptr, char *value);
 
 /* Accessors for event.metadata */
 
-
 void bugsnag_event_add_metadata_double(void *event_ptr, char *section, char *name, double value);
 void bugsnag_event_add_metadata_string(void *event_ptr, char *section, char *name, char *value);
 void bugsnag_event_add_metadata_bool(void *event_ptr, char *section, char *name, bool value);
@@ -212,7 +243,43 @@ void bugsnag_event_add_metadata_bool(void *event_ptr, char *section, char *name,
 void bugsnag_event_clear_metadata_section(void *event_ptr, char *section);
 void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name);
 
+/**
+ * Retrieves the metadata type for a given section and key in this event.
+ *
+ * You should call this method before attempting to call bugsnag_event_get_metadata. If a
+ * value has been set for a given section/name, this method will return one of:
+ * BSG_METADATA_CHAR_VALUE, BSG_METADATA_NUMBER_VALUE, BSG_METADATA_BOOL_VALUE. You should then
+ * call the appropriate bugsnag_event_get_metadata method to retrieve the actual value.
+ *
+ * If no value has been set, this method will return BSG_METADATA_NONE_VALUE.
+ *
+ * To obtain a pointer to the bugsnag event you are modifying, you will need to implement an
+ * on_error callback. on_error callbacks are executed from within a signal handler so your implementation must
+ * be async-safe, otherwise the process may terminate before an error report can be captured.
+ *
+ * @param event_ptr - a pointer to the bugsnag event
+ * @param section - the metadata section key
+ * @param name - the metadata section name
+ * @return the type of the metadata, or BSG_METADATA_NONE_VALUE if no value exists
+ */
 bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name);
+
+/**
+ * Retrieves the metadata value for a given section and key in this event.
+ *
+ * Before calling this method you should first check whether a metadata value exists by using
+ * bugsnag_event_has_metadata. If no value exists, a default value will be returned. For numeric
+ * values, the default value will be 0.0.
+ *
+ * To obtain a pointer to the bugsnag event you are modifying, you will need to implement an
+ * on_error callback. on_error callbacks are executed from within a signal handler so your implementation must
+ * be async-safe, otherwise the process may terminate before an error report can be captured.
+ *
+ * @param event_ptr - a pointer to the bugsnag event
+ * @param section - the metadata section key
+ * @param name - the metadata section name
+ * @param value - the value to set on the given key/name
+ */
 double bugsnag_event_get_metadata_double(void *event_ptr, char *section, char *name);
 char *bugsnag_event_get_metadata_string(void *event_ptr, char *section, char *name);
 bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section, char *name);
