@@ -69,6 +69,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final SystemBroadcastReceiver systemBroadcastReceiver;
     final SessionTracker sessionTracker;
+
+    final ActivityBreadcrumbCollector activityBreadcrumbCollector;
+    final SessionLifecycleCallback sessionLifecycleCallback;
     private final SharedPreferences sharedPrefs;
 
     private final OrientationEventListener orientationListener;
@@ -199,12 +202,23 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
                 Environment.getDataDirectory(), logger);
 
+        activityBreadcrumbCollector = new ActivityBreadcrumbCollector(
+                new Function2<String, Map<String, ? extends Object>, Unit>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public Unit invoke(String activity, Map<String, ?> metadata) {
+                        leaveBreadcrumb(activity, BreadcrumbType.STATE,
+                                (Map<String, Object>) metadata);
+                        return null;
+                    }
+                }
+        );
+        sessionLifecycleCallback = new SessionLifecycleCallback(sessionTracker);
+
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
-            application.registerActivityLifecycleCallbacks(sessionTracker);
-        } else {
-            logger.w("Bugsnag is unable to setup automatic activity lifecycle "
-                + "breadcrumbs on API Levels below 14.");
+            application.registerActivityLifecycleCallbacks(sessionLifecycleCallback);
+            application.registerActivityLifecycleCallbacks(activityBreadcrumbCollector);
         }
 
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
