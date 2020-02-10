@@ -407,7 +407,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_event event = bsg_global_env->next_event;
-  bugsnag_event_set_user(&event, event.user.id, event.user.email, event.user.name);
+  bugsnag_event_set_user(&event, new_value, event.user.email, event.user.name);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     (*env)->ReleaseStringUTFChars(env, new_value, value);
@@ -423,7 +423,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserName(
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_event event = bsg_global_env->next_event;
-  bugsnag_event_set_user(&event, event.user.id, event.user.email, event.user.name);
+  bugsnag_event_set_user(&event, event.user.id, event.user.email, new_value);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     (*env)->ReleaseStringUTFChars(env, new_value, value);
@@ -441,7 +441,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateUserEmail(JNIEnv *env,
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_event event = bsg_global_env->next_event;
-  bugsnag_event_set_user(&event, event.user.id, event.user.email, event.user.name);
+  bugsnag_event_set_user(&event, event.user.id, new_value, event.user.name);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     (*env)->ReleaseStringUTFChars(env, new_value, value);
