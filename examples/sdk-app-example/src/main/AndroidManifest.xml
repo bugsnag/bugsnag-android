@@ -32,7 +32,7 @@
 
     <meta-data
       android:name="com.bugsnag.android.API_KEY"
-      android:value="5d1ec5bd39a74caa1267142706a7fb21" />
+      android:value="your-api-key" />
 
     <meta-data
       android:name="com.bugsnag.android.AUTO_DETECT_ANRS"
