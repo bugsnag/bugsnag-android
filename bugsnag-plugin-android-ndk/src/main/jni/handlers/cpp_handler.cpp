@@ -90,6 +90,7 @@ void bsg_handle_cpp_terminate() {
 
   bsg_global_env->handling_crash = true;
   bsg_populate_event_as(bsg_global_env);
+  bsg_global_env->next_event.unhandled = true;
   bsg_global_env->next_event.unhandled_events++;
   bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
       bsg_global_env->unwind_style,

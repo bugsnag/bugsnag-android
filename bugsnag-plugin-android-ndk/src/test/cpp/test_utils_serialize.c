@@ -7,7 +7,46 @@
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type);
 
+
+bool bsg_report_header_write(bsg_report_header *header, int fd);
+
+bool bsg_report_v1_write(bsg_report_header *header, bugsnag_report_v1 *report,
+                         int fd) {
+  if (!bsg_report_header_write(header, fd)) {
+    return false;
+  }
+  ssize_t len = write(fd, report, sizeof(bugsnag_report_v1));
+  return len == sizeof(bugsnag_report_v1);
+}
+
+bool bsg_report_v2_write(bsg_report_header *header, bugsnag_report_v2 *report,
+                         int fd) {
+  if (!bsg_report_header_write(header, fd)) {
+    return false;
+  }
+  ssize_t len = write(fd, report, sizeof(bugsnag_report_v2));
+  return len == sizeof(bugsnag_report_v2);
+}
+
+bool bsg_serialize_report_v1_to_file(bsg_environment *env, bugsnag_report_v1 *report) {
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  if (fd == -1) {
+    return false;
+  }
+  return bsg_report_v1_write(&env->report_header, report, fd);
+}
+
+bool bsg_serialize_report_v2_to_file(bsg_environment *env, bugsnag_report_v2 *report) {
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  if (fd == -1) {
+    return false;
+  }
+  return bsg_report_v2_write(&env->report_header, report, fd);
+}
+
+
 void generate_basic_report(bugsnag_event *event) {
+  strcpy(event->grouping_hash, "foo-hash");
   strcpy(event->context, "SomeActivity");
   strcpy(event->error.errorClass, "SIGBUS");
   strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
@@ -16,24 +55,20 @@ void generate_basic_report(bugsnag_event *event) {
   event->error.frame_count = 2;
   strcpy(event->error.type, "C");
   strcpy(event->error.stacktrace[0].method, "makinBacon");
-  strcpy(event->app.name, "PhotoSnap Plus");
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
-  strcpy(event->app.package_name, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.version, "2.0.52");
   event->app.version_code = 57;
-  strcpy(event->app.version_name, "2.0");
   strcpy(event->app.build_uuid, "1234-9876-adfe");
   strcpy(event->device.manufacturer, "HI-TEC™");
   strcpy(event->device.model, "Rasseur");
   strcpy(event->device.locale, "en_AU#Melbun");
+  strcpy(event->device.os_name, "android");
   strcpy(event->user.email, "fenton@io.example.com");
   strcpy(event->user.id, "fex");
   event->device.total_memory = 234678100;
   event->app.duration = 6502;
   event->app.in_foreground = true;
-  event->app.low_memory = false;
-  event->app.memory_usage = 456009;
   bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
   bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
@@ -57,12 +92,24 @@ void generate_basic_report(bugsnag_event *event) {
 bugsnag_report_v2 *bsg_generate_report_v2(void) {
   bugsnag_report_v2 *report = calloc(1, sizeof(bugsnag_report_v2));
   generate_basic_report((bugsnag_event *) report);
+
+  strcpy(report->exception.name, "SIGBUS");
+  strcpy(report->exception.message, "POSIX is serious about oncoming traffic");
+  report->exception.stacktrace[0].frame_address = 454379;
+  report->exception.frame_count = 1;
+  strcpy(report->exception.type, "C");
+  strcpy(report->exception.stacktrace[0].method, "makinBacon");
+
+  strcpy(report->app.package_name, "com.example.foo");
+  strcpy(report->app.version_name, "2.5");
   return report;
 }
 
 bugsnag_report_v1 *bsg_generate_report_v1(void) {
   bugsnag_report_v1 *report = calloc(1, sizeof(bugsnag_report_v1));
-  generate_basic_report((bugsnag_event *) report);
+  strcpy(report->session_id, "f1ab");
+  strcpy(report->session_start, "2019-03-19T12:58:19+00:00");
+  report->handled_events = 1;
   return report;
 }
 
@@ -115,7 +162,7 @@ TEST test_report_v1_migration(void) {
   bugsnag_report_v1 *generated_report = bsg_generate_report_v1();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v1));
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
-  bsg_serialize_event_to_file(env);
+  bsg_serialize_report_v1_to_file(env, generated_report);
 
   bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
   ASSERT(event != NULL);
@@ -139,26 +186,33 @@ TEST test_report_v2_migration(void) {
   bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v2));
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
-  bsg_serialize_event_to_file(env);
+  bsg_serialize_report_v2_to_file(env, generated_report);
 
-  bugsnag_event *report = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
-  ASSERT(report != NULL);
+  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(event != NULL);
 
   // bsg_library -> bsg_notifier
-  ASSERT_STR_EQ("Test Notifier", report->notifier.name);
-  ASSERT_STR_EQ("bugsnag.com", report->notifier.url);
-  ASSERT_STR_EQ("1.0", report->notifier.version);
+  ASSERT_STR_EQ("Test Notifier", event->notifier.name);
+  ASSERT_STR_EQ("bugsnag.com", event->notifier.url);
+  ASSERT_STR_EQ("1.0", event->notifier.version);
 
   // bsg_exception -> bsg_error
-  ASSERT_STR_EQ("SIGBUS", report->error.errorClass);
-  ASSERT_STR_EQ("POSIX is serious about oncoming traffic", report->error.errorMessage);
-  ASSERT_STR_EQ("C", report->error.type);
-  ASSERT(454379 == report->error.frame_count);
-  ASSERT_STR_EQ("makinBacon", report->error.stacktrace[0].method);
+  ASSERT_STR_EQ("SIGBUS", event->error.errorClass);
+  ASSERT_STR_EQ("POSIX is serious about oncoming traffic", event->error.errorMessage);
+  ASSERT_STR_EQ("C", event->error.type);
+  ASSERT_EQ(1, event->error.frame_count);
+  ASSERT_STR_EQ("makinBacon", event->error.stacktrace[0].method);
+
+  // event.device
+  ASSERT_STR_EQ("android", event->device.os_name);
+
+  // package_name/version_name are migrated to metadata
+  ASSERT_STR_EQ("com.example.foo", event->metadata.values[0].char_value);
+  ASSERT_STR_EQ("2.5", event->metadata.values[1].char_value);
 
   free(generated_report);
   free(env);
-  free(report);
+  free(event);
   PASS();
 }
 
@@ -176,12 +230,8 @@ TEST test_app_info_to_json(void) {
   JSON_Value *root_value = bsg_generate_json();
   JSON_Object *event = json_value_get_object(root_value);
   ASSERT(strcmp("2.0.52", json_object_dotget_string(event, "app.version")) == 0);
-  ASSERT(strcmp( "PhotoSnap Plus", json_object_dotget_string(event, "metaData.app.name")) == 0);
-  ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "metaData.app.packageName")) == 0);
-  ASSERT(strcmp( "com.example.PhotoSnapPlus", json_object_dotget_string(event, "app.id")) == 0);
   ASSERT(strcmp( "リリース", json_object_dotget_string(event, "app.releaseStage")) == 0);
   ASSERT_EQ(57, json_object_dotget_number(event, "app.versionCode"));
-  ASSERT(strcmp( "2.0", json_object_dotget_string(event, "metaData.app.versionName")) == 0);
   ASSERT(strcmp( "1234-9876-adfe", json_object_dotget_string(event, "app.buildUUID")) == 0);
   json_value_free(root_value);
   PASS();
@@ -194,6 +244,14 @@ TEST test_session_handled_counts(void) {
   ASSERT(strcmp("2019-03-19T12:58:19+00:00", json_object_dotget_string(event, "session.startedAt")) == 0);
   ASSERT_EQ(1, json_object_dotget_number(event, "session.events.handled"));
   ASSERT_EQ(2, json_object_dotget_number(event, "session.events.unhandled"));
+  PASS();
+}
+
+TEST test_grouping_hash_to_json(void) {
+  JSON_Value *root_value = bsg_generate_json();
+  JSON_Object *event = json_value_get_object(root_value);
+  ASSERT(event != NULL);
+  ASSERT_STR_EQ("foo-hash", json_object_get_string(event, "groupingHash"));
   PASS();
 }
 
@@ -286,8 +344,10 @@ SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
   RUN_TEST(test_report_v1_migration);
+  RUN_TEST(test_report_v2_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_context_to_json);
+  RUN_TEST(test_grouping_hash_to_json);
   RUN_TEST(test_app_info_to_json);
   RUN_TEST(test_device_info_to_json);
   RUN_TEST(test_user_info_to_json);

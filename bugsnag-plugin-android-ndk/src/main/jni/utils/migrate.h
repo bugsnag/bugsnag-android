@@ -42,14 +42,59 @@ typedef struct {
     /**
      * An ordered list of stack frames from the oldest to the most recent
      */
-    bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+    bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX];
 } bsg_exception;
 
 typedef struct {
+    char name[64];
+    char id[64];
+    char package_name[64];
+    char release_stage[64];
+    char type[32];
+    char version[32];
+    char version_name[32];
+    char active_screen[64];
+    int version_code;
+    char build_uuid[64];
+    time_t duration;
+    time_t duration_in_foreground;
+    time_t duration_ms_offset;
+    time_t duration_in_foreground_ms_offset;
+    bool in_foreground;
+    bool low_memory;
+    size_t memory_usage;
+    char binaryArch[32];
+} bsg_app_info_v1;
+
+typedef struct {
+    int api_level;
+    double battery_level;
+    char brand[64];
+    int cpu_abi_count;
+    bsg_cpu_abi cpu_abi[8];
+    int dpi;
+    bool emulator;
+    char orientation[32];
+    time_t time;
+    char id[64];
+    bool jailbroken;
+    char locale[32];
+    char location_status[32];
+    char manufacturer[64];
+    char model[64];
+    char network_access[64];
+    char os_build[64];
+    char os_version[64];
+    float screen_density;
+    char screen_resolution[32];
+    long total_memory;
+} bsg_device_info_v1;
+
+typedef struct {
     bsg_library notifier;
-    bsg_app_info app;
-    bsg_device_info device;
-    bsg_user user;
+    bsg_app_info_v1 app;
+    bsg_device_info_v1 device;
+    bsg_user_t user;
     bsg_exception exception;
     bugsnag_metadata metadata;
 
@@ -69,9 +114,9 @@ typedef struct {
 
 typedef struct {
     bsg_library notifier;
-    bsg_app_info app;
-    bsg_device_info device;
-    bsg_user user;
+    bsg_app_info_v1 app;
+    bsg_device_info_v1 device;
+    bsg_user_t user;
     bsg_exception exception;
     bugsnag_metadata metadata;
 

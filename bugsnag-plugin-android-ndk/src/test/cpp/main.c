@@ -32,7 +32,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCXXTest_run(
 TEST test_user_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
     JSON_Object *event = json_value_get_object(event_val);
-    bsg_user *user = test_case->data_ptr;
+    bsg_user_t *user = test_case->data_ptr;
     bsg_serialize_user(*user, event);
     free(user);
     return validate_serialized_json(test_case, event_val);
@@ -118,29 +118,6 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceSerializationTest_run(
     test_case->expected_json = str;
     GREATEST_MAIN_BEGIN();
     RUN_TEST1(test_device_serialization, test_case);
-    GREATEST_MAIN_END();
-}
-
-TEST test_device_meta_data_serialization(test_case *test_case) {
-    JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bsg_device_info *device = test_case->data_ptr;
-    bsg_serialize_device_metadata(*device, event);
-    free(device);
-    return validate_serialized_json(test_case, event_val);
-}
-
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetadataSerializationTest_run(
-        JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
-    int argc = 0;
-    char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadDeviceMetadataTestCase(num);
-
-    char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
-    test_case->expected_json = str;
-    GREATEST_MAIN_BEGIN();
-    RUN_TEST1(test_device_meta_data_serialization, test_case);
     GREATEST_MAIN_END();
 }
 
@@ -262,7 +239,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_BreadcrumbStateSerializationT
 TEST test_stackframe_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_array();
     JSON_Array *event = json_value_get_array(event_val);
-    bsg_stackframe *frame = test_case->data_ptr;
+    bsg_stackframe_t *frame = test_case->data_ptr;
     bsg_serialize_stackframe(frame, event);
     free(frame);
     return validate_serialized_json(test_case, event_val);

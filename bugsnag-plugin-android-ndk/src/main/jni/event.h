@@ -34,8 +34,6 @@
  */
 #define BUGSNAG_EVENT_VERSION 3
 
-#define BUGSNAG_USER_INFO_LEN 64
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,23 +44,10 @@ extern "C" {
  *********************************/
 
 typedef struct {
-    uintptr_t frame_address;
-    uintptr_t symbol_address;
-    uintptr_t load_address;
-    uintptr_t line_number;
-
-    char filename[256];
-    char method[256];
-} bsg_stackframe;
-
-typedef struct {
-    char name[64];
     char id[64];
-    char package_name[64];
     char release_stage[64];
     char type[32];
     char version[32];
-    char version_name[32];
     char active_screen[64];
     int version_code;
     char build_uuid[64];
@@ -81,9 +66,7 @@ typedef struct {
      */
     time_t duration_in_foreground_ms_offset;
     bool in_foreground;
-    bool low_memory;
-    size_t memory_usage;
-    char binaryArch[32];
+    char binary_arch[32];
 } bsg_app_info;
 
 typedef struct {
@@ -92,25 +75,18 @@ typedef struct {
 
 typedef struct {
     int api_level;
-    double battery_level;
-    char brand[64];
     int cpu_abi_count;
     bsg_cpu_abi cpu_abi[8];
-    int dpi;
-    bool emulator;
     char orientation[32];
     time_t time;
     char id[64];
     bool jailbroken;
     char locale[32];
-    char location_status[32];
     char manufacturer[64];
     char model[64];
-    char network_access[64];
     char os_build[64];
     char os_version[64];
-    float screen_density;
-    char screen_resolution[32];
+    char os_name[64];
     long total_memory;
 } bsg_device_info;
 
@@ -132,13 +108,6 @@ typedef struct {
      */
     char os_build[64];
 } bsg_report_header;
-
-typedef enum {
-    BSG_NONE_VALUE,
-    BSG_BOOL_VALUE,
-    BSG_CHAR_VALUE,
-    BSG_NUMBER_VALUE,
-} bsg_metadata_t;
 
 /**
  * A single value in metadata
@@ -177,12 +146,6 @@ typedef struct {
     bsg_metadata_value values[BUGSNAG_METADATA_MAX];
 } bugsnag_metadata;
 
-typedef struct {
-    char name[BUGSNAG_USER_INFO_LEN];
-    char email[BUGSNAG_USER_INFO_LEN];
-    char id[BUGSNAG_USER_INFO_LEN];
-} bsg_user;
-
 /** a Bugsnag exception */
 typedef struct {
     /** The exception name or stringified code */
@@ -200,7 +163,7 @@ typedef struct {
     /**
      * An ordered list of stack frames from the oldest to the most recent
      */
-    bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+    bsg_stackframe_t stacktrace[BUGSNAG_FRAMES_MAX];
 } bsg_error;
 
 typedef struct {
@@ -229,7 +192,7 @@ typedef struct {
     bsg_notifier notifier;
     bsg_app_info app;
     bsg_device_info device;
-    bsg_user user;
+    bsg_user_t user;
     bsg_error error;
     bugsnag_metadata metadata;
 
@@ -246,27 +209,13 @@ typedef struct {
     char session_start[33];
     int handled_events;
     int unhandled_events;
+    char grouping_hash[64];
+    bool unhandled;
 } bugsnag_event;
 
-void bugsnag_event_add_metadata_double(bugsnag_event *event, char *section,
-                                       char *name, double value);
-void bugsnag_event_add_metadata_string(bugsnag_event *event, char *section,
-                                       char *name, char *value);
-void bugsnag_event_add_metadata_bool(bugsnag_event *event, char *section,
-                                     char *name, bool value);
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
                                   bugsnag_breadcrumb *crumb);
 void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
-void bugsnag_event_remove_metadata(bugsnag_event *event, char *section,
-                                   char *name);
-void bugsnag_event_remove_metadata_tab(bugsnag_event *event, char *section);
-void bugsnag_event_set_orientation(bugsnag_event *event, int value);
-void bugsnag_event_set_app_version(bugsnag_event *event, char *value);
-void bugsnag_event_set_build_uuid(bugsnag_event *event, char *value);
-void bugsnag_event_set_release_stage(bugsnag_event *event, char *value);
-void bugsnag_event_set_user_email(bugsnag_event *event, char *value);
-void bugsnag_event_set_user_id(bugsnag_event *event, char *value);
-void bugsnag_event_set_user_name(bugsnag_event *event, char *value);
 void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
                                  char *started_at, int handled_count, int unhandled_count);
 bool bugsnag_event_has_session(bugsnag_event *event);

@@ -13,16 +13,16 @@ enum greatest_test_res validate_serialized_json(const test_case *test_case,
     PASS();
 }
 
-bsg_user * loadUserTestCase(jint num) {
-    bsg_user *user;
+bsg_user_t * loadUserTestCase(jint num) {
+    bsg_user_t *user;
 
     if (num == 0) {
-        user = malloc(sizeof(bsg_user));
+        user = malloc(sizeof(bsg_user_t));
         strcpy(user->id, "1234");
         strcpy(user->email, "fenton@io.example.com");
         strcpy(user->name, "Fenton");
     } else {
-        user = malloc(sizeof(bsg_user));
+        user = malloc(sizeof(bsg_user_t));
         strcpy(user->id, "456");
         strcpy(user->email, "jamie@bugsnag.com");
         strcpy(user->name, "Jamie");
@@ -38,7 +38,7 @@ bsg_app_info * loadAppTestCase(jint num) {
     strcpy(app->release_stage, "prod");
     app->version_code = 55;
     strcpy(app->build_uuid, "1234-uuid");
-    strcpy(app->binaryArch, "x86");
+    strcpy(app->binary_arch, "x86");
     app->duration = 6502;
     app->duration_in_foreground = 6502;
     app->in_foreground = true;
@@ -47,17 +47,14 @@ bsg_app_info * loadAppTestCase(jint num) {
 
 bsg_app_info * loadAppMetadataTestCase(jint num) {
     bsg_app_info *app = malloc(sizeof(bsg_app_info));
-    strcpy(app->package_name, "com.bugsnag.example");
-    strcpy(app->version_name, "5.0");
     strcpy(app->active_screen, "MainActivity");
-    strcpy(app->name, "PhotoSnap");
-    app->low_memory = true;
     return app;
 }
 
 bsg_device_info * loadDeviceTestCase(jint num) {
     bsg_device_info *device = malloc(sizeof(bsg_device_info));
     strcpy(device->id, "f5gh7");
+    strcpy(device->os_name, "android");
     strcpy(device->os_version, "8.1");
     strcpy(device->manufacturer, "Samsung");
     strcpy(device->model, "S7");
@@ -72,19 +69,7 @@ bsg_device_info * loadDeviceTestCase(jint num) {
 
     struct tm time = { 0, 0, 0, 1, 12, 128 };
     device->time = mktime(&time);
-    return device;
-}
-
-bsg_device_info * loadDeviceMetadataTestCase(jint num) {
-    bsg_device_info *device = malloc(sizeof(bsg_device_info));
-    strcpy(device->brand, "Samsung");
-    strcpy(device->location_status, "cellular");
-    strcpy(device->network_access, "full");
-    strcpy(device->screen_resolution, "1024x768");
-    device->emulator = false;
-    device->jailbroken = false;
-    device->dpi = 320;
-    device->screen_density = 3.5;
+    device->jailbroken = true;
     return device;
 }
 
@@ -102,6 +87,7 @@ bugsnag_event * loadContextTestCase(jint num) {
 
 bugsnag_event * loadHandledStateTestCase(jint num) {
     bugsnag_event *data = malloc(sizeof(bugsnag_event));
+    data->unhandled = true;
     return data;
 }
 
@@ -115,8 +101,8 @@ bugsnag_event * loadBreadcrumbsTestCase(jint num) {
     return data;
 }
 
-bsg_stackframe * loadStackframeTestCase(jint num) {
-    bsg_stackframe *data = malloc(sizeof(bsg_stackframe));
+bsg_stackframe_t * loadStackframeTestCase(jint num) {
+    bsg_stackframe_t *data = malloc(sizeof(bsg_stackframe_t));
     data->frame_address = 0x20000000;
     data->symbol_address = 0x16000000;
     data->load_address = 0x12000000;
