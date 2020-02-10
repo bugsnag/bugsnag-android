@@ -134,7 +134,7 @@ TEST test_app_version_code(void) {
 TEST test_event_user(void) {
     bugsnag_event *event = init_event();
     bugsnag_event_set_user(event, "456", "sue@example.com", "Sue Smith");
-    bsg_user_t user = bugsnag_event_get_user(event);
+    bugsnag_user user = bugsnag_event_get_user(event);
     ASSERT_STR_EQ("456", user.id);
     ASSERT_STR_EQ("sue@example.com", user.email);
     ASSERT_STR_EQ("Sue Smith", user.name);
@@ -351,14 +351,14 @@ TEST test_event_stacktrace(void) {
     bugsnag_event_get_stacktrace_size(event);
     ASSERT_EQ(1, bugsnag_event_get_stacktrace_size(event));
 
-    bsg_stackframe_t *frame = bugsnag_event_get_stackframe(event, 0);
+    bugsnag_stackframe *frame = bugsnag_event_get_stackframe(event, 0);
     ASSERT_STR_EQ("foo()", frame->method);
     ASSERT_STR_EQ("Something.c", frame->filename);
     ASSERT_EQ(58, frame->line_number);
 
     // modify and copy into a new array
     bsg_strncpy_safe(frame->method, "bar()", sizeof(frame->method));
-    bsg_stackframe_t *another_frame = bugsnag_event_get_stackframe(event, 0);
+    bugsnag_stackframe *another_frame = bugsnag_event_get_stackframe(event, 0);
     ASSERT_EQ(frame, another_frame);
 
     // verify behaviour when out of bounds

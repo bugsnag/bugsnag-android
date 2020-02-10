@@ -101,7 +101,7 @@ bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr, char *section, ch
   return data;
 }
 
-bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name) {
+bugsnag_metadata_type bugsnag_event_has_metadata(void *event_ptr, char *section, char *name) {
   return bugsnag_get_metadata_value(event_ptr, section, name).type;
 }
 
@@ -422,12 +422,12 @@ void bugsnag_error_set_error_type(void *event_ptr, char *value) {
   bsg_strncpy_safe(event->error.type, value, sizeof(event->error.type));
 }
 
-bsg_severity_t bugsnag_event_get_severity(void *event_ptr) {
+bugsnag_severity bugsnag_event_get_severity(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   return event->severity;
 }
 
-void bugsnag_event_set_severity(void *event_ptr, bsg_severity_t value) {
+void bugsnag_event_set_severity(void *event_ptr, bugsnag_severity value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   event->severity = value;
 }
@@ -437,7 +437,7 @@ bool bugsnag_event_is_unhandled(void *event_ptr) {
   return event->unhandled;
 }
 
-bsg_user_t bugsnag_event_get_user(void *event_ptr) {
+bugsnag_user bugsnag_event_get_user(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   return event->user;
 }
@@ -457,7 +457,7 @@ int bugsnag_event_get_stacktrace_size(void *event_ptr) {
   return event->error.frame_count;
 }
 
-bsg_stackframe_t *bugsnag_event_get_stackframe(void *event_ptr, int index) {
+bugsnag_stackframe *bugsnag_event_get_stackframe(void *event_ptr, int index) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   if (index >= 0 && index < event->error.frame_count) {
     return &event->error.stacktrace[index];
