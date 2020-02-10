@@ -152,21 +152,21 @@ public class ClientTest {
     @Test
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
-        List<BreadcrumbType> breadcrumbTypes
-                = Arrays.asList(BreadcrumbType.MANUAL, BreadcrumbType.STATE);
+        List<BreadcrumbType> breadcrumbTypes = Arrays.asList(BreadcrumbType.MANUAL);
         config.setEnabledBreadcrumbTypes(new HashSet<>(breadcrumbTypes));
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(1, client.breadcrumbState.getStore().size());
+        assertEquals(0, client.breadcrumbState.getStore().size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
+        client.leaveBreadcrumb("yet another");
         assertEquals(2, client.breadcrumbState.getStore().size());
 
         Breadcrumb poll = client.breadcrumbState.getStore().poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
         assertEquals("manual", poll.getMessage());
-        assertEquals("test", poll.getMetadata().get("message"));
+        assertEquals("another", poll.getMetadata().get("message"));
     }
 
     @Test

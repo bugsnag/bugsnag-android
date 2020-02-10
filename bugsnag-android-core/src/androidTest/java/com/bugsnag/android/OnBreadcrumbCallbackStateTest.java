@@ -14,6 +14,8 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @SmallTest
 public class OnBreadcrumbCallbackStateTest {
@@ -27,9 +29,13 @@ public class OnBreadcrumbCallbackStateTest {
     @Before
     public void setUp() {
         Configuration configuration = generateConfiguration();
-        configuration.setEnabledBreadcrumbTypes(Collections.<BreadcrumbType>emptySet());
-        client = generateClient();
-        assertEquals(1, client.breadcrumbState.getStore().size());
+
+        Set<BreadcrumbType> breadcrumbTypes = new HashSet<>();
+        breadcrumbTypes.add(BreadcrumbType.MANUAL);
+        breadcrumbTypes.add(BreadcrumbType.USER);
+        configuration.setEnabledBreadcrumbTypes(breadcrumbTypes);
+        client = generateClient(configuration);
+        assertEquals(0, client.breadcrumbState.getStore().size());
     }
 
     @After
@@ -40,7 +46,7 @@ public class OnBreadcrumbCallbackStateTest {
     @Test
     public void noCallback() {
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbState.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -52,7 +58,7 @@ public class OnBreadcrumbCallbackStateTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbState.getStore().size());
+        assertEquals(0, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -64,7 +70,7 @@ public class OnBreadcrumbCallbackStateTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbState.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -82,7 +88,7 @@ public class OnBreadcrumbCallbackStateTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbState.getStore().size());
+        assertEquals(0, client.breadcrumbState.getStore().size());
     }
 
     @Test
@@ -156,7 +162,7 @@ public class OnBreadcrumbCallbackStateTest {
         client.leaveBreadcrumb("Hello");
         client.removeOnBreadcrumb(cb);
         client.leaveBreadcrumb("Hello");
-        assertEquals(2, client.breadcrumbState.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
     }
 
 }
