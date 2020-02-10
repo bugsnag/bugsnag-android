@@ -124,7 +124,7 @@ typedef struct {
     /**
      * The value type from bool, char, number
      */
-    bsg_metadata_t type;
+    bugsnag_metadata_type type;
 
     /**
      * Value if type is BSG_BOOL_VALUE

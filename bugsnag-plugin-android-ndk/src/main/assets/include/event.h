@@ -262,7 +262,7 @@ void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name);
  * @param name - the metadata section name
  * @return the type of the metadata, or BSG_METADATA_NONE_VALUE if no value exists
  */
-bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name);
+bugsnag_metadata_type bugsnag_event_has_metadata(void *event_ptr, char *section, char *name);
 
 /**
  * Retrieves the metadata value for a given section and key in this event.

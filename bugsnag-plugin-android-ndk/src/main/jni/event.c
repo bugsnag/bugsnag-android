@@ -101,7 +101,7 @@ bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr, char *section, ch
   return data;
 }
 
-bsg_metadata_t bugsnag_event_has_metadata(void *event_ptr, char *section, char *name) {
+bugsnag_metadata_type bugsnag_event_has_metadata(void *event_ptr, char *section, char *name) {
   return bugsnag_get_metadata_value(event_ptr, section, name).type;
 }
 
