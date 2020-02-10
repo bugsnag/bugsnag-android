@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 internal class ClientObservable : BaseObservable() {
 
-    fun postOrientationChange(orientation: Int) {
+    fun postOrientationChange(orientation: String?) {
         notifyObservers(StateEvent.UpdateOrientation(orientation))
     }
 

@@ -12,9 +12,9 @@ class ClientObservableTest {
     fun postOrientationChange() {
         clientObservable.addObserver { _, arg ->
             val msg = arg as StateEvent.UpdateOrientation
-            assertEquals(90, msg.orientation)
+            assertEquals("landscape", msg.orientation)
         }
-        clientObservable.postOrientationChange(90)
+        clientObservable.postOrientationChange("landscape")
     }
 
     @Test

@@ -5,21 +5,25 @@ import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.os.storage.StorageManager;
-import android.view.OrientationEventListener;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
@@ -69,7 +73,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final SessionTracker sessionTracker;
     private final SharedPreferences sharedPrefs;
 
-    private final OrientationEventListener orientationListener;
     private final Connectivity connectivity;
     private final StorageManager storageManager;
     final Logger logger;
@@ -235,7 +238,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
         connectivity.registerForNetworkChanges();
 
-        orientationListener = registerOrientationChangeListener();
+        registerOrientationChangeListener();
 
         // filter out any disabled breadcrumb types
         addOnBreadcrumb(new OnBreadcrumbCallback() {
@@ -252,19 +255,23 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
     }
 
-    private OrientationEventListener registerOrientationChangeListener() {
-        OrientationEventListener orientationListener = new OrientationEventListener(appContext) {
-            @Override
-            public void onOrientationChanged(int orientation) {
-                clientObservable.postOrientationChange(orientation);
-            }
-        };
-        try {
-            orientationListener.enable();
-        } catch (IllegalStateException ex) {
-            logger.w("Failed to set up orientation tracking: " + ex);
-        }
-        return orientationListener;
+    private void registerOrientationChangeListener() {
+        IntentFilter configFilter = new IntentFilter();
+        configFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
+        ConfigChangeReceiver receiver = new ConfigChangeReceiver(deviceDataCollector,
+                new Function2<String, String, Unit>() {
+                    @Override
+                    public Unit invoke(String oldOrientation, String newOrientation) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("from", oldOrientation);
+                        data.put("to", newOrientation);
+                        leaveBreadcrumb("Orientation change", BreadcrumbType.STATE, data);
+                        clientObservable.postOrientationChange(newOrientation);
+                        return null;
+                    }
+                }
+        );
+        appContext.registerReceiver(receiver, configFilter);
     }
 
     private void loadPlugins() {
@@ -710,7 +717,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     void close() {
-        orientationListener.disable();
         connectivity.unregisterForNetworkChanges();
     }
 }

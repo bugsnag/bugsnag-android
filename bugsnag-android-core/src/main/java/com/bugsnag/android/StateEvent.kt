@@ -35,7 +35,7 @@ sealed class StateEvent {
 
     class UpdateContext(val context: String?) : StateEvent()
     class UpdateInForeground(val inForeground: Boolean, val contextActivity: String?) : StateEvent()
-    class UpdateOrientation(val orientation: Int) : StateEvent()
+    class UpdateOrientation(val orientation: String?) : StateEvent()
 
     class UpdateUserEmail(val email: String?) : StateEvent()
     class UpdateUserName(val name: String?) : StateEvent()
