@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import java.util.Date
 import java.util.HashMap
@@ -160,5 +161,38 @@ internal fun sanitiseConfiguration(
             configuration.buildUuid = buildUuid
         }
     }
+
+    // populate releaseStage
+    if (configuration.releaseStage == null) {
+        try {
+            val packageManager = appContext.packageManager
+            val ai = packageManager.getApplicationInfo(
+                packageName, PackageManager.GET_META_DATA
+            )
+            configuration.releaseStage = guessReleaseStage(configuration, ai)
+        } catch (ignore: Exception) {
+            logger.w("Bugsnag is unable to get applicationInfo.")
+        }
+    }
+
     return convertToImmutableConfig(configuration)
+}
+
+internal const val RELEASE_STAGE_DEVELOPMENT = "development"
+internal const val RELEASE_STAGE_PRODUCTION = "production"
+
+/**
+ * Guess the release stage of the running Android app by checking the
+ * android:debuggable flag from AndroidManifest.xml. If the release stage was set in
+ * [Configuration], this value will be returned instead.
+ */
+private fun guessReleaseStage(config: Configuration, appInfo: ApplicationInfo?): String {
+    val releaseStage = config.releaseStage
+    return when {
+        releaseStage != null -> releaseStage
+        appInfo != null && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> {
+            RELEASE_STAGE_DEVELOPMENT
+        }
+        else -> RELEASE_STAGE_PRODUCTION
+    }
 }

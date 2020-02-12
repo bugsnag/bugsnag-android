@@ -1,6 +1,8 @@
 package com.bugsnag.android
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -13,6 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -28,6 +31,9 @@ internal class ImmutableConfigTest {
 
     @Mock
     lateinit var context: Context
+
+    @Mock
+    lateinit var packageManager: PackageManager
 
     @Before
     fun setUp() {
@@ -156,11 +162,14 @@ internal class ImmutableConfigTest {
 
     @Test
     fun configSanitisation() {
-        Mockito.`when`(context.packageName).thenReturn("com.example.foo")
+        `when`(context.packageName).thenReturn("com.example.foo")
+        `when`(context.packageManager).thenReturn(packageManager)
+
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         seed.logger = NoopLogger
         val config = sanitiseConfiguration(context, seed, connectivity)
         assertEquals(setOf("com.example.foo"), config.projectPackages)
+        assertEquals("production", config.releaseStage)
 
         assertNotNull(config.delivery)
     }

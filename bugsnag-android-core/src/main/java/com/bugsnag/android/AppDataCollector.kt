@@ -26,7 +26,7 @@ internal class AppDataCollector(
 
     private var binaryArch: String? = null
     private val appName = getAppName()
-    private val releaseStage = guessReleaseStage()
+    private val releaseStage = config.releaseStage
     private val versionName = config.appVersion ?: packageInfo?.versionName
 
     fun generateApp(): App = App(config, binaryArch, packageName, releaseStage, versionName)
@@ -87,21 +87,6 @@ internal class AppDataCollector(
     }
 
     /**
-     * Guess the release stage of the running Android app by checking the
-     * android:debuggable flag from AndroidManifest.xml. If the release stage was set in
-     * [Configuration], this value will be returned instead.
-     */
-    private fun guessReleaseStage(): String {
-        return when {
-            config.releaseStage != null -> config.releaseStage
-            appInfo != null && (appInfo!!.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> {
-                RELEASE_STAGE_DEVELOPMENT
-            }
-            else -> RELEASE_STAGE_PRODUCTION
-        }
-    }
-
-    /**
      * The name of the running Android app, from android:label in
      * AndroidManifest.xml
      */
@@ -114,11 +99,7 @@ internal class AppDataCollector(
     }
 
     companion object {
-
         internal val startTimeMs = SystemClock.elapsedRealtime()
-
-        private const val RELEASE_STAGE_DEVELOPMENT = "development"
-        const val RELEASE_STAGE_PRODUCTION = "production"
 
         /**
          * Get the time in milliseconds since Bugsnag was initialized, which is a

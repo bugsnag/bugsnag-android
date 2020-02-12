@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
+import static com.bugsnag.android.ImmutableConfigKt.RELEASE_STAGE_PRODUCTION;
 
 import android.app.ActivityManager;
 import android.app.Application;
@@ -118,8 +119,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // if the user has set the releaseStage to production manually, disable logging
         if (configuration.getLogger() == null) {
             String releaseStage = configuration.getReleaseStage();
-            boolean loggingEnabled
-                    = !AppDataCollector.RELEASE_STAGE_PRODUCTION.equals(releaseStage);
+            boolean loggingEnabled = !RELEASE_STAGE_PRODUCTION.equals(releaseStage);
 
             if (loggingEnabled) {
                 configuration.setLogger(DebugLogger.INSTANCE);
