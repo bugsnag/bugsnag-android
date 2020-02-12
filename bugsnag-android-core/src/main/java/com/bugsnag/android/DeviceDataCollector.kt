@@ -230,7 +230,7 @@ internal class DeviceDataCollector(
     /**
      * Get the device orientation, eg. "landscape"
      */
-    private fun calculateOrientation() = when (resources?.configuration?.orientation) {
+    internal fun calculateOrientation() = when (resources?.configuration?.orientation) {
         ORIENTATION_LANDSCAPE -> "landscape"
         ORIENTATION_PORTRAIT -> "portrait"
         else -> null

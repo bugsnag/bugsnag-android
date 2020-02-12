@@ -355,31 +355,22 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
   bsg_release_env_write_lock();
 }
 
-const char *bsg_orientation_from_degrees(int orientation) {
-  if (orientation < 0) {
-    return "unknown";
-  } else if (orientation >= 315 || orientation <= 45) {
-    return "portrait";
-  } else if (orientation <= 135) {
-    return "landscape";
-  } else if (orientation <= 225) {
-    return "portrait";
-  } else {
-    return "landscape";
-  }
-}
-
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
                                                             jobject _this,
-                                                            jint orientation) {
+                                                            jstring new_value) {
   if (bsg_global_env == NULL)
     return;
 
+  char *value = new_value == NULL
+                    ? NULL
+                    : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
-  bugsnag_device_set_orientation(&bsg_global_env->next_event,
-                                 (char *) bsg_orientation_from_degrees(orientation));
+  bugsnag_device_set_orientation(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
+  if (new_value != NULL) {
+    (*env)->ReleaseStringUTFChars(env, new_value, value);
+  }
 }
 
 JNIEXPORT void JNICALL
