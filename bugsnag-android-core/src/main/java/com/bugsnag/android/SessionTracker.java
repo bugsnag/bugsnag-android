@@ -145,10 +145,9 @@ class SessionTracker extends BaseObservable {
     private void trackSessionIfNeeded(final Session session) {
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
-        final SessionPayload payload = new SessionPayload(session, null,
-                client.getAppDataCollector().generateApp(),
-                client.getDeviceDataCollector().generateDevice());
-        boolean deliverSession = callbackState.runOnSessionTasks(payload, logger);
+        session.setApp(client.getAppDataCollector().generateApp());
+        session.setDevice(client.getDeviceDataCollector().generateDevice());
+        boolean deliverSession = callbackState.runOnSessionTasks(session, logger);
 
         if (deliverSession && notifyForRelease
                 && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
@@ -163,7 +162,7 @@ class SessionTracker extends BaseObservable {
                         flushStoredSessions();
 
                         try {
-                            DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+                            DeliveryStatus deliveryStatus = deliverSessionPayload(session);
 
                             switch (deliveryStatus) {
                                 case UNDELIVERED:
@@ -233,16 +232,10 @@ class SessionTracker extends BaseObservable {
     void flushStoredSessions() {
         if (flushingRequest.tryAcquire(1)) {
             try {
-                List<File> storedFiles;
+                List<File> storedFiles = sessionStore.findStoredFiles();
 
-                storedFiles = sessionStore.findStoredFiles();
-
-                if (!storedFiles.isEmpty()) {
-                    SessionPayload payload =
-                            new SessionPayload(null, storedFiles,
-                                    client.appDataCollector.generateApp(),
-                                    client.deviceDataCollector.generateDevice());
-
+                for (File storedFile : storedFiles) {
+                    Session payload = new Session(storedFile);
                     DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
 
                     switch (deliveryStatus) {
@@ -268,7 +261,7 @@ class SessionTracker extends BaseObservable {
         }
     }
 
-    DeliveryStatus deliverSessionPayload(SessionPayload payload) {
+    DeliveryStatus deliverSessionPayload(Session payload) {
         DeliveryParams params = configuration.getSessionApiDeliveryParams();
         Delivery delivery = configuration.getDelivery();
         return delivery.deliver(payload, params);

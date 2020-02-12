@@ -59,10 +59,10 @@ internal data class CallbackState(
         return true
     }
 
-    fun runOnSessionTasks(sessionPayload: SessionPayload, logger: Logger): Boolean {
+    fun runOnSessionTasks(session: Session, logger: Logger): Boolean {
         onSessionTasks.forEach {
             try {
-                if (!it.onSession(sessionPayload)) {
+                if (!it.onSession(session)) {
                     return false
                 }
             } catch (ex: Throwable) {

@@ -6,13 +6,11 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import java.lang.IllegalArgumentException
-import java.util.ArrayList
 
 @RunWith(MockitoJUnitRunner::class)
 class CallbackStateTest {
@@ -23,15 +21,12 @@ class CallbackStateTest {
     @Mock
     lateinit var device: Device
 
+    @Mock
+    lateinit var session: Session
+
     private val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
     private val event = Event(RuntimeException(), config = generateImmutableConfig(), handledState = handledState)
     private val breadcrumb = Breadcrumb("")
-    lateinit var sessionPayload: SessionPayload
-
-    @Before
-    fun setUp() {
-        sessionPayload = SessionPayload(null, ArrayList(), app, device)
-    }
 
     @Test
     fun testCopy() {
@@ -79,7 +74,7 @@ class CallbackStateTest {
 
         val logger = InterceptingLogger()
         assertNull(logger.msg)
-        assertTrue(state.runOnSessionTasks(sessionPayload, logger))
+        assertTrue(state.runOnSessionTasks(session, logger))
         assertNotNull(logger.msg)
     }
 
@@ -92,7 +87,7 @@ class CallbackStateTest {
             count = 1
             true
         })
-        assertFalse(state.runOnSessionTasks(sessionPayload, NoopLogger))
+        assertFalse(state.runOnSessionTasks(session, NoopLogger))
         assertEquals(0, count)
     }
 

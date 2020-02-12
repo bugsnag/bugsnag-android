@@ -1,5 +1,30 @@
 {
-  "id": "123",
-  "startedAt": "1970-01-01T00:00:00Z",
-  "user": {"id":"123","email":"j@example.com","name":"Jay"}
+  "notifier": {
+    "name": "AndroidBugsnagNotifier",
+    "version": "9.9.9",
+    "url": "https://bugsnag.com"
+  },
+  "app": {
+    "type": "android",
+    "versionCode": 0
+  },
+  "device": {
+    "cpuAbi": [],
+    "manufacturer": "samsung",
+    "model": "s7",
+    "osName": "android",
+    "osVersion": "7.1",
+    "runtimeVersions": {
+      "androidApiLevel": 24,
+      "osBuild": "bulldog"
+    },
+    "totalMemory": 10923250000
+  },
+  "sessions": [
+    {
+      "id": "123",
+      "startedAt": "1970-01-01T00:00:00Z",
+      "user": {}
+    }
+  ]
 }

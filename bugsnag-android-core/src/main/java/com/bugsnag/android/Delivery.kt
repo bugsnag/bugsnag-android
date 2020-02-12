@@ -37,7 +37,7 @@ interface Delivery {
      * @param deliveryParams The delivery parameters to be used for this request
      * @return the end-result of your delivery attempt
      */
-    fun deliver(payload: SessionPayload, deliveryParams: DeliveryParams): DeliveryStatus
+    fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus
 
     /**
      * Posts an Error Report to the Bugsnag Error Reporting API.
