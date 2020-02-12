@@ -1,8 +1,5 @@
 package com.bugsnag.android;
 
-import android.app.Activity;
-import android.app.Application;
-import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -10,9 +7,7 @@ import androidx.annotation.VisibleForTesting;
 import java.io.File;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -20,13 +15,12 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-class SessionTracker extends BaseObservable implements Application.ActivityLifecycleCallbacks {
+class SessionTracker extends BaseObservable {
 
-    private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
     private final Collection<String>
-        foregroundActivities = new ConcurrentLinkedQueue<>();
+            foregroundActivities = new ConcurrentLinkedQueue<>();
     private final long timeoutMs;
 
     private final ImmutableConfig configuration;
@@ -73,7 +67,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
     @Nullable
     @VisibleForTesting
     Session startNewSession(@NonNull Date date, @Nullable User user,
-                                      boolean autoCaptured) {
+                            boolean autoCaptured) {
         Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);
         currentSession.set(session);
         trackSessionIfNeeded(session);
@@ -127,9 +121,10 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
      * @param handledCount   the number of handled events which have occurred during the session
      * @return the session
      */
-    @Nullable Session registerExistingSession(@Nullable Date date, @Nullable String sessionId,
-                                              @Nullable User user, int unhandledCount,
-                                              int handledCount) {
+    @Nullable
+    Session registerExistingSession(@Nullable Date date, @Nullable String sessionId,
+                                    @Nullable User user, int unhandledCount,
+                                    int handledCount) {
         Session session = null;
         if (date != null && sessionId != null) {
             session = new Session(sessionId, date, user, unhandledCount, handledCount);
@@ -244,9 +239,9 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
 
                 if (!storedFiles.isEmpty()) {
                     SessionPayload payload =
-                        new SessionPayload(null, storedFiles,
-                            client.appDataCollector.generateApp(),
-                                client.deviceDataCollector.generateDevice());
+                            new SessionPayload(null, storedFiles,
+                                    client.appDataCollector.generateApp(),
+                                    client.deviceDataCollector.generateDevice());
 
                     DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
 
@@ -279,62 +274,12 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
         return delivery.deliver(payload, params);
     }
 
-    @Override
-    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onCreate()");
-    }
-
-    @Override
-    public void onActivityStarted(@NonNull Activity activity) {
-        String activityName = getActivityName(activity);
-        leaveLifecycleBreadcrumb(activityName, "onStart()");
+    void onActivityStarted(String activityName) {
         updateForegroundTracker(activityName, true, System.currentTimeMillis());
     }
 
-    @Override
-    public void onActivityResumed(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onResume()");
-    }
-
-    @Override
-    public void onActivityPaused(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onPause()");
-    }
-
-    @Override
-    public void onActivityStopped(@NonNull Activity activity) {
-        String activityName = getActivityName(activity);
-        leaveLifecycleBreadcrumb(activityName, "onStop()");
+    void onActivityStopped(String activityName) {
         updateForegroundTracker(activityName, false, System.currentTimeMillis());
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(@NonNull Activity activity, Bundle outState) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onSaveInstanceState()");
-    }
-
-    @Override
-    public void onActivityDestroyed(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onDestroy()");
-    }
-
-    private String getActivityName(@NonNull Activity activity) {
-        return activity.getClass().getSimpleName();
-    }
-
-    void leaveLifecycleBreadcrumb(String activityName, String lifecycleCallback) {
-        leaveBreadcrumb(activityName, lifecycleCallback);
-    }
-
-    private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
-
-        try {
-            client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
-        } catch (Exception ex) {
-            logger.w("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
-        }
     }
 
     /**
@@ -359,7 +304,7 @@ class SessionTracker extends BaseObservable implements Application.ActivityLifec
                 lastEnteredForegroundMs.set(nowMs);
 
                 if (noActivityRunningForMs >= timeoutMs
-                    && configuration.getAutoTrackSessions()) {
+                        && configuration.getAutoTrackSessions()) {
                     startNewSession(new Date(nowMs), client.getUser(), true);
                 }
             }

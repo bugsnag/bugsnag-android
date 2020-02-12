@@ -4,6 +4,7 @@
   <Whitelist>
     <ID>ComplexMethod:ImmutableConfig.kt$internal fun sanitiseConfiguration( appContext: Context, configuration: Configuration, connectivity: Connectivity ): ImmutableConfig</ID>
     <ID>ComplexMethod:ObjectJsonStreamer.kt$ObjectJsonStreamer$// Write complex/nested values to a JsonStreamer @Throws(IOException::class) fun objectToStream(obj: Any?, writer: JsonStream, shouldRedactKeys: Boolean = false)</ID>
+    <ID>EmptyFunctionBlock:SessionLifecycleCallback.kt$SessionLifecycleCallback${}</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
