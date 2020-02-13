@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
 import static com.bugsnag.android.ImmutableConfigKt.RELEASE_STAGE_PRODUCTION;
+import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
 
 import android.app.ActivityManager;
 import android.app.Application;
@@ -17,8 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.util.ArrayList;
@@ -163,8 +162,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             }
         });
 
-        ImmutableConfigKt.sanitiseConfiguration(appContext, configuration, connectivity);
-        immutableConfig = ImmutableConfigKt.convertToImmutableConfig(configuration);
+        immutableConfig = sanitiseConfiguration(appContext, configuration, connectivity);
 
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());

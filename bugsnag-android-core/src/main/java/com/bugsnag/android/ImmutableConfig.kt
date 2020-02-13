@@ -126,16 +126,13 @@ internal fun sanitiseConfiguration(
         configuration.delivery = DefaultDelivery(connectivity, logger)
     }
     val packageName = appContext.packageName
+    val packageManager = appContext.packageManager
+    val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
+    val appInfo = runCatching { packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA ) }.getOrNull()
 
     if (configuration.versionCode == null || configuration.versionCode == 0) {
-        try {
-            val packageManager = appContext.packageManager
-            val packageInfo = packageManager.getPackageInfo(packageName, 0)
-            @Suppress("DEPRECATION")
-            configuration.versionCode = packageInfo.versionCode
-        } catch (ignore: Exception) {
-            logger.w("Bugsnag is unable to read version code from manifest.")
-        }
+        @Suppress("DEPRECATION")
+        configuration.versionCode = packageInfo?.versionCode
     }
 
     // Set sensible defaults if project packages not already set
@@ -146,53 +143,19 @@ internal fun sanitiseConfiguration(
     // populate from manifest (in the case where the constructor was called directly by the
     // User or no UUID was supplied)
     if (configuration.buildUuid == null) {
-        var buildUuid: String? = null
-        try {
-            val packageManager = appContext.packageManager
-            val ai = packageManager.getApplicationInfo(
-                packageName, PackageManager.GET_META_DATA
-            )
-            buildUuid = ai.metaData.getString(ManifestConfigLoader.BUILD_UUID)
-        } catch (ignore: Exception) {
-            logger.w("Bugsnag is unable to read build UUID from manifest.")
-        }
-
-        if (buildUuid != null) {
-            configuration.buildUuid = buildUuid
-        }
+        configuration.buildUuid = appInfo?.metaData?.getString(ManifestConfigLoader.BUILD_UUID)
     }
 
     // populate releaseStage
     if (configuration.releaseStage == null) {
-        try {
-            val packageManager = appContext.packageManager
-            val ai = packageManager.getApplicationInfo(
-                packageName, PackageManager.GET_META_DATA
-            )
-            configuration.releaseStage = guessReleaseStage(configuration, ai)
-        } catch (ignore: Exception) {
-            logger.w("Bugsnag is unable to get applicationInfo.")
+        configuration.releaseStage = when {
+            appInfo != null && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> RELEASE_STAGE_DEVELOPMENT
+            else -> RELEASE_STAGE_PRODUCTION
         }
     }
-
     return convertToImmutableConfig(configuration)
 }
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"
 internal const val RELEASE_STAGE_PRODUCTION = "production"
 
-/**
- * Guess the release stage of the running Android app by checking the
- * android:debuggable flag from AndroidManifest.xml. If the release stage was set in
- * [Configuration], this value will be returned instead.
- */
-private fun guessReleaseStage(config: Configuration, appInfo: ApplicationInfo?): String {
-    val releaseStage = config.releaseStage
-    return when {
-        releaseStage != null -> releaseStage
-        appInfo != null && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> {
-            RELEASE_STAGE_DEVELOPMENT
-        }
-        else -> RELEASE_STAGE_PRODUCTION
-    }
-}
