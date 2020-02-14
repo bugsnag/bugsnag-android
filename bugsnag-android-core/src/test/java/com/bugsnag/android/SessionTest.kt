@@ -43,9 +43,9 @@ class SessionTest {
 
     @Test
     fun overrideStartedAt() {
-        assertEquals(0, session.startedAt!!.time)
+        assertEquals(0, session.startedAt.time)
         session.startedAt = Date(5)
-        assertEquals(5, session.startedAt!!.time)
+        assertEquals(5, session.startedAt.time)
     }
 
     @Test

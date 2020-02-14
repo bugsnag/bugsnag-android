@@ -125,12 +125,7 @@ class Event @JvmOverloads internal constructor(
             val copy = Session.copySession(session)
             writer.name("session").beginObject()
             writer.name("id").value(copy.id)
-
-            val startedAt = copy.startedAt
-            if (startedAt != null) {
-                writer.name("startedAt").value(DateUtils.toIso8601(startedAt))
-            }
-
+            writer.name("startedAt").value(DateUtils.toIso8601(copy.startedAt))
             writer.name("events").beginObject()
             writer.name("handled").value(copy.handledCount.toLong())
             writer.name("unhandled").value(copy.unhandledCount.toLong())

@@ -1,8 +1,7 @@
 package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
-
-import org.jetbrains.annotations.Nullable;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,21 +51,21 @@ public final class Session implements JsonStream.Streamable, UserAware {
         this.file = file;
     }
 
-    @Nullable
+    @NonNull
     public String getId() {
         return id;
     }
 
-    public void setId(@Nullable String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
-    @Nullable
+    @NonNull
     public Date getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(@Nullable Date startedAt) {
+    public void setStartedAt(@NonNull Date startedAt) {
         this.startedAt = startedAt;
     }
 
