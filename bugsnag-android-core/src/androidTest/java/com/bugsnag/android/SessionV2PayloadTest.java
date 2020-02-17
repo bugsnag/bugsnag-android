@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-public class SessionPayloadTest {
+public class SessionV2PayloadTest {
 
     private Session session;
 
@@ -69,9 +69,17 @@ public class SessionPayloadTest {
         Session payload = new Session(storedFiles.get(0));
         JSONObject rootNode = streamableToJson(payload);
         assertNotNull(rootNode);
+
+        assertNotNull(rootNode.getJSONObject("app"));
+        assertNotNull(rootNode.getJSONObject("device"));
+        assertNotNull(rootNode.getJSONObject("notifier"));
+
         JSONArray sessions = rootNode.getJSONArray("sessions");
         assertNotNull(sessions);
         assertEquals(1, sessions.length());
+
+        JSONObject session = sessions.getJSONObject(0);
+        assertEquals("test", session.getString("id"));
     }
 
     @Test

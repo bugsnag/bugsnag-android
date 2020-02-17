@@ -41,7 +41,7 @@ class SessionStore extends FileStore {
     @NonNull
     @Override
     String getFilename(Object object) {
-        return String.format(Locale.US, "%s%s%d.json",
+        return String.format(Locale.US, "%s%s%d_v2.json",
             storeDirectory, UUID.randomUUID().toString(), System.currentTimeMillis());
     }
 

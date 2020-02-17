@@ -1,9 +1,12 @@
 package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 import java.util.Date
 
 class SessionTest {
@@ -55,6 +58,13 @@ class SessionTest {
         assertEquals("123", session.getUser().id)
         assertEquals("joe@example.com", session.getUser().email)
         assertEquals("Joey", session.getUser().name)
+    }
+
+    @Test
+    fun isV2() {
+        assertFalse(session.isV2Payload)
+        assertFalse(Session(File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json")).isV2Payload)
+        assertTrue(Session(File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc_v2.json")).isV2Payload)
     }
 
     private fun validateSessionCopied(copy: Session) {

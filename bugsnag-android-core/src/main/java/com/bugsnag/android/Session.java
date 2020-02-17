@@ -128,23 +128,52 @@ public final class Session implements JsonStream.Streamable, UserAware {
         this.autoCaptured.set(autoCaptured);
     }
 
+    /**
+     * Determines whether a cached session payload is v1 (where only the session is stored)
+     * or v2 (where the whole payload including app/device is stored).
+     *
+     * @return whether the payload is v2
+     */
+    boolean isV2Payload() {
+        return file != null && file.getName().endsWith("_v2.json");
+    }
+
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         if (file != null) {
-            writer.value(file);
+            if (isV2Payload()) {
+                serializeV2Payload(writer);
+            } else {
+                serializeV1Payload(writer);
+            }
         } else {
             writer.beginObject();
             writer.name("notifier").value(Notifier.INSTANCE);
             writer.name("app").value(app);
             writer.name("device").value(device);
             writer.name("sessions").beginArray();
-            serializeSession(writer);
+            serializeSessionInfo(writer);
             writer.endArray();
             writer.endObject();
         }
     }
 
-    private void serializeSession(@NonNull JsonStream writer) throws IOException {
+    private void serializeV2Payload(@NonNull JsonStream writer) throws IOException {
+        writer.value(file);
+    }
+
+    private void serializeV1Payload(@NonNull JsonStream writer) throws IOException { // TODO test me
+        writer.beginObject();
+        writer.name("notifier").value(Notifier.INSTANCE);
+        writer.name("app").value(app);
+        writer.name("device").value(device);
+        writer.name("sessions").beginArray();
+        writer.value(file);
+        writer.endArray();
+        writer.endObject();
+    }
+
+    void serializeSessionInfo(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("id").value(id);
         writer.name("startedAt").value(DateUtils.toIso8601(startedAt));

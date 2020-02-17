@@ -6,6 +6,7 @@ import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -235,29 +236,39 @@ class SessionTracker extends BaseObservable {
                 List<File> storedFiles = sessionStore.findStoredFiles();
 
                 for (File storedFile : storedFiles) {
-                    Session payload = new Session(storedFile);
-                    DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
-
-                    switch (deliveryStatus) {
-                        case DELIVERED:
-                            sessionStore.deleteStoredFiles(storedFiles);
-                            break;
-                        case UNDELIVERED:
-                            sessionStore.cancelQueuedFiles(storedFiles);
-                            logger.w("Leaving session payload for future delivery");
-                            break;
-                        case FAILURE:
-                            // drop bad data
-                            logger.w("Deleting invalid session tracking payload");
-                            sessionStore.deleteStoredFiles(storedFiles);
-                            break;
-                        default:
-                            break;
-                    }
+                    flushStoredSession(storedFile);
                 }
             } finally {
                 flushingRequest.release(1);
             }
+        }
+    }
+
+    void flushStoredSession(File storedFile) {
+        Session payload = new Session(storedFile);
+
+        if (payload.isV2Payload()) { // collect data here
+            payload.setApp(client.getAppDataCollector().generateApp());
+            payload.setDevice(client.getDeviceDataCollector().generateDevice());
+        }
+
+        DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+
+        switch (deliveryStatus) {
+            case DELIVERED:
+                sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
+                break;
+            case UNDELIVERED:
+                sessionStore.cancelQueuedFiles(Collections.singletonList(storedFile));
+                logger.w("Leaving session payload for future delivery");
+                break;
+            case FAILURE:
+                // drop bad data
+                logger.w("Deleting invalid session tracking payload");
+                sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
+                break;
+            default:
+                break;
         }
     }
 
