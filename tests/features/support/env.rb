@@ -12,20 +12,20 @@ After do |scenario|
   $driver.reset
 end
 
-Before('@skip_android_9') do |scenario|
-  skip_this_scenario("Skipping scenario") if bs_device == 'ANDROID_9'
-end
-
-Before('@skip_below_android_9') do |scenario|
-  skip_this_scenario("Skipping scenario") if bs_device != 'ANDROID_9'
-end
-
-Before('@skip_below_android_8') do |scenario|
-  skip_this_scenario("Skipping scenario") if bs_device != 'ANDROID_8' && bs_device != 'ANDROID_9'
+Before('@skip_above_android_8') do |scenario|
+  skip_this_scenario("Skipping scenario") if %w['ANDROID_9 ANDROID_10'].include? bs_device
 end
 
 Before('@skip_above_android_7') do |scenario|
-  skip_this_scenario("Skipping scenario") if bs_device == 'ANDROID_8' || bs_device == 'ANDROID_9'
+  skip_this_scenario("Skipping scenario") if %w['ANDROID_8 ANDROID_8_1 ANDROID_9 ANDROID_10'].include? bs_device
+end
+
+Before('@skip_below_android_9') do |scenario|
+  skip_this_scenario("Skipping scenario") unless %w['ANDROID_9 ANDROID_10'].include? bs_device
+end
+
+Before('@skip_below_android_8') do |scenario|
+  skip_this_scenario("Skipping scenario") unless %w['ANDROID_8 ANDROID_8_1 ANDROID_9 ANDROID_10'].include? bs_device
 end
 
 AfterConfiguration do |config|

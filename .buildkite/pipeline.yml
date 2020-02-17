@@ -133,6 +133,21 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
+  - label: ':android: Android 10 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+        artifacts#v1.2.0:
+            download: "build/fixture.apk"
+        docker-compose#v2.6.0:
+            run: android-maze-runner
+    env:
+        DEVICE_TYPE: "ANDROID_10"
+        APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+        - exit_status: "*"
+
   - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
     timeout_in_minutes: 60
     plugins:
@@ -182,7 +197,7 @@ steps:
       docker-compose#v2.6.0:
         run: android-maze-runner
     env:
-      DEVICE_TYPE: "ANDROID_7"
+      DEVICE_TYPE: "ANDROID_7_1"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
@@ -195,7 +210,7 @@ steps:
       docker-compose#v2.6.0:
         run: android-maze-runner
     env:
-      DEVICE_TYPE: "ANDROID_8"
+      DEVICE_TYPE: "ANDROID_8_1"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
