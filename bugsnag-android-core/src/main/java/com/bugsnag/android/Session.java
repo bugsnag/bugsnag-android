@@ -80,6 +80,16 @@ public final class Session implements JsonStream.Streamable, UserAware {
         user = new User(id, email, name);
     }
 
+    @NonNull
+    public App getApp() {
+        return app;
+    }
+
+    @NonNull
+    public Device getDevice() {
+        return device;
+    }
+
     void setApp(App app) {
         this.app = app;
     }
