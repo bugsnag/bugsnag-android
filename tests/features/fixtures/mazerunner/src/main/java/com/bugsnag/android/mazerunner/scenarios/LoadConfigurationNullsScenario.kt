@@ -14,7 +14,7 @@ import com.bugsnag.android.OnErrorCallback
 import java.lang.RuntimeException
 
 
-internal class LoadConfigurationKotlinScenario(
+internal class LoadConfigurationNullsScenario(
     config: Configuration,
     context: Context
 ) : Scenario(config, context) {
@@ -25,21 +25,22 @@ internal class LoadConfigurationKotlinScenario(
     override fun run() {
         super.run()
         var testConfig = Configuration("12312312312312312312312312312312")
-        testConfig.appVersion  = "7.5.3"
-        testConfig.appType = "test"
+        // Setup
         testConfig.autoDetectErrors = true
         testConfig.autoTrackSessions = false
-        testConfig.buildUuid = "test-7.5.3"
-        testConfig.enabledReleaseStages = setOf("production", "development", "testing")
         testConfig.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
-        testConfig.projectPackages = setOf("com.company.package1", "com.company.package2")
-        testConfig.discardClasses = setOf("java.net.UnknownHostException", "com.example.Custom")
-        testConfig.launchCrashThresholdMs = 10000
-        testConfig.maxBreadcrumbs = 1
-        testConfig.persistUser = false
-        testConfig.redactedKeys = setOf("filter_me")
-        testConfig.releaseStage = "testing"
-        testConfig.versionCode = 753
+
+        // Nullable options
+        testConfig.appVersion  = null
+        testConfig.buildUuid = null
+        testConfig.enabledReleaseStages = null
+        testConfig.codeBundleId = null
+        testConfig.delivery = null
+        testConfig.context = null
+        testConfig.enabledBreadcrumbTypes = null
+        testConfig.releaseStage = null
+        testConfig.versionCode = null
+
         testConfig.addOnError(OnErrorCallback { event ->
             event.addMetadata("test", "foo", "bar")
             event.addMetadata("test", "filter_me", "foobar")
@@ -48,9 +49,6 @@ internal class LoadConfigurationKotlinScenario(
 
         Bugsnag.start(this.context, testConfig)
 
-        Bugsnag.leaveBreadcrumb("Test breadcrumb 1")
-        Bugsnag.leaveBreadcrumb("Test breadcrumb 2")
-        Bugsnag.leaveBreadcrumb("Test breadcrumb 3")
-        Bugsnag.notify(RuntimeException("LoadConfigurationKotlinScenario"))
+        Bugsnag.notify(RuntimeException("LoadConfigurationNullsScenario"))
     }
 }
