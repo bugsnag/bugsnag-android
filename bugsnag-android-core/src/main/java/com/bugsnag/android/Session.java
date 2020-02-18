@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Represents a contiguous session in an application.
+ */
 public final class Session implements JsonStream.Streamable, UserAware {
 
     private final File file;
@@ -51,40 +54,66 @@ public final class Session implements JsonStream.Streamable, UserAware {
         this.file = file;
     }
 
+    /**
+     * Retrieves the session ID. This must be a unique value across all of your sessions.
+     */
     @NonNull
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the session ID. This must be a unique value across all of your sessions.
+     */
     public void setId(@NonNull String id) {
         this.id = id;
     }
 
+    /**
+     * Gets the session start time.
+     */
     @NonNull
     public Date getStartedAt() {
         return startedAt;
     }
 
+    /**
+     * Sets the session start time.
+     */
     public void setStartedAt(@NonNull Date startedAt) {
         this.startedAt = startedAt;
     }
 
+    /**
+     * Returns the currently set User information.
+     */
     @NonNull
     @Override
     public User getUser() {
         return user;
     }
 
+    /**
+     * Sets the user associated with the session.
+     */
     @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         user = new User(id, email, name);
     }
 
+    /**
+     * Information set by the notifier about your app can be found in this field. These values
+     * can be accessed and amended if necessary.
+     */
     @NonNull
     public App getApp() {
         return app;
     }
 
+    /**
+     * Information set by the notifier about your device can be found in this field. These values
+     * can be accessed and amended if necessary.
+     */
     @NonNull
     public Device getDevice() {
         return device;
