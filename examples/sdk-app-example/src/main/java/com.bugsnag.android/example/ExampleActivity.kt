@@ -24,14 +24,10 @@ class ExampleActivity : AppCompatActivity() {
 
     private external fun notifyFromCXX()
 
-    private external fun performNativeBugsnagSetup()
-
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setupToolbarLogo()
-        performAdditionalBugsnagSetup()
-        performNativeBugsnagSetup()
 
         val view: View = findViewById(R.id.btn_fatal_crash)
         view.setOnClickListener(::crashUnhandled)
@@ -40,14 +36,6 @@ class ExampleActivity : AppCompatActivity() {
         nativeBtn.setOnClickListener { doCrash() }
 
         findViewById<View>(R.id.btn_anr).setOnClickListener { Thread.sleep(10000) }
-    }
-
-    private fun performAdditionalBugsnagSetup() {
-        // Set the global user information
-        Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
-
-        // Add some global metadata
-        Bugsnag.addMetadata("user", "age", 31)
     }
 
     /**

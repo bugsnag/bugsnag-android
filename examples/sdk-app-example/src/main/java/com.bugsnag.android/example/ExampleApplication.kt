@@ -7,11 +7,25 @@ import com.bugsnag.android.ErrorTypes
 
 class ExampleApplication : Application() {
 
+    companion object {
+        init {
+            System.loadLibrary("entrypoint")
+        }
+    }
+
+    private external fun performNativeBugsnagSetup()
+
     override fun onCreate() {
         super.onCreate()
+
         val config = Configuration.load(this)
         config.enabledErrorTypes.ndkCrashes = true
+        config.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
+        config.addMetadata("user", "age", 31)
         Bugsnag.start(this, config)
+
+        // Initialise native callbacks
+        performNativeBugsnagSetup()
     }
 
 }
