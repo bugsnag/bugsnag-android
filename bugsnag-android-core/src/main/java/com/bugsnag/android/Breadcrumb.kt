@@ -3,10 +3,31 @@ package com.bugsnag.android
 import java.io.IOException
 import java.util.Date
 
+/**
+ * In order to understand what happened in your application before each crash, it can be helpful
+ * to leave short log statements that we call breadcrumbs. Breadcrumbs are
+ * attached to a crash to help diagnose what events lead to the error.
+ */
 class Breadcrumb internal constructor(
+
+    /**
+     * The description of the breadcrumb
+     */
     val message: String,
+
+    /**
+     * The type of breadcrumb left - one of those enabled in [Configuration.enabledBreadcrumbTypes]
+     */
     val type: BreadcrumbType,
+
+    /**
+     * Diagnostic data relating to the breadcrumb
+     */
     val metadata: MutableMap<String, Any?>,
+
+    /**
+     * The timestamp that the breadcrumb was left
+     */
     val timestamp: Date = Date()
 ) : JsonStream.Streamable {
 

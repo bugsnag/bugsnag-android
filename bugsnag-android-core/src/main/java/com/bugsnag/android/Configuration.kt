@@ -266,7 +266,7 @@ class Configuration(
      *
      * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
-     * `false` from any callback to prevent delivery. "on error"
+     * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
      *
@@ -284,50 +284,107 @@ class Configuration(
      */
     override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)
 
+    /**
+     * Removes a previously added "on error" callback
+     * @param onError the callback to remove
+     */
     override fun removeOnError(onError: OnErrorCallback) = callbackState.removeOnError(onError)
 
     /**
-     * Adds an on breadcrumb callback
+     * Add an "on breadcrumb" callback, to execute code before every
+     * breadcrumb captured by Bugsnag.
      *
-     * @param onBreadcrumb the on breadcrumb callback
+     * You can use this to modify breadcrumbs before they are stored by Bugsnag.
+     * You can also return <code>false</code> from any callback to ignore a breadcrumb.
+     *
+     * For example:
+     *
+     * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
+     * public boolean run(Breadcrumb breadcrumb) {
+     * return false; // ignore the breadcrumb
+     * }
+     * })
+     *
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumbCallback
      */
     override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) =
         callbackState.addOnBreadcrumb(onBreadcrumb)
 
     /**
-     * Removes an on breadcrumb callback
-     *
-     * @param onBreadcrumb the on breadcrumb callback
+     * Removes a previously added "on breadcrumb" callback
+     * @param onBreadcrumb the callback to remove
      */
     override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) =
         callbackState.removeOnBreadcrumb(onBreadcrumb)
 
     /**
-     * Adds an on session callback
+     * Add an "on session" callback, to execute code before every
+     * session captured by Bugsnag.
      *
-     * @param onSession the on session callback
+     * You can use this to modify sessions before they are stored by Bugsnag.
+     * You can also return <code>false</code> from any callback to ignore a session.
+     *
+     * For example:
+     *
+     * Bugsnag.onSession(new OnSessionCallback() {
+     * public boolean run(Session session) {
+     * return false; // ignore the session
+     * }
+     * })
+     *
+     * @param onSession a callback to run before a session is captured
+     * @see OnSessionCallback
      */
     override fun addOnSession(onSession: OnSessionCallback) = callbackState.addOnSession(onSession)
 
     /**
-     * Removes an on session callback
-     *
-     * @param onSession the on session callback
+     * Removes a previously added "on session" callback
+     * @param onSession the callback to remove
      */
     override fun removeOnSession(onSession: OnSessionCallback) = callbackState.removeOnSession(onSession)
 
+    /**
+     * Adds a map of multiple metadata key-value pairs to the specified section.
+     */
     override fun addMetadata(section: String, value: Map<String, Any?>) =
         metadataState.addMetadata(section, value)
+
+    /**
+     * Adds the specified key and value in the specified section. The value can be of
+     * any primitive type or a collection such as a map, set or array.
+     */
     override fun addMetadata(section: String, key: String, value: Any?) =
         metadataState.addMetadata(section, key, value)
 
+    /**
+     * Removes all the data from the specified section.
+     */
     override fun clearMetadata(section: String) = metadataState.clearMetadata(section)
+
+    /**
+     * Removes data with the specified key from the specified section.
+     */
     override fun clearMetadata(section: String, key: String) = metadataState.clearMetadata(section, key)
 
+    /**
+     * Returns a map of data in the specified section.
+     */
     override fun getMetadata(section: String) = metadataState.getMetadata(section)
+
+    /**
+     * Returns the value of the specified key in the specified section.
+     */
     override fun getMetadata(section: String, key: String) = metadataState.getMetadata(section, key)
 
+    /**
+     * Returns the currently set User information.
+     */
     override fun getUser(): User = user
+
+    /**
+     * Sets the user associated with the event.
+     */
     override fun setUser(id: String?, email: String?, name: String?) {
         user = User(id, email, name)
     }
