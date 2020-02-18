@@ -72,36 +72,29 @@ public final class Bugsnag {
     }
 
     /**
-     * Gets the context to be sent to Bugsnag.
+     * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
+     * represent what was happening in your application at the time an error occurs.
      *
-     * @return Context
+     * In an android app the "context" is automatically set as the foreground Activity.
+     * If you would like to set this value manually, you should alter this property.
      */
     @Nullable public static String getContext() {
         return getClient().getContext();
     }
 
     /**
-     * Set the context sent to Bugsnag. By default we'll attempt to detect the
-     * name of the top-most activity at the time of a report, and use this
-     * as the context, but sometime this is not possible.
+     * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
+     * represent what was happening in your application at the time an error occurs.
      *
-     * @param context set what was happening at the time of a crash
+     * In an android app the "context" is automatically set as the foreground Activity.
+     * If you would like to set this value manually, you should alter this property.
      */
     public static void setContext(@Nullable final String context) {
         getClient().setContext(context);
     }
 
     /**
-     * Set details of the user currently using your application.
-     * You can search for this information in your Bugsnag dashboard.
-     * <p>
-     * For example:
-     * <p>
-     * Bugsnag.setUser("12345", "james@example.com", "James Smith");
-     *
-     * @param id    a unique identifier of the current user (defaults to a unique id)
-     * @param email the email address of the current user
-     * @param name  the name of the current user
+     * Sets the user associated with the event.
      */
     public static void setUser(@Nullable final String id,
                                @Nullable final String email,
@@ -109,6 +102,9 @@ public final class Bugsnag {
         getClient().setUser(id, email, name);
     }
 
+    /**
+     * Returns the currently set User information.
+     */
     @NonNull
     public static User getUser() {
         return getClient().getUser();
@@ -117,15 +113,15 @@ public final class Bugsnag {
     /**
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
-     * <p>
+     *
      * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     * <p>
+     *
      * For example:
-     * <p>
+     *
      * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
@@ -134,26 +130,29 @@ public final class Bugsnag {
      * })
      *
      * @param onError a callback to run before sending errors to Bugsnag
-     * <p/>
      * @see OnErrorCallback
      */
     public static void addOnError(@NonNull OnErrorCallback onError) {
         getClient().addOnError(onError);
     }
 
+    /**
+     * Removes a previously added "on error" callback
+     * @param onError the callback to remove
+     */
     public static void removeOnError(@NonNull OnErrorCallback onError) {
         getClient().removeOnError(onError);
     }
 
     /**
-     * Add a "before breadcrumb" callback, to execute code before every
+     * Add an "on breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
-     * <p>
+     *
      * You can use this to modify breadcrumbs before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a breadcrumb.
-     * <p>
+     *
      * For example:
-     * <p>
+     *
      * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
      * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
@@ -167,14 +166,40 @@ public final class Bugsnag {
         getClient().addOnBreadcrumb(onBreadcrumb);
     }
 
+    /**
+     * Removes a previously added "on breadcrumb" callback
+     * @param onBreadcrumb the callback to remove
+     */
     public static void removeOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
         getClient().removeOnBreadcrumb(onBreadcrumb);
     }
 
+    /**
+     * Add an "on session" callback, to execute code before every
+     * session captured by Bugsnag.
+     *
+     * You can use this to modify sessions before they are stored by Bugsnag.
+     * You can also return <code>false</code> from any callback to ignore a session.
+     *
+     * For example:
+     *
+     * Bugsnag.onSession(new OnSessionCallback() {
+     * public boolean run(Session session) {
+     * return false; // ignore the session
+     * }
+     * })
+     *
+     * @param onSession a callback to run before a session is captured
+     * @see OnSessionCallback
+     */
     public static void addOnSession(@NonNull OnSessionCallback onSession) {
         getClient().addOnSession(onSession);
     }
 
+    /**
+     * Removes a previously added "on session" callback
+     * @param onSession the callback to remove
+     */
     public static void removeOnSession(@NonNull OnSessionCallback onSession) {
         getClient().removeOnSession(onSession);
     }
@@ -200,28 +225,47 @@ public final class Bugsnag {
         getClient().notify(exception, onError);
     }
 
+    /**
+     * Adds a map of multiple metadata key-value pairs to the specified section.
+     */
     public static void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
         getClient().addMetadata(section, value);
     }
 
+    /**
+     * Adds the specified key and value in the specified section. The value can be of
+     * any primitive type or a collection such as a map, set or array.
+     */
     public static void addMetadata(@NonNull String section, @NonNull String key,
                                    @Nullable Object value) {
         getClient().addMetadata(section, key, value);
     }
 
+    /**
+     * Removes all the data from the specified section.
+     */
     public static void clearMetadata(@NonNull String section) {
         getClient().clearMetadata(section);
     }
 
+    /**
+     * Removes data with the specified key from the specified section.
+     */
     public static void clearMetadata(@NonNull String section, @NonNull String key) {
         getClient().clearMetadata(section, key);
     }
 
+    /**
+     * Returns a map of data in the specified section.
+     */
     @Nullable
     public static Map<String, Object> getMetadata(@NonNull String section) {
         return getClient().getMetadata(section);
     }
 
+    /**
+     * Returns the value of the specified key in the specified section.
+     */
     @Nullable
     public static Object getMetadata(@NonNull String section, @NonNull String key) {
         return getClient().getMetadata(section, key);
@@ -231,7 +275,7 @@ public final class Bugsnag {
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
      *
-     * @param message the log message to leave (max 140 chars)
+     * @param message the log message to leave
      */
     public static void leaveBreadcrumb(@NonNull String message) {
         getClient().leaveBreadcrumb(message);

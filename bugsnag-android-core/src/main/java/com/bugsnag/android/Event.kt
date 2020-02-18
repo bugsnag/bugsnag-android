@@ -177,25 +177,46 @@ class Event @JvmOverloads internal constructor(
     }
 
     /**
-     * Set user information associated with this Event
-     *
-     * @param id    the id of the user
-     * @param email the email address of the user
-     * @param name  the name of the user
+     * Sets the user associated with the event.
      */
     override fun setUser(id: String?, email: String?, name: String?) {
         _user = User(id, email, name)
     }
 
+    /**
+     * Returns the currently set User information.
+     */
     override fun getUser() = _user
 
+    /**
+     * Adds a map of multiple metadata key-value pairs to the specified section.
+     */
     override fun addMetadata(section: String, value: Map<String, Any?>) = metadata.addMetadata(section, value)
+
+    /**
+     * Adds the specified key and value in the specified section. The value can be of
+     * any primitive type or a collection such as a map, set or array.
+     */
     override fun addMetadata(section: String, key: String, value: Any?) =
         metadata.addMetadata(section, key, value)
 
+    /**
+     * Removes all the data from the specified section.
+     */
     override fun clearMetadata(section: String) = metadata.clearMetadata(section)
+
+    /**
+     * Removes data with the specified key from the specified section.
+     */
     override fun clearMetadata(section: String, key: String) = metadata.clearMetadata(section, key)
 
+    /**
+     * Returns a map of data in the specified section.
+     */
     override fun getMetadata(section: String) = metadata.getMetadata(section)
+
+    /**
+     * Returns the value of the specified key in the specified section.
+     */
     override fun getMetadata(section: String, key: String) = metadata.getMetadata(section, key)
 }
