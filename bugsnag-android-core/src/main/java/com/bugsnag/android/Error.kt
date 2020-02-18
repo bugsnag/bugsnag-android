@@ -1,15 +1,49 @@
 package com.bugsnag.android
 
+/**
+ * An [Error] represents information extracted from a [Throwable].
+ */
 class Error @JvmOverloads internal constructor(
+
+    /**
+     * The fully-qualified class name of the [Throwable]
+     */
     var errorClass: String,
+
+    /**
+     * The message string from the [Throwable]
+     */
     var errorMessage: String?,
+
+    /**
+     * A representation of the stacktrace
+     */
     var stacktrace: List<Stackframe>,
+
+    /**
+     * The type of error based on the originating platform (intended for internal use only)
+     */
     var type: Type = Type.ANDROID
 ): JsonStream.Streamable {
 
+    /**
+     * Represents the type of error captured
+     */
     enum class Type(internal val desc: String) {
+
+        /**
+         * An error captured from Android's JVM layer
+         */
         ANDROID("android"),
+
+        /**
+         * An error captured from JavaScript
+         */
         BROWSER_JS("browserjs"),
+
+        /**
+         * An error captured from Android's C layer
+         */
         C("c")
     }
 
