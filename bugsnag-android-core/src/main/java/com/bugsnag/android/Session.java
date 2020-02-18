@@ -26,6 +26,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
     private final AtomicInteger handledCount = new AtomicInteger();
     private final AtomicBoolean tracked = new AtomicBoolean(false);
     final AtomicBoolean isPaused = new AtomicBoolean(false);
+    private Notifier notifier = Notifier.INSTANCE;
 
     static Session copySession(Session session) {
         Session copy = new Session(session.id, session.startedAt,
@@ -119,6 +120,11 @@ public final class Session implements JsonStream.Streamable, UserAware {
         return device;
     }
 
+    @NonNull
+    public Notifier getNotifier() {
+        return notifier;
+    }
+
     void setApp(App app) {
         this.app = app;
     }
@@ -177,7 +183,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
             }
         } else {
             writer.beginObject();
-            writer.name("notifier").value(Notifier.INSTANCE);
+            writer.name("notifier").value(notifier);
             writer.name("app").value(app);
             writer.name("device").value(device);
             writer.name("sessions").beginArray();
@@ -193,7 +199,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
 
     private void serializeV1Payload(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-        writer.name("notifier").value(Notifier.INSTANCE);
+        writer.name("notifier").value(notifier);
         writer.name("app").value(app);
         writer.name("device").value(device);
         writer.name("sessions").beginArray();

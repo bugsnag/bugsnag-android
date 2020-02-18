@@ -14,6 +14,7 @@ class EventPayload : JsonStream.Streamable {
     var apiKey: String?
     private val eventFile: File?
     val event: Event?
+    val notifier: Notifier = Notifier
 
     internal constructor(apiKey: String?, eventFile: File) {
         this.apiKey = apiKey
@@ -32,7 +33,7 @@ class EventPayload : JsonStream.Streamable {
         writer.beginObject()
         writer.name("apiKey").value(apiKey)
         writer.name("payloadVersion").value("4.0")
-        writer.name("notifier").value(Notifier)
+        writer.name("notifier").value(notifier)
 
         writer.name("events").beginArray()
 

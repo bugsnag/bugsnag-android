@@ -5,7 +5,7 @@ import java.io.IOException
 /**
  * Information about this library, including name and version.
  */
-internal object Notifier : JsonStream.Streamable {
+object Notifier : JsonStream.Streamable {
 
     var name: String = "Android Bugsnag Notifier"
     var version: String = "4.21.0"
