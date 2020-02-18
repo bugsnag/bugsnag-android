@@ -5,7 +5,7 @@ import java.util.Date
 
 /**
  * In order to understand what happened in your application before each crash, it can be helpful
- * to leave short log statements that we call breadcrumbs. The last several breadcrumbs are
+ * to leave short log statements that we call breadcrumbs. Breadcrumbs are
  * attached to a crash to help diagnose what events lead to the error.
  */
 class Breadcrumb internal constructor(

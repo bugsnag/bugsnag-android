@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
  * <p>
  * For example:
  * <p>
- * Bugsnag.onBreadcrumb(new OnbreadcrumbCallback() {
+ * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
  * public boolean onBreadcrumb(Breadcrumb breadcrumb) {
  * return false; // ignore the breadcrumb
  * }
