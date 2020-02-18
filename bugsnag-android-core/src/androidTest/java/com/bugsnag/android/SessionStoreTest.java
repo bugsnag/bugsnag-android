@@ -66,5 +66,4 @@ public class SessionStoreTest {
         assertTrue(SESSION_COMPARATOR.compare(new File(first), new File(startup)) < 0);
         assertTrue(SESSION_COMPARATOR.compare(new File(second), new File(startup)) > 0);
     }
-
 }

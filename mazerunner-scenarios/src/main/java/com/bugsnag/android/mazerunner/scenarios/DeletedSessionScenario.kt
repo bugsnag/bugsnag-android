@@ -11,7 +11,7 @@ import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EventPayload
-import com.bugsnag.android.SessionPayload
+import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.flushAllSessions
 import java.io.File
@@ -32,7 +32,7 @@ internal class DeletedSessionScenario(config: Configuration,
                 val errDir = File(context.cacheDir, "bugsnag-sessions")
 
                 config.delivery = object: Delivery {
-                    override fun deliver(payload: SessionPayload,
+                    override fun deliver(payload: Session,
                                          deliveryParams: DeliveryParams): DeliveryStatus {
                         // delete files before they can be delivered
                         val files = errDir.listFiles()

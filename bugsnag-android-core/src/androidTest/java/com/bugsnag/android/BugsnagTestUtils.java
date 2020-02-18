@@ -84,6 +84,12 @@ final class BugsnagTestUtils {
         return new ConnectivityCompat(ApplicationProvider.getApplicationContext(), null);
     }
 
+    static Device generateDevice() {
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        return new Device(buildInfo, new String[]{}, null, null, null,
+                109230923452L);
+    }
+
     static DeviceWithState generateDeviceWithState() {
         DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
         return new DeviceWithState(buildInfo, new String[]{}, null, null, null,
@@ -107,7 +113,7 @@ final class BugsnagTestUtils {
 
             @NonNull
             @Override
-            public DeliveryStatus deliver(@NonNull SessionPayload payload,
+            public DeliveryStatus deliver(@NonNull Session payload,
                                           @NonNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }

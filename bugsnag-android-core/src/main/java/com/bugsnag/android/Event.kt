@@ -126,7 +126,6 @@ class Event @JvmOverloads internal constructor(
             writer.name("session").beginObject()
             writer.name("id").value(copy.id)
             writer.name("startedAt").value(DateUtils.toIso8601(copy.startedAt))
-
             writer.name("events").beginObject()
             writer.name("handled").value(copy.handledCount.toLong())
             writer.name("unhandled").value(copy.unhandledCount.toLong())

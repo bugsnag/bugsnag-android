@@ -11,7 +11,6 @@ import com.bugsnag.android.EventPayload;
 import com.bugsnag.android.ImmutableConfig;
 import com.bugsnag.android.ImmutableConfigKt;
 import com.bugsnag.android.NoopLogger;
-import com.bugsnag.android.SessionPayload;
 
 import androidx.annotation.NonNull;
 
@@ -64,7 +63,7 @@ public class JavaHooks {
 
             @NonNull
             @Override
-            public DeliveryStatus deliver(@NonNull SessionPayload payload,
+            public DeliveryStatus deliver(@NonNull Session payload,
                                           @NonNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }

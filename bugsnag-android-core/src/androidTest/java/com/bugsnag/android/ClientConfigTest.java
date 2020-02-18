@@ -56,7 +56,7 @@ public class ClientConfigTest {
 
             @NotNull
             @Override
-            public DeliveryStatus deliver(@NotNull SessionPayload payload,
+            public DeliveryStatus deliver(@NotNull Session payload,
                                           @NotNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }

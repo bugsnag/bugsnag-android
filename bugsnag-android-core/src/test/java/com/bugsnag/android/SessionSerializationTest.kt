@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.BugsnagTestUtils.generateApp
+import com.bugsnag.android.BugsnagTestUtils.generateDevice
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -13,10 +15,15 @@ internal class SessionSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = generateSerializationTestCases(
-            "session",
-            Session("123", Date(0), User("123", "j@example.com", "Jay"), 1, 0)
-        )
+        fun testCases(): Collection<Pair<Any, String>> {
+            val session = Session("123", Date(0), User(null, null, null), 1, 0)
+            Notifier.version = "9.9.9"
+            Notifier.name = "AndroidBugsnagNotifier"
+            Notifier.url = "https://bugsnag.com"
+            session.setApp(generateApp())
+            session.setDevice(generateDevice())
+            return generateSerializationTestCases("session", session)
+        }
     }
 
     @Parameter

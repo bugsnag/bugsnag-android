@@ -12,9 +12,7 @@ import java.nio.charset.Charset
 
 internal class DefaultDelivery(private val connectivity: Connectivity?, val logger: Logger) : Delivery {
 
-    override fun deliver(payload: SessionPayload,
-                         deliveryParams: DeliveryParams
-    ): DeliveryStatus {
+    override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
         val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
         logger.i("Session API request finished with status $status")
         return status

@@ -4,16 +4,12 @@ import static com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig;
 
 import androidx.annotation.NonNull;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 /**
  * Ensures that if a callback is added or removed during iteration, a
@@ -26,18 +22,12 @@ public class ConcurrentCallbackTest {
     App app;
 
     @Mock
-    Device device;
+    Session session;
 
     private final HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
     private final Event event = new Event(new RuntimeException(),
             generateImmutableConfig(), handledState);
-    private SessionPayload sessionPayload;
-
-    @Before
-    public void setUp() {
-        sessionPayload = new SessionPayload(null, new ArrayList<File>(), app, device);
-    }
 
     @Test
     public void testOnErrorConcurrentModification() {
@@ -77,14 +67,14 @@ public class ConcurrentCallbackTest {
         final Collection<OnSessionCallback> tasks = config.getOnSessionTasks();
         config.addOnSession(new OnSessionCallback() {
             @Override
-            public boolean onSession(@NonNull SessionPayload event) {
+            public boolean onSession(@NonNull Session event) {
                 tasks.add(new OnSessionCallbackSkeleton());
                 // modify the Set, when iterating to the next callback this should not crash
                 return true;
             }
         });
         config.addOnSession(new OnSessionCallbackSkeleton());
-        config.runOnSessionTasks(sessionPayload, NoopLogger.INSTANCE);
+        config.runOnSessionTasks(session, NoopLogger.INSTANCE);
     }
 
     static class OnErrorCallbackSkeleton implements OnErrorCallback {
@@ -103,7 +93,7 @@ public class ConcurrentCallbackTest {
 
     static class OnSessionCallbackSkeleton implements OnSessionCallback {
         @Override
-        public boolean onSession(@NonNull SessionPayload sessionPayload) {
+        public boolean onSession(@NonNull Session session) {
             return true;
         }
     }

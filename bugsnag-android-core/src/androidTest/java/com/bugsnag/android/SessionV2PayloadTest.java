@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.BugsnagTestUtils.generateClient;
+import static com.bugsnag.android.BugsnagTestUtils.generateApp;
+import static com.bugsnag.android.BugsnagTestUtils.generateDevice;
 import static com.bugsnag.android.BugsnagTestUtils.generateSession;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
@@ -23,17 +24,12 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-public class SessionPayloadTest {
+public class SessionV2PayloadTest {
 
-    private JSONObject rootNode;
     private Session session;
-    private AppDataCollector appDataCollector;
 
     private SessionStore sessionStore;
     private File storageDir;
-    private SessionPayload payload;
-    private DeviceDataCollector deviceDataCollector;
-    private Client client;
 
     /**
      * Configures a session tracking payload and session store, ensuring that 0 files are present
@@ -49,17 +45,8 @@ public class SessionPayloadTest {
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
         session = generateSession();
-        client = generateClient();
-        payload = generatePayloadFromSession(context, session);
-        rootNode = streamableToJson(payload);
-    }
-
-    private SessionPayload generatePayloadFromSession(Context context,
-                                                      Session session) {
-        appDataCollector = client.getAppDataCollector();
-        deviceDataCollector = client.deviceDataCollector;
-        return new SessionPayload(session, null, appDataCollector.generateApp(),
-                deviceDataCollector.generateDevice());
+        session.setApp(generateApp());
+        session.setDevice(generateDevice());
     }
 
     /**
@@ -70,38 +57,39 @@ public class SessionPayloadTest {
     @After
     public void tearDown() {
         FileUtils.clearFilesInDir(storageDir);
-        client.close();
     }
 
     /**
      * Serialises sessions from a file instead
      */
     @Test
-    public void testMultipleSessionFiles() throws Exception {
+    public void testSessionFromFile() throws Exception {
         sessionStore.write(session);
-        sessionStore.write(generateSession());
         List<File> storedFiles = sessionStore.findStoredFiles();
-
-        SessionPayload payload = new SessionPayload(null,
-            storedFiles, appDataCollector.generateApp(), deviceDataCollector.generateDevice());
-        rootNode = streamableToJson(payload);
-
+        Session payload = new Session(storedFiles.get(0));
+        JSONObject rootNode = streamableToJson(payload);
         assertNotNull(rootNode);
+
+        assertNotNull(rootNode.getJSONObject("app"));
+        assertNotNull(rootNode.getJSONObject("device"));
+        assertNotNull(rootNode.getJSONObject("notifier"));
+
         JSONArray sessions = rootNode.getJSONArray("sessions");
         assertNotNull(sessions);
-        assertEquals(2, sessions.length());
+        assertEquals(1, sessions.length());
+
+        JSONObject session = sessions.getJSONObject(0);
+        assertEquals("test", session.getString("id"));
     }
 
     @Test
     public void testAutoCapturedOverride() throws Exception {
         session = new Session("id", new Date(), null, false);
-        Context context = ApplicationProvider.getApplicationContext();
-        payload = generatePayloadFromSession(context, session);
         assertFalse(session.isAutoCaptured());
         session.setAutoCaptured(true);
         assertTrue(session.isAutoCaptured());
 
-        JSONObject rootNode = streamableToJson(payload);
+        JSONObject rootNode = streamableToJson(session);
         JSONObject sessionNode = rootNode.getJSONArray("sessions").getJSONObject(0);
         assertFalse(sessionNode.has("user"));
     }
