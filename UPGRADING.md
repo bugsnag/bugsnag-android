@@ -70,7 +70,7 @@ See the [full documentation](https://docs.bugsnag.com/platforms/android) for mor
 
 ## Client
 
-You should should use the static `Bugsnag` interface rather than instantiating `Client` directly. 
+You should use the static `Bugsnag` interface rather than instantiating `Client` directly.
 
 Many of the previous methods on `Client` should now be called on `Configuration` instead.
 For example, `maxBreadcrumbs` can now only be set on `Configuration` before `Bugsnag` is started:
