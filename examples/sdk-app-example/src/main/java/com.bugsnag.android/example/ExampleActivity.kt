@@ -24,11 +24,14 @@ class ExampleActivity : AppCompatActivity() {
 
     private external fun notifyFromCXX()
 
+    private external fun performNativeBugsnagSetup()
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setupToolbarLogo()
         performAdditionalBugsnagSetup()
+        performNativeBugsnagSetup()
 
         val view: View = findViewById(R.id.btn_fatal_crash)
         view.setOnClickListener(::crashUnhandled)
