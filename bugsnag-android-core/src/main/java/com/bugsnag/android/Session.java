@@ -162,7 +162,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
         writer.value(file);
     }
 
-    private void serializeV1Payload(@NonNull JsonStream writer) throws IOException { // TODO test me
+    private void serializeV1Payload(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("notifier").value(Notifier.INSTANCE);
         writer.name("app").value(app);

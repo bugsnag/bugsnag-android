@@ -4,12 +4,23 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 import java.util.Date
 
+@RunWith(MockitoJUnitRunner::class)
 class SessionTest {
+
+    @Mock
+    lateinit var device: DeviceWithState
+
+    @Mock
+    lateinit var app: AppWithState
 
     private val session = Session("123", Date(0), User(), true)
 
@@ -58,6 +69,20 @@ class SessionTest {
         assertEquals("123", session.getUser().id)
         assertEquals("joe@example.com", session.getUser().email)
         assertEquals("Joey", session.getUser().name)
+    }
+
+    @Test
+    fun overrideApp() {
+        assertNull(session.app)
+        session.app = app
+        assertEquals(app, session.app)
+    }
+
+    @Test
+    fun overrideDevice() {
+        assertNull(session.device)
+        session.device = device
+        assertEquals(device, session.device)
     }
 
     @Test

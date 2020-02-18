@@ -247,7 +247,7 @@ class SessionTracker extends BaseObservable {
     void flushStoredSession(File storedFile) {
         Session payload = new Session(storedFile);
 
-        if (payload.isV2Payload()) { // collect data here
+        if (!payload.isV2Payload()) { // collect data here
             payload.setApp(client.getAppDataCollector().generateApp());
             payload.setDevice(client.getDeviceDataCollector().generateDevice());
         }
