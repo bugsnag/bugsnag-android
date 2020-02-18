@@ -128,7 +128,7 @@ steps:
       docker-compose#v2.6.0:
         run: android-maze-runner
     env:
-      DEVICE_TYPE: "ANDROID_9"
+      DEVICE_TYPE: "ANDROID_9_0"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
@@ -141,7 +141,7 @@ steps:
         docker-compose#v2.6.0:
             run: android-maze-runner
     env:
-        DEVICE_TYPE: "ANDROID_10"
+        DEVICE_TYPE: "ANDROID_10_0"
         APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
@@ -171,7 +171,7 @@ steps:
       docker-compose#v2.6.0:
         run: android-maze-runner
     env:
-      DEVICE_TYPE: "ANDROID_5"
+      DEVICE_TYPE: "ANDROID_5_0"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
@@ -184,7 +184,7 @@ steps:
       docker-compose#v2.6.0:
         run: android-maze-runner
     env:
-      DEVICE_TYPE: "ANDROID_6"
+      DEVICE_TYPE: "ANDROID_6_0"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
