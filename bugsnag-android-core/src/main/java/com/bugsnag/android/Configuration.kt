@@ -132,7 +132,7 @@ class Configuration(
      *
      * By default, this value is set to 'android'.
      */
-    var appType: String = "android"
+    var appType: String? = "android"
 
     /**
      * By default, the notifier's log messages will be logged using [android.util.Log]
