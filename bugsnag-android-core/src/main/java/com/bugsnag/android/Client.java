@@ -600,7 +600,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         if (currentSession != null
                 && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
-            event.setSession(currentSession);
+            event.session = currentSession;
         }
 
         // Capture the state of the app and device and attach diagnostics to the event
