@@ -21,7 +21,7 @@ internal data class ImmutableConfig(
     val appVersion: String?,
     val versionCode: Int,
     val codeBundleId: String?,
-    val appType: String,
+    val appType: String?,
     val delivery: Delivery,
     val endpoints: EndpointConfiguration,
     val persistUser: Boolean,
