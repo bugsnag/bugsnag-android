@@ -227,6 +227,8 @@ steps:
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
+    soft_fail:
+        - exit_status: "*"
 
   - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
     timeout_in_minutes: 60
