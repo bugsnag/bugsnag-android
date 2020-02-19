@@ -202,7 +202,20 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 8 end-to-end tests'
+  - label: ':android: Android 8.0 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+        artifacts#v1.2.0:
+            download: "build/fixture.apk"
+        docker-compose#v2.6.0:
+            run: android-maze-runner
+    env:
+        DEVICE_TYPE: "ANDROID_8_0"
+        APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 8.1 end-to-end tests'
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
