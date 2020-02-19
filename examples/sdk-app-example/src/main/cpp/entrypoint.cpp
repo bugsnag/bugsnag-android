@@ -13,6 +13,18 @@ int crash_write_read_only() {
     return 5;
 }
 
+bool my_on_error_b(void *event) {
+    bugsnag_event_set_user(event, "999999", "ndk override", "j@ex.co");
+    bugsnag_event_add_metadata_string(event, "Native", "field", "value");
+    bugsnag_event_add_metadata_bool(event, "Native", "field", true);
+    return true;
+}
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_example_ExampleApplication_performNativeBugsnagSetup(JNIEnv *env, jobject instance) {
+    bugsnag_add_on_error(&my_on_error_b);
+}
+
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_example_ExampleActivity_doCrash(JNIEnv *env, jobject instance) {
     crash_write_read_only();
 }
