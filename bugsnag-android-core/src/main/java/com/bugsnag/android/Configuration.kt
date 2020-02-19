@@ -11,9 +11,14 @@ class Configuration(
     /**
      * Changes the API key used for events sent to Bugsnag.
      */
-    val apiKey: String
+    apiKey: String
 ) : CallbackAware, MetadataAware, UserAware {
 
+    var apiKey = apiKey
+        set(value) {
+            require(value.matches(API_KEY_REGEX.toRegex())) { "You must provide a valid Bugsnag API key" }
+            field = value
+        }
     private var user = User()
 
     @JvmField
