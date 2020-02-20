@@ -325,3 +325,15 @@ steps:
       NDK_VERSION: "r19"
     concurrency: 5
     concurrency_group: 'browserstack-app'
+
+  - label: ':android: NDK 21 SDK 10.0 Instrumentation tests'
+    timeout_in_minutes: 60
+    plugins:
+        - docker-compose#v2.6.0:
+              run: android-instrumentation-tests
+    env:
+        APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
+        INSTRUMENTATION_DEVICES: '["Google Pixel 4-10.0"]'
+        NDK_VERSION: "r21"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
