@@ -136,7 +136,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         // Set up breadcrumbs
-        callbackState = configuration.callbackState.copy();
+        callbackState = configuration.impl.callbackState.copy();
         int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
         breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
 
@@ -319,9 +319,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     private MetadataState copyMetadataState(@NonNull Configuration configuration) {
         // performs deep copy of metadata to preserve immutability of Configuration interface
-        Metadata orig = configuration.metadataState.getMetadata();
+        Metadata orig = configuration.impl.metadataState.getMetadata();
         Metadata copy = orig.copy();
-        return configuration.metadataState.copy(copy);
+        return configuration.impl.metadataState.copy(copy);
     }
 
     private void registerOrientationChangeListener() {

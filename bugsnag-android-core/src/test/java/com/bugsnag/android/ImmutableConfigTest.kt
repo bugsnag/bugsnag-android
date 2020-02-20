@@ -131,8 +131,9 @@ internal class ImmutableConfigTest {
             assertEquals("custom", seed.appType)
 
             // network config
-            assertEquals(seed.endpoints.notify, endpoints.notify)
-            assertEquals(seed.endpoints.sessions, endpoints.sessions)
+            val endpoints1 = seed.endpoints!!
+            assertEquals(endpoints1.notify, endpoints.notify)
+            assertEquals(endpoints1.sessions, endpoints.sessions)
 
             // behaviour
             assertEquals(7000, seed.launchCrashThresholdMs)

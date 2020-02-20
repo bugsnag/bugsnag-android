@@ -95,8 +95,8 @@ internal class ManifestConfigLoader {
 
     private fun loadEndpointsConfig(config: Configuration, data: Bundle) {
         if (data.containsKey(ENDPOINT_NOTIFY)) {
-            val endpoint = data.getString(ENDPOINT_NOTIFY, config.endpoints.notify)
-            val sessionEndpoint = data.getString(ENDPOINT_SESSIONS, config.endpoints.sessions)
+            val endpoint = data.getString(ENDPOINT_NOTIFY, config.endpoints?.notify)
+            val sessionEndpoint = data.getString(ENDPOINT_SESSIONS, config.endpoints?.sessions)
             config.endpoints = EndpointConfiguration(endpoint, sessionEndpoint)
         }
     }
@@ -112,16 +112,16 @@ internal class ManifestConfigLoader {
                 versionCode = data.getInt(VERSION_CODE)
             }
             if (data.containsKey(ENABLED_RELEASE_STAGES)) {
-                enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, emptySet())
+                enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             }
             discardClasses = getStrArray(data, DISCARD_CLASSES, discardClasses)
-            projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)
+            projectPackages = getStrArray(data, PROJECT_PACKAGES, emptySet())!!
             redactedKeys = getStrArray(data, REDACTED_KEYS, redactedKeys)
         }
     }
 
     private fun getStrArray(data: Bundle, key: String,
-                            default: Set<String>): Set<String> {
+                            default: Set<String>?): Set<String>? {
         val delimitedStr = data.getString(key)
 
         return when (val ary = delimitedStr?.split(",")) {

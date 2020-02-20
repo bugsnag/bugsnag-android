@@ -116,11 +116,4 @@ class CallbackStateTest {
         assertEquals(0, count)
     }
 
-    private class InterceptingLogger: Logger {
-        var msg: String? = null
-        override fun w(msg: String, throwable: Throwable) {
-            this.msg = msg
-        }
-    }
-
 }

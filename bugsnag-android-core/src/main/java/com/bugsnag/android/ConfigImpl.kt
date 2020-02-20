@@ -7,14 +7,15 @@ import java.util.Collections
  * User-specified configuration storage object, contains information
  * specified at the client level, api-key and endpoint configuration.
  */
-class Configuration(
+class ConfigImpl(
     /**
      * Changes the API key used for events sent to Bugsnag.
      */
     apiKey: String
 ) : CallbackAware, MetadataAware, UserAware {
 
-    var apiKey = apiKey
+
+    var apiKey: String = apiKey
         set(value) {
             require(value.matches(API_KEY_REGEX.toRegex())) { "You must provide a valid Bugsnag API key" }
             field = value
