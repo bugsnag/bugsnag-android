@@ -1,22 +1,11 @@
 package com.bugsnag.android;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public class ConfigurationTest {
