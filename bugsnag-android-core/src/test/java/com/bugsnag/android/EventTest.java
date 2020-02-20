@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -113,14 +112,22 @@ public class EventTest {
 
     @Test
     public void testIsUnhandled() {
-        Event logEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_LOG));
-        Event anrEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_ANR));
-        Event handledEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION));
-        Event rejectionEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_PROMISE_REJECTION));
-        Event strictEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_STRICT_MODE, Severity.WARNING, "Hello"));
-        Event unhandledEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION));
-        Event userEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_USER_SPECIFIED));
-        Event callbackEvent = new Event(testException, config, HandledState.newInstance(HandledState.REASON_CALLBACK_SPECIFIED));
+        final Event logEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_LOG));
+        final Event anrEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_ANR));
+        final Event handledEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION));
+        final Event rejectionEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_PROMISE_REJECTION));
+        final Event strictEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_STRICT_MODE, Severity.WARNING, "Hello"));
+        final Event unhandledEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION));
+        final Event userEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_USER_SPECIFIED));
+        final Event callbackEvent = new Event(testException, config,
+            HandledState.newInstance(HandledState.REASON_CALLBACK_SPECIFIED));
 
         assertFalse(logEvent.isUnhandled());
         assertTrue(anrEvent.isUnhandled());
