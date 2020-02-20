@@ -3,7 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import java.util.Collections
 
-class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAware {
+internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAware {
 
     var apiKey: String = apiKey
         set(value) {
