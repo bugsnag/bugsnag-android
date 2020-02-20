@@ -26,7 +26,8 @@ class Event @JvmOverloads internal constructor(
     internal val metadata: Metadata = data.copy()
     private val discardClasses: Set<String> = config.discardClasses.toSet()
 
-    var session: Session? = null
+    @JvmField
+    internal var session: Session? = null
 
     /**
      * The severity of the event. By default, unhandled exceptions will be [Severity.ERROR]
