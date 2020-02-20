@@ -39,8 +39,8 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         return ConfigImpl.load(context, apiKey);
     }
 
-    private void warn(String property) {
-        getLogger().w("Invalid null value supplied to config." + property + ", ignoring");
+    private void error(String property) {
+        getLogger().e("Invalid null value supplied to config." + property + ", ignoring");
     }
 
     /**
@@ -58,7 +58,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (apiKey != null) {
             impl.setApiKey(apiKey);
         } else {
-            warn("apiKey");
+            error("apiKey");
         }
     }
 
@@ -175,7 +175,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (sendThreads != null) {
             impl.setSendThreads(sendThreads);
         } else {
-            warn("sendThreads");
+            error("sendThreads");
         }
     }
 
@@ -260,7 +260,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (enabledErrorTypes != null) {
             impl.setEnabledErrorTypes(enabledErrorTypes);
         } else {
-            warn("enabledErrorTypes");
+            error("enabledErrorTypes");
         }
     }
 
@@ -404,7 +404,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (delivery != null) {
             impl.setDelivery(delivery);
         } else {
-            warn("delivery");
+            error("delivery");
         }
     }
 
@@ -497,7 +497,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      */
     public void setRedactedKeys(@Nullable Set<String> redactedKeys) {
         if (redactedKeys != null) {
-            impl.setRedactedKeys(redactedKeys);
+            impl.setRedactedKeys(SetUtils.sanitiseSet(redactedKeys));
         } else {
             impl.setRedactedKeys(Collections.<String>emptySet());
         }
@@ -520,7 +520,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      */
     public void setDiscardClasses(@Nullable Set<String> discardClasses) {
         if (discardClasses != null) {
-            impl.setDiscardClasses(discardClasses);
+            impl.setDiscardClasses(SetUtils.sanitiseSet(discardClasses));
         } else {
             impl.setDiscardClasses(Collections.<String>emptySet());
         }
@@ -540,7 +540,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * If you would like to change which release stages notify Bugsnag you can set this property.
      */
     public void setEnabledReleaseStages(@Nullable Set<String> enabledReleaseStages) {
-        impl.setEnabledReleaseStages(enabledReleaseStages);
+        impl.setEnabledReleaseStages(SetUtils.sanitiseSet(enabledReleaseStages));
     }
 
     /**
@@ -581,7 +581,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * - User interaction: left when the user performs certain system operations.
      */
     public void setEnabledBreadcrumbTypes(@Nullable Set<BreadcrumbType> enabledBreadcrumbTypes) {
-        impl.setEnabledBreadcrumbTypes(enabledBreadcrumbTypes);
+        impl.setEnabledBreadcrumbTypes(SetUtils.sanitiseSet(enabledBreadcrumbTypes));
     }
 
     /**
@@ -607,9 +607,9 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      */
     public void setProjectPackages(@NonNull Set<String> projectPackages) {
         if (projectPackages != null) {
-            impl.setProjectPackages(projectPackages);
+            impl.setProjectPackages(SetUtils.sanitiseSet(projectPackages));
         } else {
-            warn("projectPackages");
+            error("projectPackages");
         }
     }
 
@@ -640,7 +640,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onError != null) {
             impl.addOnError(onError);
         } else {
-            warn("addOnError");
+            error("addOnError");
         }
     }
 
@@ -653,7 +653,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onError != null) {
             impl.removeOnError(onError);
         } else {
-            warn("removeOnError");
+            error("removeOnError");
         }
     }
 
@@ -680,7 +680,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onBreadcrumb != null) {
             impl.addOnBreadcrumb(onBreadcrumb);
         } else {
-            warn("addOnBreadcrumb");
+            error("addOnBreadcrumb");
         }
     }
 
@@ -693,7 +693,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onBreadcrumb != null) {
             impl.removeOnBreadcrumb(onBreadcrumb);
         } else {
-            warn("removeOnBreadcrumb");
+            error("removeOnBreadcrumb");
         }
     }
 
@@ -720,7 +720,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onSession != null) {
             impl.addOnSession(onSession);
         } else {
-            warn("addOnSession");
+            error("addOnSession");
         }
     }
 
@@ -733,7 +733,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onSession != null) {
             impl.removeOnSession(onSession);
         } else {
-            warn("removeOnSession");
+            error("removeOnSession");
         }
     }
 
@@ -745,7 +745,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && value != null) {
             impl.addMetadata(section, value);
         } else {
-            warn("addMetadata");
+            error("addMetadata");
         }
     }
 
@@ -758,7 +758,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && key != null) {
             impl.addMetadata(section, key, value);
         } else {
-            warn("addMetadata");
+            error("addMetadata");
         }
     }
 
@@ -770,7 +770,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null) {
             impl.clearMetadata(section);
         } else {
-            warn("clearMetadata");
+            error("clearMetadata");
         }
     }
 
@@ -782,7 +782,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && key != null) {
             impl.clearMetadata(section, key);
         } else {
-            warn("clearMetadata");
+            error("clearMetadata");
         }
     }
 
@@ -795,7 +795,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null) {
             return impl.getMetadata(section);
         } else {
-            warn("getMetadata");
+            error("getMetadata");
             return null;
         }
     }
@@ -809,7 +809,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && key != null) {
             return impl.getMetadata(section, key);
         } else {
-            warn("getMetadata");
+            error("getMetadata");
             return null;
         }
     }
