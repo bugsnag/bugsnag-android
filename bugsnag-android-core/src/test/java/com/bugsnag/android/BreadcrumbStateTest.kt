@@ -121,8 +121,50 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testOnBreadcrumbCallback() {
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { false })
-        breadcrumbState.add(Breadcrumb("Whoops"))
+        val breadcrumb = Breadcrumb("Whoops")
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
+            true
+        })
+        breadcrumbState.add(breadcrumb)
+        assertEquals(1, breadcrumbState.store.size)
+        assertEquals(breadcrumb, breadcrumbState.store.peek())
+    }
+
+    /**
+     * Verifies that returning false in one callback will halt subsequent callbacks and not apply breadcrumb
+     */
+     @Test
+     fun testOnBreadcrumbCallbackFalse() {
+        val breadcrumb = Breadcrumb("Whoops")
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
+            givenBreadcrumb.metadata["callback"] = "first"
+            false
+        })
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
+            givenBreadcrumb.metadata["callback"] = "second"
+            true
+        })
+        breadcrumbState.add(breadcrumb)
         assertTrue(breadcrumbState.store.isEmpty())
+        assertEquals("first", breadcrumb.metadata["callback"])
+     }
+
+    /**
+     * Verifies that an exception within an OnBreadcrumbCallback allows subsequent callbacks to run
+     */
+    @Test
+    fun testOnBreadcrumbCallbackException() {
+        val breadcrumb = Breadcrumb("Whoops")
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
+            throw Exception("Oh no")
+        })
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
+            givenBreadcrumb.metadata["callback"] = "second"
+            true
+        })
+        breadcrumbState.add(breadcrumb)
+        assertEquals(1, breadcrumbState.store.size)
+        assertEquals(breadcrumb, breadcrumbState.store.peek())
+        assertEquals("second", breadcrumb.metadata["callback"])
     }
 }

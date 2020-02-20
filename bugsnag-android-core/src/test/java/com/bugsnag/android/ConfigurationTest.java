@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,7 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class ConfigurationTest {
@@ -179,5 +185,46 @@ public class ConfigurationTest {
         assertEquals(0, (int) configuration.getVersionCode()); // populated in client ctor if null
         configuration.setVersionCode(577);
         assertEquals(577, (int) configuration.getVersionCode());
+    }
+
+    @Test
+    public void testAddMetadata() {
+        Configuration configuration = generateConfiguration();
+        configuration.addMetadata("keyVal", "foo", "bar");
+        HashMap<String, Object> testMap = new HashMap<>();
+        testMap.put("key1", "val1");
+        testMap.put("key2", "val2");
+        configuration.addMetadata("mapVal", testMap);
+
+        assertEquals("bar", configuration.getMetadata("keyVal", "foo"));
+        assertEquals("val1", configuration.getMetadata("mapVal", "key1"));
+        assertEquals("val2", configuration.getMetadata("mapVal", "key2"));
+    }
+
+    @Test
+    public void testClearMetadata() {
+        Configuration configuration = generateConfiguration();
+        configuration.addMetadata("keyVal", "foo", "bar");
+        HashMap<String, Object> testMap = new HashMap<>();
+        testMap.put("key1", "val1");
+        testMap.put("key2", "val2");
+        configuration.addMetadata("mapVal", testMap);
+
+        configuration.clearMetadata("keyVal");
+        configuration.clearMetadata("mapVal", "key2");
+
+        assertNull(configuration.getMetadata("keyVal", "foo"));
+        assertEquals("val1", configuration.getMetadata("mapVal", "key1"));
+        assertNull(configuration.getMetadata("mapVal", "key2"));
+    }
+
+    @Test
+    public void testSetUser() {
+        Configuration configuration = generateConfiguration();
+        configuration.setUser("24601", "m@rp.fr", "MM");
+        assertEquals(User.class, configuration.getUser().getClass());
+        assertEquals("24601", configuration.getUser().getId());
+        assertEquals("m@rp.fr", configuration.getUser().getEmail());
+        assertEquals("MM", configuration.getUser().getName());
     }
 }

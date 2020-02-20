@@ -180,9 +180,25 @@ public class ClientTest {
     public void testClientClearTab() {
         client = generateClient();
         client.addMetadata("drink", "cola", "cherry");
+        client.addMetadata("food", "sauce", "cream");
+        client.addMetadata("food", "berries", "raspberry");
 
         client.clearMetadata("drink");
+        client.clearMetadata("food", "sauce");
         assertNull(client.getMetadata("drink"));
+        assertEquals("raspberry", client.getMetadata("food", "berries"));
+        assertNull(client.getMetadata("food", "sauce"));
+    }
+
+    @Test
+    public void testClientClearValue() {
+        client = generateClient();
+        client.addMetadata("drink", "cola", "cherry");
+        client.addMetadata("drink", "soda", "cream");
+
+        client.clearMetadata("drink", "cola");
+        assertNull(client.getMetadata("drink", "cola"));
+        assertEquals("cream", client.getMetadata("drink", "soda"));
     }
 
     @Test
