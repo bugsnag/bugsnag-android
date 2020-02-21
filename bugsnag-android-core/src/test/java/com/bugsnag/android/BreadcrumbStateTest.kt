@@ -135,6 +135,9 @@ class BreadcrumbStateTest {
      */
      @Test
      fun testOnBreadcrumbCallbackFalse() {
+        val requiredBreadcrumb = Breadcrumb("Hello there")
+        breadcrumbState.add(requiredBreadcrumb)
+
         val breadcrumb = Breadcrumb("Whoops")
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
             givenBreadcrumb.metadata["callback"] = "first"
@@ -145,7 +148,8 @@ class BreadcrumbStateTest {
             true
         })
         breadcrumbState.add(breadcrumb)
-        assertTrue(breadcrumbState.store.isEmpty())
+        assertEquals(1, breadcrumbState.store.size)
+        assertEquals(requiredBreadcrumb, breadcrumbState.store.first())
         assertEquals("first", breadcrumb.metadata["callback"])
      }
 
