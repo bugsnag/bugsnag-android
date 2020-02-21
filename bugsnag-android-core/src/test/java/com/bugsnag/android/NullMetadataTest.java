@@ -45,8 +45,8 @@ public class NullMetadataTest {
         List<String> projectPackages = Collections.emptyList();
         Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages,
                 NoopLogger.INSTANCE);
-        Error err = new Error("RuntimeException", "Something broke",
-                stacktrace.getTrace());
+        Error err = new Error(new ErrorImpl("RuntimeException", "Something broke",
+                stacktrace.getTrace()), NoopLogger.INSTANCE);
         event.getErrors().clear();
         event.getErrors().add(err);
         validateDefaultMetadata(event);
