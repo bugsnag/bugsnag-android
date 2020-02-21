@@ -168,7 +168,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * to only do so for unhandled errors.
      */
     @NonNull
-    public Thread.ThreadSendPolicy getSendThreads() {
+    public ThreadSendPolicy getSendThreads() {
         return impl.getSendThreads();
     }
 
@@ -180,7 +180,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * Thread.ThreadSendPolicy.NEVER to disable or Thread.ThreadSendPolicy.UNHANDLED_ONLY
      * to only do so for unhandled errors.
      */
-    public void setSendThreads(@NonNull Thread.ThreadSendPolicy sendThreads) {
+    public void setSendThreads(@NonNull ThreadSendPolicy sendThreads) {
         if (sendThreads != null) {
             impl.setSendThreads(sendThreads);
         } else {

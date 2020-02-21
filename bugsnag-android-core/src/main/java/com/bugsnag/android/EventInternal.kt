@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.Thread.ThreadSendPolicy.*
+import com.bugsnag.android.ThreadSendPolicy.*
 import java.io.IOException
 
 internal class EventInternal @JvmOverloads internal constructor(

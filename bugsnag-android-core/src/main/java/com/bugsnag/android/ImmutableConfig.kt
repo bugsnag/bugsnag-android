@@ -11,7 +11,7 @@ internal data class ImmutableConfig(
     val enabledErrorTypes: ErrorTypes,
     val autoDetectErrors: Boolean,
     val autoTrackSessions: Boolean,
-    val sendThreads: Thread.ThreadSendPolicy,
+    val sendThreads: ThreadSendPolicy,
     val discardClasses: Collection<String>,
     val enabledReleaseStages: Collection<String>?,
     val projectPackages: Collection<String>,

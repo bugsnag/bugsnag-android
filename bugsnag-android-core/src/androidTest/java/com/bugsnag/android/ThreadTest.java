@@ -29,7 +29,8 @@ public class ThreadTest {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList(),
                 NoopLogger.INSTANCE);
-        Thread thread = new Thread(24, "main-one", Thread.Type.ANDROID, true, trace);
+        Thread thread = new Thread(24, "main-one", ThreadType.ANDROID, true, trace,
+                NoopLogger.INSTANCE);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));
@@ -60,7 +61,8 @@ public class ThreadTest {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList(),
                 NoopLogger.INSTANCE);
-        Thread thread = new Thread(24, "main-one", Thread.Type.ANDROID,false, trace);
+        Thread thread = new Thread(24, "main-one", ThreadType.ANDROID,false, trace,
+                NoopLogger.INSTANCE);
         JSONObject result = streamableToJson(thread);
         assertEquals(24, result.getLong("id"));
         assertEquals("main-one", result.getString("name"));

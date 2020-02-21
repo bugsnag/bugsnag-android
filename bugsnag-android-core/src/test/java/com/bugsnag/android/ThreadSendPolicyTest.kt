@@ -1,9 +1,8 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.Thread.ThreadSendPolicy
-import com.bugsnag.android.Thread.ThreadSendPolicy.ALWAYS
-import com.bugsnag.android.Thread.ThreadSendPolicy.NEVER
-import com.bugsnag.android.Thread.ThreadSendPolicy.UNHANDLED_ONLY
+import com.bugsnag.android.ThreadSendPolicy.ALWAYS
+import com.bugsnag.android.ThreadSendPolicy.NEVER
+import com.bugsnag.android.ThreadSendPolicy.UNHANDLED_ONLY
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -52,7 +52,7 @@ internal class ImmutableConfigTest {
             assertTrue(enabledErrorTypes.unhandledExceptions)
             assertTrue(enabledErrorTypes.anrs)
             assertFalse(enabledErrorTypes.ndkCrashes)
-            assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
+            assertEquals(ThreadSendPolicy.ALWAYS, sendThreads)
 
             // release stages
             assertTrue(discardClasses.isEmpty())
@@ -85,7 +85,7 @@ internal class ImmutableConfigTest {
         seed.enabledErrorTypes.unhandledExceptions = false
         seed.enabledErrorTypes.anrs = false
         seed.enabledErrorTypes.ndkCrashes = true
-        seed.sendThreads = Thread.ThreadSendPolicy.UNHANDLED_ONLY
+        seed.sendThreads = ThreadSendPolicy.UNHANDLED_ONLY
 
         seed.discardClasses = setOf("foo")
         seed.enabledReleaseStages = setOf("bar")
@@ -114,7 +114,7 @@ internal class ImmutableConfigTest {
             assertFalse(enabledErrorTypes.unhandledExceptions)
             assertFalse(enabledErrorTypes.anrs)
             assertTrue(enabledErrorTypes.ndkCrashes)
-            assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
+            assertEquals(ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages
             assertEquals(setOf("foo"), discardClasses)
