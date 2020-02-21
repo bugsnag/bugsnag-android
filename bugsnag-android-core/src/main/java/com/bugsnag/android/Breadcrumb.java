@@ -31,6 +31,9 @@ public class Breadcrumb implements JsonStream.Streamable {
         logger.e("Invalid null value supplied to breadcrumb." + property + ", ignoring");
     }
 
+    /**
+     * Sets the description of the breadcrumb
+     */
     public void setMessage(@NonNull String message) {
         if (message != null) {
             impl.setMessage(message);
@@ -39,11 +42,18 @@ public class Breadcrumb implements JsonStream.Streamable {
         }
     }
 
+    /**
+     * Gets the description of the breadcrumb
+     */
     @NonNull
     public String getMessage() {
         return impl.getMessage();
     }
 
+    /**
+     * Sets the type of breadcrumb left - one of those enabled in
+     * {@link Configuration#getEnabledBreadcrumbTypes()}
+     */
     public void setType(@NonNull BreadcrumbType type) {
         if (type != null) {
             impl.setType(type);
@@ -52,20 +62,33 @@ public class Breadcrumb implements JsonStream.Streamable {
         }
     }
 
+    /**
+     * Gets the type of breadcrumb left - one of those enabled in
+     * {@link Configuration#getEnabledBreadcrumbTypes()}
+     */
     @NonNull
     public BreadcrumbType getType() {
         return impl.getType();
     }
 
+    /**
+     * Sets diagnostic data relating to the breadcrumb
+     */
     public void setMetadata(@NonNull Map<String, Object> metadata) {
         impl.setMetadata(metadata);
     }
 
+    /**
+     * Gets diagnostic data relating to the breadcrumb
+     */
     @NonNull
     public Map<String, Object> getMetadata() {
         return impl.getMetadata();
     }
 
+    /**
+     * The timestamp that the breadcrumb was left
+     */
     @NonNull
     public Date getTimestamp() {
         return impl.getTimestamp();
