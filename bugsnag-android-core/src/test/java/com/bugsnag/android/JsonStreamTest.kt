@@ -41,7 +41,7 @@ class JsonStreamTest {
     fun testSaneValues() {
         val writer = StringWriter()
         val stream = JsonStream(writer)
-        val breadcrumb = Breadcrumb("whoops", BreadcrumbType.LOG, mutableMapOf(), Date(0))
+        val breadcrumb = Breadcrumb("whoops", BreadcrumbType.LOG, mutableMapOf(), Date(0), NoopLogger)
 
         stream.beginObject()
         stream.name("bool").value(true)
