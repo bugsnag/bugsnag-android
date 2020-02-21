@@ -17,6 +17,7 @@ public class ThreadFacadeTest {
 
     private Thread thread;
     private InterceptingLogger logger;
+    private Stacktrace stacktrace;
 
     /**
      * Constructs a Thread wrapper object
@@ -24,8 +25,8 @@ public class ThreadFacadeTest {
     @Before
     public void setUp() {
         logger = new InterceptingLogger();
-        List<Map<String, Object>> frames = Collections.<Map<String, Object>>emptyList();
-        Stacktrace stacktrace = new Stacktrace(frames, logger);
+        List<Map<String, Object>> frames = Collections.emptyList();
+        stacktrace = new Stacktrace(frames, logger);
         thread = new Thread(1, "thread-2", ThreadType.ANDROID, false, stacktrace, logger);
     }
 
@@ -71,5 +72,22 @@ public class ThreadFacadeTest {
         assertFalse(thread.getErrorReportingThread());
         thread.setErrorReportingThread(true);
         assertTrue(thread.getErrorReportingThread());
+    }
+
+    @Test
+    public void stacktraceValid() {
+        assertEquals(stacktrace.getTrace(), thread.getStacktrace());
+        List<Map<String, Object>> frames = Collections.emptyList();
+        Stacktrace other = new Stacktrace(frames, logger);
+        thread.setStacktrace(other.getTrace());
+        assertEquals(other.getTrace(), thread.getStacktrace());
+    }
+
+    @Test
+    public void stacktraceInvalid() {
+        assertEquals(stacktrace.getTrace(), thread.getStacktrace());
+        thread.setStacktrace(null);
+        assertEquals(stacktrace.getTrace(), thread.getStacktrace());
+        assertNotNull(logger.getMsg());
     }
 }

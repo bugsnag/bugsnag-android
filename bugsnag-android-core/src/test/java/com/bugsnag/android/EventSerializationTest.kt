@@ -39,7 +39,7 @@ internal class EventSerializationTest {
                 createEvent {
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
                     it.threads.clear()
-                    it.threads.add(Thread(5, "main", ThreadType.ANDROID, true, stacktrace))
+                    it.threads.add(Thread(5, "main", ThreadType.ANDROID, true, stacktrace, NoopLogger))
                 },
 
                 // threads included

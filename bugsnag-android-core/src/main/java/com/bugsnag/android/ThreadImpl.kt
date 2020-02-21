@@ -10,9 +10,6 @@ class ThreadImpl internal constructor(
     stacktrace: Stacktrace
 ) : JsonStream.Streamable {
 
-    /**
-     * A representation of the thread's stacktrace
-     */
     var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
 
     @Throws(IOException::class)

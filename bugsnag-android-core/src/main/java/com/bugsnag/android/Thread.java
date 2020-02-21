@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * A representation of a thread recorded in an {@link Event}
@@ -92,6 +93,25 @@ public class Thread implements JsonStream.Streamable {
      */
     public boolean getErrorReportingThread() {
         return impl.isErrorReportingThread();
+    }
+
+    /**
+     * Sets a representation of the thread's stacktrace
+     */
+    public void setStacktrace(@NonNull List<Stackframe> stacktrace) {
+        if (stacktrace != null) {
+            impl.setStacktrace(stacktrace);
+        } else {
+            error("stacktrace");
+        }
+    }
+
+    /**
+     * Gets a representation of the thread's stacktrace
+     */
+    @NonNull
+    public List<Stackframe> getStacktrace() {
+        return impl.getStacktrace();
     }
 
     @Override
