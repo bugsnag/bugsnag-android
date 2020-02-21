@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 
+/**
+ * A representation of a thread recorded in an {@link Event}
+ */
 @SuppressWarnings("ConstantConditions")
 public class Thread implements JsonStream.Streamable {
 
@@ -25,14 +28,23 @@ public class Thread implements JsonStream.Streamable {
         logger.e("Invalid null value supplied to thread." + property + ", ignoring");
     }
 
+    /**
+     * Sets the unique ID of the thread (from {@link java.lang.Thread})
+     */
     public void setId(long id) {
         impl.setId(id);
     }
 
+    /**
+     * Gets the unique ID of the thread (from {@link java.lang.Thread})
+     */
     public long getId() {
         return impl.getId();
     }
 
+    /**
+     * Sets the name of the thread (from {@link java.lang.Thread})
+     */
     public void setName(@NonNull String name) {
         if (name != null) {
             impl.setName(name);
@@ -41,11 +53,17 @@ public class Thread implements JsonStream.Streamable {
         }
     }
 
+    /**
+     * Gets the name of the thread (from {@link java.lang.Thread})
+     */
     @NonNull
     public String getName() {
         return impl.getName();
     }
 
+    /**
+     * Sets the type of thread based on the originating platform (intended for internal use only)
+     */
     public void setType(@NonNull ThreadType type) {
         if (type != null) {
             impl.setType(type);
@@ -54,15 +72,24 @@ public class Thread implements JsonStream.Streamable {
         }
     }
 
+    /**
+     * Gets the type of thread based on the originating platform (intended for internal use only)
+     */
     @NonNull
     public ThreadType getType() {
         return impl.getType();
     }
 
+    /**
+     * Sets whether the thread was the thread that caused the event
+     */
     public void setErrorReportingThread(boolean errorReportingThread) {
         impl.setErrorReportingThread(errorReportingThread);
     }
 
+    /**
+     * Gets whether the thread was the thread that caused the event
+     */
     public boolean getErrorReportingThread() {
         return impl.isErrorReportingThread();
     }

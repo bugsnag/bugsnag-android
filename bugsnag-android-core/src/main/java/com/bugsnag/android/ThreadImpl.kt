@@ -2,29 +2,10 @@ package com.bugsnag.android
 
 import java.io.IOException
 
-/**
- * A representation of a thread recorded in an [Event]
- */
 class ThreadImpl internal constructor(
-
-    /**
-     * The unique ID of the thread (from [java.lang.Thread])
-     */
     var id: Long,
-
-    /**
-     * The name of the thread (from [java.lang.Thread])
-     */
     var name: String,
-
-    /**
-     * The type of thread based on the originating platform (intended for internal use only)
-     */
     var type: ThreadType,
-
-    /**
-     * Whether the thread was the thread that caused the event
-     */
     var isErrorReportingThread: Boolean,
     stacktrace: Stacktrace
 ) : JsonStream.Streamable {
