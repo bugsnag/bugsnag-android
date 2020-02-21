@@ -55,7 +55,7 @@ final class BugsnagTestUtils {
     }
 
     static Session generateSession() {
-        return new Session("test", new Date(), new User(), false);
+        return new Session("test", new Date(), new User(), false, NoopLogger.INSTANCE);
     }
 
     static Configuration generateConfiguration() {

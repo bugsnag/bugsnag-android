@@ -28,7 +28,7 @@ internal class DeliveryDelegateTest {
     fun setUp() {
         deliveryDelegate =
             DeliveryDelegate(logger, eventStore, config, breadcrumbState)
-        event.session = Session("123", Date(), User(null, null, null), false)
+        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class DeliveryDelegateTest {
     fun generateHandledReport() {
         val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
-        event.session = Session("123", Date(), User(null, null, null), false)
+        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
 
         var msg: StateEvent.NotifyHandled? = null
         deliveryDelegate.addObserver { _, arg ->

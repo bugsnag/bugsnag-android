@@ -12,12 +12,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Represents a contiguous session in an application.
  */
+@SuppressWarnings("ConstantConditions")
 public final class Session implements JsonStream.Streamable, UserAware {
 
     private final File file;
     private String id;
     private Date startedAt;
     private User user;
+    private final Logger logger;
     private App app;
     private Device device;
 
@@ -28,30 +30,37 @@ public final class Session implements JsonStream.Streamable, UserAware {
     final AtomicBoolean isPaused = new AtomicBoolean(false);
 
     static Session copySession(Session session) {
-        Session copy = new Session(session.id, session.startedAt,
-                session.user, session.unhandledCount.get(), session.handledCount.get());
+        Session copy = new Session(session.id, session.startedAt, session.user,
+                session.unhandledCount.get(), session.handledCount.get(), session.logger);
         copy.tracked.set(session.tracked.get());
         copy.autoCaptured.set(session.isAutoCaptured());
         return copy;
     }
 
-    Session(String id, Date startedAt, User user, boolean autoCaptured) {
+    Session(String id, Date startedAt, User user, boolean autoCaptured, Logger logger) {
         this.id = id;
         this.startedAt = new Date(startedAt.getTime());
         this.user = user;
+        this.logger = logger;
         this.autoCaptured.set(autoCaptured);
         this.file = null;
     }
 
-    Session(String id, Date startedAt, User user, int unhandledCount, int handledCount) {
-        this(id, startedAt, user, false);
+    Session(String id, Date startedAt, User user, int unhandledCount, int handledCount,
+            Logger logger) {
+        this(id, startedAt, user, false, logger);
         this.unhandledCount.set(unhandledCount);
         this.handledCount.set(handledCount);
         this.tracked.set(true);
     }
 
-    Session(File file) {
+    Session(File file, Logger logger) {
         this.file = file;
+        this.logger = logger;
+    }
+
+    private void error(String property) {
+        logger.e("Invalid null value supplied to session." + property + ", ignoring");
     }
 
     /**
@@ -66,7 +75,11 @@ public final class Session implements JsonStream.Streamable, UserAware {
      * Sets the session ID. This must be a unique value across all of your sessions.
      */
     public void setId(@NonNull String id) {
-        this.id = id;
+        if (id != null) {
+            this.id = id;
+        } else {
+            error("id");
+        }
     }
 
     /**
@@ -81,7 +94,11 @@ public final class Session implements JsonStream.Streamable, UserAware {
      * Sets the session start time.
      */
     public void setStartedAt(@NonNull Date startedAt) {
-        this.startedAt = startedAt;
+        if (startedAt != null) {
+            this.startedAt = startedAt;
+        } else {
+            error("startedAt");
+        }
     }
 
     /**
