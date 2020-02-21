@@ -18,9 +18,6 @@ internal class LoadConfigurationFromManifestScenario(
     context: Context
 ) : Scenario(config, context) {
 
-    init {
-    }
-
     override fun run() {
         super.run()
         var testConfig = Configuration.load(this.context)

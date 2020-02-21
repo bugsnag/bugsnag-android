@@ -19,9 +19,6 @@ internal class LoadConfigurationNullsScenario(
     context: Context
 ) : Scenario(config, context) {
 
-    init {
-    }
-
     override fun run() {
         super.run()
         var testConfig = Configuration("12312312312312312312312312312312")
