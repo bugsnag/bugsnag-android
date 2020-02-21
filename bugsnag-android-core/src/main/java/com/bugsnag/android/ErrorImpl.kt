@@ -1,28 +1,9 @@
 package com.bugsnag.android
 
-/**
- * An [Error] represents information extracted from a [Throwable].
- */
 internal class ErrorImpl @JvmOverloads internal constructor(
-
-    /**
-     * The fully-qualified class name of the [Throwable]
-     */
     var errorClass: String,
-
-    /**
-     * The message string from the [Throwable]
-     */
     var errorMessage: String?,
-
-    /**
-     * A representation of the stacktrace
-     */
     val stacktrace: List<Stackframe>,
-
-    /**
-     * The type of error based on the originating platform (intended for internal use only)
-     */
     var type: ErrorType = ErrorType.ANDROID
 ): JsonStream.Streamable {
 
