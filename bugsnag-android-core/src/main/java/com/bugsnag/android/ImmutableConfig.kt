@@ -99,7 +99,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         sendThreads = config.sendThreads,
         discardClasses = config.discardClasses?.toSet() ?: emptySet(),
         enabledReleaseStages = config.enabledReleaseStages?.toSet(),
-        projectPackages = config.projectPackages?.toSet() ?: emptySet(),
+        projectPackages = config.projectPackages.toSet(),
         releaseStage = config.releaseStage,
         buildUuid = config.buildUuid,
         appVersion = config.appVersion,

@@ -80,7 +80,7 @@ internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAw
     var discardClasses: Set<String>? = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = BreadcrumbType.values().toSet()
-    var projectPackages: Set<String>? = emptySet()
+    var projectPackages: Set<String> = emptySet()
 
     override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)
     override fun removeOnError(onError: OnErrorCallback) = callbackState.removeOnError(onError)

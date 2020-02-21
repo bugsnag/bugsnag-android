@@ -97,7 +97,7 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
-    public void launchCrashThresoldMsValid() {
+    public void launchCrashThresholdMsValid() {
         config.setLaunchCrashThresholdMs(123456);
         assertEquals(123456, config.impl.getLaunchCrashThresholdMs());
     }
@@ -204,6 +204,8 @@ public class ConfigurationFacadeTest {
     @Test
     public void discardClassesValid() {
         Set<String> discardClasses = new HashSet<>();
+        discardClasses.add("com.example.Foo");
+
         config.setDiscardClasses(discardClasses);
         assertEquals(discardClasses, config.impl.getDiscardClasses());
         config.setDiscardClasses(null);
@@ -231,6 +233,7 @@ public class ConfigurationFacadeTest {
     @Test
     public void projectPackagesValid() {
         Set<String> projectPackages = new HashSet<>();
+        projectPackages.add("prod");
         config.setProjectPackages(projectPackages);
         assertEquals(projectPackages, config.impl.getProjectPackages());
     }
@@ -244,7 +247,7 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
-    public void addOnErrorValid() {
+    public void addRemoveOnErrorValid() {
         OnErrorCallback cb = new OnErrorCallback() {
             @Override
             public boolean onError(@NonNull Event event) {
@@ -253,9 +256,14 @@ public class ConfigurationFacadeTest {
         };
         config.addOnError(cb);
 
+        // verify add on error
         Collection<OnErrorCallback> cbs = config.impl.callbackState.getOnErrorTasks();
         assertEquals(1, cbs.size());
         assertEquals(cb, cbs.iterator().next());
+
+        // verify remove on error
+        config.removeOnError(cb);
+        assertEquals(0, cbs.size());
     }
 
     @Test
@@ -264,21 +272,6 @@ public class ConfigurationFacadeTest {
         Collection<OnErrorCallback> cbs = config.impl.callbackState.getOnErrorTasks();
         assertEquals(0, cbs.size());
         assertNotNull(logger.getMsg());
-    }
-
-    @Test
-    public void removeOnErrorValid() {
-        OnErrorCallback cb = new OnErrorCallback() {
-            @Override
-            public boolean onError(@NonNull Event event) {
-                return false;
-            }
-        };
-        config.addOnError(cb);
-        config.removeOnError(cb);
-
-        Collection<OnErrorCallback> cbs = config.impl.callbackState.getOnErrorTasks();
-        assertEquals(0, cbs.size());
     }
 
     @Test
@@ -306,9 +299,14 @@ public class ConfigurationFacadeTest {
         };
         config.addOnSession(cb);
 
+        // verify add on session
         Collection<OnSessionCallback> cbs = config.impl.callbackState.getOnSessionTasks();
         assertEquals(1, cbs.size());
         assertEquals(cb, cbs.iterator().next());
+
+        // verify remove on session
+        config.removeOnSession(cb);
+        assertEquals(0, cbs.size());
     }
 
     @Test
@@ -317,21 +315,6 @@ public class ConfigurationFacadeTest {
         Collection<OnSessionCallback> cbs = config.impl.callbackState.getOnSessionTasks();
         assertEquals(0, cbs.size());
         assertNotNull(logger.getMsg());
-    }
-
-    @Test
-    public void removeOnSessionValid() {
-        OnSessionCallback cb = new OnSessionCallback() {
-            @Override
-            public boolean onSession(@NonNull Session session) {
-                return false;
-            }
-        };
-        config.addOnSession(cb);
-        config.removeOnSession(cb);
-
-        Collection<OnSessionCallback> cbs = config.impl.callbackState.getOnSessionTasks();
-        assertEquals(0, cbs.size());
     }
 
     @Test
@@ -359,9 +342,14 @@ public class ConfigurationFacadeTest {
         };
         config.addOnBreadcrumb(cb);
 
+        // verify add on breadcrumb
         Collection<OnBreadcrumbCallback> cbs = config.impl.callbackState.getOnBreadcrumbTasks();
         assertEquals(1, cbs.size());
         assertEquals(cb, cbs.iterator().next());
+
+        // verify remove on breadcrumb
+        config.removeOnBreadcrumb(cb);
+        assertEquals(0, cbs.size());
     }
 
     @Test
@@ -370,21 +358,6 @@ public class ConfigurationFacadeTest {
         Collection<OnBreadcrumbCallback> cbs = config.impl.callbackState.getOnBreadcrumbTasks();
         assertEquals(0, cbs.size());
         assertNotNull(logger.getMsg());
-    }
-
-    @Test
-    public void removeOnBreadcrumbValid() {
-        OnBreadcrumbCallback cb = new OnBreadcrumbCallback() {
-            @Override
-            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                return false;
-            }
-        };
-        config.addOnBreadcrumb(cb);
-        config.removeOnBreadcrumb(cb);
-
-        Collection<OnBreadcrumbCallback> cbs = config.impl.callbackState.getOnBreadcrumbTasks();
-        assertEquals(0, cbs.size());
     }
 
     @Test
@@ -482,7 +455,7 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void getMetadataInvalid() {
-        config.getMetadata(null);
+        assertNull(config.getMetadata(null));
         assertNotNull(logger.getMsg());
     }
 
