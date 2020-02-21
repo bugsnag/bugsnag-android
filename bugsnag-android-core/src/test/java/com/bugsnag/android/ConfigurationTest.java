@@ -217,7 +217,6 @@ public class ConfigurationTest {
     public void testSetUser() {
         Configuration configuration = generateConfiguration();
         configuration.setUser("24601", "m@rp.fr", "MM");
-        assertEquals(User.class, configuration.getUser().getClass());
         assertEquals("24601", configuration.getUser().getId());
         assertEquals("m@rp.fr", configuration.getUser().getEmail());
         assertEquals("MM", configuration.getUser().getName());
