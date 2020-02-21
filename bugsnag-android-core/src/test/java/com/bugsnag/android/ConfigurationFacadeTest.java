@@ -40,11 +40,9 @@ public class ConfigurationFacadeTest {
         assertEquals("ffffc5bd39a74caa1267142706a7fb21", config.impl.getApiKey());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void apiKeyInvalid() {
         config.setApiKey(null);
-        assertEquals("5d1ec5bd39a74caa1267142706a7fb21", config.impl.getApiKey());
-        assertNotNull(logger.getMsg());
     }
 
     @Test
@@ -200,7 +198,7 @@ public class ConfigurationFacadeTest {
         config.setRedactedKeys(redactedKeys);
         assertEquals(redactedKeys, config.impl.getRedactedKeys());
         config.setRedactedKeys(null);
-        assertEquals(Collections.emptySet(), config.impl.getRedactedKeys());
+        assertNull(config.impl.getRedactedKeys());
     }
 
     @Test
@@ -209,7 +207,7 @@ public class ConfigurationFacadeTest {
         config.setDiscardClasses(discardClasses);
         assertEquals(discardClasses, config.impl.getDiscardClasses());
         config.setDiscardClasses(null);
-        assertEquals(Collections.emptySet(), config.impl.getDiscardClasses());
+        assertNull(config.impl.getDiscardClasses());
     }
 
     @Test
@@ -269,6 +267,36 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
+    public void removeOnErrorValid() {
+        OnErrorCallback cb = new OnErrorCallback() {
+            @Override
+            public boolean onError(@NonNull Event event) {
+                return false;
+            }
+        };
+        config.addOnError(cb);
+        config.removeOnError(cb);
+
+        Collection<OnErrorCallback> cbs = config.impl.callbackState.getOnErrorTasks();
+        assertEquals(0, cbs.size());
+    }
+
+    @Test
+    public void removeOnErrorInvalid() {
+        OnErrorCallback cb = new OnErrorCallback() {
+            @Override
+            public boolean onError(@NonNull Event event) {
+                return false;
+            }
+        };
+        config.addOnError(cb);
+        config.removeOnError(null);
+        Collection<OnErrorCallback> cbs = config.impl.callbackState.getOnErrorTasks();
+        assertEquals(1, cbs.size());
+        assertNotNull(logger.getMsg());
+    }
+
+    @Test
     public void addOnSessionValid() {
         OnSessionCallback cb = new OnSessionCallback() {
             @Override
@@ -292,6 +320,36 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
+    public void removeOnSessionValid() {
+        OnSessionCallback cb = new OnSessionCallback() {
+            @Override
+            public boolean onSession(@NonNull Session session) {
+                return false;
+            }
+        };
+        config.addOnSession(cb);
+        config.removeOnSession(cb);
+
+        Collection<OnSessionCallback> cbs = config.impl.callbackState.getOnSessionTasks();
+        assertEquals(0, cbs.size());
+    }
+
+    @Test
+    public void removeOnSessionInvalid() {
+        OnSessionCallback cb = new OnSessionCallback() {
+            @Override
+            public boolean onSession(@NonNull Session session) {
+                return false;
+            }
+        };
+        config.addOnSession(cb);
+        config.addOnSession(null);
+        Collection<OnSessionCallback> cbs = config.impl.callbackState.getOnSessionTasks();
+        assertEquals(1, cbs.size());
+        assertNotNull(logger.getMsg());
+    }
+
+    @Test
     public void addOnBreadcrumbValid() {
         OnBreadcrumbCallback cb = new OnBreadcrumbCallback() {
             @Override
@@ -311,6 +369,36 @@ public class ConfigurationFacadeTest {
         config.addOnBreadcrumb(null);
         Collection<OnBreadcrumbCallback> cbs = config.impl.callbackState.getOnBreadcrumbTasks();
         assertEquals(0, cbs.size());
+        assertNotNull(logger.getMsg());
+    }
+
+    @Test
+    public void removeOnBreadcrumbValid() {
+        OnBreadcrumbCallback cb = new OnBreadcrumbCallback() {
+            @Override
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                return false;
+            }
+        };
+        config.addOnBreadcrumb(cb);
+        config.removeOnBreadcrumb(cb);
+
+        Collection<OnBreadcrumbCallback> cbs = config.impl.callbackState.getOnBreadcrumbTasks();
+        assertEquals(0, cbs.size());
+    }
+
+    @Test
+    public void removeOnBreadcrumbInvalid() {
+        OnBreadcrumbCallback cb = new OnBreadcrumbCallback() {
+            @Override
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                return false;
+            }
+        };
+        config.addOnBreadcrumb(cb);
+        config.addOnBreadcrumb(null);
+        Collection<OnBreadcrumbCallback> cbs = config.impl.callbackState.getOnBreadcrumbTasks();
+        assertEquals(1, cbs.size());
         assertNotNull(logger.getMsg());
     }
 

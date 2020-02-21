@@ -90,6 +90,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         else -> ErrorTypes(false)
     }
 
+    @Suppress("UNNECESSARY_SAFE_CALL", "USELESS_ELVIS")
     return ImmutableConfig(
         apiKey = config.apiKey,
         enabledErrorTypes = errorTypes,
@@ -98,7 +99,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         sendThreads = config.sendThreads,
         discardClasses = config.discardClasses?.toSet() ?: emptySet(),
         enabledReleaseStages = config.enabledReleaseStages?.toSet(),
-        projectPackages = config.projectPackages.toSet(),
+        projectPackages = config.projectPackages?.toSet() ?: emptySet(),
         releaseStage = config.releaseStage,
         buildUuid = config.buildUuid,
         appVersion = config.appVersion,

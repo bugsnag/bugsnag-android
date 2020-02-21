@@ -16,7 +16,7 @@ internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAw
     internal val callbackState: CallbackState
 
     @JvmField
-    internal val metadataState: MetadataState
+    internal val metadataState: MetadataState = MetadataState()
 
     var buildUuid: String? = null
     var appVersion: String? = null
@@ -53,14 +53,18 @@ internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAw
 
     var context: String? = null
 
-    var redactedKeys: Set<String>
-        get() = Collections.unmodifiableSet(metadataState.metadata.redactedKeys)
-        set(redactedKeys) = metadataState.metadata.setRedactedKeys(redactedKeys)
+    var redactedKeys: Set<String>? = metadataState.metadata.redactedKeys
+        set(value) {
+            if (value != null) {
+                metadataState.metadata.setRedactedKeys(value)
+            }
+            field = value
+        }
 
     init {
         require(apiKey.matches(API_KEY_REGEX.toRegex())) { "You must provide a valid Bugsnag API key" }
         this.callbackState = CallbackState()
-        this.metadataState = MetadataState()
+
 
         enabledErrorTypes.ndkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
@@ -73,10 +77,10 @@ internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAw
         }
     }
 
-    var discardClasses: Set<String> = emptySet()
+    var discardClasses: Set<String>? = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = BreadcrumbType.values().toSet()
-    var projectPackages: Set<String> = emptySet()
+    var projectPackages: Set<String>? = emptySet()
 
     override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)
     override fun removeOnError(onError: OnErrorCallback) = callbackState.removeOnError(onError)

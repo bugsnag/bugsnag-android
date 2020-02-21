@@ -55,11 +55,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * Changes the API key used for events sent to Bugsnag.
      */
     public void setApiKey(@NonNull String apiKey) {
-        if (apiKey != null) {
-            impl.setApiKey(apiKey);
-        } else {
-            error("apiKey");
-        }
+        impl.setApiKey(apiKey);
     }
 
     /**
@@ -496,11 +492,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * By default, redactedKeys is set to "password"
      */
     public void setRedactedKeys(@Nullable Set<String> redactedKeys) {
-        if (redactedKeys != null) {
-            impl.setRedactedKeys(SetUtils.sanitiseSet(redactedKeys));
-        } else {
-            impl.setRedactedKeys(Collections.<String>emptySet());
-        }
+        impl.setRedactedKeys(SetUtils.sanitiseSet(redactedKeys));
     }
 
     /**
@@ -519,11 +511,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * match against the canonical class name.
      */
     public void setDiscardClasses(@Nullable Set<String> discardClasses) {
-        if (discardClasses != null) {
-            impl.setDiscardClasses(SetUtils.sanitiseSet(discardClasses));
-        } else {
-            impl.setDiscardClasses(Collections.<String>emptySet());
-        }
+        impl.setDiscardClasses(SetUtils.sanitiseSet(discardClasses));
     }
 
     /**
