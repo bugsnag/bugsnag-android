@@ -25,7 +25,7 @@ class CallbackStateTest {
     lateinit var session: Session
 
     private val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
-    private val event = Event(RuntimeException(), config = generateImmutableConfig(), handledState = handledState)
+    private val event = Event(RuntimeException(), generateImmutableConfig(), handledState, NoopLogger)
     private val breadcrumb = Breadcrumb("")
 
     @Test

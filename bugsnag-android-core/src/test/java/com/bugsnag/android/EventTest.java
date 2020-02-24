@@ -28,18 +28,19 @@ public class EventTest {
         config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Example message");
         HandledState handledState = this.handledState;
-        event = new Event(exception, config, handledState);
+        event = new Event(exception, config, handledState, NoopLogger.INSTANCE);
     }
 
     @Test
     public void checkExceptionMessageNullity() {
-        Event err = new Event(new RuntimeException(), config, handledState);
+        Event err = new Event(new RuntimeException(), config, handledState, NoopLogger.INSTANCE);
         assertNull(err.getErrors().get(0).getErrorMessage());
     }
 
     @Test
     public void testExceptionName() {
-        Event err = new Event(new RuntimeException("whoops"), config, handledState);
+        RuntimeException exc = new RuntimeException("whoops");
+        Event err = new Event(exc, config, handledState, NoopLogger.INSTANCE);
         err.getErrors().get(0).setErrorClass("Busgang");
         assertEquals("Busgang", err.getErrors().get(0).getErrorClass());
     }

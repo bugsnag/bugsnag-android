@@ -48,7 +48,7 @@ class Error @JvmOverloads internal constructor(
     }
 
     internal companion object {
-        fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): List<Error> {
+        fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): MutableList<Error> {
             val errors = mutableListOf<Error>()
 
             var currentEx: Throwable? = exc

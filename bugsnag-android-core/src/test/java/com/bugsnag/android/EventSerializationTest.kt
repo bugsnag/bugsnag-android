@@ -38,7 +38,8 @@ internal class EventSerializationTest {
                 // threads included
                 createEvent {
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
-                    it.threads = mutableListOf(Thread(5, "main", Thread.Type.ANDROID, true, stacktrace))
+                    it.threads.clear()
+                    it.threads.add(Thread(5, "main", Thread.Type.ANDROID, true, stacktrace))
                 },
 
                 // threads included
@@ -53,7 +54,8 @@ internal class EventSerializationTest {
 
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
                     val err = Error("WhoopsException", "Whoops", stacktrace.trace)
-                    it.errors = listOf(err)
+                    it.errors.clear()
+                    it.errors.add(err)
                 }
             )
         }
@@ -62,9 +64,10 @@ internal class EventSerializationTest {
             val event = Event(
                 null,
                 generateImmutableConfig(),
-                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+                NoopLogger
             )
-            event.threads = emptyList()
+            event.threads.clear()
             event.app = generateAppWithState()
             event.device = generateDeviceWithState()
             cb(event)

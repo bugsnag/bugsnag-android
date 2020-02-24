@@ -14,17 +14,18 @@ internal class EventRedactionTest {
         val event = Event(
             null,
             generateImmutableConfig(),
-            HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+            HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+            NoopLogger
         )
         event.app = generateAppWithState()
         event.device = generateDeviceWithState()
 
         event.addMetadata("app", "password", "foo")
         event.addMetadata("device", "password", "bar")
-        event.metadata.addMetadata("baz", "password", "hunter2")
+        event.impl.metadata.addMetadata("baz", "password", "hunter2")
         val metadata = mutableMapOf<String, Any?>(Pair("password", "whoops"))
         event.breadcrumbs = listOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0)))
-        event.threads = emptyList()
+        event.threads.clear()
 
         val writer = StringWriter()
         val stream = JsonStream(writer)
