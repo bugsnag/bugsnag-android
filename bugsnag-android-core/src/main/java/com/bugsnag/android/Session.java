@@ -59,7 +59,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
         this.logger = logger;
     }
 
-    private void error(String property) {
+    private void logNull(String property) {
         logger.e("Invalid null value supplied to session." + property + ", ignoring");
     }
 
@@ -78,7 +78,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
         if (id != null) {
             this.id = id;
         } else {
-            error("id");
+            logNull("id");
         }
     }
 
@@ -97,7 +97,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
         if (startedAt != null) {
             this.startedAt = startedAt;
         } else {
-            error("startedAt");
+            logNull("startedAt");
         }
     }
 
