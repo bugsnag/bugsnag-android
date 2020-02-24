@@ -24,7 +24,8 @@ public class ErrorFacadeTest {
     public void setUp() {
         logger = new InterceptingLogger();
         trace = Collections.emptyList();
-        ErrorImpl impl = new ErrorImpl("com.bar.CrashyClass", "Whoops", trace, ErrorType.ANDROID);
+        ErrorInternal impl = new ErrorInternal("com.bar.CrashyClass",
+                "Whoops", trace, ErrorType.ANDROID);
         error = new Error(impl, logger);
     }
 

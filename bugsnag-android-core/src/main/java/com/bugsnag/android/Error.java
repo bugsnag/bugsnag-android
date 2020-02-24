@@ -14,16 +14,16 @@ import java.util.List;
 @SuppressWarnings("ConstantConditions")
 public class Error implements JsonStream.Streamable {
 
-    private final ErrorImpl impl;
+    private final ErrorInternal impl;
     private final Logger logger;
 
-    Error(@NonNull ErrorImpl impl,
+    Error(@NonNull ErrorInternal impl,
           @NonNull Logger logger) {
         this.impl = impl;
         this.logger = logger;
     }
 
-    private void error(String property) {
+    private void logNull(String property) {
         logger.e("Invalid null value supplied to error." + property + ", ignoring");
     }
 
@@ -34,7 +34,7 @@ public class Error implements JsonStream.Streamable {
         if (errorClass != null) {
             impl.setErrorClass(errorClass);
         } else {
-            error("errorClass");
+            logNull("errorClass");
         }
     }
 
@@ -68,7 +68,7 @@ public class Error implements JsonStream.Streamable {
         if (type != null) {
             impl.setType(type);
         } else {
-            error("type");
+            logNull("type");
         }
     }
 
@@ -96,6 +96,6 @@ public class Error implements JsonStream.Streamable {
     static List<Error> createError(@NonNull Throwable exc,
                                    @NonNull Collection<String> projectPackages,
                                    @NonNull Logger logger) {
-        return ErrorImpl.Companion.createError(exc, projectPackages, logger);
+        return ErrorInternal.Companion.createError(exc, projectPackages, logger);
     }
 }

@@ -14,7 +14,7 @@ internal class ErrorSerializationTest {
         @Parameters
         fun testCases() = generateSerializationTestCases(
             "error",
-            Error(ErrorImpl("foo", "bar", listOf()), NoopLogger)
+            Error(ErrorInternal("foo", "bar", listOf()), NoopLogger)
         )
     }
 
