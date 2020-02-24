@@ -25,7 +25,7 @@ public class EventStateTest {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         ImmutableConfig config = convert(configuration);
         RuntimeException exception = new RuntimeException("Example message");
-        event = new Event(exception, config, handledState);
+        event = new Event(exception, config, handledState, NoopLogger.INSTANCE);
     }
 
     @Test
@@ -33,7 +33,8 @@ public class EventStateTest {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(Collections.singleton("java.io.IOException"));
 
-        event = new Event(new IOException(), BugsnagTestUtils.convert(configuration), handledState);
+        ImmutableConfig conig = convert(configuration);
+        event = new Event(new IOException(), conig, handledState, NoopLogger.INSTANCE);
         assertTrue(event.shouldDiscardClass());
     }
 
@@ -43,7 +44,8 @@ public class EventStateTest {
         configuration.setDiscardClasses(Collections.singleton("java.io.IOException"));
 
         RuntimeException exc = new RuntimeException(new IOException());
-        event = new Event(exc, BugsnagTestUtils.convert(configuration), handledState);
+        ImmutableConfig conig = convert(configuration);
+        event = new Event(exc, conig, handledState, NoopLogger.INSTANCE);
         assertTrue(event.shouldDiscardClass());
     }
 
@@ -51,7 +53,8 @@ public class EventStateTest {
     public void shouldIgnoreDoesNotMatch() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(Collections.<String>emptySet());
-        event = new Event(new IOException(), BugsnagTestUtils.convert(configuration), handledState);
+        ImmutableConfig config = convert(configuration);
+        event = new Event(new IOException(), config, handledState, NoopLogger.INSTANCE);
         assertFalse(event.shouldDiscardClass());
     }
 
@@ -61,7 +64,8 @@ public class EventStateTest {
         configuration.setDiscardClasses(Collections.<String>emptySet());
         RuntimeException exc = new RuntimeException(new IllegalStateException());
 
-        event = new Event(exc, BugsnagTestUtils.convert(configuration), handledState);
+        ImmutableConfig config = convert(configuration);
+        event = new Event(exc, config, handledState, NoopLogger.INSTANCE);
         assertFalse(event.shouldDiscardClass());
     }
 

@@ -171,11 +171,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
-
-        // performs deep copy of metadata to preserve immutability of Configuration interface
-        Metadata orig = configuration.metadataState.getMetadata();
-        Metadata copy = orig.copy();
-        metadataState = configuration.metadataState.copy(copy);
+        metadataState = copyMetadataState(configuration);
 
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
@@ -271,6 +267,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
     }
 
+    private MetadataState copyMetadataState(@NonNull Configuration configuration) {
+        // performs deep copy of metadata to preserve immutability of Configuration interface
+        Metadata orig = configuration.metadataState.getMetadata();
+        Metadata copy = orig.copy();
+        return configuration.metadataState.copy(copy);
+    }
+
     private void registerOrientationChangeListener() {
         IntentFilter configFilter = new IntentFilter();
         configFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
@@ -321,6 +324,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void sendNativeSetupNotification() {
         clientObservable.postNdkInstall(immutableConfig);
+        metadataState.initObservableMessages();
         try {
             Async.run(new Runnable() {
                 @Override
@@ -565,7 +569,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     public void notify(@NonNull Throwable exc, @Nullable OnErrorCallback onError) {
         HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Event event = new Event(exc, immutableConfig, handledState, metadataState.getMetadata());
+        Metadata metadata = metadataState.getMetadata();
+        Event event = new Event(exc, immutableConfig, handledState, metadata, logger);
         notifyInternal(event, onError);
     }
 
@@ -579,8 +584,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                                   @Nullable String attributeValue) {
         HandledState handledState
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
-        Event event = new Event(exc, immutableConfig, handledState,
-                Metadata.Companion.merge(metadataState.getMetadata(), metadata));
+        Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
+        Event event = new Event(exc, immutableConfig, handledState, data, logger);
         notifyInternal(event, null);
     }
 
@@ -600,7 +605,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         if (currentSession != null
                 && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
-            event.session = currentSession;
+            event.setSession(currentSession);
         }
 
         // Capture the state of the app and device and attach diagnostics to the event

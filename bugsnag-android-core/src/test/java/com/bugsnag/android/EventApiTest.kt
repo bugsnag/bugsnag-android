@@ -22,45 +22,46 @@ internal class EventApiTest {
         event = Event(
             RuntimeException(),
             generateImmutableConfig(),
-            HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+            HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+            NoopLogger
         )
         event.setUser("1", "fred@example.com", "Fred")
     }
 
     @Test
     fun getUser() {
-        assertEquals(event._user, event.getUser())
+        assertEquals(event.impl._user, event.getUser())
     }
 
     @Test
     fun setUser() {
         event.setUser("99", "boo@example.com", "Boo")
-        assertEquals(User("99", "boo@example.com", "Boo"), event._user)
+        assertEquals(User("99", "boo@example.com", "Boo"), event.impl._user)
     }
 
     @Test
     fun addMetadataTopLevel() {
         event.addMetadata("foo", mapOf(Pair("wham", "bar")))
-        assertEquals(mapOf(Pair("wham", "bar")), event.metadata.getMetadata("foo"))
+        assertEquals(mapOf(Pair("wham", "bar")), event.impl.metadata.getMetadata("foo"))
     }
 
     @Test
     fun addMetadata() {
         event.addMetadata("foo", "wham", "bar")
-        assertEquals("bar", event.metadata.getMetadata("foo", "wham"))
+        assertEquals("bar", event.impl.metadata.getMetadata("foo", "wham"))
     }
 
     @Test
     fun clearMetadataTopLevel() {
         event.addMetadata("foo", mapOf(Pair("wham", "bar")))
         event.clearMetadata("foo")
-        assertNull(event.metadata.getMetadata("foo"))
+        assertNull(event.impl.metadata.getMetadata("foo"))
     }
 
     @Test
     fun clearMetadata() {
         event.addMetadata("foo", "wham", "bar")
         event.clearMetadata("foo", "wham")
-        assertNull(event.metadata.getMetadata("foo", "wham"))
+        assertNull(event.impl.metadata.getMetadata("foo", "wham"))
     }
 }

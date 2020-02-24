@@ -43,4 +43,19 @@ internal class MetadataStateTest {
         state.clearMetadata("foo", "wham")
         assertNull(state.getMetadata("foo"))
     }
+
+    @Test
+    fun initObservableMessages() {
+        state.addMetadata("foo", "wham", "baz")
+        state.addMetadata("bar", "another", true)
+
+        val data = mutableSetOf<String>()
+        state.addObserver { _, arg ->
+            val msg = arg as StateEvent.AddMetadata
+            data.add(msg.section)
+        }
+
+        state.initObservableMessages()
+        assertEquals(setOf("foo", "bar"), data)
+    }
 }
