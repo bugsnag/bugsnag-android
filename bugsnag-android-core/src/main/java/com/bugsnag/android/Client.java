@@ -16,6 +16,7 @@ import android.os.storage.StorageManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
@@ -40,7 +41,7 @@ import java.util.concurrent.RejectedExecutionException;
  *
  * @see Bugsnag
  */
-@SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
+@SuppressWarnings({"checkstyle:JavadocTagContinuationIndentation", "ConstantConditions"})
 public class Client implements MetadataAware, CallbackAware, UserAware {
 
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
@@ -267,6 +268,55 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
     }
 
+    @VisibleForTesting
+    Client(
+            ImmutableConfig immutableConfig,
+            MetadataState metadataState,
+            ContextState contextState,
+            CallbackState callbackState,
+            UserState userState,
+            Context appContext,
+            @NonNull DeviceDataCollector deviceDataCollector,
+            @NonNull AppDataCollector appDataCollector,
+            @NonNull BreadcrumbState breadcrumbState,
+            @NonNull EventStore eventStore,
+            SessionStore sessionStore,
+            SystemBroadcastReceiver systemBroadcastReceiver,
+            SessionTracker sessionTracker,
+            ActivityBreadcrumbCollector activityBreadcrumbCollector,
+            SessionLifecycleCallback sessionLifecycleCallback,
+            SharedPreferences sharedPrefs,
+            Connectivity connectivity,
+            StorageManager storageManager,
+            Logger logger,
+            DeliveryDelegate deliveryDelegate
+    ) {
+        this.immutableConfig = immutableConfig;
+        this.metadataState = metadataState;
+        this.contextState = contextState;
+        this.callbackState = callbackState;
+        this.userState = userState;
+        this.appContext = appContext;
+        this.deviceDataCollector = deviceDataCollector;
+        this.appDataCollector = appDataCollector;
+        this.breadcrumbState = breadcrumbState;
+        this.eventStore = eventStore;
+        this.sessionStore = sessionStore;
+        this.systemBroadcastReceiver = systemBroadcastReceiver;
+        this.sessionTracker = sessionTracker;
+        this.activityBreadcrumbCollector = activityBreadcrumbCollector;
+        this.sessionLifecycleCallback = sessionLifecycleCallback;
+        this.sharedPrefs = sharedPrefs;
+        this.connectivity = connectivity;
+        this.storageManager = storageManager;
+        this.logger = logger;
+        this.deliveryDelegate = deliveryDelegate;
+    }
+
+    private void logNull(String property) {
+        logger.e("Invalid null value supplied to client." + property + ", ignoring");
+    }
+
     private MetadataState copyMetadataState(@NonNull Configuration configuration) {
         // performs deep copy of metadata to preserve immutability of Configuration interface
         Metadata orig = configuration.metadataState.getMetadata();
@@ -475,7 +525,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void addOnError(@NonNull OnErrorCallback onError) {
-        callbackState.addOnError(onError);
+        if (onError != null) {
+            callbackState.addOnError(onError);
+        } else {
+            logNull("addOnError");
+        }
     }
 
     /**
@@ -484,7 +538,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void removeOnError(@NonNull OnErrorCallback onError) {
-        callbackState.removeOnError(onError);
+        if (onError != null) {
+            callbackState.removeOnError(onError);
+        } else {
+            logNull("removeOnError");
+        }
     }
 
     /**
@@ -507,7 +565,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void addOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
-        callbackState.addOnBreadcrumb(onBreadcrumb);
+        if (onBreadcrumb != null) {
+            callbackState.addOnBreadcrumb(onBreadcrumb);
+        } else {
+            logNull("addOnBreadcrumb");
+        }
     }
 
     /**
@@ -516,7 +578,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void removeOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
-        callbackState.removeOnBreadcrumb(onBreadcrumb);
+        if (onBreadcrumb != null) {
+            callbackState.removeOnBreadcrumb(onBreadcrumb);
+        } else {
+            logNull("removeOnBreadcrumb");
+        }
     }
 
     /**
@@ -539,7 +605,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void addOnSession(@NonNull OnSessionCallback onSession) {
-        callbackState.addOnSession(onSession);
+        if (onSession != null) {
+            callbackState.addOnSession(onSession);
+        } else {
+            logNull("addOnSession");
+        }
     }
 
     /**
@@ -548,7 +618,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void removeOnSession(@NonNull OnSessionCallback onSession) {
-        callbackState.removeOnSession(onSession);
+        if (onSession != null) {
+            callbackState.removeOnSession(onSession);
+        } else {
+            logNull("removeOnSession");
+        }
     }
 
     /**
@@ -568,10 +642,14 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      *                  additional modification
      */
     public void notify(@NonNull Throwable exc, @Nullable OnErrorCallback onError) {
-        HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
-        Metadata metadata = metadataState.getMetadata();
-        Event event = new Event(exc, immutableConfig, handledState, metadata, logger);
-        notifyInternal(event, onError);
+        if (exc != null) {
+            HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
+            Metadata metadata = metadataState.getMetadata();
+            Event event = new Event(exc, immutableConfig, handledState, metadata, logger);
+            notifyInternal(event, onError);
+        } else {
+            logNull("notify");
+        }
     }
 
     /**
@@ -660,7 +738,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
-        metadataState.addMetadata(section, value);
+        if (section != null && value != null) {
+            metadataState.addMetadata(section, value);
+        } else {
+            logNull("addMetadata");
+        }
     }
 
     /**
@@ -669,7 +751,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void addMetadata(@NonNull String section, @NonNull String key, @Nullable Object value) {
-        metadataState.addMetadata(section, key, value);
+        if (section != null && key != null) {
+            metadataState.addMetadata(section, key, value);
+
+        } else {
+            logNull("addMetadata");
+        }
     }
 
     /**
@@ -677,7 +764,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void clearMetadata(@NonNull String section) {
-        metadataState.clearMetadata(section);
+        if (section != null) {
+            metadataState.clearMetadata(section);
+        } else {
+            logNull("clearMetadata");
+        }
     }
 
     /**
@@ -685,7 +776,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void clearMetadata(@NonNull String section, @NonNull String key) {
-        metadataState.clearMetadata(section, key);
+        if (section != null && key != null) {
+            metadataState.clearMetadata(section, key);
+        } else {
+            logNull("clearMetadata");
+        }
     }
 
     /**
@@ -694,7 +789,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     @Nullable
     @Override
     public Map<String, Object> getMetadata(@NonNull String section) {
-        return metadataState.getMetadata(section);
+        if (section != null) {
+            return metadataState.getMetadata(section);
+        } else {
+            logNull("getMetadata");
+            return null;
+        }
     }
 
     /**
@@ -703,7 +803,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     @Override
     @Nullable
     public Object getMetadata(@NonNull String section, @NonNull String key) {
-        return metadataState.getMetadata(section, key);
+        if (section != null && key != null) {
+            return metadataState.getMetadata(section, key);
+        } else {
+            logNull("getMetadata");
+            return null;
+        }
     }
 
     @NonNull
@@ -718,7 +823,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param message the log message to leave
      */
     public void leaveBreadcrumb(@NonNull String message) {
-        breadcrumbState.add(new Breadcrumb(message));
+        if (message != null) {
+            breadcrumbState.add(new Breadcrumb(message));
+        } else {
+            logNull("leaveBreadcrumb");
+        }
     }
 
     /**
@@ -732,7 +841,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     public void leaveBreadcrumb(@NonNull String message,
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, Object> metadata) {
-        breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date()));
+        if (message != null && type != null && metadata != null) {
+            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date()));
+        } else {
+            logNull("leaveBreadcrumb");
+        }
     }
 
     SessionTracker getSessionTracker() {
