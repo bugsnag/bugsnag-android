@@ -92,10 +92,10 @@ internal class DeliveryDelegateTest {
         val breadcrumb = breadcrumbState.store.peek()
         assertEquals(BreadcrumbType.ERROR, breadcrumb.type)
         assertEquals("java.lang.RuntimeException", breadcrumb.message)
-        assertEquals("java.lang.RuntimeException", breadcrumb.metadata["errorClass"])
-        assertEquals("Whoops!", breadcrumb.metadata["message"])
-        assertEquals("true", breadcrumb.metadata["unhandled"])
-        assertEquals("ERROR", breadcrumb.metadata["severity"])
+        assertEquals("java.lang.RuntimeException", breadcrumb.metadata!!["errorClass"])
+        assertEquals("Whoops!", breadcrumb.metadata!!["message"])
+        assertEquals("true", breadcrumb.metadata!!["unhandled"])
+        assertEquals("ERROR", breadcrumb.metadata!!["severity"])
     }
 
     private class InterceptingLogger : Logger {

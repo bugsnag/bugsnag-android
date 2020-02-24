@@ -9,7 +9,7 @@ class BreadcrumbMutabilityTest {
     fun breadcrumbProtectsMetadata() {
         val data = mutableMapOf<String, Any?>()
         val breadcrumb = Breadcrumb("foo", BreadcrumbType.MANUAL, data, Date(0), NoopLogger)
-        breadcrumb.metadata["a"] = "bar"
-        assertFalse(breadcrumb.metadata.isEmpty())
+        breadcrumb.metadata!!["a"] = "bar"
+        assertFalse(breadcrumb.metadata!!.isEmpty())
     }
 }

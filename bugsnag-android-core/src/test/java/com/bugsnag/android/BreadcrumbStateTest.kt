@@ -37,7 +37,7 @@ class BreadcrumbStateTest {
 
         val crumbs = breadcrumbState.store.toList()
         assertEquals(3, crumbs.size)
-        assertEquals(longStr, crumbs[2].metadata["message"])
+        assertEquals(longStr, crumbs[2].metadata!!["message"])
     }
 
     /**
@@ -52,8 +52,8 @@ class BreadcrumbStateTest {
         }
 
         val crumbs = breadcrumbState.store.toList()
-        assertEquals("2", crumbs.first().metadata["message"])
-        assertEquals("6", crumbs.last().metadata["message"])
+        assertEquals("2", crumbs.first().metadata!!["message"])
+        assertEquals("6", crumbs.last().metadata!!["message"])
     }
 
     /**

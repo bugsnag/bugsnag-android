@@ -41,7 +41,7 @@ internal class BreadcrumbState(
                 breadcrumb.message,
                 breadcrumb.type,
                 DateUtils.toIso8601(breadcrumb.timestamp),
-                breadcrumb.metadata
+                breadcrumb.metadata ?: mutableMapOf()
             )
         )
     }

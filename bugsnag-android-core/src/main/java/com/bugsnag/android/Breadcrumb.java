@@ -10,11 +10,11 @@ import java.util.Map;
 @SuppressWarnings("ConstantConditions")
 public class Breadcrumb implements JsonStream.Streamable {
 
-    private final BreadcrumbImpl impl;
+    private final BreadcrumbInternal impl;
     private final Logger logger;
 
     Breadcrumb(@NonNull String message, @NonNull Logger logger) {
-        this.impl = new BreadcrumbImpl(message);
+        this.impl = new BreadcrumbInternal(message);
         this.logger = logger;
     }
 
@@ -23,11 +23,11 @@ public class Breadcrumb implements JsonStream.Streamable {
                @Nullable Map<String, Object> metadata,
                @NonNull Date timestamp,
                @NonNull Logger logger) {
-        this.impl = new BreadcrumbImpl(message, type, metadata, timestamp);
+        this.impl = new BreadcrumbInternal(message, type, metadata, timestamp);
         this.logger = logger;
     }
 
-    private void error(String property) {
+    private void logNull(String property) {
         logger.e("Invalid null value supplied to breadcrumb." + property + ", ignoring");
     }
 
@@ -38,7 +38,7 @@ public class Breadcrumb implements JsonStream.Streamable {
         if (message != null) {
             impl.setMessage(message);
         } else {
-            error("message");
+            logNull("message");
         }
     }
 
@@ -58,7 +58,7 @@ public class Breadcrumb implements JsonStream.Streamable {
         if (type != null) {
             impl.setType(type);
         } else {
-            error("type");
+            logNull("type");
         }
     }
 
@@ -74,14 +74,14 @@ public class Breadcrumb implements JsonStream.Streamable {
     /**
      * Sets diagnostic data relating to the breadcrumb
      */
-    public void setMetadata(@NonNull Map<String, Object> metadata) {
+    public void setMetadata(@Nullable Map<String, Object> metadata) {
         impl.setMetadata(metadata);
     }
 
     /**
      * Gets diagnostic data relating to the breadcrumb
      */
-    @NonNull
+    @Nullable
     public Map<String, Object> getMetadata() {
         return impl.getMetadata();
     }

@@ -38,7 +38,7 @@ class BreadcrumbStateTest {
 
         for (breadcrumb in store) {
             if (MANUAL == breadcrumb.type && "manual" == breadcrumb.message
-                && breadcrumb.metadata["message"] == "Hello World") {
+                && breadcrumb.metadata!!["message"] == "Hello World") {
                 count++
             }
         }

@@ -8,7 +8,7 @@ import java.util.Date
  * to leave short log statements that we call breadcrumbs. Breadcrumbs are
  * attached to a crash to help diagnose what events lead to the error.
  */
-internal class BreadcrumbImpl internal constructor(
+internal class BreadcrumbInternal internal constructor(
     var message: String,
     var type: BreadcrumbType,
     var metadata: MutableMap<String, Any?>?,
