@@ -111,10 +111,10 @@ class BreadcrumbStateTest {
         assertEquals(50, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = Int.MAX_VALUE
-        assertEquals(100, config.maxBreadcrumbs)
+        assertEquals(50, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = -5
-        assertEquals(0, config.maxBreadcrumbs)
+        assertEquals(50, config.maxBreadcrumbs)
     }
 
     /**

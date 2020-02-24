@@ -197,19 +197,30 @@ public class ConfigurationFacadeTest {
         Set<String> redactedKeys = new HashSet<>();
         config.setRedactedKeys(redactedKeys);
         assertEquals(redactedKeys, config.impl.getRedactedKeys());
+    }
+
+    @Test
+    public void redactedKeysInvalid() {
+        Set<String> keys = config.impl.getRedactedKeys();
         config.setRedactedKeys(null);
-        assertNull(config.impl.getRedactedKeys());
+        assertEquals(keys, config.impl.getRedactedKeys());
+        assertNotNull(logger.getMsg());
     }
 
     @Test
     public void discardClassesValid() {
         Set<String> discardClasses = new HashSet<>();
         discardClasses.add("com.example.Foo");
-
         config.setDiscardClasses(discardClasses);
         assertEquals(discardClasses, config.impl.getDiscardClasses());
+    }
+
+    @Test
+    public void discardClassesInvalid() {
+        Set<String> classes = config.impl.getDiscardClasses();
         config.setDiscardClasses(null);
-        assertNull(config.impl.getDiscardClasses());
+        assertEquals(classes, config.impl.getDiscardClasses());
+        assertNotNull(logger.getMsg());
     }
 
     @Test

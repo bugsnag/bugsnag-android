@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,13 +15,16 @@ import java.util.Set;
 @SuppressWarnings("ConstantConditions") // suppress warning about making redundant null checks
 public class Configuration implements CallbackAware, MetadataAware, UserAware {
 
-    final ConfigImpl impl;
+    private static final int MIN_BREADCRUMBS = 0;
+    private static final int MAX_BREADCRUMBS = 100;
+
+    final ConfigInternal impl;
 
     /**
      * Constructs a new Configuration object with default values.
      */
     public Configuration(@NonNull String apiKey) {
-        impl = new ConfigImpl(apiKey);
+        impl = new ConfigInternal(apiKey);
     }
 
     /**
@@ -31,15 +33,15 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      */
     @NonNull
     public static Configuration load(@NonNull Context context) {
-        return ConfigImpl.load(context);
+        return ConfigInternal.load(context);
     }
 
     @NonNull
     static Configuration load(@NonNull Context context, @NonNull String apiKey) {
-        return ConfigImpl.load(context, apiKey);
+        return ConfigInternal.load(context, apiKey);
     }
 
-    private void error(String property) {
+    private void logNull(String property) {
         getLogger().e("Invalid null value supplied to config." + property + ", ignoring");
     }
 
@@ -171,7 +173,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (sendThreads != null) {
             impl.setSendThreads(sendThreads);
         } else {
-            error("sendThreads");
+            logNull("sendThreads");
         }
     }
 
@@ -256,7 +258,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (enabledErrorTypes != null) {
             impl.setEnabledErrorTypes(enabledErrorTypes);
         } else {
-            error("enabledErrorTypes");
+            logNull("enabledErrorTypes");
         }
     }
 
@@ -400,7 +402,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (delivery != null) {
             impl.setDelivery(delivery);
         } else {
-            error("delivery");
+            logNull("delivery");
         }
     }
 
@@ -444,7 +446,12 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * By default, 25 breadcrumbs are stored: this can be amended up to a maximum of 100.
      */
     public void setMaxBreadcrumbs(int maxBreadcrumbs) {
-        impl.setMaxBreadcrumbs(maxBreadcrumbs);
+        if (maxBreadcrumbs >= MIN_BREADCRUMBS && maxBreadcrumbs <= MAX_BREADCRUMBS) {
+            impl.setMaxBreadcrumbs(maxBreadcrumbs);
+        } else {
+            getLogger().e("Invalid null value supplied to config.maxBreadcrumbs, expected "
+                    + "between 0-100. Ignoring.");
+        }
     }
 
     /**
@@ -478,7 +485,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      *
      * By default, redactedKeys is set to "password"
      */
-    @Nullable
+    @NonNull
     public Set<String> getRedactedKeys() {
         return impl.getRedactedKeys();
     }
@@ -491,8 +498,12 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      *
      * By default, redactedKeys is set to "password"
      */
-    public void setRedactedKeys(@Nullable Set<String> redactedKeys) {
-        impl.setRedactedKeys(SetUtils.sanitiseSet(redactedKeys));
+    public void setRedactedKeys(@NonNull Set<String> redactedKeys) {
+        if (CollectionUtils.containsNullElements(redactedKeys)) {
+            logNull("redactedKeys");
+        } else {
+            impl.setRedactedKeys(redactedKeys);
+        }
     }
 
     /**
@@ -500,7 +511,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * before being sent to Bugsnag if they are detected. The notifier performs an exact
      * match against the canonical class name.
      */
-    @Nullable
+    @NonNull
     public Set<String> getDiscardClasses() {
         return impl.getDiscardClasses();
     }
@@ -510,8 +521,12 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * before being sent to Bugsnag if they are detected. The notifier performs an exact
      * match against the canonical class name.
      */
-    public void setDiscardClasses(@Nullable Set<String> discardClasses) {
-        impl.setDiscardClasses(SetUtils.sanitiseSet(discardClasses));
+    public void setDiscardClasses(@NonNull Set<String> discardClasses) {
+        if (CollectionUtils.containsNullElements(discardClasses)) {
+            logNull("discardClasses");
+        } else {
+            impl.setDiscardClasses(discardClasses);
+        }
     }
 
     /**
@@ -528,7 +543,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * If you would like to change which release stages notify Bugsnag you can set this property.
      */
     public void setEnabledReleaseStages(@Nullable Set<String> enabledReleaseStages) {
-        impl.setEnabledReleaseStages(SetUtils.sanitiseSet(enabledReleaseStages));
+        impl.setEnabledReleaseStages(enabledReleaseStages);
     }
 
     /**
@@ -569,7 +584,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * - User interaction: left when the user performs certain system operations.
      */
     public void setEnabledBreadcrumbTypes(@Nullable Set<BreadcrumbType> enabledBreadcrumbTypes) {
-        impl.setEnabledBreadcrumbTypes(SetUtils.sanitiseSet(enabledBreadcrumbTypes));
+        impl.setEnabledBreadcrumbTypes(enabledBreadcrumbTypes);
     }
 
     /**
@@ -594,10 +609,10 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * By default, projectPackages is set to be the package you called Bugsnag.start from.
      */
     public void setProjectPackages(@NonNull Set<String> projectPackages) {
-        if (projectPackages != null) {
-            impl.setProjectPackages(SetUtils.sanitiseSet(projectPackages));
+        if (CollectionUtils.containsNullElements(projectPackages)) {
+            logNull("projectPackages");
         } else {
-            error("projectPackages");
+            impl.setProjectPackages(projectPackages);
         }
     }
 
@@ -628,7 +643,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onError != null) {
             impl.addOnError(onError);
         } else {
-            error("addOnError");
+            logNull("addOnError");
         }
     }
 
@@ -641,7 +656,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onError != null) {
             impl.removeOnError(onError);
         } else {
-            error("removeOnError");
+            logNull("removeOnError");
         }
     }
 
@@ -668,7 +683,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onBreadcrumb != null) {
             impl.addOnBreadcrumb(onBreadcrumb);
         } else {
-            error("addOnBreadcrumb");
+            logNull("addOnBreadcrumb");
         }
     }
 
@@ -681,7 +696,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onBreadcrumb != null) {
             impl.removeOnBreadcrumb(onBreadcrumb);
         } else {
-            error("removeOnBreadcrumb");
+            logNull("removeOnBreadcrumb");
         }
     }
 
@@ -708,7 +723,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onSession != null) {
             impl.addOnSession(onSession);
         } else {
-            error("addOnSession");
+            logNull("addOnSession");
         }
     }
 
@@ -721,7 +736,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (onSession != null) {
             impl.removeOnSession(onSession);
         } else {
-            error("removeOnSession");
+            logNull("removeOnSession");
         }
     }
 
@@ -733,7 +748,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && value != null) {
             impl.addMetadata(section, value);
         } else {
-            error("addMetadata");
+            logNull("addMetadata");
         }
     }
 
@@ -746,7 +761,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && key != null) {
             impl.addMetadata(section, key, value);
         } else {
-            error("addMetadata");
+            logNull("addMetadata");
         }
     }
 
@@ -758,7 +773,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null) {
             impl.clearMetadata(section);
         } else {
-            error("clearMetadata");
+            logNull("clearMetadata");
         }
     }
 
@@ -770,7 +785,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && key != null) {
             impl.clearMetadata(section, key);
         } else {
-            error("clearMetadata");
+            logNull("clearMetadata");
         }
     }
 
@@ -783,7 +798,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null) {
             return impl.getMetadata(section);
         } else {
-            error("getMetadata");
+            logNull("getMetadata");
             return null;
         }
     }
@@ -797,7 +812,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (section != null && key != null) {
             return impl.getMetadata(section, key);
         } else {
-            error("getMetadata");
+            logNull("getMetadata");
             return null;
         }
     }

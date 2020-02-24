@@ -114,9 +114,9 @@ internal class ManifestConfigLoader {
             if (data.containsKey(ENABLED_RELEASE_STAGES)) {
                 enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             }
-            discardClasses = getStrArray(data, DISCARD_CLASSES, discardClasses)
-            projectPackages = getStrArray(data, PROJECT_PACKAGES, emptySet())!!
-            redactedKeys = getStrArray(data, REDACTED_KEYS, redactedKeys)
+            discardClasses = getStrArray(data, DISCARD_CLASSES, discardClasses) ?: emptySet()
+            projectPackages = getStrArray(data, PROJECT_PACKAGES, emptySet()) ?: emptySet()
+            redactedKeys = getStrArray(data, REDACTED_KEYS, redactedKeys) ?: emptySet()
         }
     }
 

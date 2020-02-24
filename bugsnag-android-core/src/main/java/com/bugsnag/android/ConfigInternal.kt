@@ -3,7 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import java.util.Collections
 
-internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAware {
+internal class ConfigInternal(apiKey: String) : CallbackAware, MetadataAware, UserAware {
 
     var apiKey: String = apiKey
         set(value) {
@@ -41,16 +41,7 @@ internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAw
     var logger: Logger? = null
     var delivery: Delivery? = null
     var endpoints: EndpointConfiguration = EndpointConfiguration()
-
     var maxBreadcrumbs: Int = DEFAULT_MAX_SIZE
-        set(numBreadcrumbs) {
-            field = when {
-                numBreadcrumbs <= MIN_BREADCRUMBS -> MIN_BREADCRUMBS
-                numBreadcrumbs > MAX_BREADCRUMBS -> MAX_BREADCRUMBS
-                else -> numBreadcrumbs
-            }
-        }
-
     var context: String? = null
 
     var redactedKeys: Set<String>? = metadataState.metadata.redactedKeys
@@ -108,8 +99,6 @@ internal class ConfigImpl(apiKey: String) : CallbackAware, MetadataAware, UserAw
     companion object {
         private const val DEFAULT_MAX_SIZE = 25
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
-        private const val MIN_BREADCRUMBS = 0
-        private const val MAX_BREADCRUMBS = 100
         private const val MIN_LAUNCH_CRASH_THRESHOLD_MS: Long = 0
         private const val API_KEY_REGEX = "[A-Fa-f0-9]{32}"
 
