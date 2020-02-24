@@ -18,6 +18,9 @@ public class EventFacadeTest {
     private InterceptingLogger logger;
     private ImmutableConfig config;
 
+    /**
+     * Constructs an event for testing the wrapper interface
+     */
     @Before
     public void setUp() {
         logger = new InterceptingLogger();
