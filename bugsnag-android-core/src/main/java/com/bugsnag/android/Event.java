@@ -303,11 +303,11 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware {
     }
 
     void setApp(@NonNull AppWithState app) {
-        impl.app = app;
+        impl.setApp(app);
     }
 
     void setDevice(@NonNull DeviceWithState device) {
-        impl.device = device;
+        impl.setDevice(device);
     }
 
     void setBreadcrumbs(@NonNull List<Breadcrumb> breadcrumbs) {
