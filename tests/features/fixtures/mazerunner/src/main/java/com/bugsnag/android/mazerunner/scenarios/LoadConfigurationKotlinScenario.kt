@@ -21,25 +21,25 @@ internal class LoadConfigurationKotlinScenario(
 
     override fun run() {
         super.run()
-        var testConfig = Configuration("12312312312312312312312312312312")
-        testConfig.appVersion  = "7.5.3"
-        testConfig.appType = "test"
+        var testConfig = Configuration("45645645645645645645645645645645")
+        testConfig.appVersion  = "0.9.8"
+        testConfig.appType = "kotlin"
         testConfig.autoDetectErrors = true
         testConfig.autoTrackSessions = false
-        testConfig.buildUuid = "test-7.5.3"
-        testConfig.enabledReleaseStages = setOf("production", "development", "testing")
+        testConfig.buildUuid = "kotlin-0.9.8"
+        testConfig.enabledReleaseStages = setOf("production", "development", "kotlin")
         testConfig.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
         testConfig.projectPackages = setOf("com.company.package1", "com.company.package2")
         testConfig.discardClasses = setOf("java.net.UnknownHostException", "com.example.Custom")
         testConfig.launchCrashThresholdMs = 10000
         testConfig.maxBreadcrumbs = 1
         testConfig.persistUser = false
-        testConfig.redactedKeys = setOf("filter_me")
-        testConfig.releaseStage = "testing"
-        testConfig.versionCode = 753
+        testConfig.redactedKeys = setOf("filter_me_two")
+        testConfig.releaseStage = "kotlin"
+        testConfig.versionCode = 98
         testConfig.addOnError(OnErrorCallback { event ->
-            event.addMetadata("test", "foo", "bar")
-            event.addMetadata("test", "filter_me", "foobar")
+            event.addMetadata("test", "filter_me", "bar")
+            event.addMetadata("test", "filter_me_two", "foobar")
             true
         })
 
