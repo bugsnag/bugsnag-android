@@ -13,7 +13,7 @@ class EventNameTest {
         val config = BugsnagTestUtils.generateImmutableConfig()
         val exception = RuntimeException("Example message", RuntimeException("Another"))
         val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
-        event = Event(exception, config, handledState)
+        event = Event(exception, config, handledState, NoopLogger)
     }
 
     @Test

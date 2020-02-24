@@ -27,7 +27,7 @@ public class ConcurrentCallbackTest {
     private final HandledState handledState
             = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
     private final Event event = new Event(new RuntimeException(),
-            generateImmutableConfig(), handledState);
+            generateImmutableConfig(), handledState, NoopLogger.INSTANCE);
 
     @Test
     public void testOnErrorConcurrentModification() {

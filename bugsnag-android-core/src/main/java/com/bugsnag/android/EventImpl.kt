@@ -8,7 +8,7 @@ import java.io.IOException
  * an [OnErrorCallback], where individual properties can be mutated before an error report is sent
  * to Bugsnag's API.
  */
-class Event @JvmOverloads internal constructor(
+internal class EventImpl @JvmOverloads internal constructor(
 
     /**
      * The Throwable object that caused the event in your application.
@@ -67,7 +67,7 @@ class Event @JvmOverloads internal constructor(
      * A list of breadcrumbs leading up to the event. These values can be accessed and amended
      * if necessary. See [Breadcrumb] for details of the data available.
      */
-    var breadcrumbs: List<Breadcrumb> = emptyList()
+    var breadcrumbs: MutableList<Breadcrumb> = mutableListOf()
 
     /**
      * Information extracted from the [Throwable]that caused the event can be found in this field.
@@ -77,8 +77,8 @@ class Event @JvmOverloads internal constructor(
      * A reference to the actual [Throwable] object that caused the event is available through
      * [originalError].
      */
-    var errors: List<Error> = when (originalError) {
-        null -> listOf()
+    var errors: MutableList<Error> = when (originalError) {
+        null -> mutableListOf()
         else -> Error.createError(originalError, config.projectPackages, config.logger)
     }
 
@@ -86,14 +86,14 @@ class Event @JvmOverloads internal constructor(
      * If thread state is being captured along with the event, this field will contain a
      * list of [Thread] objects.
      */
-    var threads: List<Thread>
+    var threads: MutableList<Thread>
 
     init {
         val recordThreads = config.sendThreads == ALWAYS || (config.sendThreads == UNHANDLED_ONLY && isUnhandled)
 
         threads = when {
             recordThreads -> ThreadState(config, if (isUnhandled) originalError else null).threads
-            else -> emptyList()
+            else -> mutableListOf()
         }
     }
 

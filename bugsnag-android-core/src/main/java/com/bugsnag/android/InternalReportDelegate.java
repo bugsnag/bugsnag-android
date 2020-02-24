@@ -50,7 +50,7 @@ class InternalReportDelegate implements EventStore.Delegate {
     public void onErrorIOFailure(Exception exc, File errorFile, String context) {
         // send an internal error to bugsnag with no cache
         HandledState handledState = HandledState.newInstance(REASON_UNHANDLED_EXCEPTION);
-        Event err = new Event(exc, immutableConfig, handledState);
+        Event err = new Event(exc, immutableConfig, handledState, logger);
         err.setContext(context);
 
         err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());

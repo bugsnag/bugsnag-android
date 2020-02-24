@@ -15,11 +15,11 @@ class EventMetadataCloneTest {
 
         val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         val config = BugsnagTestUtils.generateImmutableConfig()
-        val event = Event(RuntimeException(), config, handledState, data)
+        val event = Event(RuntimeException(), config, handledState, data, NoopLogger)
         event.addMetadata("test_section", "second", "another value")
 
         // metadata object should be deep copied
-        assertNotSame(data, event.metadata)
+        assertNotSame(data, event.impl.metadata)
 
         // validate event metadata
         val origExpected = mapOf(Pair("foo", "bar"))
@@ -27,6 +27,6 @@ class EventMetadataCloneTest {
 
         // validate event metadata
         val eventExpected = mapOf(Pair("foo", "bar"), Pair("second", "another value"))
-        assertEquals(eventExpected, event.metadata.getMetadata("test_section"))
+        assertEquals(eventExpected, event.impl.metadata.getMetadata("test_section"))
     }
 }

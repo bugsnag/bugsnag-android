@@ -20,7 +20,7 @@ class OnErrorCallbackTest {
         }
 
         val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
-        val error = Event(RuntimeException("Test"), config, handledState)
+        val error = Event(RuntimeException("Test"), config, handledState, NoopLogger)
         onError.onError(error)
         assertEquals(context, error.context)
     }

@@ -27,14 +27,14 @@ class DeliveryDelegate extends BaseObservable {
     void deliver(@NonNull Event event) {
         // Build the eventPayload
         EventPayload eventPayload = new EventPayload(immutableConfig.getApiKey(), event);
-        Session session = event.session;
+        Session session = event.getSession();
 
         if (session != null) {
             if (event.isUnhandled()) {
-                event.session = session.incrementUnhandledAndCopy();
+                event.setSession(session.incrementUnhandledAndCopy());
                 notifyObservers(StateEvent.NotifyUnhandled.INSTANCE);
             } else {
-                event.session = session.incrementHandledAndCopy();
+                event.setSession(session.incrementHandledAndCopy());
                 notifyObservers(StateEvent.NotifyHandled.INSTANCE);
             }
         }
