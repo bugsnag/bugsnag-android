@@ -10,7 +10,7 @@ open class Device internal constructor(
     /**
      * The Application Binary Interface used
      */
-    var cpuAbi: Array<String>,
+    var cpuAbi: Array<String>?,
 
     /**
      * Whether the device has been jailbroken
@@ -57,7 +57,7 @@ open class Device internal constructor(
      * A collection of names and their versions of the primary languages, frameworks or
      * runtimes that the application is running on
      */
-    var runtimeVersions: MutableMap<String, Any> = mutableMapOf(
+    var runtimeVersions: MutableMap<String, Any>? = mutableMapOf(
         Pair("androidApiLevel", buildInfo.apiLevel),
         Pair("osBuild", buildInfo.osBuild)
     )
