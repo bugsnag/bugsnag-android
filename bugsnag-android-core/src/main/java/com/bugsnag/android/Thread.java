@@ -11,7 +11,7 @@ import java.util.List;
 @SuppressWarnings("ConstantConditions")
 public class Thread implements JsonStream.Streamable {
 
-    private final ThreadImpl impl;
+    private final ThreadInternal impl;
     private final Logger logger;
 
     Thread(
@@ -21,11 +21,11 @@ public class Thread implements JsonStream.Streamable {
             boolean errorReportingThread,
             @NonNull Stacktrace stacktrace,
             @NonNull Logger logger) {
-        this.impl = new ThreadImpl(id, name, type, errorReportingThread, stacktrace);
+        this.impl = new ThreadInternal(id, name, type, errorReportingThread, stacktrace);
         this.logger = logger;
     }
 
-    private void error(String property) {
+    private void logNull(String property) {
         logger.e("Invalid null value supplied to thread." + property + ", ignoring");
     }
 
@@ -50,7 +50,7 @@ public class Thread implements JsonStream.Streamable {
         if (name != null) {
             impl.setName(name);
         } else {
-            error("name");
+            logNull("name");
         }
     }
 
@@ -69,7 +69,7 @@ public class Thread implements JsonStream.Streamable {
         if (type != null) {
             impl.setType(type);
         } else {
-            error("type");
+            logNull("type");
         }
     }
 
@@ -99,10 +99,10 @@ public class Thread implements JsonStream.Streamable {
      * Sets a representation of the thread's stacktrace
      */
     public void setStacktrace(@NonNull List<Stackframe> stacktrace) {
-        if (stacktrace != null) {
+        if (!CollectionUtils.containsNullElements(stacktrace)) {
             impl.setStacktrace(stacktrace);
         } else {
-            error("stacktrace");
+            logNull("stacktrace");
         }
     }
 

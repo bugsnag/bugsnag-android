@@ -79,14 +79,14 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void sendThreadsValid() {
-        config.setSendThreads(Thread.ThreadSendPolicy.UNHANDLED_ONLY);
-        assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, config.impl.getSendThreads());
+        config.setSendThreads(ThreadSendPolicy.UNHANDLED_ONLY);
+        assertEquals(ThreadSendPolicy.UNHANDLED_ONLY, config.impl.getSendThreads());
     }
 
     @Test
     public void sendThreadsInvalid() {
         config.setSendThreads(null);
-        assertEquals(Thread.ThreadSendPolicy.ALWAYS, config.impl.getSendThreads());
+        assertEquals(ThreadSendPolicy.ALWAYS, config.impl.getSendThreads());
         assertNotNull(logger.getMsg());
     }
 

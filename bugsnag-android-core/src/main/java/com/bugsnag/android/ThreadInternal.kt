@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 import java.io.IOException
 
-class ThreadImpl internal constructor(
+class ThreadInternal internal constructor(
     var id: Long,
     var name: String,
     var type: ThreadType,
