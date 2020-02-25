@@ -22,7 +22,7 @@ class SessionTest {
     @Mock
     lateinit var app: AppWithState
 
-    private val session = Session("123", Date(0), User(), true)
+    private val session = Session("123", Date(0), User(), true, NoopLogger)
 
     /**
      * Verifies that all the fields in session are copied into a new object correctly
@@ -88,8 +88,11 @@ class SessionTest {
     @Test
     fun isV2() {
         assertFalse(session.isV2Payload)
-        assertFalse(Session(File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json")).isV2Payload)
-        assertTrue(Session(File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc_v2.json")).isV2Payload)
+        assertFalse(Session(File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json"), NoopLogger).isV2Payload)
+        assertTrue(Session(
+            File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc_v2.json"),
+            NoopLogger
+        ).isV2Payload)
     }
 
     private fun validateSessionCopied(copy: Session) {
