@@ -1,1 +1,1 @@
-{"severity":"error","unhandled":true,"severityReason":{"type":"signal","attributes":{"signalType":""}}}
+{"severity":"error","unhandled":true,"severityReason":{"type":"signal","attributes":{"signalType":"SIGABRT"}}}
