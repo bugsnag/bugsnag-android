@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.ndk.NativeBridge
 
-internal class NdkPlugin : BugsnagPlugin {
+internal class NdkPlugin : Plugin {
 
     companion object {
         init {
@@ -10,14 +10,14 @@ internal class NdkPlugin : BugsnagPlugin {
         }
     }
 
-    override var loaded = false
+    var loaded = false
 
     private external fun enableCrashReporting()
     private external fun disableCrashReporting()
 
     private var nativeBridge: NativeBridge? = null
 
-    override fun loadPlugin(client: Client) {
+    override fun load(client: Client) {
         if (nativeBridge == null) {
             nativeBridge = NativeBridge()
             client.registerObserver(nativeBridge)
@@ -27,5 +27,5 @@ internal class NdkPlugin : BugsnagPlugin {
         client.logger.i("Initialised NDK Plugin")
     }
 
-    override fun unloadPlugin() = disableCrashReporting()
+    override fun unload() = disableCrashReporting()
 }

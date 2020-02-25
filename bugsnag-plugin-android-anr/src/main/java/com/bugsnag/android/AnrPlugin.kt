@@ -3,7 +3,7 @@ package com.bugsnag.android
 import android.os.Handler
 import android.os.Looper
 
-internal class AnrPlugin : BugsnagPlugin {
+internal class AnrPlugin : Plugin {
 
     companion object {
         init {
@@ -11,14 +11,14 @@ internal class AnrPlugin : BugsnagPlugin {
         }
     }
 
-    override var loaded = false
+    var loaded = false
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
 
     private external fun enableAnrReporting(callPreviousSigquitHandler: Boolean)
     private external fun disableAnrReporting()
 
-    override fun loadPlugin(client: Client) {
+    override fun load(client: Client) {
         // this must be run from the main thread as the SIGQUIT is sent to the main thread,
         // and if the handler is installed on a background thread instead we receive no signal
         Handler(Looper.getMainLooper()).post(Runnable {
@@ -28,7 +28,7 @@ internal class AnrPlugin : BugsnagPlugin {
         })
     }
 
-    override fun unloadPlugin() = disableAnrReporting()
+    override fun unload() = disableAnrReporting()
 
     /**
      * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
@@ -41,7 +41,7 @@ internal class AnrPlugin : BugsnagPlugin {
         val exc = RuntimeException()
         exc.stackTrace = thread.stackTrace
 
-        val event = BugsnagPluginInterface.createEvent(exc, client, HandledState.REASON_ANR)
+        val event = NativeInterface.createAnrEvent(exc, client)
         val err = event.errors[0]
         err.errorClass = "ANR"
         err.errorMessage = "Application did not respond to UI input"

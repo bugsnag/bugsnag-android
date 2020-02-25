@@ -77,10 +77,9 @@ internal fun writeErrorToStore(client: Client, event: Event) {
 }
 
 fun generateEvent(client: Client): Event {
-    val event = BugsnagPluginInterface.createEvent(
+    val event = NativeInterface.createAnrEvent(
         RuntimeException(),
-        client,
-        HandledState.REASON_ANR
+        client
     )
     event.app = generateAppWithState()
     event.device = generateDeviceWithState()

@@ -9,7 +9,6 @@ import java.util.HashMap
 internal data class ImmutableConfig(
     val apiKey: String,
     val enabledErrorTypes: ErrorTypes,
-    val autoDetectErrors: Boolean,
     val autoTrackSessions: Boolean,
     val sendThreads: ThreadSendPolicy,
     val discardClasses: Collection<String>,
@@ -93,7 +92,6 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
     return ImmutableConfig(
         apiKey = config.apiKey,
         enabledErrorTypes = errorTypes,
-        autoDetectErrors = config.autoDetectErrors,
         autoTrackSessions = config.autoTrackSessions,
         sendThreads = config.sendThreads,
         discardClasses = config.discardClasses.toSet(),
