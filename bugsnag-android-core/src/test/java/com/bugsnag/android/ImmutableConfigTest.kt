@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
@@ -15,7 +14,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -131,8 +129,9 @@ internal class ImmutableConfigTest {
             assertEquals("custom", seed.appType)
 
             // network config
-            assertEquals(seed.endpoints.notify, endpoints.notify)
-            assertEquals(seed.endpoints.sessions, endpoints.sessions)
+            val endpoints1 = seed.endpoints
+            assertEquals(endpoints1.notify, endpoints.notify)
+            assertEquals(endpoints1.sessions, endpoints.sessions)
 
             // behaviour
             assertEquals(7000, seed.launchCrashThresholdMs)

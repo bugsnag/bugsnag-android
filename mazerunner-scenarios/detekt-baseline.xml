@@ -12,6 +12,7 @@
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
     <ID>MatchingDeclarationName:ArrayNotifyReleaseStageScenario.kt$com.bugsnag.android.mazerunner.scenarios.ArrayNotifyReleaseStageScenario.kt</ID>
     <ID>MatchingDeclarationName:HandledExceptionWithoutMessage.kt$com.bugsnag.android.mazerunner.scenarios.HandledExceptionWithoutMessage.kt</ID>
+    <ID>NewLineAtEndOfFile:TestHarnessHooks.kt$com.bugsnag.android.TestHarnessHooks.kt</ID>
     <ID>TooGenericExceptionThrown:CrashHandlerScenario.kt$CrashHandlerScenario$throw RuntimeException("CrashHandlerScenario")</ID>
     <ID>TooGenericExceptionThrown:CustomClientErrorFlushScenario.kt$CustomClientErrorFlushScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:DisableAutoDetectErrorsScenario.kt$DisableAutoDetectErrorsScenario$throw RuntimeException("Should never appear")</ID>

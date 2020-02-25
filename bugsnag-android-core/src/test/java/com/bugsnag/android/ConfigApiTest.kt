@@ -24,8 +24,8 @@ internal class ConfigApiTest {
     @Before
     fun setUp() {
         config = generateConfiguration()
-        callbackState = config.callbackState
-        metadataState = config.metadataState
+        callbackState = config.impl.callbackState
+        metadataState = config.impl.metadataState
     }
 
     @Test

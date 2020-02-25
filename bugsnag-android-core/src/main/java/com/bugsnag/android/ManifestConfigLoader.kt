@@ -112,16 +112,16 @@ internal class ManifestConfigLoader {
                 versionCode = data.getInt(VERSION_CODE)
             }
             if (data.containsKey(ENABLED_RELEASE_STAGES)) {
-                enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, emptySet())
+                enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             }
-            discardClasses = getStrArray(data, DISCARD_CLASSES, discardClasses)
-            projectPackages = getStrArray(data, PROJECT_PACKAGES, projectPackages)
-            redactedKeys = getStrArray(data, REDACTED_KEYS, redactedKeys)
+            discardClasses = getStrArray(data, DISCARD_CLASSES, discardClasses) ?: emptySet()
+            projectPackages = getStrArray(data, PROJECT_PACKAGES, emptySet()) ?: emptySet()
+            redactedKeys = getStrArray(data, REDACTED_KEYS, redactedKeys) ?: emptySet()
         }
     }
 
     private fun getStrArray(data: Bundle, key: String,
-                            default: Set<String>): Set<String> {
+                            default: Set<String>?): Set<String>? {
         val delimitedStr = data.getString(key)
 
         return when (val ary = delimitedStr?.split(",")) {
