@@ -17,7 +17,7 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var appVersion: String? = null
     var versionCode: Int? = 0
     var releaseStage: String? = null
-    var sendThreads: Thread.ThreadSendPolicy = Thread.ThreadSendPolicy.ALWAYS
+    var sendThreads: ThreadSendPolicy = ThreadSendPolicy.ALWAYS
     var persistUser: Boolean = false
 
     var launchCrashThresholdMs: Long = DEFAULT_LAUNCH_CRASH_THRESHOLD_MS

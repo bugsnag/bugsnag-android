@@ -88,7 +88,7 @@ internal class ManifestConfigLoader {
             val str = data.getString(SEND_THREADS)
 
             if (str != null) {
-                sendThreads = Thread.ThreadSendPolicy.fromString(str)
+                sendThreads = ThreadSendPolicy.fromString(str)
             }
         }
     }
