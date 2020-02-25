@@ -53,7 +53,7 @@ internal class EventSerializationTest {
                     it.breadcrumbs = listOf(crumb)
 
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
-                    val err = Error("WhoopsException", "Whoops", stacktrace.trace)
+                    val err = Error(ErrorInternal("WhoopsException", "Whoops", stacktrace.trace), NoopLogger)
                     it.errors.clear()
                     it.errors.add(err)
                 }

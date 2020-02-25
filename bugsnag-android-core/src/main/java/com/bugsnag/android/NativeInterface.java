@@ -365,7 +365,7 @@ public class NativeInterface {
                     errors.get(0).setErrorMessage(message);
 
                     for (Error error : errors) {
-                        error.setType(Error.Type.C);
+                        error.setType(ErrorType.C);
                     }
                 }
                 return true;
