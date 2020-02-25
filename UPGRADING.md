@@ -159,6 +159,7 @@ It is also possible to supply primitive configuration values via your `AndroidMa
 Bugsnag.start(this)
 ```
 
+See the [manifest documentation](https://docs.bugsnag.com/platforms/android/configuration-options/#customizing-by-build-setting) for more information.
 
 
 Several methods on `Configuration` have been renamed for greater API consistency. A full list is shown below:
@@ -212,21 +213,20 @@ See the [full documentation](https://docs.bugsnag.com/platforms/android) for mor
 
 ## BeforeNotify/BeforeSend/Callback
 
-These three callbacks have been superseded and replaced by `OnError`, a single callback which runs immediately after an error has occurred. This can run globally on all errors, or on an individual error.
+These three callbacks have been superseded and replaced by `OnError`, a single callback which runs immediately after an `Event` has been captured. This can run globally on all events, or on an individual event.
 
 ```kotlin
 val config = Configuration("my-api-key")
-config.maxBreadcrumbs = 35
-config.addOnError { event -> // run on all errors
+config.addOnError(OnErrorCallback { event -> // run on all errors
     event.context = "Some Custom context"
-    return true
-}
+    true
+})
 Bugsnag.start(this, config)
 
 // run on single error only
 Bugsnag.notify(myThrowable) { event ->
     event.context = "My Unique context"
-    return true
+    true
 }
 ```
 
