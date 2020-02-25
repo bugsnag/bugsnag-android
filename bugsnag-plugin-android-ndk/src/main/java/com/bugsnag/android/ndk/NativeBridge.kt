@@ -110,7 +110,7 @@ class NativeBridge : Observer {
             return true
         }
 
-        logger.i(String.format("Received NDK message %s", msg))
+        logger.d(String.format("Received NDK message %s", msg))
         return false
     }
 
