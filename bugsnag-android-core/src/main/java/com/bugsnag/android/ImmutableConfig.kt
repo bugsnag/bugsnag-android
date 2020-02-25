@@ -90,14 +90,13 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         else -> ErrorTypes(false)
     }
 
-    @Suppress("UNNECESSARY_SAFE_CALL", "USELESS_ELVIS")
     return ImmutableConfig(
         apiKey = config.apiKey,
         enabledErrorTypes = errorTypes,
         autoDetectErrors = config.autoDetectErrors,
         autoTrackSessions = config.autoTrackSessions,
         sendThreads = config.sendThreads,
-        discardClasses = config.discardClasses?.toSet() ?: emptySet(),
+        discardClasses = config.discardClasses.toSet(),
         enabledReleaseStages = config.enabledReleaseStages?.toSet(),
         projectPackages = config.projectPackages.toSet(),
         releaseStage = config.releaseStage,
@@ -107,7 +106,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         codeBundleId = config.codeBundleId,
         appType = config.appType,
         delivery = config.delivery,
-        endpoints = config.endpoints ?: EndpointConfiguration(),
+        endpoints = config.endpoints,
         persistUser = config.persistUser,
         launchCrashThresholdMs = config.launchCrashThresholdMs,
         logger = config.logger!!,

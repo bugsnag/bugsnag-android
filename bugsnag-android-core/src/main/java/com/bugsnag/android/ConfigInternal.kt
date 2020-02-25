@@ -3,13 +3,8 @@ package com.bugsnag.android
 import android.content.Context
 import java.util.Collections
 
-internal class ConfigInternal(apiKey: String) : CallbackAware, MetadataAware, UserAware {
+internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware, UserAware {
 
-    var apiKey: String = apiKey
-        set(value) {
-            require(value.matches(API_KEY_REGEX.toRegex())) { "You must provide a valid Bugsnag API key" }
-            field = value
-        }
     private var user = User()
 
     @JvmField
@@ -26,12 +21,6 @@ internal class ConfigInternal(apiKey: String) : CallbackAware, MetadataAware, Us
     var persistUser: Boolean = false
 
     var launchCrashThresholdMs: Long = DEFAULT_LAUNCH_CRASH_THRESHOLD_MS
-        set(launchCrashThresholdMs) {
-            field = when {
-                launchCrashThresholdMs <= MIN_LAUNCH_CRASH_THRESHOLD_MS -> MIN_LAUNCH_CRASH_THRESHOLD_MS
-                else -> launchCrashThresholdMs
-            }
-        }
 
     var autoTrackSessions: Boolean = true
     var enabledErrorTypes: ErrorTypes = ErrorTypes()
@@ -44,18 +33,14 @@ internal class ConfigInternal(apiKey: String) : CallbackAware, MetadataAware, Us
     var maxBreadcrumbs: Int = DEFAULT_MAX_SIZE
     var context: String? = null
 
-    var redactedKeys: Set<String>? = metadataState.metadata.redactedKeys
+    var redactedKeys: Set<String> = metadataState.metadata.redactedKeys
         set(value) {
-            if (value != null) {
-                metadataState.metadata.setRedactedKeys(value)
-            }
+            metadataState.metadata.setRedactedKeys(value)
             field = value
         }
 
     init {
-        require(apiKey.matches(API_KEY_REGEX.toRegex())) { "You must provide a valid Bugsnag API key" }
         this.callbackState = CallbackState()
-
 
         enabledErrorTypes.ndkCrashes = try {
             // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
@@ -68,7 +53,7 @@ internal class ConfigInternal(apiKey: String) : CallbackAware, MetadataAware, Us
         }
     }
 
-    var discardClasses: Set<String>? = emptySet()
+    var discardClasses: Set<String> = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = BreadcrumbType.values().toSet()
     var projectPackages: Set<String> = emptySet()
@@ -99,8 +84,6 @@ internal class ConfigInternal(apiKey: String) : CallbackAware, MetadataAware, Us
     companion object {
         private const val DEFAULT_MAX_SIZE = 25
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
-        private const val MIN_LAUNCH_CRASH_THRESHOLD_MS: Long = 0
-        private const val API_KEY_REGEX = "[A-Fa-f0-9]{32}"
 
         @JvmStatic
         fun load(context: Context): Configuration = load(context, null)

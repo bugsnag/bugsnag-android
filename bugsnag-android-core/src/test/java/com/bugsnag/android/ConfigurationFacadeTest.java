@@ -172,10 +172,14 @@ public class ConfigurationFacadeTest {
         EndpointConfiguration endpoints = new EndpointConfiguration("http://example.com:1234", "http://example.com:4567");
         config.setEndpoints(endpoints);
         assertEquals(endpoints, config.impl.getEndpoints());
+    }
+
+    @Test
+    public void endpointsInvalid() {
+        EndpointConfiguration endpoints = config.impl.getEndpoints();
         config.setEndpoints(null);
-        EndpointConfiguration conf = new EndpointConfiguration();
-        assertEquals(conf.getNotify(), config.impl.getEndpoints().getNotify());
-        assertEquals(conf.getSessions(), config.impl.getEndpoints().getSessions());
+        assertEquals(endpoints, config.getEndpoints());
+        assertNotNull(logger.getMsg());
     }
 
     @Test

@@ -33,8 +33,8 @@ class ManifestConfigLoaderTest {
             assertFalse(persistUser)
 
             // endpoints
-            assertEquals(endpoints!!.notify, "https://notify.bugsnag.com")
-            assertEquals(endpoints!!.sessions, "https://sessions.bugsnag.com")
+            assertEquals(endpoints.notify, "https://notify.bugsnag.com")
+            assertEquals(endpoints.sessions, "https://sessions.bugsnag.com")
 
             // app/project packages
             assertNull(appVersion)
@@ -99,8 +99,8 @@ class ManifestConfigLoaderTest {
             assertTrue(persistUser)
 
             // endpoints
-            assertEquals(endpoints!!.notify, "http://localhost:1234")
-            assertEquals(endpoints!!.sessions, "http://localhost:2345")
+            assertEquals(endpoints.notify, "http://localhost:1234")
+            assertEquals(endpoints.sessions, "http://localhost:2345")
 
             // app/project packages
             assertEquals("5.23.7", appVersion)

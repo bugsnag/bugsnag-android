@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,6 +18,8 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
 
     private static final int MIN_BREADCRUMBS = 0;
     private static final int MAX_BREADCRUMBS = 100;
+    private static final String API_KEY_REGEX = "[A-Fa-f0-9]{32}";
+    private static final long MIN_LAUNCH_CRASH_THRESHOLD_MS = 0;
 
     final ConfigInternal impl;
 
@@ -24,6 +27,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * Constructs a new Configuration object with default values.
      */
     public Configuration(@NonNull String apiKey) {
+        validateApiKey(apiKey);
         impl = new ConfigInternal(apiKey);
     }
 
@@ -39,6 +43,12 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     @NonNull
     static Configuration load(@NonNull Context context, @NonNull String apiKey) {
         return ConfigInternal.load(context, apiKey);
+    }
+
+    private void validateApiKey(String value) {
+        if (value == null || !value.matches(API_KEY_REGEX)) {
+            throw new IllegalArgumentException("You must provide a valid Bugsnag API key");
+        }
     }
 
     private void logNull(String property) {
@@ -57,6 +67,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * Changes the API key used for events sent to Bugsnag.
      */
     public void setApiKey(@NonNull String apiKey) {
+        validateApiKey(apiKey);
         impl.setApiKey(apiKey);
     }
 
@@ -218,7 +229,13 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.
      */
     public void setLaunchCrashThresholdMs(long launchCrashThresholdMs) {
-        impl.setLaunchCrashThresholdMs(launchCrashThresholdMs);
+        if (launchCrashThresholdMs > MIN_LAUNCH_CRASH_THRESHOLD_MS) {
+            impl.setLaunchCrashThresholdMs(launchCrashThresholdMs);
+        } else {
+            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+                    + "Option launchCrashThresholdMs should be a positive long value."
+                    + "Supplied value is %d", launchCrashThresholdMs));
+        }
     }
 
     /**
@@ -411,7 +428,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
      * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.
      */
-    @Nullable
+    @NonNull
     public EndpointConfiguration getEndpoints() {
         return impl.getEndpoints();
     }
@@ -421,11 +438,11 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
      * override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.
      */
-    public void setEndpoints(@Nullable EndpointConfiguration endpoints) {
+    public void setEndpoints(@NonNull EndpointConfiguration endpoints) {
         if (endpoints != null) {
             impl.setEndpoints(endpoints);
         } else {
-            impl.setEndpoints(new EndpointConfiguration());
+            logNull("endpoints");
         }
     }
 
@@ -449,8 +466,9 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (maxBreadcrumbs >= MIN_BREADCRUMBS && maxBreadcrumbs <= MAX_BREADCRUMBS) {
             impl.setMaxBreadcrumbs(maxBreadcrumbs);
         } else {
-            getLogger().e("Invalid null value supplied to config.maxBreadcrumbs, expected "
-                    + "between 0-100. Ignoring.");
+            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+                    + "Option maxBreadcrumbs should be an integer between 0-100. "
+                    + "Supplied value is %d", maxBreadcrumbs));
         }
     }
 
