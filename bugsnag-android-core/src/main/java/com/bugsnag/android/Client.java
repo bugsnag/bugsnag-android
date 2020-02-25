@@ -824,7 +824,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     public void leaveBreadcrumb(@NonNull String message) {
         if (message != null) {
-            breadcrumbState.add(new Breadcrumb(message));
+            breadcrumbState.add(new Breadcrumb(message, logger));
         } else {
             logNull("leaveBreadcrumb");
         }
@@ -842,7 +842,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                                 @NonNull BreadcrumbType type,
                                 @NonNull Map<String, Object> metadata) {
         if (message != null && type != null && metadata != null) {
-            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date()));
+            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         } else {
             logNull("leaveBreadcrumb");
         }

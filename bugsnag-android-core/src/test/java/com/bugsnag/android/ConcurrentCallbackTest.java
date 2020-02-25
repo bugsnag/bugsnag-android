@@ -58,7 +58,8 @@ public class ConcurrentCallbackTest {
             }
         });
         config.addOnBreadcrumb(new OnBreadcrumbCallbackSkeleton());
-        config.runOnBreadcrumbTasks(new Breadcrumb("Foo"), NoopLogger.INSTANCE);
+        Breadcrumb crumb = new Breadcrumb("Foo", NoopLogger.INSTANCE);
+        config.runOnBreadcrumbTasks(crumb, NoopLogger.INSTANCE);
     }
 
     @Test

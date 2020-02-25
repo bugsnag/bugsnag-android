@@ -49,7 +49,7 @@ internal class EventSerializationTest {
                     it.addMetadata("wham", "some_key", "A value")
                     it.setUser(null, null, "Jamie")
 
-                    val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0))
+                    val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0), NoopLogger)
                     it.breadcrumbs = listOf(crumb)
 
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)

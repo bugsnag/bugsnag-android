@@ -110,7 +110,8 @@ class DeliveryDelegate extends BaseObservable {
             data.put("message", message);
             data.put("unhandled", String.valueOf(event.isUnhandled()));
             data.put("severity", event.getSeverity().toString());
-            breadcrumbState.add(new Breadcrumb(errorClass, BreadcrumbType.ERROR, data, new Date()));
+            breadcrumbState.add(new Breadcrumb(errorClass,
+                    BreadcrumbType.ERROR, data, new Date(), logger));
         }
     }
 }

@@ -146,7 +146,8 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testLeaveStringBreadcrumbDirectlySendsMessage() {
-        client.breadcrumbState.add(new Breadcrumb("Drift 4 units left"));
+        Breadcrumb obj = new Breadcrumb("Drift 4 units left", NoopLogger.INSTANCE);
+        client.breadcrumbState.add(obj);
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
         assertEquals("manual", crumb.getMessage());
