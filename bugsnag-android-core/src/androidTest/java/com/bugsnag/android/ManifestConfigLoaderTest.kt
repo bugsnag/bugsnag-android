@@ -29,7 +29,7 @@ class ManifestConfigLoaderTest {
             // detection
             assertTrue(autoDetectErrors)
             assertTrue(autoTrackSessions)
-            assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
+            assertEquals(ThreadSendPolicy.ALWAYS, sendThreads)
             assertFalse(persistUser)
 
             // endpoints
@@ -95,7 +95,7 @@ class ManifestConfigLoaderTest {
             // detection
             assertFalse(autoDetectErrors)
             assertFalse(autoTrackSessions)
-            assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
+            assertEquals(ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
             assertTrue(persistUser)
 
             // endpoints

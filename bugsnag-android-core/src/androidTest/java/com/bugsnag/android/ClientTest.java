@@ -275,10 +275,10 @@ public class ClientTest {
         client.addMetadata("test_section", "second", "another value");
 
         // metadata state should be deep copied
-        assertNotSame(config.metadataState, client.metadataState);
+        assertNotSame(config.impl.metadataState, client.metadataState);
 
         // metadata object should be deep copied
-        Metadata configData = config.metadataState.getMetadata();
+        Metadata configData = config.impl.metadataState.getMetadata();
         Metadata clientData = client.metadataState.getMetadata();
         assertNotSame(configData, clientData);
 

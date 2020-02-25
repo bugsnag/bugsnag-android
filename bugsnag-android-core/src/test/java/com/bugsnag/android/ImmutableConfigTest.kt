@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
@@ -15,7 +14,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -54,7 +52,7 @@ internal class ImmutableConfigTest {
             assertTrue(enabledErrorTypes.unhandledExceptions)
             assertTrue(enabledErrorTypes.anrs)
             assertFalse(enabledErrorTypes.ndkCrashes)
-            assertEquals(Thread.ThreadSendPolicy.ALWAYS, sendThreads)
+            assertEquals(ThreadSendPolicy.ALWAYS, sendThreads)
 
             // release stages
             assertTrue(discardClasses.isEmpty())
@@ -87,7 +85,7 @@ internal class ImmutableConfigTest {
         seed.enabledErrorTypes.unhandledExceptions = false
         seed.enabledErrorTypes.anrs = false
         seed.enabledErrorTypes.ndkCrashes = true
-        seed.sendThreads = Thread.ThreadSendPolicy.UNHANDLED_ONLY
+        seed.sendThreads = ThreadSendPolicy.UNHANDLED_ONLY
 
         seed.discardClasses = setOf("foo")
         seed.enabledReleaseStages = setOf("bar")
@@ -116,7 +114,7 @@ internal class ImmutableConfigTest {
             assertFalse(enabledErrorTypes.unhandledExceptions)
             assertFalse(enabledErrorTypes.anrs)
             assertTrue(enabledErrorTypes.ndkCrashes)
-            assertEquals(Thread.ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
+            assertEquals(ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages
             assertEquals(setOf("foo"), discardClasses)
@@ -131,8 +129,9 @@ internal class ImmutableConfigTest {
             assertEquals("custom", seed.appType)
 
             // network config
-            assertEquals(seed.endpoints.notify, endpoints.notify)
-            assertEquals(seed.endpoints.sessions, endpoints.sessions)
+            val endpoints1 = seed.endpoints
+            assertEquals(endpoints1.notify, endpoints.notify)
+            assertEquals(endpoints1.sessions, endpoints.sessions)
 
             // behaviour
             assertEquals(7000, seed.launchCrashThresholdMs)

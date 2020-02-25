@@ -24,7 +24,7 @@ internal class EventRedactionTest {
         event.addMetadata("device", "password", "bar")
         event.impl.metadata.addMetadata("baz", "password", "hunter2")
         val metadata = mutableMapOf<String, Any?>(Pair("password", "whoops"))
-        event.breadcrumbs = listOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0)))
+        event.breadcrumbs = listOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0), NoopLogger))
         event.threads.clear()
 
         val writer = StringWriter()

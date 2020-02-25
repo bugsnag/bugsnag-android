@@ -28,7 +28,7 @@ internal class DeliveryDelegateTest {
     fun setUp() {
         deliveryDelegate =
             DeliveryDelegate(logger, eventStore, config, breadcrumbState)
-        event.session = Session("123", Date(), User(null, null, null), false)
+        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class DeliveryDelegateTest {
     fun generateHandledReport() {
         val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
-        event.session = Session("123", Date(), User(null, null, null), false)
+        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
 
         var msg: StateEvent.NotifyHandled? = null
         deliveryDelegate.addObserver { _, arg ->
@@ -92,10 +92,10 @@ internal class DeliveryDelegateTest {
         val breadcrumb = breadcrumbState.store.peek()
         assertEquals(BreadcrumbType.ERROR, breadcrumb.type)
         assertEquals("java.lang.RuntimeException", breadcrumb.message)
-        assertEquals("java.lang.RuntimeException", breadcrumb.metadata["errorClass"])
-        assertEquals("Whoops!", breadcrumb.metadata["message"])
-        assertEquals("true", breadcrumb.metadata["unhandled"])
-        assertEquals("ERROR", breadcrumb.metadata["severity"])
+        assertEquals("java.lang.RuntimeException", breadcrumb.metadata!!["errorClass"])
+        assertEquals("Whoops!", breadcrumb.metadata!!["message"])
+        assertEquals("true", breadcrumb.metadata!!["unhandled"])
+        assertEquals("ERROR", breadcrumb.metadata!!["severity"])
     }
 
     private class InterceptingLogger : Logger {

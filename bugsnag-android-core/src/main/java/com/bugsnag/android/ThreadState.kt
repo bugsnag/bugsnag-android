@@ -31,7 +31,7 @@ internal class ThreadState @JvmOverloads constructor
             .sortedBy { it.id }
             .map {
                 val stacktrace = Stacktrace(stackTraces[it]!!, config.projectPackages, logger)
-                Thread(it.id, it.name, Thread.Type.ANDROID, it.id == currentThreadId, stacktrace)
+                Thread(it.id, it.name, ThreadType.ANDROID, it.id == currentThreadId, stacktrace, logger)
             }.toMutableList()
     }
 

@@ -55,7 +55,7 @@ final class BugsnagTestUtils {
     }
 
     static Session generateSession() {
-        return new Session("test", new Date(), new User(), false);
+        return new Session("test", new Date(), new User(), false, NoopLogger.INSTANCE);
     }
 
     static Configuration generateConfiguration() {
@@ -76,7 +76,7 @@ final class BugsnagTestUtils {
 
     static SessionTracker generateSessionTracker() {
         Configuration config = generateConfiguration();
-        return new SessionTracker(convert(config), config.callbackState,
+        return new SessionTracker(convert(config), config.impl.callbackState,
                 BugsnagTestUtils.generateClient(), generateSessionStore(), NoopLogger.INSTANCE);
     }
 

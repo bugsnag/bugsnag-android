@@ -32,14 +32,14 @@ internal class EventSerializationTest {
                 // session included
                 createEvent {
                     val user = User("123", "foo@example.com", "Joe")
-                    it.session = Session("123", Date(0), user, false)
+                    it.session = Session("123", Date(0), user, false, NoopLogger)
                 },
 
                 // threads included
                 createEvent {
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
                     it.threads.clear()
-                    it.threads.add(Thread(5, "main", Thread.Type.ANDROID, true, stacktrace))
+                    it.threads.add(Thread(5, "main", ThreadType.ANDROID, true, stacktrace, NoopLogger))
                 },
 
                 // threads included
@@ -49,11 +49,11 @@ internal class EventSerializationTest {
                     it.addMetadata("wham", "some_key", "A value")
                     it.setUser(null, null, "Jamie")
 
-                    val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0))
+                    val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0), NoopLogger)
                     it.breadcrumbs = listOf(crumb)
 
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
-                    val err = Error("WhoopsException", "Whoops", stacktrace.trace)
+                    val err = Error(ErrorInternal("WhoopsException", "Whoops", stacktrace.trace), NoopLogger)
                     it.errors.clear()
                     it.errors.add(err)
                 }

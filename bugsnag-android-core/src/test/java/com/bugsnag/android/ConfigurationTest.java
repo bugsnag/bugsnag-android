@@ -99,7 +99,7 @@ public class ConfigurationTest {
         assertEquals(5000L, config.getLaunchCrashThresholdMs());
 
         config.setLaunchCrashThresholdMs(-5);
-        assertEquals(0, config.getLaunchCrashThresholdMs());
+        assertEquals(5000, config.getLaunchCrashThresholdMs());
 
         int expected = 1500;
         config.setLaunchCrashThresholdMs(expected);

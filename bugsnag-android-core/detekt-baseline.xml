@@ -2,25 +2,29 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>ComplexMethod:ImmutableConfig.kt$internal fun sanitiseConfiguration( appContext: Context, configuration: Configuration, connectivity: Connectivity ): ImmutableConfig</ID>
     <ID>ComplexMethod:ObjectJsonStreamer.kt$ObjectJsonStreamer$// Write complex/nested values to a JsonStreamer @Throws(IOException::class) fun objectToStream(obj: Any?, writer: JsonStream, shouldRedactKeys: Boolean = false)</ID>
     <ID>EmptyFunctionBlock:SessionLifecycleCallback.kt$SessionLifecycleCallback${}</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
-    <ID>MaxLineLength:ThreadStateTest.kt$ThreadStateTest$private val threadState = ThreadState(configuration, null, Thread.currentThread(), Thread.getAllStackTraces(), NoopLogger)</ID>
+    <ID>MatchingDeclarationName:Breadcrumb.kt$com.bugsnag.android.Breadcrumb.kt</ID>
+    <ID>MaxLineLength:ImmutableConfig.kt$val appInfo = runCatching { packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA ) }.getOrNull()</ID>
+    <ID>MaxLineLength:InternalEventPayloadDelegateTest.kt$InternalEventPayloadDelegateTest$`when`(deviceDataCollector.generateDeviceWithState(ArgumentMatchers.anyLong())).thenReturn(generateDeviceWithState())</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String&gt; ): DeliveryStatus</ID>
     <ID>ReturnCount:DeviceDataCollector.kt$DeviceDataCollector$ private fun isRooted(): Boolean</ID>
+    <ID>TooGenericExceptionCaught:AppDataCollector.kt$AppDataCollector$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:BugsnagPluginInterface.kt$BugsnagPluginInterface$exc: Exception</ID>
     <ID>TooGenericExceptionCaught:CallbackState.kt$CallbackState$ex: Throwable</ID>
-    <ID>TooGenericExceptionCaught:Configuration.kt$Configuration$exc: Throwable</ID>
+    <ID>TooGenericExceptionCaught:ConfigInternal.kt$ConfigInternal$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultDelivery.kt$DefaultDelivery$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:ManifestConfigLoader.kt$ManifestConfigLoader$exc: Exception</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
-    <ID>TooManyFunctions:Configuration.kt$Configuration : CallbackAwareMetadataAware</ID>
-    <ID>TooManyFunctions:Event.kt$Event : StreamableMetadataAwareUserAware</ID>
+    <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
+    <ID>TooManyFunctions:EventInternal.kt$EventInternal : StreamableMetadataAwareUserAware</ID>
     <ID>TooManyFunctions:Metadata.kt$Metadata : StreamableMetadataAware</ID>
-    <ID>VariableNaming:Event.kt$Event$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
+    <ID>VariableNaming:EventInternal.kt$EventInternal$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
+    <ID>WildcardImport:EventInternal.kt$import com.bugsnag.android.Thread.ThreadSendPolicy.*</ID>
   </Whitelist>
 </SmellBaseline>

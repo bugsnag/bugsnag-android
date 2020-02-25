@@ -115,7 +115,7 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun getBreadcrumbs() {
-        val breadcrumbs = listOf(Breadcrumb("Whoops"))
+        val breadcrumbs = listOf(Breadcrumb("Whoops", NoopLogger))
         `when`(client.breadcrumbs).thenReturn(breadcrumbs)
         assertEquals(breadcrumbs[0], NativeInterface.getBreadcrumbs()[0])
     }

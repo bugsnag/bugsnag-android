@@ -16,7 +16,7 @@ internal class BreadcrumbStateSerializationTest {
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
             val breadcrumbs = BreadcrumbState(50, CallbackState(), NoopLogger)
             val metadata = mutableMapOf<String, Any?>(Pair("direction", "left"))
-            breadcrumbs.add(Breadcrumb("hello world", BreadcrumbType.MANUAL, metadata, Date(0)))
+            breadcrumbs.add(Breadcrumb("hello world", BreadcrumbType.MANUAL, metadata, Date(0), NoopLogger))
             return generateSerializationTestCases("breadcrumb_state", breadcrumbs)
         }
     }

@@ -26,7 +26,7 @@ class CallbackStateTest {
 
     private val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
     private val event = Event(RuntimeException(), generateImmutableConfig(), handledState, NoopLogger)
-    private val breadcrumb = Breadcrumb("")
+    private val breadcrumb = Breadcrumb("", NoopLogger)
 
     @Test
     fun testCopy() {
@@ -114,13 +114,6 @@ class CallbackStateTest {
         })
         assertFalse(state.runOnBreadcrumbTasks(breadcrumb, NoopLogger))
         assertEquals(0, count)
-    }
-
-    private class InterceptingLogger: Logger {
-        var msg: String? = null
-        override fun w(msg: String, throwable: Throwable) {
-            this.msg = msg
-        }
     }
 
 }
