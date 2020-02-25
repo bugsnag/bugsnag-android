@@ -106,7 +106,8 @@ public class EventTest {
     @Test
     public void testGetOriginalError() {
         RuntimeException testRuntimeException = new RuntimeException("Something went wrong");
-        Event testEvent = new Event(testRuntimeException, config, handledState, NoopLogger.INSTANCE);
+        Event testEvent = new Event(testRuntimeException, config,
+            handledState, NoopLogger.INSTANCE);
         Throwable outException = testEvent.getOriginalError();
         assertEquals(testRuntimeException, outException);
     }
@@ -151,7 +152,8 @@ public class EventTest {
     @Test
     public void testGetSetErrors() {
         RuntimeException testRuntimeException = new RuntimeException("Something went wrong");
-        Event testEvent = new Event(testRuntimeException, config, handledState, NoopLogger.INSTANCE);
+        Event testEvent = new Event(testRuntimeException, config,
+            handledState, NoopLogger.INSTANCE);
         List<Error> errors = testEvent.getErrors();
 
         // First error should match the testException
