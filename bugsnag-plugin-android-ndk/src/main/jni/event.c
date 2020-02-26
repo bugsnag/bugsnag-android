@@ -2,12 +2,12 @@
 #include "utils/string.h"
 #include <string.h>
 
-int bsg_find_next_free_metadata_index(bugsnag_event *event) {
-  if (event->metadata.value_count < BUGSNAG_METADATA_MAX) {
-    return event->metadata.value_count;
+int bsg_find_next_free_metadata_index(bugsnag_metadata *const metadata) {
+  if (metadata->value_count < BUGSNAG_METADATA_MAX) {
+    return metadata->value_count;
   } else {
-    for (int i = 0; i < event->metadata.value_count; i++) {
-      if (event->metadata.values[i].type == BSG_METADATA_NONE_VALUE) {
+    for (int i = 0; i < metadata->value_count; i++) {
+      if (metadata->values[i].type == BSG_METADATA_NONE_VALUE) {
         return i;
       }
     }
@@ -15,51 +15,65 @@ int bsg_find_next_free_metadata_index(bugsnag_event *event) {
   return -1;
 }
 
-int bugsnag_event_add_metadata_value(void *event_ptr, char *section,
-                                     char *name) {
-  bugsnag_event *event = (bugsnag_event *) event_ptr;
-  int index = bsg_find_next_free_metadata_index(event);
+int bsg_add_metadata_value(bugsnag_metadata *metadata, char *section, char *name) {
+  int index = bsg_find_next_free_metadata_index(metadata);
   if (index < 0) {
     return index;
   }
-  bsg_strncpy_safe(event->metadata.values[index].section, section,
-                   sizeof(event->metadata.values[index].section));
-  bsg_strncpy_safe(event->metadata.values[index].name, name,
-                   sizeof(event->metadata.values[index].name));
-  if (event->metadata.value_count < BUGSNAG_METADATA_MAX) {
-    event->metadata.value_count = index + 1;
+  bsg_strncpy_safe(metadata->values[index].section, section,
+                   sizeof(metadata->values[index].section));
+  bsg_strncpy_safe(metadata->values[index].name, name,
+                   sizeof(metadata->values[index].name));
+  if (metadata->value_count < BUGSNAG_METADATA_MAX) {
+    metadata->value_count = index + 1;
   }
   return index;
 }
+
+void bsg_add_metadata_value_double(bugsnag_metadata *metadata, char *section,
+                                   char *name, double value) {
+  int index = bsg_add_metadata_value(metadata, section, name);
+  if (index >= 0) {
+    metadata->values[index].type = BSG_METADATA_NUMBER_VALUE;
+    metadata->values[index].double_value = value;
+  }
+}
+
+void bsg_add_metadata_value_str(bugsnag_metadata *metadata, char *section,
+                                char *name, char *value) {
+  int index = bsg_add_metadata_value(metadata, section, name);
+  if (index >= 0) {
+    metadata->values[index].type = BSG_METADATA_CHAR_VALUE;
+    bsg_strncpy_safe(metadata->values[index].char_value, value,
+                     sizeof(metadata->values[index].char_value));
+  }
+}
+
+void bsg_add_metadata_value_bool(bugsnag_metadata *metadata, char *section,
+                                 char *name, bool value) {
+  int index = bsg_add_metadata_value(metadata, section, name);
+  if (index >= 0) {
+    metadata->values[index].type = BSG_METADATA_BOOL_VALUE;
+    metadata->values[index].bool_value = value;
+  }
+}
+
 void bugsnag_event_add_metadata_double(void *event_ptr, char *section,
                                        char *name, double value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
-  int index = bugsnag_event_add_metadata_value(event, section, name);
-  if (index >= 0) {
-    event->metadata.values[index].type = BSG_METADATA_NUMBER_VALUE;
-    event->metadata.values[index].double_value = value;
-  }
+  bsg_add_metadata_value_double(&event->metadata, section, name, value);
 }
 
 void bugsnag_event_add_metadata_string(void *event_ptr, char *section,
                                        char *name, char *value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
-  int index = bugsnag_event_add_metadata_value(event, section, name);
-  if (index >= 0) {
-    event->metadata.values[index].type = BSG_METADATA_CHAR_VALUE;
-    bsg_strncpy_safe(event->metadata.values[index].char_value, value,
-                     sizeof(event->metadata.values[index].char_value));
-  }
+  bsg_add_metadata_value_str(&event->metadata, section, name, value);
 }
 
 void bugsnag_event_add_metadata_bool(void *event_ptr, char *section,
                                      char *name, bool value) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
-  int index = bugsnag_event_add_metadata_value(event, section, name);
-  if (index >= 0) {
-    event->metadata.values[index].type = BSG_METADATA_BOOL_VALUE;
-    event->metadata.values[index].bool_value = value;
-  }
+  bsg_add_metadata_value_bool(&event->metadata, section, name, value);
 }
 
 void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name) {

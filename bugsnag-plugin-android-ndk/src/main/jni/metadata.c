@@ -36,6 +36,9 @@ typedef struct {
   jmethodID get_context;
 } bsg_jni_cache;
 
+void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst, bsg_jni_cache *jni_cache,
+                                 char *section, char *name, jobject _value);
+
 bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
   bsg_jni_cache *jni_cache = malloc(sizeof(bsg_jni_cache));
   jni_cache->integer = (*env)->FindClass(env, "java/lang/Integer");
@@ -180,14 +183,13 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
   if (metadata == NULL) {
     return;
   }
-
   bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
   int map_size = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
   jobject keyset =
       (*env)->CallObjectMethod(env, metadata, jni_cache->map_key_set);
   jobject keylist = (*env)->NewObject(
       env, jni_cache->arraylist, jni_cache->arraylist_init_with_obj, keyset);
-  size_t metadata_size = sizeof(crumb->metadata) / sizeof(bsg_char_metadata_pair);
+  size_t metadata_size = sizeof(crumb->metadata) / BUGSNAG_METADATA_MAX;
 
   for (int i = 0; i < map_size && i < metadata_size; i++) {
     jstring _key = (*env)->CallObjectMethod(env, keylist,
@@ -198,17 +200,9 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
       (*env)->DeleteLocalRef(env, _key);
       (*env)->DeleteLocalRef(env, _value);
     } else {
-      if ((*env)->IsInstanceOf(env, _value, jni_cache->string)) {
         char *key = (char *)(*env)->GetStringUTFChars(env, _key, 0);
-        char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
-        bsg_strncpy_safe(crumb->metadata[i].key, key,
-                         sizeof(crumb->metadata[i].key));
-
-        bsg_strncpy_safe(crumb->metadata[i].value, value,
-                         sizeof(crumb->metadata[i].value));
+        bsg_populate_metadata_value(env, &crumb->metadata, jni_cache, "metaData", key, _value);
         (*env)->ReleaseStringUTFChars(env, _key, key);
-        (*env)->ReleaseStringUTFChars(env, _value, value);
-      }
     }
   }
   free(jni_cache);
@@ -379,7 +373,24 @@ void bsg_populate_event(JNIEnv *env, bugsnag_event *event) {
   free(jni_cache);
 }
 
-void bsg_populate_metadata(JNIEnv *env, bugsnag_event *event,
+void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst, bsg_jni_cache *jni_cache,
+                                 char *section, char *name, jobject _value) {
+  if ((*env)->IsInstanceOf(env, _value, jni_cache->number)) {
+    double value = (*env)->CallDoubleMethod(
+            env, _value, jni_cache->number_double_value);
+    bsg_add_metadata_value_double(dst, section, name, value);
+  } else if ((*env)->IsInstanceOf(env, _value, jni_cache->boolean)) {
+    bool value = (*env)->CallBooleanMethod(env, _value,
+                                           jni_cache->boolean_bool_value);
+    bsg_add_metadata_value_bool(dst, section, name, value);
+  } else if ((*env)->IsInstanceOf(env, _value, jni_cache->string)) {
+    char *value = (char *) (*env)->GetStringUTFChars(env, _value, 0);
+    bsg_add_metadata_value_str(dst, section, name, value);
+    free(value);
+  }
+}
+
+void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
                            jobject metadata) {
   bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
   if (metadata == NULL) {
@@ -404,26 +415,14 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_event *event,
           (*env)->CallObjectMethod(env, _section, jni_cache->map_key_set);
       jobject section_keylist =
           (*env)->NewObject(env, jni_cache->arraylist,
-                            jni_cache->arraylist_init_with_obj, section_keyset);
+                                jni_cache->arraylist_init_with_obj, section_keyset);
       for (int j = 0; j < section_size; j++) {
         jstring section_key = (*env)->CallObjectMethod(
             env, section_keylist, jni_cache->arraylist_get, (jint)j);
         char *name = (char *)(*env)->GetStringUTFChars(env, section_key, 0);
         jobject _value = (*env)->CallObjectMethod(
             env, section, jni_cache->map_get, section_key);
-        if ((*env)->IsInstanceOf(env, _value, jni_cache->number)) {
-          double value = (*env)->CallDoubleMethod(
-              env, _value, jni_cache->number_double_value);
-          bugsnag_event_add_metadata_double(event, section, name, value);
-        } else if ((*env)->IsInstanceOf(env, _value, jni_cache->boolean)) {
-          bool value = (*env)->CallBooleanMethod(env, _value,
-                                                 jni_cache->boolean_bool_value);
-          bugsnag_event_add_metadata_bool(event, section, name, value);
-        } else if ((*env)->IsInstanceOf(env, _value, jni_cache->string)) {
-          char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
-          bugsnag_event_add_metadata_string(event, section, name, value);
-          free(value);
-        }
+        bsg_populate_metadata_value(env, dst, jni_cache, section, name, _value);
         (*env)->ReleaseStringUTFChars(env, section_key, name);
         (*env)->DeleteLocalRef(env, _value);
       }
@@ -435,7 +434,7 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_event *event,
     (*env)->DeleteLocalRef(env, keyset);
     (*env)->DeleteLocalRef(env, keylist);
   } else {
-    event->metadata.value_count = 0;
+    dst->value_count = 0;
   }
   free(jni_cache);
 }

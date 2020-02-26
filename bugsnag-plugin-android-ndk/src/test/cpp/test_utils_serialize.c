@@ -5,8 +5,7 @@
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
-bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsnag_breadcrumb_type type);
-
+bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type);
 
 bool bsg_report_header_write(bsg_report_header *header, int fd);
 
@@ -74,8 +73,11 @@ void generate_basic_report(bugsnag_event *event) {
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
   bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
 
+  event->crumb_count = 0;
+  event->crumb_first_index = 0;
   bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º", BSG_CRUMB_STATE);
   bugsnag_event_add_breadcrumb(event, crumb1);
+
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.", BSG_CRUMB_USER);
   bugsnag_event_add_breadcrumb(event, crumb2);
 
@@ -102,6 +104,24 @@ bugsnag_report_v2 *bsg_generate_report_v2(void) {
 
   strcpy(report->app.package_name, "com.example.foo");
   strcpy(report->app.version_name, "2.5");
+
+  bugsnag_breadcrumb_v1 *crumb1 = &report->breadcrumbs[0];
+  crumb1->type = BSG_CRUMB_STATE;
+  strcpy(crumb1->timestamp, "2018-08-29T21:41:39Z");
+  strcpy(crumb1->name, "decrease torque");
+  strcpy(crumb1->metadata[0].key, "message");
+  strcpy(crumb1->metadata[0].value, "Moving laterally 26º");
+
+  bugsnag_breadcrumb_v1 *crumb2 = &report->breadcrumbs[1];
+  crumb2->type = BSG_CRUMB_USER;
+  strcpy(crumb2->timestamp, "2018-08-29T21:41:39Z");
+  strcpy(crumb2->name, "enable blasters");
+  strcpy(crumb2->metadata[0].key, "message");
+  strcpy(crumb2->metadata[0].value, "this is a drill.");
+
+  report->crumb_first_index = 0;
+  report->crumb_count = 2;
+
   return report;
 }
 
@@ -209,6 +229,19 @@ TEST test_report_v2_migration(void) {
   // package_name/version_name are migrated to metadata
   ASSERT_STR_EQ("com.example.foo", event->metadata.values[0].char_value);
   ASSERT_STR_EQ("2.5", event->metadata.values[1].char_value);
+
+  // breadcrumbs are migrated correctly
+  ASSERT_EQ(2, event->crumb_count);
+  ASSERT_EQ(0, event->crumb_first_index);
+
+  bugsnag_breadcrumb_v1 *crumb = &generated_report->breadcrumbs[0];
+  bsg_char_metadata_pair *val = &crumb->metadata[0];
+
+  ASSERT_STR_EQ("decrease torque", crumb->name);
+  ASSERT_STR_EQ("2018-08-29T21:41:39Z", crumb->timestamp);
+  ASSERT_EQ(BSG_CRUMB_STATE, crumb->type);
+  ASSERT_STR_EQ("message", val->key);
+  ASSERT_STR_EQ("Moving laterally 26º", val->value);
 
   free(generated_report);
   free(env);
@@ -326,17 +359,18 @@ TEST test_breadcrumbs_to_json(void) {
   JSON_Array *breadcrumbs = json_object_get_array(event, "breadcrumbs");
   ASSERT(breadcrumbs != NULL);
   ASSERT_EQ(2, json_array_get_count(breadcrumbs));
+
   JSON_Object *crumb1 = json_array_get_object(breadcrumbs, 0);
-  JSON_Object *crumb2 = json_array_get_object(breadcrumbs, 1);
-  ASSERT(strcmp("decrease torque", json_object_get_string(crumb1, "name")) == 0);
-  ASSERT(strcmp("state", json_object_get_string(crumb1, "type")) == 0);
+  ASSERT_STR_EQ("decrease torque", json_object_get_string(crumb1, "name"));
+  ASSERT_STR_EQ("state", json_object_get_string(crumb1, "type"));
   ASSERT_EQ(1, json_object_get_count(json_object_get_object(crumb1, "metaData")));
-  ASSERT(strcmp("Moving laterally 26º", json_object_get_string(json_object_get_object(crumb1, "metaData"), "message")) == 0);
-  ASSERT(strcmp("enable blasters", json_object_get_string(crumb2, "name")) == 0);
-  ASSERT(strcmp("user", json_object_get_string(crumb2, "type")) == 0);
+  ASSERT_STR_EQ("Moving laterally 26º", json_object_get_string(json_object_get_object(crumb1, "metaData"), "message"));
+
+  JSON_Object *crumb2 = json_array_get_object(breadcrumbs, 1);
+  ASSERT_STR_EQ("enable blasters", json_object_get_string(crumb2, "name"));
+  ASSERT_STR_EQ("user", json_object_get_string(crumb2, "type"));
   ASSERT_EQ(1, json_object_get_count(json_object_get_object(crumb2, "metaData")));
-  ASSERT(strcmp("this is a drill.", json_object_get_string(json_object_get_object(crumb2, "metaData"), "message")) == 0);
-  json_value_free(root_value);
+  ASSERT_STR_EQ("this is a drill.", json_object_get_string(json_object_get_object(crumb2, "metaData"), "message"));
   PASS();
 }
 

@@ -26,6 +26,7 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
+void migrate_breadcrumb_legacy(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 
 #ifdef __cplusplus
 }
@@ -121,9 +122,7 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     event->user = report_v2->user;
     event->crumb_count = report_v2->crumb_count;
     event->crumb_first_index = report_v2->crumb_first_index;
-
-    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
-    memcpy(&event->breadcrumbs, report_v2->breadcrumbs, breadcrumb_size);
+    migrate_breadcrumb_legacy(report_v2, event);
 
     strcpy(event->context, report_v2->context);
     event->severity = report_v2->severity;
@@ -148,9 +147,29 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     // Fatal C errors are always true by default, previously this was hardcoded and
     // not a field on the struct
     event->unhandled = true;
+    free(report_v2);
   }
-  free(report_v2);
   return event;
+}
+
+void migrate_breadcrumb_legacy(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
+  for (int k = 0; k < report_v2->crumb_count; k++) {
+    int crumb_index = report_v2->crumb_first_index + k % BUGSNAG_CRUMBS_MAX;
+
+    bugsnag_breadcrumb *new_crumb = &event->breadcrumbs[crumb_index];
+    bugsnag_breadcrumb_v1 *old_crumb = &report_v2->breadcrumbs[crumb_index];
+    new_crumb->type = old_crumb->type;
+    bsg_strncpy_safe(new_crumb->name, old_crumb->name, sizeof(new_crumb->name));
+    bsg_strncpy_safe(new_crumb->timestamp, old_crumb->timestamp, sizeof(new_crumb->timestamp));
+
+    for (int j = 0; j < 8; j++) {
+      bsg_char_metadata_pair pair = old_crumb->metadata[j];
+
+      if (strlen(pair.value) > 0 && strlen(pair.key) > 0) {
+        bsg_add_metadata_value_str(&new_crumb->metadata, "metaData", pair.key, pair.value);
+      }
+    }
+  }
 }
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
@@ -398,6 +417,31 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata, JSON_Object 
   }
 }
 
+void bsg_serialize_breadcrumb_metadata(const bugsnag_metadata metadata, JSON_Object *event_obj) {
+  for (int i = 0; i < metadata.value_count; i++) {
+    char *format = malloc(sizeof(char) * 256);
+    bsg_metadata_value value = metadata.values[i];
+
+    switch (value.type) {
+      case BSG_METADATA_BOOL_VALUE:
+        sprintf(format, "metaData.%s", value.name);
+            json_object_dotset_boolean(event_obj, format, value.bool_value);
+            break;
+      case BSG_METADATA_CHAR_VALUE:
+        sprintf(format, "metaData.%s", value.name);
+            json_object_dotset_string(event_obj, format, value.char_value);
+            break;
+      case BSG_METADATA_NUMBER_VALUE:
+        sprintf(format, "metaData.%s", value.name);
+            json_object_dotset_number(event_obj, format, value.double_value);
+            break;
+      default:
+        break;
+    }
+    free(format);
+  }
+}
+
 void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj) {
   if (strlen(user.name) > 0)
     json_object_dotset_string(event_obj, "user.name", user.name);
@@ -458,26 +502,14 @@ void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
       JSON_Value *crumb_val = json_value_init_object();
       JSON_Object *crumb = json_value_get_object(crumb_val);
       json_array_append_value(crumbs, crumb_val);
+
       bugsnag_breadcrumb breadcrumb = event->breadcrumbs[current_index];
       json_object_set_string(crumb, "name", breadcrumb.name);
       json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
       json_object_set_string(crumb, "type",
                              bsg_crumb_type_string(breadcrumb.type));
-
-      JSON_Value *meta_val = json_value_init_object();
-      JSON_Object *meta = json_value_get_object(meta_val);
-      json_object_set_value(crumb, "metaData", meta_val);
-      int metadata_index = 0;
-      while (strlen(breadcrumb.metadata[metadata_index].key) > 0) {
-        json_object_set_string(meta, breadcrumb.metadata[metadata_index].key,
-                               breadcrumb.metadata[metadata_index].value);
-        metadata_index++;
-      }
-
+      bsg_serialize_breadcrumb_metadata(breadcrumb.metadata, crumb);
       current_index++;
-      if (current_index == BUGSNAG_CRUMBS_MAX) {
-        current_index = 0;
-      }
     }
   }
 }

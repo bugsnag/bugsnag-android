@@ -2,14 +2,12 @@
 #include <event.h>
 #include <time.h>
 
-bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsnag_breadcrumb_type type) {
+bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
   crumb->type = type;
   strcpy(crumb->name, name);
   strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
-  strcpy(crumb->metadata[0].key, "message");
-  strcpy(crumb->metadata[0].value, message);
-
+  bsg_add_metadata_value_str(&crumb->metadata, "metaData", "message", message);
   return crumb;
 }
 
@@ -20,19 +18,19 @@ TEST test_add_breadcrumb(void) {
   ASSERT_EQ(1, event->crumb_count);
   ASSERT_EQ(0, event->crumb_first_index);
   ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("message", event->breadcrumbs[0].metadata[0].key) == 0);
-  ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata[0].value) == 0);
+  ASSERT(strcmp("message", event->breadcrumbs[0].metadata.values[0].name) == 0);
+  ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata.values[0].char_value) == 0);
   free(crumb);
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("walking...", "this is not a drill.", BSG_CRUMB_USER);
   bugsnag_event_add_breadcrumb(event, crumb2);
   ASSERT_EQ(2, event->crumb_count);
   ASSERT_EQ(0, event->crumb_first_index);
   ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("message", event->breadcrumbs[0].metadata[0].key) == 0);
-  ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata[0].value) == 0);
+  ASSERT(strcmp("message", event->breadcrumbs[0].metadata.values[0].name) == 0);
+  ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata.values[0].char_value) == 0);
   ASSERT(strcmp("walking...", event->breadcrumbs[1].name) == 0);
-  ASSERT(strcmp("message", event->breadcrumbs[1].metadata[0].key) == 0);
-  ASSERT(strcmp("this is not a drill.", event->breadcrumbs[1].metadata[0].value) == 0);
+  ASSERT(strcmp("message", event->breadcrumbs[1].metadata.values[0].name) == 0);
+  ASSERT(strcmp("this is not a drill.", event->breadcrumbs[1].metadata.values[0].char_value) == 0);
 
   free(event);
   free(crumb2);

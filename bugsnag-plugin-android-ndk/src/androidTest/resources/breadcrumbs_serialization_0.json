@@ -1,1 +1,1 @@
-[{"name":"Jane","timestamp":"2018-10-08T12:07:09Z","type":"user","metaData":{"foo":"bar"}}]
+[{"name":"Jane","timestamp":"2018-10-08T12:07:09Z","type":"user","metaData":{"str":"Foo","bool":true,"num":55}}]
