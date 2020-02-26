@@ -117,16 +117,30 @@ internal fun sanitiseConfiguration(
     appContext: Context, configuration: Configuration,
     connectivity: Connectivity
 ): ImmutableConfig {
-    val logger = configuration.logger!!
-
-    @Suppress("SENSELESS_COMPARISON")
-    if (configuration.delivery == null) {
-        configuration.delivery = DefaultDelivery(connectivity, logger)
-    }
     val packageName = appContext.packageName
     val packageManager = appContext.packageManager
     val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
     val appInfo = runCatching { packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA ) }.getOrNull()
+
+    // populate releaseStage
+    if (configuration.releaseStage == null) {
+        configuration.releaseStage = when {
+            appInfo != null && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> RELEASE_STAGE_DEVELOPMENT
+            else -> RELEASE_STAGE_PRODUCTION
+        }
+    }
+
+    // if the user has set the releaseStage to production manually, disable logging
+    if (configuration.logger == null || configuration.logger == DebugLogger) {
+        val releaseStage = configuration.releaseStage
+        val loggingEnabled = RELEASE_STAGE_PRODUCTION != releaseStage
+
+        if (loggingEnabled) {
+            configuration.logger = DebugLogger
+        } else {
+            configuration.logger = NoopLogger
+        }
+    }
 
     if (configuration.versionCode == null || configuration.versionCode == 0) {
         @Suppress("DEPRECATION")
@@ -144,12 +158,9 @@ internal fun sanitiseConfiguration(
         configuration.buildUuid = appInfo?.metaData?.getString(ManifestConfigLoader.BUILD_UUID)
     }
 
-    // populate releaseStage
-    if (configuration.releaseStage == null) {
-        configuration.releaseStage = when {
-            appInfo != null && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> RELEASE_STAGE_DEVELOPMENT
-            else -> RELEASE_STAGE_PRODUCTION
-        }
+    @Suppress("SENSELESS_COMPARISON")
+    if (configuration.delivery == null) {
+        configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
     }
     return convertToImmutableConfig(configuration)
 }

@@ -27,7 +27,10 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var autoDetectErrors: Boolean = true
     var codeBundleId: String? = null
     var appType: String? = "android"
-    var logger: Logger? = null
+    var logger: Logger? = DebugLogger
+        set(value) {
+            field = value ?: NoopLogger
+        }
     var delivery: Delivery? = null
     var endpoints: EndpointConfiguration = EndpointConfiguration()
     var maxBreadcrumbs: Int = DEFAULT_MAX_SIZE

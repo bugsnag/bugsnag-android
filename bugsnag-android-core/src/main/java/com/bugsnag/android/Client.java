@@ -111,37 +111,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        // if the user has set the releaseStage to production manually, disable logging
-        if (configuration.getLogger() == null) {
-            String releaseStage = configuration.getReleaseStage();
-            boolean loggingEnabled = !RELEASE_STAGE_PRODUCTION.equals(releaseStage);
-
-            if (loggingEnabled) {
-                configuration.setLogger(DebugLogger.INSTANCE);
-            } else {
-                configuration.setLogger(NoopLogger.INSTANCE);
-            }
-        }
-        logger = configuration.getLogger();
-
-        // set sensible defaults for delivery/project packages etc if not set
-        warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-
-        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
-
-        // Set up breadcrumbs
-        callbackState = configuration.impl.callbackState.copy();
-        int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
-        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
-
-        // filter out any disabled breadcrumb types
-        addOnBreadcrumb(new OnBreadcrumbCallback() {
-            @Override
-            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
-            }
-        });
 
         connectivity = new ConnectivityCompat(appContext, new Function2<Boolean, String, Unit>() {
             @Override
@@ -158,7 +128,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             }
         });
 
+        // set sensible defaults for delivery/project packages etc if not set
         immutableConfig = sanitiseConfiguration(appContext, configuration, connectivity);
+        logger = immutableConfig.getLogger();
+        warnIfNotAppContext(androidContext);
+
+        // Set up breadcrumbs
+        callbackState = configuration.impl.callbackState.copy();
+        int maxBreadcrumbs = immutableConfig.getMaxBreadcrumbs();
+        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
+
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumbCallback() {
+            @Override
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
+            }
+        });
+
+        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
