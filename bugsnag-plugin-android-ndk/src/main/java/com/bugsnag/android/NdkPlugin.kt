@@ -10,8 +10,6 @@ internal class NdkPlugin : Plugin {
         }
     }
 
-    var loaded = false
-
     private external fun enableCrashReporting()
     private external fun disableCrashReporting()
 

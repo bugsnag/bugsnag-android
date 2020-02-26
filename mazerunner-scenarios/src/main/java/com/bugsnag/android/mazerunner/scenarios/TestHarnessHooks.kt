@@ -77,9 +77,10 @@ internal fun writeErrorToStore(client: Client, event: Event) {
 }
 
 fun generateEvent(client: Client): Event {
-    val event = NativeInterface.createAnrEvent(
+    val event = NativeInterface.createEvent(
         RuntimeException(),
-        client
+        client,
+        HandledState.newInstance(HandledState.REASON_ANR)
     )
     event.app = generateAppWithState()
     event.device = generateDeviceWithState()

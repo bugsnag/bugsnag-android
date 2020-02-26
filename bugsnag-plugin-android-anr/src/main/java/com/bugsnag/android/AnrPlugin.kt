@@ -11,7 +11,6 @@ internal class AnrPlugin : Plugin {
         }
     }
 
-    var loaded = false
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
 
@@ -41,7 +40,11 @@ internal class AnrPlugin : Plugin {
         val exc = RuntimeException()
         exc.stackTrace = thread.stackTrace
 
-        val event = NativeInterface.createAnrEvent(exc, client)
+        val event = NativeInterface.createEvent(
+            exc,
+            client,
+            HandledState.newInstance(HandledState.REASON_ANR)
+        )
         val err = event.errors[0]
         err.errorClass = "ANR"
         err.errorMessage = "Application did not respond to UI input"

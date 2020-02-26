@@ -374,9 +374,9 @@ public class NativeInterface {
     }
 
     @NonNull
-    public static Event createAnrEvent(@NonNull Throwable exc,
-                                       @NonNull Client client) {
-        HandledState handledState = HandledState.newInstance(HandledState.REASON_ANR);
+    public static Event createEvent(@NonNull Throwable exc,
+                                    @NonNull Client client,
+                                    @NonNull HandledState handledState) {
         return new Event(exc, client.getConfig(), handledState, client.logger);
     }
 
