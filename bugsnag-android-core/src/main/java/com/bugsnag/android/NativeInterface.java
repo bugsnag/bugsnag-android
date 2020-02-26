@@ -374,6 +374,13 @@ public class NativeInterface {
     }
 
     @NonNull
+    public static Event createEvent(@NonNull Throwable exc,
+                                    @NonNull Client client,
+                                    @NonNull HandledState handledState) {
+        return new Event(exc, client.getConfig(), handledState, client.logger);
+    }
+
+    @NonNull
     public static Logger getLogger() {
         return getClient().getConfig().getLogger();
     }

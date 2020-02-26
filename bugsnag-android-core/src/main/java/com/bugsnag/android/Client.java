@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -83,12 +84,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final DeliveryDelegate deliveryDelegate;
 
     final ClientObservable clientObservable = new ClientObservable();
-
-    @Nullable
-    private Class<?> ndkPluginClz;
-
-    @Nullable
-    private Class<?> anrPluginClz;
 
     /**
      * Initialize a Bugsnag client
@@ -230,22 +225,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             new ExceptionHandler(this, logger);
         }
 
-        try {
-            ndkPluginClz = Class.forName("com.bugsnag.android.NdkPlugin");
-        } catch (ClassNotFoundException exc) {
-            logger.w("bugsnag-plugin-android-ndk artefact not found on classpath, "
-                    + "NDK errors will not be captured.");
-        }
-
-        try {
-            anrPluginClz = Class.forName("com.bugsnag.android.AnrPlugin");
-        } catch (ClassNotFoundException exc) {
-            logger.w("bugsnag-plugin-android-anr artefact not found on classpath, "
-                    + "ANR errors will not be captured.");
-        }
-
         // register a receiver for automatic breadcrumbs
-
         try {
             Async.run(new Runnable() {
                 @Override
@@ -263,9 +243,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Flush any on-disk errors
         eventStore.flushOnLaunch();
-        loadPlugins();
         Map<String, Object> data = Collections.emptyMap();
         leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
+
+        // finally, initialise plugins
+        loadPlugins(configuration);
     }
 
     @VisibleForTesting
@@ -313,6 +295,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.deliveryDelegate = deliveryDelegate;
     }
 
+    private void loadPlugins(@NonNull Configuration configuration) {
+        NativeInterface.setClient(this);
+        Set<Plugin> userPlugins = configuration.getPlugins();
+        PluginClient pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
+        pluginClient.loadPlugins(this);
+    }
+
     private void logNull(String property) {
         logger.e("Invalid null value supplied to client." + property + ", ignoring");
     }
@@ -341,35 +330,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 }
         );
         appContext.registerReceiver(receiver, configFilter);
-    }
-
-    private void loadPlugins() {
-        NativeInterface.setClient(this);
-        enableOrDisableNdkReporting();
-        enableOrDisableAnrReporting();
-        BugsnagPluginInterface.INSTANCE.loadRegisteredPlugins(this);
-    }
-
-    void enableOrDisableNdkReporting() {
-        if (ndkPluginClz == null) {
-            return;
-        }
-        if (immutableConfig.getEnabledErrorTypes().getNdkCrashes()) {
-            BugsnagPluginInterface.INSTANCE.loadPlugin(this, ndkPluginClz);
-        } else {
-            BugsnagPluginInterface.INSTANCE.unloadPlugin(ndkPluginClz);
-        }
-    }
-
-    void enableOrDisableAnrReporting() {
-        if (anrPluginClz == null) {
-            return;
-        }
-        if (immutableConfig.getEnabledErrorTypes().getAnrs()) {
-            BugsnagPluginInterface.INSTANCE.loadPlugin(this, anrPluginClz);
-        } else {
-            BugsnagPluginInterface.INSTANCE.unloadPlugin(anrPluginClz);
-        }
     }
 
     void sendNativeSetupNotification() {
