@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class ConfigurationTest {
 
-    private Configuration config;
+    private ConfigInternal config;
 
     @Before
     public void setUp() {
@@ -85,7 +85,7 @@ public class ConfigurationTest {
         assertFalse(immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.MANUAL));
     }
 
-    private ImmutableConfig createConfigWithReleaseStages(Configuration config,
+    private ImmutableConfig createConfigWithReleaseStages(ConfigInternal config,
                                                           Set<String> releaseStages,
                                                           String releaseStage) {
         config.setEnabledReleaseStages(releaseStages);
@@ -95,11 +95,6 @@ public class ConfigurationTest {
 
     @Test
     public void testLaunchThreshold() {
-        assertEquals(5000L, config.getLaunchCrashThresholdMs());
-
-        config.setLaunchCrashThresholdMs(-5);
-        assertEquals(5000, config.getLaunchCrashThresholdMs());
-
         int expected = 1500;
         config.setLaunchCrashThresholdMs(expected);
         assertEquals(expected, config.getLaunchCrashThresholdMs());
@@ -175,9 +170,10 @@ public class ConfigurationTest {
 
     @Test
     public void testVersionCode() {
-        Configuration configuration = generateConfiguration();
+        ConfigInternal configuration = generateConfiguration();
         assertEquals(0, (int) configuration.getVersionCode()); // populated in client ctor if null
         configuration.setVersionCode(577);
         assertEquals(577, (int) configuration.getVersionCode());
     }
+
 }

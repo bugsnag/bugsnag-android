@@ -6,8 +6,8 @@ import java.util.Date;
 
 final class BugsnagTestUtils {
 
-    static Configuration generateConfiguration() {
-        Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
+    static ConfigInternal generateConfiguration() {
+        ConfigInternal configuration = new ConfigInternal("5d1ec5bd39a74caa1267142706a7fb21");
         configuration.setDelivery(generateDelivery());
         configuration.setLogger(NoopLogger.INSTANCE);
         return configuration;
@@ -18,7 +18,7 @@ final class BugsnagTestUtils {
     }
 
 
-    static ImmutableConfig convert(Configuration config) {
+    static ImmutableConfig convert(ConfigInternal config) {
         return ImmutableConfigKt.convertToImmutableConfig(config);
     }
 

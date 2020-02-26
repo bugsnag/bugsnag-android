@@ -41,8 +41,8 @@ public class JavaHooks {
      * Generates fake Configuration
      */
     @NonNull
-    public static Configuration generateConfiguration() {
-        Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
+    public static ConfigInternal generateConfiguration() {
+        ConfigInternal configuration = new ConfigInternal("5d1ec5bd39a74caa1267142706a7fb21");
         configuration.setDelivery(generateDelivery());
         configuration.setLogger(NoopLogger.INSTANCE);
         return configuration;

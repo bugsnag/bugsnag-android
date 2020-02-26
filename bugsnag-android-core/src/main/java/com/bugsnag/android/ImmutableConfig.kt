@@ -19,7 +19,7 @@ internal data class ImmutableConfig(
     val releaseStage: String?,
     val buildUuid: String?,
     val appVersion: String?,
-    val versionCode: Int,
+    val versionCode: Int?,
     val codeBundleId: String?,
     val appType: String?,
     val delivery: Delivery,
@@ -84,7 +84,7 @@ internal data class ImmutableConfig(
     }
 }
 
-internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
+internal fun convertToImmutableConfig(config: ConfigInternal): ImmutableConfig {
     val errorTypes = when {
         config.autoDetectErrors -> config.enabledErrorTypes.copy()
         else -> ErrorTypes(false)
@@ -102,10 +102,10 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         releaseStage = config.releaseStage,
         buildUuid = config.buildUuid,
         appVersion = config.appVersion,
-        versionCode = config.versionCode!!,
+        versionCode = config.versionCode,
         codeBundleId = config.codeBundleId,
         appType = config.appType,
-        delivery = config.delivery,
+        delivery = config.delivery!!,
         endpoints = config.endpoints,
         persistUser = config.persistUser,
         launchCrashThresholdMs = config.launchCrashThresholdMs,
@@ -116,19 +116,35 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
 }
 
 internal fun sanitiseConfiguration(
-    appContext: Context, configuration: Configuration,
+    appContext: Context, configuration: ConfigInternal,
     connectivity: Connectivity
 ): ImmutableConfig {
-    val logger = configuration.logger!!
 
-    @Suppress("SENSELESS_COMPARISON")
-    if (configuration.delivery == null) {
-        configuration.delivery = DefaultDelivery(connectivity, logger)
-    }
     val packageName = appContext.packageName
     val packageManager = appContext.packageManager
     val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
     val appInfo = runCatching { packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA ) }.getOrNull()
+
+    // populate releaseStage
+    if (configuration.releaseStage == null) {
+        configuration.releaseStage = when {
+            appInfo != null && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> RELEASE_STAGE_DEVELOPMENT
+            else -> RELEASE_STAGE_PRODUCTION
+        }
+    }
+
+    // if the user has set the releaseStage to production manually, disable logging
+    if (configuration.logger == null) {
+        if (RELEASE_STAGE_PRODUCTION != configuration.releaseStage) {
+            configuration.logger = DebugLogger
+        } else {
+            configuration.logger = NoopLogger
+        }
+    }
+
+    if (configuration.delivery == null) {
+        configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
+    }
 
     if (configuration.versionCode == null || configuration.versionCode == 0) {
         @Suppress("DEPRECATION")
@@ -146,13 +162,6 @@ internal fun sanitiseConfiguration(
         configuration.buildUuid = appInfo?.metaData?.getString(ManifestConfigLoader.BUILD_UUID)
     }
 
-    // populate releaseStage
-    if (configuration.releaseStage == null) {
-        configuration.releaseStage = when {
-            appInfo != null && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) -> RELEASE_STAGE_DEVELOPMENT
-            else -> RELEASE_STAGE_PRODUCTION
-        }
-    }
     return convertToImmutableConfig(configuration)
 }
 

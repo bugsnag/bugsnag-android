@@ -170,7 +170,7 @@ internal class ImmutableConfigTest {
         packageInfo.versionCode = 55
         `when`(packageManager.getPackageInfo("com.example.foo", 0)).thenReturn(packageInfo)
 
-        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        val seed = ConfigInternal("5d1ec5bd39a74caa1267142706a7fb21")
         seed.logger = NoopLogger
         val config = sanitiseConfiguration(context, seed, connectivity)
         assertEquals(setOf("com.example.foo"), config.projectPackages)

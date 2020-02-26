@@ -116,37 +116,14 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        // if the user has set the releaseStage to production manually, disable logging
-        if (configuration.getLogger() == null) {
-            String releaseStage = configuration.getReleaseStage();
-            boolean loggingEnabled = !RELEASE_STAGE_PRODUCTION.equals(releaseStage);
 
-            if (loggingEnabled) {
-                configuration.setLogger(DebugLogger.INSTANCE);
-            } else {
-                configuration.setLogger(NoopLogger.INSTANCE);
-            }
-        }
-        logger = configuration.getLogger();
+        ConfigInternal configInternal = configuration.impl;
 
         // set sensible defaults for delivery/project packages etc if not set
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
 
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
-
-        // Set up breadcrumbs
-        callbackState = configuration.impl.callbackState.copy();
-        int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
-        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
-
-        // filter out any disabled breadcrumb types
-        addOnBreadcrumb(new OnBreadcrumbCallback() {
-            @Override
-            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
-            }
-        });
 
         connectivity = new ConnectivityCompat(appContext, new Function2<Boolean, String, Unit>() {
             @Override
@@ -163,16 +140,31 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             }
         });
 
-        immutableConfig = sanitiseConfiguration(appContext, configuration, connectivity);
+        immutableConfig = sanitiseConfiguration(appContext, configInternal, connectivity);
+
+        logger = configInternal.getLogger();
+
+        // Set up breadcrumbs
+        callbackState = configInternal.callbackState.copy();
+        int maxBreadcrumbs = configInternal.getMaxBreadcrumbs();
+        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
+
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumbCallback() {
+            @Override
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
+            }
+        });
 
         contextState = new ContextState();
-        contextState.setContext(configuration.getContext());
+        contextState.setContext(configInternal.getContext());
 
         sessionStore = new SessionStore(appContext, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
-        metadataState = copyMetadataState(configuration);
+        metadataState = copyMetadataState(configInternal);
 
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
@@ -186,7 +178,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         UserRepository userRepository = new UserRepository(sharedPrefs,
                 immutableConfig.getPersistUser());
         userState = new UserState(userRepository);
-        User user = configuration.getUser();
+        User user = configInternal.getUser();
 
         if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
             userState.setUser(user.getId(), user.getEmail(), user.getName());
@@ -317,11 +309,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         logger.e("Invalid null value supplied to client." + property + ", ignoring");
     }
 
-    private MetadataState copyMetadataState(@NonNull Configuration configuration) {
+    private MetadataState copyMetadataState(@NonNull ConfigInternal configuration) {
         // performs deep copy of metadata to preserve immutability of Configuration interface
-        Metadata orig = configuration.impl.metadataState.getMetadata();
+        Metadata orig = configuration.metadataState.getMetadata();
         Metadata copy = orig.copy();
-        return configuration.impl.metadataState.copy(copy);
+        return configuration.metadataState.copy(copy);
     }
 
     private void registerOrientationChangeListener() {

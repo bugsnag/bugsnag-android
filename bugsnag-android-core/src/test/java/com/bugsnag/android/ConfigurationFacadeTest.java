@@ -100,6 +100,9 @@ public class ConfigurationFacadeTest {
     public void launchCrashThresholdMsValid() {
         config.setLaunchCrashThresholdMs(123456);
         assertEquals(123456, config.impl.getLaunchCrashThresholdMs());
+
+        config.setLaunchCrashThresholdMs(-5);
+        assertEquals(123456, config.impl.getLaunchCrashThresholdMs());
     }
 
     @Test
@@ -188,6 +191,22 @@ public class ConfigurationFacadeTest {
         assertEquals(66, config.impl.getMaxBreadcrumbs());
     }
 
+    /**
+     * Verifies that the max breadcrumb accessors only allow positive numbers
+     */
+    @Test
+    public void testMaxBreadcrumbAccessors() {
+        assertEquals(25, config.getMaxBreadcrumbs());
+
+        config.setMaxBreadcrumbs(50);
+        assertEquals(50, config.impl.getMaxBreadcrumbs());
+
+        config.setMaxBreadcrumbs(Integer.MAX_VALUE);
+        assertEquals(50, config.impl.getMaxBreadcrumbs());
+
+        config.setMaxBreadcrumbs(-5);
+        assertEquals(50, config.impl.getMaxBreadcrumbs());
+    }
     @Test
     public void contextValid() {
         config.setContext("Whoops");

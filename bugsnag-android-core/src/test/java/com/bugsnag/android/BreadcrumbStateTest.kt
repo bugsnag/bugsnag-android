@@ -100,24 +100,6 @@ class BreadcrumbStateTest {
     }
 
     /**
-     * Verifies that the max breadcrumb accessors only allow positive numbers
-     */
-    @Test
-    fun testMaxBreadcrumbAccessors() {
-        val config = generateConfiguration()
-        assertEquals(25, config.maxBreadcrumbs)
-
-        config.maxBreadcrumbs = 50
-        assertEquals(50, config.maxBreadcrumbs)
-
-        config.maxBreadcrumbs = Int.MAX_VALUE
-        assertEquals(50, config.maxBreadcrumbs)
-
-        config.maxBreadcrumbs = -5
-        assertEquals(50, config.maxBreadcrumbs)
-    }
-
-    /**
      * Verifies that an [OnBreadcrumbCallback] callback is run when specified in [BreadcrumbState]
      */
     @Test

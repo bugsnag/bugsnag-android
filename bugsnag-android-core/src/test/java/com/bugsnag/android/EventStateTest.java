@@ -22,7 +22,7 @@ public class EventStateTest {
      */
     @Before
     public void setUp() {
-        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        ConfigInternal configuration = BugsnagTestUtils.generateConfiguration();
         ImmutableConfig config = convert(configuration);
         RuntimeException exception = new RuntimeException("Example message");
         event = new Event(exception, config, handledState, NoopLogger.INSTANCE);
@@ -30,7 +30,7 @@ public class EventStateTest {
 
     @Test
     public void shouldIgnoreMatches() {
-        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        ConfigInternal configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(Collections.singleton("java.io.IOException"));
 
         ImmutableConfig conig = convert(configuration);
@@ -40,7 +40,7 @@ public class EventStateTest {
 
     @Test
     public void shouldIgnoreMatchesMultiple() {
-        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        ConfigInternal configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(Collections.singleton("java.io.IOException"));
 
         RuntimeException exc = new RuntimeException(new IOException());
@@ -51,7 +51,7 @@ public class EventStateTest {
 
     @Test
     public void shouldIgnoreDoesNotMatch() {
-        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        ConfigInternal configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(Collections.<String>emptySet());
         ImmutableConfig config = convert(configuration);
         event = new Event(new IOException(), config, handledState, NoopLogger.INSTANCE);
@@ -60,7 +60,7 @@ public class EventStateTest {
 
     @Test
     public void shouldIgnoreDoesNotMatchMultiple() {
-        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        ConfigInternal configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(Collections.<String>emptySet());
         RuntimeException exc = new RuntimeException(new IllegalStateException());
 

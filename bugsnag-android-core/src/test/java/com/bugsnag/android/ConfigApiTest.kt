@@ -17,15 +17,15 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 internal class ConfigApiTest {
 
-    lateinit var config: Configuration
+    lateinit var config: ConfigInternal
     private lateinit var callbackState: CallbackState
     private lateinit var metadataState: MetadataState
 
     @Before
     fun setUp() {
         config = generateConfiguration()
-        callbackState = config.impl.callbackState
-        metadataState = config.impl.metadataState
+        callbackState = config.callbackState
+        metadataState = config.metadataState
     }
 
     @Test
