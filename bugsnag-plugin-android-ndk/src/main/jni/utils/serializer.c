@@ -26,7 +26,7 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
-void migrate_breadcrumb_legacy(bugsnag_report_v2 *report_v2, bugsnag_event *event);
+void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 
 #ifdef __cplusplus
 }
@@ -122,7 +122,7 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     event->user = report_v2->user;
     event->crumb_count = report_v2->crumb_count;
     event->crumb_first_index = report_v2->crumb_first_index;
-    migrate_breadcrumb_legacy(report_v2, event);
+    migrate_breadcrumb_v1(report_v2, event);
 
     strcpy(event->context, report_v2->context);
     event->severity = report_v2->severity;
@@ -152,9 +152,9 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   return event;
 }
 
-void migrate_breadcrumb_legacy(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
+void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
   for (int k = 0; k < report_v2->crumb_count; k++) {
-    int crumb_index = report_v2->crumb_first_index + k % BUGSNAG_CRUMBS_MAX;
+    int crumb_index = (report_v2->crumb_first_index + k) % BUGSNAG_CRUMBS_MAX;
 
     bugsnag_breadcrumb *new_crumb = &event->breadcrumbs[crumb_index];
     bugsnag_breadcrumb_v1 *old_crumb = &report_v2->breadcrumbs[crumb_index];
@@ -510,6 +510,9 @@ void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
                              bsg_crumb_type_string(breadcrumb.type));
       bsg_serialize_breadcrumb_metadata(breadcrumb.metadata, crumb);
       current_index++;
+      if (current_index == BUGSNAG_CRUMBS_MAX) {
+        current_index = 0;
+      }
     }
   }
 }

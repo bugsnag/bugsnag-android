@@ -15,7 +15,7 @@ int bsg_find_next_free_metadata_index(bugsnag_metadata *const metadata) {
   return -1;
 }
 
-int bsg_add_metadata_value(bugsnag_metadata *metadata, char *section, char *name) {
+int bsg_allocate_metadata_index(bugsnag_metadata *metadata, char *section, char *name) {
   int index = bsg_find_next_free_metadata_index(metadata);
   if (index < 0) {
     return index;
@@ -32,7 +32,7 @@ int bsg_add_metadata_value(bugsnag_metadata *metadata, char *section, char *name
 
 void bsg_add_metadata_value_double(bugsnag_metadata *metadata, char *section,
                                    char *name, double value) {
-  int index = bsg_add_metadata_value(metadata, section, name);
+  int index = bsg_allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_NUMBER_VALUE;
     metadata->values[index].double_value = value;
@@ -41,7 +41,7 @@ void bsg_add_metadata_value_double(bugsnag_metadata *metadata, char *section,
 
 void bsg_add_metadata_value_str(bugsnag_metadata *metadata, char *section,
                                 char *name, char *value) {
-  int index = bsg_add_metadata_value(metadata, section, name);
+  int index = bsg_allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_CHAR_VALUE;
     bsg_strncpy_safe(metadata->values[index].char_value, value,
@@ -51,7 +51,7 @@ void bsg_add_metadata_value_str(bugsnag_metadata *metadata, char *section,
 
 void bsg_add_metadata_value_bool(bugsnag_metadata *metadata, char *section,
                                  char *name, bool value) {
-  int index = bsg_add_metadata_value(metadata, section, name);
+  int index = bsg_allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_BOOL_VALUE;
     metadata->values[index].bool_value = value;

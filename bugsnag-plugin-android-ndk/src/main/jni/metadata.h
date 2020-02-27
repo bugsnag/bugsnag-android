@@ -9,7 +9,7 @@
  */
 void bsg_populate_event(JNIEnv *env, bugsnag_event *event);
 /**
- * Load custom metadata from NativeInterface into a event, optionally from an object.
+ * Load custom metadata from NativeInterface into a native metadata struct, optionally from an object.
  * If metadata is not provided, load from NativeInterface
  */
 void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst, jobject metadata);
