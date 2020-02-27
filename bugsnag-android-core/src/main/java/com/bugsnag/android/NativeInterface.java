@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
@@ -383,5 +384,20 @@ public class NativeInterface {
     @NonNull
     public static Logger getLogger() {
         return getClient().getConfig().getLogger();
+    }
+
+    /**
+     * Retrieves an instantiated plugin of the given type, or null if none has been created
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends Plugin> T getPlugin(@NonNull Class<T> clz) {
+        Set<Plugin> plugins = getClient().pluginClient.getPlugins();
+        for (Plugin plugin : plugins) {
+            if (plugin.getClass().equals(clz)) {
+                return (T) plugin;
+            }
+        }
+        return null;
     }
 }

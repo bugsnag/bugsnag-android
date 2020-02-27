@@ -84,6 +84,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final DeliveryDelegate deliveryDelegate;
 
     final ClientObservable clientObservable = new ClientObservable();
+    PluginClient pluginClient;
 
     /**
      * Initialize a Bugsnag client
@@ -286,7 +287,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private void loadPlugins(@NonNull Configuration configuration) {
         NativeInterface.setClient(this);
         Set<Plugin> userPlugins = configuration.getPlugins();
-        PluginClient pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
+        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
         pluginClient.loadPlugins(this);
     }
 
