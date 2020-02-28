@@ -30,7 +30,7 @@ Scenario: Load configuration initialised with Kotlin
     And the event "app.buildUUID" equals "kotlin-0.9.8"
     And the event "app.version" equals "0.9.8"
     And the event "app.type" equals "kotlin"
-    And the payload field "events.0.threads" is a non-empty array
+    And the payload field "events.0.threads" is an array with 0 elements
 
 Scenario: Load configuration initialised with nulls
     When I configure the app to run in the "skipBugsnag" state

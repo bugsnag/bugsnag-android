@@ -10,6 +10,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback
+import com.bugsnag.android.ThreadSendPolicy
 import java.lang.RuntimeException
 
 
@@ -36,6 +37,7 @@ internal class LoadConfigurationKotlinScenario(
         testConfig.persistUser = false
         testConfig.redactedKeys = setOf("filter_me_two")
         testConfig.releaseStage = "kotlin"
+        testConfig.sendThreads = ThreadSendPolicy.NEVER
         testConfig.versionCode = 98
         testConfig.addOnError(OnErrorCallback { event ->
             event.addMetadata("test", "filter_me", "bar")
