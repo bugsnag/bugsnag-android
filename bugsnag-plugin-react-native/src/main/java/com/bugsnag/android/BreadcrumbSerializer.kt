@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 import java.util.Locale
 
-internal class BreadcrumbSerializer : WritableMapSerializer<Breadcrumb> {
+internal class BreadcrumbSerializer : MapSerializer<Breadcrumb> {
     override fun serialize(map: MutableMap<String, Any?>, crumb: Breadcrumb) {
         map["timestamp"] = DateUtils.toIso8601(crumb.timestamp)
         map["message"] = crumb.message
