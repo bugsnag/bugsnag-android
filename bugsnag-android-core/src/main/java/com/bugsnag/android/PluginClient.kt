@@ -28,8 +28,11 @@ internal class PluginClient(
         return try {
             val pluginClz = Class.forName(clz)
             pluginClz.newInstance() as Plugin
-        } catch (exc: Throwable) {
+        } catch (exc: ClassNotFoundException) {
             logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.")
+            null
+        } catch (exc: Throwable) {
+            logger.e("Failed to load plugin '$clz'", exc)
             null
         }
     }

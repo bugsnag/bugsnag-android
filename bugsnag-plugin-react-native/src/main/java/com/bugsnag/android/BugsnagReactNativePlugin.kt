@@ -2,7 +2,12 @@ package com.bugsnag.android
 
 import java.util.Locale
 
-@Suppress("unused", "UNUSED_PARAMETER")
+/**
+ * The BugsnagReactNativePlugin is invoked by the BugsnagReactNative class in the bugsnag-js repo.
+ * Its responsibility is to update the native client when informed of state changes in the JS layer
+ * (e.g. when the user is set) and vice versa. It is also responsible for dispatching JS errors to
+ * the native client and for providing metadata information (such as threads) to the JS layer.
+ */
 class BugsnagReactNativePlugin : Plugin {
 
     private val configSerializer = ConfigSerializer()
@@ -22,15 +27,12 @@ class BugsnagReactNativePlugin : Plugin {
 
     override fun unload() {}
 
+    @Suppress("unused")
     fun configure(): Map<String, Any?> {
-        try {
-            // see if bugsnag-android is already initialised
-            client = Bugsnag.getClient()
-            internalHooks = InternalHooks(client)
-            logger = client.logger
-        } catch (exc: IllegalStateException) {
-            throw exc
-        }
+        // see if bugsnag-android is already initialised
+        client = Bugsnag.getClient()
+        internalHooks = InternalHooks(client)
+        logger = client.logger
 
         // TODO: I think we also want to return values for state here too:
         // i.e of user, context and metadata
@@ -75,10 +77,12 @@ class BugsnagReactNativePlugin : Plugin {
         client.setUser(id, email, name)
     }
 
-    fun dispatch(payload: Map<String, Any?>?) {
+    @Suppress("unused")
+    fun dispatch(@Suppress("UNUSED_PARAMETER") payload: Map<String, Any?>?) {
         // TODO implement
     }
 
+    @Suppress("unused")
     fun getPayloadInfo(): Map<String, Any?> {
         val info = mutableMapOf<String, Any?>()
         val app = mutableMapOf<String, Any?>()

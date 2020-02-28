@@ -84,7 +84,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final DeliveryDelegate deliveryDelegate;
 
     final ClientObservable clientObservable = new ClientObservable();
-    PluginClient pluginClient;
+    private PluginClient pluginClient;
 
     /**
      * Initialize a Bugsnag client
@@ -844,5 +844,20 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void close() {
         connectivity.unregisterForNetworkChanges();
+    }
+
+    /**
+     * Retrieves an instantiated plugin of the given type, or null if none has been created
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    <T extends Plugin> T getPlugin(@NonNull Class<T> clz) {
+        Set<Plugin> plugins = pluginClient.getPlugins();
+        for (Plugin plugin : plugins) {
+            if (plugin.getClass().equals(clz)) {
+                return (T) plugin;
+            }
+        }
+        return null;
     }
 }

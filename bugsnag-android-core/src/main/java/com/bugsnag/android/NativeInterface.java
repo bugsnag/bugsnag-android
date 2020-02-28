@@ -385,19 +385,4 @@ public class NativeInterface {
     public static Logger getLogger() {
         return getClient().getConfig().getLogger();
     }
-
-    /**
-     * Retrieves an instantiated plugin of the given type, or null if none has been created
-     */
-    @SuppressWarnings("unchecked")
-    @Nullable
-    public static <T extends Plugin> T getPlugin(@NonNull Class<T> clz) {
-        Set<Plugin> plugins = getClient().pluginClient.getPlugins();
-        for (Plugin plugin : plugins) {
-            if (plugin.getClass().equals(clz)) {
-                return (T) plugin;
-            }
-        }
-        return null;
-    }
 }
