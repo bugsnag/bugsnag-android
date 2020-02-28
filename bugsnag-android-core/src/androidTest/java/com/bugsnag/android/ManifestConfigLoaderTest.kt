@@ -49,7 +49,6 @@ class ManifestConfigLoaderTest {
             assertEquals(maxBreadcrumbs, 25)
             assertEquals(launchCrashThresholdMs, 5000)
             assertEquals("android", appType)
-            assertNull(codeBundleId)
         }
     }
 
@@ -115,7 +114,6 @@ class ManifestConfigLoaderTest {
             assertEquals(maxBreadcrumbs, 50)
             assertEquals(launchCrashThresholdMs, 7000)
             assertEquals("react-native", appType)
-            assertEquals("123", codeBundleId)
         }
     }
 

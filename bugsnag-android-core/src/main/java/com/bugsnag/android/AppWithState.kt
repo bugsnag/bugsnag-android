@@ -29,7 +29,7 @@ class AppWithState(
      * Whether the application was in the foreground when the event occurred
      */
     var inForeground: Boolean?
-) : App(binaryArch, id, releaseStage, version, buildUuid, codeBundleId, type, versionCode) {
+) : App(binaryArch, id, releaseStage, version, codeBundleId, buildUuid, type, versionCode) {
 
     internal constructor(
         config: ImmutableConfig,
@@ -37,6 +37,7 @@ class AppWithState(
         id: String?,
         releaseStage: String?,
         version: String?,
+        codeBundleId: String?,
         duration: Number?,
         durationInForeground: Number?,
         inForeground: Boolean?
@@ -46,7 +47,7 @@ class AppWithState(
         releaseStage,
         version,
         config.buildUuid,
-        config.codeBundleId,
+        codeBundleId,
         config.appType,
         config.versionCode,
         duration,

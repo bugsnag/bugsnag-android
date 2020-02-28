@@ -30,7 +30,6 @@ internal class AppDataCollectorSerializationTest {
             config.releaseStage = "test-stage"
             config.appVersion = "1.2.3"
             config.versionCode = 55
-            config.codeBundleId = "foo-99"
 
             // populate regular fields
             `when`(context.packageName).thenReturn("com.example.foo")
@@ -50,6 +49,7 @@ internal class AppDataCollectorSerializationTest {
                 am,
                 NoopLogger
             )
+            appData.codeBundleId = "foo-99"
             appData.setBinaryArch("x86")
 
             // serializes the 3 different maps that AppDataCollector can generate:

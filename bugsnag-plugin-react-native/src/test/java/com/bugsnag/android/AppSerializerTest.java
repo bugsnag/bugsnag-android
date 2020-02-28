@@ -24,7 +24,7 @@ public class AppSerializerTest {
     public void setup() {
         app = new AppWithState(TestData.generateConfig(),
                 "x86", "com.example.foo", "prod",
-                "1.5.3", 509, 23, true
+                "1.5.3", "code-id-123", 509, 23, true
         );
     }
 
