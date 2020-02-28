@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 import java.util.Locale
 
-class ThreadSerializer : WritableMapSerializer<Thread> {
+internal class ThreadSerializer : WritableMapSerializer<Thread> {
     override fun serialize(map: MutableMap<String, Any?>, thread: Thread) {
         map["id"] = thread.id
         map["name"] = thread.name

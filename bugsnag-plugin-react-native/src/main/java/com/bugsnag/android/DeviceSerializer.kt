@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-class DeviceSerializer : WritableMapSerializer<DeviceWithState> {
+internal class DeviceSerializer : WritableMapSerializer<DeviceWithState> {
     override fun serialize(map: MutableMap<String, Any?>, device: DeviceWithState) {
         map["cpuAbi"] = device.cpuAbi?.toList()
         map["jailbroken"] = device.jailbroken
