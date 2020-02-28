@@ -25,8 +25,8 @@ internal data class MetadataState(val metadata: Metadata = Metadata()) : BaseObs
 
     private fun notifyClear(section: String, key: String?) {
         when (key) {
-            null -> notifyObservers(StateEvent.ClearMetadataTab(section))
-            else -> notifyObservers(StateEvent.RemoveMetadata(section, key))
+            null -> notifyObservers(StateEvent.ClearMetadataSection(section))
+            else -> notifyObservers(StateEvent.ClearMetadataValue(section, key))
         }
     }
 
