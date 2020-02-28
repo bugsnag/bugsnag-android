@@ -124,15 +124,65 @@ bugsnag_event * loadSessionTestCase(jint num) {
 }
 
 bugsnag_event * loadBreadcrumbsTestCase(jint num) {
-    bugsnag_event *data = malloc(sizeof(bugsnag_event));
-    data->crumb_count = 1;
-    data->crumb_first_index = 0;
-    data->breadcrumbs[0].type = BSG_CRUMB_USER;
-    strcpy(data->breadcrumbs[0].name, "Jane");
-    strcpy(data->breadcrumbs[0].timestamp, "2018-10-08T12:07:09Z");
-    strcpy(data->breadcrumbs[0].metadata->key, "foo");
-    strcpy(data->breadcrumbs[0].metadata->value, "bar");
-    return data;
+    bugsnag_event *event = malloc(sizeof(bugsnag_event));
+
+    // ensure that serialization loop is covered by test
+    event->crumb_count = 4;
+    event->crumb_first_index = BUGSNAG_CRUMBS_MAX - 2;
+
+    // first breadcrumb
+    bugsnag_breadcrumb *crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 2];
+    crumb->type = BSG_CRUMB_USER;
+    strcpy(crumb->name, "Jane");
+    strcpy(crumb->timestamp, "2018-10-08T12:07:09Z");
+
+    // metadata
+    bugsnag_metadata *data = &crumb->metadata;
+    data->value_count = 1;
+    data->values[0].type = BSG_METADATA_CHAR_VALUE;
+    strcpy(data->values[0].section, "custom");
+    strcpy(data->values[0].name, "str");
+    strcpy(data->values[0].char_value, "Foo");
+
+    // second breadcrumb
+    crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 1];
+    crumb->type = BSG_CRUMB_MANUAL;
+    strcpy(crumb->name, "Something went wrong");
+    strcpy(crumb->timestamp, "2018-10-08T12:07:11Z");
+
+    // metadata
+    data = &crumb->metadata;
+    data->value_count = 1;
+    data->values[0].type = BSG_METADATA_BOOL_VALUE;
+    strcpy(data->values[0].section, "custom");
+    strcpy(data->values[0].name, "bool");
+    data->values[0].bool_value = true;
+
+    // third breadcrumb
+    crumb = &event->breadcrumbs[0];
+    crumb->type = BSG_CRUMB_NAVIGATION;
+    strcpy(crumb->name, "MainActivity");
+    strcpy(crumb->timestamp, "2018-10-08T12:07:15Z");
+
+    // metadata
+    data = &crumb->metadata;
+    data->values[0].type = BSG_METADATA_NUMBER_VALUE;
+    strcpy(data->values[0].section, "custom");
+    strcpy(data->values[0].name, "num");
+    data->values[0].double_value = 55;
+
+    // fourth breadcrumb
+    crumb = &event->breadcrumbs[1];
+    crumb->type = BSG_CRUMB_STATE;
+    strcpy(crumb->name, "Updated store");
+    strcpy(crumb->timestamp, "2018-10-08T12:07:16Z");
+
+    // metadata
+    data = &crumb->metadata;
+    data->values[0].type = BSG_METADATA_NONE_VALUE;
+    strcpy(data->values[0].section, "custom");
+    strcpy(data->values[0].name, "none");
+    return event;
 }
 
 bugsnag_stackframe * loadStackframeTestCase(jint num) {

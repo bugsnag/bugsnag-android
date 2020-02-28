@@ -27,7 +27,10 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var autoDetectErrors: Boolean = true
     var codeBundleId: String? = null
     var appType: String? = "android"
-    var logger: Logger? = null
+    var logger: Logger? = DebugLogger
+        set(value) {
+            field = value ?: NoopLogger
+        }
     var delivery: Delivery? = null
     var endpoints: EndpointConfiguration = EndpointConfiguration()
     var maxBreadcrumbs: Int = DEFAULT_MAX_SIZE
@@ -58,6 +61,8 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = BreadcrumbType.values().toSet()
     var projectPackages: Set<String> = emptySet()
 
+    protected val plugins = mutableSetOf<Plugin>()
+
     override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)
     override fun removeOnError(onError: OnErrorCallback) = callbackState.removeOnError(onError)
     override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) =
@@ -79,6 +84,10 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     override fun getUser(): User = user
     override fun setUser(id: String?, email: String?, name: String?) {
         user = User(id, email, name)
+    }
+
+    fun addPlugin(plugin: Plugin) {
+        plugins.add(plugin)
     }
 
     companion object {

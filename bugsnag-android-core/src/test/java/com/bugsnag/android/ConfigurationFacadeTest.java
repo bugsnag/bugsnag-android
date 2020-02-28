@@ -499,4 +499,26 @@ public class ConfigurationFacadeTest {
         config.setUser(null, null, null);
         assertEquals(new User(null, null, null), config.getUser());
     }
+
+    @Test
+    public void addPluginValid() {
+        Plugin plugin = new Plugin() {
+            @Override
+            public void load(@NonNull Client client) {
+            }
+
+            @Override
+            public void unload() {
+            }
+        };
+        config.addPlugin(plugin);
+        assertEquals(plugin, config.impl.getPlugins().toArray()[0]);
+    }
+
+    @Test
+    public void addPluginInvalid() {
+        config.addPlugin(null);
+        assertTrue(config.impl.getPlugins().isEmpty());
+        assertNotNull(logger.getMsg());
+    }
 }

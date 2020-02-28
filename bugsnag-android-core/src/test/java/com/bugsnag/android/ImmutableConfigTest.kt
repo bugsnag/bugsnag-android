@@ -173,6 +173,7 @@ internal class ImmutableConfigTest {
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         seed.logger = NoopLogger
         val config = sanitiseConfiguration(context, seed, connectivity)
+        assertEquals(NoopLogger, config.logger)
         assertEquals(setOf("com.example.foo"), config.projectPackages)
         assertEquals("production", config.releaseStage)
         assertEquals(55, config.versionCode)

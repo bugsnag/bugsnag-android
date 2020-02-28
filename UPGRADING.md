@@ -290,6 +290,35 @@ This class is no longer required - you should use your own `Throwable` instead.
 ### EventReceiver
 This class is no longer publicly accessible as end-users should not need to set its values.
 
+# NDK Changes
+
+## Breaking changes
+- The `report.h` header has been renamed to `event.h`
+- `bugsnag_init()` has been renamed to `bugsnag_start()`
+- `bsg_severity_t` has been renamed to `bugsnag_severity`
+- `bsg_breadcrumb_t` has been renamed to `bugsnag_breadcrumb_type`
+
+## New functionality
+
+Native events can now be customized by adding an `on_error` callback. This allows you to amend the
+ data that will be sent to your Bugsnag dashboard for fatal NDK crashes.
+
+```
+bool custom_on_error_callback(void *event) {
+    bugsnag_event_set_severity(event, BSG_SEVERITY_WARN);
+    // ...
+}
+bugsnag_add_on_error(&custom_on_error_callback);
+```
+
+Most of the fields in the `Event` class in the JVM are available in this callback using a set of functions (see [event.h](https://github.com/bugsnag/bugsnag-android/blob/master/bugsnag-plugin-android-ndk/src/main/assets/include/event.h))
+ that take the event pointer argument and either return data from the event or allow you to set it.
+Full examples are given in the [Event class documentation](https://docs.bugsnag.com/platforms/android/customizing-error-reports/#the-event-class).
+
+Care must be taken to ensure that the callback function provided is async-signal safe. The code will
+be executed in an asynchronous signal handler and so must not call any functions that are not Async-Signal-Safe.
+Further information can be found [here](https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers).
+
 Upgrade bugsnag-android-ndk from 1.x to 4.x
 -----------------------
 

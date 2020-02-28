@@ -46,6 +46,22 @@ typedef struct {
 } bsg_exception;
 
 typedef struct {
+    char key[64];
+    char value[64];
+} bsg_char_metadata_pair;
+
+typedef struct {
+    char name[33];
+    char timestamp[37];
+    bugsnag_breadcrumb_type type;
+
+    /**
+     * Key/value pairs of related information for debugging
+     */
+    bsg_char_metadata_pair metadata[8];
+} bugsnag_breadcrumb_v1;
+
+typedef struct {
     char name[64];
     char id[64];
     char package_name[64];
@@ -102,7 +118,7 @@ typedef struct {
     // Breadcrumbs are a ring; the first index moves as the
     // structure is filled and replaced.
     int crumb_first_index;
-    bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
+    bugsnag_breadcrumb_v1 breadcrumbs[BUGSNAG_CRUMBS_MAX];
 
     char context[64];
     bugsnag_severity severity;
@@ -124,7 +140,7 @@ typedef struct {
     // Breadcrumbs are a ring; the first index moves as the
     // structure is filled and replaced.
     int crumb_first_index;
-    bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
+    bugsnag_breadcrumb_v1 breadcrumbs[BUGSNAG_CRUMBS_MAX];
 
     char context[64];
     bugsnag_severity severity;

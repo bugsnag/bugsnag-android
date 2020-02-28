@@ -167,11 +167,6 @@ typedef struct {
 } bsg_error;
 
 typedef struct {
-    char key[64];
-    char value[64];
-} bsg_char_metadata_pair;
-
-typedef struct {
     char name[33];
     char timestamp[37];
     bugsnag_breadcrumb_type type;
@@ -179,7 +174,7 @@ typedef struct {
     /**
      * Key/value pairs of related information for debugging
      */
-    bsg_char_metadata_pair metadata[8];
+    bugsnag_metadata metadata;
 } bugsnag_breadcrumb;
 
 typedef struct {
@@ -219,6 +214,13 @@ void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
 void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
                                  char *started_at, int handled_count, int unhandled_count);
 bool bugsnag_event_has_session(bugsnag_event *event);
+
+void bsg_add_metadata_value_double(bugsnag_metadata *metadata, char *section,
+                                   char *name, double value);
+void bsg_add_metadata_value_str(bugsnag_metadata *metadata, char *section,
+                                char *name, char *value);
+void bsg_add_metadata_value_bool(bugsnag_metadata *metadata, char *section,
+                                 char *name, bool value);
 
 /*********************************
  * (end) NDK-SPECIFIC BITS

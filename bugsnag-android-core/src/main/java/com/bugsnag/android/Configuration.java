@@ -851,4 +851,19 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
         impl.setUser(id, email, name);
     }
+
+    /**
+     * Adds a plugin which will be loaded when the bugsnag notifier is instantiated.
+     */
+    public void addPlugin(@NonNull Plugin plugin) {
+        if (plugin != null) {
+            impl.addPlugin(plugin);
+        } else {
+            logNull("addPlugin");
+        }
+    }
+
+    Set<Plugin> getPlugins() {
+        return impl.getPlugins();
+    }
 }

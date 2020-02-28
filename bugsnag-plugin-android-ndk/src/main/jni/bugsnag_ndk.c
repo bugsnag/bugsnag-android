@@ -519,7 +519,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   if (bsg_global_env == NULL)
     return;
   bsg_request_env_write_lock();
-  bsg_populate_metadata(env, &bsg_global_env->next_event, metadata);
+  bsg_populate_metadata(env, &bsg_global_env->next_event.metadata, metadata);
   bsg_release_env_write_lock();
 }
 

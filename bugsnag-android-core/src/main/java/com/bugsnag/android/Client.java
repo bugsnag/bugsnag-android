@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -84,12 +85,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final ClientObservable clientObservable = new ClientObservable();
 
-    @Nullable
-    private Class<?> ndkPluginClz;
-
-    @Nullable
-    private Class<?> anrPluginClz;
-
     /**
      * Initialize a Bugsnag client
      *
@@ -116,37 +111,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        // if the user has set the releaseStage to production manually, disable logging
-        if (configuration.getLogger() == null) {
-            String releaseStage = configuration.getReleaseStage();
-            boolean loggingEnabled = !RELEASE_STAGE_PRODUCTION.equals(releaseStage);
-
-            if (loggingEnabled) {
-                configuration.setLogger(DebugLogger.INSTANCE);
-            } else {
-                configuration.setLogger(NoopLogger.INSTANCE);
-            }
-        }
-        logger = configuration.getLogger();
-
-        // set sensible defaults for delivery/project packages etc if not set
-        warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
-
-        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
-
-        // Set up breadcrumbs
-        callbackState = configuration.impl.callbackState.copy();
-        int maxBreadcrumbs = configuration.getMaxBreadcrumbs();
-        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
-
-        // filter out any disabled breadcrumb types
-        addOnBreadcrumb(new OnBreadcrumbCallback() {
-            @Override
-            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
-            }
-        });
 
         connectivity = new ConnectivityCompat(appContext, new Function2<Boolean, String, Unit>() {
             @Override
@@ -163,7 +128,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             }
         });
 
+        // set sensible defaults for delivery/project packages etc if not set
         immutableConfig = sanitiseConfiguration(appContext, configuration, connectivity);
+        logger = immutableConfig.getLogger();
+        warnIfNotAppContext(androidContext);
+
+        // Set up breadcrumbs
+        callbackState = configuration.impl.callbackState.copy();
+        int maxBreadcrumbs = immutableConfig.getMaxBreadcrumbs();
+        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
+
+        // filter out any disabled breadcrumb types
+        addOnBreadcrumb(new OnBreadcrumbCallback() {
+            @Override
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
+            }
+        });
+
+        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
@@ -230,22 +213,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             new ExceptionHandler(this, logger);
         }
 
-        try {
-            ndkPluginClz = Class.forName("com.bugsnag.android.NdkPlugin");
-        } catch (ClassNotFoundException exc) {
-            logger.w("bugsnag-plugin-android-ndk artefact not found on classpath, "
-                    + "NDK errors will not be captured.");
-        }
-
-        try {
-            anrPluginClz = Class.forName("com.bugsnag.android.AnrPlugin");
-        } catch (ClassNotFoundException exc) {
-            logger.w("bugsnag-plugin-android-anr artefact not found on classpath, "
-                    + "ANR errors will not be captured.");
-        }
-
         // register a receiver for automatic breadcrumbs
-
         try {
             Async.run(new Runnable() {
                 @Override
@@ -263,9 +231,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Flush any on-disk errors
         eventStore.flushOnLaunch();
-        loadPlugins();
         Map<String, Object> data = Collections.emptyMap();
         leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
+
+        // finally, initialise plugins
+        loadPlugins(configuration);
     }
 
     @VisibleForTesting
@@ -313,6 +283,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.deliveryDelegate = deliveryDelegate;
     }
 
+    private void loadPlugins(@NonNull Configuration configuration) {
+        NativeInterface.setClient(this);
+        Set<Plugin> userPlugins = configuration.getPlugins();
+        PluginClient pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
+        pluginClient.loadPlugins(this);
+    }
+
     private void logNull(String property) {
         logger.e("Invalid null value supplied to client." + property + ", ignoring");
     }
@@ -341,35 +318,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 }
         );
         appContext.registerReceiver(receiver, configFilter);
-    }
-
-    private void loadPlugins() {
-        NativeInterface.setClient(this);
-        enableOrDisableNdkReporting();
-        enableOrDisableAnrReporting();
-        BugsnagPluginInterface.INSTANCE.loadRegisteredPlugins(this);
-    }
-
-    void enableOrDisableNdkReporting() {
-        if (ndkPluginClz == null) {
-            return;
-        }
-        if (immutableConfig.getEnabledErrorTypes().getNdkCrashes()) {
-            BugsnagPluginInterface.INSTANCE.loadPlugin(this, ndkPluginClz);
-        } else {
-            BugsnagPluginInterface.INSTANCE.unloadPlugin(ndkPluginClz);
-        }
-    }
-
-    void enableOrDisableAnrReporting() {
-        if (anrPluginClz == null) {
-            return;
-        }
-        if (immutableConfig.getEnabledErrorTypes().getAnrs()) {
-            BugsnagPluginInterface.INSTANCE.loadPlugin(this, anrPluginClz);
-        } else {
-            BugsnagPluginInterface.INSTANCE.unloadPlugin(anrPluginClz);
-        }
     }
 
     void sendNativeSetupNotification() {
