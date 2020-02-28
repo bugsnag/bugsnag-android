@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class ConfigSerializer implements WritableMapSerializer<ImmutableConfig> {
+class ConfigSerializer implements MapSerializer<ImmutableConfig> {
 
     @Override
     public void serialize(Map<String, Object> map, ImmutableConfig config) {
