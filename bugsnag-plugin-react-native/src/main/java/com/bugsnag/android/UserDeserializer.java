@@ -1,12 +1,14 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.MapUtils.getString;
-
 import java.util.Map;
 
 class UserDeserializer implements MapDeserializer<User> {
     @Override
     public User deserialize(Map<String, Object> map) {
-        return new User(getString(map, "id"), getString(map, "email"), getString(map, "name"));
+        return new User(
+                MapUtils.<String>getOrNull(map, "id"),
+                MapUtils.<String>getOrNull(map, "email"),
+                MapUtils.<String>getOrNull(map, "name")
+        );
     }
 }

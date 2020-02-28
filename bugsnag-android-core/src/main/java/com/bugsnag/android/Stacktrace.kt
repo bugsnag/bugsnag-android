@@ -32,6 +32,14 @@ internal class Stacktrace : JsonStream.Streamable {
         this.logger = logger
     }
 
+    constructor(logger: Logger, frames: List<Stackframe>) {
+        trace = when {
+            frames.size >= STACKTRACE_TRIM_LENGTH -> frames.subList(0, STACKTRACE_TRIM_LENGTH)
+            else -> frames
+        }
+        this.logger = logger
+    }
+
     private fun mapToStackframe(it: Map<String, Any?>) =
         Stackframe(
             it["method"] as String?,
