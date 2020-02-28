@@ -38,5 +38,15 @@ Scenario: Load configuration initialised with nulls
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "12312312312312312312312312312312"
     And the exception "message" equals "LoadConfigurationNullsScenario"
+    And the event "app.releaseStage" equals "production"
     And the event "metaData.test.foo" equals "bar"
     And the event "metaData.test.filter_me" equals "foobar"
+    And the event "app.versionCode" equals 34
+    And the event "app.buildUUID" is not null
+    And the event "app.version" equals "1.1.14"
+    And the event "app.type" is null
+    And the event "user.id" is not null
+    And the event "user.name" is null
+    And the event "user.email" is null
+    And the payload field "events.0.threads" is a non-empty array
+

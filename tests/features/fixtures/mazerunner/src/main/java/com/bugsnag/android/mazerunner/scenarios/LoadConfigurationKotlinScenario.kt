@@ -7,7 +7,6 @@ import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Client
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.CustomPluginExample
 import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback
@@ -21,7 +20,8 @@ internal class LoadConfigurationKotlinScenario(
 
     override fun run() {
         super.run()
-        var testConfig = Configuration("45645645645645645645645645645645")
+        var testConfig = Configuration("78978978978978978978978978978978")
+        testConfig.apiKey = "45645645645645645645645645645645"
         testConfig.appVersion  = "0.9.8"
         testConfig.appType = "kotlin"
         testConfig.autoDetectErrors = true

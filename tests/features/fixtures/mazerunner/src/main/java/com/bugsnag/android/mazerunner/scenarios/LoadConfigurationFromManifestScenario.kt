@@ -7,7 +7,6 @@ import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Client
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.CustomPluginExample
 import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback
 import java.lang.RuntimeException
