@@ -4,13 +4,19 @@ import java.util.Map;
 
 class MapUtils {
 
-    static String getString(Map<String, Object> map, String key) {
+    @SuppressWarnings("unchecked")
+    static <T> T getOrNull(Map<String, Object> map, String key) {
         Object id = map.get(key);
+        return id != null ? (T) id : null;
+    }
 
-        if (id instanceof String) {
-            return (String) id;
+    @SuppressWarnings("unchecked")
+    static <T> T getOrThrow(Map<String, Object> map, String key) {
+        Object id = map.get(key);
+        if (id != null) {
+            return (T) id;
         } else {
-            return null;
+            throw new IllegalArgumentException("Missing required parameter " + key);
         }
     }
 }
