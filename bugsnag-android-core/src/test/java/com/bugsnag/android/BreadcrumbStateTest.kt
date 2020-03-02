@@ -2,10 +2,8 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BreadcrumbType.MANUAL
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
+import org.junit.Assert.*
 
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
@@ -122,7 +120,7 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testOnBreadcrumbCallback() {
-        val breadcrumb = Breadcrumb("Whoops")
+        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
             true
         })
@@ -136,22 +134,32 @@ class BreadcrumbStateTest {
      */
      @Test
      fun testOnBreadcrumbCallbackFalse() {
-        val requiredBreadcrumb = Breadcrumb("Hello there")
+        val requiredBreadcrumb = Breadcrumb("Hello there", NoopLogger)
         breadcrumbState.add(requiredBreadcrumb)
 
-        val breadcrumb = Breadcrumb("Whoops")
+        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            givenBreadcrumb.metadata["callback"] = "first"
+            val metadata = givenBreadcrumb.metadata
+            if (!metadata.isNullOrEmpty()) {
+                metadata["callback"] = "first"
+            }
             false
         })
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            givenBreadcrumb.metadata["callback"] = "second"
+            val metadata = givenBreadcrumb.metadata
+            if (!metadata.isNullOrEmpty()) {
+                metadata["callback"] = "second"
+            }
             true
         })
         breadcrumbState.add(breadcrumb)
         assertEquals(1, breadcrumbState.store.size)
         assertEquals(requiredBreadcrumb, breadcrumbState.store.first())
-        assertEquals("first", breadcrumb.metadata["callback"])
+        val breadcrumbMetadata = breadcrumb.metadata
+        assertNotNull(breadcrumbMetadata)
+        if (!breadcrumbMetadata.isNullOrEmpty()) {
+            assertEquals("first", breadcrumbMetadata["callback"])
+        }
      }
 
     /**
@@ -159,17 +167,25 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testOnBreadcrumbCallbackException() {
-        val breadcrumb = Breadcrumb("Whoops")
+        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
             throw Exception("Oh no")
         })
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            givenBreadcrumb.metadata["callback"] = "second"
+            val metadata = givenBreadcrumb.metadata
+            if (!metadata.isNullOrEmpty()) {
+                metadata["callback"] = "second"
+            }
             true
         })
         breadcrumbState.add(breadcrumb)
         assertEquals(1, breadcrumbState.store.size)
         assertEquals(breadcrumb, breadcrumbState.store.peek())
-        assertEquals("second", breadcrumb.metadata["callback"])
+        assertNotNull(breadcrumb.metadata)
+        val breadcrumbMetadata = breadcrumb.metadata
+        assertNotNull(breadcrumbMetadata)
+        if (!breadcrumbMetadata.isNullOrEmpty()) {
+            assertEquals("second", breadcrumbMetadata["callback"])
+        }
     }
 }
