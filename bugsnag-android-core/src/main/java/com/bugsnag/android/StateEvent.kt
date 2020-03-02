@@ -12,8 +12,8 @@ sealed class StateEvent {
 
     class AddMetadata(val section: String, val key: String?, val value: Any?) : StateEvent()
     object ClearBreadcrumbs : StateEvent()
-    class ClearMetadataTab(val section: String) : StateEvent()
-    class RemoveMetadata(val section: String, val key: String?) : StateEvent()
+    class ClearMetadataSection(val section: String) : StateEvent()
+    class ClearMetadataValue(val section: String, val key: String?) : StateEvent()
 
     class AddBreadcrumb(
         val message: String,
@@ -37,7 +37,5 @@ sealed class StateEvent {
     class UpdateInForeground(val inForeground: Boolean, val contextActivity: String?) : StateEvent()
     class UpdateOrientation(val orientation: String?) : StateEvent()
 
-    class UpdateUserEmail(val email: String?) : StateEvent()
-    class UpdateUserName(val name: String?) : StateEvent()
-    class UpdateUserId(val id: String?) : StateEvent()
+    class UpdateUser(val user: User) : StateEvent()
 }

@@ -64,7 +64,7 @@ public class ObserverInterfaceTest {
     public void testAddNullMetadataSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
         client.addMetadata("foo", "bar", null);
-        StateEvent.RemoveMetadata msg = findMessageInQueue(StateEvent.RemoveMetadata.class);
+        StateEvent.ClearMetadataValue msg = findMessageInQueue(StateEvent.ClearMetadataValue.class);
         assertEquals("foo", msg.getSection());
         assertEquals("bar", msg.getKey());
     }
@@ -72,14 +72,16 @@ public class ObserverInterfaceTest {
     @Test
     public void testClearTopLevelTabSendsMessage() {
         client.clearMetadata("axis");
-        StateEvent.ClearMetadataTab value = findMessageInQueue(StateEvent.ClearMetadataTab.class);
+        StateEvent.ClearMetadataSection value
+                = findMessageInQueue(StateEvent.ClearMetadataSection.class);
         assertEquals("axis", value.getSection());
     }
 
     @Test
     public void testClearTabSendsMessage() {
         client.clearMetadata("axis", "foo");
-        StateEvent.RemoveMetadata value = findMessageInQueue(StateEvent.RemoveMetadata.class);
+        StateEvent.ClearMetadataValue value
+                = findMessageInQueue(StateEvent.ClearMetadataValue.class);
         assertEquals("axis", value.getSection());
         assertEquals("foo", value.getKey());
     }
@@ -124,14 +126,10 @@ public class ObserverInterfaceTest {
     @Test
     public void testClientSetUserId() {
         client.setUser("personX", "bip@example.com", "Loblaw");
-        StateEvent.UpdateUserId idMsg = findMessageInQueue(StateEvent.UpdateUserId.class);
-        assertEquals("personX", idMsg.getId());
-
-        StateEvent.UpdateUserEmail emailMsg = findMessageInQueue(StateEvent.UpdateUserEmail.class);
-        assertEquals("bip@example.com", emailMsg.getEmail());
-
-        StateEvent.UpdateUserName nameMsg = findMessageInQueue(StateEvent.UpdateUserName.class);
-        assertEquals("Loblaw", nameMsg.getName());
+        StateEvent.UpdateUser idMsg = findMessageInQueue(StateEvent.UpdateUser.class);
+        assertEquals("personX", idMsg.getUser().getId());
+        assertEquals("bip@example.com", idMsg.getUser().getEmail());
+        assertEquals("Loblaw", idMsg.getUser().getName());
     }
 
     @Test

@@ -31,8 +31,13 @@ class BugsnagReactNativePlugin : Plugin {
     fun configure(): Map<String, Any?> {
         // see if bugsnag-android is already initialised
         client = Bugsnag.getClient()
-        internalHooks = InternalHooks(client)
         logger = client.logger
+        internalHooks = InternalHooks(client)
+
+        client.registerObserver(BugsnagReactNativeBridge(client) {
+            // TODO future: serialize event to JS layer
+            logger.d("React native event: $it")
+        })
 
         // TODO: I think we also want to return values for state here too:
         // i.e of user, context and metadata
