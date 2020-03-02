@@ -139,27 +139,19 @@ class BreadcrumbStateTest {
 
         val breadcrumb = Breadcrumb("Whoops", NoopLogger)
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            val metadata = givenBreadcrumb.metadata
-            if (!metadata.isNullOrEmpty()) {
-                metadata["callback"] = "first"
-            }
+            givenBreadcrumb.metadata?.put("callback", "first")
             false
         })
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            val metadata = givenBreadcrumb.metadata
-            if (!metadata.isNullOrEmpty()) {
-                metadata["callback"] = "second"
-            }
+            givenBreadcrumb.metadata?.put("callback", "second")
             true
         })
         breadcrumbState.add(breadcrumb)
         assertEquals(1, breadcrumbState.store.size)
         assertEquals(requiredBreadcrumb, breadcrumbState.store.first())
-        val breadcrumbMetadata = breadcrumb.metadata
-        assertNotNull(breadcrumbMetadata)
-        if (!breadcrumbMetadata.isNullOrEmpty()) {
-            assertEquals("first", breadcrumbMetadata["callback"])
-        }
+        assertNotNull(breadcrumb.metadata)
+        assertEquals("first", breadcrumb.metadata?.get("callback"))
+
      }
 
     /**
@@ -172,20 +164,13 @@ class BreadcrumbStateTest {
             throw Exception("Oh no")
         })
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            val metadata = givenBreadcrumb.metadata
-            if (!metadata.isNullOrEmpty()) {
-                metadata["callback"] = "second"
-            }
+            givenBreadcrumb.metadata?.put("callback", "second")
             true
         })
         breadcrumbState.add(breadcrumb)
         assertEquals(1, breadcrumbState.store.size)
         assertEquals(breadcrumb, breadcrumbState.store.peek())
         assertNotNull(breadcrumb.metadata)
-        val breadcrumbMetadata = breadcrumb.metadata
-        assertNotNull(breadcrumbMetadata)
-        if (!breadcrumbMetadata.isNullOrEmpty()) {
-            assertEquals("second", breadcrumbMetadata["callback"])
-        }
+        assertEquals("second", breadcrumb.metadata?.get("callback"))
     }
 }
