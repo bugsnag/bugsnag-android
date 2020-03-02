@@ -26,6 +26,7 @@ internal class EventRedactionTest {
         val metadata = mutableMapOf<String, Any?>(Pair("password", "whoops"))
         event.breadcrumbs = listOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0), NoopLogger))
         event.threads.clear()
+        event.device.cpuAbi = emptyArray()
 
         val writer = StringWriter()
         val stream = JsonStream(writer)

@@ -8,7 +8,6 @@ import java.util.Date
  */
 class DeviceWithState internal constructor(
     buildInfo: DeviceBuildInfo,
-    cpuAbi: Array<String>,
     jailbroken: Boolean?,
     id: String?,
     locale: String?,
@@ -33,7 +32,7 @@ class DeviceWithState internal constructor(
      * The timestamp on the device when the event occurred
      */
     var time: Date?
-) : Device(buildInfo, cpuAbi, jailbroken, id, locale, totalMemory) {
+) : Device(buildInfo, buildInfo.cpuAbis, jailbroken, id, locale, totalMemory) {
 
     override fun serializeFields(writer: JsonStream) {
         super.serializeFields(writer)

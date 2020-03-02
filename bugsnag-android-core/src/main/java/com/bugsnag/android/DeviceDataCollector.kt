@@ -46,7 +46,6 @@ internal class DeviceDataCollector(
 
     fun generateDeviceWithState(now: Long) = DeviceWithState(
         buildInfo,
-        cpuAbi,
         rooted,
         installId,
         locale,
