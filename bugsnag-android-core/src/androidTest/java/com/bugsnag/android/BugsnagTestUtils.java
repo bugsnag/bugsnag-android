@@ -92,7 +92,7 @@ final class BugsnagTestUtils {
 
     static DeviceWithState generateDeviceWithState() {
         DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
-        return new DeviceWithState(buildInfo, new String[]{}, null, null, null,
+        return new DeviceWithState(buildInfo, null, null, null,
                 109230923452L, 22234423124L, 92340255592L, "portrait", new Date(0));
     }
 

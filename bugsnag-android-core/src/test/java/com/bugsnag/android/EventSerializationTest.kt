@@ -70,6 +70,7 @@ internal class EventSerializationTest {
             event.threads.clear()
             event.app = generateAppWithState()
             event.device = generateDeviceWithState()
+            event.device.cpuAbi = emptyArray()
             cb(event)
             return event
         }

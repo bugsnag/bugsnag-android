@@ -37,7 +37,6 @@ public class DeviceSerializerTest {
                         "google pixel",
                         new String[]{"x86"}
                 ),
-                new String[]{"x86"},
                 true,
                 "fa02",
                 "yue",

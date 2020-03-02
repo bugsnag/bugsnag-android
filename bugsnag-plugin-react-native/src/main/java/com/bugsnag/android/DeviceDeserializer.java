@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import java.util.Date;
 import java.util.Map;
 
 class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
@@ -19,9 +20,13 @@ class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
         );
 
         String time = MapUtils.getOrNull(map, "time");
+        Date date = null;
+
+        if (time != null) {
+            date = DateUtils.fromIso8601(time);
+        }
         return new DeviceWithState(
                 buildInfo,
-                buildInfo.getCpuAbis(),
                 MapUtils.<Boolean>getOrNull(map, "jailbroken"),
                 MapUtils.<String>getOrNull(map, "id"),
                 MapUtils.<String>getOrNull(map, "locale"),
@@ -29,7 +34,7 @@ class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
                 MapUtils.<Long>getOrNull(map, "freeDisk"),
                 MapUtils.<Long>getOrNull(map, "freeMemory"),
                 MapUtils.<String>getOrNull(map, "orientation"),
-                DateUtils.fromIso8601(time)
+                date
         );
     }
 }
