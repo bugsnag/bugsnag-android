@@ -375,7 +375,7 @@ public class NativeInterface {
     }
 
     @NonNull
-    public static Event createEvent(@NonNull Throwable exc,
+    public static Event createEvent(@Nullable Throwable exc,
                                     @NonNull Client client,
                                     @NonNull HandledState handledState) {
         return new Event(exc, client.getConfig(), handledState, client.logger);

@@ -39,8 +39,6 @@ class BugsnagReactNativePlugin : Plugin {
             logger.d("React native event: $it")
         })
 
-        // TODO: I think we also want to return values for state here too:
-        // i.e of user, context and metadata
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
         return map
@@ -83,8 +81,10 @@ class BugsnagReactNativePlugin : Plugin {
     }
 
     @Suppress("unused")
-    fun dispatch(@Suppress("UNUSED_PARAMETER") payload: Map<String, Any?>?) {
-        // TODO implement
+    fun dispatch(payload: MutableMap<String, Any?>?) {
+        requireNotNull(payload)
+        val event = EventDeserializer(client).deserialize(payload)
+        client.notifyInternal(event, null)
     }
 
     @Suppress("unused")

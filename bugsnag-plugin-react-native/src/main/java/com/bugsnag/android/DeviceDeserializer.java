@@ -8,15 +8,15 @@ class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
     @Override
     public DeviceWithState deserialize(Map<String, Object> map) {
         DeviceBuildInfo buildInfo = new DeviceBuildInfo(
-                MapUtils.<String>getOrThrow(map, "manufacturer"),
-                MapUtils.<String>getOrThrow(map, "model"),
-                MapUtils.<String>getOrThrow(map, "osVersion"),
-                MapUtils.<Integer>getOrThrow(map, "apiLevel"),
-                MapUtils.<String>getOrThrow(map, "osBuild"),
-                MapUtils.<String>getOrThrow(map, "fingerprint"),
-                MapUtils.<String>getOrThrow(map, "tags"),
-                MapUtils.<String>getOrThrow(map, "brand"),
-                MapUtils.<String[]>getOrThrow(map, "cpuAbis")
+                MapUtils.<String>getOrNull(map, "manufacturer"),
+                MapUtils.<String>getOrNull(map, "model"),
+                MapUtils.<String>getOrNull(map, "osVersion"),
+                MapUtils.<Integer>getOrNull(map, "apiLevel"),
+                MapUtils.<String>getOrNull(map, "osBuild"),
+                MapUtils.<String>getOrNull(map, "fingerprint"),
+                MapUtils.<String>getOrNull(map, "tags"),
+                MapUtils.<String>getOrNull(map, "brand"),
+                MapUtils.<String[]>getOrNull(map, "cpuAbis")
         );
 
         String time = MapUtils.getOrNull(map, "time");
