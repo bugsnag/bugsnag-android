@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import androidx.annotation.NonNull;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -28,5 +29,14 @@ class DateUtils {
             throw new IllegalStateException("Unable to find valid dateformatter");
         }
         return dateFormat.format(date);
+    }
+
+    @NonNull
+    static Date fromIso8601(@NonNull String date) {
+        try {
+            return iso8601Holder.get().parse(date);
+        } catch (ParseException exc) {
+            throw new IllegalArgumentException("Failed to parse timestamp", exc);
+        }
     }
 }
