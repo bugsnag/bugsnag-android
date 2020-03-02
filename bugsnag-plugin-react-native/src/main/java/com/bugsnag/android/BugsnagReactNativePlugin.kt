@@ -22,6 +22,9 @@ class BugsnagReactNativePlugin : Plugin {
     lateinit var logger: Logger
 
     override fun load(client: Client) {
+        this.client = client
+        logger = client.logger
+        internalHooks = InternalHooks(client)
         client.logger.i("Initialized React Native Plugin")
     }
 
@@ -29,11 +32,6 @@ class BugsnagReactNativePlugin : Plugin {
 
     @Suppress("unused")
     fun configure(): Map<String, Any?> {
-        // see if bugsnag-android is already initialised
-        client = Bugsnag.getClient()
-        logger = client.logger
-        internalHooks = InternalHooks(client)
-
         client.registerObserver(BugsnagReactNativeBridge(client) {
             // TODO future: serialize event to JS layer
             logger.d("React native event: $it")
