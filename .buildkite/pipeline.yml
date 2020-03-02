@@ -130,7 +130,7 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_9_0"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 10 end-to-end tests'
@@ -143,7 +143,7 @@ steps:
     env:
         DEVICE_TYPE: "ANDROID_10_0"
         APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
     soft_fail:
         - exit_status: "*"
@@ -157,7 +157,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       NDK_VERSION: "r16b"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - block: "Trigger full test suite"
@@ -173,7 +173,7 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_5_0"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 6 end-to-end tests'
@@ -186,7 +186,7 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_6_0"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
@@ -199,7 +199,7 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_7_1"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8.0 end-to-end tests'
@@ -212,7 +212,7 @@ steps:
     env:
         DEVICE_TYPE: "ANDROID_8_0"
         APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8.1 end-to-end tests'
@@ -225,7 +225,7 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_8_1"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
     soft_fail:
         - exit_status: "*"
@@ -239,7 +239,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
       NDK_VERSION: "r16b"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
@@ -251,7 +251,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       NDK_VERSION: "r16b"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
@@ -263,7 +263,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
       NDK_VERSION: "r12b"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 7.1 Instrumentation tests'
@@ -275,7 +275,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       NDK_VERSION: "r12b"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 9.0 Instrumentation tests'
@@ -287,7 +287,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       NDK_VERSION: "r12b"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 4.4 Instrumentation tests'
@@ -299,7 +299,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
       NDK_VERSION: "r19"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 7.1 Instrumentation tests'
@@ -311,7 +311,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       NDK_VERSION: "r19"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 9.0 Instrumentation tests'
@@ -323,7 +323,7 @@ steps:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       NDK_VERSION: "r19"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 21 SDK 10.0 Instrumentation tests'
@@ -335,5 +335,5 @@ steps:
         APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
         INSTRUMENTATION_DEVICES: '["Google Pixel 4-10.0"]'
         NDK_VERSION: "r21"
-    concurrency: 5
+    concurrency: 10
     concurrency_group: 'browserstack-app'
