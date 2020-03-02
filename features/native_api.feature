@@ -191,3 +191,16 @@ Feature: Native API
         And the event "metaData.fruit.ripe" is true
         And the event "metaData.fruit.counters" equals 47
         And the event "unhandled" is true
+
+    Scenario: Add configuration metadata followed by a C crash
+        When I run "CXXConfigurationMetadataNativeCrashScenario"
+        And I configure the app to run in the "non-metadata" state
+        And I relaunch the app
+        Then I should receive a request
+        And the request payload contains a completed handled native report
+        And the exception "errorClass" equals "SIGILL"
+        And the event "severity" equals "error"
+        And the event "metaData.fruit.apple" equals "gala"
+        And the event "metaData.fruit.ripe" is true
+        And the event "metaData.fruit.counters" equals 47
+        And the event "unhandled" is true

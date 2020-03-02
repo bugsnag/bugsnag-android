@@ -283,4 +283,14 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionOnErrorTrueScenario_cr
   return 55;
 }
 
+JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXConfigurationMetadataNativeCrashScenario_activate(
+    JNIEnv *env,
+    jobject instance) {
+  int x = 47;
+  if (x > 0)
+    __builtin_trap();
+  return 12167;
+}
+
 }

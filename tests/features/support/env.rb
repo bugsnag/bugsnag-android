@@ -29,7 +29,7 @@ Before('@skip_below_android_8') do |scenario|
 end
 
 Before('@skip_android_8_1') do |scenario|
-  skip_this_scenario("Skipping scenario") unless %w[ANDORID_8_1].include? bs_device
+  skip_this_scenario("Skipping scenario") if %w[ANDROID_8_1].include? bs_device
 end
 
 AfterConfiguration do |config|
