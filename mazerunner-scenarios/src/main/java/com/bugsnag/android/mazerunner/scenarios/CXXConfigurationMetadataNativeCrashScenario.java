@@ -16,6 +16,8 @@ public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
 
     public native int activate();
 
+    /**
+     */
     public CXXConfigurationMetadataNativeCrashScenario(@NonNull Configuration config,
                                                 @NonNull Context context) {
         super(config, context);
