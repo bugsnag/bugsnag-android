@@ -302,21 +302,6 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     }
 
     /**
-     * Intended for internal use only - sets the code bundle id for React Native
-     */
-    @Nullable
-    public String getCodeBundleId() {
-        return impl.getCodeBundleId();
-    }
-
-    /**
-     * Intended for internal use only - sets the code bundle id for React Native
-     */
-    public void setCodeBundleId(@Nullable String codeBundleId) {
-        impl.setCodeBundleId(codeBundleId);
-    }
-
-    /**
      * If your app's codebase contains different entry-points/processes, but reports to a single
      * Bugsnag project, you might want to add information denoting the type of process the error
      * came from.

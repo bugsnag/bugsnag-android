@@ -23,7 +23,6 @@ class ConfigSerializer implements MapSerializer<ImmutableConfig> {
             map.put("appVersion", config.getAppVersion());
         }
         map.put("versionCode", config.getVersionCode());
-        map.put("codeBundleId", config.getCodeBundleId());
         map.put("type", config.getAppType());
         map.put("persistUser", config.getPersistUser());
         map.put("launchCrashThresholdMs", (int) config.getLaunchCrashThresholdMs());

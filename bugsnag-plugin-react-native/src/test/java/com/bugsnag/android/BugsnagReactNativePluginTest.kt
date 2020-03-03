@@ -56,4 +56,10 @@ internal class BugsnagReactNativePluginTest {
         plugin.updateUser("123", "joe@example.com", "Joe")
         verify(client, times(1)).setUser("123", "joe@example.com", "Joe")
     }
+
+    @Test
+    fun updateCodeBundleId() {
+        plugin.updateCodeBundleId("123")
+        verify(client, times(1)).codeBundleId = "123"
+    }
 }

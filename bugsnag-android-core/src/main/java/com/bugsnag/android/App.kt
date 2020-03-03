@@ -28,14 +28,14 @@ open class App internal constructor(
     var version: String?,
 
     /**
+    The revision ID from the manifest (React Native apps only)
+     */
+    var codeBundleId: String?,
+
+    /**
      * The unique identifier for the build of the application set in [Configuration.buildUuid]
      */
     var buildUuid: String?,
-
-    /**
-     * The revision ID from the manifest (React Native apps only)
-     */
-    var codeBundleId: String?,
 
     /**
      * The application type set in [Configuration#version]
@@ -53,14 +53,15 @@ open class App internal constructor(
         binaryArch: String?,
         id: String?,
         releaseStage: String?,
-        version: String?
+        version: String?,
+        codeBundleId: String?
     ) : this(
         binaryArch,
         id,
         releaseStage,
         version,
+        codeBundleId,
         config.buildUuid,
-        config.codeBundleId,
         config.appType,
         config.versionCode
     )

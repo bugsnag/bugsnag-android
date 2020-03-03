@@ -43,7 +43,6 @@ public class ConfigSerializerTest {
         assertEquals("builduuid-123", map.get("buildUuid"));
         assertEquals("1.4.3", map.get("appVersion"));
         assertEquals(55, map.get("versionCode"));
-        assertEquals("code-id-123", map.get("codeBundleId"));
         assertEquals("android", map.get("type"));
         assertTrue((Boolean) map.get("persistUser"));
         assertEquals(55, map.get("launchCrashThresholdMs"));

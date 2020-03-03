@@ -25,7 +25,6 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var autoTrackSessions: Boolean = true
     var enabledErrorTypes: ErrorTypes = ErrorTypes()
     var autoDetectErrors: Boolean = true
-    var codeBundleId: String? = null
     var appType: String? = "android"
     var logger: Logger? = DebugLogger
         set(value) {

@@ -842,6 +842,21 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         return appContext;
     }
 
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     */
+    @Nullable
+    String getCodeBundleId() {
+        return appDataCollector.getCodeBundleId();
+    }
+
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     */
+    void setCodeBundleId(@Nullable String codeBundleId) {
+        appDataCollector.setCodeBundleId(codeBundleId);
+    }
+
     void close() {
         connectivity.unregisterForNetworkChanges();
     }
