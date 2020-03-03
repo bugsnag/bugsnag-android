@@ -25,11 +25,13 @@ class ThreadDeserializer implements MapDeserializer<Thread> {
             frames.add(stackframeDeserializer.deserialize(frame));
         }
 
+        Boolean errorReportingThread = MapUtils.<Boolean>getOrNull(map, "errorReportingThread");
+        errorReportingThread = errorReportingThread == null ? false : errorReportingThread;
         return new Thread(
                 MapUtils.<Long>getOrThrow(map, "id"),
                 MapUtils.<String>getOrThrow(map, "name"),
                 ThreadType.valueOf(type.toUpperCase(Locale.US)),
-                MapUtils.<Boolean>getOrThrow(map, "errorReportingThread"),
+                errorReportingThread,
                 new Stacktrace(logger, frames),
                 logger
         );

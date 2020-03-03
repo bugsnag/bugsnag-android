@@ -57,11 +57,14 @@ open class Device internal constructor(
      * A collection of names and their versions of the primary languages, frameworks or
      * runtimes that the application is running on
      */
-    var runtimeVersions: MutableMap<String, Any>? = mutableMapOf(
-        Pair("androidApiLevel", buildInfo.apiLevel),
-        Pair("osBuild", buildInfo.osBuild)
-    )
+    var runtimeVersions: MutableMap<String, Any>?
 
+    init {
+        val map = mutableMapOf<String, Any>()
+        buildInfo.apiLevel?.let { map["androidApiLevel"] = it }
+        buildInfo.osBuild?.let { map["osBuild"] = it }
+        runtimeVersions = map
+    }
 
     internal open fun serializeFields(writer: JsonStream) {
         writer.name("cpuAbi").value(cpuAbi)

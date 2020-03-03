@@ -3,15 +3,15 @@ package com.bugsnag.android
 import android.os.Build
 
 internal class DeviceBuildInfo(
-    val manufacturer: String,
-    val model: String,
-    val osVersion: String,
-    val apiLevel: Int,
-    val osBuild: String,
-    val fingerprint: String,
-    val tags: String,
-    val brand: String,
-    val cpuAbis: Array<String>
+    val manufacturer: String?,
+    val model: String?,
+    val osVersion: String?,
+    val apiLevel: Int?,
+    val osBuild: String?,
+    val fingerprint: String?,
+    val tags: String?,
+    val brand: String?,
+    val cpuAbis: Array<String>?
 ) {
     companion object {
         fun defaultInfo(): DeviceBuildInfo {

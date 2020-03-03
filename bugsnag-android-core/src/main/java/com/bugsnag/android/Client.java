@@ -846,6 +846,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         connectivity.unregisterForNetworkChanges();
     }
 
+    Logger getLogger() {
+        return logger;
+    }
+
     /**
      * Retrieves an instantiated plugin of the given type, or null if none has been created
      */
