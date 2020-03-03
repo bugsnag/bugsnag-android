@@ -51,17 +51,16 @@ class EventDeserializerTest {
     private fun threadMap() = hashMapOf(
         "stacktrace" to listOf<Any>(),
         "id" to 52L,
-        "type" to "browser_js",
+        "type" to "reactnativejs",
         "name" to "thread-worker-02",
-        "errorReportingThread" to true,
-        "type" to "browser_js"
+        "errorReportingThread" to true
     )
 
     private fun errorMap() = hashMapOf(
         "stacktrace" to emptyList<Any>(),
         "errorClass" to "BrowserException",
         "errorMessage" to "whoops!",
-        "type" to "browser_js"
+        "type" to "reactnativejs"
     )
 
     private fun metadataMap() = hashMapOf(

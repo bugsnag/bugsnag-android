@@ -13,7 +13,7 @@ enum class ErrorType(internal val desc: String) {
     /**
      * An error captured from JavaScript
      */
-    BROWSER_JS("browserjs"),
+    REACTNATIVEJS("reactnativejs"),
 
     /**
      * An error captured from Android's C layer

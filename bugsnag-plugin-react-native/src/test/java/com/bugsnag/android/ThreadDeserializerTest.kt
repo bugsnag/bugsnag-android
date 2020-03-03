@@ -23,17 +23,16 @@ class ThreadDeserializerTest {
 
         map["stacktrace"] = listOf(frame)
         map["id"] = 52L
-        map["type"] = "browser_js"
+        map["type"] = "reactnativejs"
         map["name"] = "thread-worker-02"
         map["errorReportingThread"] = true
-        map["type"] = "browser_js"
     }
 
     @Test
     fun deserialize() {
         val thread = ThreadDeserializer(StackframeDeserializer(), object : Logger {}).deserialize(map)
         assertEquals(52, thread.id)
-        assertEquals(ThreadType.BROWSER_JS, thread.type)
+        assertEquals(ThreadType.REACTNATIVEJS, thread.type)
         assertEquals("thread-worker-02", thread.name)
         assertTrue(thread.errorReportingThread)
 
