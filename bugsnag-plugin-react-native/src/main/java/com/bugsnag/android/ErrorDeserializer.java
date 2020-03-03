@@ -28,7 +28,7 @@ class ErrorDeserializer implements MapDeserializer<Error> {
         ErrorInternal impl = new ErrorInternal(
                 MapUtils.<String>getOrThrow(map, "errorClass"),
                 MapUtils.<String>getOrNull(map, "errorMessage"),
-                frames,
+                new Stacktrace(logger, frames),
                 ErrorType.valueOf(type.toUpperCase(Locale.US))
         );
         return new Error(impl, logger);
