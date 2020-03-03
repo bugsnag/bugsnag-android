@@ -23,7 +23,7 @@ class ErrorDeserializerTest {
         map["stacktrace"] = listOf(frame)
         map["errorClass"] = "BrowserException"
         map["errorMessage"] = "whoops!"
-        map["type"] = "browser_js"
+        map["type"] = "reactnativejs"
     }
 
     @Test
@@ -31,7 +31,7 @@ class ErrorDeserializerTest {
         val error = ErrorDeserializer(StackframeDeserializer(), object: Logger {}).deserialize(map)
         assertEquals("BrowserException", error.errorClass)
         assertEquals("whoops!", error.errorMessage)
-        assertEquals(ErrorType.BROWSER_JS, error.type)
+        assertEquals(ErrorType.REACTNATIVEJS, error.type)
 
         val frame = error.stacktrace[0]
         assertEquals("foo()", frame.method)

@@ -57,8 +57,8 @@ public class ErrorFacadeTest {
     @Test
     public void typeValid() {
         assertEquals(ErrorType.ANDROID, error.getType());
-        error.setType(ErrorType.BROWSER_JS);
-        assertEquals(ErrorType.BROWSER_JS, error.getType());
+        error.setType(ErrorType.REACTNATIVEJS);
+        assertEquals(ErrorType.REACTNATIVEJS, error.getType());
     }
 
     @Test

@@ -11,7 +11,7 @@ class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
                 MapUtils.<String>getOrNull(map, "manufacturer"),
                 MapUtils.<String>getOrNull(map, "model"),
                 MapUtils.<String>getOrNull(map, "osVersion"),
-                MapUtils.<Integer>getOrNull(map, "apiLevel"),
+                MapUtils.getInt(map, "apiLevel"),
                 MapUtils.<String>getOrNull(map, "osBuild"),
                 MapUtils.<String>getOrNull(map, "fingerprint"),
                 MapUtils.<String>getOrNull(map, "tags"),
@@ -30,9 +30,9 @@ class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
                 MapUtils.<Boolean>getOrNull(map, "jailbroken"),
                 MapUtils.<String>getOrNull(map, "id"),
                 MapUtils.<String>getOrNull(map, "locale"),
-                MapUtils.<Long>getOrNull(map, "totalMemory"),
-                MapUtils.<Long>getOrNull(map, "freeDisk"),
-                MapUtils.<Long>getOrNull(map, "freeMemory"),
+                MapUtils.getLong(map, "totalMemory"),
+                MapUtils.getLong(map, "freeDisk"),
+                MapUtils.getLong(map, "freeMemory"),
                 MapUtils.<String>getOrNull(map, "orientation"),
                 date
         );
