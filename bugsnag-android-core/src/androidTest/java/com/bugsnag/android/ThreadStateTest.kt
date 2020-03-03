@@ -10,14 +10,22 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.lang.Thread
+import java.util.Collections
 
 @SmallTest
 class ThreadStateTest {
 
     private val configuration = generateImmutableConfig()
     private val trace: Throwable? = null
-    private val threadState = ThreadState(configuration,
-        null, Thread.currentThread(), Thread.getAllStackTraces(), NoopLogger)
+    private val threadState = ThreadState(
+        null,
+        true,
+        ThreadSendPolicy.ALWAYS,
+        Collections.emptyList(),
+        NoopLogger,
+        Thread.currentThread(),
+        Thread.getAllStackTraces()
+    )
     private val json = streamableToJsonArray(threadState)
 
     /**
@@ -40,7 +48,15 @@ class ThreadStateTest {
             .map { it.key }
             .first()
 
-        val state = ThreadState(configuration, trace, otherThread, Thread.getAllStackTraces(), NoopLogger)
+        val state = ThreadState(
+            trace,
+            true,
+            ThreadSendPolicy.ALWAYS,
+            Collections.emptyList(),
+            NoopLogger,
+            otherThread,
+            Thread.getAllStackTraces()
+        )
         val json = streamableToJsonArray(state)
         verifyCurrentThreadStructure(json, otherThread.id)
     }
@@ -55,7 +71,15 @@ class ThreadStateTest {
         val missingTraces = Thread.getAllStackTraces()
         missingTraces.remove(currentThread)
 
-        val state = ThreadState(configuration, trace, currentThread, missingTraces, NoopLogger)
+        val state = ThreadState(
+            trace,
+            true,
+            ThreadSendPolicy.ALWAYS,
+            Collections.emptyList(),
+            NoopLogger,
+            currentThread,
+            missingTraces
+        )
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {
@@ -70,7 +94,15 @@ class ThreadStateTest {
     fun testHandledStacktrace() {
         val currentThread = Thread.currentThread()
         val allStackTraces = Thread.getAllStackTraces()
-        val state = ThreadState(configuration, trace, currentThread, allStackTraces, NoopLogger)
+        val state = ThreadState(
+            trace,
+            true,
+            ThreadSendPolicy.ALWAYS,
+            Collections.emptyList(),
+            NoopLogger,
+            currentThread,
+            allStackTraces
+        )
         val json = streamableToJsonArray(state)
 
         // find the stack trace for the current thread that was passed as a parameter
@@ -105,7 +137,15 @@ class ThreadStateTest {
         val exc: Throwable = RuntimeException("Whoops")
         val expectedTrace = exc.stackTrace
 
-        val state = ThreadState(configuration, exc, currentThread, allStackTraces, NoopLogger)
+        val state = ThreadState(
+            exc,
+            true,
+            ThreadSendPolicy.ALWAYS,
+            Collections.emptyList(),
+            NoopLogger,
+            currentThread,
+            allStackTraces
+        )
         val json = streamableToJsonArray(state)
 
         verifyCurrentThreadStructure(json, currentThread.id) {

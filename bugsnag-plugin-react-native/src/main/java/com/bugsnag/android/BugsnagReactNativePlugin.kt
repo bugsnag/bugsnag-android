@@ -88,7 +88,7 @@ class BugsnagReactNativePlugin : Plugin {
     }
 
     @Suppress("unused")
-    fun getPayloadInfo(): Map<String, Any?> {
+    fun getPayloadInfo(unhandled: Boolean): Map<String, Any?> {
         val info = mutableMapOf<String, Any?>()
         val app = mutableMapOf<String, Any?>()
         appSerializer.serialize(app, internalHooks.appWithState)
@@ -103,7 +103,7 @@ class BugsnagReactNativePlugin : Plugin {
             breadcrumbSerializer.serialize(map, it)
             map
         }
-        info["threads"] = internalHooks.threads.map {
+        info["threads"] = internalHooks.getThreads(unhandled).map {
             val map = mutableMapOf<String, Any?>()
             threadSerializer.serialize(map, it)
             map

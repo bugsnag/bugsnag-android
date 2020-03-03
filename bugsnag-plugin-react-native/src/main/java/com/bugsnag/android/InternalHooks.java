@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,10 +27,7 @@ class InternalHooks {
         return client.getBreadcrumbs();
     }
 
-    // TODO: need to return true values for threads, which requires extracting the
-    //  ThreadPolicy logic which determines whether to collect them or not from the Event
-    //  into the ThreadState constructor within bugsnag-android. Using a dummy value for now
-    public List<Thread> getThreads() {
-        return Collections.emptyList();
+    public List<Thread> getThreads(boolean unhandled) {
+        return new ThreadState(null, unhandled, getConfig()).getThreads();
     }
 }
