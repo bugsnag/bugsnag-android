@@ -293,4 +293,42 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXConfigurationMetadataNativeCras
   return 12167;
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXStartScenario_activate(
+    JNIEnv *env,
+    jobject instance) {
+  bugsnag_start(env);
+  bugsnag_leave_breadcrumb((char *)"Start scenario crumb", BSG_CRUMB_LOG);
+  bugsnag_notify((char *)"Start scenario",
+                     (char *)"Testing env", BSG_SEVERITY_INFO);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXRemoveOnErrorScenario_activate(
+    JNIEnv *env,
+    jobject instance) {
+  bugsnag_add_on_error(&on_err_false);
+  // Confirm that the callback set correctly
+  bugsnag_notify((char *)"Foo", (char *)"Bar", BSG_SEVERITY_ERR);
+  // Confirms that only the correct callback is removed
+  bugsnag_add_on_error(&on_err_true);
+  bugsnag_remove_on_error(&on_err_false);
+  int x = 47;
+  if (x > 0)
+    __builtin_trap();
+  return 12633;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXRemoveDataScenario_activate(JNIEnv *env,
+                                                                         jobject instance) {
+  bugsnag_notify_env(env, (char *)"RemoveDataScenario", (char *)"oh no", BSG_SEVERITY_ERR);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeUserInfoJavaCrashScenario_activate(JNIEnv *env,
+                                                                         jobject instance) {
+  bugsnag_set_user_env(env, (char *)"24601", (char *)"test@test.test", (char *)"test user");
+}
+
 }

@@ -27,3 +27,11 @@ Feature: Native on error callbacks are invoked
     Then I should receive a request
     And the request payload contains a completed unhandled native report
     And the event "context" equals "Some custom context"
+
+  Scenario: on_error returning false is removed
+    When I run "CXXRemoveOnErrorScenario"
+    And I configure the app to run in the "non-crashy" state
+    And I relaunch the app
+    Then I should receive a request
+    And the request payload contains a completed unhandled native report
+    And the event "context" equals "Some custom context"
