@@ -28,6 +28,10 @@ Before('@skip_below_android_8') do |scenario|
   skip_this_scenario("Skipping scenario") unless %w[ANDROID_8_0 ANDROID_8_1 ANDROID_9_0 ANDROID_10_0].include? bs_device
 end
 
+Before('@skip_android_8_1') do |scenario|
+  skip_this_scenario("Skipping scenario") if %w[ANDROID_8_1].include? bs_device
+end
+
 AfterConfiguration do |config|
   AppAutomateDriver.new(bs_username, bs_access_key, bs_local_id, bs_device, app_location)
   $driver.start_driver

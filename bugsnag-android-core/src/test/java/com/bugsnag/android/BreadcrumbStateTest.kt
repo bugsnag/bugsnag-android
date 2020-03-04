@@ -2,10 +2,8 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BreadcrumbType.MANUAL
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
+import org.junit.Assert.*
 
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
@@ -122,8 +120,57 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testOnBreadcrumbCallback() {
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { false })
-        breadcrumbState.add(Breadcrumb("Whoops", NoopLogger))
-        assertTrue(breadcrumbState.store.isEmpty())
+        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
+            true
+        })
+        breadcrumbState.add(breadcrumb)
+        assertEquals(1, breadcrumbState.store.size)
+        assertEquals(breadcrumb, breadcrumbState.store.peek())
+    }
+
+    /**
+     * Verifies that returning false in one callback will halt subsequent callbacks and not apply breadcrumb
+     */
+     @Test
+     fun testOnBreadcrumbCallbackFalse() {
+        val requiredBreadcrumb = Breadcrumb("Hello there", NoopLogger)
+        breadcrumbState.add(requiredBreadcrumb)
+
+        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
+            givenBreadcrumb.metadata?.put("callback", "first")
+            false
+        })
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
+            givenBreadcrumb.metadata?.put("callback", "second")
+            true
+        })
+        breadcrumbState.add(breadcrumb)
+        assertEquals(1, breadcrumbState.store.size)
+        assertEquals(requiredBreadcrumb, breadcrumbState.store.first())
+        assertNotNull(breadcrumb.metadata)
+        assertEquals("first", breadcrumb.metadata?.get("callback"))
+
+     }
+
+    /**
+     * Verifies that an exception within an OnBreadcrumbCallback allows subsequent callbacks to run
+     */
+    @Test
+    fun testOnBreadcrumbCallbackException() {
+        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
+            throw Exception("Oh no")
+        })
+        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
+            givenBreadcrumb.metadata?.put("callback", "second")
+            true
+        })
+        breadcrumbState.add(breadcrumb)
+        assertEquals(1, breadcrumbState.store.size)
+        assertEquals(breadcrumb, breadcrumbState.store.peek())
+        assertNotNull(breadcrumb.metadata)
+        assertEquals("second", breadcrumb.metadata?.get("callback"))
     }
 }

@@ -51,6 +51,7 @@ Scenario: Manual Session sends
     And the session "id" is not null
     And the session "startedAt" is not null
 
+@skip_android_8_1
 Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs = true
     When I run "AppNotRespondingScenario"
     And I wait for 2 seconds

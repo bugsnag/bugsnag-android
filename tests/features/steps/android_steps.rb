@@ -176,3 +176,24 @@ Then("the stacktrace contains native frame information") do
     assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
   end
 end
+
+Then("the request is valid for the error reporting API version {string} for the {string} notifier with the apiKey {string}") do |payload_version, notifier_name, api_key|
+  steps %Q{
+    Then the "Bugsnag-Api-Key" header equals "#{api_key}"
+    And the payload field "apiKey" equals "#{api_key}"
+    And the "Bugsnag-Payload-Version" header equals "#{payload_version}"
+    And the payload contains the payloadVersion "#{payload_version}"
+    And the "Content-Type" header equals "application/json"
+    And the "Bugsnag-Sent-At" header is a timestamp
+
+    And the payload field "notifier.name" equals "#{notifier_name}"
+    And the payload field "notifier.url" is not null
+    And the payload field "notifier.version" is not null
+    And the payload field "events" is a non-empty array
+
+    And each element in payload field "events" has "severity"
+    And each element in payload field "events" has "severityReason.type"
+    And each element in payload field "events" has "unhandled"
+    And each element in payload field "events" has "exceptions"
+  }
+end
