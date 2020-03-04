@@ -32,7 +32,7 @@ internal class EventSerializationTest {
                 // session included
                 createEvent {
                     val user = User("123", "foo@example.com", "Joe")
-                    it.session = Session("123", Date(0), user, false, NoopLogger)
+                    it.session = Session("123", Date(0), user, false, Notifier(), NoopLogger)
                 },
 
                 // threads included

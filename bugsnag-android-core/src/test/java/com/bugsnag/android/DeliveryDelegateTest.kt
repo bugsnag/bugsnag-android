@@ -17,6 +17,7 @@ internal class DeliveryDelegateTest {
     @Mock
     lateinit var eventStore: EventStore
 
+    private val notifier = Notifier()
     val config = generateImmutableConfig()
     val breadcrumbState = BreadcrumbState(50, CallbackState(), NoopLogger)
     private val logger = InterceptingLogger()
@@ -27,8 +28,8 @@ internal class DeliveryDelegateTest {
     @Before
     fun setUp() {
         deliveryDelegate =
-            DeliveryDelegate(logger, eventStore, config, breadcrumbState)
-        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
+            DeliveryDelegate(logger, eventStore, config, breadcrumbState, notifier)
+        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
     }
 
     @Test
@@ -51,7 +52,7 @@ internal class DeliveryDelegateTest {
     fun generateHandledReport() {
         val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
-        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
+        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
 
         var msg: StateEvent.NotifyHandled? = null
         deliveryDelegate.addObserver { _, arg ->
@@ -85,7 +86,7 @@ internal class DeliveryDelegateTest {
 
     @Test
     fun deliverReport() {
-        val status = deliveryDelegate.deliverPayloadInternal(EventPayload("api-key", event), event)
+        val status = deliveryDelegate.deliverPayloadInternal(EventPayload("api-key", event, notifier), event)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
 

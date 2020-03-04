@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
-import static com.bugsnag.android.ImmutableConfigKt.RELEASE_STAGE_PRODUCTION;
 import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
 
 import android.app.ActivityManager;
@@ -85,6 +84,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final ClientObservable clientObservable = new ClientObservable();
     private PluginClient pluginClient;
+
+    final Notifier notifier = new Notifier();
 
     /**
      * Initialize a Bugsnag client
@@ -203,11 +204,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
-                sessionTracker);
-        eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
+                sessionTracker, notifier);
+        eventStore = new EventStore(immutableConfig, appContext, logger, notifier, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState);
+                immutableConfig, breadcrumbState, notifier);
 
         // Install a default exception handler with this client
         if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
@@ -878,5 +879,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             }
         }
         return null;
+    }
+
+    Notifier getNotifier() {
+        return notifier;
     }
 }

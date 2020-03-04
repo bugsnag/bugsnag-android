@@ -33,6 +33,7 @@ class EventFilenameTest {
             config,
             context,
             NoopLogger,
+            Notifier(),
             null
         )
     }
