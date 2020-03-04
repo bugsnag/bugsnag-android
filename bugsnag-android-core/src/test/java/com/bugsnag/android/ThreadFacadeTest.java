@@ -55,8 +55,8 @@ public class ThreadFacadeTest {
     @Test
     public void typeValid() {
         assertEquals(ThreadType.ANDROID, thread.getType());
-        thread.setType(ThreadType.BROWSER_JS);
-        assertEquals(ThreadType.BROWSER_JS, thread.getType());
+        thread.setType(ThreadType.REACTNATIVEJS);
+        assertEquals(ThreadType.REACTNATIVEJS, thread.getType());
     }
 
     @Test

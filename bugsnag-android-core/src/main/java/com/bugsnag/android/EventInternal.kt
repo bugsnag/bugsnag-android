@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.ThreadSendPolicy.*
 import java.io.IOException
 
 internal class EventInternal @JvmOverloads internal constructor(
@@ -33,17 +32,7 @@ internal class EventInternal @JvmOverloads internal constructor(
         else -> Error.createError(originalError, config.projectPackages, config.logger)
     }
 
-    var threads: MutableList<Thread>
-
-    init {
-        val recordThreads = config.sendThreads == ALWAYS || (config.sendThreads == UNHANDLED_ONLY && isUnhandled)
-
-        threads = when {
-            recordThreads -> ThreadState(config, if (isUnhandled) originalError else null).threads
-            else -> mutableListOf()
-        }
-    }
-
+    var threads: MutableList<Thread> = ThreadState(originalError, isUnhandled, config).threads
     var groupingHash: String? = null
     var context: String? = null
 

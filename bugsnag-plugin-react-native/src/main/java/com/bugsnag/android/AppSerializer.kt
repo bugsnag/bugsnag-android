@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-class AppSerializer : WritableMapSerializer<AppWithState> {
+internal class AppSerializer : MapSerializer<AppWithState> {
     override fun serialize(map: MutableMap<String, Any?>, app: AppWithState) {
         map["appType"] = app.type
         map["binaryArch"] = app.binaryArch

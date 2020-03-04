@@ -13,5 +13,5 @@ enum class ThreadType(internal val desc: String) {
     /**
      * A thread captured from JavaScript
      */
-    BROWSER_JS("browserjs")
+    REACTNATIVEJS("reactnativejs")
 }

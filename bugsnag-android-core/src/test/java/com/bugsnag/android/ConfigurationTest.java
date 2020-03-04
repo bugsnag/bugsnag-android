@@ -144,12 +144,6 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testOverrideCodeBundleId() {
-        config.setCodeBundleId("abc123");
-        assertEquals("abc123", config.getCodeBundleId());
-    }
-
-    @Test
     public void testSetDelivery() {
         Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
         assertNull(configuration.getDelivery());

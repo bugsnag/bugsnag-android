@@ -19,6 +19,7 @@ internal class AppDataCollector(
     private val activityManager: ActivityManager?,
     private val logger: Logger
 ) {
+    var codeBundleId: String? = null
 
     private val packageName: String = appContext.packageName
     private var packageInfo = packageManager?.getPackageInfo(packageName, 0)
@@ -29,10 +30,10 @@ internal class AppDataCollector(
     private val releaseStage = config.releaseStage
     private val versionName = config.appVersion ?: packageInfo?.versionName
 
-    fun generateApp(): App = App(config, binaryArch, packageName, releaseStage, versionName)
+    fun generateApp(): App = App(config, binaryArch, packageName, releaseStage, versionName, codeBundleId)
 
     fun generateAppWithState(): AppWithState = AppWithState(
-        config, binaryArch, packageName, releaseStage, versionName,
+        config, binaryArch, packageName, releaseStage, versionName, codeBundleId,
         getDurationMs(), calculateDurationInForeground(), sessionTracker.isInForeground
     )
 

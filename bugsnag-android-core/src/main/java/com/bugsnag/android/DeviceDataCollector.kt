@@ -46,7 +46,6 @@ internal class DeviceDataCollector(
 
     fun generateDeviceWithState(now: Long) = DeviceWithState(
         buildInfo,
-        cpuAbi,
         rooted,
         installId,
         locale,
@@ -75,7 +74,8 @@ internal class DeviceDataCollector(
      * Check if the current Android device is rooted
      */
     private fun isRooted(): Boolean {
-        if (buildInfo.tags.contains("test-keys")) {
+        val tags = buildInfo.tags
+        if (tags != null && tags.contains("test-keys")) {
             return true
         }
 
@@ -97,7 +97,7 @@ internal class DeviceDataCollector(
     private// genymotion
     fun isEmulator(): Boolean {
         val fingerprint = buildInfo.fingerprint
-        return (fingerprint.startsWith("unknown")
+        return fingerprint != null && (fingerprint.startsWith("unknown")
                 || fingerprint.contains("generic")
                 || fingerprint.contains("vbox"))
     }
@@ -189,7 +189,7 @@ internal class DeviceDataCollector(
     /**
      * Gets information about the CPU / API
      */
-    fun getCpuAbi(): Array<String> = buildInfo.cpuAbis
+    fun getCpuAbi(): Array<String> = buildInfo.cpuAbis ?: emptyArray()
 
     /**
      * Get the usable disk space on internal storage's data directory

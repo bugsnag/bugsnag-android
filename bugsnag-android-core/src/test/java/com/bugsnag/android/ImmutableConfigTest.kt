@@ -63,7 +63,6 @@ internal class ImmutableConfigTest {
             // identifiers
             assertEquals(seed.appVersion, appVersion)
             assertEquals(seed.buildUuid, buildUuid)
-            assertEquals(seed.codeBundleId, codeBundleId)
             assertEquals(seed.appType, appType)
 
             // network config
@@ -94,7 +93,6 @@ internal class ImmutableConfigTest {
 
         seed.appVersion = "1.2.3"
         seed.buildUuid = "f7ab"
-        seed.codeBundleId = "codebundle123"
         seed.appType = "custom"
 
         val endpoints = EndpointConfiguration("http://example.com:1234", "http://example.com:1235")
@@ -125,7 +123,6 @@ internal class ImmutableConfigTest {
             // identifiers
             assertEquals("1.2.3", seed.appVersion)
             assertEquals("f7ab", seed.buildUuid)
-            assertEquals("codebundle123", seed.codeBundleId)
             assertEquals("custom", seed.appType)
 
             // network config

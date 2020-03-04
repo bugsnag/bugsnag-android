@@ -106,7 +106,6 @@ internal class ManifestConfigLoader {
             releaseStage = data.getString(RELEASE_STAGE, config.releaseStage)
             appVersion = data.getString(APP_VERSION, config.appVersion)
             appType = data.getString(APP_TYPE, config.appType)
-            codeBundleId = data.getString(CODE_BUNDLE_ID, config.codeBundleId)
 
             if (data.containsKey(VERSION_CODE)) {
                 versionCode = data.getInt(VERSION_CODE)

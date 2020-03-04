@@ -19,7 +19,6 @@ class TestData {
                 "builduuid-123",
                 "1.4.3",
                 55,
-                "code-id-123",
                 "android",
                 new DefaultDelivery(null, NoopLogger.INSTANCE),
                 new EndpointConfiguration(),

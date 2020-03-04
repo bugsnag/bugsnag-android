@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ConfigSerializer implements WritableMapSerializer<ImmutableConfig> {
+class ConfigSerializer implements MapSerializer<ImmutableConfig> {
 
     @Override
     public void serialize(Map<String, Object> map, ImmutableConfig config) {
@@ -23,7 +23,6 @@ public class ConfigSerializer implements WritableMapSerializer<ImmutableConfig> 
             map.put("appVersion", config.getAppVersion());
         }
         map.put("versionCode", config.getVersionCode());
-        map.put("codeBundleId", config.getCodeBundleId());
         map.put("type", config.getAppType());
         map.put("persistUser", config.getPersistUser());
         map.put("launchCrashThresholdMs", (int) config.getLaunchCrashThresholdMs());

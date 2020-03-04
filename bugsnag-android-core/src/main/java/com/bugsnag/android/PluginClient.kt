@@ -6,7 +6,7 @@ internal class PluginClient(
     private val logger: Logger
 ) {
 
-    private val plugins: Set<Plugin>
+    protected val plugins: Set<Plugin>
 
     init {
         val set = mutableSetOf<Plugin>()
@@ -20,6 +20,7 @@ internal class PluginClient(
         if (immutableConfig.enabledErrorTypes.anrs) {
             instantiatePlugin("com.bugsnag.android.AnrPlugin")?.let { set.add(it) }
         }
+        instantiatePlugin("com.bugsnag.android.BugsnagReactNativePlugin")?.let { set.add(it) }
         plugins = set.toSet()
     }
 
@@ -27,8 +28,11 @@ internal class PluginClient(
         return try {
             val pluginClz = Class.forName(clz)
             pluginClz.newInstance() as Plugin
+        } catch (exc: ClassNotFoundException) {
+            logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.")
+            null
         } catch (exc: Throwable) {
-            logger.w("Plugin '$clz' is not on the classpath - functionality will not be enabled.")
+            logger.e("Failed to load plugin '$clz'", exc)
             null
         }
     }

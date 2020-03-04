@@ -28,39 +28,6 @@ internal class UserStateTest {
     }
 
     @Test
-    fun setUserId() {
-        val state = UserState(repository)
-        var msg: StateEvent.UpdateUserId? = null
-        state.addObserver { _, arg ->
-            msg = arg as StateEvent.UpdateUserId
-        }
-        state.setUserId("55")
-        assertEquals("55", msg!!.id)
-    }
-
-    @Test
-    fun setUserEmail() {
-        val state = UserState(repository)
-        var msg: StateEvent.UpdateUserEmail? = null
-        state.addObserver { _, arg ->
-            msg = arg as StateEvent.UpdateUserEmail
-        }
-        state.setUserEmail("woop@example.com")
-        assertEquals("woop@example.com", msg!!.email)
-    }
-
-    @Test
-    fun setUserName() {
-        val state = UserState(repository)
-        var msg: StateEvent.UpdateUserName? = null
-        state.addObserver { _, arg ->
-            msg = arg as StateEvent.UpdateUserName
-        }
-        state.setUserName("Foo")
-        assertEquals("Foo", msg!!.name)
-    }
-
-    @Test
     fun setUser() {
         val state = UserState(repository)
         val msgs = mutableListOf<StateEvent>()
@@ -70,8 +37,9 @@ internal class UserStateTest {
 
         state.setUser("99", "tc@example.com", "Tobias")
 
-        assertEquals("99", (msgs[0] as StateEvent.UpdateUserId).id)
-        assertEquals("tc@example.com", (msgs[1] as StateEvent.UpdateUserEmail).email)
-        assertEquals("Tobias", (msgs[2] as StateEvent.UpdateUserName).name)
+        val msg = msgs[0] as StateEvent.UpdateUser
+        assertEquals("99", msg.user.id)
+        assertEquals("tc@example.com", msg.user.email)
+        assertEquals("Tobias", msg.user.name)
     }
 }

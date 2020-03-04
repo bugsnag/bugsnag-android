@@ -3,9 +3,11 @@ package com.bugsnag.android
 internal class ErrorInternal @JvmOverloads internal constructor(
     var errorClass: String,
     var errorMessage: String?,
-    val stacktrace: List<Stackframe>,
+    stacktrace: Stacktrace,
     var type: ErrorType = ErrorType.ANDROID
 ): JsonStream.Streamable {
+
+    val stacktrace: List<Stackframe> = stacktrace.trace
 
     internal companion object {
         fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): MutableList<Error> {
@@ -14,7 +16,7 @@ internal class ErrorInternal @JvmOverloads internal constructor(
             var currentEx: Throwable? = exc
             while (currentEx != null) {
                 val trace = Stacktrace(currentEx.stackTrace, projectPackages, logger)
-                errors.add(ErrorInternal(currentEx.javaClass.name, currentEx.localizedMessage, trace.trace))
+                errors.add(ErrorInternal(currentEx.javaClass.name, currentEx.localizedMessage, trace))
                 currentEx = currentEx.cause
             }
             return errors.map { Error(it, logger) }.toMutableList()

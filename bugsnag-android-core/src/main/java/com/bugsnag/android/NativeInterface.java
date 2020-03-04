@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
@@ -374,7 +375,7 @@ public class NativeInterface {
     }
 
     @NonNull
-    public static Event createEvent(@NonNull Throwable exc,
+    public static Event createEvent(@Nullable Throwable exc,
                                     @NonNull Client client,
                                     @NonNull HandledState handledState) {
         return new Event(exc, client.getConfig(), handledState, client.logger);

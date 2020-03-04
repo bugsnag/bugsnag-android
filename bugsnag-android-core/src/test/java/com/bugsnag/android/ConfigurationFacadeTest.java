@@ -131,14 +131,6 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
-    public void codeBundleIdValid() {
-        config.setCodeBundleId("123");
-        assertEquals("123", config.impl.getCodeBundleId());
-        config.setCodeBundleId(null);
-        assertNull(config.impl.getCodeBundleId());
-    }
-
-    @Test
     public void appTypeValid() {
         config.setAppType("react-native");
         assertEquals("react-native", config.impl.getAppType());

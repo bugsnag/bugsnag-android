@@ -7,8 +7,6 @@ import java.io.IOException
  * can be accessed and amended if necessary.
  */
 open class App internal constructor(
-    config: ImmutableConfig,
-
     /**
      * The architecture of the running application binary
      */
@@ -27,28 +25,46 @@ open class App internal constructor(
     /**
      * The version of the application set in [Configuration.version]
      */
-    var version: String?
-) : JsonStream.Streamable {
+    var version: String?,
+
+    /**
+    The revision ID from the manifest (React Native apps only)
+     */
+    var codeBundleId: String?,
 
     /**
      * The unique identifier for the build of the application set in [Configuration.buildUuid]
      */
-    var buildUuid: String? = config.buildUuid
-
-    /**
-     * The revision ID from the manifest (React Native apps only)
-     */
-    var codeBundleId: String? = config.codeBundleId
+    var buildUuid: String?,
 
     /**
      * The application type set in [Configuration#version]
      */
-    var type: String? = config.appType
+    var type: String?,
 
     /**
      * The version code of the application set in [Configuration.versionCode]
      */
-    var versionCode: Number? = config.versionCode
+    var versionCode: Number?
+) : JsonStream.Streamable {
+
+    internal constructor(
+        config: ImmutableConfig,
+        binaryArch: String?,
+        id: String?,
+        releaseStage: String?,
+        version: String?,
+        codeBundleId: String?
+    ) : this(
+        binaryArch,
+        id,
+        releaseStage,
+        version,
+        codeBundleId,
+        config.buildUuid,
+        config.appType,
+        config.versionCode
+    )
 
     internal open fun serialiseFields(writer: JsonStream) {
         writer.name("binaryArch").value(binaryArch)

@@ -84,6 +84,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final DeliveryDelegate deliveryDelegate;
 
     final ClientObservable clientObservable = new ClientObservable();
+    private PluginClient pluginClient;
 
     /**
      * Initialize a Bugsnag client
@@ -286,7 +287,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private void loadPlugins(@NonNull Configuration configuration) {
         NativeInterface.setClient(this);
         Set<Plugin> userPlugins = configuration.getPlugins();
-        PluginClient pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
+        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
         pluginClient.loadPlugins(this);
     }
 
@@ -841,7 +842,41 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         return appContext;
     }
 
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     */
+    @Nullable
+    String getCodeBundleId() {
+        return appDataCollector.getCodeBundleId();
+    }
+
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     */
+    void setCodeBundleId(@Nullable String codeBundleId) {
+        appDataCollector.setCodeBundleId(codeBundleId);
+    }
+
     void close() {
         connectivity.unregisterForNetworkChanges();
+    }
+
+    Logger getLogger() {
+        return logger;
+    }
+
+    /**
+     * Retrieves an instantiated plugin of the given type, or null if none has been created
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    <T extends Plugin> T getPlugin(@NonNull Class<T> clz) {
+        Set<Plugin> plugins = pluginClient.getPlugins();
+        for (Plugin plugin : plugins) {
+            if (plugin.getClass().equals(clz)) {
+                return (T) plugin;
+            }
+        }
+        return null;
     }
 }

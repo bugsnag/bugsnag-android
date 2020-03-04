@@ -53,7 +53,7 @@ internal class EventSerializationTest {
                     it.breadcrumbs = listOf(crumb)
 
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
-                    val err = Error(ErrorInternal("WhoopsException", "Whoops", stacktrace.trace), NoopLogger)
+                    val err = Error(ErrorInternal("WhoopsException", "Whoops", stacktrace), NoopLogger)
                     it.errors.clear()
                     it.errors.add(err)
                 }
@@ -70,6 +70,7 @@ internal class EventSerializationTest {
             event.threads.clear()
             event.app = generateAppWithState()
             event.device = generateDeviceWithState()
+            event.device.cpuAbi = emptyArray()
             cb(event)
             return event
         }
