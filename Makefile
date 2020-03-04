@@ -48,7 +48,7 @@ endif
 	@echo Bumping the version number to $(VERSION)
 	@sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$(VERSION)/" gradle.properties
 	@sed -i '' "s/NOTIFIER_VERSION = .*;/NOTIFIER_VERSION = \"$(VERSION)\";/"\
-	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.java
+	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
 
 # Makes a release

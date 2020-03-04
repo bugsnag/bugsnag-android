@@ -53,7 +53,7 @@ internal class InternalEventPayloadDelegateTest {
 
         val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException(), config, handledState, NoopLogger)
-        delegate.reportInternalBugsnagError(event, Notifier())
+        delegate.reportInternalBugsnagError(event)
 
         // app
         assertEquals(500L, event.app.durationInForeground)

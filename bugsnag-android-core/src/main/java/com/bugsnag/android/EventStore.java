@@ -32,6 +32,7 @@ class EventStore extends FileStore {
     private final ImmutableConfig config;
     private final Logger logger;
     private final Delegate delegate;
+    private final Notifier notifier;
 
     static final Comparator<File> EVENT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -52,14 +53,16 @@ class EventStore extends FileStore {
     };
 
     EventStore(@NonNull ImmutableConfig config,
-               @NonNull Context appContext, @NonNull Logger logger, Delegate delegate) {
+               @NonNull Context appContext, @NonNull Logger logger,
+               Notifier notifier, Delegate delegate) {
         super(appContext, "/bugsnag-errors/", MAX_EVENT_COUNT, EVENT_COMPARATOR, logger, delegate);
         this.config = config;
         this.logger = logger;
         this.delegate = delegate;
+        this.notifier = notifier;
     }
 
-    void flushOnLaunch(final Notifier notifier) {
+    void flushOnLaunch() {
         if (config.getLaunchCrashThresholdMs() != 0) {
             List<File> storedFiles = findStoredFiles();
             final List<File> crashReports = findLaunchCrashReports(storedFiles);
@@ -80,7 +83,7 @@ class EventStore extends FileStore {
                     Async.run(new Runnable() {
                         @Override
                         public void run() {
-                            flushReports(crashReports, notifier);
+                            flushReports(crashReports);
                             flushOnLaunchCompleted = true;
                         }
                     });
@@ -103,13 +106,13 @@ class EventStore extends FileStore {
             }
         }
 
-        flushAsync(notifier); // flush any remaining errors async that weren't delivered
+        flushAsync(); // flush any remaining errors async that weren't delivered
     }
 
     /**
      * Flush any on-disk errors to Bugsnag
      */
-    void flushAsync(final Notifier notifier) {
+    void flushAsync() {
         if (storeDirectory == null) {
             return;
         }
@@ -118,7 +121,7 @@ class EventStore extends FileStore {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    flushReports(findStoredFiles(), notifier);
+                    flushReports(findStoredFiles());
                 }
             });
         } catch (RejectedExecutionException exception) {
@@ -126,14 +129,14 @@ class EventStore extends FileStore {
         }
     }
 
-    void flushReports(Collection<File> storedReports, Notifier notifier) {
+    void flushReports(Collection<File> storedReports) {
         if (!storedReports.isEmpty() && semaphore.tryAcquire(1)) {
             try {
                 logger.i(String.format(Locale.US,
                     "Sending %d saved error(s) to Bugsnag", storedReports.size()));
 
                 for (File eventFile : storedReports) {
-                    flushEventFile(eventFile, notifier);
+                    flushEventFile(eventFile);
                 }
             } finally {
                 semaphore.release(1);
@@ -141,7 +144,7 @@ class EventStore extends FileStore {
         }
     }
 
-    private void flushEventFile(File eventFile, Notifier notifier) {
+    private void flushEventFile(File eventFile) {
         try {
             EventPayload payload = new EventPayload(config.getApiKey(), eventFile, notifier);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();

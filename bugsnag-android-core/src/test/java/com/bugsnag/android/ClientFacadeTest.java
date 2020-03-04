@@ -293,13 +293,13 @@ public class ClientFacadeTest {
     public void notifyValid() {
         RuntimeException exc = new RuntimeException();
         client.notify(exc);
-        verify(deliveryDelegate, times(1)).deliver(any(Event.class), any(Notifier.class));
+        verify(deliveryDelegate, times(1)).deliver(any(Event.class));
     }
 
     @Test
     public void notifyInvalid() {
         client.notify(null);
-        verify(deliveryDelegate, times(0)).deliver(any(Event.class), any(Notifier.class));
+        verify(deliveryDelegate, times(0)).deliver(any(Event.class));
         assertNotNull(logger.getMsg());
     }
 
@@ -307,13 +307,13 @@ public class ClientFacadeTest {
     public void notifyCallbackValid() {
         RuntimeException exc = new RuntimeException();
         client.notify(exc, null);
-        verify(deliveryDelegate, times(1)).deliver(any(Event.class), any(Notifier.class));
+        verify(deliveryDelegate, times(1)).deliver(any(Event.class));
     }
 
     @Test
     public void notifyCallbackInvalid() {
         client.notify(null, null);
-        verify(deliveryDelegate, times(0)).deliver(any(Event.class), any(Notifier.class));
+        verify(deliveryDelegate, times(0)).deliver(any(Event.class));
         assertNotNull(logger.getMsg());
     }
 

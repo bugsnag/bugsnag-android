@@ -124,7 +124,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 leaveBreadcrumb("Connectivity change", BreadcrumbType.STATE, data);
 
                 if (hasConnection) {
-                    eventStore.flushAsync(notifier);
+                    eventStore.flushAsync();
                 }
                 return null;
             }
@@ -205,10 +205,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
                 sessionTracker, notifier);
-        eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
+        eventStore = new EventStore(immutableConfig, appContext, logger, notifier, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState);
+                immutableConfig, breadcrumbState, notifier);
 
         // Install a default exception handler with this client
         if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
@@ -232,7 +232,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         registerOrientationChangeListener();
 
         // Flush any on-disk errors
-        eventStore.flushOnLaunch(notifier);
+        eventStore.flushOnLaunch();
         Map<String, Object> data = Collections.emptyMap();
         leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
 
@@ -665,7 +665,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             return;
         }
 
-        deliveryDelegate.deliver(event, notifier);
+        deliveryDelegate.deliver(event);
     }
 
     @NonNull

@@ -66,7 +66,7 @@ class InternalReportDelegate implements EventStore.Delegate {
         err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
         err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
         recordStorageCacheBehavior(err);
-        reportInternalBugsnagError(err, notifier);
+        reportInternalBugsnagError(err);
     }
 
     void recordStorageCacheBehavior(Event event) {
@@ -90,7 +90,7 @@ class InternalReportDelegate implements EventStore.Delegate {
      * generated and sent asynchronously with no callbacks, retry attempts, or writing to disk.
      * This is intended for internal use only, and reports will not be visible to end-users.
      */
-    void reportInternalBugsnagError(@NonNull Event event, Notifier notifier) {
+    void reportInternalBugsnagError(@NonNull Event event) {
         event.setApp(appDataCollector.generateAppWithState());
         event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
 
