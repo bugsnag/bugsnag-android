@@ -15,7 +15,7 @@ internal class StackframeSerializationTest {
         fun testCases() =
             generateSerializationTestCases(
                 "stackframe",
-                Stackframe("foo", "Bar", 55, true, mapOf(Pair("loadAddress", "0x520923409")))
+                Stackframe("foo", "Bar", 55, true)
             )
     }
 
