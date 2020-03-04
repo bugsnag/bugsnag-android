@@ -32,14 +32,13 @@ class BugsnagReactNativePlugin : Plugin {
 
     @Suppress("unused")
     fun configure(): Map<String, Any?> {
-        client.registerObserver(BugsnagReactNativeBridge(client) {
-            // TODO future: serialize event to JS layer
-            logger.d("React native event: $it")
-        })
-
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
         return map
+    }
+
+    fun registerForMessageEvents(cb: (MessageEvent) -> Unit) {
+        client.registerObserver(BugsnagReactNativeBridge(client, cb))
     }
 
     fun leaveBreadcrumb(map: Map<String, Any?>?) {
