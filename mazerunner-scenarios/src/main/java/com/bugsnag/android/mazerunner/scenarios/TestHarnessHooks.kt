@@ -12,11 +12,11 @@ internal fun flushAllSessions() {
 }
 
 internal fun flushErrorStoreAsync(client: Client) {
-    client.eventStore.flushAsync()
+    client.eventStore.flushAsync(Notifier())
 }
 
 internal fun flushErrorStoreOnLaunch(client: Client) {
-    client.eventStore.flushOnLaunch()
+    client.eventStore.flushOnLaunch(Notifier())
 }
 
 /**

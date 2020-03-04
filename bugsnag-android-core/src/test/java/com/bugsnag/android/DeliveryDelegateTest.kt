@@ -17,6 +17,7 @@ internal class DeliveryDelegateTest {
     @Mock
     lateinit var eventStore: EventStore
 
+    private val notifier = Notifier()
     val config = generateImmutableConfig()
     val breadcrumbState = BreadcrumbState(50, CallbackState(), NoopLogger)
     private val logger = InterceptingLogger()
@@ -28,7 +29,7 @@ internal class DeliveryDelegateTest {
     fun setUp() {
         deliveryDelegate =
             DeliveryDelegate(logger, eventStore, config, breadcrumbState)
-        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
+        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
     }
 
     @Test
@@ -37,7 +38,7 @@ internal class DeliveryDelegateTest {
         deliveryDelegate.addObserver { _, arg ->
             msg = arg as StateEvent.NotifyUnhandled
         }
-        deliveryDelegate.deliver(event)
+        deliveryDelegate.deliver(event, notifier)
 
         // verify message sent
         assertNotNull(msg)
@@ -51,13 +52,13 @@ internal class DeliveryDelegateTest {
     fun generateHandledReport() {
         val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
-        event.session = Session("123", Date(), User(null, null, null), false, NoopLogger)
+        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
 
         var msg: StateEvent.NotifyHandled? = null
         deliveryDelegate.addObserver { _, arg ->
             msg = arg as StateEvent.NotifyHandled
         }
-        deliveryDelegate.deliver(event)
+        deliveryDelegate.deliver(event, notifier)
 
         // verify message sent
         assertNotNull(msg)
@@ -77,7 +78,7 @@ internal class DeliveryDelegateTest {
         deliveryDelegate.addObserver { _, arg ->
             msg = arg as StateEvent.NotifyHandled
         }
-        deliveryDelegate.deliver(event)
+        deliveryDelegate.deliver(event, notifier)
 
         // verify no payload was sent for an Event with no errors
         assertNull(msg)
@@ -85,7 +86,7 @@ internal class DeliveryDelegateTest {
 
     @Test
     fun deliverReport() {
-        val status = deliveryDelegate.deliverPayloadInternal(EventPayload("api-key", event), event)
+        val status = deliveryDelegate.deliverPayloadInternal(EventPayload("api-key", event, notifier), event, notifier)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
 

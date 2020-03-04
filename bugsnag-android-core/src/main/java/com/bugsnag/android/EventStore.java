@@ -59,7 +59,7 @@ class EventStore extends FileStore {
         this.delegate = delegate;
     }
 
-    void flushOnLaunch() {
+    void flushOnLaunch(final Notifier notifier) {
         if (config.getLaunchCrashThresholdMs() != 0) {
             List<File> storedFiles = findStoredFiles();
             final List<File> crashReports = findLaunchCrashReports(storedFiles);
@@ -80,7 +80,7 @@ class EventStore extends FileStore {
                     Async.run(new Runnable() {
                         @Override
                         public void run() {
-                            flushReports(crashReports);
+                            flushReports(crashReports, notifier);
                             flushOnLaunchCompleted = true;
                         }
                     });
@@ -103,13 +103,13 @@ class EventStore extends FileStore {
             }
         }
 
-        flushAsync(); // flush any remaining errors async that weren't delivered
+        flushAsync(notifier); // flush any remaining errors async that weren't delivered
     }
 
     /**
      * Flush any on-disk errors to Bugsnag
      */
-    void flushAsync() {
+    void flushAsync(final Notifier notifier) {
         if (storeDirectory == null) {
             return;
         }
@@ -118,7 +118,7 @@ class EventStore extends FileStore {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    flushReports(findStoredFiles());
+                    flushReports(findStoredFiles(), notifier);
                 }
             });
         } catch (RejectedExecutionException exception) {
@@ -126,14 +126,14 @@ class EventStore extends FileStore {
         }
     }
 
-    void flushReports(Collection<File> storedReports) {
+    void flushReports(Collection<File> storedReports, Notifier notifier) {
         if (!storedReports.isEmpty() && semaphore.tryAcquire(1)) {
             try {
                 logger.i(String.format(Locale.US,
                     "Sending %d saved error(s) to Bugsnag", storedReports.size()));
 
                 for (File eventFile : storedReports) {
-                    flushEventFile(eventFile);
+                    flushEventFile(eventFile, notifier);
                 }
             } finally {
                 semaphore.release(1);
@@ -141,9 +141,9 @@ class EventStore extends FileStore {
         }
     }
 
-    private void flushEventFile(File eventFile) {
+    private void flushEventFile(File eventFile, Notifier notifier) {
         try {
-            EventPayload payload = new EventPayload(config.getApiKey(), eventFile);
+            EventPayload payload = new EventPayload(config.getApiKey(), eventFile, notifier);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 

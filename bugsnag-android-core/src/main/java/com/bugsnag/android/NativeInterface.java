@@ -316,7 +316,7 @@ public class NativeInterface {
                 || releaseStage.length() == 0
                 || client.getConfig().shouldNotifyForReleaseStage()) {
             client.getEventStore().enqueueContentForDelivery(payload);
-            client.getEventStore().flushAsync();
+            client.getEventStore().flushAsync(client.getNotifier());
         }
     }
 

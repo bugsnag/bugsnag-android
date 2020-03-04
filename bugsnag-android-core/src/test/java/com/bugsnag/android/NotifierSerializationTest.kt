@@ -10,13 +10,21 @@ import org.junit.runners.Parameterized.Parameters
 internal class NotifierSerializationTest {
 
     companion object {
+
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
-            Notifier.version = "9.9.9"
-            Notifier.name = "AndroidBugsnagNotifier"
-            Notifier.url = "https://bugsnag.com"
-            return generateSerializationTestCases("notifier", Notifier)
+            val notifier = Notifier()
+            notifier.version = "9.9.9"
+            notifier.name = "AndroidBugsnagNotifier"
+            notifier.url = "https://bugsnag.com"
+
+            val deps = Notifier()
+            deps.version = "4.5.6"
+            deps.name = "CustomNotifier"
+            deps.url = "https://example.com"
+            deps.dependencies.add(notifier)
+            return generateSerializationTestCases("notifier", notifier, deps)
         }
     }
 

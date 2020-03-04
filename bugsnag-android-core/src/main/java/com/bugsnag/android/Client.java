@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
-import static com.bugsnag.android.ImmutableConfigKt.RELEASE_STAGE_PRODUCTION;
 import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
 
 import android.app.ActivityManager;
@@ -86,6 +85,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final ClientObservable clientObservable = new ClientObservable();
     private PluginClient pluginClient;
 
+    final Notifier notifier = new Notifier();
+
     /**
      * Initialize a Bugsnag client
      *
@@ -123,7 +124,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 leaveBreadcrumb("Connectivity change", BreadcrumbType.STATE, data);
 
                 if (hasConnection) {
-                    eventStore.flushAsync();
+                    eventStore.flushAsync(notifier);
                 }
                 return null;
             }
@@ -203,7 +204,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
-                sessionTracker);
+                sessionTracker, notifier);
         eventStore = new EventStore(immutableConfig, appContext, logger, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
@@ -231,7 +232,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         registerOrientationChangeListener();
 
         // Flush any on-disk errors
-        eventStore.flushOnLaunch();
+        eventStore.flushOnLaunch(notifier);
         Map<String, Object> data = Collections.emptyMap();
         leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
 
@@ -664,7 +665,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             return;
         }
 
-        deliveryDelegate.deliver(event);
+        deliveryDelegate.deliver(event, notifier);
     }
 
     @NonNull
@@ -878,5 +879,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             }
         }
         return null;
+    }
+
+    Notifier getNotifier() {
+        return notifier;
     }
 }

@@ -26,6 +26,12 @@ class BugsnagReactNativePlugin : Plugin {
         logger = client.logger
         internalHooks = InternalHooks(client)
         client.logger.i("Initialized React Native Plugin")
+
+        val notifier = client.notifier
+        notifier.name = "Bugsnag React Native"
+        notifier.url = "https://github.com/bugsnag/bugsnag-js"
+        // use the version supplied by bugsnag-android, as this is equivalent for this module
+        notifier.dependencies.add(Notifier()) // depend on bugsnag-android
     }
 
     override fun unload() {}

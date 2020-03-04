@@ -24,9 +24,9 @@ class DeliveryDelegate extends BaseObservable {
         this.breadcrumbState = breadcrumbState;
     }
 
-    void deliver(@NonNull Event event) {
+    void deliver(@NonNull Event event, Notifier notifier) {
         // Build the eventPayload
-        EventPayload eventPayload = new EventPayload(immutableConfig.getApiKey(), event);
+        EventPayload eventPayload = new EventPayload(immutableConfig.getApiKey(), event, notifier);
         Session session = event.getSession();
 
         if (session != null) {
@@ -40,13 +40,14 @@ class DeliveryDelegate extends BaseObservable {
         }
 
         if (event.isUnhandled()) {
-            cacheEvent(event, true);
+            cacheEvent(event, true, notifier);
         } else {
-            deliverPayloadAsync(event, eventPayload);
+            deliverPayloadAsync(event, eventPayload, notifier);
         }
     }
 
-    private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload) {
+    private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload,
+                                     final Notifier notifier) {
         final EventPayload finalEventPayload = eventPayload;
         final Event finalEvent = event;
 
@@ -55,17 +56,18 @@ class DeliveryDelegate extends BaseObservable {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    deliverPayloadInternal(finalEventPayload, finalEvent);
+                    deliverPayloadInternal(finalEventPayload, finalEvent, notifier);
                 }
             });
         } catch (RejectedExecutionException exception) {
-            cacheEvent(event, false);
+            cacheEvent(event, false, notifier);
             logger.w("Exceeded max queue count, saving to disk to send later");
         }
     }
 
     @VisibleForTesting
-    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
+    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event,
+                                          Notifier notifier) {
         DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams();
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
@@ -78,7 +80,7 @@ class DeliveryDelegate extends BaseObservable {
             case UNDELIVERED:
                 logger.w("Could not send event(s) to Bugsnag,"
                         + " saving to disk to send later");
-                cacheEvent(event, false);
+                cacheEvent(event, false, notifier);
                 leaveErrorBreadcrumb(event);
                 break;
             case FAILURE:
@@ -90,10 +92,10 @@ class DeliveryDelegate extends BaseObservable {
         return deliveryStatus;
     }
 
-    private void cacheEvent(@NonNull Event event, boolean attemptSend) {
+    private void cacheEvent(@NonNull Event event, boolean attemptSend, Notifier notifier) {
         eventStore.write(event);
         if (attemptSend) {
-            eventStore.flushAsync();
+            eventStore.flushAsync(notifier);
         }
     }
 
