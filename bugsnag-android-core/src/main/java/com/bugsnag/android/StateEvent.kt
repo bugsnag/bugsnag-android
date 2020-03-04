@@ -11,7 +11,6 @@ sealed class StateEvent {
     object DeliverPending : StateEvent()
 
     class AddMetadata(val section: String, val key: String?, val value: Any?) : StateEvent()
-    object ClearBreadcrumbs : StateEvent()
     class ClearMetadataSection(val section: String) : StateEvent()
     class ClearMetadataValue(val section: String, val key: String?) : StateEvent()
 
