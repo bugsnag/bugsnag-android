@@ -12,15 +12,16 @@ internal class StacktraceSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() =
-            generateSerializationTestCases(
+        fun testCases(): Collection<Pair<Stacktrace, String>> {
+            val frame = Stackframe("foo()", "Bar.kt", 55, true, mapOf(Pair("54", "invoke()")), 99)
+            return generateSerializationTestCases(
                 "stacktrace",
 
                 // empty stacktrace element ctor
                 Stacktrace(arrayOf(), emptySet(), NoopLogger),
 
                 // empty custom frames ctor
-                Stacktrace(listOf(mapOf(Pair("columnNumber", "55"))), NoopLogger),
+                Stacktrace(listOf(frame), NoopLogger),
 
                 // basic
                 basic(),
@@ -32,6 +33,7 @@ internal class StacktraceSerializationTest {
                 trimStacktrace(),
                 trimStacktraceListCtor()
             )
+        }
 
         private fun basic() =
             Stacktrace(
@@ -55,7 +57,7 @@ internal class StacktraceSerializationTest {
 
         private fun trimStacktraceListCtor(): Stacktrace {
             val elements = (0..999).map {
-                mapOf(Pair("Foo", it))
+                Stackframe("Foo", "Bar.kt", it, true)
             }
             return Stacktrace(elements, NoopLogger)
         }

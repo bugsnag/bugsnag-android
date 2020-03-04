@@ -25,7 +25,7 @@ public class ThreadFacadeTest {
     @Before
     public void setUp() {
         logger = new InterceptingLogger();
-        List<Map<String, Object>> frames = Collections.emptyList();
+        List<Stackframe> frames = Collections.emptyList();
         stacktrace = new Stacktrace(frames, logger);
         thread = new Thread(1, "thread-2", ThreadType.ANDROID, false, stacktrace, logger);
     }
@@ -77,7 +77,7 @@ public class ThreadFacadeTest {
     @Test
     public void stacktraceValid() {
         assertEquals(stacktrace.getTrace(), thread.getStacktrace());
-        List<Map<String, Object>> frames = Collections.emptyList();
+        List<Stackframe> frames = Collections.emptyList();
         Stacktrace other = new Stacktrace(frames, logger);
         thread.setStacktrace(other.getTrace());
         assertEquals(other.getTrace(), thread.getStacktrace());

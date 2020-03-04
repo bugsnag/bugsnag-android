@@ -33,7 +33,8 @@ public class ThreadSerializerTest {
         frame.put("lineNumber", 55);
         frame.put("inProject", true);
 
-        List<Map<String, Object>> frames = Collections.singletonList(frame);
+        Stackframe stackframe = new Stackframe("foo()", "Bar.kt", 55, true);
+        List<Stackframe> frames = Collections.singletonList(stackframe);
         Stacktrace stacktrace = new Stacktrace(frames, NoopLogger.INSTANCE);
         thread = new Thread(1, "fake-thread", ThreadType.ANDROID,
                 true, stacktrace, NoopLogger.INSTANCE);

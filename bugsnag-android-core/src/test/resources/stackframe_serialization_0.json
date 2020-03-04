@@ -2,6 +2,5 @@
   "method": "foo",
   "file": "Bar",
   "lineNumber": 55,
-  "inProject": true,
-  "loadAddress": "0x520923409"
+  "inProject": true
 }

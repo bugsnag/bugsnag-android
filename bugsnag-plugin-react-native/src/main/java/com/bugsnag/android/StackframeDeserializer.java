@@ -11,8 +11,7 @@ class StackframeDeserializer implements MapDeserializer<Stackframe> {
                 MapUtils.<String>getOrNull(map, "method"),
                 MapUtils.<String>getOrNull(map, "file"),
                 MapUtils.<Integer>getOrNull(map, "lineNumber"),
-                MapUtils.<Boolean>getOrNull(map, "inProject"),
-                Collections.<String, Object>emptyMap()
+                MapUtils.<Boolean>getOrNull(map, "inProject")
         );
     }
 }
