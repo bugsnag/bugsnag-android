@@ -203,45 +203,4 @@ __builtin_trap();
 return 12633;
 }
 
-bool add_java_data(void *event_ptr) {
-  bugsnag_event_add_metadata_string(event_ptr,
-    (char *)"data",
-    (char *)"context",
-    bugsnag_event_get_context(event_ptr)
-  );
-  bugsnag_event_add_metadata_string(event_ptr,
-    (char *)"data",
-    (char *)"appVersion",
-    bugsnag_app_get_version(event_ptr)
-  );
-  bugsnag_event_add_metadata_string(event_ptr,
-    (char *)"data",
-    (char *)"user",
-    bugsnag_event_get_user(event_ptr).name
-  );
-  bugsnag_event_add_metadata_string(event_ptr,
-    (char *)"data",
-    (char *)"metadata",
-    bugsnag_event_get_metadata_string(event_ptr,
-      (char *)"notData",
-      (char *)"vals"
-    )
-  );
-  bugsnag_event_add_metadata_string(event_ptr,
-    (char *)"data",
-    (char *)"device",
-    bugsnag_device_get_model(event_ptr)
-  );
-  return true;
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXGetJavaDataScenario_activate(JNIEnv *env,
-                                                                         jobject instance) {
-  bugsnag_add_on_error(&add_java_data);
-  int x = 47;
-  if (x > 0)
-    __builtin_trap();
-}
-
 }
