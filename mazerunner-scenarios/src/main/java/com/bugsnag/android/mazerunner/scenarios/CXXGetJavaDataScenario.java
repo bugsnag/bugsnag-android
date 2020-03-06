@@ -19,6 +19,9 @@ public class CXXGetJavaDataScenario extends Scenario {
 
     public native void activate();
 
+    /**
+     *
+     */
     public CXXGetJavaDataScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);

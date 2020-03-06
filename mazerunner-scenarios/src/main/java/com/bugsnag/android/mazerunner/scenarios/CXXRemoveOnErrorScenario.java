@@ -16,6 +16,9 @@ public class CXXRemoveOnErrorScenario extends Scenario {
 
     public native void activate();
 
+    /**
+     * 
+     */
     public CXXRemoveOnErrorScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
