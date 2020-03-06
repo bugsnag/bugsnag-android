@@ -29,6 +29,7 @@ class SystemBroadcastReceiverTest {
 
     @Test
     fun testBasicReceive() {
+        `when`(client.config).thenReturn(getConfig(emptySet()))
         `when`(intent.action).thenReturn("android.intent.action.AIRPLANE_MODE")
 
 
@@ -41,6 +42,7 @@ class SystemBroadcastReceiverTest {
 
     @Test
     fun testMetadataReceive() {
+        `when`(client.config).thenReturn(getConfig(emptySet()))
         `when`(intent.action).thenReturn("SomeTitle")
         `when`(intent.extras).thenReturn(bundle)
         `when`(bundle.keySet()).thenReturn(setOf("foo"))
@@ -51,6 +53,27 @@ class SystemBroadcastReceiverTest {
 
         val metadata = mapOf(Pair("Intent Action", "SomeTitle"), Pair("foo", "[bar]"))
         verify(client, times(1)).leaveBreadcrumb("SomeTitle", BreadcrumbType.STATE, metadata)
+    }
+
+    @Test
+    fun testBreadcrumbTypesUser() {
+        `when`(client.config).thenReturn(getConfig(setOf(BreadcrumbType.USER)))
+        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        assertEquals(6, receiver.actions.size)
+    }
+
+    @Test
+    fun testBreadcrumbTypesState() {
+        `when`(client.config).thenReturn(getConfig(setOf(BreadcrumbType.STATE)))
+        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        assertEquals(25, receiver.actions.size)
+    }
+
+    @Test
+    fun testBreadcrumbTypesNavigation() {
+        `when`(client.config).thenReturn(getConfig(setOf(BreadcrumbType.NAVIGATION)))
+        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        assertEquals(2, receiver.actions.size)
     }
 
     @Test
@@ -69,6 +92,12 @@ class SystemBroadcastReceiverTest {
             "NOT_ANDROID.net.wifi.p2p.CONNECTION_STATE_CHANGE",
             shortenActionNameIfNeeded("NOT_ANDROID.net.wifi.p2p.CONNECTION_STATE_CHANGE")
         )
+    }
+
+    private fun getConfig(breadcrumbTypes: Set<BreadcrumbType>) : ImmutableConfig {
+        var config = BugsnagTestUtils.generateConfiguration()
+        config.enabledBreadcrumbTypes = breadcrumbTypes
+        return BugsnagTestUtils.convert(config)
     }
 
 }

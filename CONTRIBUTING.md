@@ -100,7 +100,7 @@ option:
 
 ## Testing
 
-Full details of how to build and run tests can be found in [the testing guide](`TESTING.md`)
+Full details of how to build and run tests can be found in [the testing guide](TESTING.md)
 
 ## Building the Example App
 
@@ -127,4 +127,4 @@ this version when you next run the app.
 
 # Releasing a New Version
 
-Full details of how to release can be found in [the release guide](`RELEASING.md`)
+Full details of how to release can be found in [the release guide](RELEASING.md)
