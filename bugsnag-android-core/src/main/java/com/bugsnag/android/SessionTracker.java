@@ -70,7 +70,7 @@ class SessionTracker extends BaseObservable {
     Session startNewSession(@NonNull Date date, @Nullable User user,
                             boolean autoCaptured) {
         String id = UUID.randomUUID().toString();
-        Session session = new Session(id, date, user, autoCaptured, logger);
+        Session session = new Session(id, date, user, autoCaptured, client.getNotifier(), logger);
         currentSession.set(session);
         trackSessionIfNeeded(session);
         return session;
@@ -129,7 +129,8 @@ class SessionTracker extends BaseObservable {
                                     int handledCount) {
         Session session = null;
         if (date != null && sessionId != null) {
-            session = new Session(sessionId, date, user, unhandledCount, handledCount, logger);
+            session = new Session(sessionId, date, user, unhandledCount, handledCount,
+                    client.getNotifier(), logger);
             notifySessionStartObserver(session);
         } else {
             notifyObservers(StateEvent.PauseSession.INSTANCE);
@@ -246,7 +247,7 @@ class SessionTracker extends BaseObservable {
     }
 
     void flushStoredSession(File storedFile) {
-        Session payload = new Session(storedFile, logger);
+        Session payload = new Session(storedFile, client.getNotifier(), logger);
 
         if (!payload.isV2Payload()) { // collect data here
             payload.setApp(client.getAppDataCollector().generateApp());

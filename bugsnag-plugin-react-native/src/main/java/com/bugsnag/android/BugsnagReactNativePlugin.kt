@@ -28,12 +28,21 @@ class BugsnagReactNativePlugin : Plugin {
         client.logger.i("Initialized React Native Plugin")
     }
 
+    private fun updateNotifierInfo(jsVersion: String) {
+        val notifier = client.notifier
+        notifier.name = "Bugsnag React Native"
+        notifier.url = "https://github.com/bugsnag/bugsnag-js"
+        notifier.version = jsVersion
+        notifier.dependencies.add(Notifier()) // depend on bugsnag-android
+    }
+
     override fun unload() {}
 
     @Suppress("unused")
-    fun configure(): Map<String, Any?> {
+    fun configure(jsVersion: String): Map<String, Any?> {
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
+        updateNotifierInfo(jsVersion)
         return map
     }
 

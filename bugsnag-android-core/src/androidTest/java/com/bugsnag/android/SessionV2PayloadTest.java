@@ -66,7 +66,7 @@ public class SessionV2PayloadTest {
     public void testSessionFromFile() throws Exception {
         sessionStore.write(session);
         List<File> storedFiles = sessionStore.findStoredFiles();
-        Session payload = new Session(storedFiles.get(0), NoopLogger.INSTANCE);
+        Session payload = new Session(storedFiles.get(0), new Notifier(), NoopLogger.INSTANCE);
         JSONObject rootNode = streamableToJson(payload);
         assertNotNull(rootNode);
 
@@ -84,7 +84,7 @@ public class SessionV2PayloadTest {
 
     @Test
     public void testAutoCapturedOverride() throws Exception {
-        session = new Session("id", new Date(), null, false, NoopLogger.INSTANCE);
+        session = new Session("id", new Date(), null, false, new Notifier(), NoopLogger.INSTANCE);
         assertFalse(session.isAutoCaptured());
         session.setAutoCaptured(true);
         assertTrue(session.isAutoCaptured());

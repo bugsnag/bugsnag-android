@@ -14,17 +14,20 @@ class EventPayload : JsonStream.Streamable {
     var apiKey: String?
     private val eventFile: File?
     val event: Event?
+    private val notifier: Notifier
 
-    internal constructor(apiKey: String?, eventFile: File) {
+    internal constructor(apiKey: String?, eventFile: File, notifier: Notifier) {
         this.apiKey = apiKey
         this.eventFile = eventFile
         this.event = null
+        this.notifier = notifier
     }
 
-    internal constructor(apiKey: String?, event: Event) {
+    internal constructor(apiKey: String?, event: Event, notifier: Notifier) {
         this.apiKey = apiKey
         this.eventFile = null
         this.event = event
+        this.notifier = notifier
     }
 
     @Throws(IOException::class)
@@ -32,7 +35,7 @@ class EventPayload : JsonStream.Streamable {
         writer.beginObject()
         writer.name("apiKey").value(apiKey)
         writer.name("payloadVersion").value("4.0")
-        writer.name("notifier").value(Notifier)
+        writer.name("notifier").value(notifier)
 
         writer.name("events").beginArray()
 

@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class Session implements JsonStream.Streamable, UserAware {
 
     private final File file;
+    private final Notifier notifier;
     private String id;
     private Date startedAt;
     private User user;
@@ -31,32 +32,36 @@ public final class Session implements JsonStream.Streamable, UserAware {
 
     static Session copySession(Session session) {
         Session copy = new Session(session.id, session.startedAt, session.user,
-                session.unhandledCount.get(), session.handledCount.get(), session.logger);
+                session.unhandledCount.get(), session.handledCount.get(), session.notifier,
+                session.logger);
         copy.tracked.set(session.tracked.get());
         copy.autoCaptured.set(session.isAutoCaptured());
         return copy;
     }
 
-    Session(String id, Date startedAt, User user, boolean autoCaptured, Logger logger) {
+    Session(String id, Date startedAt, User user, boolean autoCaptured,
+            Notifier notifier, Logger logger) {
         this.id = id;
         this.startedAt = new Date(startedAt.getTime());
         this.user = user;
         this.logger = logger;
         this.autoCaptured.set(autoCaptured);
         this.file = null;
+        this.notifier = notifier;
     }
 
     Session(String id, Date startedAt, User user, int unhandledCount, int handledCount,
-            Logger logger) {
-        this(id, startedAt, user, false, logger);
+            Notifier notifier, Logger logger) {
+        this(id, startedAt, user, false, notifier, logger);
         this.unhandledCount.set(unhandledCount);
         this.handledCount.set(handledCount);
         this.tracked.set(true);
     }
 
-    Session(File file, Logger logger) {
+    Session(File file, Notifier notifier, Logger logger) {
         this.file = file;
         this.logger = logger;
+        this.notifier = notifier;
     }
 
     private void logNull(String property) {
@@ -194,7 +199,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
             }
         } else {
             writer.beginObject();
-            writer.name("notifier").value(Notifier.INSTANCE);
+            writer.name("notifier").value(notifier);
             writer.name("app").value(app);
             writer.name("device").value(device);
             writer.name("sessions").beginArray();
@@ -210,7 +215,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
 
     private void serializeV1Payload(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
-        writer.name("notifier").value(Notifier.INSTANCE);
+        writer.name("notifier").value(notifier);
         writer.name("app").value(app);
         writer.name("device").value(device);
         writer.name("sessions").beginArray();

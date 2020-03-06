@@ -15,18 +15,21 @@ class DeliveryDelegate extends BaseObservable {
     private final EventStore eventStore;
     private final ImmutableConfig immutableConfig;
     final BreadcrumbState breadcrumbState;
+    private final Notifier notifier;
 
     DeliveryDelegate(Logger logger, EventStore eventStore,
-                     ImmutableConfig immutableConfig, BreadcrumbState breadcrumbState) {
+                     ImmutableConfig immutableConfig, BreadcrumbState breadcrumbState,
+                     Notifier notifier) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
         this.breadcrumbState = breadcrumbState;
+        this.notifier = notifier;
     }
 
     void deliver(@NonNull Event event) {
         // Build the eventPayload
-        EventPayload eventPayload = new EventPayload(immutableConfig.getApiKey(), event);
+        EventPayload eventPayload = new EventPayload(immutableConfig.getApiKey(), event, notifier);
         Session session = event.getSession();
 
         if (session != null) {

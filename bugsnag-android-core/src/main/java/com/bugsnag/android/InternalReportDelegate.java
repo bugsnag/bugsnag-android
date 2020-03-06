@@ -29,6 +29,7 @@ class InternalReportDelegate implements EventStore.Delegate {
     final DeviceDataCollector deviceDataCollector;
     final Context appContext;
     final SessionTracker sessionTracker;
+    final Notifier notifier;
 
     InternalReportDelegate(Context context,
                            Logger logger,
@@ -36,7 +37,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                            StorageManager storageManager,
                            AppDataCollector appDataCollector,
                            DeviceDataCollector deviceDataCollector,
-                           SessionTracker sessionTracker) {
+                           SessionTracker sessionTracker,
+                           Notifier notifier) {
         this.logger = logger;
         this.immutableConfig = immutableConfig;
         this.storageManager = storageManager;
@@ -44,6 +46,7 @@ class InternalReportDelegate implements EventStore.Delegate {
         this.deviceDataCollector = deviceDataCollector;
         this.appContext = context;
         this.sessionTracker = sessionTracker;
+        this.notifier = notifier;
     }
 
     @Override
@@ -91,12 +94,11 @@ class InternalReportDelegate implements EventStore.Delegate {
         event.setApp(appDataCollector.generateAppWithState());
         event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
 
-        Notifier notifier = Notifier.INSTANCE;
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());
 
-        final EventPayload eventPayload = new EventPayload(null, event);
+        final EventPayload eventPayload = new EventPayload(null, event, notifier);
         try {
             Async.run(new Runnable() {
                 @Override

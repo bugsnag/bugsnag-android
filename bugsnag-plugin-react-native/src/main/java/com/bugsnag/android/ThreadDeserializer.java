@@ -32,7 +32,7 @@ class ThreadDeserializer implements MapDeserializer<Thread> {
                 MapUtils.<String>getOrThrow(map, "name"),
                 ThreadType.valueOf(type.toUpperCase(Locale.US)),
                 errorReportingThread,
-                new Stacktrace(logger, frames),
+                new Stacktrace(frames, logger),
                 logger
         );
     }

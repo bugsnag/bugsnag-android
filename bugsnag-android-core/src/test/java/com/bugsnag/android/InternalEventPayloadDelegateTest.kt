@@ -47,7 +47,8 @@ internal class InternalEventPayloadDelegateTest {
             storageManager,
             appDataCollector,
             deviceDataCollector,
-            sessionTracker
+            sessionTracker,
+            Notifier()
         )
 
         val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)

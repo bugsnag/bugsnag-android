@@ -32,6 +32,7 @@ class EventStore extends FileStore {
     private final ImmutableConfig config;
     private final Logger logger;
     private final Delegate delegate;
+    private final Notifier notifier;
 
     static final Comparator<File> EVENT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -52,11 +53,13 @@ class EventStore extends FileStore {
     };
 
     EventStore(@NonNull ImmutableConfig config,
-               @NonNull Context appContext, @NonNull Logger logger, Delegate delegate) {
+               @NonNull Context appContext, @NonNull Logger logger,
+               Notifier notifier, Delegate delegate) {
         super(appContext, "/bugsnag-errors/", MAX_EVENT_COUNT, EVENT_COMPARATOR, logger, delegate);
         this.config = config;
         this.logger = logger;
         this.delegate = delegate;
+        this.notifier = notifier;
     }
 
     void flushOnLaunch() {
@@ -143,7 +146,7 @@ class EventStore extends FileStore {
 
     private void flushEventFile(File eventFile) {
         try {
-            EventPayload payload = new EventPayload(config.getApiKey(), eventFile);
+            EventPayload payload = new EventPayload(config.getApiKey(), eventFile, notifier);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 

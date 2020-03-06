@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import java.util.Collections;
 import java.util.Map;
 
 class StackframeDeserializer implements MapDeserializer<Stackframe> {
@@ -12,7 +11,8 @@ class StackframeDeserializer implements MapDeserializer<Stackframe> {
                 MapUtils.<String>getOrNull(map, "file"),
                 MapUtils.<Integer>getOrNull(map, "lineNumber"),
                 MapUtils.<Boolean>getOrNull(map, "inProject"),
-                Collections.<String, Object>emptyMap()
+                MapUtils.<Map<String, String>>getOrNull(map, "code"),
+                MapUtils.<Integer>getOrNull(map, "columnNumber")
         );
     }
 }

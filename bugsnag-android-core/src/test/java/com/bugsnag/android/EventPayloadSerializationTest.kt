@@ -11,15 +11,17 @@ import java.io.File
 internal class EventPayloadSerializationTest {
 
     companion object {
+        private val notifier = Notifier()
+
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<JsonStream.Streamable, String>> {
-            Notifier.version = "9.9.9"
-            Notifier.name = "AndroidBugsnagNotifier"
-            Notifier.url = "https://bugsnag.com"
+            notifier.version = "9.9.9"
+            notifier.name = "AndroidBugsnagNotifier"
+            notifier.url = "https://bugsnag.com"
             return generateSerializationTestCases(
                 "report",
-                EventPayload("api-key", File(""))
+                EventPayload("api-key", File(""), notifier)
             )
         }
     }

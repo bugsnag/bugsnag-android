@@ -5,7 +5,7 @@ import java.io.IOException
 /**
  * Represents a single stackframe from a [Throwable]
  */
-class Stackframe internal constructor(
+class Stackframe @JvmOverloads internal constructor(
 
     /**
      * The name of the method that was being executed
@@ -28,8 +28,17 @@ class Stackframe internal constructor(
      * [Configuration.projectPackages]
      */
     var inProject: Boolean?,
-    private var customFields: Map<String, Any?>
-): JsonStream.Streamable {
+
+    /**
+     * Lines of the code surrounding the frame, where the lineNumber is the key (React Native only)
+     */
+    var code: Map<String, String?>? = null,
+
+    /**
+     * The column number of the frame (React Native only)
+     */
+    var columnNumber: Number? = null
+) : JsonStream.Streamable {
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
@@ -38,9 +47,17 @@ class Stackframe internal constructor(
         writer.name("file").value(file)
         writer.name("lineNumber").value(lineNumber)
         writer.name("inProject").value(inProject)
-        customFields.forEach {
-            writer.name(it.key)
-            writer.value(it.value)
+        writer.name("columnNumber").value(columnNumber)
+
+        code?.let { map: Map<String, String?> ->
+            writer.name("code")
+
+            map.forEach {
+                writer.beginObject()
+                writer.name(it.key)
+                writer.value(it.value)
+                writer.endObject()
+            }
         }
         writer.endObject()
     }
