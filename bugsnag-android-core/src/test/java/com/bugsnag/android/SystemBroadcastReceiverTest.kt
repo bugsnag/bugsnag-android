@@ -32,7 +32,6 @@ class SystemBroadcastReceiverTest {
         `when`(client.config).thenReturn(getConfig(emptySet()))
         `when`(intent.action).thenReturn("android.intent.action.AIRPLANE_MODE")
 
-
         val receiver = SystemBroadcastReceiver(client, NoopLogger)
         receiver.onReceive(context, intent)
 

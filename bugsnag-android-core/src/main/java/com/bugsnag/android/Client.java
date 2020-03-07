@@ -211,7 +211,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
 
         // register a receiver for automatic breadcrumbs
-        final SystemBroadcastReceiver systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
+        final SystemBroadcastReceiver systemBroadcastReceiver =
+            new SystemBroadcastReceiver(this, logger);
         if (systemBroadcastReceiver.getActions().size() > 0) {
             try {
                 Async.run(new Runnable() {
