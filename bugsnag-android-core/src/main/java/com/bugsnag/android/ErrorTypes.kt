@@ -22,9 +22,17 @@ class ErrorTypes(
      * Sets whether Bugsnag should automatically capture and report unhandled errors.
      * By default, this value is true.
      */
-    var unhandledExceptions: Boolean = true
-) {
-    internal constructor(detectErrors: Boolean) : this(detectErrors, detectErrors, detectErrors)
+    var unhandledExceptions: Boolean = true,
 
-    internal fun copy() = ErrorTypes(anrs, ndkCrashes, unhandledExceptions)
+
+    /**
+     * Sets whether Bugsnag should automatically capture and report unhandled promise rejections.
+     * This only applies to React Native apps.
+     * By default, this value is true.
+     */
+    var unhandledRejections: Boolean = true
+) {
+    internal constructor(detectErrors: Boolean) : this(detectErrors, detectErrors, detectErrors, detectErrors)
+
+    internal fun copy() = ErrorTypes(anrs, ndkCrashes, unhandledExceptions, unhandledRejections)
 }
