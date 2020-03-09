@@ -39,6 +39,6 @@ public class CXXRemoveDataScenario extends Scenario {
                 Bugsnag.clearMetadata("persist", "remove");
                 activate();
             }
-        }, 1500);
+        }, 150);
     }
 }

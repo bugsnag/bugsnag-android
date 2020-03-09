@@ -312,7 +312,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXRemoveOnErrorScenario_activate(
   bugsnag_notify((char *)"Foo", (char *)"Bar", BSG_SEVERITY_ERR);
   // Confirms that only the correct callback is removed
   bugsnag_add_on_error(&on_err_true);
-  bugsnag_remove_on_error(&on_err_false);
+  bugsnag_remove_on_error();
   int x = 47;
   if (x > 0)
     __builtin_trap();
