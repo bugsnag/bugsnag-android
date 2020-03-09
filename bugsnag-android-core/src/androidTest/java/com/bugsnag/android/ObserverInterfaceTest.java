@@ -4,6 +4,7 @@ import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import androidx.annotation.NonNull;
@@ -164,9 +165,8 @@ public class ObserverInterfaceTest {
         client.leaveBreadcrumb("Drift 4 units left");
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getMessage());
-        assertEquals(1, crumb.getMetadata().size());
-        assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
+        assertEquals("Drift 4 units left", crumb.getMessage());
+        assertTrue(crumb.getMetadata().isEmpty());
     }
 
     @Test
@@ -175,9 +175,8 @@ public class ObserverInterfaceTest {
         client.breadcrumbState.add(obj);
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getMessage());
-        assertEquals(1, crumb.getMetadata().size());
-        assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
+        assertEquals("Drift 4 units left", crumb.getMessage());
+        assertTrue(crumb.getMetadata().isEmpty());
     }
 
     @Test
