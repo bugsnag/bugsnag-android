@@ -11,7 +11,7 @@ def expectedNdkVersion = "16" // Controls which NDK library major version should
 
 def expectedAbiLists = // Controls which combinations of ABIs are expected for release
 [
-    ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"] as Set,
+    ["arm64-v8a", "armeabi", "armeabi-v7a", "x86", "x86_64"] as Set,
     ["armeabi-v7a", "x86"] as Set
 ]
 
@@ -68,7 +68,7 @@ task validatePublishOptions() {
 }
 
 tasks.whenTaskAdded { task ->
-    if (task.name == 'assembleRelease') {
+    if ((task.name == 'assembleRelease') || (task.name == 'publish') || (task.name == 'bintrayUpload')) {
         task.dependsOn validatePublishOptions
     }
 }
