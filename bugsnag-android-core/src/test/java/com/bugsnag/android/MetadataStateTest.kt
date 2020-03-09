@@ -55,7 +55,7 @@ internal class MetadataStateTest {
             data.add(msg.section)
         }
 
-        state.initObservableMessages()
+        state.emitObservableEvent()
         assertEquals(setOf("foo", "bar"), data)
     }
 }

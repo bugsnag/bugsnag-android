@@ -8,7 +8,9 @@ internal class UserState(private val userRepository: UserRepository) : BaseObser
     fun setUser(id: String?, email: String?, name: String?) {
         user = User(id, email, name)
         userRepository.save(user)
-        notifyObservers(StateEvent.UpdateUser(user))
+        emitObservableEvent()
     }
+
+    fun emitObservableEvent() = notifyObservers(StateEvent.UpdateUser(user))
 
 }

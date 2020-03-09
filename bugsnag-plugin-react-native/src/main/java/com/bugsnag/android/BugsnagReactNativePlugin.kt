@@ -48,6 +48,7 @@ class BugsnagReactNativePlugin : Plugin {
 
     fun registerForMessageEvents(cb: (MessageEvent) -> Unit) {
         client.registerObserver(BugsnagReactNativeBridge(client, cb))
+        client.syncInitialState()
     }
 
     fun leaveBreadcrumb(map: Map<String, Any?>?) {
