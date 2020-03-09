@@ -91,12 +91,21 @@ Files are generated into`<module>/build/outputs/aar`.
 
 ### Building with custom ABIs
 
+By default, the NDK module will be built with the following ABIs:
+
+- arm64-v8a
+- armeabi-v7a
+- x86
+- x86_64
+
 To build the NDK module with specific ABIs, use the `ABI_FILTERS` project
 option:
 
 ```shell
 ./gradlew assembleRelease -PABI_FILTERS=x86,arm64-v8a
 ```
+
+For release purposes, the Makefile's build command includes the "armeabi" ABI for compatibility with devices using r16 and below of the NDK.
 
 ## Testing
 

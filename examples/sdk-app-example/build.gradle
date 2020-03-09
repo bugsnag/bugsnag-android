@@ -52,9 +52,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.compileSdkVersion
         signingConfig signingConfigs.config
-        ndk {
-            abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
-        }
+        ndk.abiFilters = project.hasProperty("ABI_FILTERS") ? project.ABI_FILTERS.split(",") :
+                ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"]
     }
     buildTypes {
         release {
