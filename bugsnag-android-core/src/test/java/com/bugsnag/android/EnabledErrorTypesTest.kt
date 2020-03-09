@@ -15,6 +15,7 @@ class EnabledErrorTypesTest {
         assertTrue(config.enabledErrorTypes.anrs)
         assertFalse(config.enabledErrorTypes.ndkCrashes)
         assertTrue(config.enabledErrorTypes.unhandledExceptions)
+        assertTrue(config.enabledErrorTypes.unhandledRejections)
     }
 
     @Test
@@ -25,6 +26,7 @@ class EnabledErrorTypesTest {
             assertTrue(anrs)
             assertFalse(ndkCrashes)
             assertTrue(unhandledExceptions)
+            assertTrue(unhandledRejections)
         }
     }
 
@@ -36,6 +38,7 @@ class EnabledErrorTypesTest {
             assertFalse(anrs)
             assertFalse(ndkCrashes)
             assertFalse(unhandledExceptions)
+            assertFalse(unhandledRejections)
         }
     }
 
@@ -45,6 +48,7 @@ class EnabledErrorTypesTest {
             assertFalse(anrs)
             assertFalse(ndkCrashes)
             assertFalse(unhandledExceptions)
+            assertFalse(unhandledRejections)
         }
     }
 }
