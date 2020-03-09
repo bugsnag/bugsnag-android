@@ -4,8 +4,10 @@ internal class ContextState(context: String? = null) : BaseObservable() {
     var context = context
         set(value) {
             field = value
-            notifyObservers(StateEvent.UpdateContext(context))
+            emitObservableEvent()
         }
+
+    fun emitObservableEvent() = notifyObservers(StateEvent.UpdateContext(context))
 
     fun copy() = ContextState(context)
 }

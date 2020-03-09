@@ -324,7 +324,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void sendNativeSetupNotification() {
         clientObservable.postNdkInstall(immutableConfig);
-        metadataState.initObservableMessages();
         try {
             Async.run(new Runnable() {
                 @Override
@@ -345,6 +344,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         userState.addObserver(observer);
         contextState.addObserver(observer);
         deliveryDelegate.addObserver(observer);
+    }
+
+    /**
+     * Sends initial state values for Metadata/User/Context to any registered observers.
+     */
+    void syncInitialState() {
+        metadataState.emitObservableEvent();
+        contextState.emitObservableEvent();
+        userState.emitObservableEvent();
     }
 
     /**
