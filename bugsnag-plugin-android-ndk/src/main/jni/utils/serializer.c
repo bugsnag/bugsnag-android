@@ -120,8 +120,6 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     migrate_app_v1(report_v2, event);
     migrate_device_v1(report_v2, event);
     event->user = report_v2->user;
-    event->crumb_count = report_v2->crumb_count;
-    event->crumb_first_index = report_v2->crumb_first_index;
     migrate_breadcrumb_v1(report_v2, event);
 
     strcpy(event->context, report_v2->context);
@@ -152,13 +150,34 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   return event;
 }
 
-void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
-  for (int k = 0; k < event->crumb_count; k++) {
-    int crumb_index = (report_v2->crumb_first_index + k) % V1_BUGSNAG_CRUMBS_MAX;
-    int new_crumb_index = crumb_index % BUGSNAG_CRUMBS_MAX;
+int bsg_calculate_total_crumbs(int old_count) {
+  return old_count < BUGSNAG_CRUMBS_MAX ? old_count : BUGSNAG_CRUMBS_MAX;
+}
 
-    bugsnag_breadcrumb *new_crumb = &event->breadcrumbs[new_crumb_index];
+int bsg_calculate_v1_start_index(int old_count) {
+  return old_count < BUGSNAG_CRUMBS_MAX ? 0 : old_count % BUGSNAG_CRUMBS_MAX;
+}
+
+int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index) {
+  return (crumb_pos + first_index) % V1_BUGSNAG_CRUMBS_MAX;
+}
+
+void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
+  event->crumb_count = 0;
+  event->crumb_first_index = 0;
+
+  // previously breadcrumbs had 30 elements, now they have 25.
+  // if more than 25 breadcrumbs were collected in the legacy report,
+  // offset them accordingly by moving the start position by count - BUGSNAG_CRUMBS_MAX.
+  int new_crumb_total = bsg_calculate_total_crumbs(report_v2->crumb_count);
+  int k = bsg_calculate_v1_start_index(report_v2->crumb_count);
+
+  for (; k < new_crumb_total; k++) {
+    int crumb_index = bsg_calculate_v1_crumb_index(k, report_v2->crumb_first_index);
     bugsnag_breadcrumb_v1 *old_crumb = &report_v2->breadcrumbs[crumb_index];
+    bugsnag_breadcrumb *new_crumb = malloc(sizeof(bugsnag_breadcrumb));
+
+    // copy old crumb fields to new
     new_crumb->type = old_crumb->type;
     bsg_strncpy_safe(new_crumb->name, old_crumb->name, sizeof(new_crumb->name));
     bsg_strncpy_safe(new_crumb->timestamp, old_crumb->timestamp, sizeof(new_crumb->timestamp));
@@ -170,6 +189,10 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
         bsg_add_metadata_value_str(&new_crumb->metadata, "metaData", pair.key, pair.value);
       }
     }
+
+    // add crumb to event by copying memory
+    bugsnag_event_add_breadcrumb(event, new_crumb);
+    free(new_crumb);
   }
 }
 

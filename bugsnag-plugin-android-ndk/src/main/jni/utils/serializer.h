@@ -31,6 +31,10 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception, JSON_Array *stac
 void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs);
 char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
+int bsg_calculate_total_crumbs(int old_count);
+int bsg_calculate_v1_start_index(int old_count);
+int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index);
+
 #ifdef __cplusplus
 }
 #endif
