@@ -167,7 +167,7 @@ typedef struct {
 } bsg_error;
 
 typedef struct {
-    char name[33];
+    char name[64];
     char timestamp[37];
     bugsnag_breadcrumb_type type;
 
