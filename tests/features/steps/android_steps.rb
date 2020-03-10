@@ -197,3 +197,8 @@ Then("the request is valid for the error reporting API version {string} for the 
     And each element in payload field "events" has "exceptions"
   }
 end
+
+Then("the event has {[0-9]+} breadcrumbs") do |expected_count|
+  value = Server.current_request[:body]["events"].first["breadcrumbs"]
+  fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
+end

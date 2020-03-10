@@ -17,3 +17,16 @@ Scenario: Manually added breadcrumbs are sent in report
     And the event "breadcrumbs.0.type" equals "manual"
     And the event "breadcrumbs.0.metaData" is not null
     And the event "breadcrumbs.0.metaData.message" equals "Hello Breadcrumb!"
+
+Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs are disabled
+    When I run "BreadcrumbDisabledScenario"
+    Then I should receive a request
+    And the request is a valid for the error reporting API
+    And the event has 1 breadcrumbs
+
+Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs are disabled
+    When I run "BreadcrumbAutoScenario"
+    And I relauch the app
+    Then I should receive a request
+    And the request is a valid for the error reporting API
+    And the event has a "STATE" breadcrumb with message "Bugsnag loaded"

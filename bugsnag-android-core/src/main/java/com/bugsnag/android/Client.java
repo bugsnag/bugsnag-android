@@ -72,9 +72,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final SessionTracker sessionTracker;
 
-    private SystemBroadcastReceiver systemBroadcastReceiver = null;
-    private ActivityBreadcrumbCollector activityBreadcrumbCollector = null;
-    private SessionLifecycleCallback sessionLifecycleCallback = null;
+    private final SystemBroadcastReceiver systemBroadcastReceiver;
+    private final ActivityBreadcrumbCollector activityBreadcrumbCollector;
+    private final SessionLifecycleCallback sessionLifecycleCallback;
 
     private final SharedPreferences sharedPrefs;
 
@@ -182,7 +182,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             application.registerActivityLifecycleCallbacks(sessionLifecycleCallback);
 
             if (immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.STATE)) {
-                activityBreadcrumbCollector = new ActivityBreadcrumbCollector(
+                this.activityBreadcrumbCollector = new ActivityBreadcrumbCollector(
                     new Function2<String, Map<String, ? extends Object>, Unit>() {
                         @SuppressWarnings("unchecked")
                         @Override
@@ -194,7 +194,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                     }
                 );
                 application.registerActivityLifecycleCallbacks(activityBreadcrumbCollector);
+            } else {
+                this.activityBreadcrumbCollector = null;
             }
+        } else {
+            this.activityBreadcrumbCollector = null;
+            this.sessionLifecycleCallback = null;
         }
 
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
@@ -226,6 +231,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
             }
             this.systemBroadcastReceiver = systemBroadcastReceiver;
+        } else {
+            this.systemBroadcastReceiver = null;
         }
         connectivity.registerForNetworkChanges();
 

@@ -12,11 +12,11 @@ import org.junit.Test
 @SmallTest
 class BreadcrumbFilterTest {
 
-    private var client: Client? = null
+    lateinit var client: Client
 
     @After
     fun tearDown() {
-        client?.close()
+        client.close()
     }
 
     @Test
@@ -25,9 +25,9 @@ class BreadcrumbFilterTest {
         configuration.enabledBreadcrumbTypes = emptySet()
         client = generateClient(configuration)
 
-        client?.leaveBreadcrumb("Hello World")
+        client.leaveBreadcrumb("Hello World")
 
-        assertEquals(1, client!!.breadcrumbState.store.size)
+        assertEquals(1, client.breadcrumbState.store.size)
     }
 
     @Test
@@ -36,9 +36,9 @@ class BreadcrumbFilterTest {
         configuration.enabledBreadcrumbTypes = setOf(MANUAL)
         client = generateClient(configuration)
 
-        client?.leaveBreadcrumb("Hello World")
+        client.leaveBreadcrumb("Hello World")
 
-        assertEquals(1, client!!.breadcrumbState.store.size)
+        assertEquals(1, client.breadcrumbState.store.size)
     }
 
 }
