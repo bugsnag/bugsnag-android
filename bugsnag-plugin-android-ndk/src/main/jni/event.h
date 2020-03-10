@@ -21,7 +21,7 @@
 /**
  *  Max number of breadcrumbs in an event. Configures a default if not defined.
  */
-#define BUGSNAG_CRUMBS_MAX 30
+#define BUGSNAG_CRUMBS_MAX 25
 #endif
 #ifndef BUGSNAG_DEFAULT_EX_TYPE
 /**

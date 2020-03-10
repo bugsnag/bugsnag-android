@@ -153,10 +153,11 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
 }
 
 void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event) {
-  for (int k = 0; k < report_v2->crumb_count; k++) {
-    int crumb_index = (report_v2->crumb_first_index + k) % BUGSNAG_CRUMBS_MAX;
+  for (int k = 0; k < event->crumb_count; k++) {
+    int crumb_index = (report_v2->crumb_first_index + k) % V1_BUGSNAG_CRUMBS_MAX;
+    int new_crumb_index = crumb_index % BUGSNAG_CRUMBS_MAX;
 
-    bugsnag_breadcrumb *new_crumb = &event->breadcrumbs[crumb_index];
+    bugsnag_breadcrumb *new_crumb = &event->breadcrumbs[new_crumb_index];
     bugsnag_breadcrumb_v1 *old_crumb = &report_v2->breadcrumbs[crumb_index];
     new_crumb->type = old_crumb->type;
     bsg_strncpy_safe(new_crumb->name, old_crumb->name, sizeof(new_crumb->name));
@@ -243,7 +244,7 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
     event_v2->crumb_count = report_v1->crumb_count;
     event_v2->crumb_first_index = report_v1->crumb_first_index;
 
-    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb) * BUGSNAG_CRUMBS_MAX;
+    size_t breadcrumb_size = sizeof(bugsnag_breadcrumb_v1) * V1_BUGSNAG_CRUMBS_MAX;
     memcpy(&event_v2->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
 
     strcpy(event_v2->context, report_v1->context);

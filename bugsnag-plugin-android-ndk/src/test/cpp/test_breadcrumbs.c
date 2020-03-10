@@ -39,26 +39,31 @@ TEST test_add_breadcrumb(void) {
 
 TEST test_add_breadcrumbs_over_max(void) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
-  // HACK: assumes the max number of crumbs is 30
-  for (int i=0; i < 64; i++) {
-    char *format = malloc(sizeof(char) * 64);
-    memset(format, 0, sizeof(char) * 64);
+  int breadcrumb_count = 64;
+
+  for (int i=0; i < breadcrumb_count; i++) {
+    char *format = malloc(sizeof(char) * breadcrumb_count);
+    memset(format, 0, sizeof(char) * breadcrumb_count);
     sprintf(format, "crumb: %d", i);
     bugsnag_breadcrumb *crumb = init_breadcrumb(format, "go go go", BSG_CRUMB_USER);
     bugsnag_event_add_breadcrumb(event, crumb);
     free(crumb);
     free(format);
   }
-  ASSERT(strcmp("crumb: 60", event->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("crumb: 61", event->breadcrumbs[1].name) == 0);
-  ASSERT(strcmp("crumb: 62", event->breadcrumbs[2].name) == 0);
-  ASSERT(strcmp("crumb: 63", event->breadcrumbs[3].name) == 0);
-  ASSERT(strcmp("crumb: 34", event->breadcrumbs[4].name) == 0);
-  ASSERT(strcmp("crumb: 35", event->breadcrumbs[5].name) == 0);
-  ASSERT(strcmp("crumb: 58", event->breadcrumbs[28].name) == 0);
-  ASSERT(strcmp("crumb: 59", event->breadcrumbs[29].name) == 0);
+
+  // assertions assume that the crumb count is always 25
   ASSERT_EQ(BUGSNAG_CRUMBS_MAX, event->crumb_count);
-  ASSERT_EQ(4, event->crumb_first_index);
+  ASSERT_EQ(14, event->crumb_first_index);
+
+  ASSERT(strcmp("crumb: 50", event->breadcrumbs[0].name) == 0);
+  ASSERT(strcmp("crumb: 51", event->breadcrumbs[1].name) == 0);
+  ASSERT(strcmp("crumb: 52", event->breadcrumbs[2].name) == 0);
+  ASSERT(strcmp("crumb: 53", event->breadcrumbs[3].name) == 0);
+
+  ASSERT(strcmp("crumb: 63", event->breadcrumbs[13].name) == 0);
+  ASSERT(strcmp("crumb: 39", event->breadcrumbs[14].name) == 0);
+  ASSERT(strcmp("crumb: 40", event->breadcrumbs[15].name) == 0);
+  ASSERT(strcmp("crumb: 41", event->breadcrumbs[16].name) == 0);
   free(event);
   PASS();
 }
