@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.0.0 (TBD)
+
+__This version contains many breaking changes__. It is part of an effort to unify our notifier
+libraries across platforms, making the user interface more consistent, and implementations better
+ on multi-layered environments where multiple Bugsnag libraries need to work together
+ (such as React Native).
+
+Please see the [upgrade guide](UPGRADING.md) for details of all the changes and instructions on
+how to upgrade.
+
 ## 4.22.3 (2020-01-22)
 
 * Allow disabling previous signal handler invocation for Unity ANRs
