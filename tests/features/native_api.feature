@@ -108,7 +108,7 @@ Feature: Native API
           | SIGTRAP |
         And the event "severity" equals "error"
         And the event has a "log" breadcrumb named "Warm beer detected"
-        And the event has a "manual" breadcrumb with message "Reverse thrusters"
+        And the event has a "manual" breadcrumb with the message "Reverse thrusters"
         And the event "unhandled" is true
 
     Scenario: Leaving breadcrumbs in Java and followed by notifying in C
@@ -118,8 +118,8 @@ Feature: Native API
         And the exception "errorClass" equals "Failed instantiation"
         And the exception "message" equals "Could not allocate"
         And the event "severity" equals "error"
-        And the event has a "manual" breadcrumb with message "Initiate lift"
-        And the event has a "manual" breadcrumb with message "Disable lift"
+        And the event has a "manual" breadcrumb with the message "Initiate lift"
+        And the event has a "manual" breadcrumb with the message "Disable lift"
         And the event "unhandled" is false
 
     Scenario: Leaving breadcrumbs in Java followed by a C crash
@@ -132,7 +132,7 @@ Feature: Native API
           | SIGILL |
           | SIGTRAP |
         And the event "severity" equals "error"
-        And the event has a "manual" breadcrumb with message "Bridge connector activated"
+        And the event has a "manual" breadcrumb with the message "Bridge connector activated"
         And the event "unhandled" is true
 
     Scenario: Leaving breadcrumbs in C followed by a Java crash

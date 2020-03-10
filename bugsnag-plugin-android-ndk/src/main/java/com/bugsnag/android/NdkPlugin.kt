@@ -20,6 +20,7 @@ internal class NdkPlugin : Plugin {
             nativeBridge = NativeBridge()
             client.registerObserver(nativeBridge)
             client.sendNativeSetupNotification()
+            client.syncInitialState()
         }
         enableCrashReporting()
         client.logger.i("Initialised NDK Plugin")

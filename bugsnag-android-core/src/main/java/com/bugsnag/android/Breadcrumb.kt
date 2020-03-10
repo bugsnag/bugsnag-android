@@ -16,9 +16,9 @@ internal class BreadcrumbInternal internal constructor(
 ) : JsonStream.Streamable {
 
     internal constructor(message: String) : this(
-        "manual",
+        message,
         BreadcrumbType.MANUAL,
-        mutableMapOf(Pair("message", message)),
+        mutableMapOf(),
         Date()
     )
 

@@ -202,3 +202,14 @@ Then("the event has {[0-9]+} breadcrumbs") do |expected_count|
   value = Server.current_request[:body]["events"].first["breadcrumbs"]
   fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
 end
+
+Then(/^the event has a "(.+)" breadcrumb with the message "(.+)"(?: for request (\d+))?$/) do |type, message, request_index|
+  value = read_key_path(Server.current_request[:body], "events.0.breadcrumbs")
+  found = false
+  value.each do |crumb|
+    if crumb["type"] == type and crumb["name"] == message then
+      found = true
+    end
+  end
+  fail("No breadcrumb matched: #{value}") unless found
+end

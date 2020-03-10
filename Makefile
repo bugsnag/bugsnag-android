@@ -3,7 +3,7 @@ all: build
 .PHONY: build test clean bump release
 
 build:
-	./gradlew build
+	./gradlew build -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64
 
 clean:
 	./gradlew clean
@@ -63,4 +63,5 @@ endif
 	@git commit -m "Release v$(VERSION)"
 	@git tag v$(VERSION)
 	@git push origin master v$(VERSION)
-	@./gradlew assembleRelease publish bintrayUpload && ./gradlew assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true
+	@./gradlew assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 \
+	 && ./gradlew assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 -PreleaseNdkArtefact=true

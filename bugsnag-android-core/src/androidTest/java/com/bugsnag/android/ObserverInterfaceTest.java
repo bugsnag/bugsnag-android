@@ -1,9 +1,11 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
@@ -41,6 +43,7 @@ public class ObserverInterfaceTest {
         breadcrumbTypes.add(BreadcrumbType.LOG);
         breadcrumbTypes.add(BreadcrumbType.MANUAL);
         config.setEnabledBreadcrumbTypes(breadcrumbTypes);
+        config.addMetadata("foo", "bar", true);
         client = new Client(ApplicationProvider.getApplicationContext(), config);
         observer = new BugsnagTestObserver();
         client.registerObserver(observer);
@@ -49,6 +52,31 @@ public class ObserverInterfaceTest {
     @After
     public void tearDown() {
         client.close();
+    }
+
+    @SuppressWarnings("EmptyCatchBlock")
+    @Test
+    public void testSyncInitialState() {
+        try {
+            assertNull(findMessageInQueue(StateEvent.UpdateUser.class));
+            fail("UpdateUser message not expected");
+        } catch (Throwable ignored) {
+        }
+        try {
+            assertNull(findMessageInQueue(StateEvent.AddMetadata.class));
+            fail("AddMetadata message not expected");
+        } catch (Throwable ignored) {
+        }
+        try {
+            assertNull(findMessageInQueue(StateEvent.UpdateContext.class));
+            fail("UpdateContext message not expected");
+        } catch (Throwable ignored) {
+        }
+
+        client.syncInitialState();
+        assertNotNull(findMessageInQueue(StateEvent.UpdateUser.class));
+        assertNotNull(findMessageInQueue(StateEvent.AddMetadata.class));
+        assertNotNull(findMessageInQueue(StateEvent.UpdateContext.class));
     }
 
     @Test
@@ -137,9 +165,8 @@ public class ObserverInterfaceTest {
         client.leaveBreadcrumb("Drift 4 units left");
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getMessage());
-        assertEquals(1, crumb.getMetadata().size());
-        assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
+        assertEquals("Drift 4 units left", crumb.getMessage());
+        assertTrue(crumb.getMetadata().isEmpty());
     }
 
     @Test
@@ -148,9 +175,8 @@ public class ObserverInterfaceTest {
         client.breadcrumbState.add(obj);
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("manual", crumb.getMessage());
-        assertEquals(1, crumb.getMetadata().size());
-        assertEquals("Drift 4 units left", crumb.getMetadata().get("message"));
+        assertEquals("Drift 4 units left", crumb.getMessage());
+        assertTrue(crumb.getMetadata().isEmpty());
     }
 
     @Test

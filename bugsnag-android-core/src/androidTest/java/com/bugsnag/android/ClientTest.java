@@ -165,8 +165,7 @@ public class ClientTest {
 
         Breadcrumb poll = client.breadcrumbState.getStore().poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
-        assertEquals("manual", poll.getMessage());
-        assertEquals("another", poll.getMetadata().get("message"));
+        assertEquals("another", poll.getMessage());
     }
 
     @Test
