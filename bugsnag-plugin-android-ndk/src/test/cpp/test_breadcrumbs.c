@@ -1,6 +1,7 @@
 #include <greatest/greatest.h>
 #include <event.h>
 #include <time.h>
+#include <utils/serializer.h>
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
@@ -39,31 +40,83 @@ TEST test_add_breadcrumb(void) {
 
 TEST test_add_breadcrumbs_over_max(void) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
-  // HACK: assumes the max number of crumbs is 30
-  for (int i=0; i < 64; i++) {
-    char *format = malloc(sizeof(char) * 64);
-    memset(format, 0, sizeof(char) * 64);
+  int breadcrumb_count = 64;
+
+  for (int i=0; i < breadcrumb_count; i++) {
+    char *format = malloc(sizeof(char) * breadcrumb_count);
+    memset(format, 0, sizeof(char) * breadcrumb_count);
     sprintf(format, "crumb: %d", i);
     bugsnag_breadcrumb *crumb = init_breadcrumb(format, "go go go", BSG_CRUMB_USER);
     bugsnag_event_add_breadcrumb(event, crumb);
     free(crumb);
     free(format);
   }
-  ASSERT(strcmp("crumb: 60", event->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("crumb: 61", event->breadcrumbs[1].name) == 0);
-  ASSERT(strcmp("crumb: 62", event->breadcrumbs[2].name) == 0);
-  ASSERT(strcmp("crumb: 63", event->breadcrumbs[3].name) == 0);
-  ASSERT(strcmp("crumb: 34", event->breadcrumbs[4].name) == 0);
-  ASSERT(strcmp("crumb: 35", event->breadcrumbs[5].name) == 0);
-  ASSERT(strcmp("crumb: 58", event->breadcrumbs[28].name) == 0);
-  ASSERT(strcmp("crumb: 59", event->breadcrumbs[29].name) == 0);
+
+  // assertions assume that the crumb count is always 25
   ASSERT_EQ(BUGSNAG_CRUMBS_MAX, event->crumb_count);
-  ASSERT_EQ(4, event->crumb_first_index);
+  ASSERT_EQ(14, event->crumb_first_index);
+
+  ASSERT(strcmp("crumb: 50", event->breadcrumbs[0].name) == 0);
+  ASSERT(strcmp("crumb: 51", event->breadcrumbs[1].name) == 0);
+  ASSERT(strcmp("crumb: 52", event->breadcrumbs[2].name) == 0);
+  ASSERT(strcmp("crumb: 53", event->breadcrumbs[3].name) == 0);
+
+  ASSERT(strcmp("crumb: 63", event->breadcrumbs[13].name) == 0);
+  ASSERT(strcmp("crumb: 39", event->breadcrumbs[14].name) == 0);
+  ASSERT(strcmp("crumb: 40", event->breadcrumbs[15].name) == 0);
+  ASSERT(strcmp("crumb: 41", event->breadcrumbs[16].name) == 0);
   free(event);
+  PASS();
+}
+
+TEST test_bsg_calculate_total_crumbs(void) {
+  ASSERT_EQ(0, bsg_calculate_total_crumbs(0));
+  ASSERT_EQ(5, bsg_calculate_total_crumbs(5));
+  ASSERT_EQ(22, bsg_calculate_total_crumbs(22));
+  ASSERT_EQ(25, bsg_calculate_total_crumbs(25));
+  ASSERT_EQ(25, bsg_calculate_total_crumbs(26));
+  ASSERT_EQ(25, bsg_calculate_total_crumbs(30));
+  PASS();
+}
+
+TEST test_bsg_calculate_start_index(void) {
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(0));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(3));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(17));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(24));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(25));
+  ASSERT_EQ(1, bsg_calculate_v1_start_index(26));
+  ASSERT_EQ(3, bsg_calculate_v1_start_index(28));
+  ASSERT_EQ(5, bsg_calculate_v1_start_index(30));
+  PASS();
+}
+
+TEST test_bsg_calculate_crumb_index(void) {
+  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(0, 0));
+
+  // zero offset
+  ASSERT_EQ(24, bsg_calculate_v1_crumb_index(24, 0));
+  ASSERT_EQ(25, bsg_calculate_v1_crumb_index(25, 0));
+  ASSERT_EQ(26, bsg_calculate_v1_crumb_index(26, 0));
+  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(30, 0));
+
+  // offset
+  ASSERT_EQ(15, bsg_calculate_v1_crumb_index(0, 15));
+  ASSERT_EQ(15, bsg_calculate_v1_crumb_index(5, 10));
+  ASSERT_EQ(24, bsg_calculate_v1_crumb_index(10, 14));
+  ASSERT_EQ(25, bsg_calculate_v1_crumb_index(10, 15));
+  ASSERT_EQ(26, bsg_calculate_v1_crumb_index(11, 15));
+  ASSERT_EQ(29, bsg_calculate_v1_crumb_index(14, 15));
+  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(20, 10));
+  ASSERT_EQ(1, bsg_calculate_v1_crumb_index(20, 11));
+  ASSERT_EQ(4, bsg_calculate_v1_crumb_index(23, 11));
   PASS();
 }
 
 SUITE(breadcrumbs) {
   RUN_TEST(test_add_breadcrumb);
   RUN_TEST(test_add_breadcrumbs_over_max);
+  RUN_TEST(test_bsg_calculate_total_crumbs);
+  RUN_TEST(test_bsg_calculate_start_index);
+  RUN_TEST(test_bsg_calculate_crumb_index);
 }

@@ -3,6 +3,10 @@
 
 #include "event.h"
 
+#ifndef V1_BUGSNAG_CRUMBS_MAX
+#define V1_BUGSNAG_CRUMBS_MAX 30
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -118,7 +122,7 @@ typedef struct {
     // Breadcrumbs are a ring; the first index moves as the
     // structure is filled and replaced.
     int crumb_first_index;
-    bugsnag_breadcrumb_v1 breadcrumbs[BUGSNAG_CRUMBS_MAX];
+    bugsnag_breadcrumb_v1 breadcrumbs[V1_BUGSNAG_CRUMBS_MAX];
 
     char context[64];
     bugsnag_severity severity;
@@ -140,7 +144,7 @@ typedef struct {
     // Breadcrumbs are a ring; the first index moves as the
     // structure is filled and replaced.
     int crumb_first_index;
-    bugsnag_breadcrumb_v1 breadcrumbs[BUGSNAG_CRUMBS_MAX];
+    bugsnag_breadcrumb_v1 breadcrumbs[V1_BUGSNAG_CRUMBS_MAX];
 
     char context[64];
     bugsnag_severity severity;
