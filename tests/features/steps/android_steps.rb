@@ -198,6 +198,11 @@ Then("the request is valid for the error reporting API version {string} for the 
   }
 end
 
+Then("the event has {int} breadcrumbs") do |expected_count|
+  value = Server.current_request[:body]["events"].first["breadcrumbs"]
+  fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
+end
+
 Then(/^the event has a "(.+)" breadcrumb with the message "(.+)"(?: for request (\d+))?$/) do |type, message, request_index|
   value = read_key_path(Server.current_request[:body], "events.0.breadcrumbs")
   found = false

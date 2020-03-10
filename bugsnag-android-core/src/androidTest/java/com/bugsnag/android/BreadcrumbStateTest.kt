@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 
 import androidx.test.filters.SmallTest
 import com.bugsnag.android.BugsnagTestUtils.generateClient
+import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 
 import org.junit.After
 import org.junit.Before
@@ -19,7 +20,6 @@ class BreadcrumbStateTest {
     @Before
     fun setUp() {
         breadcrumbState = BreadcrumbState(20, CallbackState(), NoopLogger)
-        client = generateClient()
     }
 
     @After
@@ -32,6 +32,7 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testClientMethods() {
+        client = generateClient()
         client!!.leaveBreadcrumb("Hello World")
         val store = client!!.breadcrumbState.store
         var count = 0

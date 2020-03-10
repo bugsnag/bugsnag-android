@@ -70,11 +70,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     private final SessionStore sessionStore;
 
-    final SystemBroadcastReceiver systemBroadcastReceiver;
     final SessionTracker sessionTracker;
 
-    final ActivityBreadcrumbCollector activityBreadcrumbCollector;
-    final SessionLifecycleCallback sessionLifecycleCallback;
+    private final SystemBroadcastReceiver systemBroadcastReceiver;
+    private final ActivityBreadcrumbCollector activityBreadcrumbCollector;
+    private final SessionLifecycleCallback sessionLifecycleCallback;
+
     private final SharedPreferences sharedPrefs;
 
     private final Connectivity connectivity;
@@ -121,8 +122,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 Map<String, Object> data = new HashMap<>();
                 data.put("hasConnection", hasConnection);
                 data.put("networkState", networkState);
-                leaveBreadcrumb("Connectivity change", BreadcrumbType.STATE, data);
-
+                leaveAutoBreadcrumb("Connectivity change", BreadcrumbType.STATE, data);
                 if (hasConnection) {
                     eventStore.flushAsync();
                 }
@@ -140,14 +140,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         int maxBreadcrumbs = immutableConfig.getMaxBreadcrumbs();
         breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
 
-        // filter out any disabled breadcrumb types
-        addOnBreadcrumb(new OnBreadcrumbCallback() {
-            @Override
-            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                return immutableConfig.shouldRecordBreadcrumbType(breadcrumb.getType());
-            }
-        });
-
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         contextState = new ContextState();
@@ -156,7 +148,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         sessionStore = new SessionStore(appContext, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
-        systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
         metadataState = copyMetadataState(configuration);
 
         // Set up and collect constant app and device diagnostics
@@ -183,23 +174,32 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
                 Environment.getDataDirectory(), logger);
 
-        activityBreadcrumbCollector = new ActivityBreadcrumbCollector(
-                new Function2<String, Map<String, ? extends Object>, Unit>() {
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public Unit invoke(String activity, Map<String, ?> metadata) {
-                        leaveBreadcrumb(activity, BreadcrumbType.STATE,
-                                (Map<String, Object>) metadata);
-                        return null;
-                    }
-                }
-        );
-        sessionLifecycleCallback = new SessionLifecycleCallback(sessionTracker);
 
         if (appContext instanceof Application) {
+
             Application application = (Application) appContext;
+            sessionLifecycleCallback = new SessionLifecycleCallback(sessionTracker);
             application.registerActivityLifecycleCallbacks(sessionLifecycleCallback);
-            application.registerActivityLifecycleCallbacks(activityBreadcrumbCollector);
+
+            if (immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.STATE)) {
+                this.activityBreadcrumbCollector = new ActivityBreadcrumbCollector(
+                    new Function2<String, Map<String, ? extends Object>, Unit>() {
+                        @SuppressWarnings("unchecked")
+                        @Override
+                        public Unit invoke(String activity, Map<String, ?> metadata) {
+                            leaveBreadcrumb(activity, BreadcrumbType.STATE,
+                                (Map<String, Object>) metadata);
+                            return null;
+                        }
+                    }
+                );
+                application.registerActivityLifecycleCallbacks(activityBreadcrumbCollector);
+            } else {
+                this.activityBreadcrumbCollector = null;
+            }
+        } else {
+            this.activityBreadcrumbCollector = null;
+            this.sessionLifecycleCallback = null;
         }
 
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
@@ -216,16 +216,23 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
 
         // register a receiver for automatic breadcrumbs
-        try {
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    IntentFilter intentFilter = SystemBroadcastReceiver.getIntentFilter();
-                    appContext.registerReceiver(systemBroadcastReceiver, intentFilter);
-                }
-            });
-        } catch (RejectedExecutionException ex) {
-            logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
+        final SystemBroadcastReceiver systemBroadcastReceiver =
+            new SystemBroadcastReceiver(this, logger);
+        if (systemBroadcastReceiver.getActions().size() > 0) {
+            try {
+                Async.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        appContext.registerReceiver(systemBroadcastReceiver,
+                            systemBroadcastReceiver.getIntentFilter());
+                    }
+                });
+            } catch (RejectedExecutionException ex) {
+                logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
+            }
+            this.systemBroadcastReceiver = systemBroadcastReceiver;
+        } else {
+            this.systemBroadcastReceiver = null;
         }
         connectivity.registerForNetworkChanges();
 
@@ -234,7 +241,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // Flush any on-disk errors
         eventStore.flushOnLaunch();
         Map<String, Object> data = Collections.emptyMap();
-        leaveBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
+        leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
 
         // finally, initialise plugins
         loadPlugins(configuration);
@@ -313,7 +320,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                         Map<String, Object> data = new HashMap<>();
                         data.put("from", oldOrientation);
                         data.put("to", newOrientation);
-                        leaveBreadcrumb("Orientation change", BreadcrumbType.STATE, data);
+                        leaveAutoBreadcrumb("Orientation change", BreadcrumbType.STATE, data);
                         clientObservable.postOrientationChange(newOrientation);
                         return null;
                     }
@@ -792,7 +799,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
      *
-     * @param message     A short label
+     * @param message  A short label
      * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
      */
@@ -803,6 +810,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         } else {
             logNull("leaveBreadcrumb");
+        }
+    }
+
+    /**
+     * Intended for internal use only - leaves a breadcrumb if the type is enabled for automatic
+     * breadcrumbs.
+     *
+     * @param message  A short label
+     * @param type     A category for the breadcrumb
+     * @param metadata Additional diagnostic information about the app environment
+     */
+    void leaveAutoBreadcrumb(@NonNull String message,
+                             @NonNull BreadcrumbType type,
+                             @NonNull Map<String, Object> metadata) {
+        if (immutableConfig.shouldRecordBreadcrumbType(type)) {
+            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         }
     }
 
