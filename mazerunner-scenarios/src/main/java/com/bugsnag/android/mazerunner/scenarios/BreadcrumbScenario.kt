@@ -22,7 +22,7 @@ internal class BreadcrumbScenario(config: Configuration,
         super.run()
         Bugsnag.leaveBreadcrumb("Hello Breadcrumb!")
         val data = Collections.singletonMap("Foo", "Bar" as Any)
-        Bugsnag.leaveBreadcrumb("Another Breadcrumb", BreadcrumbType.USER, data)
+        Bugsnag.leaveBreadcrumb("Another Breadcrumb", data, BreadcrumbType.USER)
         Bugsnag.notify(generateException())
     }
 

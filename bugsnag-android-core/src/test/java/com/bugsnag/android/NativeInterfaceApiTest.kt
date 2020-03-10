@@ -163,7 +163,7 @@ internal class NativeInterfaceApiTest {
     @Test
     fun leaveBreadcrumb() {
         NativeInterface.leaveBreadcrumb("wow", BreadcrumbType.LOG)
-        verify(client, times(1)).leaveBreadcrumb("wow", BreadcrumbType.LOG, emptyMap())
+        verify(client, times(1)).leaveBreadcrumb("wow", emptyMap(), BreadcrumbType.LOG)
     }
 
     @Test
@@ -171,8 +171,8 @@ internal class NativeInterfaceApiTest {
         NativeInterface.leaveBreadcrumb("wow", "log", mapOf(Pair("foo", "bar")))
         verify(client, times(1)).leaveBreadcrumb(
             "wow",
-            BreadcrumbType.LOG,
-            mapOf(Pair("foo", "bar"))
+            mapOf(Pair("foo", "bar")),
+            BreadcrumbType.LOG
         )
     }
 

@@ -42,8 +42,8 @@ class LeaveBreadcrumbTest {
 
         verify(client, times(1)).leaveBreadcrumb(
             eq("JS: invoked API"),
-            eq(BreadcrumbType.REQUEST),
-            eq(metadata)
+            eq(metadata),
+            eq(BreadcrumbType.REQUEST)
         )
     }
 
@@ -57,8 +57,8 @@ class LeaveBreadcrumbTest {
 
         verify(client, times(1)).leaveBreadcrumb(
             eq("JS: invoked API"),
-            eq(BreadcrumbType.REQUEST),
-            eq(emptyMap())
+            eq(emptyMap()),
+            eq(BreadcrumbType.REQUEST)
         )
     }
 }

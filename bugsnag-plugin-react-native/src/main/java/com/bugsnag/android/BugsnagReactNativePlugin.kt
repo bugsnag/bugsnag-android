@@ -57,7 +57,7 @@ class BugsnagReactNativePlugin : Plugin {
         val type = BreadcrumbType.valueOf((map["type"] as String).toUpperCase(Locale.US))
         val obj = map["metadata"] ?: emptyMap<String, Any>()
         @Suppress("UNCHECKED_CAST")
-        client.leaveBreadcrumb(msg, type, obj as Map<String, Any>)
+        client.leaveBreadcrumb(msg, obj as Map<String, Any>, type)
     }
 
     fun startSession() {

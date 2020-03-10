@@ -181,7 +181,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testLeaveBreadcrumbSendsMessage() {
-        client.leaveBreadcrumb("Rollback", BreadcrumbType.LOG, new HashMap<String, Object>());
+        client.leaveBreadcrumb("Rollback", new HashMap<String, Object>(), BreadcrumbType.LOG);
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.LOG, crumb.getType());
         assertEquals("Rollback", crumb.getMessage());

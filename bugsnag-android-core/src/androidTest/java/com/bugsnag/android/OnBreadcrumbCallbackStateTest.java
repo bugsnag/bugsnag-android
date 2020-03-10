@@ -12,7 +12,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -110,7 +109,7 @@ public class OnBreadcrumbCallbackStateTest {
         });
 
         client.leaveBreadcrumb("Foo");
-        client.leaveBreadcrumb("Hello", BreadcrumbType.USER, new HashMap<String, Object>());
+        client.leaveBreadcrumb("Hello", new HashMap<String, Object>(), BreadcrumbType.USER);
         assertEquals(5, count[0]);
     }
 

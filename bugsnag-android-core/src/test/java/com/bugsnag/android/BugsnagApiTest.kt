@@ -151,8 +151,8 @@ class BugsnagApiTest {
 
     @Test
     fun leaveBreadcrumb1() {
-        Bugsnag.leaveBreadcrumb("whoops", BreadcrumbType.LOG, mapOf())
-        verify(client, times(1)).leaveBreadcrumb("whoops", BreadcrumbType.LOG, mapOf())
+        Bugsnag.leaveBreadcrumb("whoops", mapOf(), BreadcrumbType.LOG)
+        verify(client, times(1)).leaveBreadcrumb("whoops", mapOf(), BreadcrumbType.LOG)
     }
 
     @Test

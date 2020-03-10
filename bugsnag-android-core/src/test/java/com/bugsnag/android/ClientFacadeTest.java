@@ -20,9 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -439,27 +437,27 @@ public class ClientFacadeTest {
     @Test
     public void leaveComplexBreadcrumbValid() {
         HashMap<String, Object> metadata = new HashMap<>();
-        client.leaveBreadcrumb("foo", BreadcrumbType.NAVIGATION, metadata);
+        client.leaveBreadcrumb("foo", metadata, BreadcrumbType.NAVIGATION);
         verify(breadcrumbState, times(1)).add(any(Breadcrumb.class));
     }
 
     @Test
     public void leaveComplexBreadcrumbInvalid1() {
         HashMap<String, Object> metadata = new HashMap<>();
-        client.leaveBreadcrumb(null, BreadcrumbType.NAVIGATION, metadata);
+        client.leaveBreadcrumb(null, metadata, BreadcrumbType.NAVIGATION);
         verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
     }
 
     @Test
     public void leaveComplexBreadcrumbInvalid2() {
         HashMap<String, Object> metadata = new HashMap<>();
-        client.leaveBreadcrumb("foo", null, metadata);
+        client.leaveBreadcrumb("foo", metadata, null);
         verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
     }
 
     @Test
     public void leaveComplexBreadcrumbInvalid3() {
-        client.leaveBreadcrumb("foo", BreadcrumbType.NAVIGATION, null);
+        client.leaveBreadcrumb("foo", null, BreadcrumbType.NAVIGATION);
         verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
     }
 }

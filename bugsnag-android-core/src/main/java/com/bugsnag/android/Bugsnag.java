@@ -284,15 +284,14 @@ public final class Bugsnag {
     /**
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
-     *
      * @param message     A short label
-     * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
+     * @param type     A category for the breadcrumb
      */
     public static void leaveBreadcrumb(@NonNull String message,
-                                       @NonNull BreadcrumbType type,
-                                       @NonNull Map<String, Object> metadata) {
-        getClient().leaveBreadcrumb(message, type, metadata);
+                                       @NonNull Map<String, Object> metadata,
+                                       @NonNull BreadcrumbType type) {
+        getClient().leaveBreadcrumb(message, metadata, type);
     }
 
     /**
