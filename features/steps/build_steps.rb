@@ -202,3 +202,14 @@ Then(/^the payload field "(.+)" is greater than (\d+)(?: for request (\d+))?$/) 
   observed_value = read_key_path(find_request(request_index)[:body], field_path)
   assert(observed_value > int_value)
 end
+
+Then(/^the event has a "(.+)" breadcrumb with the message "(.+)"(?: for request (\d+))?$/) do |type, message, request_index|
+  value = read_key_path(find_request(get_request_index(request_index))[:body], "events.0.breadcrumbs")
+  found = false
+  value.each do |crumb|
+    if crumb["type"] == type and crumb["name"] == message then
+      found = true
+    end
+  end
+  fail("No breadcrumb matched: #{value}") unless found
+end

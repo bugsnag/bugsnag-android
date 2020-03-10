@@ -197,3 +197,14 @@ Then("the request is valid for the error reporting API version {string} for the 
     And each element in payload field "events" has "exceptions"
   }
 end
+
+Then(/^the event has a "(.+)" breadcrumb with the message "(.+)"(?: for request (\d+))?$/) do |type, message, request_index|
+  value = read_key_path(Server.current_request[:body], "events.0.breadcrumbs")
+  found = false
+  value.each do |crumb|
+    if crumb["type"] == type and crumb["name"] == message then
+      found = true
+    end
+  end
+  fail("No breadcrumb matched: #{value}") unless found
+end
