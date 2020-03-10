@@ -68,7 +68,7 @@ task validatePublishOptions() {
 }
 
 tasks.whenTaskAdded { task ->
-    if ((task.name == 'assembleRelease') || (task.name == 'publish') || (task.name == 'bintrayUpload')) {
+    if ((task.name == 'publish') || (task.name == 'bintrayUpload')) {
         task.dependsOn validatePublishOptions
     }
 }
