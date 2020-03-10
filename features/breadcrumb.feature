@@ -22,9 +22,8 @@ Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs ar
     And the request is a valid for the error reporting API
     And the event has 1 breadcrumbs
 
-Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs are disabled
+Scenario: An automatic breadcrumb is sent in report when the appropriate type is enabled
     When I run "BreadcrumbAutoScenario"
-    And I relauch the app
     Then I should receive a request
     And the request is a valid for the error reporting API
-    And the event has a "STATE" breadcrumb with message "Bugsnag loaded"
+    And the event has a "state" breadcrumb with the message "Bugsnag loaded"

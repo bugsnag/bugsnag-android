@@ -18,13 +18,12 @@ Scenario: Manually added breadcrumbs are sent in report
 
 Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs are disabled
     When I run "BreadcrumbDisabledScenario"
-    Then I should receive a request
-    And the request is a valid for the error reporting API
+    And I wait to receive a request
+    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event has 1 breadcrumbs
 
-Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs are disabled
+Scenario: An automatic breadcrumb is sent in report when the appropriate type is enabled
     When I run "BreadcrumbAutoScenario"
-    And I relauch the app
-    Then I should receive a request
-    And the request is a valid for the error reporting API
-    And the event has a "STATE" breadcrumb with message "Bugsnag loaded"
+    And I wait to receive a request
+    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the event has a "state" breadcrumb with the message "Bugsnag loaded"
