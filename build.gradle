@@ -16,7 +16,6 @@ buildscript {
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC16"
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:4.5.2"
     }
 }
 plugins {
