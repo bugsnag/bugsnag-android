@@ -36,7 +36,7 @@ class SystemBroadcastReceiverTest {
         receiver.onReceive(context, intent)
 
         val metadata = mapOf(Pair("Intent Action", "android.intent.action.AIRPLANE_MODE"))
-        verify(client, times(1)).leaveBreadcrumb("AIRPLANE_MODE", BreadcrumbType.STATE, metadata)
+        verify(client, times(1)).leaveBreadcrumb("AIRPLANE_MODE", metadata, BreadcrumbType.STATE)
     }
 
     @Test
@@ -51,7 +51,7 @@ class SystemBroadcastReceiverTest {
         receiver.onReceive(context, intent)
 
         val metadata = mapOf(Pair("Intent Action", "SomeTitle"), Pair("foo", "[bar]"))
-        verify(client, times(1)).leaveBreadcrumb("SomeTitle", BreadcrumbType.STATE, metadata)
+        verify(client, times(1)).leaveBreadcrumb("SomeTitle", metadata, BreadcrumbType.STATE)
     }
 
     @Test

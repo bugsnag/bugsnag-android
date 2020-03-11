@@ -187,8 +187,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                         @SuppressWarnings("unchecked")
                         @Override
                         public Unit invoke(String activity, Map<String, ?> metadata) {
-                            leaveBreadcrumb(activity, BreadcrumbType.STATE,
-                                (Map<String, Object>) metadata);
+                            leaveBreadcrumb(activity, (Map<String, Object>) metadata,
+                                    BreadcrumbType.STATE);
                             return null;
                         }
                     }
@@ -798,14 +798,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     /**
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
-     *
      * @param message  A short label
-     * @param type     A category for the breadcrumb
      * @param metadata Additional diagnostic information about the app environment
+     * @param type     A category for the breadcrumb
      */
     public void leaveBreadcrumb(@NonNull String message,
-                                @NonNull BreadcrumbType type,
-                                @NonNull Map<String, Object> metadata) {
+                                @NonNull Map<String, Object> metadata,
+                                @NonNull BreadcrumbType type) {
         if (message != null && type != null && metadata != null) {
             breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         } else {

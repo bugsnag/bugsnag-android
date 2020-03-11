@@ -65,7 +65,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
             if (type == null) {
                 type = BreadcrumbType.STATE;
             }
-            client.leaveBreadcrumb(shortAction, type, meta);
+            client.leaveBreadcrumb(shortAction, meta, type);
 
         } catch (Exception ex) {
             logger.w("Failed to leave breadcrumb in SystemBroadcastReceiver: "

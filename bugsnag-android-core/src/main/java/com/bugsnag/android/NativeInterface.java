@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Used as the entry point for native code to allow proguard to obfuscate other areas if needed
@@ -181,7 +180,7 @@ public class NativeInterface {
         if (name == null) {
             return;
         }
-        getClient().leaveBreadcrumb(name, type, new HashMap<String, Object>());
+        getClient().leaveBreadcrumb(name, new HashMap<String, Object>(), type);
     }
 
     /**
@@ -193,7 +192,7 @@ public class NativeInterface {
             return;
         }
         String name = new String(nameBytes, UTF8Charset);
-        getClient().leaveBreadcrumb(name, type, new HashMap<String, Object>());
+        getClient().leaveBreadcrumb(name, new HashMap<String, Object>(), type);
     }
 
     /**
@@ -203,7 +202,7 @@ public class NativeInterface {
                                        @NonNull String type,
                                        @NonNull Map<String, Object> metadata) {
         String typeName = type.toUpperCase(Locale.US);
-        getClient().leaveBreadcrumb(message, BreadcrumbType.valueOf(typeName), metadata);
+        getClient().leaveBreadcrumb(message, metadata, BreadcrumbType.valueOf(typeName));
     }
 
     /**
