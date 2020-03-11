@@ -34,14 +34,6 @@
       android:name="com.bugsnag.android.API_KEY"
       android:value="your-api-key" />
 
-    <meta-data
-      android:name="com.bugsnag.android.AUTO_DETECT_ANRS"
-      android:value="true" />
-
-    <meta-data
-      android:name="com.bugsnag.android.AUTO_DETECT_NDK_CRASHES"
-      android:value="true" />
-
   </application>
 
 </manifest>
