@@ -28,7 +28,7 @@ public class CXXGetJavaDataScenario extends Scenario {
         config.addMetadata("notData", "vals", "passMetaData");
         config.setAppVersion("passAppVersion");
         config.setContext("passContext");
-        config.setUser("passUser", "passUser", "passUser");
+        config.setUser("passUserId", "passUserEmail", "passUserName");
     }
 
     @Override

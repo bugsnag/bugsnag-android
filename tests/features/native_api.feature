@@ -260,6 +260,8 @@ Feature: Native API
         And the event "unhandled" is true
         And the event "metaData.data.context" equals "passContext"
         And the event "metaData.data.appVersion" equals "passAppVersion"
-        And the event "metaData.data.user" equals "passUser"
+        And the event "metaData.data.userName" equals "passUserName"
+        And the event "metaData.data.userEmail" equals "passUserEmail"
+        And the event "metaData.data.userId" equals "passUserId"
         And the event "metaData.data.metadata" equals "passMetaData"
         And the event "metaData.data.device" is not null

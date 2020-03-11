@@ -24,9 +24,11 @@ Feature: Native on error callbacks are invoked
     And the request payload contains a completed unhandled native report
     And the event "context" equals "Some custom context"
 
-  Scenario: on_error returning false is removed
+  Scenario: Removing on_error callback
     When I run "CXXRemoveOnErrorScenario" and relaunch the app
     And I configure Bugsnag for "CXXRemoveOnErrorScenario"
     And I wait to receive a request
-    Then the request payload contains a completed unhandled native report
-    And the event "context" equals "CXXRemoveOnErrorScenario"
+    Then the request payload contains a completed handled native report
+    And the event "user.id" equals "default"
+    And the event "user.email" equals "default@default.df"
+    And the event "user.name" equals "default"
