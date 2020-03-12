@@ -39,9 +39,14 @@ class BugsnagReactNativePlugin : Plugin {
     override fun unload() {}
 
     @Suppress("unused")
-    fun configure(jsVersion: String): Map<String, Any?> {
+    fun configure(env: Map<String, Any?>?): Map<String, Any?> {
+        requireNotNull(env)
+        val jsVersion = env["notifierVersion"] as String
+        /* val reactNativeVersion = env["reactNativeVersion"] as String
+        val engine = env["engine"] as String */
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
+        // TODO use reactNativeVersion and engine in runtimeVersions
         updateNotifierInfo(jsVersion)
         return map
     }
