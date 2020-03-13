@@ -49,6 +49,7 @@ class ConfigSerializer implements MapSerializer<ImmutableConfig> {
         map.put("anrs", errorTypes.getAnrs());
         map.put("ndkCrashes", errorTypes.getNdkCrashes());
         map.put("unhandledExceptions", errorTypes.getUnhandledExceptions());
+        map.put("unhandledRejections", errorTypes.getUnhandledRejections());
         return map;
     }
 

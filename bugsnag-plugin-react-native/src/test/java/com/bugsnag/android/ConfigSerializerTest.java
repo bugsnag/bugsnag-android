@@ -53,6 +53,7 @@ public class ConfigSerializerTest {
         assertTrue((Boolean) errorTypes.get("anrs"));
         assertFalse((Boolean) errorTypes.get("ndkCrashes"));
         assertTrue((Boolean) errorTypes.get("unhandledExceptions"));
+        assertTrue((Boolean) errorTypes.get("unhandledRejections"));
 
         Map<String, Object> endpoints = (Map<String, Object>) map.get("endpoints");
         assertEquals("https://notify.bugsnag.com", endpoints.get("notify"));
