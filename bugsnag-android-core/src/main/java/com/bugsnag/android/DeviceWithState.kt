@@ -12,6 +12,7 @@ class DeviceWithState internal constructor(
     id: String?,
     locale: String?,
     totalMemory: Long?,
+    runtimeVersions: MutableMap<String, Any>,
 
     /**
      * The number of free bytes of storage available on the device
@@ -32,7 +33,7 @@ class DeviceWithState internal constructor(
      * The timestamp on the device when the event occurred
      */
     var time: Date?
-) : Device(buildInfo, buildInfo.cpuAbis, jailbroken, id, locale, totalMemory) {
+) : Device(buildInfo, buildInfo.cpuAbis, jailbroken, id, locale, totalMemory, runtimeVersions) {
 
     override fun serializeFields(writer: JsonStream) {
         super.serializeFields(writer)

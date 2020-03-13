@@ -28,7 +28,14 @@ class BugsnagReactNativePlugin : Plugin {
         client.logger.i("Initialized React Native Plugin")
     }
 
-    private fun updateNotifierInfo(jsVersion: String) {
+    private fun updateNotifierInfo(env: Map<String, Any?>) {
+        val reactNativeVersion = env["reactNativeVersion"] as String?
+        reactNativeVersion?.let { client.addRuntimeVersionInfo("reactNativeVersion", it) }
+
+        val engine = env["engine"] as String?
+        engine?.let { client.addRuntimeVersionInfo("engine", it) }
+
+        val jsVersion = env["notifierVersion"] as String
         val notifier = client.notifier
         notifier.name = "Bugsnag React Native"
         notifier.url = "https://github.com/bugsnag/bugsnag-js"
@@ -41,13 +48,10 @@ class BugsnagReactNativePlugin : Plugin {
     @Suppress("unused")
     fun configure(env: Map<String, Any?>?): Map<String, Any?> {
         requireNotNull(env)
-        val jsVersion = env["notifierVersion"] as String
-        /* val reactNativeVersion = env["reactNativeVersion"] as String
-        val engine = env["engine"] as String */
+        updateNotifierInfo(env)
+
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
-        // TODO use reactNativeVersion and engine in runtimeVersions
-        updateNotifierInfo(jsVersion)
         return map
     }
 

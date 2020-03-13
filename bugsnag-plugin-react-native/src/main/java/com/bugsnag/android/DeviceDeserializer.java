@@ -31,6 +31,7 @@ class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
                 MapUtils.<String>getOrNull(map, "id"),
                 MapUtils.<String>getOrNull(map, "locale"),
                 MapUtils.getLong(map, "totalMemory"),
+                MapUtils.<Map<String, Object>>getOrNull(map, "runtimeVersions"),
                 MapUtils.getLong(map, "freeDisk"),
                 MapUtils.getLong(map, "freeMemory"),
                 MapUtils.<String>getOrNull(map, "orientation"),

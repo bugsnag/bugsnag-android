@@ -32,7 +32,7 @@ class DeviceDeserializerTest {
         map["brand"] = "pixel"
         map["osVersion"] = "8.1"
         map["apiLevel"] = 27
-        map["runtimeVersions"] = mapOf(Pair("apiLevel", 27))
+        map["runtimeVersions"] = mapOf(Pair("androidApiLevel", 27), Pair("osBuild", "bulldog"))
         map["freeDisk"] = 4092340985
         map["freeMemory"] = 50923422234
         map["orientation"] = "portrait"
