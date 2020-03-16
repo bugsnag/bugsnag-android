@@ -460,4 +460,10 @@ public class ClientFacadeTest {
         client.leaveBreadcrumb("foo", null, BreadcrumbType.NAVIGATION);
         verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
     }
+
+    @Test
+    public void addRuntimeVersionInfo() {
+        client.addRuntimeVersionInfo("foo", "bar");
+        verify(deviceDataCollector, times(1)).addRuntimeVersionInfo("foo", "bar");
+    }
 }

@@ -888,6 +888,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         appDataCollector.setCodeBundleId(codeBundleId);
     }
 
+    void addRuntimeVersionInfo(@NonNull String key, @NonNull String value) {
+        deviceDataCollector.addRuntimeVersionInfo(key, value);
+    }
+
     void close() {
         connectivity.unregisterForNetworkChanges();
     }

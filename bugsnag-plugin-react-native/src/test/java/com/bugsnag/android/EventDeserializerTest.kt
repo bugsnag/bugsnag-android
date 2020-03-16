@@ -36,7 +36,7 @@ class EventDeserializerTest {
         map["errors"] = listOf(errorMap())
         map["metadata"] = metadataMap()
         map["app"] = mapOf(Pair("id", "app-id"))
-        map["device"] = mapOf(Pair("id", "device-id"))
+        map["device"] = mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
 
         `when`(client.config).thenReturn(TestData.generateConfig())
         `when`(client.getLogger()).thenReturn(object : Logger {})

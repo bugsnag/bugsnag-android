@@ -2,9 +2,18 @@ package com.bugsnag.android;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 
 final class BugsnagTestUtils {
+
+    static HashMap<String, Object> runtimeVersions = new HashMap<>();
+
+    static {
+        runtimeVersions.put("osBuild", "bulldog");
+        runtimeVersions.put("androidApiLevel", 24);
+    }
 
     static Configuration generateConfiguration() {
         Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
@@ -31,13 +40,15 @@ final class BugsnagTestUtils {
 
     static Device generateDevice() {
         DeviceBuildInfo buildInfo = generateDeviceBuildInfo();
-        return new Device(buildInfo, new String[]{}, null, null, null, 10923250000L);
+        return new Device(buildInfo, new String[]{}, null, null, null, 10923250000L,
+                runtimeVersions);
     }
 
     static DeviceWithState generateDeviceWithState() {
         DeviceBuildInfo buildInfo = generateDeviceBuildInfo();
         return new DeviceWithState(buildInfo,null, null, null,
-                109230923452L, 22234423124L, 92340255592L, "portrait", new Date(0));
+                109230923452L, runtimeVersions, 22234423124L,
+                92340255592L, "portrait", new Date(0));
     }
 
     public static Delivery generateDelivery() {

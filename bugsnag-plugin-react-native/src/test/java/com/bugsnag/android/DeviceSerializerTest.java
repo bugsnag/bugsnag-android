@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,9 @@ public class DeviceSerializerTest {
      */
     @Before
     public void setup() {
+        Map<String, Object> runtimeVersions = new HashMap<>();
+        runtimeVersions.put("androidApiLevel", 27);
+        runtimeVersions.put("osBuild", "bulldog");
         device = new DeviceWithState(
                 new DeviceBuildInfo(
                         "google",
@@ -41,6 +45,7 @@ public class DeviceSerializerTest {
                 "fa02",
                 "yue",
                 50923409234L,
+                runtimeVersions,
                 20923423434L,
                 23409662345L,
                 "portrait",
