@@ -5,34 +5,34 @@ import org.junit.Test
 
 class ApiKeyValidationTest {
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testEmptyApiKey() {
         Configuration("")
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testWrongSizeApiKey() {
         Configuration("abfe05f")
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testNonHexApiKey() {
         Configuration("yej0492j55z92z2p")
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testSettingEmptyApiKey() {
         val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         config.apiKey = ""
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testSettingWrongSizeApiKey() {
         val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         config.apiKey = "abfe05f"
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testSettingNonHexApiKey() {
         val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         config.apiKey = "yej0492j55z92z2p"

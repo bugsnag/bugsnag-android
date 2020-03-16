@@ -47,7 +47,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
 
     private void validateApiKey(String value) {
         if (value == null || !value.matches(API_KEY_REGEX)) {
-            throw new IllegalArgumentException("You must provide a valid Bugsnag API key");
+            DebugLogger.INSTANCE.w("You must provide a valid Bugsnag API key");
         }
     }
 
