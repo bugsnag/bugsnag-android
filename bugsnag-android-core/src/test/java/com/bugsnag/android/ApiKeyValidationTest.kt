@@ -5,7 +5,7 @@ import org.junit.Test
 
 class ApiKeyValidationTest {
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun testEmptyApiKey() {
         Configuration("")
     }
@@ -20,7 +20,7 @@ class ApiKeyValidationTest {
         Configuration("yej0492j55z92z2p")
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun testSettingEmptyApiKey() {
         val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         config.apiKey = ""

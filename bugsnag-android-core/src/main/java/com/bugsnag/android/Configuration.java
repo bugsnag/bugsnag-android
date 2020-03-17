@@ -46,10 +46,11 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     }
 
     private void validateApiKey(String value) {
-        if (value == null || !value.matches(API_KEY_REGEX)) {
-            if (value == null) {
-                value = "";
-            }
+        if (Intrinsics.isEmpty(value)) {
+            throw new IllegalArgumentException("No Bugsnag API Key set");
+        }
+
+        if (!value.matches(API_KEY_REGEX)) {
             DebugLogger.INSTANCE.w(String.format("Invalid configuration. apiKey should be a "
                     + "32-character hexademical string, got %s", value));
         }
