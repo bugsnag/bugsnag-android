@@ -13,10 +13,9 @@ class ErrorTypes(
     /**
      * Determines whether NDK crashes such as signals and exceptions should be reported by bugsnag.
      *
-     * If you are using bugsnag-android this flag is false by default; if you are using
-     * bugsnag-android-ndk this flag is true by default.
+     * This flag is true by default.
      */
-    var ndkCrashes: Boolean = false,
+    var ndkCrashes: Boolean = true,
 
     /**
      * Sets whether Bugsnag should automatically capture and report unhandled errors.

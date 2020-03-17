@@ -51,7 +51,7 @@ public class ConfigSerializerTest {
 
         Map<String, Object> errorTypes = (Map<String, Object>) map.get("enabledErrorTypes");
         assertTrue((Boolean) errorTypes.get("anrs"));
-        assertFalse((Boolean) errorTypes.get("ndkCrashes"));
+        assertTrue((Boolean) errorTypes.get("ndkCrashes"));
         assertTrue((Boolean) errorTypes.get("unhandledExceptions"));
         assertTrue((Boolean) errorTypes.get("unhandledRejections"));
 

@@ -8,7 +8,7 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     private var user = User()
 
     @JvmField
-    internal val callbackState: CallbackState
+    internal val callbackState: CallbackState = CallbackState()
 
     @JvmField
     internal val metadataState: MetadataState = MetadataState()
@@ -40,20 +40,6 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
             metadataState.metadata.setRedactedKeys(value)
             field = value
         }
-
-    init {
-        this.callbackState = CallbackState()
-
-        enabledErrorTypes.ndkCrashes = try {
-            // check if AUTO_DETECT_NDK_CRASHES has been set in bugsnag-android
-            // or bugsnag-android-ndk
-            val clz = Class.forName("com.bugsnag.android.BuildConfig")
-            val field = clz.getDeclaredField("AUTO_DETECT_NDK_CRASHES")
-            field.getBoolean(null)
-        } catch (exc: Throwable) {
-            false
-        }
-    }
 
     var discardClasses: Set<String> = emptySet()
     var enabledReleaseStages: Set<String>? = null

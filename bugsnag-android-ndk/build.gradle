@@ -6,10 +6,6 @@ apply plugin: "com.android.library"
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
-
-    buildTypes.each { buildType ->
-        buildType.buildConfigField("boolean", "AUTO_DETECT_NDK_CRASHES", "true")
-    }
 }
 
 dependencies {
