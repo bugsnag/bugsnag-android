@@ -10,6 +10,11 @@ libraries across platforms, making the user interface more consistent, and imple
 Please see the [upgrade guide](UPGRADING.md) for details of all the changes and instructions on
 how to upgrade.
 
+### Bug fixes
+
+* Remove unnecessary uses-library android.test.runner from AndroidManifest
+  [#783](https://github.com/bugsnag/bugsnag-android/pull/783)
+
 ## 4.22.3 (2020-01-22)
 
 * Allow disabling previous signal handler invocation for Unity ANRs
