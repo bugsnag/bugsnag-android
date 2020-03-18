@@ -52,7 +52,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
 
         if (!value.matches(API_KEY_REGEX)) {
             DebugLogger.INSTANCE.w(String.format("Invalid configuration. apiKey should be a "
-                    + "32-character hexademical string, got %s", value));
+                    + "32-character hexademical string, got \"%s\"", value));
         }
     }
 
