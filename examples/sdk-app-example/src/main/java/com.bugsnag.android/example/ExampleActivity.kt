@@ -123,7 +123,7 @@ class ExampleActivity : AppCompatActivity() {
         Bugsnag.leaveBreadcrumb("LoginButtonClick")
 
         val metadata = mapOf(Pair("reason", "incorrect password"))
-        Bugsnag.leaveBreadcrumb("WebAuthFailure", BreadcrumbType.ERROR, metadata)
+        Bugsnag.leaveBreadcrumb("WebAuthFailure", metadata, BreadcrumbType.ERROR)
 
         val e = RuntimeException("Error Report with Breadcrumbs")
         Bugsnag.notify(e)
