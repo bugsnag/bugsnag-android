@@ -11,7 +11,7 @@ Scenario: Load configuration initialised from the Manifest
     And the event "metaData.test.foo" equals "bar"
     And the event "metaData.test.filter_me" equals "[REDACTED]"
     And the event "app.versionCode" equals 753
-    #And the event "app.buildUUID" equals "test-7.5.3"
+    And the event "app.buildUUID" equals "test-7.5.3"
     And the event "app.version" equals "7.5.3"
     And the event "app.type" equals "test"
     And the payload field "events.0.threads" is a non-empty array
