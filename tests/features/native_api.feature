@@ -212,3 +212,56 @@ Feature: Native API
         And the event "metaData.fruit.ripe" is true
         And the event "metaData.fruit.counters" equals 47
         And the event "unhandled" is true
+
+    Scenario: Use the NDK methods without "env" after calling "bugsnag_start"
+        When I run "CXXStartScenario"
+        And I wait to receive a request
+        Then the request payload contains a completed handled native report
+        And the event "unhandled" is false
+        And the exception "errorClass" equals "Start scenario"
+        And the exception "message" equals "Testing env"
+        And the event "severity" equals "info"
+        And the event has a "log" breadcrumb named "Start scenario crumb"
+
+    Scenario: Remove MetaData from the NDK layer
+        When I run "CXXRemoveDataScenario"
+        And I wait to receive 2 requests
+        Then the request payload contains a completed handled native report
+        And the event "unhandled" is false
+        And the exception "errorClass" equals "RemoveDataScenario"
+        And the exception "message" equals "oh no"
+        And the event "metaData.persist.keep" equals "foo"
+        And the event "metaData.persist.remove" equals "bar"
+        And the event "metaData.remove.foo" equals "bar"
+        Then I discard the oldest request
+        And the request payload contains a completed handled native report
+        And the event "unhandled" is false
+        And the exception "errorClass" equals "RemoveDataScenario"
+        And the exception "message" equals "oh no"
+        And the event "metaData.persist.keep" equals "foo"
+        And the event "metaData.persist.remove" is null
+        And the event "metaData.remove" is null
+
+    Scenario: Set user in Native layer followed by a Java crash
+        When I run "CXXNativeUserInfoJavaCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXNativeUserInfoJavaCrashScenario"
+        And I wait to receive a request
+        Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+        And the payload field "events" is an array with 1 elements
+        And the event "user.id" equals "24601"
+        And the event "user.email" equals "test@test.test"
+        And the event "user.name" equals "test user"
+
+    Scenario: Get Java data in the Native layer
+        When I run "CXXGetJavaDataScenario" and relaunch the app
+        And I configure Bugsnag for "CXXGetJavaDataScenario"
+        And I wait to receive a request
+        Then the request payload contains a completed unhandled native report
+        And the event "unhandled" is true
+        And the event "metaData.data.context" equals "passContext"
+        And the event "metaData.data.appVersion" equals "passAppVersion"
+        And the event "metaData.data.userName" equals "passUserName"
+        And the event "metaData.data.userEmail" equals "passUserEmail"
+        And the event "metaData.data.userId" equals "passUserId"
+        And the event "metaData.data.metadata" equals "passMetaData"
+        And the event "metaData.data.device" is not null

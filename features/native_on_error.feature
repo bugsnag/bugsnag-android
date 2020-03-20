@@ -27,3 +27,13 @@ Feature: Native on error callbacks are invoked
     Then I should receive a request
     And the request payload contains a completed unhandled native report
     And the event "context" equals "Some custom context"
+
+  Scenario: Removing on_error callback
+    When I run "CXXRemoveOnErrorScenario"
+    And I relaunch the app
+    And I configure the app to run in the "non-crashy" state
+    Then I should receive a request
+    Then the request payload contains a completed handled native report
+    And the event "user.id" equals "default"
+    And the event "user.email" equals "default@default.df"
+    And the event "user.name" equals "default"
