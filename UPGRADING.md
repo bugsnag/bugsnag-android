@@ -6,29 +6,18 @@ Upgrade from 4.X to 5.X
 
 __This version contains many breaking changes__. It is part of an effort to unify our notifier libraries across platforms, making the user interface more consistent, and implementations better on multi-layered environments where multiple Bugsnag libraries need to work together (such as React Native).
 
-### Overview
+### Key points
+
+- `Bugsnag.init` has been renamed to `Bugsnag.start`.
+- The configuration options available in the `AndroidManifest.xml` have been expanded and some have been renamed
+- [ANR](https://developer.android.com/topic/performance/vitals/anr) and [NDK](https://developer.android.com/ndk/) crash detection have now been enabled by default. The types of error that Bugsnag detects can be configured using the [`enabledErrorTypes`](https://docs.bugsnag.com/platforms/android/configuration-options/#enabledbreadcrumbtypes) configuration option.
+- The `BeforeNotify` and `BeforeSend` callbacks have been simplified to an `OnErrorCallback` that provides access to the data being sent to your dashboard.
+
+More details of these changes can be found below and full documentation is available online at: [https://docs.bugsnag.com/platforms/android](https://docs.bugsnag.com/platforms/android).
+
+### Bugsnag client
 
 `Bugsnag.init` has been renamed to `Bugsnag.start`.
-
-The configuration options that can be set via your `AndroidManifest.xml` has been expanded:
-
-```xml
-<meta-data
-  android:name="com.bugsnag.android.MAX_BREADCRUMBS"
-  android:value="35" />
-```
-
-These values will be read when `start` is called or by creating a `Configuration` object yourself using `Configuration.load` and then providing further configuration in code:
-
-```kotlin
-val config = Configuration.load(this)
-config.maxBreadcrumbs = 35
-Bugsnag.start(this, config)
-```
-
-### Interfaces
-
-#### Bugsnag Client
 
 You should use the static `Bugsnag` interface rather than instantiating `Client` directly.
 
@@ -89,12 +78,29 @@ The full list of altered methods and their intended replacements can be found be
 | `Client#setUserName` or <br />`Bugsnag#setUserName`                                    | `Configuration#setUser` or <br /> `Bugsnag#setUser` |
 | `Client#stopSession` or <br />`Bugsnag#stopSession`                                    | `Bugsnag#pauseSession` |
 
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
+See the [online documentation](https://docs.bugsnag.com/platforms/android) for more information.
 
-#### Configuration
+### Configuration
 
-Altering values on `Configuration` _after_ calling `Bugsnag.start()` now has no effect. You should
-specify any non-default behavior up-front before Bugsnag is started.
+Many more configuration options can be set via your `AndroidManifest.xml`, for example:
+
+```xml
+<meta-data
+  android:name="com.bugsnag.android.MAX_BREADCRUMBS"
+  android:value="35" />
+```
+
+Bugsnag can then be initialized by simply calling `Bugsnag.start`. 
+
+You can also create a `Configuration` object yourself using `Configuration.load` to read the app manifest and then provide further configuration in code:
+
+```kotlin
+val config = Configuration.load(this)
+config.maxBreadcrumbs = 35
+Bugsnag.start(this, config)
+```
+
+Altering values on `Configuration` _after_ calling `Bugsnag.start` now has no effect. You should specify any non-default behavior up-front before Bugsnag is started.
 
 Several methods on `Configuration` have been renamed for greater API consistency. A full list is shown below:
 
@@ -118,9 +124,9 @@ Several methods on `Configuration` have been renamed for greater API consistency
 | `Configuration#setPersistUserBetweenSessions`      | `Configuration#setPersistUser` |
 | `Configuration#setSessionEndpoint`                 | `Configuration#setEndpoints` |
 
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
+See the [online documentation](https://docs.bugsnag.com/platforms/android/configuration-options/) for more information.
 
-#### BeforeNotify/BeforeSend/Callback
+### BeforeNotify/BeforeSend/Callback
 
 These three callbacks have been superseded and replaced by `OnError`, a single callback which runs immediately after an `Event` has been captured. This can run globally on all events, or on an individual event.
 
@@ -139,11 +145,11 @@ Bugsnag.notify(myThrowable) { event ->
 }
 ```
 
-If you use the NDK, implement the native `on_error` callback which will be run for fatal C/C++ errors only. See [below](#v5-ndk-breaking)
+If you use the NDK, implement the native `on_error` callback which will be run for fatal C/C++ errors only. See [below](#v5-ndk-changes)
 
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
+See the [online documentation](https://docs.bugsnag.com/platforms/android/customizing-error-reports/) for more information.
 
-#### Error -> Event
+### Error -> Event
 
 `Error` has been replaced by `Event`, which represents the payload that will be sent to Bugsnag's API. A large number of new accessors have been added to the `Event` class to allow for greater customization of error reports in callbacks.
 
@@ -165,9 +171,9 @@ Several existing methods have been renamed, a full list of which is shown below:
 | `Error#setUserId`            | `Event#setUser(String, String, String)` |
 | `Error#setUserName`          | `Event#setUser(String, String, String)` |
 
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
+See the [online documentation](https://docs.bugsnag.com/platforms/android/customizing-error-reports/) for more information.
 
-#### Breadcrumbs
+### Breadcrumbs
 
 Breadcrumbs now contain a message rather than a name and the callback has been renamed for consistency:
 
@@ -176,13 +182,16 @@ Breadcrumbs now contain a message rather than a name and the callback has been r
 | `Breadcrumb#getName`                  | `Breadcrumb#getMessage` |
 | `BeforeRecordBreadcrumb#shouldRecord` | `OnBreadcrumbCallback#onBreadcrumb` |
 
-#### Session payload & callbacks
+See the [online documentation](https://docs.bugsnag.com/platforms/android/customizing-breadcrumbs/) for more information.
+
+
+### Session payload & callbacks
 
 `SessionTrackingPayload` is now called `SessionPayload`. It is now possible to redact the `app` and `device` information captured on sessions via an `OnSessionCallback`.
 
-See the [full documentation](https://docs.bugsnag.com/platforms/android) for more information.
+See the [online documentation](https://docs.bugsnag.complatforms/android/capturing-sessions/) for more information.
 
-#### Delivery
+### Delivery
 
 The signature for providing a custom delivery mechanism has changed:
 
@@ -191,7 +200,9 @@ The signature for providing a custom delivery mechanism has changed:
 | `Delivery#deliver(Report, Configuration)`                 | `Delivery#deliver(SessionPayload, DeliveryParams)` |
 | `Delivery#deliver(SessionTrackingPayload, Configuration)` | `Delivery#deliver(Report, DeliveryParams)` |
 
-#### Removed from public API
+See the [online documentation](https://docs.bugsnag.com/platforms/android/configuration-options/) for more information.
+
+### Removed from public API
 
 | v4.x API  | v5.x API |
 | --------------------------------------------------------- | --------------------------------------------------------- |
@@ -206,16 +217,18 @@ The signature for providing a custom delivery mechanism has changed:
 | `EventReceiver`            | This class is no longer publicly accessible as end-users should not need to set its values. |
 | `BugsnagException`         | This class is no longer required - you should use your own `Throwable` instead. |
 
-#### NDK Changes
+<div id="v5-ndk-changes"></div>
 
-##### Breaking changes <div id="v5-ndk-breaking">
+### NDK changes
+
+#### Breaking changes 
 
 - The `report.h` header has been renamed to `event.h`
 - `bugsnag_init()` has been renamed to `bugsnag_start()`
 - `bsg_severity_t` has been renamed to `bugsnag_severity`
 - `bsg_breadcrumb_t` has been renamed to `bugsnag_breadcrumb_type`
 
-##### New functionality
+#### New functionality
 
 Native events can now be customized by adding an `on_error` callback. This allows you to amend the
  data that will be sent to your Bugsnag dashboard for fatal NDK crashes.
