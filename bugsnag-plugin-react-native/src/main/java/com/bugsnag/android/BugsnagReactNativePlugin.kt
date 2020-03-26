@@ -21,10 +21,19 @@ class BugsnagReactNativePlugin : Plugin {
 
     lateinit var logger: Logger
 
+    private lateinit var observerBridge: BugsnagReactNativeBridge
+    var jsCallback: ((event: MessageEvent) -> Unit)? = null
+
     override fun load(client: Client) {
         this.client = client
         logger = client.logger
         internalHooks = InternalHooks(client)
+
+        // register a state observer immediately but only pass events on when JS callback set
+        client.registerObserver(observerBridge)
+        observerBridge = BugsnagReactNativeBridge(client) {
+            jsCallback?.invoke(it)
+        }
         client.logger.i("Initialized React Native Plugin")
     }
 
@@ -56,7 +65,7 @@ class BugsnagReactNativePlugin : Plugin {
     }
 
     fun registerForMessageEvents(cb: (MessageEvent) -> Unit) {
-        client.registerObserver(BugsnagReactNativeBridge(client, cb))
+        this.jsCallback = cb
         client.syncInitialState()
     }
 
