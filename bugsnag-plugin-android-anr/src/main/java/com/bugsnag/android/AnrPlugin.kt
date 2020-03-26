@@ -26,8 +26,10 @@ internal class AnrPlugin : Plugin {
             Handler(Looper.getMainLooper()).post(Runnable {
                 this.client = client
                 enableAnrReporting(true)
-                client.logger.w("Initialised ANR Plugin")
+                client.logger.i("Initialised ANR Plugin")
             })
+        } else {
+            client.logger.e("Native library could not be linked. Bugsnag will not report ANRs.")
         }
     }
 
