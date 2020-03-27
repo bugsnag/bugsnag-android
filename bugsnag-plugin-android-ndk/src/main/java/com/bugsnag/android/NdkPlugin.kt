@@ -29,7 +29,8 @@ internal class NdkPlugin : Plugin {
             enableCrashReporting()
             client.logger.i("Initialised NDK Plugin")
         } else {
-            client.logger.e("Native library could not be linked. Bugsnag will not report NDK errors.")
+            client.logger.e("Native library could not be linked. Bugsnag will not report NDK "
+                    + "errors. See https://docs.bugsnag.com/platforms/android/ndk-link-errors")
         }
     }
 

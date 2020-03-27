@@ -29,7 +29,8 @@ internal class AnrPlugin : Plugin {
                 client.logger.i("Initialised ANR Plugin")
             })
         } else {
-            client.logger.e("Native library could not be linked. Bugsnag will not report ANRs.")
+            client.logger.e("Native library could not be linked. Bugsnag will not report " +
+                    "ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors")
         }
     }
 
