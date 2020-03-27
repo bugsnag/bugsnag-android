@@ -5,12 +5,12 @@ import android.os.Looper
 
 internal class AnrPlugin : Plugin {
 
-    companion object {
-        init {
-            System.loadLibrary("bugsnag-plugin-android-anr")
-        }
+    private companion object {
+        private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
+                "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
     }
 
+    private val loader = LibraryLoader()
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
 
@@ -18,13 +18,24 @@ internal class AnrPlugin : Plugin {
     private external fun disableAnrReporting()
 
     override fun load(client: Client) {
-        // this must be run from the main thread as the SIGQUIT is sent to the main thread,
-        // and if the handler is installed on a background thread instead we receive no signal
-        Handler(Looper.getMainLooper()).post(Runnable {
-            this.client = client
-            enableAnrReporting(true)
-            client.logger.w("Initialised ANR Plugin")
-        })
+        val loaded = loader.loadLibrary("bugsnag-plugin-android-anr", client) {
+            val error = it.errors[0]
+            error.errorClass = "AnrLinkError"
+            error.errorMessage = LOAD_ERR_MSG
+            true
+        }
+
+        if (loaded) {
+            // this must be run from the main thread as the SIGQUIT is sent to the main thread,
+            // and if the handler is installed on a background thread instead we receive no signal
+            Handler(Looper.getMainLooper()).post(Runnable {
+                this.client = client
+                enableAnrReporting(true)
+                client.logger.i("Initialised ANR Plugin")
+            })
+        } else {
+            client.logger.e(LOAD_ERR_MSG)
+        }
     }
 
     override fun unload() = disableAnrReporting()
