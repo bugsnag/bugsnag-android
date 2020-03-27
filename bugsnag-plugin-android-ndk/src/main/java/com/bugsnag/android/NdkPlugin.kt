@@ -4,6 +4,11 @@ import com.bugsnag.android.ndk.NativeBridge
 
 internal class NdkPlugin : Plugin {
 
+    private companion object {
+        private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
+                "not report NDK errors. See https://docs.bugsnag.com/platforms/android/ndk-link-errors"
+    }
+
     private val loader = LibraryLoader()
 
     private external fun enableCrashReporting()
@@ -15,7 +20,7 @@ internal class NdkPlugin : Plugin {
         val loaded = loader.loadLibrary("bugsnag-ndk", client) {
             val error = it.errors[0]
             error.errorClass = "NdkLinkError"
-            error.errorMessage = "Native library could not be linked. Bugsnag will not report NDK errors."
+            error.errorMessage = LOAD_ERR_MSG
             true
         }
 
@@ -29,8 +34,7 @@ internal class NdkPlugin : Plugin {
             enableCrashReporting()
             client.logger.i("Initialised NDK Plugin")
         } else {
-            client.logger.e("Native library could not be linked. Bugsnag will not report NDK "
-                    + "errors. See https://docs.bugsnag.com/platforms/android/ndk-link-errors")
+            client.logger.e(LOAD_ERR_MSG)
         }
     }
 

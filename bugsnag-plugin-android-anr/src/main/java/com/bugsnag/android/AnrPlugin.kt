@@ -5,6 +5,11 @@ import android.os.Looper
 
 internal class AnrPlugin : Plugin {
 
+    private companion object {
+        private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
+                "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
+    }
+
     private val loader = LibraryLoader()
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
@@ -16,7 +21,7 @@ internal class AnrPlugin : Plugin {
         val loaded = loader.loadLibrary("bugsnag-plugin-android-anr", client) {
             val error = it.errors[0]
             error.errorClass = "AnrLinkError"
-            error.errorMessage = "Native library could not be linked. Bugsnag will not report ANRs."
+            error.errorMessage = LOAD_ERR_MSG
             true
         }
 
@@ -29,8 +34,7 @@ internal class AnrPlugin : Plugin {
                 client.logger.i("Initialised ANR Plugin")
             })
         } else {
-            client.logger.e("Native library could not be linked. Bugsnag will not report " +
-                    "ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors")
+            client.logger.e(LOAD_ERR_MSG)
         }
     }
 
