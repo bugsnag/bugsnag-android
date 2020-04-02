@@ -204,3 +204,47 @@ Feature: Native API
         And the event "metaData.fruit.ripe" is true
         And the event "metaData.fruit.counters" equals 47
         And the event "unhandled" is true
+
+    Scenario: Use the NDK methods without "env" after calling "bugsnag_start"
+        When I run "CXXStartScenario"
+        Then I should receive a request
+        And the request payload contains a completed handled native report
+        And the event "unhandled" is false
+        And the exception "errorClass" equals "Start scenario"
+        And the exception "message" equals "Testing env"
+        And the event "severity" equals "info"
+        And the event has a "log" breadcrumb named "Start scenario crumb"
+
+    Scenario: Remove MetaData from the NDK layer
+        When I run "CXXRemoveDataScenario"
+        And I wait for 5 seconds
+        Then I should receive 2 requests
+        And the payload in request 0 contains a completed handled native report
+        And the event "unhandled" is false for request 0
+        And the exception "errorClass" equals "RemoveDataScenario" for request 0
+        And the exception "message" equals "oh no" for request 0
+        And the event "metaData.persist.keep" equals "foo" for request 0
+        And the event "metaData.persist.remove" equals "bar" for request 0
+        And the event "metaData.remove.foo" equals "bar" for request 0
+        And the payload in request 1 contains a completed handled native report
+        And the event "unhandled" is false for request 1
+        And the exception "errorClass" equals "RemoveDataScenario" for request 1
+        And the exception "message" equals "oh no" for request 1
+        And the event "metaData.persist.keep" equals "foo" for request 1
+        And the event "metaData.persist.remove" is null for request 1
+        And the event "metaData.remove" is null for request 1
+
+    Scenario: Get Java data in the Native layer
+        When I run "CXXGetJavaDataScenario"
+        And I configure the app to run in the "non-crashy" state
+        And I relaunch the app
+        And I should receive a request
+        Then the request payload contains a completed unhandled native report
+        And the event "unhandled" is true
+        And the event "metaData.data.context" equals "passContext"
+        And the event "metaData.data.appVersion" equals "passAppVersion"
+        And the event "metaData.data.userName" equals "passUserName"
+        And the event "metaData.data.userEmail" equals "passUserEmail"
+        And the event "metaData.data.userId" equals "passUserId"
+        And the event "metaData.data.metadata" equals "passMetaData"
+        And the event "metaData.data.device" is not null

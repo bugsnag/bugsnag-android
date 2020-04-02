@@ -13,7 +13,7 @@ class EnabledErrorTypesTest {
     fun testDetectAnrDefault() {
         assertTrue(config.autoDetectErrors)
         assertTrue(config.enabledErrorTypes.anrs)
-        assertFalse(config.enabledErrorTypes.ndkCrashes)
+        assertTrue(config.enabledErrorTypes.ndkCrashes)
         assertTrue(config.enabledErrorTypes.unhandledExceptions)
         assertTrue(config.enabledErrorTypes.unhandledRejections)
     }
@@ -24,7 +24,7 @@ class EnabledErrorTypesTest {
 
         with(convertToImmutableConfig(config).enabledErrorTypes) {
             assertTrue(anrs)
-            assertFalse(ndkCrashes)
+            assertTrue(ndkCrashes)
             assertTrue(unhandledExceptions)
             assertTrue(unhandledRejections)
         }

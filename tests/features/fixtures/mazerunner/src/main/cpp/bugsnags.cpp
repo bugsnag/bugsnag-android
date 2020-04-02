@@ -198,7 +198,7 @@ return 12633;
 }
 
 bool on_err_true(void *event_ptr) {
-  bugsnag_event_set_context(event_ptr, "Some custom context");
+  bugsnag_event_set_context(event_ptr, (char *)"Some custom context");
   return true;
 }
 
@@ -289,6 +289,96 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXConfigurationMetadataNativeCras
   if (x > 0)
     __builtin_trap();
   return 12167;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXStartScenario_activate(
+    JNIEnv *env,
+    jobject instance) {
+  bugsnag_start(env);
+  bugsnag_leave_breadcrumb((char *)"Start scenario crumb", BSG_CRUMB_LOG);
+  bugsnag_notify((char *)"Start scenario",
+                     (char *)"Testing env", BSG_SEVERITY_INFO);
+}
+
+bool override_user(void *event_ptr) {
+  bugsnag_event_set_user(event_ptr, (char *)"callback", (char *)"call@back.cb", (char *)"");
+  return true;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXRemoveOnErrorScenario_activate(
+    JNIEnv *env,
+    jobject instance) {
+  bugsnag_set_user_env(env, (char *)"default", (char *)"default@default.df", (char *)"default");
+  bugsnag_add_on_error(&override_user);
+  bugsnag_remove_on_error();
+  int x = 47;
+  if (x > 0)
+    __builtin_trap();
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXRemoveDataScenario_activate(JNIEnv *env,
+                                                                         jobject instance) {
+  bugsnag_notify_env(env, (char *)"RemoveDataScenario", (char *)"oh no", BSG_SEVERITY_ERR);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeUserInfoJavaCrashScenario_activate(JNIEnv *env,
+                                                                         jobject instance) {
+  bugsnag_set_user_env(env, (char *)"24601", (char *)"test@test.test", (char *)"test user");
+}
+
+bool add_java_data(void *event_ptr) {
+  bugsnag_event_add_metadata_string(event_ptr,
+    (char *)"data",
+    (char *)"context",
+    bugsnag_event_get_context(event_ptr)
+  );
+  bugsnag_event_add_metadata_string(event_ptr,
+    (char *)"data",
+    (char *)"appVersion",
+    bugsnag_app_get_version(event_ptr)
+  );
+  bugsnag_event_add_metadata_string(event_ptr,
+    (char *)"data",
+    (char *)"userName",
+    bugsnag_event_get_user(event_ptr).name
+  );
+  bugsnag_event_add_metadata_string(event_ptr,
+    (char *)"data",
+    (char *)"userEmail",
+    bugsnag_event_get_user(event_ptr).email
+  );
+  bugsnag_event_add_metadata_string(event_ptr,
+    (char *)"data",
+    (char *)"userId",
+    bugsnag_event_get_user(event_ptr).id
+  );
+  bugsnag_event_add_metadata_string(event_ptr,
+    (char *)"data",
+    (char *)"metadata",
+    bugsnag_event_get_metadata_string(event_ptr,
+      (char *)"notData",
+      (char *)"vals"
+    )
+  );
+  bugsnag_event_add_metadata_string(event_ptr,
+    (char *)"data",
+    (char *)"device",
+    bugsnag_device_get_model(event_ptr)
+  );
+  return true;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXGetJavaDataScenario_activate(JNIEnv *env,
+                                                                         jobject instance) {
+  bugsnag_add_on_error(&add_java_data);
+  int x = 47;
+  if (x > 0)
+    __builtin_trap();
 }
 
 }

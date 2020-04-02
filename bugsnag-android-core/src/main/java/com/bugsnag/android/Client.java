@@ -122,7 +122,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 Map<String, Object> data = new HashMap<>();
                 data.put("hasConnection", hasConnection);
                 data.put("networkState", networkState);
-                leaveAutoBreadcrumb("Connectivity change", BreadcrumbType.STATE, data);
+                leaveAutoBreadcrumb("Connectivity changed", BreadcrumbType.STATE, data);
                 if (hasConnection) {
                     eventStore.flushAsync();
                 }
@@ -320,7 +320,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                         Map<String, Object> data = new HashMap<>();
                         data.put("from", oldOrientation);
                         data.put("to", newOrientation);
-                        leaveAutoBreadcrumb("Orientation change", BreadcrumbType.STATE, data);
+                        leaveAutoBreadcrumb("Orientation changed", BreadcrumbType.STATE, data);
                         clientObservable.postOrientationChange(newOrientation);
                         return null;
                     }
