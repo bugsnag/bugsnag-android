@@ -1,20 +1,11 @@
-FROM openjdk:8-jdk-stretch
+FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest as android
 
-RUN apt-get update
-RUN apt-get install -y gradle jq
-
-WORKDIR /sdk
-RUN wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -q
-RUN unzip -q sdk-tools-linux-4333796.zip
-
-ENV PATH="${PATH}:/sdk/tools:/sdk/tools/bin"
-
-RUN yes | sdkmanager "platform-tools"
-
-ENV PATH="${PATH}:/sdk/platform-tools"
-ENV ANDROID_HOME="/sdk/"
+RUN echo Building CI image for NDK version r16b
 
 WORKDIR /app
+
+RUN mv android-ndk-r16b $ANDROID_HOME/ndk-bundle
+ENV ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"
 
 COPY gradlew build.gradle settings.gradle gradle.properties /app/
 COPY gradle/ /app/gradle/
@@ -28,8 +19,5 @@ COPY examples/ examples/
 COPY mazerunner-scenarios/ mazerunner-scenarios/
 COPY scripts/ scripts/
 
-RUN scripts/install-ndk.sh
-
 ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
-
 RUN ./gradlew

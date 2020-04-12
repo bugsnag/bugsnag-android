@@ -1,0 +1,32 @@
+FROM openjdk:8-jdk-stretch
+
+RUN apt-get update
+RUN apt-get install -y gradle jq
+
+WORKDIR /sdk
+
+RUN wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -q
+RUN unzip -q sdk-tools-linux-4333796.zip
+
+ENV PATH="${PATH}:/sdk/tools:/sdk/tools/bin"
+ENV PATH="${PATH}:/sdk/platform-tools"
+ENV ANDROID_HOME="/sdk/"
+ENV LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64"
+ENV PATH=${PATH}:${ANDROID_NDK_HOME}
+
+RUN yes | sdkmanager "platform-tools" > /dev/null
+
+WORKDIR /app
+
+# Download and expand all NDK versions that might be used.  The relevant folder will simply be renamed
+# when building the image for a specific version.
+RUN wget -q https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip
+RUN wget -q https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
+RUN wget -q https://dl.google.com/android/repository/android-ndk-r19-linux-x86_64.zip
+RUN wget -q https://dl.google.com/android/repository/android-ndk-r21-linux-x86_64.zip
+
+# Unzip all NDKs
+RUN unzip -q 'android-ndk-*-linux-x86_64.zip'
+
+# Clean up downloaded files
+RUN rm android-ndk-*-linux-x86_64.zip
