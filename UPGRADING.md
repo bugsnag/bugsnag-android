@@ -60,7 +60,7 @@ The full list of altered methods and their intended replacements can be found be
 | `Client#notifyBlocking(Throwable, Severity, MetaData)`                                 | `Bugsnag#notify(Throwable, OnErrorCallback)` |
 | `Client#setAppVersion` or <br />`Bugsnag#setAppVersion`                                | `Configuration#setAppVersion` |
 | `Client#setAutoCaptureSessions` or <br />`Bugsnag#setAutoCaptureSessions`              | `Configuration#setAutoTrackSessions` |
-| `Client#setBuildUUID` or <br />`Bugsnag#setBuildUUID`                                  | `Configuration#setBuildUuid` |
+| `Client#setBuildUUID` or <br />`Bugsnag#setBuildUUID`                                  | Method removed. Set as an AndroidManifest <meta-data> element instead using `com.bugsnag.android.BUILD_UUID` as the key |
 | `Client#setEndpoint` or <br />`Bugsnag#setEndpoint`                                    | `Configuration#setEndpoints` |
 | `Client#setErrorReportApiClient` or <br />`Bugsnag#setErrorReportApiClient`            | `Configuration#setDelivery` |
 | `Client#setFilters` or <br />`Bugsnag#setFilters`                                      | `Configuration#setRedactedKeys` |
@@ -112,7 +112,7 @@ Several methods on `Configuration` have been renamed for greater API consistency
 | `Configuration#setAutomaticallyCollectBreadcrumbs` | `Configuration#setEnabledBreadcrumbTypes` |
 | `Configuration#setAnrThresholdMs`                  | Method no longer required. |
 | `Configuration#setAutoCaptureSessions`             | `Configuration#setAutoTrackSessions` |
-| `Configuration#setBuildUUID`                       | `Configuration#setBuildUuid` |
+| `Configuration#setBuildUUID`                       | Method removed. Set as an AndroidManifest <meta-data> element instead using `com.bugsnag.android.BUILD_UUID` as the key |
 | `Configuration#setDetectAnrs`                      | `Configuration#setAutoDetectErrors` or <br />`Configuration#setEnabledErrorTypes` |
 | `Configuration#setDetectNdkCrashes`                | `Configuration#setAutoDetectErrors` or <br />`Configuration#setEnabledErrorTypes` |
 | `Configuration#setEnableExceptionHandler`          | `Configuration#setAutoDetectErrors` or <br />`Configuration#setEnabledErrorTypes` |

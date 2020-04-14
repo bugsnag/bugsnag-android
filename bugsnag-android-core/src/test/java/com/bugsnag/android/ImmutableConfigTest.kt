@@ -62,7 +62,7 @@ internal class ImmutableConfigTest {
 
             // identifiers
             assertEquals(seed.appVersion, appVersion)
-            assertEquals(seed.buildUuid, buildUuid)
+            assertNull(buildUuid)
             assertEquals(seed.appType, appType)
 
             // network config
@@ -92,7 +92,6 @@ internal class ImmutableConfigTest {
         seed.releaseStage = "wham"
 
         seed.appVersion = "1.2.3"
-        seed.buildUuid = "f7ab"
         seed.appType = "custom"
 
         val endpoints = EndpointConfiguration("http://example.com:1234", "http://example.com:1235")
@@ -103,7 +102,7 @@ internal class ImmutableConfigTest {
         seed.enabledBreadcrumbTypes = emptySet()
 
         // verify overrides are copied across
-        with(convertToImmutableConfig(seed)) {
+        with(convertToImmutableConfig(seed, "f7ab")) {
             assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
 
             // detection
@@ -122,7 +121,7 @@ internal class ImmutableConfigTest {
 
             // identifiers
             assertEquals("1.2.3", seed.appVersion)
-            assertEquals("f7ab", seed.buildUuid)
+            assertEquals("f7ab", buildUuid)
             assertEquals("custom", seed.appType)
 
             // network config

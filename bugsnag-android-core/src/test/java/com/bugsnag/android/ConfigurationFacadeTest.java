@@ -46,14 +46,6 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
-    public void buildUuidValid() {
-        config.setBuildUuid("123");
-        assertEquals("123", config.impl.getBuildUuid());
-        config.setBuildUuid(null);
-        assertNull(config.impl.getBuildUuid());
-    }
-
-    @Test
     public void appVersionValid() {
         config.setAppVersion("1.23");
         assertEquals("1.23", config.impl.getAppVersion());

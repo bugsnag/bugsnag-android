@@ -24,7 +24,6 @@ class ManifestConfigLoaderTest {
 
         with(config) {
             assertEquals(apiKey, "5d1ec5bd39a74caa1267142706a7fb21")
-            assertNull(buildUuid)
 
             // detection
             assertTrue(autoDetectErrors)
@@ -89,7 +88,6 @@ class ManifestConfigLoaderTest {
 
         with(config) {
             assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
-            assertEquals("fgh123456", buildUuid)
 
             // detection
             assertFalse(autoDetectErrors)
