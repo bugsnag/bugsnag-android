@@ -6,7 +6,7 @@ class ThreadInternal internal constructor(
     var id: Long,
     var name: String,
     var type: ThreadType,
-    var isErrorReportingThread: Boolean,
+    val isErrorReportingThread: Boolean,
     stacktrace: Stacktrace
 ) : JsonStream.Streamable {
 

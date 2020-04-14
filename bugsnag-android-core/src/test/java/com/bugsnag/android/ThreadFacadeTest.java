@@ -70,8 +70,6 @@ public class ThreadFacadeTest {
     @Test
     public void errorReportingThreadValid() {
         assertFalse(thread.getErrorReportingThread());
-        thread.setErrorReportingThread(true);
-        assertTrue(thread.getErrorReportingThread());
     }
 
     @Test
