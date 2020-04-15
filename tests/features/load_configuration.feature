@@ -27,7 +27,7 @@ Scenario: Load configuration initialised with Kotlin
     And the event "metaData.test.filter_me" equals "bar"
     And the event "metaData.test.filter_me_two" equals "[REDACTED]"
     And the event "app.versionCode" equals 98
-    And the event "app.buildUUID" equals "kotlin-0.9.8"
+    And the event "app.buildUUID" equals "test-7.5.3"
     And the event "app.version" equals "0.9.8"
     And the event "app.type" equals "kotlin"
     And the payload field "events.0.threads" is an array with 0 elements
