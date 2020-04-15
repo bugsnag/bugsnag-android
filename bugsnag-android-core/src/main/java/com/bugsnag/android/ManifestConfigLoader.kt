@@ -71,7 +71,6 @@ internal class ManifestConfigLoader {
 
         // misc config
         with(config) {
-            buildUuid = data.getString(BUILD_UUID)
             maxBreadcrumbs = data.getInt(MAX_BREADCRUMBS, maxBreadcrumbs)
             launchCrashThresholdMs =
                 data.getInt(LAUNCH_CRASH_THRESHOLD_MS, launchCrashThresholdMs.toInt()).toLong()

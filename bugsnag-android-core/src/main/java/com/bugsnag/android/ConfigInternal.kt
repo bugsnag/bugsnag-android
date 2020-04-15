@@ -13,7 +13,6 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     @JvmField
     internal val metadataState: MetadataState = MetadataState()
 
-    var buildUuid: String? = null
     var appVersion: String? = null
     var versionCode: Int? = 0
     var releaseStage: String? = null

@@ -35,7 +35,6 @@ public class LoadConfigurationNullsScenario extends Scenario {
         // Nullable options
         testConfig.setAppType(null);
         testConfig.setAppVersion(null);
-        testConfig.setBuildUuid(null);
         testConfig.setContext(null);
         testConfig.setDelivery(null);
         testConfig.setDiscardClasses(null);

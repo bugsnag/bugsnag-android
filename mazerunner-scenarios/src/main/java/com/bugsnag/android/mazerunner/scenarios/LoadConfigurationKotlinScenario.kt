@@ -27,7 +27,6 @@ internal class LoadConfigurationKotlinScenario(
         testConfig.appType = "kotlin"
         testConfig.autoDetectErrors = true
         testConfig.autoTrackSessions = false
-        testConfig.buildUuid = "kotlin-0.9.8"
         testConfig.enabledReleaseStages = setOf("production", "development", "kotlin")
         testConfig.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
         testConfig.projectPackages = setOf("com.company.package1", "com.company.package2")
