@@ -56,12 +56,6 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
 
-  - label: ':android: Android size reporting'
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.3.0:
-          run: android-sizer
-
   - wait
 
   # End-to-end tests take the longest to run, so start as soon as possible.
@@ -161,6 +155,12 @@ steps:
     concurrency_group: 'browserstack-app'
     soft_fail:
       - exit_status: "*"
+
+  - label: ':android: Android size reporting'
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-sizer
 
   - label: ':android: Linter'
     timeout_in_minutes: 10
