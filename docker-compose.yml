@@ -46,11 +46,6 @@ services:
       BUILDKITE_PULL_REQUEST:
       BUILDKITE_REPO:
 
-  android-emulator:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.emulator
-
   android-maze-runner:
     build:
       context: .
