@@ -62,7 +62,7 @@ steps:
 
   - label: ':android: Android 5 end-to-end tests'
     skip: Temporarily disabled due to flakiness with BrowserStack tunneling
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -75,7 +75,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 6 end-to-end tests'
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -88,7 +88,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -101,7 +101,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8.0 end-to-end tests'
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -114,7 +114,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8.1 end-to-end tests'
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -129,7 +129,7 @@ steps:
       - exit_status: "*"
 
   - label: ':android: Android 9 end-to-end tests'
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -142,7 +142,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 10 end-to-end tests'
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
