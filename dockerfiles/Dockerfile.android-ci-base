@@ -4,8 +4,8 @@ RUN echo Building CI image for NDK version r16b
 
 WORKDIR /app
 
-RUN mv android-ndk-r16b $ANDROID_HOME/ndk-bundle
-ENV ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"
+ENV ANDROID_NDK_HOME="${ANDROID_HOME}/android-ndk-r16b"
+ENV PATH="${ANDROID_NDK_HOME}:${PATH}"
 
 COPY gradlew build.gradle settings.gradle gradle.properties /app/
 COPY gradle/ /app/gradle/
