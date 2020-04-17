@@ -120,31 +120,29 @@ Then("the report in request {int} contains the required fields") do |index|
     Then the payload field "events.0.unhandled" is not null for request #{index}
     And the payload field "events.0.app.duration" is not null for request #{index}
     And the payload field "events.0.app.durationInForeground" is not null for request #{index}
-    And the payload field "events.0.app.id" is not null for request #{index}
+    And the payload field "events.0.app.id" equals "com.bugsnag.android.mazerunner" for request #{index}
     And the payload field "events.0.app.inForeground" is not null for request #{index}
     And the payload field "events.0.app.releaseStage" is not null for request #{index}
     And the payload field "events.0.app.type" equals "android" for request #{index}
     And the payload field "events.0.app.version" is not null for request #{index}
     And the payload field "events.0.app.versionCode" equals 34 for request #{index}
     And the payload field "events.0.device.id" is not null for request #{index}
+    And the payload field "events.0.device.locale" is not null for request #{index}
     And the payload field "events.0.device.manufacturer" is not null for request #{index}
     And the payload field "events.0.device.model" is not null for request #{index}
     And the payload field "events.0.device.orientation" is not null for request #{index}
     And the payload field "events.0.device.osName" equals "android" for request #{index}
+    And the payload field "events.0.device.time" is not null for request #{index}
     And the payload field "events.0.device.totalMemory" is not null for request #{index}
     And the payload field "events.0.device.runtimeVersions.osBuild" is not null for request #{index}
     And the payload field "events.0.metaData.app.name" equals "MazeRunner" for request #{index}
-    And the payload field "events.0.metaData.app.packageName" equals "com.bugsnag.android.mazerunner" for request #{index}
-    And the payload field "events.0.metaData.app.versionName" is not null for request #{index}
     And the payload field "events.0.metaData.device.brand" is not null for request #{index}
     And the payload field "events.0.metaData.device.dpi" is not null for request #{index}
     And the payload field "events.0.metaData.device.emulator" is true for request #{index}
-    And the payload field "events.0.metaData.device.locale" is not null for request #{index}
     And the payload field "events.0.metaData.device.locationStatus" is not null for request #{index}
     And the payload field "events.0.metaData.device.networkAccess" is not null for request #{index}
     And the payload field "events.0.metaData.device.screenDensity" is not null for request #{index}
     And the payload field "events.0.metaData.device.screenResolution" is not null for request #{index}
-    And the payload field "events.0.metaData.device.time" is not null for request #{index}
     And the payload field "events.0.severity" is not null for request #{index}
     And the payload field "events.0.severityReason.type" is not null for request #{index}
     And the payload field "events.0.device.cpuAbi" is a non-empty array for request #{index}
@@ -203,4 +201,15 @@ end
 Then(/^the payload field "(.+)" is greater than (\d+)(?: for request (\d+))?$/) do |field_path, int_value, request_index|
   observed_value = read_key_path(find_request(request_index)[:body], field_path)
   assert(observed_value > int_value)
+end
+
+Then(/^the event has a "(.+)" breadcrumb with the message "(.+)"(?: for request (\d+))?$/) do |type, message, request_index|
+  value = read_key_path(find_request(get_request_index(request_index))[:body], "events.0.breadcrumbs")
+  found = false
+  value.each do |crumb|
+    if crumb["type"] == type and crumb["name"] == message then
+      found = true
+    end
+  end
+  fail("No breadcrumb matched: #{value}") unless found
 end

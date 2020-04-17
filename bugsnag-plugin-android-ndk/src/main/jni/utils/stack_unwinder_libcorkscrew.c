@@ -1,6 +1,6 @@
 #include "stack_unwinder_libcorkscrew.h"
 #include <dlfcn.h>
-#include <report.h>
+#include <event.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -66,7 +66,7 @@ bool bsg_configure_libcorkscrew(void) {
 }
 
 ssize_t
-bsg_unwind_stack_libcorkscrew(bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+bsg_unwind_stack_libcorkscrew(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
                               siginfo_t *info, void *user_context) {
   backtrace_frame_t frames[BUGSNAG_FRAMES_MAX];
   backtrace_symbol_t symbols[BUGSNAG_FRAMES_MAX];

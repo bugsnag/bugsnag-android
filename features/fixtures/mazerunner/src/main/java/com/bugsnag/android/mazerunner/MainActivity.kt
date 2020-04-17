@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
@@ -18,8 +19,7 @@ class MainActivity : Activity() {
         val config = prepareConfig()
         val testCase = loadScenario(config)
 
-        Bugsnag.init(this, config)
-        Bugsnag.setLoggingEnabled(true)
+        Bugsnag.start(this, config)
 
         /**
          * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
@@ -45,9 +45,9 @@ class MainActivity : Activity() {
         val eventType = intent.getStringExtra("EVENT_TYPE")
         val config = Configuration(intent.getStringExtra("BUGSNAG_API_KEY"))
         val port = intent.getStringExtra("BUGSNAG_PORT")
-        config.setEndpoints("${findHostname()}:$port", "${findHostname()}:$port")
-        config.detectNdkCrashes = true
-        config.detectAnrs = true
+        config.endpoints = EndpointConfiguration("${findHostname()}:$port", "${findHostname()}:$port")
+        config.enabledErrorTypes.ndkCrashes = true
+        config.enabledErrorTypes.anrs = true
         return config
     }
 

@@ -16,6 +16,7 @@ Feature: Native API
 
     Scenario: Adding user information in Java followed by a C crash
         And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed handled native report
@@ -49,6 +50,7 @@ Feature: Native API
 
     Scenario: Update context in Java followed by crashing in C
         When I run "CXXUpdateContextCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXUpdateContextCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed handled native report
@@ -71,6 +73,7 @@ Feature: Native API
 
     Scenario: Leaving a breadcrumb followed by a C crash
         When I run "CXXNativeBreadcrumbNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNativeBreadcrumbNativeCrashScenario"
         And I wait to receive a request
         Then the request payload contains a completed handled native report
@@ -83,6 +86,7 @@ Feature: Native API
 
     Scenario: Starting a session, notifying, followed by a C crash
         When I run "CXXSessionInfoCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSessionInfoCrashScenario"
         And I wait to receive 4 requests
         And I discard the oldest request
@@ -95,6 +99,7 @@ Feature: Native API
 
     Scenario: Leaving breadcrumbs in Java and C followed by a C crash
         When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaBreadcrumbNativeBreadcrumbScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -103,7 +108,7 @@ Feature: Native API
           | SIGTRAP |
         And the event "severity" equals "error"
         And the event has a "log" breadcrumb named "Warm beer detected"
-        And the event has a "manual" breadcrumb with message "Reverse thrusters"
+        And the event has a "manual" breadcrumb with the message "Reverse thrusters"
         And the event "unhandled" is true
 
     Scenario: Leaving breadcrumbs in Java and followed by notifying in C
@@ -113,12 +118,13 @@ Feature: Native API
         And the exception "errorClass" equals "Failed instantiation"
         And the exception "message" equals "Could not allocate"
         And the event "severity" equals "error"
-        And the event has a "manual" breadcrumb with message "Initiate lift"
-        And the event has a "manual" breadcrumb with message "Disable lift"
+        And the event has a "manual" breadcrumb with the message "Initiate lift"
+        And the event has a "manual" breadcrumb with the message "Disable lift"
         And the event "unhandled" is false
 
     Scenario: Leaving breadcrumbs in Java followed by a C crash
         When I run "CXXJavaBreadcrumbNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaBreadcrumbNativeCrashScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -126,11 +132,12 @@ Feature: Native API
           | SIGILL |
           | SIGTRAP |
         And the event "severity" equals "error"
-        And the event has a "manual" breadcrumb with message "Bridge connector activated"
+        And the event has a "manual" breadcrumb with the message "Bridge connector activated"
         And the event "unhandled" is true
 
     Scenario: Leaving breadcrumbs in C followed by a Java crash
         When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNativeBreadcrumbJavaCrashScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -152,6 +159,7 @@ Feature: Native API
 
     Scenario: Set extraordinarily long app information
         When I run "CXXExtraordinaryLongStringScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExtraordinaryLongStringScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -176,6 +184,7 @@ Feature: Native API
 
     Scenario: Add custom metadata followed by a C crash
         When I run "CXXCustomMetadataNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXCustomMetadataNativeCrashScenario"
         And I wait to receive a request
         And the request payload contains a completed handled native report
@@ -188,3 +197,71 @@ Feature: Native API
         And the event "metaData.fruit.ripe" is true
         And the event "metaData.fruit.counters" equals 47
         And the event "unhandled" is true
+
+    Scenario: Add custom metadata to configuration followed by a C crash
+        When I run "CXXConfigurationMetadataNativeCrashScenario" and relaunch the app
+        And I configure the app to run in the "non-metadata" state
+        And I configure Bugsnag for "CXXConfigurationMetadataNativeCrashScenario"
+        And I wait to receive a request
+        And the request payload contains a completed handled native report
+        And the exception "errorClass" equals one of:
+          | SIGILL |
+          | SIGTRAP |
+        And the event "severity" equals "error"
+        And the event "metaData.fruit.apple" equals "gala"
+        And the event "metaData.fruit.ripe" is true
+        And the event "metaData.fruit.counters" equals 47
+        And the event "unhandled" is true
+
+    Scenario: Use the NDK methods without "env" after calling "bugsnag_start"
+        When I run "CXXStartScenario"
+        And I wait to receive a request
+        Then the request payload contains a completed handled native report
+        And the event "unhandled" is false
+        And the exception "errorClass" equals "Start scenario"
+        And the exception "message" equals "Testing env"
+        And the event "severity" equals "info"
+        And the event has a "log" breadcrumb named "Start scenario crumb"
+
+    Scenario: Remove MetaData from the NDK layer
+        When I run "CXXRemoveDataScenario"
+        And I wait to receive 2 requests
+        Then the request payload contains a completed handled native report
+        And the event "unhandled" is false
+        And the exception "errorClass" equals "RemoveDataScenario"
+        And the exception "message" equals "oh no"
+        And the event "metaData.persist.keep" equals "foo"
+        And the event "metaData.persist.remove" equals "bar"
+        And the event "metaData.remove.foo" equals "bar"
+        Then I discard the oldest request
+        And the request payload contains a completed handled native report
+        And the event "unhandled" is false
+        And the exception "errorClass" equals "RemoveDataScenario"
+        And the exception "message" equals "oh no"
+        And the event "metaData.persist.keep" equals "foo"
+        And the event "metaData.persist.remove" is null
+        And the event "metaData.remove" is null
+
+    Scenario: Set user in Native layer followed by a Java crash
+        When I run "CXXNativeUserInfoJavaCrashScenario" and relaunch the app
+        And I configure Bugsnag for "CXXNativeUserInfoJavaCrashScenario"
+        And I wait to receive a request
+        Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+        And the payload field "events" is an array with 1 elements
+        And the event "user.id" equals "24601"
+        And the event "user.email" equals "test@test.test"
+        And the event "user.name" equals "test user"
+
+    Scenario: Get Java data in the Native layer
+        When I run "CXXGetJavaDataScenario" and relaunch the app
+        And I configure Bugsnag for "CXXGetJavaDataScenario"
+        And I wait to receive a request
+        Then the request payload contains a completed unhandled native report
+        And the event "unhandled" is true
+        And the event "metaData.data.context" equals "passContext"
+        And the event "metaData.data.appVersion" equals "passAppVersion"
+        And the event "metaData.data.userName" equals "passUserName"
+        And the event "metaData.data.userEmail" equals "passUserEmail"
+        And the event "metaData.data.userId" equals "passUserId"
+        And the event "metaData.data.metadata" equals "passMetaData"
+        And the event "metaData.data.device" is not null

@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -13,7 +14,7 @@ import java.util.UUID;
  * Store and flush Sessions which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-class SessionStore extends FileStore<Session> {
+class SessionStore extends FileStore {
 
     static final Comparator<File> SESSION_COMPARATOR = new Comparator<File>() {
         @Override
@@ -33,16 +34,14 @@ class SessionStore extends FileStore<Session> {
         }
     };
 
-    SessionStore(@NonNull Configuration config, @NonNull Context appContext,
-                 @Nullable Delegate delegate) {
-        super(config, appContext, "/bugsnag-sessions/",
-            128, SESSION_COMPARATOR, delegate);
+    SessionStore(@NonNull Context appContext, @NonNull Logger logger, @Nullable Delegate delegate) {
+        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, logger, delegate);
     }
 
     @NonNull
     @Override
     String getFilename(Object object) {
-        return String.format(Locale.US, "%s%s%d.json",
+        return String.format(Locale.US, "%s%s%d_v2.json",
             storeDirectory, UUID.randomUUID().toString(), System.currentTimeMillis());
     }
 

@@ -1,6 +1,14 @@
 # Changelog
 
-## TBD
+## 5.0.0 (2020-04-21)
+
+__This version contains many breaking changes__. It is part of an effort to unify our notifier
+libraries across platforms, making the user interface more consistent, and implementations better
+ on multi-layered environments where multiple Bugsnag libraries need to work together
+ (such as React Native).
+
+Please see the [upgrade guide](UPGRADING.md) for details of all the changes and instructions on
+how to upgrade.
 
 ### Bug fixes
 
@@ -171,6 +179,8 @@ the use of any API supplied by bugsnag-android.
 [#501](https://github.com/bugsnag/bugsnag-android/pull/501)
 * Send minimal error report if cached file is corrupted/empty
 [#500](https://github.com/bugsnag/bugsnag-android/pull/500)
+* Remove deprecated interfaces from API 
+[#514](https://github.com/bugsnag/bugsnag-android/pull/514)
 
 ### Bug fixes
 

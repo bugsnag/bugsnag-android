@@ -1,0 +1,1202 @@
+[
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 0,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 1,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 2,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 3,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 4,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 5,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 6,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 7,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 8,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 9,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 10,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 11,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 12,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 13,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 14,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 15,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 16,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 17,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 18,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 19,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 20,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 21,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 22,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 23,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 24,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 25,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 26,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 27,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 28,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 29,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 30,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 31,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 32,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 33,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 34,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 35,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 36,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 37,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 38,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 39,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 40,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 41,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 42,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 43,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 44,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 45,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 46,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 47,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 48,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 49,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 50,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 51,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 52,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 53,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 54,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 55,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 56,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 57,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 58,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 59,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 60,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 61,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 62,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 63,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 64,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 65,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 66,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 67,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 68,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 69,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 70,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 71,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 72,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 73,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 74,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 75,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 76,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 77,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 78,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 79,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 80,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 81,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 82,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 83,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 84,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 85,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 86,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 87,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 88,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 89,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 90,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 91,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 92,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 93,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 94,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 95,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 96,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 97,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 98,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 99,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 100,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 101,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 102,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 103,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 104,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 105,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 106,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 107,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 108,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 109,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 110,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 111,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 112,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 113,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 114,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 115,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 116,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 117,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 118,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 119,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 120,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 121,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 122,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 123,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 124,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 125,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 126,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 127,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 128,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 129,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 130,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 131,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 132,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 133,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 134,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 135,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 136,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 137,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 138,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 139,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 140,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 141,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 142,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 143,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 144,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 145,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 146,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 147,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 148,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 149,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 150,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 151,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 152,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 153,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 154,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 155,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 156,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 157,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 158,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 159,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 160,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 161,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 162,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 163,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 164,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 165,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 166,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 167,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 168,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 169,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 170,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 171,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 172,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 173,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 174,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 175,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 176,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 177,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 178,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 179,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 180,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 181,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 182,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 183,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 184,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 185,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 186,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 187,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 188,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 189,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 190,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 191,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 192,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 193,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 194,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 195,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 196,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 197,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 198,
+    "inProject": true
+  },
+  {
+    "method": "Foo",
+    "file": "Bar.kt",
+    "lineNumber": 199,
+    "inProject": true
+  }
+]

@@ -13,6 +13,7 @@
 SUITE(string_utils);
 SUITE(serialize_utils);
 SUITE(breadcrumbs);
+SUITE(event_mutators);
 
 GREATEST_MAIN_DEFS();
 
@@ -24,13 +25,14 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCXXTest_run(
     RUN_SUITE(string_utils);
     RUN_SUITE(serialize_utils);
     RUN_SUITE(breadcrumbs);
+    RUN_SUITE(event_mutators);
     GREATEST_MAIN_END();
 }
 
 TEST test_user_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
     JSON_Object *event = json_value_get_object(event_val);
-    bsg_user *user = test_case->data_ptr;
+    bugsnag_user *user = test_case->data_ptr;
     bsg_serialize_user(*user, event);
     free(user);
     return validate_serialized_json(test_case, event_val);
@@ -82,12 +84,12 @@ TEST test_app_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadAppMetaDataTestCase(num);
+    test_case->data_ptr = loadAppMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;
@@ -119,29 +121,6 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceSerializationTest_run(
     GREATEST_MAIN_END();
 }
 
-TEST test_device_meta_data_serialization(test_case *test_case) {
-    JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bsg_device_info *device = test_case->data_ptr;
-    bsg_serialize_device_metadata(*device, event);
-    free(device);
-    return validate_serialized_json(test_case, event_val);
-}
-
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceMetaDataSerializationTest_run(
-        JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
-    int argc = 0;
-    char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadDeviceMetaDataTestCase(num);
-
-    char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
-    test_case->expected_json = str;
-    GREATEST_MAIN_BEGIN();
-    RUN_TEST1(test_device_meta_data_serialization, test_case);
-    GREATEST_MAIN_END();
-}
-
 TEST test_custom_meta_data_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
     JSON_Object *event = json_value_get_object(event_val);
@@ -151,12 +130,12 @@ TEST test_custom_meta_data_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetaDataSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetadataSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
     test_case *test_case = malloc(sizeof(test_case));
-    test_case->data_ptr = loadCustomMetaDataTestCase(num);
+    test_case->data_ptr = loadCustomMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
     test_case->expected_json = str;
@@ -167,10 +146,10 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetaDataSerializationTe
 
 TEST test_context_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_context(report, event);
-    free(report);
+    JSON_Object *event_obj = json_value_get_object(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_context(event, event_obj);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 
@@ -190,10 +169,10 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_ContextSerializationTest_run(
 
 TEST test_handled_state_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_handled_state(report, event);
-    free(report);
+    JSON_Object *event_obj = json_value_get_object(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_handled_state(event, event_obj);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 
@@ -213,10 +192,10 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_HandledStateSerializationTest
 
 TEST test_session_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_object();
-    JSON_Object *event = json_value_get_object(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_session(report, event);
-    free(report);
+    JSON_Object *event_obj = json_value_get_object(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_session(event, event_obj);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 
@@ -236,14 +215,14 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_SessionSerializationTest_run(
 
 TEST test_breadcrumbs_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_array();
-    JSON_Array *event = json_value_get_array(event_val);
-    bugsnag_report *report = test_case->data_ptr;
-    bsg_serialize_breadcrumbs(report, event);
-    free(report);
+    JSON_Array *event_ary = json_value_get_array(event_val);
+    bugsnag_event *event = test_case->data_ptr;
+    bsg_serialize_breadcrumbs(event, event_ary);
+    free(event);
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_BreadcrumbsSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_BreadcrumbStateSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
@@ -260,7 +239,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_BreadcrumbsSerializationTest_
 TEST test_stackframe_serialization(test_case *test_case) {
     JSON_Value *event_val = json_value_init_array();
     JSON_Array *event = json_value_get_array(event_val);
-    bsg_stackframe *frame = test_case->data_ptr;
+    bugsnag_stackframe *frame = test_case->data_ptr;
     bsg_serialize_stackframe(frame, event);
     free(frame);
     return validate_serialized_json(test_case, event_val);
@@ -287,8 +266,8 @@ TEST test_exception_serialization(test_case *test_case) {
     JSON_Array *stacktrace = json_value_get_array(stack_val);
     json_object_set_value(exception, "stacktrace", stack_val);
 
-    bsg_exception *exc = test_case->data_ptr;
-    bsg_serialize_exception(*exc, exception, stacktrace);
+    bsg_error *exc = test_case->data_ptr;
+    bsg_serialize_error(*exc, exception, stacktrace);
     free(exc);
     return validate_serialized_json(test_case, event_val);
 }

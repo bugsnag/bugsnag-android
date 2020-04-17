@@ -44,7 +44,7 @@ class ConnectivityApi24Test {
     fun connectivityLegacyNetworkState() {
         val conn = ConnectivityApi24(cm, null)
         Mockito.`when`(cm.activeNetwork).thenReturn(info)
-        
+
         Mockito.`when`(cm.getNetworkCapabilities(info)).thenReturn(null)
         assertEquals("none", conn.retrieveNetworkAccessState())
 

@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
-#include <report.h>
+#include <event.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -179,23 +179,26 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   }
 
   bsg_global_env->handling_crash = true;
-  bsg_populate_report_as(bsg_global_env);
-  bsg_global_env->next_report.unhandled_events++;
-  bsg_global_env->next_report.exception.frame_count = bsg_unwind_stack(
+  bsg_global_env->next_event.unhandled = true;
+  bsg_populate_event_as(bsg_global_env);
+  bsg_global_env->next_event.unhandled_events++;
+  bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
       bsg_global_env->signal_unwind_style,
-      bsg_global_env->next_report.exception.stacktrace, info, user_context);
+      bsg_global_env->next_event.error.stacktrace, info, user_context);
 
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
     const int signal = bsg_native_signals[i];
     if (signal == signum) {
-      bsg_strcpy(bsg_global_env->next_report.exception.name,
+      bsg_strcpy(bsg_global_env->next_event.error.errorClass,
                  (char *)bsg_native_signal_names[i]);
-      bsg_strcpy(bsg_global_env->next_report.exception.message,
+      bsg_strcpy(bsg_global_env->next_event.error.errorMessage,
                  (char *)bsg_native_signal_msgs[i]);
       break;
     }
   }
-  bsg_serialize_report_to_file(bsg_global_env);
+  if (bsg_run_on_error()) {
+    bsg_serialize_event_to_file(bsg_global_env);
+  }
   bsg_handler_uninstall_signal();
   bsg_invoke_previous_signal_handler(signum, info, user_context);
 }

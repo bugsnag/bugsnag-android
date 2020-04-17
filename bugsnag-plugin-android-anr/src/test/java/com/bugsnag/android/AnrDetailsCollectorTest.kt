@@ -19,25 +19,19 @@ class AnrDetailsCollectorTest {
 
     private val collector = AnrDetailsCollector()
     private val stateInfo = ActivityManager.ProcessErrorStateInfo()
-    private lateinit var error: Error
 
     @Mock
     lateinit var am: ActivityManager
+
+    @Mock
+    lateinit var client: Client
 
     @Before
     fun setUp() {
         stateInfo.pid = PID_EXAMPLE
         stateInfo.tag = "com.bugsnag.android.example/.ExampleActivity"
-        stateInfo.shortMsg = "ANR Input dispatching timed out"
+        stateInfo.shortMsg = "Input dispatching timed out"
         stateInfo.longMsg = "ANR in com.bugsnag.android.example"
-
-        error = Error.Builder(
-            Configuration("f"),
-            RuntimeException(),
-            null,
-            Thread.currentThread(),
-            true
-        ).build()
     }
 
     @Test
@@ -69,7 +63,14 @@ class AnrDetailsCollectorTest {
 
     @Test
     fun anrDetailsAltered() {
-        collector.addErrorStateInfo(error, stateInfo)
-        assertEquals(stateInfo.shortMsg.replace("ANR", ""), error.exceptionMessage)
+        Mockito.`when`(client.config).thenReturn(BugsnagTestUtils.generateImmutableConfig())
+        val event = NativeInterface.createEvent(
+            RuntimeException("whoops"),
+            client,
+            HandledState.newInstance(HandledState.REASON_ANR)
+        )
+        collector.addErrorStateInfo(event, stateInfo)
+        assertEquals(stateInfo.shortMsg.replace("ANR", ""), event.errors[0].errorMessage)
     }
+
 }

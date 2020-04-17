@@ -1,6 +1,7 @@
 Feature: Reporting App Not Responding events
 
-Scenario: Sleeping the main thread with pending touch events when detectAnrs = true
+@skip_android_8_1
+Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs = true
     When I run "AppNotRespondingScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
@@ -11,7 +12,8 @@ Scenario: Sleeping the main thread with pending touch events when detectAnrs = t
     And the exception "errorClass" equals "ANR"
     And the exception "message" starts with " Input dispatching timed out"
 
-Scenario: Sleeping the main thread with pending touch events when detectAnrs = true and detectNdkCrashes = false
+@skip_android_8_1
+Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs = true and autoDetectNdkCrashes = false
     When I run "AppNotRespondingDisabledNdkScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
@@ -22,6 +24,7 @@ Scenario: Sleeping the main thread with pending touch events when detectAnrs = t
     And the exception "errorClass" equals "ANR"
     And the exception "message" starts with " Input dispatching timed out"
 
+@skip_android_8_1
 Scenario: Sleeping the main thread with pending touch events
     When I run "AppNotRespondingDisabledScenario"
     And I wait for 2 seconds
@@ -30,14 +33,7 @@ Scenario: Sleeping the main thread with pending touch events
     And I clear any error dialogue
     Then I should receive no requests
 
-Scenario: Sleeping the main thread with pending touch events after disabling ANR reporting
-    When I run "AppNotRespondingLaterDisabledScenario"
-    And I wait for 2 seconds
-    And I tap the screen 3 times
-    And I wait for 4 seconds
-    And I clear any error dialogue
-    Then I should receive no requests
-
+@skip_android_8_1
 Scenario: Sleeping the main thread with pending touch events after the release stage settings change to disable reporting
     When I run "AppNotRespondingOutsideReleaseStagesScenario"
     And I wait for 2 seconds

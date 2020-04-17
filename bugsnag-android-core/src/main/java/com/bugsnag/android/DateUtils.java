@@ -22,11 +22,21 @@ class DateUtils {
         }
     };
 
+    @NonNull
     static String toIso8601(@NonNull Date date) {
-        return iso8601Holder.get().format(date);
+        DateFormat dateFormat = iso8601Holder.get();
+        if (dateFormat == null) {
+            throw new IllegalStateException("Unable to find valid dateformatter");
+        }
+        return dateFormat.format(date);
     }
 
-    static Date fromIso8601(@NonNull String date) throws ParseException {
-        return iso8601Holder.get().parse(date);
+    @NonNull
+    static Date fromIso8601(@NonNull String date) {
+        try {
+            return iso8601Holder.get().parse(date);
+        } catch (ParseException exc) {
+            throw new IllegalArgumentException("Failed to parse timestamp", exc);
+        }
     }
 }

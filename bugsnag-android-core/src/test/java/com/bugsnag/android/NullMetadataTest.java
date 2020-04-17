@@ -1,10 +1,13 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Ensures that setting metadata to null doesn't result in NPEs
@@ -15,73 +18,44 @@ public class NullMetadataTest {
 
     private static final String TAB_KEY = "tab";
 
-    private Configuration config;
+    private ImmutableConfig config;
     private Throwable throwable;
 
     /**
      * Generates a bugsnag client with a NOP error api client
      *
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
-        config = new Configuration("api-key");
+    public void setUp() {
+        config = BugsnagTestUtils.generateImmutableConfig();
         throwable = new RuntimeException("Test");
     }
 
     @Test
-    public void testErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, throwable, null,
-            Thread.currentThread(), false).build();
-        validateDefaultMetadata(error.getMetaData());
+    public void testErrorDefaultMetadata() {
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(throwable, config, handledState, NoopLogger.INSTANCE);
+        validateDefaultMetadata(event);
     }
 
     @Test
-    public void testSecondErrorDefaultMetaData() throws Exception {
-        Error error = new Error.Builder(config, "RuntimeException",
-            "Something broke", new StackTraceElement[]{},
-            null, Thread.currentThread()).build();
-        validateDefaultMetadata(error.getMetaData());
+    public void testSecondErrorDefaultMetadata() {
+        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(new RuntimeException(), config, handledState, NoopLogger.INSTANCE);
+        List<String> projectPackages = Collections.emptyList();
+        Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages,
+                NoopLogger.INSTANCE);
+        Error err = new Error(new ErrorInternal("RuntimeException", "Something broke",
+                stacktrace), NoopLogger.INSTANCE);
+        event.getErrors().clear();
+        event.getErrors().add(err);
+        validateDefaultMetadata(event);
     }
 
-    @Test
-    public void testErrorSetMetadataRef() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            null,
-            Thread.currentThread(), false).build();
-        MetaData metaData = new MetaData();
-        metaData.addToTab(TAB_KEY, "test", "data");
-        error.setMetaData(metaData);
-        assertNotNull(metaData.getTab(TAB_KEY));
-    }
-
-    @Test
-    public void testErrorSetNullMetadata() throws Exception {
-        Error error = new Error.Builder(config, throwable,
-            null,
-            Thread.currentThread(), false).build();
-        error.setMetaData(null);
-        validateDefaultMetadata(error.getMetaData());
-    }
-
-    @Test
-    public void testConfigDefaultMetadata() throws Exception {
-        validateDefaultMetadata(config.getMetaData());
-    }
-
-    @Test
-    public void testConfigSetMetadataRef() throws Exception {
-        Configuration configuration = new Configuration("test");
-        configuration.setMetaData(new MetaData());
-        validateDefaultMetadata(configuration.getMetaData());
-    }
-
-    private void validateDefaultMetadata(MetaData metaData) {
-        assertNotNull(metaData);
-        assertEquals(0, metaData.getTab(TAB_KEY).size());
-
-        metaData.addToTab(TAB_KEY, "test", "data");
-        assertEquals(1, metaData.getTab(TAB_KEY).size());
+    private void validateDefaultMetadata(MetadataAware error) {
+        assertNull(error.getMetadata(TAB_KEY));
+        error.addMetadata(TAB_KEY, "test", "data");
+        assertEquals("data", error.getMetadata(TAB_KEY, "test"));
     }
 
 }

@@ -1,36 +1,33 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.ConfigFactory.MF_BUILD_UUID;
-import static com.bugsnag.android.MapUtils.getStringFromMap;
+import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
+import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
 
-import com.bugsnag.android.NativeInterface.Message;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.os.Build;
+import android.os.Environment;
 import android.os.storage.StorageManager;
-import android.text.TextUtils;
-import android.view.OrientationEventListener;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -44,51 +41,52 @@ import java.util.concurrent.RejectedExecutionException;
  *
  * @see Bugsnag
  */
-@SuppressWarnings("checkstyle:JavadocTagContinuationIndentation")
-public class Client extends Observable implements Observer {
+@SuppressWarnings({"checkstyle:JavadocTagContinuationIndentation", "ConstantConditions"})
+public class Client implements MetadataAware, CallbackAware, UserAware {
 
-    private static final boolean BLOCKING = true;
     private static final String SHARED_PREF_KEY = "com.bugsnag.android";
-    private static final String USER_ID_KEY = "user.id";
-    private static final String USER_NAME_KEY = "user.name";
-    private static final String USER_EMAIL_KEY = "user.email";
 
-    static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
+    final ImmutableConfig immutableConfig;
 
-    @NonNull
-    protected final Configuration config;
+    final MetadataState metadataState;
+
+    private final ContextState contextState;
+    private final CallbackState callbackState;
+    private final UserState userState;
+
     final Context appContext;
 
     @NonNull
-    protected final DeviceData deviceData;
+    final DeviceDataCollector deviceDataCollector;
 
     @NonNull
-    protected final AppData appData;
+    final AppDataCollector appDataCollector;
 
     @NonNull
-    final Breadcrumbs breadcrumbs;
+    final BreadcrumbState breadcrumbState;
 
     @NonNull
-    private final User user = new User();
+    protected final EventStore eventStore;
 
-    @NonNull
-    protected final ErrorStore errorStore;
+    private final SessionStore sessionStore;
 
-    final SessionStore sessionStore;
-
-    final EventReceiver eventReceiver;
     final SessionTracker sessionTracker;
-    final SharedPreferences sharedPrefs;
 
-    private final OrientationEventListener orientationListener;
+    private final SystemBroadcastReceiver systemBroadcastReceiver;
+    private final ActivityBreadcrumbCollector activityBreadcrumbCollector;
+    private final SessionLifecycleCallback sessionLifecycleCallback;
+
+    private final SharedPreferences sharedPrefs;
+
     private final Connectivity connectivity;
-    final StorageManager storageManager;
+    private final StorageManager storageManager;
+    final Logger logger;
+    final DeliveryDelegate deliveryDelegate;
 
-    @Nullable
-    private Class<?> ndkPluginClz;
+    final ClientObservable clientObservable = new ClientObservable();
+    private PluginClient pluginClient;
 
-    @Nullable
-    private Class<?> anrPluginClz;
+    final Notifier notifier = new Notifier();
 
     /**
      * Initialize a Bugsnag client
@@ -96,7 +94,7 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      */
     public Client(@NonNull Context androidContext) {
-        this(androidContext, null, true);
+        this(androidContext, Configuration.load(androidContext));
     }
 
     /**
@@ -105,22 +103,8 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param apiKey         your Bugsnag API key from your Bugsnag dashboard
      */
-    public Client(@NonNull Context androidContext, @Nullable String apiKey) {
-        this(androidContext, apiKey, true);
-    }
-
-    /**
-     * Initialize a Bugsnag client
-     *
-     * @param androidContext         an Android context, usually <code>this</code>
-     * @param apiKey                 your Bugsnag API key from your Bugsnag dashboard
-     * @param enableExceptionHandler should we automatically handle uncaught exceptions?
-     */
-    public Client(@NonNull Context androidContext,
-                  @Nullable String apiKey,
-                  boolean enableExceptionHandler) {
-        this(androidContext,
-            ConfigFactory.createNewConfiguration(androidContext, apiKey, enableExceptionHandler));
+    public Client(@NonNull Context androidContext, @NonNull String apiKey) {
+        this(androidContext, Configuration.load(androidContext, apiKey));
     }
 
     /**
@@ -129,255 +113,258 @@ public class Client extends Observable implements Observer {
      * @param androidContext an Android context, usually <code>this</code>
      * @param configuration  a configuration for the Client
      */
-    public Client(@NonNull Context androidContext, @NonNull Configuration configuration) {
-        warnIfNotAppContext(androidContext);
+    public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
         appContext = androidContext.getApplicationContext();
-        config = configuration;
-        sessionStore = new SessionStore(config, appContext, null);
-        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
-        connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
+        connectivity = new ConnectivityCompat(appContext, new Function2<Boolean, String, Unit>() {
             @Override
-            public Unit invoke(Boolean connected) {
-                if (connected) {
-                    errorStore.flushAsync();
+            public Unit invoke(Boolean hasConnection, String networkState) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("hasConnection", hasConnection);
+                data.put("networkState", networkState);
+                leaveAutoBreadcrumb("Connectivity changed", BreadcrumbType.STATE, data);
+                if (hasConnection) {
+                    eventStore.flushAsync();
                 }
                 return null;
             }
         });
 
-        //noinspection ConstantConditions
-        if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(connectivity));
-        }
+        // set sensible defaults for delivery/project packages etc if not set
+        immutableConfig = sanitiseConfiguration(appContext, configuration, connectivity);
+        logger = immutableConfig.getLogger();
+        warnIfNotAppContext(androidContext);
 
-        sessionTracker =
-            new SessionTracker(configuration, this, sessionStore);
-        eventReceiver = new EventReceiver(this);
+        // Set up breadcrumbs
+        callbackState = configuration.impl.callbackState.copy();
+        int maxBreadcrumbs = immutableConfig.getMaxBreadcrumbs();
+        breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
+
+        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
+
+        contextState = new ContextState();
+        contextState.setContext(configuration.getContext());
+
+        sessionStore = new SessionStore(appContext, logger, null);
+        sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
+                sessionStore, logger);
+        metadataState = copyMetadataState(configuration);
 
         // Set up and collect constant app and device diagnostics
         sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        appData = new AppData(appContext, appContext.getPackageManager(), config, sessionTracker);
+        ActivityManager am =
+                (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+
+        appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
+                immutableConfig, sessionTracker, am, logger);
+
+        UserRepository userRepository = new UserRepository(sharedPrefs,
+                immutableConfig.getPersistUser());
+        userState = new UserState(userRepository);
+        User user = configuration.getUser();
+
+        if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
+            userState.setUser(user.getId(), user.getEmail(), user.getName());
+        }
+
+        String id = userState.getUser().getId();
+        DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
-        deviceData = new DeviceData(connectivity, this.appContext, resources, sharedPrefs);
+        deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
+                Environment.getDataDirectory(), logger);
 
-        // Set up breadcrumbs
-        breadcrumbs = new Breadcrumbs(configuration);
-
-        // Set sensible defaults if project packages not already set
-        if (config.getProjectPackages() == null) {
-            setProjectPackages(appContext.getPackageName());
-        }
-
-        String deviceId = deviceData.getId();
-
-        if (config.getPersistUserBetweenSessions()) {
-            // Check to see if a user was stored in the SharedPreferences
-            user.setId(sharedPrefs.getString(USER_ID_KEY, deviceId));
-            user.setName(sharedPrefs.getString(USER_NAME_KEY, null));
-            user.setEmail(sharedPrefs.getString(USER_EMAIL_KEY, null));
-        } else {
-            user.setId(deviceId);
-        }
 
         if (appContext instanceof Application) {
+
             Application application = (Application) appContext;
-            application.registerActivityLifecycleCallbacks(sessionTracker);
+            sessionLifecycleCallback = new SessionLifecycleCallback(sessionTracker);
+            application.registerActivityLifecycleCallbacks(sessionLifecycleCallback);
+
+            if (immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.STATE)) {
+                this.activityBreadcrumbCollector = new ActivityBreadcrumbCollector(
+                    new Function2<String, Map<String, ? extends Object>, Unit>() {
+                        @SuppressWarnings("unchecked")
+                        @Override
+                        public Unit invoke(String activity, Map<String, ?> metadata) {
+                            leaveBreadcrumb(activity, (Map<String, Object>) metadata,
+                                    BreadcrumbType.STATE);
+                            return null;
+                        }
+                    }
+                );
+                application.registerActivityLifecycleCallbacks(activityBreadcrumbCollector);
+            } else {
+                this.activityBreadcrumbCollector = null;
+            }
         } else {
-            Logger.warn("Bugsnag is unable to setup automatic activity lifecycle "
-                + "breadcrumbs on API Levels below 14.");
+            this.activityBreadcrumbCollector = null;
+            this.sessionLifecycleCallback = null;
         }
 
-        // populate from manifest (in the case where the constructor was called directly by the
-        // User or no UUID was supplied)
-        if (config.getBuildUUID() == null) {
-            String buildUuid = null;
-            try {
-                PackageManager packageManager = appContext.getPackageManager();
-                String packageName = appContext.getPackageName();
-                ApplicationInfo ai =
-                    packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-                buildUuid = ai.metaData.getString(MF_BUILD_UUID);
-            } catch (Exception ignore) {
-                Logger.warn("Bugsnag is unable to read build UUID from manifest.");
-            }
-            if (buildUuid != null) {
-                config.setBuildUUID(buildUuid);
-            }
-        }
+        InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
+                immutableConfig, storageManager, appDataCollector, deviceDataCollector,
+                sessionTracker, notifier);
+        eventStore = new EventStore(immutableConfig, appContext, logger, notifier, delegate);
 
-        // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
-            @Override
-            public void onErrorIOFailure(Exception exc, File errorFile, String context) {
-                // send an internal error to bugsnag with no cache
-                Thread thread = Thread.currentThread();
-                Error err = new Error.Builder(config, exc, null, thread, true).build();
-                err.setContext(context);
-
-                MetaData metaData = err.getMetaData();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "canWrite", errorFile.canWrite());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "exists", errorFile.exists());
-
-                @SuppressLint("UsableSpace") // storagemanager alternative API requires API 26
-                long usableSpace = appContext.getCacheDir().getUsableSpace();
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "usableSpace", usableSpace);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "filename", errorFile.getName());
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "fileLength", errorFile.length());
-                recordStorageCacheBehavior(metaData);
-                Client.this.reportInternalBugsnagError(err);
-            }
-        });
+        deliveryDelegate = new DeliveryDelegate(logger, eventStore,
+                immutableConfig, breadcrumbState, notifier);
 
         // Install a default exception handler with this client
-        if (config.getEnableExceptionHandler()) {
-            enableExceptionHandler();
-        }
-
-        try {
-            ndkPluginClz = Class.forName("com.bugsnag.android.NdkPlugin");
-        } catch (ClassNotFoundException exc) {
-            Logger.warn("bugsnag-plugin-android-ndk artefact not found on classpath, "
-                    + "NDK errors will not be captured.");
-        }
-
-        try {
-            anrPluginClz = Class.forName("com.bugsnag.android.AnrPlugin");
-        } catch (ClassNotFoundException exc) {
-            Logger.warn("bugsnag-plugin-android-anr artefact not found on classpath, "
-                    + "ANR errors will not be captured.");
+        if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
+            new ExceptionHandler(this, logger);
         }
 
         // register a receiver for automatic breadcrumbs
-
-        try {
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    appContext.registerReceiver(eventReceiver, EventReceiver.getIntentFilter());
-                }
-            });
-        } catch (RejectedExecutionException ex) {
-            Logger.warn("Failed to register for automatic breadcrumb broadcasts", ex);
+        final SystemBroadcastReceiver systemBroadcastReceiver =
+            new SystemBroadcastReceiver(this, logger);
+        if (systemBroadcastReceiver.getActions().size() > 0) {
+            try {
+                Async.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        appContext.registerReceiver(systemBroadcastReceiver,
+                            systemBroadcastReceiver.getIntentFilter());
+                    }
+                });
+            } catch (RejectedExecutionException ex) {
+                logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
+            }
+            this.systemBroadcastReceiver = systemBroadcastReceiver;
+        } else {
+            this.systemBroadcastReceiver = null;
         }
         connectivity.registerForNetworkChanges();
 
-        boolean isNotProduction = !AppData.RELEASE_STAGE_PRODUCTION.equals(
-            appData.guessReleaseStage());
-        Logger.setEnabled(isNotProduction);
-
-        config.addObserver(this);
-        breadcrumbs.addObserver(this);
-        sessionTracker.addObserver(this);
-        user.addObserver(this);
-
-        final Client client = this;
-        orientationListener = new OrientationEventListener(appContext) {
-            @Override
-            public void onOrientationChanged(int orientation) {
-                client.setChanged();
-                client.notifyObservers(new Message(
-                    NativeInterface.MessageType.UPDATE_ORIENTATION, orientation));
-            }
-        };
-        try {
-            orientationListener.enable();
-        } catch (IllegalStateException ex) {
-            Logger.warn("Failed to set up orientation tracking: " + ex);
-        }
+        registerOrientationChangeListener();
 
         // Flush any on-disk errors
-        errorStore.flushOnLaunch();
-        loadPlugins();
+        eventStore.flushOnLaunch();
+        Map<String, Object> data = Collections.emptyMap();
+        leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
 
-        // react to changes in config
-        ClientConfigObserver observer = new ClientConfigObserver(this, config);
-        config.addObserver(observer);
-        client.addObserver(observer);
+        // finally, initialise plugins
+        loadPlugins(configuration);
     }
 
-    void recordStorageCacheBehavior(MetaData metaData) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            File cacheDir = appContext.getCacheDir();
-            File errDir = new File(cacheDir, "bugsnag-errors");
-
-            try {
-                boolean tombstone = storageManager.isCacheBehaviorTombstone(errDir);
-                boolean group = storageManager.isCacheBehaviorGroup(errDir);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheTombstone", tombstone);
-                metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "cacheGroup", group);
-            } catch (IOException exc) {
-                Logger.warn("Failed to record cache behaviour, skipping diagnostics", exc);
-            }
-        }
+    @VisibleForTesting
+    Client(
+            ImmutableConfig immutableConfig,
+            MetadataState metadataState,
+            ContextState contextState,
+            CallbackState callbackState,
+            UserState userState,
+            Context appContext,
+            @NonNull DeviceDataCollector deviceDataCollector,
+            @NonNull AppDataCollector appDataCollector,
+            @NonNull BreadcrumbState breadcrumbState,
+            @NonNull EventStore eventStore,
+            SessionStore sessionStore,
+            SystemBroadcastReceiver systemBroadcastReceiver,
+            SessionTracker sessionTracker,
+            ActivityBreadcrumbCollector activityBreadcrumbCollector,
+            SessionLifecycleCallback sessionLifecycleCallback,
+            SharedPreferences sharedPrefs,
+            Connectivity connectivity,
+            StorageManager storageManager,
+            Logger logger,
+            DeliveryDelegate deliveryDelegate
+    ) {
+        this.immutableConfig = immutableConfig;
+        this.metadataState = metadataState;
+        this.contextState = contextState;
+        this.callbackState = callbackState;
+        this.userState = userState;
+        this.appContext = appContext;
+        this.deviceDataCollector = deviceDataCollector;
+        this.appDataCollector = appDataCollector;
+        this.breadcrumbState = breadcrumbState;
+        this.eventStore = eventStore;
+        this.sessionStore = sessionStore;
+        this.systemBroadcastReceiver = systemBroadcastReceiver;
+        this.sessionTracker = sessionTracker;
+        this.activityBreadcrumbCollector = activityBreadcrumbCollector;
+        this.sessionLifecycleCallback = sessionLifecycleCallback;
+        this.sharedPrefs = sharedPrefs;
+        this.connectivity = connectivity;
+        this.storageManager = storageManager;
+        this.logger = logger;
+        this.deliveryDelegate = deliveryDelegate;
     }
 
-    private void loadPlugins() {
+    private void loadPlugins(@NonNull Configuration configuration) {
         NativeInterface.setClient(this);
-        enableOrDisableNdkReporting();
-        enableOrDisableAnrReporting();
-        BugsnagPluginInterface.INSTANCE.loadRegisteredPlugins(this);
+        Set<Plugin> userPlugins = configuration.getPlugins();
+        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
+        pluginClient.loadPlugins(this);
     }
 
-    void enableOrDisableNdkReporting() {
-        if (ndkPluginClz == null) {
-            return;
-        }
-        if (config.getDetectNdkCrashes()) {
-            BugsnagPluginInterface.INSTANCE.loadPlugin(this, ndkPluginClz);
-        } else {
-            BugsnagPluginInterface.INSTANCE.unloadPlugin(ndkPluginClz);
-        }
+    private void logNull(String property) {
+        logger.e("Invalid null value supplied to client." + property + ", ignoring");
     }
 
-    void enableOrDisableAnrReporting() {
-        if (anrPluginClz == null) {
-            return;
-        }
-        if (config.getDetectAnrs()) {
-            BugsnagPluginInterface.INSTANCE.loadPlugin(this, anrPluginClz);
-        } else {
-            BugsnagPluginInterface.INSTANCE.unloadPlugin(anrPluginClz);
-        }
+    private MetadataState copyMetadataState(@NonNull Configuration configuration) {
+        // performs deep copy of metadata to preserve immutability of Configuration interface
+        Metadata orig = configuration.impl.metadataState.getMetadata();
+        Metadata copy = orig.copy();
+        return configuration.impl.metadataState.copy(copy);
+    }
+
+    private void registerOrientationChangeListener() {
+        IntentFilter configFilter = new IntentFilter();
+        configFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
+        ConfigChangeReceiver receiver = new ConfigChangeReceiver(deviceDataCollector,
+                new Function2<String, String, Unit>() {
+                    @Override
+                    public Unit invoke(String oldOrientation, String newOrientation) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("from", oldOrientation);
+                        data.put("to", newOrientation);
+                        leaveAutoBreadcrumb("Orientation changed", BreadcrumbType.STATE, data);
+                        clientObservable.postOrientationChange(newOrientation);
+                        return null;
+                    }
+                }
+        );
+        appContext.registerReceiver(receiver, configFilter);
     }
 
     void sendNativeSetupNotification() {
-        setChanged();
-        ArrayList<Object> messageArgs = new ArrayList<>();
-        messageArgs.add(config);
-
-        super.notifyObservers(new Message(NativeInterface.MessageType.INSTALL, messageArgs));
+        clientObservable.postNdkInstall(immutableConfig);
         try {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    enqueuePendingNativeReports();
+                    clientObservable.postNdkDeliverPending();
                 }
             });
         } catch (RejectedExecutionException ex) {
-            Logger.warn("Failed to enqueue native reports, will retry next launch: ", ex);
+            logger.w("Failed to enqueue native reports, will retry next launch: ", ex);
         }
     }
 
-    void enqueuePendingNativeReports() {
-        setChanged();
-        notifyObservers(new Message(
-            NativeInterface.MessageType.DELIVER_PENDING, null));
+    void registerObserver(Observer observer) {
+        metadataState.addObserver(observer);
+        breadcrumbState.addObserver(observer);
+        sessionTracker.addObserver(observer);
+        clientObservable.addObserver(observer);
+        userState.addObserver(observer);
+        contextState.addObserver(observer);
+        deliveryDelegate.addObserver(observer);
     }
 
-    @Override
-    public void update(@NonNull Observable observable, @NonNull Object arg) {
-        if (arg instanceof Message) {
-            setChanged();
-            super.notifyObservers(arg);
-        }
+    /**
+     * Sends initial state values for Metadata/User/Context to any registered observers.
+     */
+    void syncInitialState() {
+        metadataState.emitObservableEvent();
+        contextState.emitObservableEvent();
+        userState.emitObservableEvent();
     }
 
     /**
      * Starts tracking a new session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * You should call this at the appropriate time in your application when you wish to start a
      * session. Any subsequent errors which occur in your application will still be reported to
@@ -388,18 +375,18 @@ public class Client extends Observable implements Observer {
      * when one doesn't already exist.
      *
      * @see #resumeSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
     public void startSession() {
         sessionTracker.startSession(false);
     }
 
     /**
-     * Stops tracking a session. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * Pauses tracking of a session. You should disable automatic session tracking via
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
-     * You should call this at the appropriate time in your application when you wish to stop a
+     * You should call this at the appropriate time in your application when you wish to pause a
      * session. Any subsequent errors which occur in your application will still be reported to
      * Bugsnag but will not count towards your application's
      * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
@@ -408,17 +395,17 @@ public class Client extends Observable implements Observer {
      *
      * @see #startSession()
      * @see #resumeSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see Configuration#setAutoTrackSessions(boolean)
      */
-    public final void stopSession() {
-        sessionTracker.stopSession();
+    public void pauseSession() {
+        sessionTracker.pauseSession();
     }
 
     /**
-     * Resumes a session which has previously been stopped, or starts a new session if none exists.
-     * If a session has already been resumed or started and has not been stopped, calling this
+     * Resumes a session which has previously been paused, or starts a new session if none exists.
+     * If a session has already been resumed or started and has not been paused, calling this
      * method will have no effect. You should disable automatic session tracking via
-     * {@link #setAutoCaptureSessions(boolean)} if you call this method.
+     * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
      * <p/>
      * It's important to note that sessions are stored in memory for the lifetime of the
      * application process and are not persisted on disk. Therefore calling this method on app
@@ -431,372 +418,176 @@ public class Client extends Observable implements Observer {
      * stability score</a>.
      *
      * @see #startSession()
-     * @see #stopSession()
-     * @see Configuration#setAutoCaptureSessions(boolean)
+     * @see #pauseSession()
+     * @see Configuration#setAutoTrackSessions(boolean)
      *
      * @return true if a previous session was resumed, false if a new session was started.
      */
-    public final boolean resumeSession() {
+    public boolean resumeSession() {
         return sessionTracker.resumeSession();
     }
 
     /**
-     * Starts tracking a new session only if no sessions have yet been tracked
+     * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
+     * represent what was happening in your application at the time an error occurs.
      *
-     * This is an integration point for custom libraries implementing automatic session capture
-     * which differs from the default activity-based initialization.
-     */
-    public void startFirstSession(@NonNull Activity activity) {
-        sessionTracker.startFirstSession(activity);
-    }
-
-    /**
-     * Set the application version sent to Bugsnag. By default we'll pull this
-     * from your AndroidManifest.xml
-     *
-     * @param appVersion the app version to send
-     */
-    public void setAppVersion(@NonNull String appVersion) {
-        config.setAppVersion(appVersion);
-    }
-
-    /**
-     * Gets the context to be sent to Bugsnag.
-     *
-     * @return Context
+     * In an android app the "context" is automatically set as the foreground Activity.
+     * If you would like to set this value manually, you should alter this property.
      */
     @Nullable public String getContext() {
-        return config.getContext();
+        return contextState.getContext();
     }
 
     /**
-     * Set the context sent to Bugsnag. By default we'll attempt to detect the
-     * name of the top-most activity at the time of a report, and use this
-     * as the context, but sometime this is not possible.
+     * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
+     * represent what was happening in your application at the time an error occurs.
      *
-     * @param context set what was happening at the time of a crash
+     * In an android app the "context" is automatically set as the foreground Activity.
+     * If you would like to set this value manually, you should alter this property.
      */
     public void setContext(@Nullable String context) {
-        config.setContext(context);
+        contextState.setContext(context);
     }
 
     /**
-     * Set the endpoint to send data to. By default we'll send reports to
-     * the standard https://notify.bugsnag.com endpoint, but you can override
-     * this if you are using Bugsnag Enterprise to point to your own Bugsnag
-     * endpoint.
-     *
-     * @param endpoint the custom endpoint to send report to
-     * @deprecated use {@link com.bugsnag.android.Configuration#setEndpoints(String, String)}
-     * instead.
+     * Sets the user associated with the event.
      */
-    @Deprecated
-    public void setEndpoint(@NonNull String endpoint) {
-        config.setEndpoint(endpoint);
-    }
-
-    /**
-     * Set the buildUUID to your own value. This is used to identify proguard
-     * mapping files in the case that you publish multiple different apps with
-     * the same appId and versionCode. The default value is read from the
-     * com.bugsnag.android.BUILD_UUID meta-data field in your app manifest.
-     *
-     * @param buildUuid the buildUuid.
-     */
-    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public void setBuildUUID(@Nullable final String buildUuid) {
-        config.setBuildUUID(buildUuid);
-    }
-
-
-    /**
-     * Set which keys should be filtered when sending metaData to Bugsnag.
-     * Use this when you want to ensure sensitive information, such as passwords
-     * or credit card information is stripped from metaData you send to Bugsnag.
-     * Any keys in metaData which contain these strings will be marked as
-     * [FILTERED] when send to Bugsnag.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setFilters("password", "credit_card");
-     *
-     * @param filters a list of keys to filter from metaData
-     */
-    public void setFilters(@Nullable String... filters) {
-        config.setFilters(filters);
-    }
-
-    /**
-     * Set which exception classes should be ignored (not sent) by Bugsnag.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setIgnoreClasses("java.lang.RuntimeException");
-     *
-     * @param ignoreClasses a list of exception classes to ignore
-     */
-    public void setIgnoreClasses(@Nullable String... ignoreClasses) {
-        config.setIgnoreClasses(ignoreClasses);
-    }
-
-    /**
-     * Set for which releaseStages errors should be sent to Bugsnag.
-     * Use this to stop errors from development builds being sent.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setNotifyReleaseStages("production");
-     *
-     * @param notifyReleaseStages a list of releaseStages to notify for
-     * @see #setReleaseStage
-     */
-    public void setNotifyReleaseStages(@Nullable String... notifyReleaseStages) {
-        config.setNotifyReleaseStages(notifyReleaseStages);
-    }
-
-    /**
-     * Set which packages should be considered part of your application.
-     * Bugsnag uses this to help with error grouping, and stacktrace display.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setProjectPackages("com.example.myapp");
-     * <p/>
-     * By default, we'll mark the current package name as part of you app.
-     *
-     * @param projectPackages a list of package names
-     * @deprecated use {{@link Configuration#setProjectPackages(String[])}} instead
-     */
-    @Deprecated
-    public void setProjectPackages(@Nullable String... projectPackages) {
-        config.setProjectPackages(projectPackages);
-    }
-
-    /**
-     * Set the current "release stage" of your application.
-     * By default, we'll set this to "development" for debug builds and
-     * "production" for non-debug builds.
-     *
-     * @param releaseStage the release stage of the app
-     * @see #setNotifyReleaseStages
-     */
-    public void setReleaseStage(@Nullable String releaseStage) {
-        config.setReleaseStage(releaseStage);
-        Logger.setEnabled(!AppData.RELEASE_STAGE_PRODUCTION.equals(releaseStage));
-    }
-
-    /**
-     * Set whether to send thread-state with report.
-     * By default, this will be true.
-     *
-     * @param sendThreads should we send thread-state with report?
-     */
-    public void setSendThreads(boolean sendThreads) {
-        config.setSendThreads(sendThreads);
-    }
-
-
-    /**
-     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
-     * the app enters the foreground.
-     * <p>
-     * By default this behavior is enabled.
-     *
-     * @param autoCapture whether sessions should be captured automatically
-     */
-    public void setAutoCaptureSessions(boolean autoCapture) {
-        config.setAutoCaptureSessions(autoCapture);
-
-        if (autoCapture) { // track any existing sessions
-            sessionTracker.onAutoCaptureEnabled();
-        }
-    }
-
-    /**
-     * Set details of the user currently using your application.
-     * You can search for this information in your Bugsnag dashboard.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.setUser("12345", "james@example.com", "James Smith");
-     *
-     * @param id    a unique identifier of the current user (defaults to a unique id)
-     * @param email the email address of the current user
-     * @param name  the name of the current user
-     */
+    @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
-        setUserId(id);
-        setUserEmail(email);
-        setUserName(name);
+        userState.setUser(id, email, name);
     }
 
     /**
-     * Retrieves details of the user currently using your application.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @return the current user
+     * Returns the currently set User information.
      */
     @NonNull
+    @Override
     public User getUser() {
-        return user;
-    }
-
-    @NonNull
-    @InternalApi
-    public Collection<Breadcrumb> getBreadcrumbs() {
-        return new ArrayList<>(breadcrumbs.store);
-    }
-
-    @NonNull
-    @InternalApi
-    public AppData getAppData() {
-        return appData;
-    }
-
-    @NonNull
-    @InternalApi
-    public DeviceData getDeviceData() {
-        return deviceData;
+        return userState.getUser();
     }
 
     /**
-     * Removes the current user data and sets it back to defaults
-     */
-    public void clearUser() {
-        user.setId(getStringFromMap("id", deviceData.getDeviceData()));
-        user.setEmail(null);
-        user.setName(null);
-
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit()
-            .remove(USER_ID_KEY)
-            .remove(USER_EMAIL_KEY)
-            .remove(USER_NAME_KEY)
-            .apply();
-    }
-
-    /**
-     * Set a unique identifier for the user currently using your application.
-     * By default, this will be an automatically generated unique id
-     * You can search for this information in your Bugsnag dashboard.
+     * Add a "on error" callback, to execute code at the point where an error report is
+     * captured in Bugsnag.
      *
-     * @param id a unique identifier of the current user
-     */
-    public void setUserId(@Nullable String id) {
-        user.setId(id);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_ID_KEY, id);
-        }
-    }
-
-    /**
-     * Set the email address of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param email the email address of the current user
-     */
-    public void setUserEmail(@Nullable String email) {
-        user.setEmail(email);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_EMAIL_KEY, email);
-        }
-    }
-
-    /**
-     * Set the name of the current user.
-     * You can search for this information in your Bugsnag dashboard.
-     *
-     * @param name the name of the current user
-     */
-    public void setUserName(@Nullable String name) {
-        user.setName(name);
-
-        if (config.getPersistUserBetweenSessions()) {
-            storeInSharedPrefs(USER_NAME_KEY, name);
-        }
-    }
-
-    DeliveryCompat getAndSetDeliveryCompat() {
-        Delivery current = config.getDelivery();
-
-        if (current instanceof DeliveryCompat) {
-            return (DeliveryCompat)current;
-        } else {
-            DeliveryCompat compat = new DeliveryCompat();
-            config.setDelivery(compat);
-            return compat;
-        }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Deprecated
-    void setErrorReportApiClient(@NonNull ErrorReportApiClient errorReportApiClient) {
-        if (errorReportApiClient == null) {
-            throw new IllegalArgumentException("ErrorReportApiClient cannot be null.");
-        }
-        DeliveryCompat compat = getAndSetDeliveryCompat();
-        compat.errorReportApiClient = errorReportApiClient;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Deprecated
-    void setSessionTrackingApiClient(@NonNull SessionTrackingApiClient apiClient) {
-        if (apiClient == null) {
-            throw new IllegalArgumentException("SessionTrackingApiClient cannot be null.");
-        }
-        DeliveryCompat compat = getAndSetDeliveryCompat();
-        compat.sessionTrackingApiClient = apiClient;
-    }
-
-    /**
-     * Add a "before notify" callback, to execute code before sending
-     * reports to Bugsnag.
-     * <p/>
-     * You can use this to add or modify information attached to an error
+     * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
-     * <code>false</code> from any callback to prevent delivery. "Before
-     * notify" callbacks do not run before reports generated in the event
+     * <code>false</code> from any callback to prevent delivery. "on error"
+     * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     * <p/>
+     *
      * For example:
-     * <p/>
-     * client.beforeNotify(new BeforeNotify() {
-     * public boolean run(Error error) {
-     * error.setSeverity(Severity.INFO);
+     *
+     * Bugsnag.addOnError(new OnErrorCallback() {
+     * public boolean run(Event event) {
+     * event.setSeverity(Severity.INFO);
      * return true;
      * }
      * })
      *
-     * @param beforeNotify a callback to run before sending errors to Bugsnag
-     * @see BeforeNotify
+     * @param onError a callback to run before sending errors to Bugsnag
+     * @see OnErrorCallback
      */
-    public void beforeNotify(@NonNull BeforeNotify beforeNotify) {
-        config.beforeNotify(beforeNotify);
+    @Override
+    public void addOnError(@NonNull OnErrorCallback onError) {
+        if (onError != null) {
+            callbackState.addOnError(onError);
+        } else {
+            logNull("addOnError");
+        }
     }
 
     /**
-     * Add a "before breadcrumb" callback, to execute code before every
+     * Removes a previously added "on error" callback
+     * @param onError the callback to remove
+     */
+    @Override
+    public void removeOnError(@NonNull OnErrorCallback onError) {
+        if (onError != null) {
+            callbackState.removeOnError(onError);
+        } else {
+            logNull("removeOnError");
+        }
+    }
+
+    /**
+     * Add an "on breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
-     * <p>
+     *
      * You can use this to modify breadcrumbs before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a breadcrumb.
-     * <p>
+     *
      * For example:
-     * <p>
-     * Bugsnag.beforeRecordBreadcrumb(new BeforeRecordBreadcrumb() {
-     * public boolean shouldRecord(Breadcrumb breadcrumb) {
+     *
+     * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
+     * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
      * }
      * })
      *
-     * @param beforeRecordBreadcrumb a callback to run before a breadcrumb is captured
-     * @see BeforeRecordBreadcrumb
+     * @param onBreadcrumb a callback to run before a breadcrumb is captured
+     * @see OnBreadcrumbCallback
      */
-    public void beforeRecordBreadcrumb(@NonNull BeforeRecordBreadcrumb beforeRecordBreadcrumb) {
-        config.beforeRecordBreadcrumb(beforeRecordBreadcrumb);
+    @Override
+    public void addOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
+        if (onBreadcrumb != null) {
+            callbackState.addOnBreadcrumb(onBreadcrumb);
+        } else {
+            logNull("addOnBreadcrumb");
+        }
+    }
+
+    /**
+     * Removes a previously added "on breadcrumb" callback
+     * @param onBreadcrumb the callback to remove
+     */
+    @Override
+    public void removeOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
+        if (onBreadcrumb != null) {
+            callbackState.removeOnBreadcrumb(onBreadcrumb);
+        } else {
+            logNull("removeOnBreadcrumb");
+        }
+    }
+
+    /**
+     * Add an "on session" callback, to execute code before every
+     * session captured by Bugsnag.
+     *
+     * You can use this to modify sessions before they are stored by Bugsnag.
+     * You can also return <code>false</code> from any callback to ignore a session.
+     *
+     * For example:
+     *
+     * Bugsnag.onSession(new OnSessionCallback() {
+     * public boolean run(Session session) {
+     * return false; // ignore the session
+     * }
+     * })
+     *
+     * @param onSession a callback to run before a session is captured
+     * @see OnSessionCallback
+     */
+    @Override
+    public void addOnSession(@NonNull OnSessionCallback onSession) {
+        if (onSession != null) {
+            callbackState.addOnSession(onSession);
+        } else {
+            logNull("addOnSession");
+        }
+    }
+
+    /**
+     * Removes a previously added "on session" callback
+     * @param onSession the callback to remove
+     */
+    @Override
+    public void removeOnSession(@NonNull OnSessionCallback onSession) {
+        if (onSession != null) {
+            callbackState.removeOnSession(onSession);
+        } else {
+            logNull("removeOnSession");
+        }
     }
 
     /**
@@ -805,680 +596,24 @@ public class Client extends Observable implements Observer {
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, !BLOCKING);
+        notify(exception, null);
     }
 
     /**
      * Notify Bugsnag of a handled exception
      *
-     * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
+     * @param exc the exception to send to Bugsnag
+     * @param onError  callback invoked on the generated error report for
      *                  additional modification
      */
-    public void notify(@NonNull Throwable exception, @Nullable Callback callback) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, DeliveryStyle.ASYNC, callback);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
-     *                   additional modification
-     */
-    public void notify(@NonNull String name,
-                       @NonNull String message,
-                       @NonNull StackTraceElement[] stacktrace,
-                       @Nullable Callback callback) {
-        Error error = new Error.Builder(config, name, message, stacktrace,
-            sessionTracker, Thread.currentThread())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, DeliveryStyle.ASYNC, callback);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     */
-    public void notify(@NonNull Throwable exception, @NonNull Severity severity) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .severity(severity)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull Throwable exception,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .metaData(metaData)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull Throwable exception, @NonNull Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .metaData(metaData)
-            .severity(severity)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull String name, @NonNull String message,
-                       @NonNull StackTraceElement[] stacktrace, @NonNull Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        notify(error, !BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notify(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notify(@NonNull String name,
-                       @NonNull String message,
-                       @Nullable String context,
-                       @NonNull StackTraceElement[] stacktrace,
-                       @NonNull Severity severity,
-                       @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        error.setContext(context);
-        notify(error, !BLOCKING);
-    }
-
-    private void notify(@NonNull Error error, boolean blocking) {
-        DeliveryStyle style = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(error, style, null);
-    }
-
-    void notify(@NonNull Error error,
-                @NonNull DeliveryStyle style,
-                @Nullable Callback callback) {
-        // Don't notify if this error class should be ignored
-        if (error.shouldIgnoreClass()) {
-            return;
-        }
-
-        // generate new object each time, as this can be mutated by end-users
-        Map<String, Object> errorAppData = appData.getAppData();
-
-        // Don't notify unless releaseStage is in notifyReleaseStages
-        String releaseStage = getStringFromMap("releaseStage", errorAppData);
-
-        if (!config.shouldNotifyForReleaseStage(releaseStage)) {
-            return;
-        }
-
-        // Capture the state of the app and device and attach diagnostics to the error
-        Map<String, Object> errorDeviceData = deviceData.getDeviceData();
-        error.setDeviceData(errorDeviceData);
-        error.getMetaData().store.put("device", deviceData.getDeviceMetaData());
-
-
-        // add additional info that belongs in metadata
-        error.setAppData(errorAppData);
-        error.getMetaData().store.put("app", appData.getAppDataMetaData());
-
-        // Attach breadcrumbs to the error
-        error.setBreadcrumbs(breadcrumbs);
-
-        // Attach user info to the error
-        error.setUser(user);
-
-        // Attach default context from active activity
-        if (TextUtils.isEmpty(error.getContext())) {
-            String context = config.getContext();
-            error.setContext(context != null ? context : appData.getActiveScreenClass());
-        }
-
-        // Run beforeNotify tasks, don't notify if any return true
-        if (!runBeforeNotifyTasks(error)) {
-            Logger.info("Skipping notification - beforeNotify task returned false");
-            return;
-        }
-
-        // Build the report
-        Report report = new Report(config.getApiKey(), error);
-
-        if (callback != null) {
-            callback.beforeNotify(report);
-        }
-
-        if (error.getSession() != null) {
-            setChanged();
-
-            if (error.getHandledState().isUnhandled()) {
-                notifyObservers(new Message(
-                    NativeInterface.MessageType.NOTIFY_UNHANDLED, null));
-            } else {
-                notifyObservers(new Message(
-                    NativeInterface.MessageType.NOTIFY_HANDLED, error.getExceptionName()));
-            }
-        }
-
-        switch (style) {
-            case SAME_THREAD:
-                deliver(report, error);
-                break;
-            case NO_CACHE:
-                report.setCachingDisabled(true);
-                deliverReportAsync(error, report);
-                break;
-            case ASYNC:
-                deliverReportAsync(error, report);
-                break;
-            case ASYNC_WITH_CACHE:
-                errorStore.write(error);
-                errorStore.flushAsync();
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Reports an error that occurred within the notifier to bugsnag. A lean error report will be
-     * generated and sent asynchronously with no callbacks, retry attempts, or writing to disk.
-     * This is intended for internal use only, and reports will not be visible to end-users.
-     */
-    void reportInternalBugsnagError(@NonNull Error error) {
-        Map<String, Object> app = appData.getAppDataSummary();
-        app.put("duration", AppData.getDurationMs());
-        app.put("durationInForeground", appData.calculateDurationInForeground());
-        app.put("inForeground", sessionTracker.isInForeground());
-        error.setAppData(app);
-
-        Map<String, Object> device = deviceData.getDeviceDataSummary();
-        device.put("freeDisk", deviceData.calculateFreeDisk());
-        error.setDeviceData(device);
-
-        MetaData metaData = error.getMetaData();
-        Notifier notifier = Notifier.getInstance();
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "apiKey", config.getApiKey());
-
-        Object packageName = appData.getAppData().get("packageName");
-        metaData.addToTab(INTERNAL_DIAGNOSTICS_TAB, "packageName", packageName);
-
-        final Report report = new Report(null, error);
-        try {
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Delivery delivery = config.getDelivery();
-
-                        // can only modify headers if DefaultDelivery is in use
-                        if (delivery instanceof DefaultDelivery) {
-                            Map<String, String> headers = config.getErrorApiHeaders();
-                            headers.put("Bugsnag-Internal-Error", "true");
-                            headers.remove(Configuration.HEADER_API_KEY);
-                            DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
-                            defaultDelivery.deliver(config.getEndpoint(), report, headers);
-                        }
-
-                    } catch (Exception exception) {
-                        Logger.warn("Failed to report internal error to Bugsnag", exception);
-                    }
-                }
-            });
-        } catch (RejectedExecutionException ignored) {
-            // drop internal report
-        }
-    }
-
-    private void deliverReportAsync(@NonNull Error error, Report report) {
-        final Report finalReport = report;
-        final Error finalError = error;
-
-        // Attempt to send the report in the background
-        try {
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    deliver(finalReport, finalError);
-                }
-            });
-        } catch (RejectedExecutionException exception) {
-            errorStore.write(error);
-            Logger.warn("Exceeded max queue count, saving to disk to send later");
-        }
-    }
-
-    private void leaveErrorBreadcrumb(@NonNull Error error) {
-        // Add a breadcrumb for this error occurring
-        String exceptionMessage = error.getExceptionMessage();
-        Map<String, String> message = Collections.singletonMap("message", exceptionMessage);
-        breadcrumbs.add(new Breadcrumb(error.getExceptionName(), BreadcrumbType.ERROR, message));
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     */
-    public void notifyBlocking(@NonNull Throwable exception) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param callback  callback invoked on the generated error report for
-     *                  additional modification
-     */
-    public void notifyBlocking(@NonNull Throwable exception, @Nullable Callback callback) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, DeliveryStyle.SAME_THREAD, callback);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param callback   callback invoked on the generated error report for
-     *                   additional modification
-     */
-    public void notifyBlocking(@NonNull String name,
-                               @NonNull String message,
-                               @NonNull StackTraceElement[] stacktrace,
-                               @Nullable Callback callback) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .build();
-        notify(error, DeliveryStyle.SAME_THREAD, callback);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notify(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .severityReasonType(HandledState.REASON_HANDLED_EXCEPTION)
-            .metaData(metaData)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     * @param metaData  additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(Throwable, Callback)} to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, exception, sessionTracker,
-            Thread.currentThread(), false)
-            .metaData(metaData)
-            .severity(severity)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull String name,
-                               @NonNull String message,
-                               @NonNull StackTraceElement[] stacktrace,
-                               @NonNull Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of an error
-     *
-     * @param name       the error name or class
-     * @param message    the error message
-     * @param context    the error context
-     * @param stacktrace the stackframes associated with the error
-     * @param severity   the severity of the error, one of Severity.ERROR,
-     *                   Severity.WARNING or Severity.INFO
-     * @param metaData   additional information to send with the exception
-     * @deprecated Use {@link #notifyBlocking(String, String, StackTraceElement[], Callback)}
-     * to send and modify error reports
-     */
-    @Deprecated
-    public void notifyBlocking(@NonNull String name,
-                               @NonNull String message,
-                               @Nullable String context,
-                               @NonNull StackTraceElement[] stacktrace,
-                               @NonNull Severity severity,
-                               @NonNull MetaData metaData) {
-        Error error = new Error.Builder(config, name, message,
-            stacktrace, sessionTracker, Thread.currentThread())
-            .severity(severity)
-            .metaData(metaData)
-            .build();
-        error.setContext(context);
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exception the exception to send to Bugsnag
-     * @param severity  the severity of the error, one of Severity.ERROR,
-     *                  Severity.WARNING or Severity.INFO
-     */
-    public void notifyBlocking(@NonNull Throwable exception, @NonNull Severity severity) {
-        Error error = new Error.Builder(config, exception,
-            sessionTracker, Thread.currentThread(), false)
-            .severity(severity)
-            .build();
-        notify(error, BLOCKING);
-    }
-
-    /**
-     * Intended for internal use only
-     *
-     * @param exception the exception
-     * @param clientData the clientdata
-     * @param blocking whether to block when notifying
-     * @param callback a callback when notifying
-     */
-    public void internalClientNotify(@NonNull Throwable exception,
-                              @NonNull Map<String, Object> clientData,
-                              boolean blocking,
-                              @Nullable Callback callback) {
-        String severity = getKeyFromClientData(clientData, "severity", true);
-        String severityReason =
-            getKeyFromClientData(clientData, "severityReason", true);
-        String logLevel = getKeyFromClientData(clientData, "logLevel", false);
-
-        String msg = String.format("Internal client notify, severity = '%s',"
-            + " severityReason = '%s'", severity, severityReason);
-        Logger.info(msg);
-
-        @SuppressWarnings("WrongConstant")
-        Error error = new Error.Builder(config, exception,
-            sessionTracker, Thread.currentThread(), false)
-            .severity(Severity.fromString(severity))
-            .severityReasonType(severityReason)
-            .attributeValue(logLevel)
-            .build();
-
-        DeliveryStyle deliveryStyle = blocking ? DeliveryStyle.SAME_THREAD : DeliveryStyle.ASYNC;
-        notify(error, deliveryStyle, callback);
-    }
-
-    @NonNull
-    private String getKeyFromClientData(Map<String, Object> clientData,
-                                        String key,
-                                        boolean required) {
-        Object value = clientData.get(key);
-        if (value instanceof String) {
-            return (String) value;
-        } else if (required) {
-            throw new IllegalStateException("Failed to set " + key + " in client data!");
-        }
-        return null;
-    }
-
-    /**
-     * Add diagnostic information to every error report.
-     * Diagnostic information is collected in "tabs" on your dashboard.
-     * <p/>
-     * For example:
-     * <p/>
-     * client.addToTab("account", "name", "Acme Co.");
-     * client.addToTab("account", "payingCustomer", true);
-     *
-     * @param tab   the dashboard tab to add diagnostic data to
-     * @param key   the name of the diagnostic information
-     * @param value the contents of the diagnostic information
-     */
-    public void addToTab(@NonNull String tab, @NonNull String key, @Nullable Object value) {
-        config.getMetaData().addToTab(tab, key, value);
-    }
-
-    /**
-     * Remove a tab of app-wide diagnostic information
-     *
-     * @param tabName the dashboard tab to remove diagnostic data from
-     */
-    public void clearTab(@NonNull String tabName) {
-        config.getMetaData().clearTab(tabName);
-    }
-
-    /**
-     * Get the global diagnostic information currently stored in MetaData.
-     *
-     * @see MetaData
-     */
-    @NonNull public MetaData getMetaData() {
-        return config.getMetaData();
-    }
-
-    /**
-     * Set the global diagnostic information to be send with every error.
-     *
-     * @see MetaData
-     */
-    public void setMetaData(@NonNull MetaData metaData) {
-        config.setMetaData(metaData);
-    }
-
-    /**
-     * Leave a "breadcrumb" log message, representing an action that occurred
-     * in your app, to aid with debugging.
-     *
-     * @param breadcrumb the log message to leave (max 140 chars)
-     */
-    public void leaveBreadcrumb(@NonNull String breadcrumb) {
-        Breadcrumb crumb = new Breadcrumb(breadcrumb);
-
-        if (runBeforeBreadcrumbTasks(crumb)) {
-            breadcrumbs.add(crumb);
-        }
-    }
-
-    /**
-     * Leave a "breadcrumb" log message, representing an action which occurred
-     * in your app, to aid with debugging.
-     */
-    public void leaveBreadcrumb(@NonNull String name,
-                                @NonNull BreadcrumbType type,
-                                @NonNull Map<String, String> metadata) {
-        Breadcrumb crumb = new Breadcrumb(name, type, metadata);
-
-        if (runBeforeBreadcrumbTasks(crumb)) {
-            breadcrumbs.add(crumb);
-        }
-    }
-
-    /**
-     * Set the maximum number of breadcrumbs to keep and sent to Bugsnag.
-     * By default, we'll keep and send the 20 most recent breadcrumb log
-     * messages.
-     *
-     * @param numBreadcrumbs number of breadcrumb log messages to send
-     * @deprecated use {@link Configuration#setMaxBreadcrumbs(int)} instead
-     */
-    @Deprecated
-    public void setMaxBreadcrumbs(int numBreadcrumbs) {
-        config.setMaxBreadcrumbs(numBreadcrumbs);
-    }
-
-    /**
-     * Clear any breadcrumbs that have been left so far.
-     */
-    public void clearBreadcrumbs() {
-        breadcrumbs.clear();
-    }
-
-    /**
-     * Enable automatic reporting of ANRs.
-     */
-    void enableAnrReporting() {
-        getConfig().setDetectAnrs(true);
-        enableOrDisableAnrReporting();
-    }
-
-    /**
-     * Disable automatic reporting of ANRs.
-     */
-    void disableAnrReporting() {
-        getConfig().setDetectAnrs(false);
-        enableOrDisableAnrReporting();
-    }
-
-    /**
-     * Enable automatic reporting of C/C++ crashes.
-     */
-    void enableNdkCrashReporting() {
-        getConfig().setDetectNdkCrashes(true);
-        enableOrDisableNdkReporting();
-    }
-
-    /**
-     * Disable automatic reporting of C/C++ crashes.
-     */
-    void disableNdkCrashReporting() {
-        getConfig().setDetectNdkCrashes(false);
-        enableOrDisableNdkReporting();
-    }
-
-    /**
-     * Enable automatic reporting of unhandled exceptions.
-     * By default, this is automatically enabled in the constructor.
-     */
-    public void enableExceptionHandler() {
-        ExceptionHandler.enable(this);
-    }
-
-    /**
-     * Disable automatic reporting of unhandled exceptions.
-     */
-    public void disableExceptionHandler() {
-        ExceptionHandler.disable(this);
-    }
-
-    void deliver(@NonNull Report report, @NonNull Error error) {
-        if (!runBeforeSendTasks(report)) {
-            Logger.info("Skipping notification - beforeSend task returned false");
-            return;
-        }
-        try {
-            config.getDelivery().deliver(report, config);
-            Logger.info("Sent 1 new error to Bugsnag");
-            leaveErrorBreadcrumb(error);
-        } catch (DeliveryFailureException exception) {
-            if (!report.isCachingDisabled()) {
-                Logger.warn("Could not send error(s) to Bugsnag,"
-                    + " saving to disk to send later", exception);
-                errorStore.write(error);
-                leaveErrorBreadcrumb(error);
-            }
-        } catch (Exception exception) {
-            Logger.warn("Problem sending error to Bugsnag", exception);
+    public void notify(@NonNull Throwable exc, @Nullable OnErrorCallback onError) {
+        if (exc != null) {
+            HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
+            Metadata metadata = metadataState.getMetadata();
+            Event event = new Event(exc, immutableConfig, handledState, metadata, logger);
+            notifyInternal(event, onError);
+        } else {
+            logNull("notify");
         }
     }
 
@@ -1487,87 +622,219 @@ public class Client extends Observable implements Observer {
      *
      * Should only ever be called from the {@link ExceptionHandler}.
      */
-    void cacheAndNotify(@NonNull Throwable exception, Severity severity, MetaData metaData,
-                        @HandledState.SeverityReason String severityReason,
-                        @Nullable String attributeValue, Thread thread) {
-        Error error = new Error.Builder(config, exception,
-            sessionTracker, thread, true)
-            .severity(severity)
-            .metaData(metaData)
-            .severityReasonType(severityReason)
-            .attributeValue(attributeValue)
-            .build();
-
-        notify(error, DeliveryStyle.ASYNC_WITH_CACHE, null);
+    void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
+                                  @HandledState.SeverityReason String severityReason,
+                                  @Nullable String attributeValue) {
+        HandledState handledState
+                = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
+        Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
+        Event event = new Event(exc, immutableConfig, handledState, data, logger);
+        notifyInternal(event, null);
     }
 
-    private boolean runBeforeSendTasks(Report report) {
-        for (BeforeSend beforeSend : config.getBeforeSendTasks()) {
-            try {
-                if (!beforeSend.run(report)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeSend threw an Exception", ex);
-            }
+    void notifyInternal(@NonNull Event event,
+                        @Nullable OnErrorCallback onError) {
+        // Don't notify if this event class should be ignored
+        if (event.shouldDiscardClass()) {
+            return;
         }
 
-        // By default, allow the error to be sent if there were no objections
-        return true;
+        if (!immutableConfig.shouldNotifyForReleaseStage()) {
+            return;
+        }
+
+        // get session for event
+        Session currentSession = sessionTracker.getCurrentSession();
+
+        if (currentSession != null
+                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
+            event.setSession(currentSession);
+        }
+
+        // Capture the state of the app and device and attach diagnostics to the event
+        event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
+        event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
+
+        // add additional info that belongs in metadata
+        // generate new object each time, as this can be mutated by end-users
+        event.setApp(appDataCollector.generateAppWithState());
+        event.addMetadata("app", appDataCollector.getAppDataMetadata());
+
+        // Attach breadcrumbState to the event
+        event.setBreadcrumbs(new ArrayList<>(breadcrumbState.getStore()));
+
+        // Attach user info to the event
+        User user = userState.getUser();
+        event.setUser(user.getId(), user.getEmail(), user.getName());
+
+        // Attach default context from active activity
+        if (Intrinsics.isEmpty(event.getContext())) {
+            String context = contextState.getContext();
+            event.setContext(context != null ? context : appDataCollector.getActiveScreenClass());
+        }
+
+        // Run on error tasks, don't notify if any return false
+        if (!callbackState.runOnErrorTasks(event, logger)
+                || (onError != null && !onError.onError(event))) {
+            logger.i("Skipping notification - onError task returned false");
+            return;
+        }
+
+        deliveryDelegate.deliver(event);
     }
 
-    OrientationEventListener getOrientationListener() {
-        return orientationListener; // this only exists for tests
+    @NonNull
+    List<Breadcrumb> getBreadcrumbs() {
+        return new ArrayList<>(breadcrumbState.getStore());
+    }
+
+    @NonNull
+    AppDataCollector getAppDataCollector() {
+        return appDataCollector;
+    }
+
+    @NonNull
+    DeviceDataCollector getDeviceDataCollector() {
+        return deviceDataCollector;
+    }
+
+    /**
+     * Adds a map of multiple metadata key-value pairs to the specified section.
+     */
+    @Override
+    public void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
+        if (section != null && value != null) {
+            metadataState.addMetadata(section, value);
+        } else {
+            logNull("addMetadata");
+        }
+    }
+
+    /**
+     * Adds the specified key and value in the specified section. The value can be of
+     * any primitive type or a collection such as a map, set or array.
+     */
+    @Override
+    public void addMetadata(@NonNull String section, @NonNull String key, @Nullable Object value) {
+        if (section != null && key != null) {
+            metadataState.addMetadata(section, key, value);
+
+        } else {
+            logNull("addMetadata");
+        }
+    }
+
+    /**
+     * Removes all the data from the specified section.
+     */
+    @Override
+    public void clearMetadata(@NonNull String section) {
+        if (section != null) {
+            metadataState.clearMetadata(section);
+        } else {
+            logNull("clearMetadata");
+        }
+    }
+
+    /**
+     * Removes data with the specified key from the specified section.
+     */
+    @Override
+    public void clearMetadata(@NonNull String section, @NonNull String key) {
+        if (section != null && key != null) {
+            metadataState.clearMetadata(section, key);
+        } else {
+            logNull("clearMetadata");
+        }
+    }
+
+    /**
+     * Returns a map of data in the specified section.
+     */
+    @Nullable
+    @Override
+    public Map<String, Object> getMetadata(@NonNull String section) {
+        if (section != null) {
+            return metadataState.getMetadata(section);
+        } else {
+            logNull("getMetadata");
+            return null;
+        }
+    }
+
+    /**
+     * Returns the value of the specified key in the specified section.
+     */
+    @Override
+    @Nullable
+    public Object getMetadata(@NonNull String section, @NonNull String key) {
+        if (section != null && key != null) {
+            return metadataState.getMetadata(section, key);
+        } else {
+            logNull("getMetadata");
+            return null;
+        }
+    }
+
+    @NonNull
+    Map<String, Object> getMetadata() {
+        return metadataState.getMetadata().toMap();
+    }
+
+    /**
+     * Leave a "breadcrumb" log message, representing an action that occurred
+     * in your app, to aid with debugging.
+     *
+     * @param message the log message to leave
+     */
+    public void leaveBreadcrumb(@NonNull String message) {
+        if (message != null) {
+            breadcrumbState.add(new Breadcrumb(message, logger));
+        } else {
+            logNull("leaveBreadcrumb");
+        }
+    }
+
+    /**
+     * Leave a "breadcrumb" log message representing an action or event which
+     * occurred in your app, to aid with debugging
+     * @param message  A short label
+     * @param metadata Additional diagnostic information about the app environment
+     * @param type     A category for the breadcrumb
+     */
+    public void leaveBreadcrumb(@NonNull String message,
+                                @NonNull Map<String, Object> metadata,
+                                @NonNull BreadcrumbType type) {
+        if (message != null && type != null && metadata != null) {
+            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
+        } else {
+            logNull("leaveBreadcrumb");
+        }
+    }
+
+    /**
+     * Intended for internal use only - leaves a breadcrumb if the type is enabled for automatic
+     * breadcrumbs.
+     *
+     * @param message  A short label
+     * @param type     A category for the breadcrumb
+     * @param metadata Additional diagnostic information about the app environment
+     */
+    void leaveAutoBreadcrumb(@NonNull String message,
+                             @NonNull BreadcrumbType type,
+                             @NonNull Map<String, Object> metadata) {
+        if (immutableConfig.shouldRecordBreadcrumbType(type)) {
+            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
+        }
     }
 
     SessionTracker getSessionTracker() {
         return sessionTracker;
     }
 
-    private boolean runBeforeNotifyTasks(Error error) {
-        for (BeforeNotify beforeNotify : config.getBeforeNotifyTasks()) {
-            try {
-                if (!beforeNotify.run(error)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeNotify threw an Exception", ex);
-            }
-        }
-
-        // By default, allow the error to be sent if there were no objections
-        return true;
-    }
-
-    private boolean runBeforeBreadcrumbTasks(@NonNull Breadcrumb breadcrumb) {
-        Collection<BeforeRecordBreadcrumb> tasks = config.getBeforeRecordBreadcrumbTasks();
-        for (BeforeRecordBreadcrumb beforeRecordBreadcrumb : tasks) {
-            try {
-                if (!beforeRecordBreadcrumb.shouldRecord(breadcrumb)) {
-                    return false;
-                }
-            } catch (Throwable ex) {
-                Logger.warn("BeforeRecordBreadcrumb threw an Exception", ex);
-            }
-        }
-        return true;
-    }
-
-
-    /**
-     * Stores the given key value pair into shared preferences
-     *
-     * @param key   The key to store
-     * @param value The value to store
-     */
-    private void storeInSharedPrefs(String key, String value) {
-        SharedPreferences sharedPref =
-            appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-        sharedPref.edit().putString(key, value).apply();
-    }
-
-    ErrorStore getErrorStore() {
-        return errorStore;
+    @NonNull
+    EventStore getEventStore() {
+        return eventStore;
     }
 
     /**
@@ -1577,61 +844,74 @@ public class Client extends Observable implements Observer {
      */
     @SuppressWarnings("checkstyle:NoFinalizer")
     protected void finalize() throws Throwable {
-        if (eventReceiver != null) {
+        if (systemBroadcastReceiver != null) {
             try {
-                appContext.unregisterReceiver(eventReceiver);
+                appContext.unregisterReceiver(systemBroadcastReceiver);
             } catch (IllegalArgumentException exception) {
-                Logger.warn("Receiver not registered");
+                logger.w("Receiver not registered");
             }
         }
-
         super.finalize();
     }
 
-    private static void warnIfNotAppContext(Context androidContext) {
+    private void warnIfNotAppContext(Context androidContext) {
         if (!(androidContext instanceof Application)) {
-            Logger.warn("Warning - Non-Application context detected! Please ensure that you are "
+            logger.w("Warning - Non-Application context detected! Please ensure that you are "
                 + "initializing Bugsnag from a custom Application class.");
         }
     }
 
-    /**
-     * Sets whether the SDK should write logs. In production apps, it is recommended that this
-     * should be set to false.
-     * <p>
-     * Logging is enabled by default unless the release stage is set to 'production', in which case
-     * it will be disabled.
-     *
-     * @param loggingEnabled true if logging is enabled
-     */
-    public void setLoggingEnabled(boolean loggingEnabled) {
-        Logger.setEnabled(loggingEnabled);
-    }
-
-    /**
-     * Returns the configuration used to initialise the client
-     * @return the config
-     */
-    @NonNull
-    public Configuration getConfig() {
-        return config;
-    }
-
-    /**
-     * Retrieves the time at which the client was launched
-     *
-     * @return the ms since the java epoch
-     */
-    public long getLaunchTimeMs() {
-        return AppData.getDurationMs();
+    ImmutableConfig getConfig() {
+        return immutableConfig;
     }
 
     void setBinaryArch(String binaryArch) {
-        getAppData().setBinaryArch(binaryArch);
+        getAppDataCollector().setBinaryArch(binaryArch);
+    }
+
+    Context getAppContext() {
+        return appContext;
+    }
+
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     */
+    @Nullable
+    String getCodeBundleId() {
+        return appDataCollector.getCodeBundleId();
+    }
+
+    /**
+     * Intended for internal use only - sets the code bundle id for React Native
+     */
+    void setCodeBundleId(@Nullable String codeBundleId) {
+        appDataCollector.setCodeBundleId(codeBundleId);
     }
 
     void close() {
-        orientationListener.disable();
         connectivity.unregisterForNetworkChanges();
+    }
+
+    Logger getLogger() {
+        return logger;
+    }
+
+    /**
+     * Retrieves an instantiated plugin of the given type, or null if none has been created
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    <T extends Plugin> T getPlugin(@NonNull Class<T> clz) {
+        Set<Plugin> plugins = pluginClient.getPlugins();
+        for (Plugin plugin : plugins) {
+            if (plugin.getClass().equals(clz)) {
+                return (T) plugin;
+            }
+        }
+        return null;
+    }
+
+    Notifier getNotifier() {
+        return notifier;
     }
 }

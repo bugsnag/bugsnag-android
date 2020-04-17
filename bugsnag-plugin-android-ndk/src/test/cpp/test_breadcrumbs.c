@@ -1,97 +1,122 @@
 #include <greatest/greatest.h>
-#include <report.h>
+#include <event.h>
 #include <time.h>
+#include <utils/serializer.h>
 
-bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bsg_breadcrumb_t type) {
+bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
   crumb->type = type;
   strcpy(crumb->name, name);
   strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
-  strcpy(crumb->metadata[0].key, "message");
-  strcpy(crumb->metadata[0].value, message);
-
+  bsg_add_metadata_value_str(&crumb->metadata, "metaData", "message", message);
   return crumb;
 }
 
 TEST test_add_breadcrumb(void) {
-  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
   bugsnag_breadcrumb *crumb = init_breadcrumb("stroll", "this is a drill.", BSG_CRUMB_USER);
-  bugsnag_report_add_breadcrumb(report, crumb);
-  ASSERT_EQ(1, report->crumb_count);
-  ASSERT_EQ(0, report->crumb_first_index);
-  ASSERT(strcmp("stroll", report->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("message", report->breadcrumbs[0].metadata[0].key) == 0);
-  ASSERT(strcmp("this is a drill.", report->breadcrumbs[0].metadata[0].value) == 0);
+  bugsnag_event_add_breadcrumb(event, crumb);
+  ASSERT_EQ(1, event->crumb_count);
+  ASSERT_EQ(0, event->crumb_first_index);
+  ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
+  ASSERT(strcmp("message", event->breadcrumbs[0].metadata.values[0].name) == 0);
+  ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata.values[0].char_value) == 0);
   free(crumb);
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("walking...", "this is not a drill.", BSG_CRUMB_USER);
-  bugsnag_report_add_breadcrumb(report, crumb2);
-  ASSERT_EQ(2, report->crumb_count);
-  ASSERT_EQ(0, report->crumb_first_index);
-  ASSERT(strcmp("stroll", report->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("message", report->breadcrumbs[0].metadata[0].key) == 0);
-  ASSERT(strcmp("this is a drill.", report->breadcrumbs[0].metadata[0].value) == 0);
-  ASSERT(strcmp("walking...", report->breadcrumbs[1].name) == 0);
-  ASSERT(strcmp("message", report->breadcrumbs[1].metadata[0].key) == 0);
-  ASSERT(strcmp("this is not a drill.", report->breadcrumbs[1].metadata[0].value) == 0);
+  bugsnag_event_add_breadcrumb(event, crumb2);
+  ASSERT_EQ(2, event->crumb_count);
+  ASSERT_EQ(0, event->crumb_first_index);
+  ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
+  ASSERT(strcmp("message", event->breadcrumbs[0].metadata.values[0].name) == 0);
+  ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata.values[0].char_value) == 0);
+  ASSERT(strcmp("walking...", event->breadcrumbs[1].name) == 0);
+  ASSERT(strcmp("message", event->breadcrumbs[1].metadata.values[0].name) == 0);
+  ASSERT(strcmp("this is not a drill.", event->breadcrumbs[1].metadata.values[0].char_value) == 0);
 
-  free(report);
+  free(event);
   free(crumb2);
   PASS();
 }
 
 TEST test_add_breadcrumbs_over_max(void) {
-  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
-  // HACK: assumes the max number of crumbs is 30
-  for (int i=0; i < 64; i++) {
-    char *format = malloc(sizeof(char) * 64);
-    memset(format, 0, sizeof(char) * 64);
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+  int breadcrumb_count = 64;
+
+  for (int i=0; i < breadcrumb_count; i++) {
+    char *format = malloc(sizeof(char) * breadcrumb_count);
+    memset(format, 0, sizeof(char) * breadcrumb_count);
     sprintf(format, "crumb: %d", i);
     bugsnag_breadcrumb *crumb = init_breadcrumb(format, "go go go", BSG_CRUMB_USER);
-    bugsnag_report_add_breadcrumb(report, crumb);
+    bugsnag_event_add_breadcrumb(event, crumb);
     free(crumb);
     free(format);
   }
-  ASSERT(strcmp("crumb: 60", report->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("crumb: 61", report->breadcrumbs[1].name) == 0);
-  ASSERT(strcmp("crumb: 62", report->breadcrumbs[2].name) == 0);
-  ASSERT(strcmp("crumb: 63", report->breadcrumbs[3].name) == 0);
-  ASSERT(strcmp("crumb: 34", report->breadcrumbs[4].name) == 0);
-  ASSERT(strcmp("crumb: 35", report->breadcrumbs[5].name) == 0);
-  ASSERT(strcmp("crumb: 58", report->breadcrumbs[28].name) == 0);
-  ASSERT(strcmp("crumb: 59", report->breadcrumbs[29].name) == 0);
-  ASSERT_EQ(BUGSNAG_CRUMBS_MAX, report->crumb_count);
-  ASSERT_EQ(4, report->crumb_first_index);
-  free(report);
+
+  // assertions assume that the crumb count is always 25
+  ASSERT_EQ(BUGSNAG_CRUMBS_MAX, event->crumb_count);
+  ASSERT_EQ(14, event->crumb_first_index);
+
+  ASSERT(strcmp("crumb: 50", event->breadcrumbs[0].name) == 0);
+  ASSERT(strcmp("crumb: 51", event->breadcrumbs[1].name) == 0);
+  ASSERT(strcmp("crumb: 52", event->breadcrumbs[2].name) == 0);
+  ASSERT(strcmp("crumb: 53", event->breadcrumbs[3].name) == 0);
+
+  ASSERT(strcmp("crumb: 63", event->breadcrumbs[13].name) == 0);
+  ASSERT(strcmp("crumb: 39", event->breadcrumbs[14].name) == 0);
+  ASSERT(strcmp("crumb: 40", event->breadcrumbs[15].name) == 0);
+  ASSERT(strcmp("crumb: 41", event->breadcrumbs[16].name) == 0);
+  free(event);
   PASS();
 }
 
-TEST test_clear_empty_breadcrumbs(void) {
-  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
-  bugsnag_report_clear_breadcrumbs(report);
-  ASSERT_EQ(0, report->crumb_count);
-  ASSERT_EQ(0, report->crumb_first_index);
+TEST test_bsg_calculate_total_crumbs(void) {
+  ASSERT_EQ(0, bsg_calculate_total_crumbs(0));
+  ASSERT_EQ(5, bsg_calculate_total_crumbs(5));
+  ASSERT_EQ(22, bsg_calculate_total_crumbs(22));
+  ASSERT_EQ(25, bsg_calculate_total_crumbs(25));
+  ASSERT_EQ(25, bsg_calculate_total_crumbs(26));
+  ASSERT_EQ(25, bsg_calculate_total_crumbs(30));
   PASS();
 }
 
-TEST test_clear_breadcrumbs(void) {
-  bugsnag_report *report = calloc(1, sizeof(bugsnag_report));
-  bugsnag_breadcrumb *crumb1 = init_breadcrumb("running!", "this is a drill.", BSG_CRUMB_USER);
-  bugsnag_report_add_breadcrumb(report, crumb1);
-  free(crumb1);
-  bugsnag_breadcrumb *crumb2 = init_breadcrumb("walking...", "this is not a drill.", BSG_CRUMB_USER);
-  bugsnag_report_add_breadcrumb(report, crumb2);
-  bugsnag_report_clear_breadcrumbs(report);
-  ASSERT_EQ(0, report->crumb_count);
-  ASSERT_EQ(0, report->crumb_first_index);
+TEST test_bsg_calculate_start_index(void) {
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(0));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(3));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(17));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(24));
+  ASSERT_EQ(0, bsg_calculate_v1_start_index(25));
+  ASSERT_EQ(1, bsg_calculate_v1_start_index(26));
+  ASSERT_EQ(3, bsg_calculate_v1_start_index(28));
+  ASSERT_EQ(5, bsg_calculate_v1_start_index(30));
+  PASS();
+}
 
-  free(report);
-  free(crumb2);
+TEST test_bsg_calculate_crumb_index(void) {
+  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(0, 0));
+
+  // zero offset
+  ASSERT_EQ(24, bsg_calculate_v1_crumb_index(24, 0));
+  ASSERT_EQ(25, bsg_calculate_v1_crumb_index(25, 0));
+  ASSERT_EQ(26, bsg_calculate_v1_crumb_index(26, 0));
+  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(30, 0));
+
+  // offset
+  ASSERT_EQ(15, bsg_calculate_v1_crumb_index(0, 15));
+  ASSERT_EQ(15, bsg_calculate_v1_crumb_index(5, 10));
+  ASSERT_EQ(24, bsg_calculate_v1_crumb_index(10, 14));
+  ASSERT_EQ(25, bsg_calculate_v1_crumb_index(10, 15));
+  ASSERT_EQ(26, bsg_calculate_v1_crumb_index(11, 15));
+  ASSERT_EQ(29, bsg_calculate_v1_crumb_index(14, 15));
+  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(20, 10));
+  ASSERT_EQ(1, bsg_calculate_v1_crumb_index(20, 11));
+  ASSERT_EQ(4, bsg_calculate_v1_crumb_index(23, 11));
   PASS();
 }
 
 SUITE(breadcrumbs) {
   RUN_TEST(test_add_breadcrumb);
   RUN_TEST(test_add_breadcrumbs_over_max);
-  RUN_TEST(test_clear_empty_breadcrumbs);
-  RUN_TEST(test_clear_breadcrumbs);
+  RUN_TEST(test_bsg_calculate_total_crumbs);
+  RUN_TEST(test_bsg_calculate_start_index);
+  RUN_TEST(test_bsg_calculate_crumb_index);
 }

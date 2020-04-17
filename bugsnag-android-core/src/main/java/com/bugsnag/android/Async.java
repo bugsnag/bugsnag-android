@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
 
+import java.lang.Thread;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -18,7 +19,7 @@ class Async {
     private static final int CORE_POOL_SIZE = Math.max(1, Math.min(CPU_COUNT - 1, 4));
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
     private static final int KEEP_ALIVE_SECONDS = 30;
-    static final BlockingQueue<Runnable> POOL_WORK_QUEUE =
+    private static final BlockingQueue<Runnable> POOL_WORK_QUEUE =
         new LinkedBlockingQueue<>(128);
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
         private final AtomicInteger count = new AtomicInteger(1);
@@ -37,10 +38,8 @@ class Async {
     }
 
     static void cancelTasks() throws InterruptedException {
-        Logger.info("Cancelling tasks");
         EXECUTOR.shutdown();
         EXECUTOR.awaitTermination(2000, TimeUnit.MILLISECONDS);
-        Logger.info("Finishing cancelling tasks");
     }
 
 }

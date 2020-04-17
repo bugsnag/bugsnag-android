@@ -3,32 +3,42 @@ package com.bugsnag.android
 import android.os.Handler
 import android.os.Looper
 
-internal class AnrPlugin : BugsnagPlugin {
+internal class AnrPlugin : Plugin {
 
-    companion object {
-        init {
-            System.loadLibrary("bugsnag-plugin-android-anr")
-        }
+    private companion object {
+        private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
+                "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
     }
 
-    override var loaded = false
+    private val loader = LibraryLoader()
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
 
     private external fun enableAnrReporting(callPreviousSigquitHandler: Boolean)
     private external fun disableAnrReporting()
 
-    override fun loadPlugin(client: Client) {
-        // this must be run from the main thread as the SIGQUIT is sent to the main thread,
-        // and if the handler is installed on a background thread instead we receive no signal
-        Handler(Looper.getMainLooper()).post(Runnable {
-            this.client = client
-            enableAnrReporting(client.config.callPreviousSigquitHandler)
-            Logger.warn("Initialised ANR Plugin")
-        })
+    override fun load(client: Client) {
+        val loaded = loader.loadLibrary("bugsnag-plugin-android-anr", client) {
+            val error = it.errors[0]
+            error.errorClass = "AnrLinkError"
+            error.errorMessage = LOAD_ERR_MSG
+            true
+        }
+
+        if (loaded) {
+            // this must be run from the main thread as the SIGQUIT is sent to the main thread,
+            // and if the handler is installed on a background thread instead we receive no signal
+            Handler(Looper.getMainLooper()).post(Runnable {
+                this.client = client
+                enableAnrReporting(true)
+                client.logger.i("Initialised ANR Plugin")
+            })
+        } else {
+            client.logger.e(LOAD_ERR_MSG)
+        }
     }
 
-    override fun unloadPlugin() = disableAnrReporting()
+    override fun unload() = disableAnrReporting()
 
     /**
      * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
@@ -38,16 +48,21 @@ internal class AnrPlugin : BugsnagPlugin {
         val thread = Looper.getMainLooper().thread
 
         // generate a full report as soon as possible, then wait for extra process error info
-        val errMsg = "Application did not respond to UI input"
-        val exc = BugsnagException("ANR", errMsg, thread.stackTrace)
-        val error = Error.Builder(client.config, exc, client.sessionTracker, thread, true)
-            .severity(Severity.ERROR)
-            .severityReasonType(HandledState.REASON_ANR)
-            .build()
+        val exc = RuntimeException()
+        exc.stackTrace = thread.stackTrace
+
+        val event = NativeInterface.createEvent(
+            exc,
+            client,
+            HandledState.newInstance(HandledState.REASON_ANR)
+        )
+        val err = event.errors[0]
+        err.errorClass = "ANR"
+        err.errorMessage = "Application did not respond to UI input"
 
         // wait and poll for error info to be collected. this occurs just before the ANR dialog
         // is displayed
-        collector.collectAnrErrorDetails(client, error)
+        collector.collectAnrErrorDetails(client, event)
     }
 
 }

@@ -40,6 +40,27 @@ android {
         targetSdkVersion 27
         versionCode 34
         versionName "1.1.14"
+        manifestPlaceholders = [
+            // omit any of the following placeholders to use the default values
+            bugsnagApiKey: "abc12312312312312312312312312312",
+            bugsnagAppType: "test",
+            bugsnagAppVersion: "7.5.3",
+            bugsnagAutoDetectErrors: true,
+            bugsnagAutoTrackSessions: false,
+            bugsnagBuildUuid: "test-7.5.3",
+            bugsnagDiscardClasses: "com.domain.ClassName,com.domain.SecondClassName",
+            bugsnagEnabledReleaseStages: "production,development,testing",
+            bugsnagEndpoint: "http://bs-local.com:9339",
+            bugsnagEndpointSessions: "http://bs-local.com:9339",
+            bugsnagLaunchCrashThresholdMs: 10000,
+            bugsnagMaxBreadcrumbs: 1,
+            bugsnagPersistUser: false,
+            bugsnagProjectPackages: "java.net.UnknownHostException,com.example.Custom",
+            bugsnagRedactedKeys: "filter_me",
+            bugsnagReleaseStage: "testing",
+            bugsnagSendThreads: "always",
+            bugsnagVersionCode: 753,
+        ]
     }
     signingConfigs {
         release {
@@ -73,6 +94,7 @@ android {
 
 dependencies {
     implementation "com.bugsnag:bugsnag-android:+"
+    implementation project(":mazerunner-scenarios")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"
 }
