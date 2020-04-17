@@ -1,14 +1,15 @@
 version: '3.6'
 services:
-  android-base:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android-base
 
-  android-instrumentation-tests:
+  android-common:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.android-instrumentation-tests
+      dockerfile: dockerfiles/Dockerfile.android-common
+
+  android-ci:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-ci-base
     environment:
       BROWSER_STACK_USERNAME:
       BROWSER_STACK_ACCESS_KEY:
@@ -20,11 +21,15 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-jvm
+      args:
+        BRANCH_NAME: ${BRANCH_NAME}
 
   android-builder:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-builder
+      args:
+        BRANCH_NAME: ${BRANCH_NAME}
     volumes:
       - ./build:/app/build
 
@@ -32,6 +37,8 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-sizer
+      args:
+        BRANCH_NAME: ${BRANCH_NAME}
     environment:
       DANGER_GITHUB_API_TOKEN:
       BUILDKITE:
@@ -39,15 +46,10 @@ services:
       BUILDKITE_PULL_REQUEST:
       BUILDKITE_REPO:
 
-  android-emulator:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.emulator
-
   android-maze-runner:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.android
+      dockerfile: dockerfiles/Dockerfile.android-maze-runner
     environment:
       VERBOSE:
       DEBUG:
@@ -56,7 +58,7 @@ services:
       BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
       DEVICE_TYPE:
       APP_LOCATION:
-    command: --tags ~@ignore
+    command: --tags ~@ignore --fail-fast 
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output

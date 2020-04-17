@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.0.0 (TBD)
+## 5.0.0 (2020-04-21)
 
 __This version contains many breaking changes__. It is part of an effort to unify our notifier
 libraries across platforms, making the user interface more consistent, and implementations better

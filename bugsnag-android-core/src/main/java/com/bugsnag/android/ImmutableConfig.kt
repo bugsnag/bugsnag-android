@@ -83,7 +83,10 @@ internal data class ImmutableConfig(
     }
 }
 
-internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
+internal fun convertToImmutableConfig(
+    config: Configuration,
+    buildUuid: String? = null
+): ImmutableConfig {
     val errorTypes = when {
         config.autoDetectErrors -> config.enabledErrorTypes.copy()
         else -> ErrorTypes(false)
@@ -99,7 +102,7 @@ internal fun convertToImmutableConfig(config: Configuration): ImmutableConfig {
         enabledReleaseStages = config.enabledReleaseStages?.toSet(),
         projectPackages = config.projectPackages.toSet(),
         releaseStage = config.releaseStage,
-        buildUuid = config.buildUuid,
+        buildUuid = buildUuid,
         appVersion = config.appVersion,
         versionCode = config.versionCode,
         appType = config.appType,
@@ -152,17 +155,14 @@ internal fun sanitiseConfiguration(
         configuration.projectPackages = setOf<String>(packageName)
     }
 
-    // populate from manifest (in the case where the constructor was called directly by the
-    // User or no UUID was supplied)
-    if (configuration.buildUuid == null) {
-        configuration.buildUuid = appInfo?.metaData?.getString(ManifestConfigLoader.BUILD_UUID)
-    }
+    // populate buildUUID from manifest
+    val buildUuid = appInfo?.metaData?.getString(ManifestConfigLoader.BUILD_UUID)
 
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
         configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
     }
-    return convertToImmutableConfig(configuration)
+    return convertToImmutableConfig(configuration, buildUuid)
 }
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"

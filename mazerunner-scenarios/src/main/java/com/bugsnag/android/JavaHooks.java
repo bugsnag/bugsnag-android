@@ -77,6 +77,6 @@ public class JavaHooks {
      */
     @NonNull
     public static ImmutableConfig generateImmutableConfig() {
-        return ImmutableConfigKt.convertToImmutableConfig(generateConfiguration());
+        return ImmutableConfigKt.convertToImmutableConfig(generateConfiguration(), null);
     }
 }

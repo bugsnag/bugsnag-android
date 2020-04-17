@@ -33,7 +33,6 @@ internal class AppDataCollectorSerializationTest {
 
             // populate regular fields
             `when`(context.packageName).thenReturn("com.example.foo")
-            config.buildUuid = "123456"
 
             // populate metadata fields
             `when`(sessionTracker.contextActivity).thenReturn("MyActivity")

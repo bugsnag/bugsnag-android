@@ -82,13 +82,6 @@ public class Thread implements JsonStream.Streamable {
     }
 
     /**
-     * Sets whether the thread was the thread that caused the event
-     */
-    public void setErrorReportingThread(boolean errorReportingThread) {
-        impl.setErrorReportingThread(errorReportingThread);
-    }
-
-    /**
      * Gets whether the thread was the thread that caused the event
      */
     public boolean getErrorReportingThread() {

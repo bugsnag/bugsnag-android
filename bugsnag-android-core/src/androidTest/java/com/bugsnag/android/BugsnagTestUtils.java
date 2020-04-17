@@ -80,7 +80,7 @@ final class BugsnagTestUtils {
 
 
     static ImmutableConfig convert(Configuration config) {
-        return ImmutableConfigKt.convertToImmutableConfig(config);
+        return ImmutableConfigKt.convertToImmutableConfig(config, null);
     }
 
     static SessionTracker generateSessionTracker() {
