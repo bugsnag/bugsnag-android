@@ -1,0 +1,81 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Breadcrumb - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Breadcrumb</a><br/>
+<br/>
+<h1>Breadcrumb</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Breadcrumb</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="get-message.html">getMessage</a></h4>
+</td>
+<td>
+<p>Gets the description of the breadcrumb</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMessage</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-metadata.html">getMetadata</a></h4>
+</td>
+<td>
+<p>Gets diagnostic data relating to the breadcrumb</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-timestamp.html">getTimestamp</a></h4>
+</td>
+<td>
+<p>The timestamp that the breadcrumb was left</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getTimestamp</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-type.html">getType</a></h4>
+</td>
+<td>
+<p>Gets the type of breadcrumb left - one of those enabled in <code><a href="../-configuration/get-enabled-breadcrumb-types.html">Configuration#getEnabledBreadcrumbTypes()</a></code></p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getType</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-message.html">setMessage</a></h4>
+</td>
+<td>
+<p>Sets the description of the breadcrumb</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMessage</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$setMessage(kotlin.String)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-metadata.html">setMetadata</a></h4>
+</td>
+<td>
+<p>Sets diagnostic data relating to the breadcrumb</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$setMetadata(kotlin.collections.MutableMap((kotlin.String, kotlin.Any)))/metadata">metadata</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-type.html">setType</a></h4>
+</td>
+<td>
+<p>Sets the type of breadcrumb left - one of those enabled in <code><a href="../-configuration/get-enabled-breadcrumb-types.html">Configuration#getEnabledBreadcrumbTypes()</a></code></p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setType</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$setType(com.bugsnag.android.BreadcrumbType)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="to-stream.html">toStream</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$toStream(com.bugsnag.android.JsonStream)/stream">stream</span><span class="symbol">:</span>&nbsp;<a href="../-json-stream/index.html"><span class="identifier">JsonStream</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

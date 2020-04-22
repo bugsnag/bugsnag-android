@@ -1,0 +1,29 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>OnSessionCallback - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">OnSessionCallback</a><br/>
+<br/>
+<h1>OnSessionCallback</h1>
+<code><span class="keyword">interface </span><span class="identifier">OnSessionCallback</span></code>
+<p>A callback to be run before sessions are sent to Bugsnag. </p>
+<p> </p>
+<p>You can use this to add or modify information attached to a session before it is sent to your dashboard. You can also return <code>false</code> from any callback to halt execution.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="on-session.html">onSession</a></h4>
+</td>
+<td>
+<p>Runs the "on session" callback. If the callback returns <code>false</code> any further OnSessionCallback callbacks will not be called and the session will not be sent to Bugsnag.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onSession</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.OnSessionCallback$onSession(com.bugsnag.android.Session)/session">session</span><span class="symbol">:</span>&nbsp;<a href="../-session/index.html"><span class="identifier">Session</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

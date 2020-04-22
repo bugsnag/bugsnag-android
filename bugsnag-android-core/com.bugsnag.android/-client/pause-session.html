@@ -1,0 +1,18 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Client.pauseSession - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Client</a>&nbsp;/&nbsp;<a href="./pause-session.html">pauseSession</a><br/>
+<br/>
+<h1>pauseSession</h1>
+<a name="com.bugsnag.android.Client$pauseSession()"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">pauseSession</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Pauses tracking of a session. You should disable automatic session tracking via <code><a href="../-configuration/set-auto-track-sessions.html">Configuration#setAutoTrackSessions(boolean)</a></code> if you call this method. </p>
+ You should call this at the appropriate time in your application when you wish to pause a session. Any subsequent errors which occur in your application will still be reported to Bugsnag but will not count towards your application's <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score"> stability score</a>. This can be advantageous if, for example, you do not wish the stability score to include crashes in a background service.
+<p><strong>See Also</strong><br/>
+<a href="start-session.html">#startSession()</a><a href="resume-session.html">#resumeSession()</a><a href="../-configuration/set-auto-track-sessions.html">Configuration#setAutoTrackSessions(boolean)</a></p>
+</BODY>
+</HTML>

@@ -1,0 +1,110 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>App - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">App</a><br/>
+<br/>
+<h1>App</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">App</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code>
+<p>Stateless information set by the notifier about your app can be found on this class. These values
+can be accessed and amended if necessary.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="binary-arch.html">binaryArch</a></h4>
+</td>
+<td>
+<p>The architecture of the running application binary</p>
+<code><span class="keyword">var </span><span class="identifier">binaryArch</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="build-uuid.html">buildUuid</a></h4>
+</td>
+<td>
+<p>The unique identifier for the build of the application set in <a href="#">Configuration.buildUuid</a></p>
+<code><span class="keyword">var </span><span class="identifier">buildUuid</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="code-bundle-id.html">codeBundleId</a></h4>
+</td>
+<td>
+<p>The revision ID from the manifest (React Native apps only)</p>
+<code><span class="keyword">var </span><span class="identifier">codeBundleId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="id.html">id</a></h4>
+</td>
+<td>
+<p>The package name of the application</p>
+<code><span class="keyword">var </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="release-stage.html">releaseStage</a></h4>
+</td>
+<td>
+<p>The release stage set in <a href="#">Configuration.releaseStage</a></p>
+<code><span class="keyword">var </span><span class="identifier">releaseStage</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="type.html">type</a></h4>
+</td>
+<td>
+<p>The application type set in <a href="#">Configuration#version</a></p>
+<code><span class="keyword">var </span><span class="identifier">type</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="version.html">version</a></h4>
+</td>
+<td>
+<p>The version of the application set in <a href="#">Configuration.version</a></p>
+<code><span class="keyword">var </span><span class="identifier">version</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="version-code.html">versionCode</a></h4>
+</td>
+<td>
+<p>The version code of the application set in <a href="#">Configuration.versionCode</a></p>
+<code><span class="keyword">var </span><span class="identifier">versionCode</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html"><span class="identifier">Number</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="to-stream.html">toStream</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.App$toStream(com.bugsnag.android.JsonStream)/writer">writer</span><span class="symbol">:</span>&nbsp;<a href="../-json-stream/index.html"><span class="identifier">JsonStream</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="../-app-with-state/index.html">AppWithState</a></h4>
+</td>
+<td>
+<p>Stateful information set by the notifier about your app can be found on this class. These values
+can be accessed and amended if necessary.</p>
+<code><span class="keyword">class </span><span class="identifier">AppWithState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">App</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

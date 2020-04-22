@@ -1,0 +1,15 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Event.getErrors - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Event</a>&nbsp;/&nbsp;<a href="./get-errors.html">getErrors</a><br/>
+<br/>
+<h1>getErrors</h1>
+<a name="com.bugsnag.android.Event$getErrors()"></a>
+<code><span class="identifier">@NonNull</span> <span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getErrors</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-error/index.html"><span class="identifier">Error</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code>
+<p>Information extracted from the <code><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html">Throwable</a></code> that caused the event can be found in this field. The list contains at least one <code><a href="../-error/index.html">Error</a></code> that represents the thrown object with subsequent elements in the list populated from <code><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html#getCause()">Throwable#getCause()</a></code>. A reference to the actual <code><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html">Throwable</a></code> object that caused the event is available through <code><a href="get-original-error.html">Event#getOriginalError()</a></code> ()}.</p>
+</BODY>
+</HTML>

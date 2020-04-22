@@ -1,0 +1,20 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>NativeInterface.deliverReport - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">NativeInterface</a>&nbsp;/&nbsp;<a href="./deliver-report.html">deliverReport</a><br/>
+<br/>
+<h1>deliverReport</h1>
+<a name="com.bugsnag.android.NativeInterface$deliverReport(kotlin.ByteArray, kotlin.ByteArray)"></a>
+<code><span class="keyword">open</span> <span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">deliverReport</span><span class="symbol">(</span><span class="identifier">@Nullable</span> <span class="identifier" id="com.bugsnag.android.NativeInterface$deliverReport(kotlin.ByteArray, kotlin.ByteArray)/releaseStageBytes">releaseStageBytes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier">@NonNull</span> <span class="identifier" id="com.bugsnag.android.NativeInterface$deliverReport(kotlin.ByteArray, kotlin.ByteArray)/payloadBytes">payloadBytes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Deliver a report, serialized as an event JSON payload.</p>
+<h3>Parameters</h3>
+<p><a name="releaseStageBytes"></a>
+<code>releaseStageBytes</code> - <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">?</span><span class="symbol">:</span> The release stage in which the event was captured. Used to determine whether the report should be discarded, based on configured release stages</p>
+<p><a name="payloadBytes"></a>
+<code>payloadBytes</code> - <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">:</span> The raw JSON payload of the event</p>
+</BODY>
+</HTML>

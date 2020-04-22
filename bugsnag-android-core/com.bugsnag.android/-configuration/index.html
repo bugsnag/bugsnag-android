@@ -1,0 +1,478 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Configuration - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Configuration</a><br/>
+<br/>
+<h1>Configuration</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Configuration</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">CallbackAware</span><span class="symbol">, </span><span class="identifier">MetadataAware</span><span class="symbol">, </span><span class="identifier">UserAware</span></code>
+<p>User-specified configuration storage object, contains information specified at the client level, api-key and endpoint configuration.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<p>Constructs a new Configuration object with default values.</p>
+<code><span class="identifier">Configuration</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$<init>(kotlin.String)/apiKey">apiKey</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="add-metadata.html">addMetadata</a></h4>
+</td>
+<td>
+<p>Adds a map of multiple metadata key-value pairs to the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$addMetadata(kotlin.String, kotlin.collections.Map((kotlin.String, kotlin.Any)))/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$addMetadata(kotlin.String, kotlin.collections.Map((kotlin.String, kotlin.Any)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds the specified key and value in the specified section. The value can be of any primitive type or a collection such as a map, set or array.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$addMetadata(kotlin.String, kotlin.String, kotlin.Any)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$addMetadata(kotlin.String, kotlin.String, kotlin.Any)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$addMetadata(kotlin.String, kotlin.String, kotlin.Any)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="add-on-breadcrumb.html">addOnBreadcrumb</a></h4>
+</td>
+<td>
+<p>Add an "on breadcrumb" callback, to execute code before every breadcrumb captured by Bugsnag. You can use this to modify breadcrumbs before they are stored by Bugsnag. You can also return <code>false</code> from any callback to ignore a breadcrumb. For example: Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() { public boolean run(Breadcrumb breadcrumb) { return false; // ignore the breadcrumb } })</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addOnBreadcrumb</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$addOnBreadcrumb(com.bugsnag.android.OnBreadcrumbCallback)/onBreadcrumb">onBreadcrumb</span><span class="symbol">:</span>&nbsp;<a href="../-on-breadcrumb-callback/index.html"><span class="identifier">OnBreadcrumbCallback</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="add-on-error.html">addOnError</a></h4>
+</td>
+<td>
+<p>Add a "on error" callback, to execute code at the point where an error report is captured in Bugsnag. You can use this to add or modify information attached to an Event before it is sent to your dashboard. You can also return <code>false</code> from any callback to prevent delivery. "on error" callbacks do not run before reports generated in the event of immediate app termination from crashes in C/C++ code. For example: Bugsnag.addOnError(new OnErrorCallback() { public boolean run(Event event) { event.setSeverity(Severity.INFO); return true; } })</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addOnError</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$addOnError(com.bugsnag.android.OnErrorCallback)/onError">onError</span><span class="symbol">:</span>&nbsp;<a href="../-on-error-callback/index.html"><span class="identifier">OnErrorCallback</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="add-on-session.html">addOnSession</a></h4>
+</td>
+<td>
+<p>Add an "on session" callback, to execute code before every session captured by Bugsnag. You can use this to modify sessions before they are stored by Bugsnag. You can also return <code>false</code> from any callback to ignore a session. For example: Bugsnag.onSession(new OnSessionCallback() { public boolean run(Session session) { return false; // ignore the session } })</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addOnSession</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$addOnSession(com.bugsnag.android.OnSessionCallback)/onSession">onSession</span><span class="symbol">:</span>&nbsp;<a href="../-on-session-callback/index.html"><span class="identifier">OnSessionCallback</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="add-plugin.html">addPlugin</a></h4>
+</td>
+<td>
+<p>Adds a plugin which will be loaded when the bugsnag notifier is instantiated.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addPlugin</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$addPlugin(com.bugsnag.android.Plugin)/plugin">plugin</span><span class="symbol">:</span>&nbsp;<a href="../-plugin/index.html"><span class="identifier">Plugin</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="clear-metadata.html">clearMetadata</a></h4>
+</td>
+<td>
+<p>Removes all the data from the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$clearMetadata(kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes data with the specified key from the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$clearMetadata(kotlin.String, kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$clearMetadata(kotlin.String, kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-api-key.html">getApiKey</a></h4>
+</td>
+<td>
+<p>Retrieves the API key used for events sent to Bugsnag.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getApiKey</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-app-type.html">getAppType</a></h4>
+</td>
+<td>
+<p>If your app's codebase contains different entry-points/processes, but reports to a single Bugsnag project, you might want to add information denoting the type of process the error came from. This information can be used in the dashboard to filter errors and to determine whether an error is limited to a subset of appTypes. By default, this value is set to 'android'.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAppType</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-app-version.html">getAppVersion</a></h4>
+</td>
+<td>
+<p>Set the application version sent to Bugsnag. We'll automatically pull your app version from the versionName field in your AndroidManifest.xml file.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAppVersion</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-auto-detect-errors.html">getAutoDetectErrors</a></h4>
+</td>
+<td>
+<p>If you want to disable automatic detection of all errors, you can set this property to false. By default this property is true. Setting autoDetectErrors to false will disable all automatic errors, regardless of the error types enabled by enabledErrorTypes</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAutoDetectErrors</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-auto-track-sessions.html">getAutoTrackSessions</a></h4>
+</td>
+<td>
+<p>Sets whether or not Bugsnag should automatically capture and report User sessions whenever the app enters the foreground. By default this behavior is enabled.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAutoTrackSessions</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-context.html">getContext</a></h4>
+</td>
+<td>
+<p>Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts represent what was happening in your application at the time an error occurs. In an android app the "context" is automatically set as the foreground Activity. If you would like to set this value manually, you should alter this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getContext</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-delivery.html">getDelivery</a></h4>
+</td>
+<td>
+<p>The Delivery implementation used to make network calls to the Bugsnag <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reporting</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions API</a>. This may be useful if you have requirements such as certificate pinning and rotation, which are not supported by the default implementation. To provide custom delivery functionality, create a class which implements the Delivery interface. Please note that request bodies must match the structure specified in the <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reporting</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions API</a> documentation. You can use the return type from the deliver functions to control the strategy for retrying the transmission at a later date. If DeliveryStatus.UNDELIVERED is returned, the notifier will automatically cache the payload and trigger delivery later on. Otherwise, if either DeliveryStatus.DELIVERED or DeliveryStatus.FAILURE is returned the notifier will removed any cached payload and no further delivery will be attempted.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getDelivery</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery/index.html"><span class="identifier">Delivery</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-discard-classes.html">getDiscardClasses</a></h4>
+</td>
+<td>
+<p>Allows you to specify the fully-qualified name of error classes that will be discarded before being sent to Bugsnag if they are detected. The notifier performs an exact match against the canonical class name.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getDiscardClasses</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-enabled-breadcrumb-types.html">getEnabledBreadcrumbTypes</a></h4>
+</td>
+<td>
+<p>By default we will automatically add breadcrumbs for common application events such as activity lifecycle events and system intents. To amend this behavior, override the enabled breadcrumb types. All breadcrumbs can be disabled by providing an empty set. The following breadcrumb types can be enabled: - Captured errors: left when an error event is sent to the Bugsnag API. - Manual breadcrumbs: left via the Bugsnag.leaveBreadcrumb function. - Navigation changes: left for Activity Lifecycle events to track the user's journey in the app. - State changes: state breadcrumbs are left for system broadcast events. For example: battery warnings, airplane mode, etc. - User interaction: left when the user performs certain system operations.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getEnabledBreadcrumbTypes</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-enabled-error-types.html">getEnabledErrorTypes</a></h4>
+</td>
+<td>
+<p>Bugsnag will automatically detect different types of error in your application. If you wish to control exactly which types are enabled, set this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getEnabledErrorTypes</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-error-types/index.html"><span class="identifier">ErrorTypes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-enabled-release-stages.html">getEnabledReleaseStages</a></h4>
+</td>
+<td>
+<p>By default, Bugsnag will be notified of events that happen in any releaseStage. If you would like to change which release stages notify Bugsnag you can set this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getEnabledReleaseStages</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-endpoints.html">getEndpoints</a></h4>
+</td>
+<td>
+<p>Set the endpoints to send data to. By default we'll send error reports to https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getEndpoints</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-endpoint-configuration/index.html"><span class="identifier">EndpointConfiguration</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-launch-crash-threshold-ms.html">getLaunchCrashThresholdMs</a></h4>
+</td>
+<td>
+<p>Sets the threshold in milliseconds for an uncaught error to be considered as a crash on launch. If a crash is detected on launch, Bugsnag will attempt to send the event synchronously. By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getLaunchCrashThresholdMs</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-logger.html">getLogger</a></h4>
+</td>
+<td>
+<p>By default, the notifier's log messages will be logged using android.util.Log with a "Bugsnag" tag unless the releaseStage is "production". To override this behavior, an alternative instance can be provided that implements the Logger interface.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getLogger</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-logger/index.html"><span class="identifier">Logger</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-max-breadcrumbs.html">getMaxBreadcrumbs</a></h4>
+</td>
+<td>
+<p>Sets the maximum number of breadcrumbs which will be stored. Once the threshold is reached, the oldest breadcrumbs will be deleted. By default, 25 breadcrumbs are stored: this can be amended up to a maximum of 100.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMaxBreadcrumbs</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-metadata.html">getMetadata</a></h4>
+</td>
+<td>
+<p>Returns a map of data in the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$getMetadata(kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Returns the value of the specified key in the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$getMetadata(kotlin.String, kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$getMetadata(kotlin.String, kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-persist-user.html">getPersistUser</a></h4>
+</td>
+<td>
+<p>Set whether or not Bugsnag should persist user information between application sessions. If enabled then any user information set will be re-used until the user information is removed manually by calling <code><a href="../-bugsnag/set-user.html">Bugsnag#setUser(String, String, String)</a></code> with null arguments.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getPersistUser</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-project-packages.html">getProjectPackages</a></h4>
+</td>
+<td>
+<p>Sets which package names Bugsnag should consider as a part of the running application. We mark stacktrace lines as in-project if they originate from any of these packages and this allows us to improve the visual display of the stacktrace on the dashboard. By default, projectPackages is set to be the package you called Bugsnag.start from.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getProjectPackages</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-redacted-keys.html">getRedactedKeys</a></h4>
+</td>
+<td>
+<p>Sets which values should be removed from any Metadata objects before sending them to Bugsnag. Use this if you want to ensure you don't send sensitive data such as passwords, and credit card numbers to our servers. Any keys which contain these strings will be filtered. By default, redactedKeys is set to "password"</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getRedactedKeys</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-release-stage.html">getReleaseStage</a></h4>
+</td>
+<td>
+<p>If you would like to distinguish between errors that happen in different stages of the application release process (development, production, etc) you can set the releaseStage that is reported to Bugsnag. If you are running a debug build, we'll automatically set this to "development", otherwise it is set to "production". You can control whether events are sent for specific release stages using the enabledReleaseStages option.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getReleaseStage</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-send-threads.html">getSendThreads</a></h4>
+</td>
+<td>
+<p>Controls whether we should capture and serialize the state of all threads at the time of an error. By default sendThreads is set to Thread.ThreadSendPolicy.ALWAYS. This can be set to Thread.ThreadSendPolicy.NEVER to disable or Thread.ThreadSendPolicy.UNHANDLED_ONLY to only do so for unhandled errors.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getSendThreads</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-thread-send-policy/index.html"><span class="identifier">ThreadSendPolicy</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-user.html">getUser</a></h4>
+</td>
+<td>
+<p>Returns the currently set User information.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getUser</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-user/index.html"><span class="identifier">User</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-version-code.html">getVersionCode</a></h4>
+</td>
+<td>
+<p>We'll automatically pull your versionCode from the versionCode field in your AndroidManifest.xml file. If you'd like to override this you can set this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getVersionCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="load.html">load</a></h4>
+</td>
+<td>
+<p>Loads a Configuration object from values supplied as meta-data elements in your AndroidManifest.</p>
+<code><span class="keyword">open</span> <span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">load</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$load(android.content.Context)/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://developer.android.com/reference/android/content/Context.html"><span class="identifier">Context</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Configuration</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="remove-on-breadcrumb.html">removeOnBreadcrumb</a></h4>
+</td>
+<td>
+<p>Removes a previously added "on breadcrumb" callback</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeOnBreadcrumb</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$removeOnBreadcrumb(com.bugsnag.android.OnBreadcrumbCallback)/onBreadcrumb">onBreadcrumb</span><span class="symbol">:</span>&nbsp;<a href="../-on-breadcrumb-callback/index.html"><span class="identifier">OnBreadcrumbCallback</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="remove-on-error.html">removeOnError</a></h4>
+</td>
+<td>
+<p>Removes a previously added "on error" callback</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeOnError</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$removeOnError(com.bugsnag.android.OnErrorCallback)/onError">onError</span><span class="symbol">:</span>&nbsp;<a href="../-on-error-callback/index.html"><span class="identifier">OnErrorCallback</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="remove-on-session.html">removeOnSession</a></h4>
+</td>
+<td>
+<p>Removes a previously added "on session" callback</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeOnSession</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$removeOnSession(com.bugsnag.android.OnSessionCallback)/onSession">onSession</span><span class="symbol">:</span>&nbsp;<a href="../-on-session-callback/index.html"><span class="identifier">OnSessionCallback</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-api-key.html">setApiKey</a></h4>
+</td>
+<td>
+<p>Changes the API key used for events sent to Bugsnag.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setApiKey</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setApiKey(kotlin.String)/apiKey">apiKey</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-app-type.html">setAppType</a></h4>
+</td>
+<td>
+<p>If your app's codebase contains different entry-points/processes, but reports to a single Bugsnag project, you might want to add information denoting the type of process the error came from. This information can be used in the dashboard to filter errors and to determine whether an error is limited to a subset of appTypes. By default, this value is set to 'android'.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setAppType</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setAppType(kotlin.String)/appType">appType</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-app-version.html">setAppVersion</a></h4>
+</td>
+<td>
+<p>Set the application version sent to Bugsnag. We'll automatically pull your app version from the versionName field in your AndroidManifest.xml file.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setAppVersion</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setAppVersion(kotlin.String)/appVersion">appVersion</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-auto-detect-errors.html">setAutoDetectErrors</a></h4>
+</td>
+<td>
+<p>If you want to disable automatic detection of all errors, you can set this property to false. By default this property is true. Setting autoDetectErrors to false will disable all automatic errors, regardless of the error types enabled by enabledErrorTypes</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setAutoDetectErrors</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setAutoDetectErrors(kotlin.Boolean)/autoDetectErrors">autoDetectErrors</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-auto-track-sessions.html">setAutoTrackSessions</a></h4>
+</td>
+<td>
+<p>Sets whether or not Bugsnag should automatically capture and report User sessions whenever the app enters the foreground. By default this behavior is enabled.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setAutoTrackSessions</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setAutoTrackSessions(kotlin.Boolean)/autoTrackSessions">autoTrackSessions</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-context.html">setContext</a></h4>
+</td>
+<td>
+<p>Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts represent what was happening in your application at the time an error occurs. In an android app the "context" is automatically set as the foreground Activity. If you would like to set this value manually, you should alter this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setContext</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setContext(kotlin.String)/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-delivery.html">setDelivery</a></h4>
+</td>
+<td>
+<p>The Delivery implementation used to make network calls to the Bugsnag <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reporting</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions API</a>. This may be useful if you have requirements such as certificate pinning and rotation, which are not supported by the default implementation. To provide custom delivery functionality, create a class which implements the Delivery interface. Please note that request bodies must match the structure specified in the <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reporting</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions API</a> documentation. You can use the return type from the deliver functions to control the strategy for retrying the transmission at a later date. If DeliveryStatus.UNDELIVERED is returned, the notifier will automatically cache the payload and trigger delivery later on. Otherwise, if either DeliveryStatus.DELIVERED or DeliveryStatus.FAILURE is returned the notifier will removed any cached payload and no further delivery will be attempted.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setDelivery</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setDelivery(com.bugsnag.android.Delivery)/delivery">delivery</span><span class="symbol">:</span>&nbsp;<a href="../-delivery/index.html"><span class="identifier">Delivery</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-discard-classes.html">setDiscardClasses</a></h4>
+</td>
+<td>
+<p>Allows you to specify the fully-qualified name of error classes that will be discarded before being sent to Bugsnag if they are detected. The notifier performs an exact match against the canonical class name.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setDiscardClasses</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setDiscardClasses(kotlin.collections.MutableSet((kotlin.String)))/discardClasses">discardClasses</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-enabled-breadcrumb-types.html">setEnabledBreadcrumbTypes</a></h4>
+</td>
+<td>
+<p>By default we will automatically add breadcrumbs for common application events such as activity lifecycle events and system intents. To amend this behavior, override the enabled breadcrumb types. All breadcrumbs can be disabled by providing an empty set. The following breadcrumb types can be enabled: - Captured errors: left when an error event is sent to the Bugsnag API. - Manual breadcrumbs: left via the Bugsnag.leaveBreadcrumb function. - Navigation changes: left for Activity Lifecycle events to track the user's journey in the app. - State changes: state breadcrumbs are left for system broadcast events. For example: battery warnings, airplane mode, etc. - User interaction: left when the user performs certain system operations.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setEnabledBreadcrumbTypes</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setEnabledBreadcrumbTypes(kotlin.collections.MutableSet((com.bugsnag.android.BreadcrumbType)))/enabledBreadcrumbTypes">enabledBreadcrumbTypes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-enabled-error-types.html">setEnabledErrorTypes</a></h4>
+</td>
+<td>
+<p>Bugsnag will automatically detect different types of error in your application. If you wish to control exactly which types are enabled, set this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setEnabledErrorTypes</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setEnabledErrorTypes(com.bugsnag.android.ErrorTypes)/enabledErrorTypes">enabledErrorTypes</span><span class="symbol">:</span>&nbsp;<a href="../-error-types/index.html"><span class="identifier">ErrorTypes</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-enabled-release-stages.html">setEnabledReleaseStages</a></h4>
+</td>
+<td>
+<p>By default, Bugsnag will be notified of events that happen in any releaseStage. If you would like to change which release stages notify Bugsnag you can set this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setEnabledReleaseStages</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setEnabledReleaseStages(kotlin.collections.MutableSet((kotlin.String)))/enabledReleaseStages">enabledReleaseStages</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-endpoints.html">setEndpoints</a></h4>
+</td>
+<td>
+<p>Set the endpoints to send data to. By default we'll send error reports to https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setEndpoints</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setEndpoints(com.bugsnag.android.EndpointConfiguration)/endpoints">endpoints</span><span class="symbol">:</span>&nbsp;<a href="../-endpoint-configuration/index.html"><span class="identifier">EndpointConfiguration</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-launch-crash-threshold-ms.html">setLaunchCrashThresholdMs</a></h4>
+</td>
+<td>
+<p>Sets the threshold in milliseconds for an uncaught error to be considered as a crash on launch. If a crash is detected on launch, Bugsnag will attempt to send the event synchronously. By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setLaunchCrashThresholdMs</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setLaunchCrashThresholdMs(kotlin.Long)/launchCrashThresholdMs">launchCrashThresholdMs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-logger.html">setLogger</a></h4>
+</td>
+<td>
+<p>By default, the notifier's log messages will be logged using android.util.Log with a "Bugsnag" tag unless the releaseStage is "production". To override this behavior, an alternative instance can be provided that implements the Logger interface.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setLogger</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setLogger(com.bugsnag.android.Logger)/logger">logger</span><span class="symbol">:</span>&nbsp;<a href="../-logger/index.html"><span class="identifier">Logger</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-max-breadcrumbs.html">setMaxBreadcrumbs</a></h4>
+</td>
+<td>
+<p>Sets the maximum number of breadcrumbs which will be stored. Once the threshold is reached, the oldest breadcrumbs will be deleted. By default, 25 breadcrumbs are stored: this can be amended up to a maximum of 100.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMaxBreadcrumbs</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setMaxBreadcrumbs(kotlin.Int)/maxBreadcrumbs">maxBreadcrumbs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-persist-user.html">setPersistUser</a></h4>
+</td>
+<td>
+<p>Set whether or not Bugsnag should persist user information between application sessions. If enabled then any user information set will be re-used until the user information is removed manually by calling <code><a href="../-bugsnag/set-user.html">Bugsnag#setUser(String, String, String)</a></code> with null arguments.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setPersistUser</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setPersistUser(kotlin.Boolean)/persistUser">persistUser</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-project-packages.html">setProjectPackages</a></h4>
+</td>
+<td>
+<p>Sets which package names Bugsnag should consider as a part of the running application. We mark stacktrace lines as in-project if they originate from any of these packages and this allows us to improve the visual display of the stacktrace on the dashboard. By default, projectPackages is set to be the package you called Bugsnag.start from.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setProjectPackages</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setProjectPackages(kotlin.collections.MutableSet((kotlin.String)))/projectPackages">projectPackages</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-redacted-keys.html">setRedactedKeys</a></h4>
+</td>
+<td>
+<p>Sets which values should be removed from any Metadata objects before sending them to Bugsnag. Use this if you want to ensure you don't send sensitive data such as passwords, and credit card numbers to our servers. Any keys which contain these strings will be filtered. By default, redactedKeys is set to "password"</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setRedactedKeys</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setRedactedKeys(kotlin.collections.MutableSet((kotlin.String)))/redactedKeys">redactedKeys</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-release-stage.html">setReleaseStage</a></h4>
+</td>
+<td>
+<p>If you would like to distinguish between errors that happen in different stages of the application release process (development, production, etc) you can set the releaseStage that is reported to Bugsnag. If you are running a debug build, we'll automatically set this to "development", otherwise it is set to "production". You can control whether events are sent for specific release stages using the enabledReleaseStages option.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setReleaseStage</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setReleaseStage(kotlin.String)/releaseStage">releaseStage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-send-threads.html">setSendThreads</a></h4>
+</td>
+<td>
+<p>Controls whether we should capture and serialize the state of all threads at the time of an error. By default sendThreads is set to Thread.ThreadSendPolicy.ALWAYS. This can be set to Thread.ThreadSendPolicy.NEVER to disable or Thread.ThreadSendPolicy.UNHANDLED_ONLY to only do so for unhandled errors.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setSendThreads</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setSendThreads(com.bugsnag.android.ThreadSendPolicy)/sendThreads">sendThreads</span><span class="symbol">:</span>&nbsp;<a href="../-thread-send-policy/index.html"><span class="identifier">ThreadSendPolicy</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-user.html">setUser</a></h4>
+</td>
+<td>
+<p>Sets the user associated with the event.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setUser</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setUser(kotlin.String, kotlin.String, kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$setUser(kotlin.String, kotlin.String, kotlin.String)/email">email</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$setUser(kotlin.String, kotlin.String, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-version-code.html">setVersionCode</a></h4>
+</td>
+<td>
+<p>We'll automatically pull your versionCode from the versionCode field in your AndroidManifest.xml file. If you'd like to override this you can set this property.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setVersionCode</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setVersionCode(kotlin.Int)/versionCode">versionCode</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

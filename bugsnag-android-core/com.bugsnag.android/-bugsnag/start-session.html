@@ -1,0 +1,18 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Bugsnag.startSession - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Bugsnag</a>&nbsp;/&nbsp;<a href="./start-session.html">startSession</a><br/>
+<br/>
+<h1>startSession</h1>
+<a name="com.bugsnag.android.Bugsnag$startSession()"></a>
+<code><span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">startSession</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Starts tracking a new session. You should disable automatic session tracking via <code><a href="../-configuration/set-auto-track-sessions.html">Configuration#setAutoTrackSessions(boolean)</a></code> if you call this method. </p>
+ You should call this at the appropriate time in your application when you wish to start a session. Any subsequent errors which occur in your application will still be reported to Bugsnag but will not count towards your application's <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score"> stability score</a>. This will start a new session even if there is already an existing session; you should call <code><a href="resume-session.html">#resumeSession()</a></code> if you only want to start a session when one doesn't already exist.
+<p><strong>See Also</strong><br/>
+<a href="resume-session.html">#resumeSession()</a><a href="pause-session.html">#pauseSession()</a><a href="../-configuration/set-auto-track-sessions.html">Configuration#setAutoTrackSessions(boolean)</a></p>
+</BODY>
+</HTML>

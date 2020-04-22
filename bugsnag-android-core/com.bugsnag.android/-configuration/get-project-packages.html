@@ -1,0 +1,15 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Configuration.getProjectPackages - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Configuration</a>&nbsp;/&nbsp;<a href="./get-project-packages.html">getProjectPackages</a><br/>
+<br/>
+<h1>getProjectPackages</h1>
+<a name="com.bugsnag.android.Configuration$getProjectPackages()"></a>
+<code><span class="identifier">@NonNull</span> <span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getProjectPackages</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code>
+<p>Sets which package names Bugsnag should consider as a part of the running application. We mark stacktrace lines as in-project if they originate from any of these packages and this allows us to improve the visual display of the stacktrace on the dashboard. By default, projectPackages is set to be the package you called Bugsnag.start from.</p>
+</BODY>
+</HTML>

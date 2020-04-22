@@ -1,0 +1,15 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Configuration.getDelivery - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Configuration</a>&nbsp;/&nbsp;<a href="./get-delivery.html">getDelivery</a><br/>
+<br/>
+<h1>getDelivery</h1>
+<a name="com.bugsnag.android.Configuration$getDelivery()"></a>
+<code><span class="identifier">@NonNull</span> <span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getDelivery</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery/index.html"><span class="identifier">Delivery</span></a></code>
+<p>The Delivery implementation used to make network calls to the Bugsnag <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reporting</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions API</a>. This may be useful if you have requirements such as certificate pinning and rotation, which are not supported by the default implementation. To provide custom delivery functionality, create a class which implements the Delivery interface. Please note that request bodies must match the structure specified in the <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reporting</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions API</a> documentation. You can use the return type from the deliver functions to control the strategy for retrying the transmission at a later date. If DeliveryStatus.UNDELIVERED is returned, the notifier will automatically cache the payload and trigger delivery later on. Otherwise, if either DeliveryStatus.DELIVERED or DeliveryStatus.FAILURE is returned the notifier will removed any cached payload and no further delivery will be attempted.</p>
+</BODY>
+</HTML>

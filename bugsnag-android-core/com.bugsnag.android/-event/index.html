@@ -1,0 +1,206 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Event - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Event</a><br/>
+<br/>
+<h1>Event</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Event</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span><span class="symbol">, </span><span class="identifier">MetadataAware</span><span class="symbol">, </span><span class="identifier">UserAware</span></code>
+<p>An Event object represents a Throwable captured by Bugsnag and is available as a parameter on an <code><a href="../-on-error-callback/index.html">OnErrorCallback</a></code>, where individual properties can be mutated before an error report is sent to Bugsnag's API.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="add-metadata.html">addMetadata</a></h4>
+</td>
+<td>
+<p>Adds a map of multiple metadata key-value pairs to the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$addMetadata(kotlin.String, kotlin.collections.Map((kotlin.String, kotlin.Any)))/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Event$addMetadata(kotlin.String, kotlin.collections.Map((kotlin.String, kotlin.Any)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds the specified key and value in the specified section. The value can be of any primitive type or a collection such as a map, set or array.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$addMetadata(kotlin.String, kotlin.String, kotlin.Any)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Event$addMetadata(kotlin.String, kotlin.String, kotlin.Any)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Event$addMetadata(kotlin.String, kotlin.String, kotlin.Any)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="clear-metadata.html">clearMetadata</a></h4>
+</td>
+<td>
+<p>Removes all the data from the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$clearMetadata(kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes data with the specified key from the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$clearMetadata(kotlin.String, kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Event$clearMetadata(kotlin.String, kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-api-key.html">getApiKey</a></h4>
+</td>
+<td>
+<p>The API key used for events sent to Bugsnag. Even though the API key is set when Bugsnag is initialized, you may choose to send certain events to a different Bugsnag project.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getApiKey</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-app.html">getApp</a></h4>
+</td>
+<td>
+<p>Information set by the notifier about your app can be found in this field. These values can be accessed and amended if necessary.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getApp</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-app-with-state/index.html"><span class="identifier">AppWithState</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-breadcrumbs.html">getBreadcrumbs</a></h4>
+</td>
+<td>
+<p>A list of breadcrumbs leading up to the event. These values can be accessed and amended if necessary. See <code><a href="../-breadcrumb/index.html">Breadcrumb</a></code> for details of the data available.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getBreadcrumbs</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-breadcrumb/index.html"><span class="identifier">Breadcrumb</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-context.html">getContext</a></h4>
+</td>
+<td>
+<p>Returns the context of the error. The context is a summary what what was occurring in the application at the time of the crash, if available, such as the visible activity.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getContext</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-device.html">getDevice</a></h4>
+</td>
+<td>
+<p>Information set by the notifier about your device can be found in this field. These values can be accessed and amended if necessary.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getDevice</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-device-with-state/index.html"><span class="identifier">DeviceWithState</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-errors.html">getErrors</a></h4>
+</td>
+<td>
+<p>Information extracted from the <code><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html">Throwable</a></code> that caused the event can be found in this field. The list contains at least one <code><a href="../-error/index.html">Error</a></code> that represents the thrown object with subsequent elements in the list populated from <code><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html#getCause()">Throwable#getCause()</a></code>. A reference to the actual <code><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html">Throwable</a></code> object that caused the event is available through <code><a href="get-original-error.html">Event#getOriginalError()</a></code> ()}.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getErrors</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-error/index.html"><span class="identifier">Error</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-grouping-hash.html">getGroupingHash</a></h4>
+</td>
+<td>
+<p>Set the grouping hash of the event to override the default grouping on the dashboard. All events with the same grouping hash will be grouped together into one error. This is an advanced usage of the library and mis-using it will cause your events not to group properly in your dashboard. As the name implies, this option accepts a hash of sorts.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getGroupingHash</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-metadata.html">getMetadata</a></h4>
+</td>
+<td>
+<p>Returns a map of data in the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$getMetadata(kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Returns the value of the specified key in the specified section.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$getMetadata(kotlin.String, kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Event$getMetadata(kotlin.String, kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-original-error.html">getOriginalError</a></h4>
+</td>
+<td>
+<p>The Throwable object that caused the event in your application. Manipulating this field does not affect the error information reported to the Bugsnag dashboard. Use <code><a href="get-errors.html">Event#getErrors()</a></code> to access and amend the representation of the error that will be sent.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getOriginalError</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-severity.html">getSeverity</a></h4>
+</td>
+<td>
+<p>The severity of the event. By default, unhandled exceptions will be <code><a href="../-severity/-e-r-r-o-r.html">Severity#ERROR</a></code> and handled exceptions sent with Bugsnag#notify <code><a href="../-severity/-w-a-r-n-i-n-g.html">Severity#WARNING</a></code>.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getSeverity</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-severity/index.html"><span class="identifier">Severity</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-threads.html">getThreads</a></h4>
+</td>
+<td>
+<p>If thread state is being captured along with the event, this field will contain a list of <code><a href="../-thread/index.html">Thread</a></code> objects.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getThreads</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-thread/index.html"><span class="identifier">Thread</span></a><span class="symbol">!</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-user.html">getUser</a></h4>
+</td>
+<td>
+<p>Returns the currently set User information.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getUser</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-user/index.html"><span class="identifier">User</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-unhandled.html">isUnhandled</a></h4>
+</td>
+<td>
+<p>Whether the event was a crash (i.e. unhandled) or handled error in which the system continued running.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isUnhandled</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-api-key.html">setApiKey</a></h4>
+</td>
+<td>
+<p>The API key used for events sent to Bugsnag. Even though the API key is set when Bugsnag is initialized, you may choose to send certain events to a different Bugsnag project.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setApiKey</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$setApiKey(kotlin.String)/apiKey">apiKey</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-context.html">setContext</a></h4>
+</td>
+<td>
+<p>Sets the context of the error. The context is a summary what what was occurring in the application at the time of the crash, if available, such as the visible activity.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setContext</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$setContext(kotlin.String)/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-grouping-hash.html">setGroupingHash</a></h4>
+</td>
+<td>
+<p>Set the grouping hash of the event to override the default grouping on the dashboard. All events with the same grouping hash will be grouped together into one error. This is an advanced usage of the library and mis-using it will cause your events not to group properly in your dashboard. As the name implies, this option accepts a hash of sorts.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setGroupingHash</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$setGroupingHash(kotlin.String)/groupingHash">groupingHash</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-severity.html">setSeverity</a></h4>
+</td>
+<td>
+<p>The severity of the event. By default, unhandled exceptions will be <code><a href="../-severity/-e-r-r-o-r.html">Severity#ERROR</a></code> and handled exceptions sent with Bugsnag#notify <code><a href="../-severity/-w-a-r-n-i-n-g.html">Severity#WARNING</a></code>.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setSeverity</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$setSeverity(com.bugsnag.android.Severity)/severity">severity</span><span class="symbol">:</span>&nbsp;<a href="../-severity/index.html"><span class="identifier">Severity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-user.html">setUser</a></h4>
+</td>
+<td>
+<p>Sets the user associated with the event.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setUser</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$setUser(kotlin.String, kotlin.String, kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Event$setUser(kotlin.String, kotlin.String, kotlin.String)/email">email</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Event$setUser(kotlin.String, kotlin.String, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="should-discard-class.html">shouldDiscardClass</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">shouldDiscardClass</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="to-stream.html">toStream</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$toStream(com.bugsnag.android.JsonStream)/stream">stream</span><span class="symbol">:</span>&nbsp;<a href="../-json-stream/index.html"><span class="identifier">JsonStream</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-severity-internal.html">updateSeverityInternal</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">updateSeverityInternal</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$updateSeverityInternal(com.bugsnag.android.Severity)/severity">severity</span><span class="symbol">:</span>&nbsp;<a href="../-severity/index.html"><span class="identifier">Severity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

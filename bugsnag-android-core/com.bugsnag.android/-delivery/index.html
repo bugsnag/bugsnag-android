@@ -1,0 +1,39 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Delivery - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Delivery</a><br/>
+<br/>
+<h1>Delivery</h1>
+<code><span class="keyword">interface </span><span class="identifier">Delivery</span></code>
+<p>Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.</p>
+<p>A default <a href="./index.html">Delivery</a> implementation is provided as part of Bugsnag initialization,
+but you may wish to use your own implementation if you have requirements such
+as pinning SSL certificates, for example.</p>
+<p>Any custom implementation must be capable of sending
+<a href="https://docs.bugsnag.com/api/error-reporting/">Error Reports</a>
+and <a href="https://docs.bugsnag.com/api/sessions/">Sessions</a> as
+documented at <a href="https://docs.bugsnag.com/api/">https://docs.bugsnag.com/api/</a></p>
+<p><strong>See Also</strong><br/>
+<p><a href="#">DefaultDelivery</a></p>
+</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="deliver.html">deliver</a></h4>
+</td>
+<td>
+<p>Posts an array of sessions to the Bugsnag Session Tracking API.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deliver</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)/payload">payload</span><span class="symbol">:</span>&nbsp;<a href="../-session/index.html"><span class="identifier">Session</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</span><span class="symbol">:</span>&nbsp;<a href="../-delivery-params/index.html"><span class="identifier">DeliveryParams</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery-status/index.html"><span class="identifier">DeliveryStatus</span></a></code>
+<p>Posts an Error Report to the Bugsnag Error Reporting API.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deliver</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)/payload">payload</span><span class="symbol">:</span>&nbsp;<a href="../-event-payload/index.html"><span class="identifier">EventPayload</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</span><span class="symbol">:</span>&nbsp;<a href="../-delivery-params/index.html"><span class="identifier">DeliveryParams</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery-status/index.html"><span class="identifier">DeliveryStatus</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

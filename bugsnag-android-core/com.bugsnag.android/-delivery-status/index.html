@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DeliveryStatus - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">DeliveryStatus</a><br/>
+<br/>
+<h1>DeliveryStatus</h1>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">DeliveryStatus</span></code>
+<p>Return value for the status of a payload delivery.</p>
+<h3>Enum Values</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-d-e-l-i-v-e-r-e-d.html">DELIVERED</a></h4>
+</td>
+<td>
+<p>The payload was delivered successfully and can be deleted.</p>
+</td>
+</tr>
+<tr>
+<td>
+<h4><a href="-u-n-d-e-l-i-v-e-r-e-d.html">UNDELIVERED</a></h4>
+</td>
+<td>
+<p>The payload was not delivered but can be retried, e.g. when there was a loss of connectivity</p>
+</td>
+</tr>
+<tr>
+<td>
+<h4><a href="-f-a-i-l-u-r-e.html">FAILURE</a></h4>
+</td>
+<td>
+<p>The payload was not delivered and should be deleted without attempting retry.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

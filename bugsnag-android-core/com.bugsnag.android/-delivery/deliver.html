@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Delivery.deliver - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Delivery</a>&nbsp;/&nbsp;<a href="./deliver.html">deliver</a><br/>
+<br/>
+<h1>deliver</h1>
+<a name="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deliver</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)/payload">payload</span><span class="symbol">:</span>&nbsp;<a href="../-session/index.html"><span class="identifier">Session</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</span><span class="symbol">:</span>&nbsp;<a href="../-delivery-params/index.html"><span class="identifier">DeliveryParams</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery-status/index.html"><span class="identifier">DeliveryStatus</span></a></code>
+<p>Posts an array of sessions to the Bugsnag Session Tracking API.</p>
+<p>This request must be delivered to the endpoint specified in <a href="deliver.html#com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</a> with the given
+HTTP headers.</p>
+<p>You should return the <a href="../-delivery-status/index.html">DeliveryStatus</a> which best matches the end-result of your delivery
+attempt. Bugsnag will use the return value to decide whether to delete the payload if it was
+cached on disk, or whether to reattempt delivery later on.</p>
+<p>For example, a 2xx status code will indicate success so you should return
+<a href="../-delivery-status/-d-e-l-i-v-e-r-e-d.html">DeliveryStatus.DELIVERED</a>. Most 4xx status codes would indicate an unrecoverable error, so
+the report should be dropped using <a href="../-delivery-status/-f-a-i-l-u-r-e.html">DeliveryStatus.FAILURE</a>. For all other scenarios,
+delivery should be attempted again later by using <a href="../-delivery-status/-u-n-d-e-l-i-v-e-r-e-d.html">DeliveryStatus.UNDELIVERED</a>.</p>
+<p>See <a href="https://docs.bugsnag.com/api/sessions/">https://docs.bugsnag.com/api/sessions/</a></p>
+<h3>Parameters</h3>
+<p><a name="payload"></a>
+<code>payload</code> - The session tracking payload</p>
+<p><a name="deliveryParams"></a>
+<code>deliveryParams</code> - The delivery parameters to be used for this request</p>
+<p><strong>Return</strong><br/>
+the end-result of your delivery attempt</p>
+<a name="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deliver</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)/payload">payload</span><span class="symbol">:</span>&nbsp;<a href="../-event-payload/index.html"><span class="identifier">EventPayload</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</span><span class="symbol">:</span>&nbsp;<a href="../-delivery-params/index.html"><span class="identifier">DeliveryParams</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery-status/index.html"><span class="identifier">DeliveryStatus</span></a></code>
+<p>Posts an Error Report to the Bugsnag Error Reporting API.</p>
+<p>This request must be delivered to the endpoint specified in <a href="deliver.html#com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</a> with the given
+HTTP headers.</p>
+<p>You should return the <a href="../-delivery-status/index.html">DeliveryStatus</a> which best matches the end-result of your delivery
+attempt. Bugsnag will use the return value to decide whether to delete the payload if it was
+cached on disk, or whether to reattempt delivery later on.</p>
+<p>For example, a 2xx status code will indicate success so you should return
+<a href="../-delivery-status/-d-e-l-i-v-e-r-e-d.html">DeliveryStatus.DELIVERED</a>. Most 4xx status codes would indicate an unrecoverable error, so
+the report should be dropped using <a href="../-delivery-status/-f-a-i-l-u-r-e.html">DeliveryStatus.FAILURE</a>. For all other scenarios,
+delivery should be attempted again later by using <a href="../-delivery-status/-u-n-d-e-l-i-v-e-r-e-d.html">DeliveryStatus.UNDELIVERED</a>.</p>
+<p>See <a href="https://docs.bugsnag.com/api/error-reporting/">https://docs.bugsnag.com/api/error-reporting/</a>
+(https://docs.bugsnag.com/api/error-reporting/)</p>
+<h3>Parameters</h3>
+<p><a name="payload"></a>
+<code>payload</code> - The error payload</p>
+<p><a name="deliveryParams"></a>
+<code>deliveryParams</code> - The delivery parameters to be used for this request</p>
+<p><strong>Return</strong><br/>
+the end-result of your delivery attempt</p>
+</BODY>
+</HTML>

@@ -1,0 +1,15 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Configuration.getEnabledBreadcrumbTypes - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Configuration</a>&nbsp;/&nbsp;<a href="./get-enabled-breadcrumb-types.html">getEnabledBreadcrumbTypes</a><br/>
+<br/>
+<h1>getEnabledBreadcrumbTypes</h1>
+<a name="com.bugsnag.android.Configuration$getEnabledBreadcrumbTypes()"></a>
+<code><span class="identifier">@Nullable</span> <span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getEnabledBreadcrumbTypes</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html"><span class="identifier">MutableSet</span></a><span class="symbol">&lt;</span><a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>By default we will automatically add breadcrumbs for common application events such as activity lifecycle events and system intents. To amend this behavior, override the enabled breadcrumb types. All breadcrumbs can be disabled by providing an empty set. The following breadcrumb types can be enabled: - Captured errors: left when an error event is sent to the Bugsnag API. - Manual breadcrumbs: left via the Bugsnag.leaveBreadcrumb function. - Navigation changes: left for Activity Lifecycle events to track the user's journey in the app. - State changes: state breadcrumbs are left for system broadcast events. For example: battery warnings, airplane mode, etc. - User interaction: left when the user performs certain system operations.</p>
+</BODY>
+</HTML>

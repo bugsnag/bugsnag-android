@@ -1,0 +1,20 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Configuration.addOnBreadcrumb - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Configuration</a>&nbsp;/&nbsp;<a href="./add-on-breadcrumb.html">addOnBreadcrumb</a><br/>
+<br/>
+<h1>addOnBreadcrumb</h1>
+<a name="com.bugsnag.android.Configuration$addOnBreadcrumb(com.bugsnag.android.OnBreadcrumbCallback)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addOnBreadcrumb</span><span class="symbol">(</span><span class="identifier">@NonNull</span> <span class="identifier" id="com.bugsnag.android.Configuration$addOnBreadcrumb(com.bugsnag.android.OnBreadcrumbCallback)/onBreadcrumb">onBreadcrumb</span><span class="symbol">:</span>&nbsp;<a href="../-on-breadcrumb-callback/index.html"><span class="identifier">OnBreadcrumbCallback</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Add an "on breadcrumb" callback, to execute code before every breadcrumb captured by Bugsnag. You can use this to modify breadcrumbs before they are stored by Bugsnag. You can also return <code>false</code> from any callback to ignore a breadcrumb. For example: Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() { public boolean run(Breadcrumb breadcrumb) { return false; // ignore the breadcrumb } })</p>
+<h3>Parameters</h3>
+<p><a name="onBreadcrumb"></a>
+<code>onBreadcrumb</code> - <a href="../-on-breadcrumb-callback/index.html"><span class="identifier">OnBreadcrumbCallback</span></a><span class="symbol">:</span> a callback to run before a breadcrumb is captured</p>
+<p><strong>See Also</strong><br/>
+<a href="../-on-breadcrumb-callback/index.html">OnBreadcrumbCallback</a></p>
+</BODY>
+</HTML>

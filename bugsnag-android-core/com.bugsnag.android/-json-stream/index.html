@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>JsonStream - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">JsonStream</a><br/>
+<br/>
+<h1>JsonStream</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">JsonStream</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">JsonWriter</span></code>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-streamable/index.html">Streamable</a></h4>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Streamable</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<p>Constructs a JSONStream</p>
+<code><span class="identifier">JsonStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.JsonStream$<init>(java.io.Writer)/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/io/Writer.html"><span class="identifier">Writer</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="name.html">name</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">name</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.JsonStream$name(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">JsonStream</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="value.html">value</a></h4>
+</td>
+<td>
+<p>Serialises an arbitrary object as JSON, handling primitive types as well as Collections, Maps, and arrays.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">value</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.JsonStream$value(kotlin.Any, kotlin.Boolean)/object">object</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.JsonStream$value(kotlin.Any, kotlin.Boolean)/shouldRedactKeys">shouldRedactKeys</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">value</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.JsonStream$value(kotlin.Any)/object">object</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Writes a File (its content) into the stream</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">value</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.JsonStream$value(java.io.File)/file">file</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/io/File.html"><span class="identifier">File</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
