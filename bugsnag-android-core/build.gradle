@@ -16,3 +16,10 @@ apply from: "../gradle/release.gradle"
 apply from: "../gradle/detekt.gradle"
 apply from: "../gradle/checkstyle.gradle"
 apply from: "../gradle/license-check.gradle"
+
+apply plugin: 'org.jetbrains.dokka'
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/dokka"
+}
