@@ -5,26 +5,8 @@ Scenario: Exception classname ignored
     Then I should receive no requests
 
 Scenario: Disabled Exception Handler
-    When I run "DisableAutoNotifyScenario"
+    When I run "DisableAutoDetectErrorsScenario"
     Then I should receive no requests
-
-Scenario: Disabling native crash reporting before a native C++ crash
-    When I run "CXXThrowSomethingLaterDisabledScenario"
-    And I configure the app to run in the "non-crashy" state
-    And I relaunch the app
-    Then I should receive no requests
-
-Scenario: Disabling native crash reporting before a POSIX signal
-    When I run "CXXTrapLaterDisabledScenario"
-    And I configure the app to run in the "non-crashy" state
-    And I relaunch the app
-    Then I should receive no requests
-
-Scenario: Reenabling native crash reporting before a native C++ crash
-    When I run "CXXThrowSomethingReenabledScenario"
-    And I configure the app to run in the "non-crashy" state
-    And I relaunch the app
-    Then I should receive a request
 
 Scenario: Changing release stage to exclude the current stage settings before a POSIX signal
     When I run "CXXTrapOutsideReleaseStagesScenario"

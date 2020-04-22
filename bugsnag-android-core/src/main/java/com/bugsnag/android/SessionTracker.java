@@ -1,22 +1,14 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.MapUtils.getStringFromMap;
-
-import android.app.Activity;
-import android.app.Application;
-import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Observable;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -24,17 +16,17 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-class SessionTracker extends Observable implements Application.ActivityLifecycleCallbacks {
+class SessionTracker extends BaseObservable {
 
-    private static final String KEY_LIFECYCLE_CALLBACK = "ActivityLifecycle";
     private static final int DEFAULT_TIMEOUT_MS = 30000;
 
     private final Collection<String>
-        foregroundActivities = new ConcurrentLinkedQueue<>();
+            foregroundActivities = new ConcurrentLinkedQueue<>();
     private final long timeoutMs;
 
-    final Configuration configuration;
-    final Client client;
+    private final ImmutableConfig configuration;
+    private final CallbackState callbackState;
+    private final Client client;
     final SessionStore sessionStore;
 
     // This most recent time an Activity was stopped.
@@ -45,25 +37,29 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     private final AtomicReference<Session> currentSession = new AtomicReference<>();
     private final Semaphore flushingRequest = new Semaphore(1);
     private final ForegroundDetector foregroundDetector;
+    final Logger logger;
 
-    SessionTracker(Configuration configuration, Client client, SessionStore sessionStore) {
-        this(configuration, client, DEFAULT_TIMEOUT_MS, sessionStore);
+    SessionTracker(ImmutableConfig configuration, CallbackState callbackState,
+                   Client client, SessionStore sessionStore, Logger logger) {
+        this(configuration, callbackState, client, DEFAULT_TIMEOUT_MS, sessionStore, logger);
     }
 
-    SessionTracker(Configuration configuration, Client client, long timeoutMs,
-                   SessionStore sessionStore) {
+    SessionTracker(ImmutableConfig configuration, CallbackState callbackState,
+                   Client client, long timeoutMs, SessionStore sessionStore, Logger logger) {
         this.configuration = configuration;
+        this.callbackState = callbackState;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
-        this.foregroundDetector = new ForegroundDetector(client.appContext);
+        this.foregroundDetector = new ForegroundDetector(client.getAppContext());
+        this.logger = logger;
         notifyNdkInForeground();
     }
 
     /**
      * Starts a new session with the given date and user.
      * <p>
-     * A session will only be created if {@link Configuration#getAutoCaptureSessions()} returns
+     * A session will only be created if {@link Configuration#getAutoTrackSessions()} returns
      * true.
      *
      * @param date the session start date
@@ -72,13 +68,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     @Nullable
     @VisibleForTesting
     Session startNewSession(@NonNull Date date, @Nullable User user,
-                                      boolean autoCaptured) {
-        if (configuration.getSessionEndpoint() == null) {
-            Logger.warn("The session tracking endpoint has not been set. "
-                + "Session tracking is disabled");
-            return null;
-        }
-        Session session = new Session(UUID.randomUUID().toString(), date, user, autoCaptured);
+                            boolean autoCaptured) {
+        String id = UUID.randomUUID().toString();
+        Session session = new Session(id, date, user, autoCaptured, client.getNotifier(), logger);
         currentSession.set(session);
         trackSessionIfNeeded(session);
         return session;
@@ -88,14 +80,12 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         return startNewSession(new Date(), client.getUser(), autoCaptured);
     }
 
-    void stopSession() {
+    void pauseSession() {
         Session session = currentSession.get();
 
         if (session != null) {
-            session.isStopped.set(true);
-            setChanged();
-            notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+            session.isPaused.set(true);
+            notifyObservers(StateEvent.PauseSession.INSTANCE);
         }
     }
 
@@ -107,7 +97,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
             session = startSession(false);
             resumed = false;
         } else {
-            resumed = session.isStopped.compareAndSet(true, false);
+            resumed = session.isPaused.compareAndSet(true, false);
         }
 
         if (session != null) {
@@ -117,12 +107,9 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     }
 
     private void notifySessionStartObserver(Session session) {
-        setChanged();
         String startedAt = DateUtils.toIso8601(session.getStartedAt());
-        notifyObservers(new NativeInterface.Message(
-            NativeInterface.MessageType.START_SESSION,
-            Arrays.asList(session.getId(), startedAt,
-                session.getHandledCount(), session.getUnhandledCount())));
+        notifyObservers(new StateEvent.StartSession(session.getId(), startedAt,
+                session.getHandledCount(), session.getUnhandledCount()));
     }
 
     /**
@@ -136,17 +123,17 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      * @param handledCount   the number of handled events which have occurred during the session
      * @return the session
      */
-    @Nullable Session registerExistingSession(@Nullable Date date, @Nullable String sessionId,
-                                              @Nullable User user, int unhandledCount,
-                                              int handledCount) {
+    @Nullable
+    Session registerExistingSession(@Nullable Date date, @Nullable String sessionId,
+                                    @Nullable User user, int unhandledCount,
+                                    int handledCount) {
         Session session = null;
         if (date != null && sessionId != null) {
-            session = new Session(sessionId, date, user, unhandledCount, handledCount);
+            session = new Session(sessionId, date, user, unhandledCount, handledCount,
+                    client.getNotifier(), logger);
             notifySessionStartObserver(session);
         } else {
-            setChanged();
-            notifyObservers(new NativeInterface.Message(
-                NativeInterface.MessageType.STOP_SESSION, null));
+            notifyObservers(StateEvent.PauseSession.INSTANCE);
         }
         currentSession.set(session);
         return session;
@@ -159,36 +146,41 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
      * @param session the session
      */
     private void trackSessionIfNeeded(final Session session) {
-        boolean notifyForRelease = configuration.shouldNotifyForReleaseStage(getReleaseStage());
+        boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
-        if (notifyForRelease
-            && (configuration.getAutoCaptureSessions() || !session.isAutoCaptured())
-            && session.isTracked().compareAndSet(false, true)) {
+        session.setApp(client.getAppDataCollector().generateApp());
+        session.setDevice(client.getDeviceDataCollector().generateDevice());
+        boolean deliverSession = callbackState.runOnSessionTasks(session, logger);
+
+        if (deliverSession && notifyForRelease
+                && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
+                && session.isTracked().compareAndSet(false, true)) {
             notifySessionStartObserver(session);
 
             try {
-                final String endpoint = configuration.getSessionEndpoint();
                 Async.run(new Runnable() {
                     @Override
                     public void run() {
                         //FUTURE:SM It would be good to optimise this
                         flushStoredSessions();
 
-                        SessionTrackingPayload payload =
-                            new SessionTrackingPayload(session, null,
-                                client.appData, client.deviceData);
-
                         try {
-                            for (BeforeSendSession mutator : configuration.getSessionCallbacks()) {
-                                mutator.beforeSendSession(payload);
-                            }
+                            DeliveryStatus deliveryStatus = deliverSessionPayload(session);
 
-                            configuration.getDelivery().deliver(payload, configuration);
-                        } catch (DeliveryFailureException exception) { // store for later sending
-                            Logger.warn("Storing session payload for future delivery", exception);
-                            sessionStore.write(session);
+                            switch (deliveryStatus) {
+                                case UNDELIVERED:
+                                    logger.w("Storing session payload for future delivery");
+                                    sessionStore.write(session);
+                                    break;
+                                case FAILURE:
+                                    logger.w("Dropping invalid session tracking payload");
+                                    break;
+                                case DELIVERED:
+                                default:
+                                    break;
+                            }
                         } catch (Exception exception) {
-                            Logger.warn("Dropping invalid session tracking payload", exception);
+                            logger.w("Session tracking payload failed", exception);
                         }
                     }
                 });
@@ -199,26 +191,11 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         }
     }
 
-    /**
-     * Track a new session when auto capture is enabled via config after initialisation.
-     */
-    void onAutoCaptureEnabled() {
-        Session session = currentSession.get();
-        if (session != null && !foregroundActivities.isEmpty()) {
-            // If there is no session we will wait for one to be created
-            trackSessionIfNeeded(session);
-        }
-    }
-
-    private String getReleaseStage() {
-        return getStringFromMap("releaseStage", client.appData.getAppDataSummary());
-    }
-
     @Nullable
     Session getCurrentSession() {
         Session session = currentSession.get();
 
-        if (session != null && !session.isStopped.get()) {
+        if (session != null && !session.isPaused.get()) {
             return session;
         }
         return null;
@@ -258,27 +235,10 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
     void flushStoredSessions() {
         if (flushingRequest.tryAcquire(1)) {
             try {
-                List<File> storedFiles;
+                List<File> storedFiles = sessionStore.findStoredFiles();
 
-                storedFiles = sessionStore.findStoredFiles();
-
-                if (!storedFiles.isEmpty()) {
-                    SessionTrackingPayload payload =
-                        new SessionTrackingPayload(null, storedFiles,
-                            client.appData, client.deviceData);
-
-                    //FUTURE:SM Reduce duplication here and above
-                    try {
-                        configuration.getDelivery().deliver(payload, configuration);
-                        sessionStore.deleteStoredFiles(storedFiles);
-                    } catch (DeliveryFailureException exception) {
-                        sessionStore.cancelQueuedFiles(storedFiles);
-                        Logger.warn("Leaving session payload for future delivery", exception);
-                    } catch (Exception exception) {
-                        // drop bad data
-                        Logger.warn("Deleting invalid session tracking payload", exception);
-                        sessionStore.deleteStoredFiles(storedFiles);
-                    }
+                for (File storedFile : storedFiles) {
+                    flushStoredSession(storedFile);
                 }
             } finally {
                 flushingRequest.release(1);
@@ -286,80 +246,46 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
         }
     }
 
-    @Override
-    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onCreate()");
+    void flushStoredSession(File storedFile) {
+        Session payload = new Session(storedFile, client.getNotifier(), logger);
+
+        if (!payload.isV2Payload()) { // collect data here
+            payload.setApp(client.getAppDataCollector().generateApp());
+            payload.setDevice(client.getDeviceDataCollector().generateDevice());
+        }
+
+        DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+
+        switch (deliveryStatus) {
+            case DELIVERED:
+                sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
+                break;
+            case UNDELIVERED:
+                sessionStore.cancelQueuedFiles(Collections.singletonList(storedFile));
+                logger.w("Leaving session payload for future delivery");
+                break;
+            case FAILURE:
+                // drop bad data
+                logger.w("Deleting invalid session tracking payload");
+                sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
+                break;
+            default:
+                break;
+        }
     }
 
-    @Override
-    public void onActivityStarted(@NonNull Activity activity) {
-        String activityName = getActivityName(activity);
-        leaveLifecycleBreadcrumb(activityName, "onStart()");
+    DeliveryStatus deliverSessionPayload(Session payload) {
+        DeliveryParams params = configuration.getSessionApiDeliveryParams();
+        Delivery delivery = configuration.getDelivery();
+        return delivery.deliver(payload, params);
+    }
+
+    void onActivityStarted(String activityName) {
         updateForegroundTracker(activityName, true, System.currentTimeMillis());
     }
 
-    @Override
-    public void onActivityResumed(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onResume()");
-    }
-
-    @Override
-    public void onActivityPaused(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onPause()");
-    }
-
-    @Override
-    public void onActivityStopped(@NonNull Activity activity) {
-        String activityName = getActivityName(activity);
-        leaveLifecycleBreadcrumb(activityName, "onStop()");
+    void onActivityStopped(String activityName) {
         updateForegroundTracker(activityName, false, System.currentTimeMillis());
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(@NonNull Activity activity, Bundle outState) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onSaveInstanceState()");
-    }
-
-    @Override
-    public void onActivityDestroyed(@NonNull Activity activity) {
-        leaveLifecycleBreadcrumb(getActivityName(activity), "onDestroy()");
-    }
-
-    private String getActivityName(@NonNull Activity activity) {
-        return activity.getClass().getSimpleName();
-    }
-
-    void leaveLifecycleBreadcrumb(String activityName, String lifecycleCallback) {
-        leaveBreadcrumb(activityName, lifecycleCallback);
-    }
-
-    private void leaveBreadcrumb(String activityName, String lifecycleCallback) {
-        if (configuration.isAutomaticallyCollectingBreadcrumbs()) {
-            Map<String, String> metadata = new HashMap<>();
-            metadata.put(KEY_LIFECYCLE_CALLBACK, lifecycleCallback);
-
-            try {
-                client.leaveBreadcrumb(activityName, BreadcrumbType.NAVIGATION, metadata);
-            } catch (Exception ex) {
-                Logger.warn("Failed to leave breadcrumb in SessionTracker: " + ex.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Tracks a session if a session has not yet been captured,
-     * recording the session as auto-captured. Requires the current activity.
-     *
-     * @param activity the current activity
-     */
-    void startFirstSession(Activity activity) {
-        Session session = currentSession.get();
-        if (session == null) {
-            long nowMs = System.currentTimeMillis();
-            lastEnteredForegroundMs.set(nowMs);
-            startNewSession(new Date(nowMs), client.getUser(), true);
-            foregroundActivities.add(getActivityName(activity));
-        }
     }
 
     /**
@@ -384,7 +310,7 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 lastEnteredForegroundMs.set(nowMs);
 
                 if (noActivityRunningForMs >= timeoutMs
-                    && configuration.getAutoCaptureSessions()) {
+                        && configuration.getAutoTrackSessions()) {
                     startNewSession(new Date(nowMs), client.getUser(), true);
                 }
             }
@@ -396,18 +322,13 @@ class SessionTracker extends Observable implements Application.ActivityLifecycle
                 lastExitedForegroundMs.set(nowMs);
             }
         }
-        setChanged();
         notifyNdkInForeground();
     }
 
     private void notifyNdkInForeground() {
         Boolean inForeground = isInForeground();
-
-        if (inForeground != null) {
-            notifyObservers(new NativeInterface.Message(
-                    NativeInterface.MessageType.UPDATE_IN_FOREGROUND,
-                    Arrays.asList(inForeground, getContextActivity())));
-        }
+        boolean foreground = inForeground != null ? inForeground : false;
+        notifyObservers(new StateEvent.UpdateInForeground(foreground, getContextActivity()));
     }
 
     @Nullable

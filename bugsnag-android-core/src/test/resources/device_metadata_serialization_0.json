@@ -1,0 +1,9 @@
+{
+  "locationStatus": "disallowed",
+  "emulator": false,
+  "networkAccess": "unknown",
+  "screenDensity": 200.0,
+  "dpi": 120,
+  "screenResolution": "0x0",
+  "brand": "google"
+}

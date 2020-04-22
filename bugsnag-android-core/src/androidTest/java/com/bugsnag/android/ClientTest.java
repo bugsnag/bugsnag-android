@@ -6,11 +6,13 @@ import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
@@ -19,9 +21,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 @SmallTest
 public class ClientTest {
 
@@ -32,24 +40,23 @@ public class ClientTest {
     private Context context;
     private Configuration config;
     private Client client;
+    private User user;
 
     /**
      * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
-     * @throws Exception if initialisation failed
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         context = ApplicationProvider.getApplicationContext();
         clearSharedPrefs();
-        config = new Configuration("api-key");
+        config = generateConfiguration();
     }
 
     /**
      * Clears sharedPreferences to remove any values persisted
-     * @throws Exception if IO to sharedPrefs failed
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         clearSharedPrefs();
         if (client != null) {
             client.close();
@@ -78,7 +85,7 @@ public class ClientTest {
         return sharedPref;
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNullContext() {
         client = new Client(null, "api-key");
     }
@@ -90,36 +97,19 @@ public class ClientTest {
         client.notify(new RuntimeException("Testing"));
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testConfig() {
-        config.setEndpoint("new-endpoint");
-
-        client = new Client(context, config);
-        client.setErrorReportApiClient(BugsnagTestUtils.generateErrorReportApiClient());
-        client.setSessionTrackingApiClient(BugsnagTestUtils.generateSessionTrackingApiClient());
-
-        // Notify should not crash
-        client.notify(new RuntimeException("Testing"));
-    }
-
     @Test
     public void testRestoreUserFromPrefs() {
         setUserPrefs();
 
-        config.setPersistUserBetweenSessions(true);
+        config.setPersistUser(true);
         config.setDelivery(BugsnagTestUtils.generateDelivery());
         client = new Client(context, config);
 
-        final User user = new User();
-
-        client.beforeNotify(new BeforeNotify() {
+        client.addOnError(new OnErrorCallback() {
             @Override
-            public boolean run(@NonNull Error error) {
+            public boolean onError(@NonNull Event event) {
                 // Pull out the user information
-                user.setId(error.getUser().getId());
-                user.setEmail(error.getUser().getEmail());
-                user.setName(error.getUser().getName());
+                ClientTest.this.user = event.getUser();
                 return true;
             }
         });
@@ -134,7 +124,7 @@ public class ClientTest {
 
     @Test
     public void testStoreUserInPrefs() {
-        config.setPersistUserBetweenSessions(true);
+        config.setPersistUser(true);
         client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
@@ -147,147 +137,64 @@ public class ClientTest {
 
     @Test
     public void testStoreUserInPrefsDisabled() {
-        config.setPersistUserBetweenSessions(false);
+        config.setPersistUser(false);
         client = new Client(context, config);
         client.setUser(USER_ID, USER_EMAIL, USER_NAME);
 
         // Check that the user was not stored in prefs
         SharedPreferences sharedPref = getSharedPrefs(context);
+        assertNotNull(sharedPref.getString("install.iud", null));
         assertFalse(sharedPref.contains("user.id"));
         assertFalse(sharedPref.contains("user.email"));
         assertFalse(sharedPref.contains("user.name"));
     }
 
-    @Test
-    public void testClearUser() {
-        // Set a user in prefs
-        setUserPrefs();
-
-        // Clear the user using the command
-        client = new Client(context, "api-key");
-        client.clearUser();
-
-        // Check that there is no user information in the prefs anymore
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        assertFalse(sharedPref.contains("user.id"));
-        assertFalse(sharedPref.contains("user.email"));
-        assertFalse(sharedPref.contains("user.name"));
-    }
-
-    @Test
-    public void testEmptyManifestConfig() {
-        Bundle data = new Bundle();
-        Configuration protoConfig = new Configuration("api-key");
-        ConfigFactory.populateConfigFromManifest(protoConfig, data);
-
-        assertEquals(config.getApiKey(), protoConfig.getApiKey());
-        assertEquals(config.getVersionCode(), protoConfig.getVersionCode());
-        assertEquals(config.getBuildUUID(), protoConfig.getBuildUUID());
-        assertEquals(config.getAppVersion(), protoConfig.getAppVersion());
-        assertEquals(config.getReleaseStage(), protoConfig.getReleaseStage());
-        assertEquals(config.getEndpoint(), protoConfig.getEndpoint());
-        assertEquals(config.getSessionEndpoint(), protoConfig.getSessionEndpoint());
-        assertEquals(config.getSendThreads(), protoConfig.getSendThreads());
-        assertEquals(config.getEnableExceptionHandler(), protoConfig.getEnableExceptionHandler());
-        assertEquals(config.getPersistUserBetweenSessions(),
-            protoConfig.getPersistUserBetweenSessions());
-        assertEquals(false, protoConfig.getDetectAnrs());
-        assertEquals(false, protoConfig.getDetectNdkCrashes());
-    }
-
-    @Test
-    public void testFullManifestConfig() {
-        String buildUuid = "123";
-        String appVersion = "v1.0";
-        Integer versionCode = 27;
-        String releaseStage = "debug";
-        String endpoint = "http://example.com";
-        String sessionEndpoint = "http://session-example.com";
-
-        Bundle data = new Bundle();
-        data.putString("com.bugsnag.android.BUILD_UUID", buildUuid);
-        data.putString("com.bugsnag.android.APP_VERSION", appVersion);
-        data.putInt("com.bugsnag.android.VERSION_CODE", versionCode);
-        data.putString("com.bugsnag.android.RELEASE_STAGE", releaseStage);
-        data.putString("com.bugsnag.android.SESSIONS_ENDPOINT", sessionEndpoint);
-        data.putString("com.bugsnag.android.ENDPOINT", endpoint);
-        data.putBoolean("com.bugsnag.android.SEND_THREADS", false);
-        data.putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false);
-        data.putBoolean("com.bugsnag.android.PERSIST_USER_BETWEEN_SESSIONS", true);
-        data.putBoolean("com.bugsnag.android.AUTO_CAPTURE_SESSIONS", true);
-        data.putBoolean("com.bugsnag.android.DETECT_ANRS", true);
-        data.putBoolean("com.bugsnag.android.DETECT_NDK_CRASHES", true);
-
-        Configuration protoConfig = new Configuration("api-key");
-        ConfigFactory.populateConfigFromManifest(protoConfig, data);
-        assertEquals(buildUuid, protoConfig.getBuildUUID());
-        assertEquals(appVersion, protoConfig.getAppVersion());
-        assertEquals(versionCode, protoConfig.getVersionCode());
-        assertEquals(releaseStage, protoConfig.getReleaseStage());
-        assertEquals(endpoint, protoConfig.getEndpoint());
-        assertEquals(sessionEndpoint, protoConfig.getSessionEndpoint());
-        assertEquals(false, protoConfig.getSendThreads());
-        assertEquals(false, protoConfig.getEnableExceptionHandler());
-        assertEquals(true, protoConfig.getPersistUserBetweenSessions());
-        assertEquals(true, protoConfig.getAutoCaptureSessions());
-        assertEquals(true, protoConfig.getDetectAnrs());
-        assertEquals(true, protoConfig.getDetectNdkCrashes());
-    }
-
-    @SuppressWarnings("deprecation") // test backwards compatibility of client.setMaxBreadcrumbs
     @Test
     public void testMaxBreadcrumbs() {
         Configuration config = generateConfiguration();
-        config.setAutomaticallyCollectBreadcrumbs(false);
+        List<BreadcrumbType> breadcrumbTypes = Arrays.asList(BreadcrumbType.MANUAL);
+        config.setEnabledBreadcrumbTypes(new HashSet<>(breadcrumbTypes));
+        config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(0, client.breadcrumbs.store.size());
-
-        client.setMaxBreadcrumbs(1);
+        assertEquals(0, client.breadcrumbState.getStore().size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
-        assertEquals(1, client.breadcrumbs.store.size());
+        client.leaveBreadcrumb("yet another");
+        assertEquals(2, client.breadcrumbState.getStore().size());
 
-        Breadcrumb poll = client.breadcrumbs.store.poll();
+        Breadcrumb poll = client.breadcrumbState.getStore().poll();
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
-        assertEquals("manual", poll.getName());
-        assertEquals("another", poll.getMetadata().get("message"));
-    }
-
-    @Test
-    public void testClearBreadcrumbs() {
-        Configuration config = generateConfiguration();
-        config.setAutomaticallyCollectBreadcrumbs(false);
-        client = generateClient(config);
-        assertEquals(0, client.breadcrumbs.store.size());
-
-        client.leaveBreadcrumb("test");
-        assertEquals(1, client.breadcrumbs.store.size());
-
-        client.clearBreadcrumbs();
-        assertEquals(0, client.breadcrumbs.store.size());
+        assertEquals("another", poll.getMessage());
     }
 
     @Test
     public void testClientAddToTab() {
         client = generateClient();
-        client.addToTab("drink", "cola", "cherry");
-        assertNotNull(client.getMetaData().getTab("drink"));
+        client.addMetadata("drink", "cola", "cherry");
+        assertNotNull(client.getMetadata("drink"));
     }
 
     @Test
     public void testClientClearTab() {
         client = generateClient();
-        client.addToTab("drink", "cola", "cherry");
+        client.addMetadata("drink", "cola", "cherry");
+        client.addMetadata("food", "berries", "raspberry");
 
-        client.clearTab("drink");
-        assertTrue(client.getMetaData().getTab("drink").isEmpty());
+        client.clearMetadata("drink");
+        assertNull(client.getMetadata("drink"));
+        assertEquals("raspberry", client.getMetadata("food", "berries"));
     }
 
-    @SuppressWarnings("deprecation")
-    @Test(expected = IllegalArgumentException.class)
-    public void testApiClientNullValidation() {
-        generateClient().setSessionTrackingApiClient(null);
+    @Test
+    public void testClientClearValue() {
+        client = generateClient();
+        client.addMetadata("drink", "cola", "cherry");
+        client.addMetadata("drink", "soda", "cream");
+
+        client.clearMetadata("drink", "cola");
+        assertNull(client.getMetadata("drink", "cola"));
+        assertEquals("cream", client.getMetadata("drink", "soda"));
     }
 
     @Test
@@ -309,30 +216,30 @@ public class ClientTest {
 
     @Test
     public void testBreadcrumbStoreNotModified() {
-        client = generateClient();
+        config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
+        client = generateClient(config);
+        client.leaveBreadcrumb("Manual breadcrumb");
         Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-        int breadcrumbCount = client.breadcrumbs.store.size();
 
         breadcrumbs.clear(); // only the copy should be cleared
         assertTrue(breadcrumbs.isEmpty());
-        assertEquals(breadcrumbCount, client.breadcrumbs.store.size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
+        assertEquals("Manual breadcrumb", client.breadcrumbState.getStore().remove().getMessage());
     }
 
     @Test
     public void testAppDataCollection() {
         client = generateClient();
-        AppData appData = client.getAppData();
-        assertEquals(client.getAppData(), appData);
+        AppDataCollector appDataCollector = client.getAppDataCollector();
+        assertEquals(client.getAppDataCollector(), appDataCollector);
     }
 
     @Test
-    public void testAppDataMetaData() {
+    public void testAppDataMetadata() {
         client = generateClient();
-        Map<String, Object> app = client.getAppData().getAppDataMetaData();
-        assertEquals(6, app.size());
+        Map<String, Object> app = client.getAppDataCollector().getAppDataMetadata();
+        assertEquals(4, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
-        assertEquals("com.bugsnag.android.core.test", app.get("packageName"));
-        assertEquals("1.0", app.get("versionName"));
         assertNotNull(app.get("memoryUsage"));
         assertTrue(app.containsKey("activeScreen"));
         assertNotNull(app.get("lowMemory"));
@@ -341,26 +248,70 @@ public class ClientTest {
     @Test
     public void testDeviceDataCollection() {
         client = generateClient();
-        DeviceData deviceData = client.getDeviceData();
-        assertEquals(client.getDeviceData(), deviceData);
+        DeviceDataCollector deviceDataCollector = client.getDeviceDataCollector();
+        assertEquals(client.getDeviceDataCollector(), deviceDataCollector);
     }
 
     @Test
     public void testPopulateDeviceMetadata() {
         client = generateClient();
-        Map<String, Object> metaData = client.getDeviceData().getDeviceMetaData();
+        Map<String, Object> metadata = client.getDeviceDataCollector().getDeviceMetadata();
 
-        assertEquals(11, metaData.size());
-        assertNotNull(metaData.get("batteryLevel"));
-        assertNotNull(metaData.get("charging"));
-        assertNotNull(metaData.get("locationStatus"));
-        assertNotNull(metaData.get("networkAccess"));
-        assertNotNull(metaData.get("time"));
-        assertNotNull(metaData.get("brand"));
-        assertNotNull(metaData.get("locale"));
-        assertNotNull(metaData.get("screenDensity"));
-        assertNotNull(metaData.get("dpi"));
-        assertNotNull(metaData.get("emulator"));
-        assertNotNull(metaData.get("screenResolution"));
+        assertEquals(9, metadata.size());
+        assertNotNull(metadata.get("batteryLevel"));
+        assertNotNull(metadata.get("charging"));
+        assertNotNull(metadata.get("locationStatus"));
+        assertNotNull(metadata.get("networkAccess"));
+        assertNotNull(metadata.get("brand"));
+        assertNotNull(metadata.get("screenDensity"));
+        assertNotNull(metadata.get("dpi"));
+        assertNotNull(metadata.get("emulator"));
+        assertNotNull(metadata.get("screenResolution"));
+    }
+
+    @Test
+    public void testMetadataCloned() {
+        config.addMetadata("test_section", "foo", "bar");
+        client = new Client(context, config);
+        client.addMetadata("test_section", "second", "another value");
+
+        // metadata state should be deep copied
+        assertNotSame(config.impl.metadataState, client.metadataState);
+
+        // metadata object should be deep copied
+        Metadata configData = config.impl.metadataState.getMetadata();
+        Metadata clientData = client.metadataState.getMetadata();
+        assertNotSame(configData, clientData);
+
+        // metadata backing map should be deep copied
+
+        // validate configuration metadata
+        Map<String, Object> configExpected = Collections.<String, Object>singletonMap("foo", "bar");
+        assertEquals(configExpected, config.getMetadata("test_section"));
+
+        // validate client metadata
+        Map<String, Object> data = new HashMap<>();
+        data.put("foo", "bar");
+        data.put("second", "another value");
+        assertEquals(data, client.getMetadata("test_section"));
+    }
+
+    @Test
+    public void testUserCloned() {
+        config.setUser("123", "test@example.com", "Tess Derby");
+        client = new Client(context, config);
+        User user = client.getUser();
+        assertEquals("123", user.getId());
+        assertEquals("Tess Derby", user.getName());
+        assertEquals("test@example.com", user.getEmail());
+    }
+
+    @Test
+    public void testUserNotCloned() {
+        client = new Client(context, config);
+        User user = client.getUser();
+        assertNotNull(user.getId()); // use an auto-generated-id
+        assertNull(user.getName());
+        assertNull(user.getEmail());
     }
 }

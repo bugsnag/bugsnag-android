@@ -16,7 +16,7 @@ class IOUtils {
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
     private static final int EOF = -1;
 
-    public static void closeQuietly(@Nullable final Closeable closeable) {
+    static void closeQuietly(@Nullable final Closeable closeable) {
         try {
             if (closeable != null) {
                 closeable.close();
@@ -26,14 +26,14 @@ class IOUtils {
         }
     }
 
-    public static void close(@Nullable final URLConnection conn) {
+    static void close(@Nullable final URLConnection conn) {
         if (conn instanceof HttpURLConnection) {
             ((HttpURLConnection) conn).disconnect();
         }
     }
 
-    public static int copy(@NonNull final Reader input,
-                           @NonNull final Writer output) throws IOException {
+    static int copy(@NonNull final Reader input,
+                    @NonNull final Writer output) throws IOException {
         char[] buffer = new char[DEFAULT_BUFFER_SIZE];
         long count = 0;
         int read;
@@ -49,13 +49,13 @@ class IOUtils {
         return (int) count;
     }
 
-    static void deleteFile(File file) {
+    static void deleteFile(File file, Logger logger) {
         try {
             if (!file.delete()) {
                 file.deleteOnExit();
             }
         } catch (Exception ex) {
-            Logger.warn("Failed to delete file", ex);
+            logger.w("Failed to delete file", ex);
         }
     }
 }

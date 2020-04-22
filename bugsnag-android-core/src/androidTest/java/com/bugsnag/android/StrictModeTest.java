@@ -39,13 +39,13 @@ public class StrictModeTest {
     }
 
     @Test
-    public void testIsNotStrictModeThrowable() throws Exception {
+    public void testIsNotStrictModeThrowable() {
         assertFalse(strictModeHandler.isStrictModeThrowable(new RuntimeException()));
         assertFalse(strictModeHandler.isStrictModeThrowable(new Throwable()));
     }
 
     @Test
-    public void testIsStrictModeThrowable() throws Exception {
+    public void testIsStrictModeThrowable() {
         Exception strictModeException = generateStrictModeException();
 
         if (strictModeException != null) {

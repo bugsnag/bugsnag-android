@@ -48,3 +48,37 @@ Scenario: Set Auto Capture Sessions sends
     And I wait for 60 seconds
     Then I should receive a request
     And the request is a valid for the session tracking API
+
+Scenario: User is persisted between sessions
+    When I run "SessionPersistUserScenario"
+    And I wait for 3 seconds
+    And I relaunch the app
+    And I configure the app to run in the "no_user" state
+    And I run "SessionPersistUserScenario"
+    And I wait for 10 seconds
+    Then I should receive 2 requests
+    And the request 1 is valid for the session tracking API
+    And the request 2 is valid for the session tracking API
+    And the session "user.id" equals "12345" for request 1
+    And the session "user.email" equals "test@test.test" for request 1
+    And the session "user.name" equals "test user" for request 1
+    And the session "user.id" equals "12345" for request 2
+    And the session "user.email" equals "test@test.test" for request 2
+    And the session "user.name" equals "test user" for request 2
+
+Scenario: User is not persisted between sessions
+    When I run "SessionPersistUserDisabledScenario"
+    And I wait for 3 seconds
+    And I relaunch the app
+    And I configure the app to run in the "no_user" state
+    And I run "SessionPersistUserDisabledScenario"
+    And I wait for 10 seconds
+    Then I should receive 2 requests
+    And the request 1 is valid for the session tracking API
+    And the request 2 is valid for the session tracking API
+    And the session "user.id" equals "12345" for request 1
+    And the session "user.email" equals "test@test.test" for request 1
+    And the session "user.name" equals "test user" for request 1
+    And the session "user.id" is not null for request 2
+    And the session "user.name" is null for request 2
+    And the session "user.email" is null for request 2

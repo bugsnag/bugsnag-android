@@ -7,19 +7,21 @@ import android.os.Looper;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
+import java.util.Collections;
+
 import androidx.annotation.NonNull;
 
 public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
 
     public AppNotRespondingOutsideReleaseStagesScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
+        config.setEnabledReleaseStages(Collections.singleton("fee-fi-fo-fum"));
     }
 
     @Override
     public void run() {
         super.run();
-        Bugsnag.setNotifyReleaseStages(new String[]{"fee-fi-fo-fum"});
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {
             @Override

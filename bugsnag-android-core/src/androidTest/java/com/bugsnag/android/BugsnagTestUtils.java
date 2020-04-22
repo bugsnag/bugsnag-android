@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,73 +51,82 @@ final class BugsnagTestUtils {
     }
 
     static Client generateClient() {
-        return generateClient(new Configuration("api-key"));
+        return generateClient(new Configuration("5d1ec5bd39a74caa1267142706a7fb21"));
     }
 
     static Session generateSession() {
-        return new Session("test", new Date(), new User(), false);
+        return new Session("test", new Date(), new User(), false,
+                new Notifier(), NoopLogger.INSTANCE);
     }
 
     static Configuration generateConfiguration() {
-        Configuration configuration = new Configuration("test");
+        Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
         configuration.setDelivery(generateDelivery());
+        configuration.setLogger(NoopLogger.INSTANCE);
         return configuration;
     }
 
+    static ImmutableConfig generateImmutableConfig() {
+        return convert(generateConfiguration());
+    }
+
+
+    static ImmutableConfig convert(Configuration config) {
+        return ImmutableConfigKt.convertToImmutableConfig(config, null);
+    }
+
     static SessionTracker generateSessionTracker() {
-        return new SessionTracker(generateConfiguration(), BugsnagTestUtils.generateClient(),
-            generateSessionStore());
+        Configuration config = generateConfiguration();
+        return new SessionTracker(convert(config), config.impl.callbackState,
+                BugsnagTestUtils.generateClient(), generateSessionStore(), NoopLogger.INSTANCE);
     }
 
     static Connectivity generateConnectivity() {
         return new ConnectivityCompat(ApplicationProvider.getApplicationContext(), null);
     }
 
+    static Device generateDevice() {
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        return new Device(buildInfo, new String[]{}, null, null, null,
+                109230923452L);
+    }
+
+    static DeviceWithState generateDeviceWithState() {
+        DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
+        return new DeviceWithState(buildInfo, null, null, null,
+                109230923452L, 22234423124L, 92340255592L, "portrait", new Date(0));
+    }
+
     @NonNull
     static SessionStore generateSessionStore() {
         Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(generateConfiguration(), applicationContext, null);
-    }
-
-    @SuppressWarnings("deprecation")
-    @NonNull
-    static SessionTrackingApiClient generateSessionTrackingApiClient() {
-        return new SessionTrackingApiClient() {
-            @Override
-            public void postSessionTrackingPayload(@NonNull String urlString,
-                                                   @NonNull SessionTrackingPayload payload,
-                                                   @NonNull Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        };
-    }
-
-    @SuppressWarnings("deprecation")
-    static ErrorReportApiClient generateErrorReportApiClient() { // no-op
-        return new ErrorReportApiClient() {
-            @Override
-            public void postReport(@NonNull String urlString,
-                                   @NonNull Report report,
-                                   @NonNull Map<String, String> headers)
-                throws NetworkException, BadResponseException {
-
-            }
-        };
+        return new SessionStore(applicationContext, NoopLogger.INSTANCE, null);
     }
 
     public static Delivery generateDelivery() {
         return new Delivery() {
+            @NotNull
             @Override
-            public void deliver(@NonNull SessionTrackingPayload payload,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
+            public DeliveryStatus deliver(@NonNull EventPayload payload,
+                                          @NonNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
 
+            @NonNull
             @Override
-            public void deliver(@NonNull Report report,
-                                @NonNull Configuration config)
-                throws DeliveryFailureException {}
-
+            public DeliveryStatus deliver(@NonNull Session payload,
+                                          @NonNull DeliveryParams deliveryParams) {
+                return DeliveryStatus.DELIVERED;
+            }
         };
+    }
+
+    public static AppWithState generateAppWithState() {
+        return new AppWithState(generateImmutableConfig(), null, null, null,
+                null, null, null, null, null);
+    }
+
+    public static App generateApp() {
+        return new App(generateImmutableConfig(), null, null, null, null, null);
     }
 }

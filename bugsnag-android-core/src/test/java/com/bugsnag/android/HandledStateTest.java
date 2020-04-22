@@ -10,7 +10,7 @@ import org.junit.Test;
 public class HandledStateTest {
 
     @Test
-    public void testHandled() throws Exception {
+    public void testHandled() {
         HandledState handled = HandledState.newInstance(
             HandledState.REASON_HANDLED_EXCEPTION);
         assertNotNull(handled);
@@ -19,7 +19,7 @@ public class HandledStateTest {
     }
 
     @Test
-    public void testUnhandled() throws Exception {
+    public void testUnhandled() {
         HandledState unhandled = HandledState.newInstance(
             HandledState.REASON_UNHANDLED_EXCEPTION);
         assertNotNull(unhandled);
@@ -28,7 +28,7 @@ public class HandledStateTest {
     }
 
     @Test
-    public void testUserSpecified() throws Exception {
+    public void testUserSpecified() {
         HandledState userSpecified = HandledState.newInstance(
             HandledState.REASON_USER_SPECIFIED, Severity.INFO, null);
         assertNotNull(userSpecified);
@@ -37,7 +37,7 @@ public class HandledStateTest {
     }
 
     @Test
-    public void testStrictMode() throws Exception {
+    public void testStrictMode() {
         HandledState strictMode = HandledState.newInstance(
             HandledState.REASON_STRICT_MODE, null, "Test");
         assertNotNull(strictMode);
@@ -47,7 +47,7 @@ public class HandledStateTest {
     }
 
     @Test
-    public void testPromiseRejection() throws Exception { // invoked via react native
+    public void testPromiseRejection() { // invoked via react native
         HandledState unhandled = HandledState.newInstance(
             HandledState.REASON_PROMISE_REJECTION);
         assertNotNull(unhandled);
@@ -56,7 +56,7 @@ public class HandledStateTest {
     }
 
     @Test
-    public void testLog() throws Exception { // invoked via Unity
+    public void testLog() { // invoked via Unity
         HandledState unhandled = HandledState.newInstance(
             HandledState.REASON_LOG, Severity.WARNING, null);
         assertNotNull(unhandled);
@@ -65,7 +65,7 @@ public class HandledStateTest {
     }
 
     @Test
-    public void testCallbackSpecified() throws Exception {
+    public void testCallbackSpecified() {
         HandledState handled = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
         assertEquals(HandledState.REASON_HANDLED_EXCEPTION,
             handled.calculateSeverityReasonType());
@@ -76,7 +76,7 @@ public class HandledStateTest {
     }
 
     @Test
-    public void testInvalidUserSpecified() throws Exception {
+    public void testInvalidUserSpecified() {
         HandledState handled = HandledState.newInstance(HandledState.REASON_CALLBACK_SPECIFIED);
         assertEquals(HandledState.REASON_CALLBACK_SPECIFIED,
             handled.calculateSeverityReasonType());
@@ -87,8 +87,13 @@ public class HandledStateTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidStrictmodeVal() throws Exception {
+    public void testInvalidStrictmodeVal() {
         HandledState.newInstance(HandledState.REASON_STRICT_MODE);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidHandledVal() {
+        HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION, Severity.ERROR, "Whoops");
     }
 
 }

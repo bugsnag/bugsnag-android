@@ -3,7 +3,7 @@ all: build
 .PHONY: build test clean bump release
 
 build:
-	./gradlew build
+	./gradlew build -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64
 
 clean:
 	./gradlew clean
@@ -47,8 +47,8 @@ ifeq ($(VERSION),)
 endif
 	@echo Bumping the version number to $(VERSION)
 	@sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$(VERSION)/" gradle.properties
-	@sed -i '' "s/NOTIFIER_VERSION = .*;/NOTIFIER_VERSION = \"$(VERSION)\";/"\
-	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.java
+	@sed -i '' "s/var version: String = .*/var version: String = \"$(VERSION)\",/"\
+	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
 
 # Makes a release
@@ -63,4 +63,5 @@ endif
 	@git commit -m "Release v$(VERSION)"
 	@git tag v$(VERSION)
 	@git push origin master v$(VERSION)
-	@./gradlew assembleRelease publish bintrayUpload && ./gradlew assembleRelease publish bintrayUpload -PreleaseNdkArtefact=true
+	@./gradlew assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 \
+	 && ./gradlew assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 -PreleaseNdkArtefact=true

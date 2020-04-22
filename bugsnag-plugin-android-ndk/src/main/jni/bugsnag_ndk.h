@@ -7,8 +7,9 @@
 #include <android/log.h>
 #include <stdbool.h>
 
-#include "report.h"
+#include "event.h"
 #include "utils/stack_unwinder.h"
+#include "../assets/include/bugsnag.h"
 
 #ifndef BUGSNAG_LOG
 #define BUGSNAG_LOG(fmt, ...)                                                  \
@@ -28,15 +29,18 @@ typedef struct {
      * Preferred unwinding style
      */
     bsg_unwinder unwind_style;
+    /**
+     * Records the version of the bugsnag NDK report being serialized to disk.
+     */
     bsg_report_header report_header;
     /**
      * File path on disk where the next crash report will be written if needed.
      */
-    char next_report_path[384];
+    char next_event_path[384];
     /**
-     * Cache of static metadata and report info. Exception/time information is populated at crash time.
+     * Cache of static metadata and event info. Exception/time information is populated at crash time.
      */
-    bugsnag_report next_report;
+    bugsnag_event next_event;
     /**
      * Time when installed
      */
@@ -54,9 +58,20 @@ typedef struct {
      * true if a handler has completed crash handling
      */
     bool crash_handled;
+
+    bsg_on_error on_error;
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();
+
+/**
+ * Invokes the user-supplied on_error callback, if it has been set. This allows users to mutate
+ * the bugsnag_event payload before it is persisted to disk, and to discard the report
+ * by returning false..
+ *
+ * @return true if the report should be delivered, false if it should be discarded
+ */
+bool bsg_run_on_error();
 
 #ifdef __cplusplus
 }

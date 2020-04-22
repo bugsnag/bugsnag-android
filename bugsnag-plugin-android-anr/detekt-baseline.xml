@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <Blacklist></Blacklist>
+  <Whitelist>
+    <ID>TooGenericExceptionCaught:AnrDetailsCollector.kt$AnrDetailsCollector$exc: RuntimeException</ID>
+  </Whitelist>
+</SmellBaseline>

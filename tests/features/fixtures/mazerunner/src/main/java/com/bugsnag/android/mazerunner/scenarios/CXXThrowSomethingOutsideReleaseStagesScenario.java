@@ -5,6 +5,8 @@ import android.content.Context;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
+import java.util.Collections;
+
 import androidx.annotation.NonNull;
 
 public class CXXThrowSomethingOutsideReleaseStagesScenario extends Scenario {
@@ -19,7 +21,8 @@ public class CXXThrowSomethingOutsideReleaseStagesScenario extends Scenario {
 
     public CXXThrowSomethingOutsideReleaseStagesScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
+        config.setAutoTrackSessions(false);
+        config.setEnabledReleaseStages(Collections.singleton("fee-fi-fo-fum"));
     }
 
     @Override
@@ -29,7 +32,6 @@ public class CXXThrowSomethingOutsideReleaseStagesScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        Bugsnag.setNotifyReleaseStages(new String[]{"fee-fi-fo-fum"});
         crash(23);
     }
 }

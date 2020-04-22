@@ -2,6 +2,7 @@ Feature: Native crash reporting
 
     Scenario: Dereference a null pointer
         When I run "CXXNullPointerScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNullPointerScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -28,6 +29,7 @@ Feature: Native crash reporting
     @skip_below_api18
     Scenario: Stack buffer overflow
         When I run "CXXStackoverflowScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXStackoverflowScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -38,6 +40,7 @@ Feature: Native crash reporting
 
     Scenario: Program trap()
         When I run "CXXTrapScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXTrapScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -53,6 +56,7 @@ Feature: Native crash reporting
 
     Scenario: Write to read-only memory
         When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXWriteReadOnlyMemoryScenario"
         And I wait to receive a request
         And the exception "errorClass" equals "SIGSEGV"
@@ -63,6 +67,7 @@ Feature: Native crash reporting
 
     Scenario: Double free() allocated memory
         When I run "CXXDoubleFreeScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXDoubleFreeScenario"
         And I wait to receive a request
         And the exception "errorClass" equals "SIGSEGV"
@@ -73,6 +78,7 @@ Feature: Native crash reporting
 
     Scenario: Improper object type cast
         When I run "CXXImproperTypecastScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXImproperTypecastScenario"
         And I wait to receive a request
         And the exception "errorClass" equals "SIGSEGV"
@@ -83,6 +89,7 @@ Feature: Native crash reporting
 
     Scenario: Program abort()
         When I run "CXXAbortScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXAbortScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -98,6 +105,7 @@ Feature: Native crash reporting
 
     Scenario: Raise SIGILL
         When I run "CXXSigillScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigillScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -111,6 +119,7 @@ Feature: Native crash reporting
 
     Scenario: Raise SIGSEGV
         When I run "CXXSigsegvScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigsegvScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -122,6 +131,7 @@ Feature: Native crash reporting
 
     Scenario: Raise SIGABRT
         When I run "CXXSigabrtScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigabrtScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -133,6 +143,7 @@ Feature: Native crash reporting
 
     Scenario: Raise SIGBUS
         When I run "CXXSigbusScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigbusScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -144,6 +155,7 @@ Feature: Native crash reporting
 
     Scenario: Raise SIGFPE
         When I run "CXXSigfpeScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigfpeScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -155,6 +167,7 @@ Feature: Native crash reporting
 
     Scenario: Raise SIGTRAP
         When I run "CXXSigtrapScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigtrapScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -166,6 +179,7 @@ Feature: Native crash reporting
 
     Scenario: Undefined JNI method
         When I run "UnsatisfiedLinkErrorScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "UnsatisfiedLinkErrorScenario"
         And I wait to receive a request
         And the report contains the required fields
@@ -176,6 +190,7 @@ Feature: Native crash reporting
 
     Scenario: Causing a crash in a separate library
         When I run "CXXExternalStackElementScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExternalStackElementScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -194,6 +209,7 @@ Feature: Native crash reporting
 
     Scenario: Throwing an exception in C++
         When I run "CXXExceptionScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExceptionScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
@@ -208,6 +224,7 @@ Feature: Native crash reporting
 
     Scenario: Throwing an object in C++
         When I run "CXXThrowSomethingScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXThrowSomethingScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report

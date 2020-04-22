@@ -4,6 +4,6 @@ include(
     ':bugsnag-android-core',
     ':bugsnag-plugin-android-anr',
     ':bugsnag-plugin-android-ndk',
-    ":sdkAppExample"
+    ':bugsnag-plugin-react-native',
+    ":mazerunner-scenarios"
 )
-project(":sdkAppExample").projectDir = new File("examples/sdk-app-example")

@@ -1,0 +1,22 @@
+{
+  "id": 24,
+  "name": "main-one",
+  "type": "android",
+  "stacktrace": [
+    {
+      "method": "run_func",
+      "file": "librunner.so",
+      "lineNumber": 5038
+    },
+    {
+      "method": "Runner.runFunc",
+      "file": "Runner.java",
+      "lineNumber": 14
+    },
+    {
+      "method": "App.launch",
+      "file": "App.java",
+      "lineNumber": 70
+    }
+  ]
+}

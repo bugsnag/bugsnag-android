@@ -15,7 +15,7 @@ public class NativeInterfaceTest {
     private Client client;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         client = BugsnagTestUtils.generateClient();
     }
 
@@ -25,20 +25,20 @@ public class NativeInterfaceTest {
     }
 
     @Test
-    public void getMetaData() {
+    public void getMetadata() {
         NativeInterface.setClient(client);
-        assertNotSame(client.config.getMetaData().store, NativeInterface.getMetaData());
+        assertNotSame(client.metadataState.getMetadata().toMap(), NativeInterface.getMetadata());
     }
 
     @Test
     public void addToTab() {
         Client client = BugsnagTestUtils.generateClient();
         NativeInterface.setClient(client);
-        NativeInterface.addToTab("app", "buildno", "0.1");
-        NativeInterface.addToTab("app", "args", "-print 1");
-        NativeInterface.addToTab("info", "cache", false);
+        NativeInterface.addMetadata("app", "buildno", "0.1");
+        NativeInterface.addMetadata("app", "args", "-print 1");
+        NativeInterface.addMetadata("info", "cache", false);
 
-        Map<String, Object> metadata = NativeInterface.getMetaData();
+        Map<String, Object> metadata = NativeInterface.getMetadata();
         @SuppressWarnings("unchecked")
         Map<String, Object> app = (Map<String, Object>)metadata.get("app");
         assertSame("0.1", app.get("buildno"));
@@ -52,12 +52,12 @@ public class NativeInterfaceTest {
     public void clearTab() {
         Client client = BugsnagTestUtils.generateClient();
         NativeInterface.setClient(client);
-        NativeInterface.addToTab("app", "buildno", "0.1");
-        NativeInterface.addToTab("app", "args", "-print 1");
-        NativeInterface.addToTab("info", "cache", false);
-        NativeInterface.clearTab("info");
+        NativeInterface.addMetadata("app", "buildno", "0.1");
+        NativeInterface.addMetadata("app", "args", "-print 1");
+        NativeInterface.addMetadata("info", "cache", false);
+        NativeInterface.clearMetadata("info", null);
 
-        Map<String, Object> metadata = NativeInterface.getMetaData();
+        Map<String, Object> metadata = NativeInterface.getMetadata();
         @SuppressWarnings("unchecked")
         Map<String, Object> app = (Map<String, Object>)metadata.get("app");
         assertSame("0.1", app.get("buildno"));

@@ -9,10 +9,10 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.lang.Exception
 import java.lang.RuntimeException
+import java.util.Comparator
 
 class FileStoreTest {
-    val appContext = ApplicationProvider.getApplicationContext<Context>()
-    val config = Configuration("api-key")
+    private val appContext: Context = ApplicationProvider.getApplicationContext<Context>()
 
     @Test
     fun sendsInternalErrorReport() {
@@ -20,7 +20,7 @@ class FileStoreTest {
         val dir = File(appContext.filesDir, "custom-store")
         dir.mkdir()
 
-        val store = CustomFileStore(config, appContext, dir.absolutePath, 1, null, delegate)
+        val store = CustomFileStore(appContext, dir.absolutePath, 1, null, delegate)
         val exc = RuntimeException("Whoops")
         store.write(CustomStreamable(exc))
 
@@ -36,7 +36,7 @@ class FileStoreTest {
         val dir = File(appContext.filesDir, "custom-store")
         dir.mkdir()
 
-        val store = CustomFileStore(config, appContext, "", 1, null, delegate)
+        val store = CustomFileStore(appContext, "", 1, null, delegate)
         store.enqueueContentForDelivery("foo")
 
         assertEquals("NDK Crash report copy", delegate.context)
@@ -57,17 +57,16 @@ class CustomDelegate: FileStore.Delegate {
     }
 }
 
-class CustomStreamable(val exc: Throwable) : JsonStream.Streamable {
+class CustomStreamable(private val exc: Throwable) : JsonStream.Streamable {
     override fun toStream(stream: JsonStream) = throw exc
 }
 
 internal class CustomFileStore(
-    config: Configuration,
     appContext: Context,
-    val folder: String?,
+    private val folder: String?,
     maxStoreCount: Int,
-    comparator: java.util.Comparator<File>?,
+    comparator: Comparator<File>?,
     delegate: Delegate?
-) : FileStore<CustomStreamable>(config, appContext, folder, maxStoreCount, comparator, delegate) {
+) : FileStore(appContext, folder, maxStoreCount, comparator, NoopLogger, delegate) {
     override fun getFilename(`object`: Any?) = "$folder/foo.json"
 }

@@ -1,0 +1,6 @@
+{
+  "errorClass": "foo",
+  "message": "bar",
+  "type": "android",
+  "stacktrace": []
+}

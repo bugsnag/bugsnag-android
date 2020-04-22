@@ -1,0 +1,12 @@
+{
+  "name": "CustomNotifier",
+  "version": "4.5.6",
+  "url": "https://example.com",
+  "dependencies": [
+    {
+      "name": "AndroidBugsnagNotifier",
+      "version": "9.9.9",
+      "url": "https://bugsnag.com"
+    }
+  ]
+}

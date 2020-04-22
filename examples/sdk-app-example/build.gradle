@@ -1,12 +1,44 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+        jcenter()
+    }
+    ext.kotlin_version = "1.3.21"
+    ext.agpVersion = "3.4.2"
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:${agpVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.bugsnag:bugsnag-android-gradle-plugin:4.7.4"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+        jcenter()
+        maven { // add this to use snapshots
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+}
+
+ext {
+    // Note minSdkVersion must be >=21 for 64 bit architectures
+    compileSdkVersion = 28
+    minSdkVersion = 14
+    supportLibVersion = "1.1.0"
+    espressoVersion = "3.1.0"
+    bugsnagPluginVersion = "3.3.0"
+}
+
+
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
-
-repositories {
-    mavenLocal()
-    google()
-    mavenCentral()
-    jcenter()
-}
 
 android {
     signingConfigs {
@@ -22,11 +54,9 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.compileSdkVersion
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
-        ndk {
-            abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
-        }
+        ndk.abiFilters = project.hasProperty("ABI_FILTERS") ? project.ABI_FILTERS.split(",") :
+                ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"]
     }
     buildTypes {
         release {
@@ -38,14 +68,9 @@ android {
     externalNativeBuild.cmake.path "CMakeLists.txt"
 }
 
-project.afterEvaluate {
-    project.android.lintOptions.abortOnError = false
-}
-
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:+"
-
-    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "com.bugsnag:bugsnag-android:5.0.0-rc.07-SNAPSHOT"
+    implementation "androidx.appcompat:appcompat:$supportLibVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

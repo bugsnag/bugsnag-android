@@ -1,111 +1,101 @@
 package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public final class Breadcrumb implements JsonStream.Streamable {
+@SuppressWarnings("ConstantConditions")
+public class Breadcrumb implements JsonStream.Streamable {
 
-    private static final int MAX_MESSAGE_LENGTH = 140;
-    private static final String DEFAULT_NAME = "manual";
-    private static final String MESSAGE_METAKEY = "message";
-    private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String NAME_KEY = "name";
-    private static final String METADATA_KEY = "metaData";
-    private static final String TYPE_KEY = "type";
+    private final BreadcrumbInternal impl;
+    private final Logger logger;
 
-    @NonNull
-    private final String timestamp;
-
-    @NonNull
-    private final String name;
-
-    @NonNull
-    private final BreadcrumbType type;
-
-    @NonNull
-    private final Map<String, String> metadata;
-
-    Breadcrumb(@NonNull String message) {
-        this(DEFAULT_NAME, BreadcrumbType.MANUAL, Collections.singletonMap(MESSAGE_METAKEY,
-            message.substring(0, Math.min(message.length(), MAX_MESSAGE_LENGTH))));
+    Breadcrumb(@NonNull String message, @NonNull Logger logger) {
+        this.impl = new BreadcrumbInternal(message);
+        this.logger = logger;
     }
 
-    Breadcrumb(@NonNull String name,
+    Breadcrumb(@NonNull String message,
                @NonNull BreadcrumbType type,
-               @NonNull Map<String, String> metadata) {
-        this(name, type, new Date(), metadata);
+               @Nullable Map<String, Object> metadata,
+               @NonNull Date timestamp,
+               @NonNull Logger logger) {
+        this.impl = new BreadcrumbInternal(message, type, metadata, timestamp);
+        this.logger = logger;
     }
 
-    Breadcrumb(@NonNull String name,
-               @NonNull BreadcrumbType type,
-               @NonNull Date captureDate,
-               @NonNull Map<String, String> metadata) {
-        if (captureDate == null) {
-            captureDate = new Date();
-        }
-        if (metadata == null) {
-            metadata = new HashMap<>();
-        }
-        this.timestamp = DateUtils.toIso8601(captureDate);
-        this.type = type;
-        this.name = name;
-        this.metadata = new HashMap<>(metadata);
+    private void logNull(String property) {
+        logger.e("Invalid null value supplied to breadcrumb." + property + ", ignoring");
     }
 
+    /**
+     * Sets the description of the breadcrumb
+     */
+    public void setMessage(@NonNull String message) {
+        if (message != null) {
+            impl.setMessage(message);
+        } else {
+            logNull("message");
+        }
+    }
+
+    /**
+     * Gets the description of the breadcrumb
+     */
     @NonNull
-    public String getName() {
-        return name;
+    public String getMessage() {
+        return impl.getMessage();
     }
 
+    /**
+     * Sets the type of breadcrumb left - one of those enabled in
+     * {@link Configuration#getEnabledBreadcrumbTypes()}
+     */
+    public void setType(@NonNull BreadcrumbType type) {
+        if (type != null) {
+            impl.setType(type);
+        } else {
+            logNull("type");
+        }
+    }
+
+    /**
+     * Gets the type of breadcrumb left - one of those enabled in
+     * {@link Configuration#getEnabledBreadcrumbTypes()}
+     */
     @NonNull
     public BreadcrumbType getType() {
-        return type;
+        return impl.getType();
     }
 
-    @NonNull
-    public Map<String, String> getMetadata() {
-        return metadata;
+    /**
+     * Sets diagnostic data relating to the breadcrumb
+     */
+    public void setMetadata(@Nullable Map<String, Object> metadata) {
+        impl.setMetadata(metadata);
     }
 
+    /**
+     * Gets diagnostic data relating to the breadcrumb
+     */
+    @Nullable
+    public Map<String, Object> getMetadata() {
+        return impl.getMetadata();
+    }
+
+    /**
+     * The timestamp that the breadcrumb was left
+     */
     @NonNull
-    public String getTimestamp() {
-        return timestamp;
+    public Date getTimestamp() {
+        return impl.getTimestamp();
     }
 
     @Override
-    public void toStream(@NonNull JsonStream writer) throws IOException {
-        writer.beginObject();
-        writer.name(TIMESTAMP_KEY).value(this.timestamp);
-        writer.name(NAME_KEY).value(this.name);
-        writer.name(TYPE_KEY).value(this.type.toString());
-        writer.name(METADATA_KEY);
-        writer.beginObject();
-
-        // sort metadata alphabetically
-        List<String> keys = new ArrayList<>(metadata.keySet());
-        Collections.sort(keys, String.CASE_INSENSITIVE_ORDER);
-
-        for (String key : keys) {
-            writer.name(key).value(metadata.get(key));
-        }
-
-        writer.endObject();
-        writer.endObject();
-    }
-
-    int payloadSize() throws IOException {
-        StringWriter writer = new StringWriter();
-        JsonStream jsonStream = new JsonStream(writer);
-        toStream(jsonStream);
-
-        return writer.toString().length();
+    public void toStream(@NonNull JsonStream stream) throws IOException {
+        impl.toStream(stream);
     }
 }
