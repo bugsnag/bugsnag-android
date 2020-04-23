@@ -4,12 +4,9 @@ FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME} as a
 WORKDIR /app
 
 # Build and upload to the local maven as version 9.9.9
-RUN sed -i -e 's/VERSION_NAME=.*/VERSION_NAME=9.9.9/g' gradle.properties
+RUN ./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal
 
-RUN ./gradlew assembleRelease publishToMavenLocal
+COPY tests/features/ /app/tests/features
 
-COPY tests/features/ /app/features
-
-WORKDIR /app/features/fixtures/mazerunner
-
-CMD ../../../gradlew assembleRelease && cp build/outputs/apk/release/mazerunner-release.apk /app/build/fixture.apk
+ENV FIXTURE_PROJECT=/app/tests/features/fixtures/mazerunner
+CMD ./gradlew -p=${FIXTURE_PROJECT} assembleRelease && cp ${FIXTURE_PROJECT}/build/outputs/apk/release/mazerunner-release.apk /app/build/fixture.apk

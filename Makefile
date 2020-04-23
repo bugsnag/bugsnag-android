@@ -29,12 +29,15 @@ endif
 ifeq ($(BROWSER_STACK_ACCESS_KEY),)
 	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
 endif
-	@docker-compose up --build android-builder
-	@docker-compose build android-maze-runner
+	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal
+	@./gradlew -p=tests/features/fixtures/mazerunner/ assembleRelease
+	@cp tests/features/fixtures/mazerunner/build/outputs/apk/release/mazerunner-release.apk build/fixture.apk
+	@BRANCH_NAME= docker-compose build android-maze-runner
+
 ifneq ($(TEST_FEATURE),)
-	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner features/$(TEST_FEATURE)
+	@BRANCH_NAME= APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner features/$(TEST_FEATURE)
 else
-	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner
+	@BRANCH_NAME= APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner
 endif
 
 bump:
