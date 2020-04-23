@@ -30,10 +30,10 @@ class BugsnagReactNativePlugin : Plugin {
         internalHooks = InternalHooks(client)
 
         // register a state observer immediately but only pass events on when JS callback set
-        client.registerObserver(observerBridge)
         observerBridge = BugsnagReactNativeBridge(client) {
             jsCallback?.invoke(it)
         }
+        client.registerObserver(observerBridge)
         client.logger.i("Initialized React Native Plugin")
     }
 
