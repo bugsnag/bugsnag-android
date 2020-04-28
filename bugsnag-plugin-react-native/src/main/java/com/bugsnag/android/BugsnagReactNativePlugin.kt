@@ -16,6 +16,8 @@ class BugsnagReactNativePlugin : Plugin {
     private val breadcrumbSerializer = BreadcrumbSerializer()
     private val threadSerializer = ThreadSerializer()
 
+    private var ignoreJsExceptionCallbackAdded = false
+
     internal lateinit var internalHooks: InternalHooks
     internal lateinit var client: Client
 
@@ -53,6 +55,7 @@ class BugsnagReactNativePlugin : Plugin {
     }
 
     private fun ignoreJavaScriptExceptions() {
+        ignoreJsExceptionCallbackAdded = true
         this.client.addOnError(OnErrorCallback { event ->
             event.errors[0].errorClass != "com.facebook.react.common.JavascriptException"
         })
@@ -69,7 +72,7 @@ class BugsnagReactNativePlugin : Plugin {
         // in this plugin. When a JS exception crashes the app, we get a duplicate
         // native exception for the same error so we ignore those once the JS layer
         // has started.
-        ignoreJavaScriptExceptions()
+        if (!ignoreJsExceptionCallbackAdded) ignoreJavaScriptExceptions()
 
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
