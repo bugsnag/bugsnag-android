@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import android.content.Context;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,6 +22,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * specified at the client level, api-key and endpoint configuration.
  */
 public class Configuration extends Observable implements Observer {
+
+    /** G4G added
+     * So that we can set the endpoint for native crashes from inside unity. */
+    @Keep
+    public static void setEndpointOverride(String endpoint) {
+        endpointOverride = endpoint;
+    }
+
+    /** G4G added */
+    private static String endpointOverride = null;
 
     private static final String HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version";
     static final String HEADER_API_KEY = "Bugsnag-Api-Key";
@@ -182,6 +193,11 @@ public class Configuration extends Observable implements Observer {
      */
     @NonNull
     public String getEndpoint() {
+        // G4G added -->
+        if (endpointOverride != null) {
+            return endpointOverride;
+        }
+        // <-- G4G added
         return endpoint;
     }
 
