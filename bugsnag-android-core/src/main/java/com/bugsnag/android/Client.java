@@ -16,7 +16,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.storage.StorageManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.OrientationEventListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1468,7 +1467,6 @@ public class Client extends Observable implements Observer {
             return;
         }
         try {
-            Log.w("Bugsnag", "Delivering report to endpoint = " + config.getEndpoint());
             config.getDelivery().deliver(report, config);
             Logger.info("Sent 1 new error to Bugsnag");
             leaveErrorBreadcrumb(error);
