@@ -72,7 +72,7 @@ class BugsnagReactNativePlugin : Plugin {
         // in this plugin. When a JS exception crashes the app, we get a duplicate
         // native exception for the same error so we ignore those once the JS layer
         // has started.
-        if (!ignoreJsExceptionCallbackAdded) ignoreJavaScriptExceptions()
+        if (!ignoreJsExceptionCallbackAdded) { ignoreJavaScriptExceptions() }
 
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
