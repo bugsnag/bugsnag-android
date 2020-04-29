@@ -148,7 +148,7 @@ public class Client extends Observable implements Observer {
 
         //noinspection ConstantConditions
         if (configuration.getDelivery() == null) {
-            configuration.setDelivery(new DefaultDelivery(connectivity));
+            configuration.setDelivery(new DefaultDelivery(connectivity, appContext));
         }
 
         sessionTracker =

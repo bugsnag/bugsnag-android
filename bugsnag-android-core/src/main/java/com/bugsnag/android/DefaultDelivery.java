@@ -1,5 +1,11 @@
 package com.bugsnag.android;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.io.BufferedWriter;
@@ -11,13 +17,15 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-class DefaultDelivery implements Delivery {
+public class DefaultDelivery implements Delivery {
 
     private static final int HTTP_REQUEST_FAILED = 0;
     private final Connectivity connectivity;
+    private final Context androidContext;
 
-    DefaultDelivery(Connectivity connectivity) {
+    DefaultDelivery(Connectivity connectivity, Context androidContext) {
         this.connectivity = connectivity;
+        this.androidContext = androidContext;
     }
 
     @Override
@@ -50,6 +58,21 @@ class DefaultDelivery implements Delivery {
                 JsonStream.Streamable streamable,
                 Map<String, String> headers) throws DeliveryFailureException {
 
+        Logger.setEnabled(true);
+        if (urlString.contains("notify.bugsnag.com")) {
+            String endpointOverride;
+            try {
+                // in <application> you set meta data to override the native crash endpoint
+                ApplicationInfo info = androidContext.getPackageManager().getApplicationInfo(androidContext.getPackageName(), PackageManager.GET_META_DATA);
+                Bundle bundle = info.metaData;
+                endpointOverride = bundle.getString("g4g.bugsnag_endpoint");
+                Log.i("Bugsnag-g4g", "overriding endpoint to" + endpointOverride);
+                urlString = endpointOverride;
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.wtf("Bugsnag-g4g", e);
+            }
+            Log.i("Bugsnag-g4g", "overrided endpoint? -> " + urlString);
+        }
         if (connectivity != null && !connectivity.hasNetworkConnection()) {
             throw new DeliveryFailureException("No network connection available", null);
         }
