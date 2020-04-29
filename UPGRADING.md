@@ -10,7 +10,7 @@ __This version contains many breaking changes__. It is part of an effort to unif
 
 - `Bugsnag.init` has been renamed to `Bugsnag.start`.
 - The configuration options available in the `AndroidManifest.xml` have been expanded and some have been renamed
-- [ANR](https://developer.android.com/topic/performance/vitals/anr) and [NDK](https://developer.android.com/ndk/) crash detection have now been enabled by default. The types of error that Bugsnag detects can be configured using the [`enabledErrorTypes`](https://docs.bugsnag.com/platforms/android/configuration-options/#enabledbreadcrumbtypes) configuration option.
+- [ANR](https://developer.android.com/topic/performance/vitals/anr) and [NDK](https://developer.android.com/ndk/) crash detection have now been enabled by default. The types of error that Bugsnag detects can be configured using the [`enabledErrorTypes`](https://docs.bugsnag.com/platforms/android/configuration-options/#enablederrortypes) configuration option.
 - The `BeforeNotify` and `BeforeSend` callbacks have been simplified to an `OnErrorCallback` that provides access to the data being sent to your dashboard.
 
 More details of these changes can be found below and full documentation is available online at: [https://docs.bugsnag.com/platforms/android](https://docs.bugsnag.com/platforms/android).
