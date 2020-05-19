@@ -31,8 +31,13 @@ echo "Android Tests [$(timestamp)]: Second app upload successful, url: $test_url
 
 echo "Android Tests [$(timestamp)]: Starting test run"
 build_response=$(curl -X POST "https://api-cloud.browserstack.com/app-automate/espresso/build" -d \ "{\"devices\": $INSTRUMENTATION_DEVICES, \"app\": \"$app_url\", \"deviceLogs\" : true, \"testSuite\": \"$test_url\"}" -H "Content-Type: application/json" -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY")
+
+printf "$build_response: %s", "$build_response"
+
+
 build_id=$(echo "$build_response" | jq -r ".build_id")
 
+# TODO Also check if build_id is "null"
 if [ -z "$build_id" ]; then
     echo "Android Tests [$(timestamp)]: Test start failed, exiting"
     echo "$build_response"
@@ -53,6 +58,7 @@ until [ "$status" == "\"done\"" ] || [ $WAIT_COUNT -eq 6 ]; do
     ((WAIT_COUNT++))
     sleep 30
     status_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X GET https://api-cloud.browserstack.com/app-automate/espresso/builds/"$build_id")
+    printf "status_response: %s\n", "$status_response"
     status=$(echo "$status_response" | jq ".status")
 done
 
