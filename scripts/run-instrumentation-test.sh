@@ -54,16 +54,15 @@ status_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X
 status=$(echo "$status_response" | jq -r ".status")
 
 WAIT_COUNT=0
-until [ "$status" == "\"done\"" ] || [ $WAIT_COUNT -eq 60 ]; do
-    echo "Android Tests [$(timestamp)]: Current test status: $status, Time waited: $((WAIT_COUNT * 10))"
+until [ "$status" == "\"done\"" ] || [ $WAIT_COUNT -eq 100 ]; do
+    echo "Android Tests [$(timestamp)]: Current test status: $status, Time waited: $((WAIT_COUNT * 15))"
     ((WAIT_COUNT++))
-    sleep 10
+    sleep 15
     status_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X GET https://api-cloud.browserstack.com/app-automate/espresso/builds/"$build_id")
-    printf "status_response: %s\n", "$status_response"
     status=$(echo "$status_response" | jq ".status")
 done
 
-if [ "$status" != "\"done\"" ] then;
+if [ "$status" != "\"done\"" ]; then
     echo "Timed out waiting for tests to complete"
     exit 1
 fi
