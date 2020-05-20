@@ -60,101 +60,101 @@ steps:
 
   # End-to-end tests take the longest to run, so start as soon as possible.
 
-#  - label: ':android: Android 5 end-to-end tests'
-#    skip: Temporarily disabled due to flakiness with BrowserStack tunneling
-#    timeout_in_minutes: 60
-#    plugins:
-#      artifacts#v1.2.0:
-#        download: "build/fixture.apk"
-#      docker-compose#v3.3.0:
-#        run: android-maze-runner
-#    env:
-#      DEVICE_TYPE: "ANDROID_5_0"
-#      APP_LOCATION: "/app/build/fixture.apk"
-#    concurrency: 10
-#    concurrency_group: 'browserstack-app'
-#
-#  - label: ':android: Android 6 end-to-end tests'
-#    timeout_in_minutes: 60
-#    plugins:
-#      artifacts#v1.2.0:
-#        download: "build/fixture.apk"
-#      docker-compose#v3.3.0:
-#        run: android-maze-runner
-#    env:
-#      DEVICE_TYPE: "ANDROID_6_0"
-#      APP_LOCATION: "/app/build/fixture.apk"
-#    concurrency: 10
-#    concurrency_group: 'browserstack-app'
-#
-#  - label: ':android: Android 7 end-to-end tests'
-#    timeout_in_minutes: 60
-#    plugins:
-#      artifacts#v1.2.0:
-#        download: "build/fixture.apk"
-#      docker-compose#v3.3.0:
-#        run: android-maze-runner
-#    env:
-#      DEVICE_TYPE: "ANDROID_7_1"
-#      APP_LOCATION: "/app/build/fixture.apk"
-#    concurrency: 10
-#    concurrency_group: 'browserstack-app'
-#
-#  - label: ':android: Android 8.0 end-to-end tests'
-#    timeout_in_minutes: 60
-#    plugins:
-#      artifacts#v1.2.0:
-#        download: "build/fixture.apk"
-#      docker-compose#v3.3.0:
-#        run: android-maze-runner
-#    env:
-#      DEVICE_TYPE: "ANDROID_8_0"
-#      APP_LOCATION: "/app/build/fixture.apk"
-#    concurrency: 10
-#    concurrency_group: 'browserstack-app'
-#
-#  - label: ':android: Android 8.1 end-to-end tests'
-#    timeout_in_minutes: 60
-#    plugins:
-#      artifacts#v1.2.0:
-#        download: "build/fixture.apk"
-#      docker-compose#v3.3.0:
-#        run: android-maze-runner
-#    env:
-#      DEVICE_TYPE: "ANDROID_8_1"
-#      APP_LOCATION: "/app/build/fixture.apk"
-#    concurrency: 10
-#    concurrency_group: 'browserstack-app'
-#    soft_fail:
-#      - exit_status: "*"
-#
-#  - label: ':android: Android 9 end-to-end tests'
-#    timeout_in_minutes: 60
-#    plugins:
-#      artifacts#v1.2.0:
-#        download: "build/fixture.apk"
-#      docker-compose#v3.3.0:
-#        run: android-maze-runner
-#    env:
-#      DEVICE_TYPE: "ANDROID_9_0"
-#      APP_LOCATION: "/app/build/fixture.apk"
-#    concurrency: 10
-#    concurrency_group: 'browserstack-app'
-#
-#  - label: ':android: Android 10 end-to-end tests'
-#    timeout_in_minutes: 60
-#    plugins:
-#      artifacts#v1.2.0:
-#        download: "build/fixture.apk"
-#      docker-compose#v3.3.0:
-#        run: android-maze-runner
-#    env:
-#      DEVICE_TYPE: "ANDROID_10_0"
-#      APP_LOCATION: "/app/build/fixture.apk"
-#    concurrency: 10
-#    concurrency_group: 'browserstack-app'
-#    soft_fail:
-#      - exit_status: "*"
+  - label: ':android: Android 5 end-to-end tests'
+    skip: Temporarily disabled due to flakiness with BrowserStack tunneling
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_5_0"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 6 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_6_0"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 7 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_7_1"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 8.0 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_8_0"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 8.1 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_8_1"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 9 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_9_0"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 10 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_10_0"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
