@@ -21,7 +21,7 @@ fi
 
 echo "Android Tests [$(timestamp)]: First app upload successful, url: $app_url"
 
-# Aecond app - the tests.
+# Second app - the tests.
 echo "Android Tests [$(timestamp)]: Uploading second test app from $TEST_LOCATION to BrowserStack"
 test_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/espresso/test-suite" -F "file=@$TEST_LOCATION")
 test_url=$(echo "$test_response" | jq -r ".test_url")
@@ -50,7 +50,7 @@ echo "Android Tests [$(timestamp)]: Test run creation successful, id: $build_id"
 echo "Android Tests [$(timestamp)]: Waiting for test run to begin"
 sleep 10 # Allow the tests to kick off
 
-status_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X GET https://api-cloud.browserstack.com/app-automate/espresso/builds/"$build_id")
+status_response=$(curl -s -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X GET https://api-cloud.browserstack.com/app-automate/espresso/builds/"$build_id")
 status=$(echo "$status_response" | jq -r ".status")
 
 WAIT_COUNT=0
@@ -58,7 +58,7 @@ until [ "$status" == "\"done\"" ] || [ $WAIT_COUNT -eq 100 ]; do
     echo "Android Tests [$(timestamp)]: Current test status: $status, Time waited: $((WAIT_COUNT * 15))"
     ((WAIT_COUNT++))
     sleep 15
-    status_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X GET https://api-cloud.browserstack.com/app-automate/espresso/builds/"$build_id")
+    status_response=$(curl -s -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X GET https://api-cloud.browserstack.com/app-automate/espresso/builds/"$build_id")
     status=$(echo "$status_response" | jq ".status")
 done
 
@@ -92,7 +92,7 @@ echo "Android Tests [$(timestamp)]: Total failed: $total_failed"
 if [ $total_failed -ne 0 ];  then
   exit 1
 fi
-if [ $total_failed -eq 0 ];  then
+if [ $total_succeeded -eq 0 ];  then
   echo "No successful tests detected, this should not happen."
   exit 1
 fi
