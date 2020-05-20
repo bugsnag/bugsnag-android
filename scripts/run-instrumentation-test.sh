@@ -4,6 +4,10 @@ timestamp() {
   date +"%T"
 }
 
+export APP_LOCATION=examples/sdk-app-example/build/outputs/apk/release/sdk-app-example-release.apk
+export TEST_LOCATION=bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk
+
+# First app.  This is not actually used, but must be present and different to the test app.
 echo "Android Tests [$(timestamp)]: Starting instrumentation test run against devices: $INSTRUMENTATION_DEVICES"
 echo "Android Tests [$(timestamp)]: Uploading first test app from $APP_LOCATION to BrowserStack"
 app_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/upload" -F "file=@$APP_LOCATION")
@@ -17,8 +21,9 @@ fi
 
 echo "Android Tests [$(timestamp)]: First app upload successful, url: $app_url"
 
-echo "Android Tests [$(timestamp)]: Uploading second test app from $APP_LOCATION to BrowserStack"
-test_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/espresso/test-suite" -F "file=@$APP_LOCATION")
+# Aecond app - the tests.
+echo "Android Tests [$(timestamp)]: Uploading second test app from $TEST_LOCATION to BrowserStack"
+test_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/espresso/test-suite" -F "file=@$TEST_LOCATION")
 test_url=$(echo "$test_response" | jq -r ".test_url")
 
 if [ -z "$test_url" ]; then
@@ -32,13 +37,9 @@ echo "Android Tests [$(timestamp)]: Second app upload successful, url: $test_url
 echo "Android Tests [$(timestamp)]: Starting test run"
 build_response=$(curl -X POST "https://api-cloud.browserstack.com/app-automate/espresso/build" -d \ "{\"devices\": $INSTRUMENTATION_DEVICES, \"app\": \"$app_url\", \"deviceLogs\" : true, \"testSuite\": \"$test_url\"}" -H "Content-Type: application/json" -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY")
 
-printf "$build_response: %s", "$build_response"
-
-
 build_id=$(echo "$build_response" | jq -r ".build_id")
 
-# TODO Also check if build_id is "null"
-if [ -z "$build_id" ]; then
+if [ -z "$build_id" ] || [ "$build_id" = "null" ]; then
     echo "Android Tests [$(timestamp)]: Test start failed, exiting"
     echo "$build_response"
     exit 1
@@ -53,17 +54,23 @@ status_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X
 status=$(echo "$status_response" | jq -r ".status")
 
 WAIT_COUNT=0
-until [ "$status" == "\"done\"" ] || [ $WAIT_COUNT -eq 6 ]; do
-    echo "Android Tests [$(timestamp)]: Current test status: $status, Time waited: $((WAIT_COUNT * 30))"
+until [ "$status" == "\"done\"" ] || [ $WAIT_COUNT -eq 60 ]; do
+    echo "Android Tests [$(timestamp)]: Current test status: $status, Time waited: $((WAIT_COUNT * 10))"
     ((WAIT_COUNT++))
-    sleep 30
+    sleep 10
     status_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X GET https://api-cloud.browserstack.com/app-automate/espresso/builds/"$build_id")
     printf "status_response: %s\n", "$status_response"
     status=$(echo "$status_response" | jq ".status")
 done
 
+if [ "$status" != "\"done\"" ] then;
+    echo "Timed out waiting for tests to complete"
+    exit 1
+fi
+
 echo "Android Tests [$(timestamp)]: Tests complete"
 
+# Process results
 NUMBER_OF_DEVICES=$(awk -F "," '{print NF}' <<< "$INSTRUMENTATION_DEVICES")
 device_count=0
 total_succeeded=0
