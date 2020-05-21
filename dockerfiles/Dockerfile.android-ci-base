@@ -28,6 +28,10 @@ RUN echo "signing.secretKeyRingFile=/root/.gnupg/secring.gpg" >> ~/.gradle/gradl
 # Copy remaining Gradle files
 COPY build.gradle settings.gradle /app/
 
+# Build the example app - needed for Espresso tests
+COPY examples/ examples/
+RUN ./gradlew -p examples/sdk-app-example assembleRelease
+
 # Branch specifics
 COPY bugsnag-android/ bugsnag-android/
 COPY bugsnag-android-ndk/ bugsnag-android-ndk/
@@ -35,7 +39,6 @@ COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
 COPY bugsnag-android-core/ bugsnag-android-core/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
 COPY bugsnag-plugin-react-native/ bugsnag-plugin-react-native/
-COPY examples/ examples/
 COPY mazerunner-scenarios/ mazerunner-scenarios/
 COPY scripts/ scripts/
 
