@@ -69,7 +69,7 @@ android {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:5.0.0-rc.07-SNAPSHOT"
+    implementation "com.bugsnag:bugsnag-android:5.0.0"
     implementation "androidx.appcompat:appcompat:$supportLibVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

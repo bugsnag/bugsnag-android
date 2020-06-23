@@ -22,27 +22,7 @@ in isolation by only running the `check` task.
 ./gradlew check connectedCheck
 ```
 
-## End-to-end tests
-
-To run the end-to-end tests, first set up the environment by running
-[Bundler](https://bundler.io):
-
-```shell
-bundle install
-```
-
-The tests require two environment variables to be set:
-
-* `ANDROID_HOME`, set the the location of the Android SDK
-* `ANDROID_EMULATOR`, set to the name of an installed emulator
-
-Then run the tests using:
-
-```shell
-bundle exec maze-runner
-```
-
-## Running remote tests
+## Running remote end-to-end tests
 
 These tests are implemented with our notifier testing tool [Maze runner](https://github.com/bugsnag/maze-runner).
 
@@ -73,6 +53,7 @@ Remote tests can be run against real devices provided by BrowserStack. In order 
 A BrowserStack App Automate Username: `BROWSER_STACK_USERNAME`
 A BrowserStack App Automate Access Key: `BROWSER_STACK_ACCESS_KEY`
 A local docker and docker-compose installation.
+The `DEVICE_TYPE` environment variable should also be set to one of those supported by MazeRunner, e.g ANDROID_9_0 (see /.buildkite/pipeline.yml for further examples).
 
 ### Instrumentation tests
 
