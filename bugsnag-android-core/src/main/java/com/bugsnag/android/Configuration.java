@@ -17,7 +17,7 @@ import java.util.Set;
 public class Configuration implements CallbackAware, MetadataAware, UserAware {
 
     private static final int MIN_BREADCRUMBS = 0;
-    private static final int MAX_BREADCRUMBS = 100;
+    private static final int MAX_BREADCRUMBS = 1000;
     private static final String API_KEY_REGEX = "[A-Fa-f0-9]{32}";
     private static final long MIN_LAUNCH_CRASH_THRESHOLD_MS = 0;
 
