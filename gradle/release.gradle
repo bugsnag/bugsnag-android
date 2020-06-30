@@ -7,14 +7,6 @@ archivesBaseName = project.getProperties().get("artefactId")
 version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 
-def expectedNdkVersion = "16" // Controls which NDK library major version should be used for release
-
-def expectedAbiLists = // Controls which combinations of ABIs are expected for release
-[
-    ["arm64-v8a", "armeabi", "armeabi-v7a", "x86", "x86_64"] as Set,
-    ["armeabi-v7a", "x86"] as Set
-]
-
 // Disable doclint:
 // https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
 if (JavaVersion.current().isJava8Compatible()) {
@@ -38,43 +30,8 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 
-task validatePublishOptions() {
-    description = "Ensures assembleRelease is run with the correct NDK library version and ABI list"
-    doFirst {
-        def ndkVersion
-        try {
-            def props = new Properties()
-            file(System.getenv('ANDROID_NDK_HOME') + "/source.properties").withInputStream {
-                props.load(it)
-            }
-            ndkVersion = props.getProperty("Pkg.Revision")
-        } catch (Exception e) {
-            ndkVersion = "UNKNOWN"
-        }
-
-        if (!ndkVersion.startsWith("${expectedNdkVersion}.")) {
-            throw new GradleException("${project.name} must be released with ${expectedNdkVersion}.x of the NDK - found ${ndkVersion}")
-        }
-
-        if (project.android.defaultConfig.ndk.abiFilters != null) {
-            for (abiList in expectedAbiLists) {
-                if (abiList == project.android.defaultConfig.ndk.abiFilters as Set) {
-                    return
-                }
-            }
-            throw new GradleException("Unexpected list of ABIs for release: ${project.android.defaultConfig.ndk.abiFilters}")
-        }
-    }
-}
-
-tasks.whenTaskAdded { task ->
-    if ((task.name == 'publish') || (task.name == 'bintrayUpload')) {
-        task.dependsOn validatePublishOptions
-    }
-}
-
-publishing {
-
+// see https://developer.android.com/studio/build/maven-publish-plugin
+afterEvaluate {
     repositories {
         maven {
             if (VERSION_NAME.contains("SNAPSHOT")) {
@@ -89,54 +46,40 @@ publishing {
         }
     }
 
-    publications {
+    publishing {
+        publications {
+            SDK(MavenPublication) {
+                from components.release
+                groupId "com.bugsnag"
+                artifactId archivesBaseName
+                version version
 
-        SDK(MavenPublication) {
-            groupId "com.bugsnag"
-            artifactId archivesBaseName
-            version version
-            artifact(sourceJar)
-            artifact("$buildDir/outputs/aar/$archivesBaseName-release.aar")
+                pom.withXml {
+                    Node root = asNode()
 
-            pom.withXml {
-                Node root = asNode()
+                    // top-level metadata
+                    Node packaging = root.get("packaging").first()
+                    packaging.value = project.POM_PACKAGING
+                    root.appendNode("name", pomName)
+                    root.appendNode("description", project.POM_DESCRIPTION)
+                    root.appendNode("url", project.POM_URL)
 
-                // top-level metadata
-                Node packaging = root.get("packaging").first()
-                packaging.value = project.POM_PACKAGING
-                root.appendNode("name", pomName)
-                root.appendNode("description", project.POM_DESCRIPTION)
-                root.appendNode("url", project.POM_URL)
+                    // licenses
+                    Node licenseNode = root.appendNode("licenses").appendNode("license")
+                    licenseNode.appendNode("name", project.POM_LICENCE_NAME)
+                    licenseNode.appendNode("url", project.POM_LICENCE_URL)
+                    licenseNode.appendNode("distribution", project.POM_LICENCE_DIST)
 
-                // licenses
-                Node licenseNode = root.appendNode("licenses").appendNode("license")
-                licenseNode.appendNode("name", project.POM_LICENCE_NAME)
-                licenseNode.appendNode("url", project.POM_LICENCE_URL)
-                licenseNode.appendNode("distribution", project.POM_LICENCE_DIST)
+                    // developers
+                    Node devNode = root.appendNode("developers").appendNode("developer")
+                    devNode.appendNode("id", project.POM_DEVELOPER_ID)
+                    devNode.appendNode("name", project.POM_DEVELOPER_NAME)
 
-                // developers
-                Node devNode = root.appendNode("developers").appendNode("developer")
-                devNode.appendNode("id", project.POM_DEVELOPER_ID)
-                devNode.appendNode("name", project.POM_DEVELOPER_NAME)
-
-                // scm
-                Node scmNode = root.appendNode("scm")
-                scmNode.appendNode("connection", project.POM_SCM_CONNECTION)
-                scmNode.appendNode("developerConnection", project.POM_SCM_DEV_CONNECTION)
-                scmNode.appendNode("url", project.POM_SCM_URL)
-
-                def dependenciesNode = root.appendNode("dependencies")
-
-                // Iterate over the implementation dependencies (we don"t want the test ones), adding a <dependency> node for each
-                configurations.implementation.allDependencies.each {
-                    // Ensure dependencies such as fileTree are not included in the pom.
-                    if (it.name != "unspecified") {
-                        def dependencyNode = dependenciesNode.appendNode("dependency")
-                        dependencyNode.appendNode("groupId", it.group)
-                        dependencyNode.appendNode("artifactId", it.name)
-                        dependencyNode.appendNode("version", it.version)
-                        dependencyNode.appendNode("scope", "compile")
-                    }
+                    // scm
+                    Node scmNode = root.appendNode("scm")
+                    scmNode.appendNode("connection", project.POM_SCM_CONNECTION)
+                    scmNode.appendNode("developerConnection", project.POM_SCM_DEV_CONNECTION)
+                    scmNode.appendNode("url", project.POM_SCM_URL)
                 }
             }
         }

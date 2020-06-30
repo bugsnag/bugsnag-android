@@ -5,6 +5,7 @@ plugins {
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 apply plugin: "io.gitlab.arturbosch.detekt"
+apply plugin: "maven-publish"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion

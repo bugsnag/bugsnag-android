@@ -27,6 +27,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    // adding custom jniLibs results in dupe SO files, ignore
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
 }
 
 dependencies {
