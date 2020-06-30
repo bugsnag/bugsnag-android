@@ -26,18 +26,18 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.7.4'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.7.5'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 34
         versionName "1.1.14"
         manifestPlaceholders = [
