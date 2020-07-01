@@ -1,5 +1,8 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
   <Blacklist></Blacklist>
-  <Whitelist></Whitelist>
+  <Whitelist>
+    <ID>EmptyFunctionBlock:BugsnagReactNativePlugin.kt$BugsnagReactNativePlugin${}</ID>
+    <ID>TooManyFunctions:BugsnagReactNativePlugin.kt$BugsnagReactNativePlugin$BugsnagReactNativePlugin</ID>
+  </Whitelist>
 </SmellBaseline>
