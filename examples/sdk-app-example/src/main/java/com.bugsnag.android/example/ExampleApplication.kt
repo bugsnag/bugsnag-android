@@ -9,6 +9,13 @@ class ExampleApplication : Application() {
 
     companion object {
         init {
+//            if you support API <= 17 you should uncomment this to load the bugsnag library
+//            before any libraries that link to it
+//            https://docs.bugsnag.com/platforms/android/#initialize-the-bugsnag-client
+//
+//            System.loadLibrary("bugsnag-ndk")
+//            System.loadLibrary("bugsnag-plugin-android-anr")
+
             System.loadLibrary("entrypoint")
         }
     }
