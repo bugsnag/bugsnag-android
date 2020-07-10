@@ -234,17 +234,19 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         } else {
             this.systemBroadcastReceiver = null;
         }
-        connectivity.registerForNetworkChanges();
 
         registerOrientationChangeListener();
 
+        // initialise plugins before attempting to flush any errors
+        loadPlugins(configuration);
+
         // Flush any on-disk errors
+        connectivity.registerForNetworkChanges();
         eventStore.flushOnLaunch();
+
+        // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
-
-        // finally, initialise plugins
-        loadPlugins(configuration);
     }
 
     @VisibleForTesting
