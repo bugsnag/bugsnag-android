@@ -241,8 +241,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         loadPlugins(configuration);
 
         // Flush any on-disk errors
-        eventStore.flushOnLaunch();
         connectivity.registerForNetworkChanges();
+        eventStore.flushOnLaunch();
 
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
