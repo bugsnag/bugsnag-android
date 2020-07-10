@@ -41,10 +41,10 @@ class BugsnagReactNativePlugin : Plugin {
 
     private fun updateNotifierInfo(env: Map<String, Any?>) {
         val reactNativeVersion = env["reactNativeVersion"] as String?
-        reactNativeVersion?.let { client.addRuntimeVersionInfo("reactNativeVersion", it) }
+        reactNativeVersion?.let { client.addRuntimeVersionInfo("reactNative", it) }
 
         val engine = env["engine"] as String?
-        engine?.let { client.addRuntimeVersionInfo("engine", it) }
+        engine?.let { client.addRuntimeVersionInfo("reactNativeJsEngine", it) }
 
         val jsVersion = env["notifierVersion"] as String
         val notifier = client.notifier
