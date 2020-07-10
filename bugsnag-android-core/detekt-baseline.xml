@@ -2,29 +2,41 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>ComplexMethod:ObjectJsonStreamer.kt$ObjectJsonStreamer$// Write complex/nested values to a JsonStreamer @Throws(IOException::class) fun objectToStream(obj: Any?, writer: JsonStream, shouldRedactKeys: Boolean = false)</ID>
     <ID>EmptyFunctionBlock:SessionLifecycleCallback.kt$SessionLifecycleCallback${}</ID>
+    <ID>EmptyKtFile:Configuration.kt$.Configuration.kt</ID>
+    <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ var buildUuid: String?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
+    <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: String?, type: String?, versionCode: Number?, /** * The number of milliseconds the application was running before the event occurred */ var duration: Number?, /** * The number of milliseconds the application was running in the foreground before the * event occurred */ var durationInForeground: Number?, /** * Whether the application was in the foreground when the event occurred */ var inForeground: Boolean? )</ID>
+    <ID>LongParameterList:AppWithState.kt$AppWithState$( config: ImmutableConfig, binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, duration: Number?, durationInForeground: Number?, inForeground: Boolean? )</ID>
+    <ID>LongParameterList:DeviceBuildInfo.kt$DeviceBuildInfo$( val manufacturer: String?, val model: String?, val osVersion: String?, val apiLevel: Int?, val osBuild: String?, val fingerprint: String?, val tags: String?, val brand: String?, val cpuAbis: Array&lt;String&gt;? )</ID>
+    <ID>LongParameterList:DeviceDataCollector.kt$DeviceDataCollector$( private val connectivity: Connectivity, private val appContext: Context, private val resources: Resources?, private val installId: String, private val buildInfo: DeviceBuildInfo, private val dataDirectory: File, private val logger: Logger )</ID>
+    <ID>LongParameterList:DeviceWithState.kt$DeviceWithState$( buildInfo: DeviceBuildInfo, jailbroken: Boolean?, id: String?, locale: String?, totalMemory: Long?, /** * The number of free bytes of storage available on the device */ var freeDisk: Long?, /** * The number of free bytes of memory available on the device */ var freeMemory: Long?, /** * The orientation of the device when the event occurred: either portrait or landscape */ var orientation: String?, /** * The timestamp on the device when the event occurred */ var time: Date? )</ID>
+    <ID>LongParameterList:ThreadState.kt$ThreadState$( exc: Throwable?, isUnhandled: Boolean, sendThreads: ThreadSendPolicy, projectPackages: Collection&lt;String&gt;, logger: Logger, currentThread: java.lang.Thread = java.lang.Thread.currentThread(), stackTraces: MutableMap&lt;java.lang.Thread, Array&lt;StackTraceElement&gt;&gt; = java.lang.Thread.getAllStackTraces() )</ID>
+    <ID>LongParameterList:ThreadState.kt$ThreadState$( stackTraces: MutableMap&lt;java.lang.Thread, Array&lt;StackTraceElement&gt;&gt;, currentThread: java.lang.Thread, exc: Throwable?, isUnhandled: Boolean, projectPackages: Collection&lt;String&gt;, logger: Logger )</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
-    <ID>MatchingDeclarationName:Breadcrumb.kt$com.bugsnag.android.Breadcrumb.kt</ID>
+    <ID>MatchingDeclarationName:Breadcrumb.kt$BreadcrumbInternal : Streamable</ID>
     <ID>MaxLineLength:ImmutableConfig.kt$val appInfo = runCatching { packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA ) }.getOrNull()</ID>
     <ID>MaxLineLength:InternalEventPayloadDelegateTest.kt$InternalEventPayloadDelegateTest$`when`(deviceDataCollector.generateDeviceWithState(ArgumentMatchers.anyLong())).thenReturn(generateDeviceWithState())</ID>
+    <ID>MaxLineLength:SessionTest.kt$SessionTest$assertFalse(Session(File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json"), Notifier(), NoopLogger).isV2Payload)</ID>
+    <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = mutableSetOf&lt;Plugin&gt;()</ID>
+    <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
+    <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
+    <ID>ProtectedMemberInFinalClass:PluginClient.kt$PluginClient$protected val plugins: Set&lt;Plugin&gt;</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String&gt; ): DeliveryStatus</ID>
     <ID>ReturnCount:DeviceDataCollector.kt$DeviceDataCollector$ private fun isRooted(): Boolean</ID>
     <ID>TooGenericExceptionCaught:AppDataCollector.kt$AppDataCollector$exception: Exception</ID>
-    <ID>TooGenericExceptionCaught:BugsnagPluginInterface.kt$BugsnagPluginInterface$exc: Exception</ID>
     <ID>TooGenericExceptionCaught:CallbackState.kt$CallbackState$ex: Throwable</ID>
-    <ID>TooGenericExceptionCaught:ConfigInternal.kt$ConfigInternal$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultDelivery.kt$DefaultDelivery$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:ManifestConfigLoader.kt$ManifestConfigLoader$exc: Exception</ID>
+    <ID>TooGenericExceptionCaught:PluginClient.kt$PluginClient$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
-    <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAware</ID>
-    <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
-    <ID>TooManyFunctions:EventInternal.kt$EventInternal : StreamableMetadataAwareUserAware</ID>
-    <ID>TooManyFunctions:Metadata.kt$Metadata : StreamableMetadataAware</ID>
+    <ID>TooGenericExceptionThrown:BreadcrumbStateTest.kt$BreadcrumbStateTest$throw Exception("Oh no")</ID>
+    <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal$ConfigInternal</ID>
+    <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector$DeviceDataCollector</ID>
+    <ID>TooManyFunctions:EventInternal.kt$EventInternal$EventInternal</ID>
+    <ID>TooManyFunctions:Metadata.kt$Metadata$Metadata</ID>
     <ID>VariableNaming:EventInternal.kt$EventInternal$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
-    <ID>WildcardImport:EventInternal.kt$import com.bugsnag.android.Thread.ThreadSendPolicy.*</ID>
   </Whitelist>
 </SmellBaseline>
