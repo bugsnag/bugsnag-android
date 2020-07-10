@@ -216,13 +216,15 @@ public class ClientTest {
 
     @Test
     public void testBreadcrumbStoreNotModified() {
-        client = generateClient();
+        config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
+        client = generateClient(config);
+        client.leaveBreadcrumb("Manual breadcrumb");
         Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-        int breadcrumbCount = client.breadcrumbState.getStore().size();
 
         breadcrumbs.clear(); // only the copy should be cleared
         assertTrue(breadcrumbs.isEmpty());
-        assertEquals(breadcrumbCount, client.breadcrumbState.getStore().size());
+        assertEquals(1, client.breadcrumbState.getStore().size());
+        assertEquals("Manual breadcrumb", client.breadcrumbState.getStore().remove().getMessage());
     }
 
     @Test

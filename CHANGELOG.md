@@ -7,7 +7,7 @@
 * Add null check when loading data from manifest
   [#878](https://github.com/bugsnag/bugsnag-android/pull/878)
 
-## 5.0.0 (2020-04-21)
+## 5.0.0 (2020-04-22)
 
 __This version contains many breaking changes__. It is part of an effort to unify our notifier
 libraries across platforms, making the user interface more consistent, and implementations better
