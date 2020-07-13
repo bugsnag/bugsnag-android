@@ -2,8 +2,10 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -97,6 +99,21 @@ internal class DeliveryDelegateTest {
         assertEquals("Whoops!", breadcrumb.metadata!!["message"])
         assertEquals("true", breadcrumb.metadata!!["unhandled"])
         assertEquals("ERROR", breadcrumb.metadata!!["severity"])
+    }
+
+    @Test
+    fun isAnr() {
+        val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+        val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
+        assertFalse(deliveryDelegate.isAnr(event))
+
+        // simulate ANR
+        event.errors[0].errorClass = "ANR"
+        assertTrue(deliveryDelegate.isAnr(event))
+
+        // clear all errors
+        event.errors.clear()
+        assertFalse(deliveryDelegate.isAnr(event))
     }
 
     private class InterceptingLogger : Logger {

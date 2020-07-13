@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Avoid attempting to flush unhandled error reports in same session
+  [#902](https://github.com/bugsnag/bugsnag-android/pull/902)
+
 ## 5.0.0 (2020-04-22)
 
 __This version contains many breaking changes__. It is part of an effort to unify our notifier
