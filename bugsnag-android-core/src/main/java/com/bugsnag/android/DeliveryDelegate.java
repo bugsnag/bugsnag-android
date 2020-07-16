@@ -44,21 +44,10 @@ class DeliveryDelegate extends BaseObservable {
 
         if (event.isUnhandled()) {
             // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
-            cacheEvent(event, isAnr(event));
+            cacheEvent(event, event.impl.isAnr(event));
         } else {
             deliverPayloadAsync(event, eventPayload);
         }
-    }
-
-    boolean isAnr(@NonNull Event event) {
-        List<Error> errors = event.getErrors();
-        String errorClass = null;
-
-        if (!errors.isEmpty()) {
-            Error error = errors.get(0);
-            errorClass = error.getErrorClass();
-        }
-        return "ANR".equals(errorClass);
     }
 
     private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload) {

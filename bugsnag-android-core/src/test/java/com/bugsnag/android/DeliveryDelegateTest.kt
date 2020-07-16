@@ -101,21 +101,6 @@ internal class DeliveryDelegateTest {
         assertEquals("ERROR", breadcrumb.metadata!!["severity"])
     }
 
-    @Test
-    fun isAnr() {
-        val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
-        val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
-        assertFalse(deliveryDelegate.isAnr(event))
-
-        // simulate ANR
-        event.errors[0].errorClass = "ANR"
-        assertTrue(deliveryDelegate.isAnr(event))
-
-        // clear all errors
-        event.errors.clear()
-        assertFalse(deliveryDelegate.isAnr(event))
-    }
-
     private class InterceptingLogger : Logger {
         var msg: String? = null
         override fun i(msg: String) {
