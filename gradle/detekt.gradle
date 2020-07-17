@@ -1,10 +1,4 @@
 detekt {
     input = files("src/androidTest", "src/main/java", "src/test")
     baseline = file("detekt-baseline.xml")
-
-    reports {
-        html {
-            enabled = true
-        }
-    }
 }
