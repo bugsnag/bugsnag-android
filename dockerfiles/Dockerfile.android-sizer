@@ -12,8 +12,8 @@ COPY tests/features/ tests/features
 RUN apt-get install -y ruby-full
 
 WORKDIR /app/tests/features/fixtures/minimalapp
-RUN curl -LJO https://github.com/google/bundletool/releases/download/0.10.3/bundletool-all-0.10.3.jar
-RUN mv bundletool-all-0.10.3.jar bundletool.jar
+RUN curl -LJO https://github.com/google/bundletool/releases/download/1.0.0/bundletool-all-1.0.0.jar
+RUN mv bundletool-all-1.0.0.jar bundletool.jar
 
 RUN gem install bundler
 RUN bundle install

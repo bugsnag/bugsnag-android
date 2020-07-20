@@ -3,8 +3,8 @@ require 'fileutils'
 RELEASE_APK = "app/build/outputs/apk/release/app-release-unsigned.apk"
 
 BUNDLE_DIR = "app/build/outputs/bundle/release/"
-RELEASE_BUNDLE = "app.aab"
-UNBUNDLED_RELEASE = "app.apks"
+RELEASE_BUNDLE = "app-release.aab"
+UNBUNDLED_RELEASE = "app-release.apks"
 
 STANDALONE_DIR = BUNDLE_DIR + "standalones/"
 STANDALONE_HDPI_BASE = "standalone-hdpi.apk"

@@ -3,6 +3,7 @@
 
     <application android:allowBackup="true"
         android:label="minimal_app"
+        android:name=".CustomApp"
         android:supportsRtl="true">
         <meta-data android:name="com.bugsnag.android.API_KEY"
                    android:value="12312312312312312312312312312312"/>
