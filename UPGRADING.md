@@ -249,6 +249,11 @@ Care must be taken to ensure that the callback function provided is async-signal
 be executed in an asynchronous signal handler and so must not call any functions that are not Async-Signal-Safe.
 Further information can be found [here](https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers).
 
+### Metadata changes
+
+- Removed `packageName` from the `app` metadata tab, as the field is duplicated by `app.id`
+- Removed `versionName` from the `app` metadata tab, as the field is duplicated by `app.version` and this has been known to cause confusion amongst users in the past
+
 Upgrade bugsnag-android-ndk from 1.x to 4.x
 -----------------------
 
