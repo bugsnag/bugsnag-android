@@ -20,9 +20,13 @@ class InternalHooks {
         return client.appDataCollector.generateAppWithState();
     }
 
-    public Map<String,Object> getAppMetadata() { return client.appDataCollector.getAppDataMetadata(); }
+    public Map<String,Object> getAppMetadata() {
+        return client.appDataCollector.getAppDataMetadata();
+    }
 
-    public Map<String,Object> getDeviceMetadata() { return client.deviceDataCollector.getDeviceMetadata(); }
+    public Map<String,Object> getDeviceMetadata() {
+        return client.deviceDataCollector.getDeviceMetadata();
+    }
 
     public DeviceWithState getDeviceWithState() {
         return client.deviceDataCollector.generateDeviceWithState(new Date().getTime());
