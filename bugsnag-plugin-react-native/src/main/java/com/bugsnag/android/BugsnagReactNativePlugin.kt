@@ -152,6 +152,8 @@ class BugsnagReactNativePlugin : Plugin {
             threadSerializer.serialize(map, it)
             map
         }
+        info["appMetadata"] = internalHooks.getAppMetadata();
+        info["deviceMetadata"] = internalHooks.getDeviceMetadata();
         return info
     }
 }
