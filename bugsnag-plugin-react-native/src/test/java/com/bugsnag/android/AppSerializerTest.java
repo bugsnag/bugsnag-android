@@ -41,7 +41,7 @@ public class AppSerializerTest {
         assertEquals("code-id-123", map.get("codeBundleId"));
         assertEquals("com.example.foo", map.get("id"));
         assertEquals("prod", map.get("releaseStage"));
-        assertEquals("android", map.get("appType"));
+        assertEquals("android", map.get("type"));
         assertEquals("1.5.3", map.get("version"));
         assertEquals(55, map.get("versionCode"));
     }
