@@ -60,8 +60,8 @@ internal class DeviceDataCollector(
         locale,
         calculateTotalMemory(),
         runtimeVersions.toMutableMap(),
-        calculateFreeMemory(),
         calculateFreeDisk(),
+        calculateFreeMemory(),
         calculateOrientation(),
         Date(now)
     )

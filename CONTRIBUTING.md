@@ -111,17 +111,6 @@ For release purposes, the Makefile's build command includes the "armeabi" ABI fo
 
 Full details of how to build and run tests can be found in [the testing guide](TESTING.md)
 
-## Building the Example App
-
-You can build and install the example app as follows:
-
-```shell
-./gradlew installDebug
-```
-
-This builds the latest version of the library and installs an app onto your
-device/emulator.
-
 ## Installing/testing against a local maven repository
 
 Change `VERSION_NAME` in `gradle.properties` to a version higher than the currently
