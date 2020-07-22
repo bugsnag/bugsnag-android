@@ -9,6 +9,7 @@ import android.widget.EditText
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.EndpointConfiguration
+import com.bugsnag.android.Logger
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
@@ -78,6 +79,39 @@ class MainActivity : Activity() {
         config.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
         config.enabledErrorTypes.ndkCrashes = true
         config.enabledErrorTypes.anrs = true
+        config.logger = object: Logger {
+            override fun d(msg: String) {
+                Log.d("Bugsnag", msg)
+            }
+
+            override fun d(msg: String, throwable: Throwable) {
+                Log.d("Bugsnag", msg, throwable)
+            }
+
+            override fun e(msg: String) {
+                Log.e("Bugsnag", msg)
+            }
+
+            override fun e(msg: String, throwable: Throwable) {
+                Log.e("Bugsnag", msg, throwable)
+            }
+
+            override fun i(msg: String) {
+                Log.i("Bugsnag", msg)
+            }
+
+            override fun i(msg: String, throwable: Throwable) {
+                Log.i("Bugsnag", msg, throwable)
+            }
+
+            override fun w(msg: String) {
+                Log.w("Bugsnag", msg)
+            }
+
+            override fun w(msg: String, throwable: Throwable) {
+                Log.w("Bugsnag", msg, throwable)
+            }
+        }
         return config
     }
 

@@ -48,6 +48,16 @@ internal class EventInternal @JvmOverloads internal constructor(
         }
     }
 
+    protected fun isAnr(event: Event): Boolean {
+        val errors = event.errors
+        var errorClass: String? = null
+        if (errors.isNotEmpty()) {
+            val error = errors[0]
+            errorClass = error.errorClass
+        }
+        return "ANR" == errorClass
+    }
+
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         // Write error basics

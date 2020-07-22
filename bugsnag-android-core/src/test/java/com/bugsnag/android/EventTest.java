@@ -160,4 +160,19 @@ public class EventTest {
         assertEquals(testRuntimeException.getClass().getName(), errors.get(0).getErrorClass());
         assertEquals(testRuntimeException.getMessage(), errors.get(0).getErrorMessage());
     }
+
+    @Test
+    public void testIsAnr() {
+        RuntimeException exc = new RuntimeException("Something went wrong");
+        Event event = new Event(exc, config, handledState, NoopLogger.INSTANCE);
+        assertFalse(event.impl.isAnr(event));
+
+        // simulate ANR
+        event.getErrors().get(0).setErrorClass("ANR");
+        assertTrue(event.impl.isAnr(event));
+
+        // clear all errors
+        event.getErrors().clear();
+        assertFalse(event.impl.isAnr(event));
+    }
 }
