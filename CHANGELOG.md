@@ -12,6 +12,22 @@
 * Avoid attempting to flush unhandled error reports in same session
   [#902](https://github.com/bugsnag/bugsnag-android/pull/902)
 
+#### React Native
+
+The following alterations have been made to support the React Native notifier:
+
+* Respect pre-populated fields on `Event` when notifying
+  [#906](https://github.com/bugsnag/bugsnag-android/pull/906)
+
+* Create observer before registering plugin
+  [#874](https://github.com/bugsnag/bugsnag-android/pull/874)
+
+* `app.type` event serialisation differs from config
+  [#909](https://github.com/bugsnag/bugsnag-android/pull/909)
+
+* Pass device and app metadata to react native
+  [#910](https://github.com/bugsnag/bugsnag-android/pull/910)
+
 ## 5.0.0 (2020-04-22)
 
 __This version contains many breaking changes__. It is part of an effort to unify our notifier
