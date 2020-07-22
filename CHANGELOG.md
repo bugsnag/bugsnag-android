@@ -2,6 +2,10 @@
 
 ## TBD
 
+### Bug Fixes
+
+* Fix swapped device freeMemory and freeDisk values [#903](https://github.com/bugsnag/bugsnag-android/issues/903)
+
 * Avoid attempting to flush unhandled error reports in same session
   [#902](https://github.com/bugsnag/bugsnag-android/pull/902)
 

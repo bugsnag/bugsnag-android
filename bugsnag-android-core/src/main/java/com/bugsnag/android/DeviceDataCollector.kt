@@ -50,8 +50,8 @@ internal class DeviceDataCollector(
         installId,
         locale,
         calculateTotalMemory(),
-        calculateFreeMemory(),
         calculateFreeDisk(),
+        calculateFreeMemory(),
         calculateOrientation(),
         Date(now)
     )
