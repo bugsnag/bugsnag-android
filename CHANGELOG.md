@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.0.1 (2020-07-23)
 
 ### Bug fixes
 
