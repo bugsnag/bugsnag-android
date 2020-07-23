@@ -16,38 +16,71 @@ class BugsnagReactNativePlugin : Plugin {
     private val breadcrumbSerializer = BreadcrumbSerializer()
     private val threadSerializer = ThreadSerializer()
 
+    private var ignoreJsExceptionCallbackAdded = false
+
     internal lateinit var internalHooks: InternalHooks
     internal lateinit var client: Client
 
     lateinit var logger: Logger
 
+    private lateinit var observerBridge: BugsnagReactNativeBridge
+    var jsCallback: ((event: MessageEvent) -> Unit)? = null
+
     override fun load(client: Client) {
         this.client = client
         logger = client.logger
         internalHooks = InternalHooks(client)
+
+        // register a state observer immediately but only pass events on when JS callback set
+        observerBridge = BugsnagReactNativeBridge(client) {
+            jsCallback?.invoke(it)
+        }
+        client.registerObserver(observerBridge)
         client.logger.i("Initialized React Native Plugin")
     }
 
-    private fun updateNotifierInfo(jsVersion: String) {
+    private fun updateNotifierInfo(env: Map<String, Any?>) {
+        val reactNativeVersion = env["reactNativeVersion"] as String?
+        reactNativeVersion?.let { client.addRuntimeVersionInfo("reactNative", it) }
+
+        val engine = env["engine"] as String?
+        engine?.let { client.addRuntimeVersionInfo("reactNativeJsEngine", it) }
+
+        val jsVersion = env["notifierVersion"] as String
         val notifier = client.notifier
         notifier.name = "Bugsnag React Native"
         notifier.url = "https://github.com/bugsnag/bugsnag-js"
         notifier.version = jsVersion
-        notifier.dependencies.add(Notifier()) // depend on bugsnag-android
+        notifier.dependencies = listOf(Notifier()) // depend on bugsnag-android
+    }
+
+    private fun ignoreJavaScriptExceptions() {
+        ignoreJsExceptionCallbackAdded = true
+        this.client.addOnError(OnErrorCallback { event ->
+            event.errors[0].errorClass != "com.facebook.react.common.JavascriptException"
+        })
     }
 
     override fun unload() {}
 
     @Suppress("unused")
-    fun configure(jsVersion: String): Map<String, Any?> {
+    fun configure(env: Map<String, Any?>?): Map<String, Any?> {
+        requireNotNull(env)
+        updateNotifierInfo(env)
+
+        // JS exceptions are caught by the JS layer and passed to the dispatch method
+        // in this plugin. When a JS exception crashes the app, we get a duplicate
+        // native exception for the same error so we ignore those once the JS layer
+        // has started.
+        if (!ignoreJsExceptionCallbackAdded) { ignoreJavaScriptExceptions() }
+
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, internalHooks.config)
-        updateNotifierInfo(jsVersion)
         return map
     }
 
     fun registerForMessageEvents(cb: (MessageEvent) -> Unit) {
-        client.registerObserver(BugsnagReactNativeBridge(client, cb))
+        this.jsCallback = cb
         client.syncInitialState()
     }
 
@@ -119,6 +152,8 @@ class BugsnagReactNativePlugin : Plugin {
             threadSerializer.serialize(map, it)
             map
         }
+        info["appMetadata"] = internalHooks.getAppMetadata();
+        info["deviceMetadata"] = internalHooks.getDeviceMetadata();
         return info
     }
 }

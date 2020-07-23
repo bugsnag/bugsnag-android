@@ -13,11 +13,19 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 final class BugsnagTestUtils {
 
     private BugsnagTestUtils() {
+    }
+
+    static HashMap<String, Object> runtimeVersions = new HashMap<>();
+
+    static {
+        runtimeVersions.put("osBuild", "bulldog");
+        runtimeVersions.put("androidApiLevel", 24);
     }
 
     private static String streamableToString(JsonStream.Streamable streamable) throws IOException {
@@ -88,13 +96,14 @@ final class BugsnagTestUtils {
     static Device generateDevice() {
         DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
         return new Device(buildInfo, new String[]{}, null, null, null,
-                109230923452L);
+                109230923452L, runtimeVersions);
     }
 
     static DeviceWithState generateDeviceWithState() {
         DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
         return new DeviceWithState(buildInfo, null, null, null,
-                109230923452L, 22234423124L, 92340255592L, "portrait", new Date(0));
+                109230923452L, runtimeVersions, 22234423124L, 92340255592L,
+                "portrait", new Date(0));
     }
 
     @NonNull

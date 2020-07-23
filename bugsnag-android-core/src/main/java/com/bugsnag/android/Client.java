@@ -234,17 +234,19 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         } else {
             this.systemBroadcastReceiver = null;
         }
-        connectivity.registerForNetworkChanges();
 
         registerOrientationChangeListener();
 
+        // initialise plugins before attempting to flush any errors
+        loadPlugins(configuration);
+
         // Flush any on-disk errors
+        connectivity.registerForNetworkChanges();
         eventStore.flushOnLaunch();
+
+        // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
-
-        // finally, initialise plugins
-        loadPlugins(configuration);
     }
 
     @VisibleForTesting
@@ -611,7 +613,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
             Metadata metadata = metadataState.getMetadata();
             Event event = new Event(exc, immutableConfig, handledState, metadata, logger);
-            notifyInternal(event, onError);
+            populateAndNotifyAndroidEvent(event, onError);
         } else {
             logNull("notify");
         }
@@ -629,28 +631,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
         Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
         Event event = new Event(exc, immutableConfig, handledState, data, logger);
-        notifyInternal(event, null);
+        populateAndNotifyAndroidEvent(event, null);
     }
 
-    void notifyInternal(@NonNull Event event,
-                        @Nullable OnErrorCallback onError) {
-        // Don't notify if this event class should be ignored
-        if (event.shouldDiscardClass()) {
-            return;
-        }
-
-        if (!immutableConfig.shouldNotifyForReleaseStage()) {
-            return;
-        }
-
-        // get session for event
-        Session currentSession = sessionTracker.getCurrentSession();
-
-        if (currentSession != null
-                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
-            event.setSession(currentSession);
-        }
-
+    void populateAndNotifyAndroidEvent(@NonNull Event event,
+                                       @Nullable OnErrorCallback onError) {
         // Capture the state of the app and device and attach diagnostics to the event
         event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
         event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
@@ -671,6 +656,27 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         if (Intrinsics.isEmpty(event.getContext())) {
             String context = contextState.getContext();
             event.setContext(context != null ? context : appDataCollector.getActiveScreenClass());
+        }
+        notifyInternal(event, onError);
+    }
+
+    void notifyInternal(@NonNull Event event,
+                        @Nullable OnErrorCallback onError) {
+        // Don't notify if this event class should be ignored
+        if (event.shouldDiscardClass()) {
+            return;
+        }
+
+        if (!immutableConfig.shouldNotifyForReleaseStage()) {
+            return;
+        }
+
+        // get session for event
+        Session currentSession = sessionTracker.getCurrentSession();
+
+        if (currentSession != null
+                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
+            event.setSession(currentSession);
         }
 
         // Run on error tasks, don't notify if any return false
@@ -886,6 +892,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     void setCodeBundleId(@Nullable String codeBundleId) {
         appDataCollector.setCodeBundleId(codeBundleId);
+    }
+
+    void addRuntimeVersionInfo(@NonNull String key, @NonNull String value) {
+        deviceDataCollector.addRuntimeVersionInfo(key, value);
     }
 
     void close() {

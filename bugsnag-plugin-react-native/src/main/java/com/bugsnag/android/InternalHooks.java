@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 class InternalHooks {
 
@@ -17,6 +18,14 @@ class InternalHooks {
 
     public AppWithState getAppWithState() {
         return client.appDataCollector.generateAppWithState();
+    }
+
+    public Map<String,Object> getAppMetadata() {
+        return client.appDataCollector.getAppDataMetadata();
+    }
+
+    public Map<String,Object> getDeviceMetadata() {
+        return client.deviceDataCollector.getDeviceMetadata();
     }
 
     public DeviceWithState getDeviceWithState() {

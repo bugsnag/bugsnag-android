@@ -30,7 +30,13 @@ open class Device internal constructor(
     /**
      * The total number of bytes of memory on the device
      */
-    var totalMemory: Long?
+    var totalMemory: Long?,
+
+    /**
+     * A collection of names and their versions of the primary languages, frameworks or
+     * runtimes that the application is running on
+     */
+    var runtimeVersions: MutableMap<String, Any>?
 ) : JsonStream.Streamable {
 
     /**
@@ -52,19 +58,6 @@ open class Device internal constructor(
      * The version of the operating system running on the device used
      */
     var osVersion: String? = buildInfo.osVersion
-
-    /**
-     * A collection of names and their versions of the primary languages, frameworks or
-     * runtimes that the application is running on
-     */
-    var runtimeVersions: MutableMap<String, Any>?
-
-    init {
-        val map = mutableMapOf<String, Any>()
-        buildInfo.apiLevel?.let { map["androidApiLevel"] = it }
-        buildInfo.osBuild?.let { map["osBuild"] = it }
-        runtimeVersions = map
-    }
 
     internal open fun serializeFields(writer: JsonStream) {
         writer.name("cpuAbi").value(cpuAbi)

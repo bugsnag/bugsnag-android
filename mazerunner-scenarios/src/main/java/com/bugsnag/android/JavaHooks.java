@@ -14,6 +14,7 @@ import com.bugsnag.android.NoopLogger;
 
 import androidx.annotation.NonNull;
 
+import java.util.Collections;
 import java.util.Date;
 
 public class JavaHooks {
@@ -25,7 +26,8 @@ public class JavaHooks {
     public static DeviceWithState generateDeviceWithState() {
         DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
         return new DeviceWithState(buildInfo, null, null, null,
-                109230923452L, 22234423124L, 92340255592L, "portrait", new Date(0));
+                109230923452L, Collections.<String, Object>emptyMap(), 22234423124L,
+                92340255592L, "portrait", new Date(0));
     }
 
     /**

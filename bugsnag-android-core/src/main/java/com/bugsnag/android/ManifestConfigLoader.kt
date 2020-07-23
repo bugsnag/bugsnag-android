@@ -59,21 +59,23 @@ internal class ManifestConfigLoader {
      * @param data   the manifest bundle
      */
     @VisibleForTesting
-    internal fun load(data: Bundle, userSuppliedApiKey: String?): Configuration {
+    internal fun load(data: Bundle?, userSuppliedApiKey: String?): Configuration {
         // get the api key from the JVM call, or lookup in the manifest if null
-        val apiKey = (userSuppliedApiKey ?: data.getString(API_KEY))
+        val apiKey = (userSuppliedApiKey ?: data?.getString(API_KEY))
             ?: throw IllegalArgumentException("No Bugsnag API key set")
         val config = Configuration(apiKey)
 
-        loadDetectionConfig(config, data)
-        loadEndpointsConfig(config, data)
-        loadAppConfig(config, data)
+        if (data != null) {
+            loadDetectionConfig(config, data)
+            loadEndpointsConfig(config, data)
+            loadAppConfig(config, data)
 
-        // misc config
-        with(config) {
-            maxBreadcrumbs = data.getInt(MAX_BREADCRUMBS, maxBreadcrumbs)
-            launchCrashThresholdMs =
-                data.getInt(LAUNCH_CRASH_THRESHOLD_MS, launchCrashThresholdMs.toInt()).toLong()
+            // misc config
+            with(config) {
+                maxBreadcrumbs = data.getInt(MAX_BREADCRUMBS, maxBreadcrumbs)
+                launchCrashThresholdMs =
+                    data.getInt(LAUNCH_CRASH_THRESHOLD_MS, launchCrashThresholdMs.toInt()).toLong()
+            }
         }
         return config
     }

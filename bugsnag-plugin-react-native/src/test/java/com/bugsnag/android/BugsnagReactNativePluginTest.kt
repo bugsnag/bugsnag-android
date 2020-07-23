@@ -31,7 +31,7 @@ internal class BugsnagReactNativePluginTest {
     @Test
     fun registerForMessageEvents() {
         plugin.registerForMessageEvents {  }
-        verify(client, times(1)).registerObserver(any())
+        verify(client, times(1)).syncInitialState()
     }
 
     @Test

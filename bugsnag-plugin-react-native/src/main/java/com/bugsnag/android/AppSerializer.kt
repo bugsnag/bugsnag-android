@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 internal class AppSerializer : MapSerializer<AppWithState> {
     override fun serialize(map: MutableMap<String, Any?>, app: AppWithState) {
-        map["appType"] = app.type
+        map["type"] = app.type
         map["binaryArch"] = app.binaryArch
         map["buildUuid"] = app.buildUuid
         map["codeBundleId"] = app.codeBundleId

@@ -7,11 +7,11 @@ import java.io.IOException
  */
 class Notifier @JvmOverloads constructor(
     var name: String = "Android Bugsnag Notifier",
-    var version: String = "5.0.0",
+    var version: String = "5.0.1",
     var url: String = "https://bugsnag.com"
 ) : JsonStream.Streamable {
 
-    val dependencies = mutableListOf<Notifier>()
+    var dependencies = listOf<Notifier>()
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {

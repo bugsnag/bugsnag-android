@@ -34,6 +34,14 @@ internal class DeviceDataCollector(
     private val screenResolution = getScreenResolution()
     private val locale = Locale.getDefault().toString()
     private val cpuAbi = getCpuAbi()
+    private val runtimeVersions: MutableMap<String, Any>
+
+    init {
+        val map = mutableMapOf<String, Any>()
+        buildInfo.apiLevel?.let { map["androidApiLevel"] = it }
+        buildInfo.osBuild?.let { map["osBuild"] = it }
+        runtimeVersions = map
+    }
 
     fun generateDevice() = Device(
         buildInfo,
@@ -41,7 +49,8 @@ internal class DeviceDataCollector(
         rooted,
         installId,
         locale,
-        calculateTotalMemory()
+        calculateTotalMemory(),
+        runtimeVersions.toMutableMap()
     )
 
     fun generateDeviceWithState(now: Long) = DeviceWithState(
@@ -50,6 +59,7 @@ internal class DeviceDataCollector(
         installId,
         locale,
         calculateTotalMemory(),
+        runtimeVersions.toMutableMap(),
         calculateFreeDisk(),
         calculateFreeMemory(),
         calculateOrientation(),
@@ -234,6 +244,10 @@ internal class DeviceDataCollector(
         ORIENTATION_LANDSCAPE -> "landscape"
         ORIENTATION_PORTRAIT -> "portrait"
         else -> null
+    }
+
+    fun addRuntimeVersionInfo(key: String, value: String) {
+        runtimeVersions[key] = value
     }
 
     companion object {

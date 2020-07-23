@@ -80,36 +80,38 @@ class MainActivity : Activity() {
         config.enabledErrorTypes.ndkCrashes = true
         config.enabledErrorTypes.anrs = true
         config.logger = object: Logger {
-            override fun d(msg: String) {
-                Log.d("Bugsnag", msg)
-            }
-
-            override fun d(msg: String, throwable: Throwable) {
-                Log.d("Bugsnag", msg, throwable)
-            }
+            private val TAG = "Bugsnag"
 
             override fun e(msg: String) {
-                Log.e("Bugsnag", msg)
+                Log.e(TAG, msg)
             }
 
             override fun e(msg: String, throwable: Throwable) {
-                Log.e("Bugsnag", msg, throwable)
-            }
-
-            override fun i(msg: String) {
-                Log.i("Bugsnag", msg)
-            }
-
-            override fun i(msg: String, throwable: Throwable) {
-                Log.i("Bugsnag", msg, throwable)
+                Log.e(TAG, msg, throwable)
             }
 
             override fun w(msg: String) {
-                Log.w("Bugsnag", msg)
+                Log.w(TAG, msg)
             }
 
             override fun w(msg: String, throwable: Throwable) {
-                Log.w("Bugsnag", msg, throwable)
+                Log.w(TAG, msg, throwable)
+            }
+
+            override fun i(msg: String) {
+                Log.i(TAG, msg)
+            }
+
+            override fun i(msg: String, throwable: Throwable) {
+                Log.i(TAG, msg, throwable)
+            }
+
+            override fun d(msg: String) {
+                Log.d(TAG, msg)
+            }
+
+            override fun d(msg: String, throwable: Throwable) {
+                Log.d(TAG, msg, throwable)
             }
         }
         return config

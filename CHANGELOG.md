@@ -1,13 +1,35 @@
 # Changelog
 
-## TBD
+## 5.0.1 (2020-07-23)
 
-### Bug Fixes
+### Bug fixes
+
+* Add null check when loading data from manifest
+  [#878](https://github.com/bugsnag/bugsnag-android/pull/878)
 
 * Fix swapped device freeMemory and freeDisk values [#903](https://github.com/bugsnag/bugsnag-android/issues/903)
 
 * Avoid attempting to flush unhandled error reports in same session
   [#902](https://github.com/bugsnag/bugsnag-android/pull/902)
+
+#### React Native
+
+The following alterations have been made to support the React Native notifier:
+
+* Prevent duplicate notifier dependencies being added
+  [#911](https://github.com/bugsnag/bugsnag-android/pull/911)
+
+* Respect pre-populated fields on `Event` when notifying
+  [#906](https://github.com/bugsnag/bugsnag-android/pull/906)
+
+* Create observer before registering plugin
+  [#874](https://github.com/bugsnag/bugsnag-android/pull/874)
+
+* `app.type` event serialisation differs from config
+  [#909](https://github.com/bugsnag/bugsnag-android/pull/909)
+
+* Pass device and app metadata to react native
+  [#910](https://github.com/bugsnag/bugsnag-android/pull/910)
 
 ## 5.0.0 (2020-04-22)
 
@@ -41,7 +63,7 @@ how to upgrade.
 * Catch throwables when invoking methods on system services
   [#623](https://github.com/bugsnag/bugsnag-android/pull/623)
 * Fix possible crash when recording reports and breadcrumbs containing values
-  using different text encodings or UTF-8 control characters, followed by a 
+  using different text encodings or UTF-8 control characters, followed by a
   C/C++ crash.
   [#584](https://github.com/bugsnag/bugsnag-android/pull/584)
 * Fix crash when calling `NativeInterface.clearTab()` (from an integration
@@ -188,7 +210,7 @@ the use of any API supplied by bugsnag-android.
 [#501](https://github.com/bugsnag/bugsnag-android/pull/501)
 * Send minimal error report if cached file is corrupted/empty
 [#500](https://github.com/bugsnag/bugsnag-android/pull/500)
-* Remove deprecated interfaces from API 
+* Remove deprecated interfaces from API
 [#514](https://github.com/bugsnag/bugsnag-android/pull/514)
 
 ### Bug fixes
@@ -196,7 +218,7 @@ the use of any API supplied by bugsnag-android.
 * Fix abort() in native code when storing breadcrumbs with null values in
   metadata
   [#510](https://github.com/bugsnag/bugsnag-android/pull/510)
-* Convert metadata to map when notifying the NDK observer 
+* Convert metadata to map when notifying the NDK observer
   [#513](https://github.com/bugsnag/bugsnag-android/pull/513)
 
 ## 4.15.0 (2019-06-10)
