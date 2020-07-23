@@ -51,7 +51,7 @@ class BugsnagReactNativePlugin : Plugin {
         notifier.name = "Bugsnag React Native"
         notifier.url = "https://github.com/bugsnag/bugsnag-js"
         notifier.version = jsVersion
-        notifier.dependencies.add(Notifier()) // depend on bugsnag-android
+        client.notifier.dependencies = listOf(Notifier()) // depend on bugsnag-android
     }
 
     private fun ignoreJavaScriptExceptions() {
