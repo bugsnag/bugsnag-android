@@ -11,7 +11,7 @@ class Notifier @JvmOverloads constructor(
     var url: String = "https://bugsnag.com"
 ) : JsonStream.Streamable {
 
-    val dependencies = mutableListOf<Notifier>()
+    var dependencies = listOf<Notifier>()
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {

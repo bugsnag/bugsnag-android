@@ -23,7 +23,7 @@ internal class NotifierSerializationTest {
             deps.version = "4.5.6"
             deps.name = "CustomNotifier"
             deps.url = "https://example.com"
-            deps.dependencies.add(notifier)
+            deps.dependencies = listOf(notifier)
             return generateSerializationTestCases("notifier", notifier, deps)
         }
     }

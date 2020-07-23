@@ -16,6 +16,9 @@
 
 The following alterations have been made to support the React Native notifier:
 
+* Prevent duplicate notifier dependencies being added
+  [#911](https://github.com/bugsnag/bugsnag-android/pull/911)
+
 * Respect pre-populated fields on `Event` when notifying
   [#906](https://github.com/bugsnag/bugsnag-android/pull/906)
 
