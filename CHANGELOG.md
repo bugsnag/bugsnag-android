@@ -1,5 +1,14 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+#### React Native
+
+* Always set config.redactedKeys on Event
+  [#913](https://github.com/bugsnag/bugsnag-android/pull/913)
+
 ## 5.0.1 (2020-07-23)
 
 ### Bug fixes

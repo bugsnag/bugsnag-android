@@ -671,6 +671,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             return;
         }
 
+        // set the redacted keys on the event as this
+        // will not have been set for RN/Unity events
+        Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
+        Metadata eventMetadata = event.impl.getMetadata();
+        eventMetadata.setRedactedKeys(redactedKeys);
+
         // get session for event
         Session currentSession = sessionTracker.getCurrentSession();
 
