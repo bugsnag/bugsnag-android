@@ -175,4 +175,11 @@ public class EventTest {
         event.getErrors().clear();
         assertFalse(event.impl.isAnr(event));
     }
+
+    @Test
+    public void testSeverityReasonType() {
+        RuntimeException exc = new RuntimeException("Something went wrong");
+        Event event = new Event(exc, config, handledState, NoopLogger.INSTANCE);
+        assertEquals(HandledState.REASON_HANDLED_EXCEPTION, event.impl.getSeverityReasonType());
+    }
 }

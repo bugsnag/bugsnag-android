@@ -6,6 +6,11 @@
 
 #### React Native
 
+The following alterations have been made to support the React Native notifier:
+
+* Attempt delivery of promise rejections immediately
+  [#912](https://github.com/bugsnag/bugsnag-android/pull/912)
+
 * Always set config.redactedKeys on Event
   [#913](https://github.com/bugsnag/bugsnag-android/pull/913)
 
