@@ -110,6 +110,7 @@ internal class EventInternal @JvmOverloads internal constructor(
         this.severity = severity
     }
 
+    fun getSeverityReasonType(): String = handledState.severityReasonType
 
     override fun setUser(id: String?, email: String?, name: String?) {
         _user = User(id, email, name)
