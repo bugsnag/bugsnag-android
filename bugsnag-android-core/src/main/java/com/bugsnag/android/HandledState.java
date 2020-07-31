@@ -36,7 +36,7 @@ final class HandledState implements JsonStream.Streamable {
 
     private final Severity defaultSeverity;
     private Severity currentSeverity;
-    private final boolean unhandled;
+    private boolean unhandled;
 
     static HandledState newInstance(@SeverityReason String severityReasonType) {
         return newInstance(severityReasonType, null, null);
@@ -94,6 +94,10 @@ final class HandledState implements JsonStream.Streamable {
 
     public boolean isUnhandled() {
         return unhandled;
+    }
+
+    void setUnhandled(boolean isUnhandled) {
+        unhandled = isUnhandled;
     }
 
     @Nullable
