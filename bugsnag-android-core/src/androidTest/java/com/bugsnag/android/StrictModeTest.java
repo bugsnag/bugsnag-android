@@ -1,10 +1,12 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.*;
 
 import android.content.Context;
 import android.os.Build;
@@ -13,7 +15,6 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,15 +49,16 @@ public class StrictModeTest {
     public void testIsStrictModeThrowable() {
         Exception strictModeException = generateStrictModeException();
 
-        if (strictModeException != null) {
-            assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
+        assumeNotNull(strictModeException);
 
-            RuntimeException wrappedException = new RuntimeException(strictModeException);
-            assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
+        assertTrue(strictModeHandler.isStrictModeThrowable(strictModeException));
 
-            RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
-            assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
-        }
+        RuntimeException wrappedException = new RuntimeException(strictModeException);
+        assertTrue(strictModeHandler.isStrictModeThrowable(wrappedException));
+
+        RuntimeException doubleWrappedException = new RuntimeException(wrappedException);
+        assertTrue(strictModeHandler.isStrictModeThrowable(doubleWrappedException));
+
     }
 
     @Test
@@ -68,7 +70,7 @@ public class StrictModeTest {
                 strictModeHandler.getViolationDescription(invalidArg);
                 fail("Null/empty values not rejected");
             } catch (IllegalArgumentException ignored) {
-                Assert.assertNotNull(ignored);
+                assertNotNull(ignored);
             }
         }
     }
@@ -95,18 +97,19 @@ public class StrictModeTest {
     @Test
     public void testStrictModeDescException() {
         Exception exception = generateStrictModeException();
+        assumeNotNull(exception);
 
-        if (exception != null) {
-            String desc = strictModeHandler.getViolationDescription(exception.getMessage());
+        String desc = strictModeHandler.getViolationDescription(exception.getMessage());
 
-            if (Build.VERSION.SDK_INT >= 28) {
-                // the violation description format changed to be more generic in P,
-                // no longer possible to get a full description
-                assertNull(desc);
-            } else {
-                assertEquals("DiskRead", desc);
-            }
+        String expected;
+        if (Build.VERSION.SDK_INT >= 28) {
+            // the violation description format changed to be more generic in P,
+            // no longer possible to get a full description
+            expected = null;
+        } else {
+            expected = "DiskRead";
         }
+        assertEquals(expected, desc);
     }
 
     /**
