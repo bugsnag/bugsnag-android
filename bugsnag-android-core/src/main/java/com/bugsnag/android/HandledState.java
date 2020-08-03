@@ -96,10 +96,6 @@ final class HandledState implements JsonStream.Streamable {
         return unhandled;
     }
 
-    void setUnhandled(boolean isUnhandled) {
-        unhandled = isUnhandled;
-    }
-
     @Nullable
     String getAttributeValue() {
         return attributeValue;
