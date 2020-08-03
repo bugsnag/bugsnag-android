@@ -19,7 +19,12 @@ internal class EventDeserializer(
         val severityReasonType = severityReason["type"] as String
         val severity = map["severity"] as String
         val unhandled = map["unhandled"] as Boolean
-        val handledState = HandledState(severityReasonType, Severity.valueOf(severity.toUpperCase(Locale.US)), unhandled, null)
+        val handledState = HandledState(
+            severityReasonType,
+            Severity.valueOf(severity.toUpperCase(Locale.US)),
+            unhandled,
+            null
+        )
 
         // construct event
         val event = NativeInterface.createEvent(null, client, handledState)
