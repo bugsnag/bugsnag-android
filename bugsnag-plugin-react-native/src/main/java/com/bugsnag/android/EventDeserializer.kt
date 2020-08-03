@@ -16,17 +16,15 @@ internal class EventDeserializer(
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(map: MutableMap<String, Any?>): Event {
         val severityReason = map["severityReason"] as Map<String, Any>
-        val type = severityReason["type"] as String
-        val handledState: HandledState = HandledState.newInstance(type)
+        val severityReasonType = severityReason["type"] as String
+        val severity = map["severity"] as String
         val unhandled = map["unhandled"] as Boolean
-        handledState.isUnhandled = unhandled
+        val handledState = HandledState(severityReasonType, Severity.valueOf(severity.toUpperCase(Locale.US)), unhandled, null)
 
         // construct event
         val event = NativeInterface.createEvent(null, client, handledState)
         event.context = map["context"] as String?
         event.groupingHash = map["groupingHash"] as String?
-        val severity = map["severity"] as String
-        event.updateSeverityInternal(Severity.valueOf(severity.toUpperCase(Locale.US)))
 
         // app/device
         event.app = appDeserializer.deserialize(map["app"] as MutableMap<String, Any>)
