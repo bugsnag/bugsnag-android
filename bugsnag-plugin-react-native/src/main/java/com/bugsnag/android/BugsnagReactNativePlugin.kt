@@ -113,7 +113,14 @@ class BugsnagReactNativePlugin : Plugin {
         client.codeBundleId = id
     }
 
-    fun updateMetadata(section: String, data: Map<String, Any?>?) {
+    fun clearMetadata(section: String, key: String?) {
+        when (key) {
+            null -> client.clearMetadata(section)
+            else -> client.clearMetadata(section, key)
+        }
+    }
+
+    fun addMetadata(section: String, data: Map<String, Any?>?) {
         when (data) {
             null -> client.clearMetadata(section)
             else -> client.addMetadata(section, data)
