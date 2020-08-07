@@ -58,4 +58,25 @@ internal class MetadataStateTest {
         state.emitObservableEvent()
         assertEquals(setOf("foo", "bar"), data)
     }
+
+    @Test
+    fun initObservableMessagesWithMap() {
+        state.addMetadata("foo", hashMapOf(
+            "key1" to "1",
+            "key2" to "2",
+            "key3" to 3)
+        )
+
+        val sections = mutableSetOf<String>()
+        val keys = mutableSetOf<String?>()
+        state.addObserver { _, arg ->
+            val msg = arg as StateEvent.AddMetadata
+            sections.add(msg.section)
+            keys.add(msg.key)
+        }
+
+        state.emitObservableEvent()
+        assertEquals(setOf("foo"), sections)
+        assertEquals(setOf("key1", "key2", "key3"), keys)
+    }
 }
