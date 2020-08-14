@@ -10,6 +10,7 @@
 
 <!-- What changed? -->
 
-## Tests
+## Testing
 
-<!-- How was it tested? -->
+<!-- How was it tested? What manual and automated tests were
+     run/added? -->
