@@ -26,7 +26,7 @@ class UpdateMetadataTest {
 
     @Test
     fun nullMetadataRemovesSection() {
-        plugin.updateMetadata("foo", null)
+        plugin.addMetadata("foo", null)
         verify(client, times(1)).clearMetadata("foo")
     }
 
@@ -38,7 +38,7 @@ class UpdateMetadataTest {
             "naughtyValue" to null
         )
 
-        plugin.updateMetadata("foo", data)
+        plugin.addMetadata("foo", data)
         verify(client, times(1)).addMetadata("foo", data)
     }
 }
