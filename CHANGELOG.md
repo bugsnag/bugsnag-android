@@ -2,6 +2,8 @@
 
 ## TBD
 
+### Enhancements
+
 * Add accessor for breadcrumb list on Client
   [#924](https://github.com/bugsnag/bugsnag-android/pull/924)
 

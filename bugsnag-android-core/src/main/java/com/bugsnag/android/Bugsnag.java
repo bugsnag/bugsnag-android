@@ -370,7 +370,9 @@ public final class Bugsnag {
      * use {@link Configuration#setEnabledBreadcrumbTypes(Set)} and
      * {@link Configuration#addOnBreadcrumb(OnBreadcrumbCallback)} instead.
      *
-     * @return a list of collected breadcrumbs
+     * Returns the current buffer of breadcrumbs that will be sent with captured events. This
+     * ordered list represents the most recent breadcrumbs to be captured up to the limit
+     * set in {@link Configuration#getMaxBreadcrumbs()}.
      */
     @NonNull
     public static List<Breadcrumb> getBreadcrumbs() {
