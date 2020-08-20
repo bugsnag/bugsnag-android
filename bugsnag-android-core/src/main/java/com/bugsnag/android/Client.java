@@ -696,16 +696,16 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     /**
-     * Returns a readonly List of breadcrumbs in the order which they were captured by the Client.
+     * Returns the current buffer of breadcrumbs that will be sent with captured events. This
+     * ordered list represents the most recent breadcrumbs to be captured up to the limit
+     * set in {@link Configuration#getMaxBreadcrumbs()}.
      *
      * The returned collection is readonly and mutating the list will cause no effect on the
      * Client's state. If you wish to alter the breadcrumbs collected by the Client then you should
      * use {@link Configuration#setEnabledBreadcrumbTypes(Set)} and
      * {@link Configuration#addOnBreadcrumb(OnBreadcrumbCallback)} instead.
      *
-     * Returns the current buffer of breadcrumbs that will be sent with captured events. This
-     * ordered list represents the most recent breadcrumbs to be captured up to the limit
-     * set in {@link Configuration#getMaxBreadcrumbs()}.
+     * @return a list of collected breadcrumbs
      */
     @NonNull
     public List<Breadcrumb> getBreadcrumbs() {
