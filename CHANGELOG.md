@@ -1,12 +1,24 @@
 # Changelog
 
-## TBD
+## 5.0.2 (2020-08-17)
 
 ### Bug fixes
 
 #### React Native
 
 The following alterations have been made to support the React Native notifier:
+
+* Split updateMetadata method into two separate add/clear methods
+  [#918](https://github.com/bugsnag/bugsnag-android/pull/918)
+
+* Refactor event deserialiser to ensure unhandled value is retained
+  [#917](https://github.com/bugsnag/bugsnag-android/pull/917)
+
+* Retain unhandled value when parsing a JS event
+  [#914](https://github.com/bugsnag/bugsnag-android/pull/914)
+
+* Prevent duplicate notifier dependencies being added
+  [#911](https://github.com/bugsnag/bugsnag-android/pull/911)
 
 * Attempt delivery of promise rejections immediately
   [#912](https://github.com/bugsnag/bugsnag-android/pull/912)
