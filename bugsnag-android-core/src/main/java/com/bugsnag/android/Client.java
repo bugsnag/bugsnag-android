@@ -695,8 +695,18 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         deliveryDelegate.deliver(event);
     }
 
+    /**
+     * Returns a readonly List of breadcrumbs in the order which they were captured by the Client.
+     *
+     * The returned collection is readonly and mutating the list will cause no effect on the
+     * Client's state. If you wish to alter the breadcrumbs collected by the Client then you should
+     * use {@link Configuration#setEnabledBreadcrumbTypes(Set)} and
+     * {@link Configuration#addOnBreadcrumb(OnBreadcrumbCallback)} instead.
+     *
+     * @return a list of collected breadcrumbs
+     */
     @NonNull
-    List<Breadcrumb> getBreadcrumbs() {
+    public List<Breadcrumb> getBreadcrumbs() {
         return new ArrayList<>(breadcrumbState.getStore());
     }
 

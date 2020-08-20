@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Add accessor for breadcrumb list on Client
+  [#924](https://github.com/bugsnag/bugsnag-android/pull/924)
+
 ## 5.0.2 (2020-08-17)
 
 ### Bug fixes

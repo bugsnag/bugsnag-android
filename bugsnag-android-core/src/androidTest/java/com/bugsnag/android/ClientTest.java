@@ -207,7 +207,7 @@ public class ClientTest {
     @Test
     public void testBreadcrumbGetter() {
         client = generateClient();
-        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
 
         int breadcrumbCount = breadcrumbs.size();
         client.leaveBreadcrumb("Foo");
@@ -219,7 +219,7 @@ public class ClientTest {
         config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
         client = generateClient(config);
         client.leaveBreadcrumb("Manual breadcrumb");
-        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
 
         breadcrumbs.clear(); // only the copy should be cleared
         assertTrue(breadcrumbs.isEmpty());

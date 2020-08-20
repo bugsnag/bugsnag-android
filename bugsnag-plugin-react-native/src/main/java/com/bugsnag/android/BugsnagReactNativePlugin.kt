@@ -149,7 +149,7 @@ class BugsnagReactNativePlugin : Plugin {
         deviceSerializer.serialize(device, internalHooks.deviceWithState)
         info["device"] = device
 
-        info["breadcrumbs"] = internalHooks.breadcrumbs.map {
+        info["breadcrumbs"] = client.breadcrumbs.map {
             val map = mutableMapOf<String, Any?>()
             breadcrumbSerializer.serialize(map, it)
             map

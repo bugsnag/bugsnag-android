@@ -6,7 +6,10 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app.
@@ -357,6 +360,21 @@ public final class Bugsnag {
      */
     public static void pauseSession() {
         getClient().pauseSession();
+    }
+
+    /**
+     * Returns a readonly List of breadcrumbs in the order which they were captured by the Client.
+     *
+     * The returned collection is readonly and mutating the list will cause no effect on the
+     * Client's state. If you wish to alter the breadcrumbs collected by the Client then you should
+     * use {@link Configuration#setEnabledBreadcrumbTypes(Set)} and
+     * {@link Configuration#addOnBreadcrumb(OnBreadcrumbCallback)} instead.
+     *
+     * @return a list of collected breadcrumbs
+     */
+    @NonNull
+    public static List<Breadcrumb> getBreadcrumbs() {
+        return getClient().getBreadcrumbs();
     }
 
     /**
