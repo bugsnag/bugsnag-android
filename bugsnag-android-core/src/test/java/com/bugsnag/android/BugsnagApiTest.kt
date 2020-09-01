@@ -173,6 +173,12 @@ class BugsnagApiTest {
         verify(client, times(1)).pauseSession()
     }
 
+    @Test
+    fun getBreadcrumbs() {
+        Bugsnag.getBreadcrumbs()
+        verify(client, times(1)).breadcrumbs
+    }
+
     @Test(expected = IllegalStateException::class)
     fun nullClient() {
         Bugsnag.client = null

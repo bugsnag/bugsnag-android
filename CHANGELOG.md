@@ -4,6 +4,9 @@
 
 ### Enhancements
 
+* Add accessor for breadcrumb list on Client
+  [#924](https://github.com/bugsnag/bugsnag-android/pull/924)
+
 Test improvement: removed conditional operator test smell
 [#925](https://github.com/bugsnag/bugsnag-android/pull/925)
 
