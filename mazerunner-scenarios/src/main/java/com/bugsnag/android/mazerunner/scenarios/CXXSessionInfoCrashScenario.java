@@ -33,15 +33,17 @@ public class CXXSessionInfoCrashScenario extends Scenario {
 
         if (metadata == null || !metadata.equals("non-crashy")) {
             Bugsnag.startSession();
+            TestHarnessHooksKt.flushAllSessions();
+
             Bugsnag.notify(new Exception("For the first"));
             Bugsnag.notify(new Exception("For the second"));
-            TestHarnessHooksKt.flushAllSessions();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     crash(3837);
                 }
-            }, 500);
+            }, 1500);
+
         }
     }
 }
