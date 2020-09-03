@@ -71,8 +71,15 @@ Ensure that the following environment variables are set:
 
 * `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
 * `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
-* `DEVICE_TYPE`: The android version to run the tests against, one of: ANDROID_5, ANDROID_6, ANDROID_7, ANDROID_8, ANDROID_9
-
+* `DEVICE_TYPE`: The android version to run the tests against, one of: 
+  * ANDROID_5_0, 
+  * ANDROID_6_0
+  * ANDROID_7_1
+  * ANDROID_8_0
+  * ANDROID_8_1
+  * ANDROID_9_0
+  * ANDROID_10_0
+  
 Run `make remote-integration-tests`
 
 If you wish to test a single feature, set the `TEST_FEATURE` environment variable to the name of the feature file.
