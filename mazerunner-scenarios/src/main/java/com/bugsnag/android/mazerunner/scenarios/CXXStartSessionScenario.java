@@ -38,7 +38,7 @@ public class CXXStartSessionScenario extends Scenario {
                 public void run() {
                     crash(0);
                 }
-            }, 500);
+            }, 1500);
         }
     }
 }
