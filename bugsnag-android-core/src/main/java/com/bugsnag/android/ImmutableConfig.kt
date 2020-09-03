@@ -50,7 +50,8 @@ internal data class ImmutableConfig(
         enabledBreadcrumbTypes == null || enabledBreadcrumbTypes.contains(type)
 
     @JvmName("getErrorApiDeliveryParams")
-    internal fun getErrorApiDeliveryParams() = DeliveryParams(endpoints.notify, errorApiHeaders())
+    internal fun getErrorApiDeliveryParams(apiKey: String) =
+        DeliveryParams(endpoints.notify, errorApiHeaders(apiKey))
 
     @JvmName("getSessionApiDeliveryParams")
     internal fun getSessionApiDeliveryParams() =
@@ -61,7 +62,7 @@ internal data class ImmutableConfig(
      *
      * @return the HTTP headers
      */
-    private fun errorApiHeaders(): Map<String, String> {
+    private fun errorApiHeaders(apiKey: String): Map<String, String> {
         val map = HashMap<String, String>()
         map[HEADER_API_PAYLOAD_VERSION] = "4.0"
         map[HEADER_API_KEY] = apiKey

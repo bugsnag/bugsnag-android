@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Bug fixes
+
+* Support changing Event's api key in OnErrorCallback
+  [#928](https://github.com/bugsnag/bugsnag-android/pull/928)
+
 ### Enhancements
 
 * Add accessor for breadcrumb list on Client
