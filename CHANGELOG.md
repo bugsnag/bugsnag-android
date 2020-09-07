@@ -10,6 +10,11 @@
 * Test improvement: removed conditional operator test smell
   [#925](https://github.com/bugsnag/bugsnag-android/pull/925)
 
+#### React Native
+
+* Keep name of class for use in reflection
+  [#927](https://github.com/bugsnag/bugsnag-android/pull/927)
+
 ## 5.0.2 (2020-08-17)
 
 ### Bug fixes
