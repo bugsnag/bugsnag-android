@@ -32,10 +32,6 @@ class InternalHooks {
         return client.deviceDataCollector.generateDeviceWithState(new Date().getTime());
     }
 
-    public List<Breadcrumb> getBreadcrumbs() {
-        return client.getBreadcrumbs();
-    }
-
     public List<Thread> getThreads(boolean unhandled) {
         return new ThreadState(null, unhandled, getConfig()).getThreads();
     }

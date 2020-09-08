@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -21,6 +22,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 @SuppressWarnings("unchecked")
 @SmallTest
@@ -205,9 +208,19 @@ public class ClientTest {
     }
 
     @Test
+    public void testClientBreadcrumbRetrieval() {
+        client = generateClient();
+        client.leaveBreadcrumb("Hello World");
+        List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        List<Breadcrumb> store = new ArrayList<>(client.breadcrumbState.getStore());
+        assertEquals(store, breadcrumbs);
+        assertNotSame(store, breadcrumbs);
+    }
+
+    @Test
     public void testBreadcrumbGetter() {
         client = generateClient();
-        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
 
         int breadcrumbCount = breadcrumbs.size();
         client.leaveBreadcrumb("Foo");
@@ -219,7 +232,7 @@ public class ClientTest {
         config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
         client = generateClient(config);
         client.leaveBreadcrumb("Manual breadcrumb");
-        Collection<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
 
         breadcrumbs.clear(); // only the copy should be cleared
         assertTrue(breadcrumbs.isEmpty());
