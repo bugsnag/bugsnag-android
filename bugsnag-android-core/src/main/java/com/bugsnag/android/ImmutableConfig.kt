@@ -29,13 +29,6 @@ internal data class ImmutableConfig(
     val maxBreadcrumbs: Int
 ) {
 
-    companion object {
-        private const val HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version"
-        internal const val HEADER_API_KEY = "Bugsnag-Api-Key"
-        internal const val HEADER_INTERNAL_ERROR = "Bugsnag-Internal-Error"
-        private const val HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At"
-    }
-
     /**
      * Checks if the given release stage should be notified or not
      *
@@ -55,33 +48,7 @@ internal data class ImmutableConfig(
 
     @JvmName("getSessionApiDeliveryParams")
     internal fun getSessionApiDeliveryParams() =
-        DeliveryParams(endpoints.sessions, sessionApiHeaders())
-
-    /**
-     * Supplies the headers which must be used in any request sent to the Error Reporting API.
-     *
-     * @return the HTTP headers
-     */
-    private fun errorApiHeaders(apiKey: String): Map<String, String> {
-        val map = HashMap<String, String>()
-        map[HEADER_API_PAYLOAD_VERSION] = "4.0"
-        map[HEADER_API_KEY] = apiKey
-        map[HEADER_BUGSNAG_SENT_AT] = DateUtils.toIso8601(Date())
-        return map
-    }
-
-    /**
-     * Supplies the headers which must be used in any request sent to the Session Tracking API.
-     *
-     * @return the HTTP headers
-     */
-    private fun sessionApiHeaders(): Map<String, String> {
-        val map = HashMap<String, String>()
-        map[HEADER_API_PAYLOAD_VERSION] = "1.0"
-        map[HEADER_API_KEY] = apiKey
-        map[HEADER_BUGSNAG_SENT_AT] = DateUtils.toIso8601(Date())
-        return map
-    }
+        DeliveryParams(endpoints.sessions, sessionApiHeaders(apiKey))
 }
 
 internal fun convertToImmutableConfig(

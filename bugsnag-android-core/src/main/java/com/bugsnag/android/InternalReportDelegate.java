@@ -1,8 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.HandledState.REASON_UNHANDLED_EXCEPTION;
-import static com.bugsnag.android.ImmutableConfig.HEADER_API_KEY;
-import static com.bugsnag.android.ImmutableConfig.HEADER_INTERNAL_ERROR;
+import static com.bugsnag.android.DeliveryHeadersKt.HEADER_INTERNAL_ERROR;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -112,7 +111,7 @@ class InternalReportDelegate implements EventStore.Delegate {
                         if (delivery instanceof DefaultDelivery) {
                             Map<String, String> headers = params.getHeaders();
                             headers.put(HEADER_INTERNAL_ERROR, "true");
-                            headers.remove(HEADER_API_KEY);
+                            headers.remove(DeliveryHeadersKt.HEADER_API_KEY);
                             DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
                             defaultDelivery.deliver(params.getEndpoint(), eventPayload, headers);
                         }
