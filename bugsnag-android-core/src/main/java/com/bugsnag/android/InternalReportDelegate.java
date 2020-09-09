@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.HandledState.REASON_UNHANDLED_EXCEPTION;
 import static com.bugsnag.android.DeliveryHeadersKt.HEADER_INTERNAL_ERROR;
+import static com.bugsnag.android.HandledState.REASON_UNHANDLED_EXCEPTION;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
