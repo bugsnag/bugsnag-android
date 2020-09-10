@@ -4,11 +4,14 @@ import android.content.Context
 import com.bugsnag.android.EventStore.EVENT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 
@@ -17,6 +20,15 @@ class EventFilenameTest {
 
     @Mock
     lateinit var context: Context
+
+    @Mock
+    lateinit var event: Event
+
+    @Mock
+    lateinit var file: File
+
+    @Mock
+    lateinit var app: AppWithState
 
     private lateinit var eventStore: EventStore
 
@@ -36,6 +48,9 @@ class EventFilenameTest {
             Notifier(),
             null
         )
+        `when`(event.app).thenReturn(app)
+        `when`(event.apiKey).thenReturn("0000111122223333aaaabbbbcccc9999")
+        `when`(app.duration).thenReturn(null)
     }
 
     @Test
@@ -81,5 +96,59 @@ class EventFilenameTest {
         // startup is handled correctly
         assertTrue(EVENT_COMPARATOR.compare(File(first), File(startup)) < 0)
         assertTrue(EVENT_COMPARATOR.compare(File(second), File(startup)) > 0)
+    }
+
+    @Test
+    fun regularJvmEventName() {
+        val filename = eventStore.getFilename(event, "my-uuid-123", 1504255147933, "/errors/")
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
+    }
+
+    /**
+     * Simulates a crash 1s after launch which is considered a startup crash
+     */
+    @Test
+    fun startupCrashJvmEventName() {
+        `when`(app.duration).thenReturn(1000)
+        val filename = eventStore.getFilename(event, "my-uuid-123", 1504255147933, "/errors/")
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123_startupcrash.json", filename)
+    }
+
+    /**
+     * Simulates a crash 10s after launch which is not considered a startup crash
+     */
+    @Test
+    fun nonStartupCrashCrashJvmEventName() {
+        `when`(app.duration).thenReturn(10000)
+        val filename = eventStore.getFilename(event, "my-uuid-123", 1504255147933, "/errors/")
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
+    }
+
+    @Test
+    fun ndkEventName() {
+        val filename = eventStore.getFilename("{}", "my-uuid-123", 1504255147933, "/errors/")
+        assertEquals("/errors/1504255147933_my-uuid-123not-jvm.json", filename)
+    }
+
+    @Test
+    fun apiKeyFromEmptyFilename() {
+        `when`(file.name).thenReturn("")
+        assertNull(eventStore.getApiKeyFromFilename(file))
+    }
+
+    /**
+     * Should return null as no api key is present
+     */
+    @Test
+    fun apiKeyFromLegacyFilename() {
+        `when`(file.name).thenReturn("1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json")
+        assertNull(eventStore.getApiKeyFromFilename(file))
+    }
+
+    @Test
+    fun apiKeyFromNewFilename() {
+        `when`(file.name).thenReturn("1504255147933_0000111122223333aaaabbbbcccc9999" +
+                "_683c6b92-b325-4987-80ad-77086509ca1e.json")
+        assertEquals("0000111122223333aaaabbbbcccc9999", eventStore.getApiKeyFromFilename(file))
     }
 }

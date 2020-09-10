@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.lang.Thread;
@@ -146,8 +147,14 @@ class EventStore extends FileStore {
 
     private void flushEventFile(File eventFile) {
         try {
-            EventPayload payload = new EventPayload(config.getApiKey(), eventFile, notifier);
-            DeliveryParams deliveryParams = config.getErrorApiDeliveryParams();
+            String apiKey = getApiKeyFromFilename(eventFile);
+
+            if (apiKey == null) { // no info encoded, fallback to config value
+                apiKey = config.getApiKey();
+            }
+
+            EventPayload payload = new EventPayload(apiKey, eventFile, notifier);
+            DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload.getApiKey());
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 
             switch (deliveryStatus) {
@@ -183,6 +190,22 @@ class EventStore extends FileStore {
         return file.getName().endsWith("_startupcrash.json");
     }
 
+    /**
+     * Retrieves the api key encoded in the filename or null if this information
+     * is not encoded for the given event
+     */
+    @Nullable
+    String getApiKeyFromFilename(File file) {
+        String name = file.getName().replaceAll("_startupcrash.json", "");
+        int start = name.indexOf("_") + 1;
+        int end = name.indexOf("_", start);
+
+        if (start == 0 || end == -1 || end <= start) {
+            return null;
+        }
+        return name.substring(start, end);
+    }
+
     private List<File> findLaunchCrashReports(Collection<File> storedFiles) {
         List<File> launchCrashes = new ArrayList<>();
 
@@ -194,10 +217,20 @@ class EventStore extends FileStore {
         return launchCrashes;
     }
 
+    /**
+     * Generates a filename for the Event in the format
+     * "[timestamp]_[apiKey]_[UUID][startupcrash|not-jvm].json"
+     */
     @NonNull
     @Override
     String getFilename(Object object) {
-        String suffix = "not-jvm";
+        String uuid = UUID.randomUUID().toString();
+        long now = System.currentTimeMillis();
+        return getFilename(object, uuid, now, storeDirectory);
+    }
+
+    String getFilename(Object object, String uuid, long timestamp, String storeDirectory) {
+        String suffix = "";
 
         if (object instanceof Event) {
             Event event = (Event) object;
@@ -206,11 +239,14 @@ class EventStore extends FileStore {
             if (duration != null && isStartupCrash(duration.longValue())) {
                 suffix = STARTUP_CRASH;
             }
+            return String.format(Locale.US, "%s%d_%s_%s%s.json",
+                    storeDirectory, timestamp, event.getApiKey(), uuid, suffix);
+
+        } else { // generating a filename for an NDK event
+            suffix = "not-jvm";
+            return String.format(Locale.US, "%s%d_%s%s.json",
+                    storeDirectory, timestamp, uuid, suffix);
         }
-        String uuid = UUID.randomUUID().toString();
-        long timestamp = System.currentTimeMillis();
-        return String.format(Locale.US, "%s%d_%s%s.json",
-            storeDirectory, timestamp, uuid, suffix);
     }
 
     boolean isStartupCrash(long durationMs) {
