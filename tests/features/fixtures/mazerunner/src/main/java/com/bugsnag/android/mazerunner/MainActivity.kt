@@ -121,6 +121,7 @@ class MainActivity : Activity() {
         val config: Configuration
         if (apiKeyField.text.isNotEmpty()) {
             val manualApiKey = apiKeyField.text.toString()
+            Log.d("Bugsnag", "Running in manual mode with API key: $manualApiKey")
             config = Configuration(manualApiKey)
             setStoredApiKey(manualApiKey)
         } else {
