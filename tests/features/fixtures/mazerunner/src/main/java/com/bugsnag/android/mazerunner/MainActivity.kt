@@ -91,17 +91,7 @@ class MainActivity : Activity() {
     }
 
     private fun executeScenario(eventType: String, metaData: String) {
-        val config: Configuration
-        val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
-        if (apiKeyField.text.isNotEmpty()) {
-            val manualApiKey = apiKeyField.text.toString()
-            config = Configuration(manualApiKey)
-            config.enabledErrorTypes.ndkCrashes = true
-            config.enabledErrorTypes.anrs = true
-            setStoredApiKey(manualApiKey)
-        } else {
-            config = prepareConfig()
-        }
+        val config = prepareConfig()
         val testCase = loadScenario(config, eventType, metaData)
 
         if (metaData != "skipBugsnag") {
@@ -127,8 +117,16 @@ class MainActivity : Activity() {
     }
 
     private fun prepareConfig(): Configuration {
-        val config = Configuration("a35a2a72bd230ac0aa0f52715bbdc6aa")
-        config.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
+        val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+        val config: Configuration
+        if (apiKeyField.text.isNotEmpty()) {
+            val manualApiKey = apiKeyField.text.toString()
+            config = Configuration(manualApiKey)
+            setStoredApiKey(manualApiKey)
+        } else {
+            config = Configuration("a35a2a72bd230ac0aa0f52715bbdc6aa")
+            config.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
+        }
         config.enabledErrorTypes.ndkCrashes = true
         config.enabledErrorTypes.anrs = true
         config.logger = getBugsnagLogger()
