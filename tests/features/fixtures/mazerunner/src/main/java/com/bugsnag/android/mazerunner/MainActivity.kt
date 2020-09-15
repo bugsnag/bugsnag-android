@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,8 @@ import com.bugsnag.android.Logger
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
+
+    private val apiKeyKey = "BUGSNAG_API_KEY"
 
     private val factory = TestCaseFactory()
 
@@ -39,6 +42,45 @@ class MainActivity : Activity() {
             val metaData = scenarioMetaData.text.toString()
             executeScenario(scenario, metaData)
         }
+
+        val clearUserData = findViewById<Button>(R.id.clearUserData)
+
+        clearUserData.setOnClickListener {
+            clearStoredApiKey()
+        }
+
+        if (apiKeyStored()) {
+            val apiKey = getStoredApiKey()
+            val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+            apiKeyField.text.clear()
+            apiKeyField.text.append(apiKey)
+        }
+    }
+
+    private fun apiKeyStored(): Boolean {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return false
+        return sharedPref.contains(apiKeyKey)
+    }
+
+    private fun setStoredApiKey(apiKey: String) {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putString(apiKeyKey, apiKey)
+            commit()
+        }
+    }
+
+    private fun clearStoredApiKey() {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            remove(apiKeyKey)
+            commit()
+        }
+    }
+
+    private fun getStoredApiKey(): String? {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return ""
+        return sharedPref.getString(apiKeyKey, "")
     }
 
     private fun startBugsnag(eventType: String, metaData: String) {
@@ -49,7 +91,17 @@ class MainActivity : Activity() {
     }
 
     private fun executeScenario(eventType: String, metaData: String) {
-        val config = prepareConfig()
+        val config: Configuration
+        val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+        if (apiKeyField.text.isNotEmpty()) {
+            val manualApiKey = apiKeyField.text.toString()
+            config = Configuration(manualApiKey)
+            config.enabledErrorTypes.ndkCrashes = true
+            config.enabledErrorTypes.anrs = true
+            setStoredApiKey(manualApiKey)
+        } else {
+            config = prepareConfig()
+        }
         val testCase = loadScenario(config, eventType, metaData)
 
         if (metaData != "skipBugsnag") {
@@ -79,7 +131,12 @@ class MainActivity : Activity() {
         config.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
         config.enabledErrorTypes.ndkCrashes = true
         config.enabledErrorTypes.anrs = true
-        config.logger = object: Logger {
+        config.logger = getBugsnagLogger()
+        return config
+    }
+
+    private fun getBugsnagLogger(): Logger {
+        return object: Logger {
             private val TAG = "Bugsnag"
 
             override fun e(msg: String) {
@@ -114,7 +171,6 @@ class MainActivity : Activity() {
                 Log.d(TAG, msg, throwable)
             }
         }
-        return config
     }
 
 }

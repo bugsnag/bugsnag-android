@@ -1,49 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <Space
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_weight="6" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+  <Button
+    android:id="@+id/startBugsnagButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:text="Start Bugsnag" />
 
-    <EditText
-        android:id="@+id/scenarioText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:ems="10"
-        android:hint="Enter scenario name"
-        android:inputType="text" />
+  <Button
+    android:id="@+id/startScenarioButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:text="Execute" />
 
-    <EditText
-        android:id="@+id/scenarioMetaData"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:ems="10"
-        android:hint="Enter scenario metadata"
-        android:inputType="text" />
+  <EditText
+    android:id="@+id/scenarioText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:ems="10"
+    android:hint="Enter scenario name"
+    android:inputType="text" />
 
-    <Button
-        android:id="@+id/startBugsnagButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="Start Bugsnag" />
+  <EditText
+    android:id="@+id/scenarioMetaData"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:ems="10"
+    android:hint="Enter scenario metadata"
+    android:inputType="text" />
 
-    <Button
-        android:id="@+id/startScenarioButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="Execute" />
+  <Space
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+  <TextView
+    android:id="@+id/textView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_weight="0"
+    android:text="Manual testing"
+    android:textAllCaps="false"
+    android:textSize="24sp"
+    android:textStyle="bold" />
+
+  <EditText
+    android:id="@+id/manualApiKey"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:ems="10"
+    android:hint="Enter API Key"
+    android:inputType="text" />
+
+  <Button
+    android:id="@+id/clearUserData"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:text="Clear User data" />
+
+  <Space
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="6" />
 
 </LinearLayout>
