@@ -47,6 +47,8 @@ class MainActivity : Activity() {
 
         clearUserData.setOnClickListener {
             clearStoredApiKey()
+            val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+            apiKeyField.text.clear()
         }
 
         if (apiKeyStored()) {
