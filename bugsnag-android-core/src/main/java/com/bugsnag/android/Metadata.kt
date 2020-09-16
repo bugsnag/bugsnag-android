@@ -3,7 +3,6 @@
 package com.bugsnag.android
 
 import java.io.IOException
-import java.util.HashMap
 import java.util.HashSet
 import java.util.concurrent.ConcurrentHashMap
 
@@ -14,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
 internal data class Metadata @JvmOverloads constructor(
-    internal val store: MutableMap<String, Any> = ConcurrentHashMap(),
+    internal val store: ConcurrentHashMap<String, Any> = ConcurrentHashMap(),
     val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer(),
     val redactedKeys: Set<String> = jsonStreamer.redactedKeys
 ) : JsonStream.Streamable, MetadataAware {
@@ -79,8 +78,8 @@ internal data class Metadata @JvmOverloads constructor(
         }
     }
 
-    fun toMap(): Map<String, Any> {
-        val hashMap = HashMap(store)
+    fun toMap(): ConcurrentHashMap<String, Any> {
+        val hashMap = ConcurrentHashMap(store)
 
         // deep copy each section
         store.entries.forEach {
@@ -106,7 +105,7 @@ internal data class Metadata @JvmOverloads constructor(
             return newMeta
         }
 
-        internal fun mergeMaps(data: List<Map<String, Any>>): MutableMap<String, Any> {
+        internal fun mergeMaps(data: List<Map<String, Any>>): ConcurrentHashMap<String, Any> {
             val keys = data.flatMap { it.keys }.toSet()
             val result = ConcurrentHashMap<String, Any>()
 
@@ -144,7 +143,7 @@ internal data class Metadata @JvmOverloads constructor(
     }
 
     fun copy() = this.copy(
-        store = toMap().toMutableMap(),
+        store = toMap(),
         jsonStreamer = jsonStreamer,
         redactedKeys = redactedKeys
     )
