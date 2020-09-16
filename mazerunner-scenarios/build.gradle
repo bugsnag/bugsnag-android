@@ -10,7 +10,6 @@ buildscript {
                 excludeModule("com.bugsnag", "bugsnag-android")
             }
         }
-        jcenter()
     }
     ext.kotlin_version = '1.3.21'
 
@@ -29,8 +28,16 @@ apply plugin: "io.gitlab.arturbosch.detekt"
 repositories {
     mavenLocal()
     google()
-    mavenCentral()
-    jcenter()
+    mavenCentral() {
+        content {
+            excludeModule("com.bugsnag", "bugsnag-android")
+        }
+    }
+    jcenter {
+        content {
+            excludeModule("com.bugsnag", "bugsnag-android")
+        }
+    }
 }
 
 android {
@@ -50,7 +57,7 @@ android {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:+"
+    implementation "com.bugsnag:bugsnag-android:9.9.9"
 }
 
 apply from: "../gradle/detekt.gradle"
