@@ -2,8 +2,14 @@ apply plugin: 'com.android.library'
 
 buildscript {
     repositories {
+        mavenLocal()
         google()
-        mavenCentral()
+        // ignore already published artefacts in jcenter/bintray in favour of mavenLocal artefact
+        mavenCentral() {
+            content {
+                excludeModule("com.bugsnag", "bugsnag-android")
+            }
+        }
         jcenter()
     }
     ext.kotlin_version = '1.3.21'
@@ -44,12 +50,7 @@ android {
 }
 
 dependencies {
-    try {
-        compileOnly project(":bugsnag-android")
-    } catch (Throwable exc) {
-        implementation "com.bugsnag:bugsnag-android:+"
-        project.logger.lifecycle("Ignoring unfound dependency as running from mazerunner")
-    }
+    implementation "com.bugsnag:bugsnag-android:+"
 }
 
 apply from: "../gradle/detekt.gradle"
