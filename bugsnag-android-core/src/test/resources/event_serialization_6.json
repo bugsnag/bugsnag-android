@@ -3,11 +3,11 @@
     "app": {
       "foo": 55
     },
-    "device": {
-      "bar": true
-    },
     "wham": {
       "some_key": "Avalue"
+    },
+    "device": {
+      "bar": true
     }
   },
   "severity": "warning",
