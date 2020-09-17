@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 class TestData {
     static ImmutableConfig generateConfig() {
@@ -27,5 +28,22 @@ class TestData {
                 NoopLogger.INSTANCE,
                 22
         );
+    }
+
+    static Error generateError() {
+        List<Stackframe> frames = Collections.singletonList(new Stackframe(
+                "foo",
+                "Bar.kt",
+                5,
+                true
+        ));
+
+        ErrorInternal impl = new ErrorInternal(
+                "BrowserException",
+                "whoops!",
+                new Stacktrace(frames, NoopLogger.INSTANCE),
+                ErrorType.REACTNATIVEJS
+        );
+        return new Error(impl, NoopLogger.INSTANCE);
     }
 }

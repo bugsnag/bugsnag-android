@@ -10,6 +10,15 @@ internal class Stacktrace : JsonStream.Streamable {
 
     companion object {
         private const val STACKTRACE_TRIM_LENGTH = 200
+
+        fun inProject(className: String, projectPackages: Collection<String>): Boolean? {
+            for (packageName in projectPackages) {
+                if (className.startsWith(packageName)) {
+                    return true
+                }
+            }
+            return null
+        }
     }
 
     val trace: List<Stackframe>
@@ -63,14 +72,5 @@ internal class Stacktrace : JsonStream.Streamable {
             logger.w("Failed to serialize stacktrace", lineEx)
             return null
         }
-    }
-
-    private fun inProject(className: String, projectPackages: Collection<String>): Boolean? {
-        for (packageName in projectPackages) {
-            if (className.startsWith(packageName)) {
-                return true
-            }
-        }
-        return null
     }
 }
