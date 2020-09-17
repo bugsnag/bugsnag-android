@@ -42,11 +42,14 @@ internal data class Metadata @JvmOverloads constructor(
         }
     }
 
-    private fun insertValue(map: MutableMap<String, Any>, key: String, value: Any) {
-        var obj = value
+    private fun insertValue(map: MutableMap<String, Any>, key: String, newValue: Any) {
+        var obj = newValue
 
-        if (obj is MutableMap<*, *> && map.isNotEmpty()) {
-            obj = mergeMaps(listOf(map as Map<String, Any>, value as Map<String, Any>))
+        // only merge if both the existing and new value are maps
+        val existingValue = map[key]
+        if (obj is MutableMap<*, *> && existingValue is MutableMap<*, *>) {
+            val maps = listOf(existingValue as Map<String, Any>, newValue as Map<String, Any>)
+            obj = mergeMaps(maps)
         }
         map[key] = obj
     }
