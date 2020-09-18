@@ -11,6 +11,14 @@ internal class Stacktrace : JsonStream.Streamable {
     companion object {
         private const val STACKTRACE_TRIM_LENGTH = 200
 
+        /**
+         * Calculates whether a stackframe is 'in project' or not by checking its class against
+         * [Configuration.getProjectPackages].
+         *
+         * For example if the projectPackages included 'com.example', then
+         * the `com.example.Foo` class would be considered in project, but `org.example.Bar` would
+         * not.
+         */
         fun inProject(className: String, projectPackages: Collection<String>): Boolean? {
             for (packageName in projectPackages) {
                 if (className.startsWith(packageName)) {

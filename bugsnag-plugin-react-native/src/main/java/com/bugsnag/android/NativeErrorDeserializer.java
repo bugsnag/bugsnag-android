@@ -7,6 +7,8 @@ import java.util.Map;
 
 /**
  * Deserializes an error from the 'nativeStack' property supplied by React Native
+ *
+ * This requires the original JS error, whose error message/class is used by the native error.
  */
 class NativeErrorDeserializer implements MapDeserializer<Error> {
 
@@ -20,6 +22,13 @@ class NativeErrorDeserializer implements MapDeserializer<Error> {
         this.logger = logger;
     }
 
+    /**
+     * Constructs a native error from the given payload. This assumes that 'nativeStack' contains
+     * a list of stackframes containing the methodName, class, file, and lineNumber.
+     *
+     * @param map the JSON payload passed from the JS layer
+     * @return a representation of a native error
+     */
     @Override
     public Error deserialize(Map<String, Object> map) {
         List<Map<String, Object>> nativeStack = MapUtils.getOrThrow(map, "nativeStack");

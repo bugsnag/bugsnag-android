@@ -45,6 +45,9 @@ internal class EventDeserializer(
         event.errors.clear()
         event.errors.addAll(errors.map(errorDeserializer::deserialize))
 
+        // if the JS payload has passed down a native stacktrace,
+        // construct a second error object from it and append it to the event
+        // so both stacktraces are visible to the user
         if (map.containsKey("nativeStack") && event.errors.isNotEmpty()) {
             runCatching {
                 val jsError = event.errors.first()
