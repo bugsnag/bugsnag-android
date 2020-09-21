@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,5 +35,9 @@ class InternalHooks {
 
     public List<Thread> getThreads(boolean unhandled) {
         return new ThreadState(null, unhandled, getConfig()).getThreads();
+    }
+
+    public Collection<String> getProjectPackages(ImmutableConfig config) {
+        return config.getProjectPackages();
     }
 }

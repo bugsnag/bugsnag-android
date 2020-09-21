@@ -6,9 +6,14 @@
 
 * Prevent ConcurrentModificationException thrown from Metadata class
   [#935](https://github.com/bugsnag/bugsnag-android/pull/935)
-
+  
 * Prevent incorrect merge of nested maps in metadata
   [#936](https://github.com/bugsnag/bugsnag-android/pull/936)
+
+#### React Native
+
+* Improve stack traces and grouping for React Native promise rejections
+  [#937](https://github.com/bugsnag/bugsnag-android/pull/937)
 
 ## 5.1.0 (2020-09-08)
 
