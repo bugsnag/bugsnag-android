@@ -3,7 +3,8 @@ package com.bugsnag.android
 import java.util.Locale
 
 internal class EventDeserializer(
-    private val client: Client
+    private val client: Client,
+    private val projectPackages: Collection<String>
 ) : MapDeserializer<Event> {
 
     private val appDeserializer = AppDeserializer()
@@ -43,6 +44,22 @@ internal class EventDeserializer(
         val errors = map["errors"] as List<Map<String, Any?>>
         event.errors.clear()
         event.errors.addAll(errors.map(errorDeserializer::deserialize))
+
+        // if the JS payload has passed down a native stacktrace,
+        // construct a second error object from it and append it to the event
+        // so both stacktraces are visible to the user
+        if (map.containsKey("nativeStack") && event.errors.isNotEmpty()) {
+            runCatching {
+                val jsError = event.errors.first()
+                val nativeErrorDeserializer = NativeErrorDeserializer(
+                    jsError,
+                    projectPackages,
+                    client.logger
+                )
+                val nativeError = nativeErrorDeserializer.deserialize(map)
+                event.errors.add(nativeError)
+            }
+        }
 
         // threads
         val threads = map["threads"] as List<Map<String, Any?>>

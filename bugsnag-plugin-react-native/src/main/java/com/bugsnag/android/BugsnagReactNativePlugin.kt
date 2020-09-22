@@ -134,7 +134,8 @@ class BugsnagReactNativePlugin : Plugin {
     @Suppress("unused")
     fun dispatch(payload: MutableMap<String, Any?>?) {
         requireNotNull(payload)
-        val event = EventDeserializer(client).deserialize(payload)
+        val projectPackages = internalHooks.getProjectPackages(client.config)
+        val event = EventDeserializer(client, projectPackages).deserialize(payload)
         client.notifyInternal(event, null)
     }
 

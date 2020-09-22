@@ -71,7 +71,7 @@ class EventDeserializerTest {
 
     @Test
     fun deserialize() {
-        val event = EventDeserializer(client).deserialize(map)
+        val event = EventDeserializer(client, emptyList()).deserialize(map)
         assertNotNull(event)
         assertEquals(Severity.INFO, event.severity)
         assertFalse(event.isUnhandled)

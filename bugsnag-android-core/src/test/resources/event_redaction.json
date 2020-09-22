@@ -3,10 +3,10 @@
     "app": {
       "password": "[REDACTED]"
     },
-    "device": {
+    "baz": {
       "password": "[REDACTED]"
     },
-    "baz": {
+    "device": {
       "password": "[REDACTED]"
     }
   },
