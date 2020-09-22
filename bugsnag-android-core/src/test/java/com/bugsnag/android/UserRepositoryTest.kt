@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.content.SharedPreferences
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -69,5 +70,22 @@ class UserRepositoryTest {
         verify(editor, times(1)).remove("user.email")
         verify(editor, times(1)).remove("user.name")
         verify(editor, times(1)).apply()
+    }
+
+    @Test
+    fun getDeviceIdFirstTime() {
+        `when`(prefs.getString(contains("install.iud"), any())).thenReturn(null)
+        val repository = UserRepository(prefs, false)
+        val deviceId = repository.getDeviceId()
+        assertNotNull(deviceId)
+        verify(editor, times(1)).putString(matches("install.iud"), any())
+    }
+
+    @Test
+    fun getDeviceIdExistingValue() {
+        `when`(prefs.getString(contains("install.iud"), any())).thenReturn("4a09cbe2")
+        val repository = UserRepository(prefs, false)
+        val deviceId = repository.getDeviceId()
+        assertEquals("4a09cbe2", deviceId)
     }
 }

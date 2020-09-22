@@ -6,6 +6,7 @@ import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -326,5 +327,13 @@ public class ClientTest {
         assertNotNull(user.getId()); // use an auto-generated-id
         assertNull(user.getName());
         assertNull(user.getEmail());
+    }
+
+    @Test
+    public void testDeviceIdNotUserId() {
+        config.setUser("123", "test@example.com", "Tess Derby");
+        client = new Client(context, config);
+        assertEquals("123", client.getUser().getId());
+        assertNotEquals("123", client.getDeviceDataCollector().generateDevice().getId());
     }
 }

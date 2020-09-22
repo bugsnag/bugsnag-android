@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Ensure device ID is set separately to the user ID
+  [#939](https://github.com/bugsnag/bugsnag-android/pull/939)
+
 ## 5.2.0 (2020-09-22)
 
 ### Bug fixes
