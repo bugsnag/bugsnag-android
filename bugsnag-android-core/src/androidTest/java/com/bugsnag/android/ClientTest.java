@@ -336,4 +336,12 @@ public class ClientTest {
         assertEquals("123", client.getUser().getId());
         assertNotEquals("123", client.getDeviceDataCollector().generateDevice().getId());
     }
+
+    @Test
+    public void testDeviceIdEqualsUserId() {
+        client = new Client(context, config);
+        String userId = client.getUser().getId();
+        String deviceId = client.getDeviceDataCollector().generateDevice().getId();
+        assertEquals(userId, deviceId);
+    }
 }

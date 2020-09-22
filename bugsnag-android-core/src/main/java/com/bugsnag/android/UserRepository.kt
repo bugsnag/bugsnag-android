@@ -41,6 +41,10 @@ internal class UserRepository(private val prefs: SharedPreferences, private val 
         editor.apply()
     }
 
+    /**
+     * Retrieves the device ID. This is a UUID which is generated per installation
+     * and persisted in SharedPreferences.
+     */
     fun getDeviceId(): String {
         var installId = prefs.getString(INSTALL_ID_KEY, null)
         if (installId == null) {
