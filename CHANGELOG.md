@@ -4,6 +4,9 @@
 
 * Ensure device ID is set separately to the user ID
   [#939](https://github.com/bugsnag/bugsnag-android/pull/939)
+  
+* Improve stack traces and grouping for promise rejections on React Native < 0.63.2
+  [#940](https://github.com/bugsnag/bugsnag-android/pull/940)
 
 ## 5.2.0 (2020-09-22)
 
