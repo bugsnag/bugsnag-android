@@ -51,16 +51,21 @@ class NativeErrorDeserializer implements MapDeserializer<Error> {
     private Stackframe deserializeStackframe(Map<String, Object> map,
                                              Collection<String> projectPackages) {
         String methodName = MapUtils.getOrNull(map, "methodName");
-        String clz = MapUtils.getOrNull(map, "class");
-
         if (methodName == null) {
             methodName = "";
         }
+
+        String clz = MapUtils.getOrNull(map, "class");
+        String method = String.format("%s.%s", clz, methodName);
+
+        // RN <0.63.2 doesn't add class, gracefully fallback by only reporting
+        // method name. see https://github.com/facebook/react-native/pull/25014
         if (clz == null) {
             clz = "";
+            method = methodName;
         }
         return new Stackframe(
-                String.format("%s.%s", clz, methodName),
+                method,
                 MapUtils.<String>getOrNull(map, "file"),
                 MapUtils.<Integer>getOrNull(map, "lineNumber"),
                 Stacktrace.Companion.inProject(clz, projectPackages)
