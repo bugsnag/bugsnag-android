@@ -156,6 +156,21 @@ steps:
     soft_fail:
       - exit_status: "*"
 
+  - label: ':android: Android 11 end-to-end tests'
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+    env:
+      DEVICE_TYPE: "ANDROID_11_0"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
     plugins:
