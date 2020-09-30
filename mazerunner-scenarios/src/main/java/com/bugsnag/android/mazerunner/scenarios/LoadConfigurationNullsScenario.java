@@ -17,10 +17,14 @@ import androidx.annotation.NonNull;
 public class LoadConfigurationNullsScenario extends Scenario {
 
     private Context context;
+    private String notifyEndpoint;
+    private String sessionEndpoint;
 
     public LoadConfigurationNullsScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         this.context = context;
+        this.notifyEndpoint = config.getEndpoints().getNotify();
+        this.sessionEndpoint = config.getEndpoints().getSessions();
     }
 
     @Override
@@ -30,7 +34,7 @@ public class LoadConfigurationNullsScenario extends Scenario {
         // Setup
         testConfig.setAutoDetectErrors(true);
         testConfig.setAutoTrackSessions(false);
-        testConfig.setEndpoints(new EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339"));
+        testConfig.setEndpoints(new EndpointConfiguration(this.notifyEndpoint, this.sessionEndpoint));
 
         // Nullable options
         testConfig.setAppType(null);

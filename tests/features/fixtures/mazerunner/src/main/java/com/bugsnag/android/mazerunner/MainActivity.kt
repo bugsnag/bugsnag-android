@@ -125,6 +125,8 @@ class MainActivity : Activity() {
 
     private fun prepareConfig(): Configuration {
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+        val notifyEndpointField = findViewById<EditText>(R.id.notifyEndpoint)
+        val sessionEndpointField = findViewById<EditText>(R.id.sessionEndpoint)
         val config: Configuration
         if (apiKeyField.text.isNotEmpty()) {
             val manualApiKey = apiKeyField.text.toString()
@@ -133,7 +135,8 @@ class MainActivity : Activity() {
             setStoredApiKey(manualApiKey)
         } else {
             config = Configuration("a35a2a72bd230ac0aa0f52715bbdc6aa")
-            config.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
+            config.endpoints = EndpointConfiguration(notifyEndpointField.text.toString(),
+                                                     sessionEndpointField.text.toString())
         }
         config.enabledErrorTypes.ndkCrashes = true
         config.enabledErrorTypes.anrs = true
