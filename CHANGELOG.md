@@ -1,6 +1,11 @@
 # Changelog
 
-## TBD
+## 5.2.1 (2020-10-01)
+
+### Bug fixes
+
+* Support changing Event's api key in OnErrorCallback
+  [#928](https://github.com/bugsnag/bugsnag-android/pull/928)
 
 * Ensure device ID is set separately to the user ID
   [#939](https://github.com/bugsnag/bugsnag-android/pull/939)
@@ -24,11 +29,6 @@
   [#937](https://github.com/bugsnag/bugsnag-android/pull/937)
 
 ## 5.1.0 (2020-09-08)
-
-### Bug fixes
-
-* Support changing Event's api key in OnErrorCallback
-  [#928](https://github.com/bugsnag/bugsnag-android/pull/928)
 
 ### Enhancements
 
