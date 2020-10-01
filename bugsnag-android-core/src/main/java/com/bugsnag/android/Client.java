@@ -168,9 +168,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             userState.setUser(user.getId(), user.getEmail(), user.getName());
         }
 
-        String id = userState.getUser().getId();
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
+        String id = userRepository.getDeviceId();
         deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
                 Environment.getDataDirectory(), logger);
 

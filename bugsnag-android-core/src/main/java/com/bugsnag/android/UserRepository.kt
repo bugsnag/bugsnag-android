@@ -13,13 +13,7 @@ internal class UserRepository(private val prefs: SharedPreferences, private val 
     }
 
     fun load(): User {
-        var installId = prefs.getString(INSTALL_ID_KEY, null)
-
-        if (installId == null) {
-            installId = UUID.randomUUID().toString()
-            prefs.edit().putString(INSTALL_ID_KEY, installId).apply()
-        }
-
+        val installId = getDeviceId()
         return when {
             persist -> // Check to see if a user was stored in the SharedPreferences
                 User(
@@ -45,5 +39,18 @@ internal class UserRepository(private val prefs: SharedPreferences, private val 
                 .remove(USER_EMAIL_KEY)
         }
         editor.apply()
+    }
+
+    /**
+     * Retrieves the device ID. This is a UUID which is generated per installation
+     * and persisted in SharedPreferences.
+     */
+    fun getDeviceId(): String {
+        var installId = prefs.getString(INSTALL_ID_KEY, null)
+        if (installId == null) {
+            installId = UUID.randomUUID().toString()
+            prefs.edit().putString(INSTALL_ID_KEY, installId).apply()
+        }
+        return installId
     }
 }

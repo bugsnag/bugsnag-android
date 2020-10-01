@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.2.1 (2020-10-01)
+
+### Bug fixes
+
+* Support changing Event's api key in OnErrorCallback
+  [#928](https://github.com/bugsnag/bugsnag-android/pull/928)
+
+* Ensure device ID is set separately to the user ID
+  [#939](https://github.com/bugsnag/bugsnag-android/pull/939)
+  
+* Improve stack traces and grouping for promise rejections on React Native < 0.63.2
+  [#940](https://github.com/bugsnag/bugsnag-android/pull/940)
+
 ## 5.2.0 (2020-09-22)
 
 ### Bug fixes

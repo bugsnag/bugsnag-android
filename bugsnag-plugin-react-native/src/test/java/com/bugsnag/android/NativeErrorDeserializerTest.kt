@@ -44,6 +44,11 @@ class NativeErrorDeserializerTest {
                 "lineNumber" to 57,
                 "file" to "Foo.kt",
                 "class" to "com.example.Foo"
+            ),
+            mapOf(
+                "methodName" to "invokeWham",
+                "lineNumber" to 159,
+                "file" to "Wham.kt"
             )
         )
         map = mapOf(
@@ -60,7 +65,7 @@ class NativeErrorDeserializerTest {
         assertEquals("BrowserException", error.errorClass)
         assertEquals("whoops!", error.errorMessage)
         assertEquals(ErrorType.ANDROID, error.type)
-        assertEquals(2, error.stacktrace.count())
+        assertEquals(3, error.stacktrace.count())
 
         val firstFrame = error.stacktrace[0]
         assertEquals("com.reactnativetest.BenCrash.asyncReject", firstFrame.method)
@@ -72,6 +77,12 @@ class NativeErrorDeserializerTest {
         assertEquals("com.example.Foo.invokeFoo", secondFrame.method)
         assertEquals("Foo.kt", secondFrame.file)
         assertEquals(57, secondFrame.lineNumber)
+        assertNull(secondFrame.inProject)
+
+        val thirdFrame = error.stacktrace[2]
+        assertEquals("invokeWham", thirdFrame.method)
+        assertEquals("Wham.kt", thirdFrame.file)
+        assertEquals(159, thirdFrame.lineNumber)
         assertNull(secondFrame.inProject)
     }
 }
