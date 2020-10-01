@@ -122,6 +122,7 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
+        command: ["--tags", "~@ignore", "--fail-fast", "--retry", "1"]
     env:
       DEVICE_TYPE: "ANDROID_8_1"
       APP_LOCATION: "/app/build/fixture.apk"
