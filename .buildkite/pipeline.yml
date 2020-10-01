@@ -122,12 +122,13 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-        command: ["--tags", "~@ignore", "--retry", "1"]
     env:
       DEVICE_TYPE: "ANDROID_8_1"
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 10
     concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Android 9 end-to-end tests'
     timeout_in_minutes: 60
