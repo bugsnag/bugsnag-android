@@ -127,6 +127,8 @@ steps:
       APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 10
     concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Android 9 end-to-end tests'
     timeout_in_minutes: 60

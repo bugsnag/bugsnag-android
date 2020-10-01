@@ -24,6 +24,26 @@
     android:text="Execute" />
 
   <EditText
+    android:id="@+id/notifyEndpoint"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:ems="10"
+    android:hint="Notify endpoint"
+    android:inputType="text"
+    android:text="http://bs-local.com:9339" />
+
+  <EditText
+    android:id="@+id/sessionEndpoint"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:ems="10"
+    android:hint="Session endpoint"
+    android:inputType="text"
+    android:text="http://bs-local.com:9339" />
+
+  <EditText
     android:id="@+id/scenarioText"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

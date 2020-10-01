@@ -28,7 +28,7 @@ internal class LoadConfigurationKotlinScenario(
         testConfig.autoDetectErrors = true
         testConfig.autoTrackSessions = false
         testConfig.enabledReleaseStages = setOf("production", "development", "kotlin")
-        testConfig.endpoints = EndpointConfiguration("http://bs-local.com:9339", "http://bs-local.com:9339")
+        testConfig.endpoints = EndpointConfiguration(this.config.endpoints.notify, this.config.endpoints.sessions)
         testConfig.projectPackages = setOf("com.company.package1", "com.company.package2")
         testConfig.discardClasses = setOf("java.net.UnknownHostException", "com.example.Custom")
         testConfig.launchCrashThresholdMs = 10000
