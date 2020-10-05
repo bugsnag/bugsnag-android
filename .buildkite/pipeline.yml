@@ -311,6 +311,18 @@ steps:
     concurrency: 10
     concurrency_group: 'browserstack-app'
 
+  - label: ':android: NDK 21 SDK 11.0 Instrumentation tests'
+    timeout_in_minutes: 30
+    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-ci
+    env:
+      INSTRUMENTATION_DEVICES: '["Google Pixel 4-11.0"]'
+      NDK_VERSION: r21d
+    concurrency: 10
+    concurrency_group: 'browserstack-app'
+
   - label: ':android: NDK 21 SDK 10.0 Instrumentation tests'
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
