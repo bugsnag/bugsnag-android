@@ -146,6 +146,6 @@ internal data class Metadata @JvmOverloads constructor(
 
     fun copy(): Metadata {
         return this.copy(store = toMap())
-            .also { it.redactedKeys = redactedKeys }
+            .also { it.redactedKeys = redactedKeys.toSet() }
     }
 }
