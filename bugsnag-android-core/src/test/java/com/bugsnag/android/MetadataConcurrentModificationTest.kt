@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertSame
@@ -45,5 +46,6 @@ internal class MetadataConcurrentModificationTest {
         orig.redactedKeys = mutableSetOf("alpha", "omega")
         val copy = orig.copy()
         assertNotSame(orig.redactedKeys, copy.redactedKeys)
+        assertEquals(mutableSetOf("alpha", "omega"), copy.redactedKeys)
     }
 }
