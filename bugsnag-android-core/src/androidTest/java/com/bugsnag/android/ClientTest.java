@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -25,13 +24,15 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unchecked")
 @SmallTest
@@ -343,5 +344,33 @@ public class ClientTest {
         String userId = client.getUser().getId();
         String deviceId = client.getDeviceDataCollector().generateDevice().getId();
         assertEquals(userId, deviceId);
+    }
+
+    /**
+     * Verifies that calling notify() concurrently delivers event payloads and
+     * does not crash the app.
+     */
+    @Test
+    public void testClientMultiNotify() throws InterruptedException {
+        // concurrently call notify()
+        client =  BugsnagTestUtils.generateClient();
+        Executor executor = Executors.newSingleThreadExecutor();
+        int count = 200;
+        final CountDownLatch latch = new CountDownLatch(count);
+
+        for (int k = 0; k < count / 2; k++) {
+            client.notify(new RuntimeException("Whoops"));
+            latch.countDown();
+
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    client.notify(new RuntimeException("Oh dear"));
+                    latch.countDown();
+                }
+            });
+        }
+        // wait for all events to be delivered
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 }

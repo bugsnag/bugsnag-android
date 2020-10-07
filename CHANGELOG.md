@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Prevent ConcurrentModificationException when setting redactedKeys
+  [#947](https://github.com/bugsnag/bugsnag-android/pull/947)
+
 ## 5.2.1 (2020-10-01)
 
 ### Bug fixes

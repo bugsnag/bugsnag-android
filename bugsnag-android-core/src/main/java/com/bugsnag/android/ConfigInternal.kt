@@ -36,7 +36,7 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
 
     var redactedKeys: Set<String> = metadataState.metadata.redactedKeys
         set(value) {
-            metadataState.metadata.setRedactedKeys(value)
+            metadataState.metadata.redactedKeys = value
             field = value
         }
 
