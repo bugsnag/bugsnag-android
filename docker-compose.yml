@@ -57,7 +57,7 @@ services:
       BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
       DEVICE_TYPE:
       APP_LOCATION:
-    command: --tags not @ignore --fail-fast
+    command: ["--tags", "not @ignore", "--fail-fast"]
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
