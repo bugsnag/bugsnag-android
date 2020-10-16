@@ -26,7 +26,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.0'
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.7.5'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:5.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -106,7 +106,8 @@ dependencies {
 apply plugin: 'com.bugsnag.android.gradle'
 
 bugsnag {
-    ndk true
-    autoUpload false
-    autoReportBuilds false
+    uploadNdkMappings = true
+    uploadJvmMappings = false
+    reportBuilds = false
+    failOnUploadError = false
 }

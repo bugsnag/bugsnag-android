@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
-  <Blacklist></Blacklist>
-  <Whitelist>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
     <ID>EmptyFunctionBlock:SessionLifecycleCallback.kt$SessionLifecycleCallback${}</ID>
     <ID>EmptyKtFile:Configuration.kt$.Configuration.kt</ID>
     <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ var buildUuid: String?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
@@ -35,10 +35,9 @@
     <ID>TooGenericExceptionCaught:PluginClient.kt$PluginClient$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
     <ID>TooGenericExceptionThrown:BreadcrumbStateTest.kt$BreadcrumbStateTest$throw Exception("Oh no")</ID>
-    <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal$ConfigInternal</ID>
-    <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector$DeviceDataCollector</ID>
-    <ID>TooManyFunctions:EventInternal.kt$EventInternal$EventInternal</ID>
-    <ID>TooManyFunctions:Metadata.kt$Metadata$Metadata</ID>
+    <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAware</ID>
+    <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
+    <ID>TooManyFunctions:EventInternal.kt$EventInternal : StreamableMetadataAwareUserAware</ID>
     <ID>VariableNaming:EventInternal.kt$EventInternal$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
-  </Whitelist>
+  </CurrentIssues>
 </SmellBaseline>
