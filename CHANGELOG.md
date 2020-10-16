@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Avoid crash when initializing bugsnag in attachBaseContext
+  [#953](https://github.com/bugsnag/bugsnag-android/pull/953)
+
 * Prevent ConcurrentModificationException when setting redactedKeys
   [#947](https://github.com/bugsnag/bugsnag-android/pull/947)
 

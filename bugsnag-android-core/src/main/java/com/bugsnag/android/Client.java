@@ -114,7 +114,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        appContext = androidContext.getApplicationContext();
+        Context ctx = androidContext.getApplicationContext();
+        appContext = ctx != null ? ctx : androidContext;
 
         connectivity = new ConnectivityCompat(appContext, new Function2<Boolean, String, Unit>() {
             @Override
