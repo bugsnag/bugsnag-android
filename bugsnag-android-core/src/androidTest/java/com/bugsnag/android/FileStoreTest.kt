@@ -37,10 +37,10 @@ class FileStoreTest {
         dir.mkdir()
 
         val store = CustomFileStore(appContext, "", 1, null, delegate)
-        store.enqueueContentForDelivery("foo")
+        store.enqueueContentForDelivery("foo", "foo.json")
 
         assertEquals("NDK Crash report copy", delegate.context)
-        assertEquals(File("/foo.json"), delegate.errorFile)
+        assertEquals(File("foo.json"), delegate.errorFile)
         assertTrue(delegate.exception is FileNotFoundException)
     }
 }

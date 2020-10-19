@@ -152,7 +152,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
           (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
       jmethodID jdeliver_method =
           (*env)->GetStaticMethodID(env, interface_class, "deliverReport",
-                                    "([B[B)V");
+                                    "([B[BLjava/lang/String;)V");
       size_t payload_length = bsg_strlen(payload);
       jbyteArray jpayload = (*env)->NewByteArray(env, payload_length);
       (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length, (jbyte *)payload);
@@ -161,8 +161,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       jbyteArray jstage = (*env)->NewByteArray(env, stage_length);
       (*env)->SetByteArrayRegion(env, jstage, 0, stage_length, (jbyte *)event->app.release_stage);
 
+      jstring jevent_path = (*env)->NewStringUTF(env, event_path);
       (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
-                                   jstage, jpayload);
+                                   jstage, jpayload, jevent_path);
+      (*env)->DeleteLocalRef(env, jevent_path);
       (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload, 0); // <-- frees payload
       (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
       (*env)->DeleteLocalRef(env, jpayload);
