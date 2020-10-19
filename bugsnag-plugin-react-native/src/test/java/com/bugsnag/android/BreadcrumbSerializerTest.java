@@ -36,7 +36,7 @@ public class BreadcrumbSerializerTest {
     public void serialize() {
         Map<String, Object> map = new HashMap<>();
         new BreadcrumbSerializer().serialize(map, crumb);
-        assertEquals("1970-01-01T00:00:00Z", map.get("timestamp"));
+        assertEquals("1970-01-01T00:00:00.000Z", map.get("timestamp"));
         assertEquals("Whoops", map.get("message"));
         assertEquals("state", map.get("type"));
         assertEquals(metadata, map.get("metadata"));

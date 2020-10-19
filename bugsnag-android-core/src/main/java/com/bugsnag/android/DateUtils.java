@@ -16,7 +16,7 @@ class DateUtils {
         @Override
         protected DateFormat initialValue() {
             TimeZone tz = TimeZone.getTimeZone("UTC");
-            DateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            DateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
             iso8601.setTimeZone(tz);
             return iso8601;
         }
