@@ -3,7 +3,6 @@
 package com.bugsnag.android
 
 import java.io.IOException
-import java.util.HashSet
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -13,10 +12,16 @@ import java.util.concurrent.ConcurrentHashMap
  * Diagnostic information is presented on your Bugsnag dashboard in tabs.
  */
 internal data class Metadata @JvmOverloads constructor(
-    internal val store: ConcurrentHashMap<String, Any> = ConcurrentHashMap(),
-    val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer(),
-    val redactedKeys: Set<String> = jsonStreamer.redactedKeys
+    internal val store: ConcurrentHashMap<String, Any> = ConcurrentHashMap()
 ) : JsonStream.Streamable, MetadataAware {
+
+    val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer()
+
+    var redactedKeys: Set<String>
+        get() = jsonStreamer.redactedKeys
+        set(value) {
+            jsonStreamer.redactedKeys = value
+        }
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
@@ -93,18 +98,12 @@ internal data class Metadata @JvmOverloads constructor(
         return hashMap
     }
 
-    fun setRedactedKeys(redactKeys: Collection<String>) {
-        val data = HashSet(redactKeys)
-        jsonStreamer.redactedKeys.clear()
-        jsonStreamer.redactedKeys.addAll(data)
-    }
-
     companion object {
         fun merge(vararg data: Metadata): Metadata {
             val stores = data.map { it.toMap() }
             val redactKeys = data.flatMap { it.jsonStreamer.redactedKeys }
             val newMeta = Metadata(mergeMaps(stores))
-            newMeta.setRedactedKeys(redactKeys.toSet())
+            newMeta.redactedKeys = redactKeys.toSet()
             return newMeta
         }
 
@@ -145,9 +144,8 @@ internal data class Metadata @JvmOverloads constructor(
         }
     }
 
-    fun copy() = this.copy(
-        store = toMap(),
-        jsonStreamer = jsonStreamer,
-        redactedKeys = redactedKeys
-    )
+    fun copy(): Metadata {
+        return this.copy(store = toMap())
+            .also { it.redactedKeys = redactedKeys.toSet() }
+    }
 }
