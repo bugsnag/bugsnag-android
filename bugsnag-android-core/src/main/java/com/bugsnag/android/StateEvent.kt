@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 sealed class StateEvent {
     class Install(
+        val apiKey: String,
         val autoDetectNdkCrashes: Boolean,
         val appVersion: String?,
         val buildUuid: String?,

@@ -206,6 +206,7 @@ typedef struct {
     int unhandled_events;
     char grouping_hash[64];
     bool unhandled;
+    char api_key[64]; // TODO add migration here!!!
 } bugsnag_event;
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,

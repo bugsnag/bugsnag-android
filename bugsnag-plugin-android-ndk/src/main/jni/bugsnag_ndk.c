@@ -95,8 +95,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableCrashRep
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
-    JNIEnv *env, jobject _this, jstring _event_path, jboolean auto_detect_ndk_crashes,
-    jint _api_level, jboolean is32bit) {
+    JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
+    jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,
@@ -106,6 +106,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->report_header.version = BUGSNAG_EVENT_VERSION;
   const char *event_path = (*env)->GetStringUTFChars(env, _event_path, 0);
   sprintf(bugsnag_env->next_event_path, "%s", event_path);
+  (*env)->ReleaseStringUTFChars(env, _event_path, event_path);
 
   if ((bool)auto_detect_ndk_crashes) {
     bsg_handler_install_signal(bugsnag_env);
@@ -113,20 +114,24 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   // populate metadata from Java layer
-  bsg_populate_event(env, &bugsnag_env->next_event);
+  bugsnag_event event = bugsnag_env->next_event;
+  bsg_populate_event(env, &event);
   time(&bugsnag_env->start_time);
-  if (bugsnag_env->next_event.app.in_foreground) {
+  if (event.app.in_foreground) {
     bugsnag_env->foreground_start_time = bugsnag_env->start_time;
   }
 
   // If set, save os build info to report info header
-  if (strlen(bugsnag_env->next_event.device.os_build) > 0) {
+  if (strlen(event.device.os_build) > 0) {
     bsg_strncpy_safe(bugsnag_env->report_header.os_build,
-                     bugsnag_env->next_event.device.os_build,
+                     event.device.os_build,
                      sizeof(bugsnag_env->report_header.os_build));
   }
 
-  (*env)->ReleaseStringUTFChars(env, _event_path, event_path);
+  const char *api_key = (*env)->GetStringUTFChars(env, _api_key, 0);
+  bugsnag_event_set_api_key(&event, (char *) api_key);
+  (*env)->ReleaseStringUTFChars(env, _api_key, api_key);
+
   bsg_global_env = bugsnag_env;
   BUGSNAG_LOG("Initialization complete!");
 }
