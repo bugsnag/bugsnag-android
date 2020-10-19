@@ -33,7 +33,11 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2, bugsnag_event *event);
 #endif
 
 bool bsg_serialize_event_to_file(bsg_environment *env) {
-  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  // the filename uses the following format:
+  // <UUID>_<api_key>.crash
+  char path[384];
+  sprintf(path, "%s_%s.crash", env->next_event_path, env->next_event.api_key);
+  int fd = open(path, O_WRONLY | O_CREAT, 0644);
   if (fd == -1) {
     return false;
   }

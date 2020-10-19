@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <utils/migrate.h>
 
-#define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
+#define OLD_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
+
+#define SERIALIZE_NEW_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo"
+#define DESERIALIZE_NEW_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo_5d1e5fbd39a74caa1200142706a90b20.crash"
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type);
 
@@ -46,6 +49,7 @@ bool bsg_serialize_report_v2_to_file(bsg_environment *env, bugsnag_report_v2 *re
 
 void generate_basic_report(bugsnag_event *event) {
   strcpy(event->grouping_hash, "foo-hash");
+  strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->context, "SomeActivity");
   strcpy(event->error.errorClass, "SIGBUS");
   strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
@@ -147,7 +151,7 @@ TEST test_report_to_file(void) {
   bugsnag_event *report = bsg_generate_event();
   memcpy(&env->next_event, report, sizeof(bugsnag_event));
   strcpy(env->report_header.os_build, "macOS Sierra");
-  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  strcpy(env->next_event_path, SERIALIZE_NEW_TEST_FILE);
   ASSERT(bsg_serialize_event_to_file(env));
   free(report);
   free(env);
@@ -161,10 +165,10 @@ TEST test_file_to_report(void) {
   strcpy(env->report_header.os_build, "macOS Sierra");
   bugsnag_event *generated_report = bsg_generate_event();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_event));
-  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  strcpy(env->next_event_path, SERIALIZE_NEW_TEST_FILE);
   bsg_serialize_event_to_file(env);
 
-  bugsnag_event *report = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  bugsnag_event *report = bsg_deserialize_event_from_file(DESERIALIZE_NEW_TEST_FILE);
   ASSERT(report != NULL);
   ASSERT(strcmp("SIGBUS", report->error.errorClass) == 0);
   ASSERT(strcmp("POSIX is serious about oncoming traffic", report->error.errorMessage) == 0);
@@ -181,10 +185,10 @@ TEST test_report_v1_migration(void) {
   strcpy(env->report_header.os_build, "macOS Sierra");
   bugsnag_report_v1 *generated_report = bsg_generate_report_v1();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v1));
-  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  strcpy(env->next_event_path, OLD_TEST_FILE);
   bsg_serialize_report_v1_to_file(env, generated_report);
 
-  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  bugsnag_event *event = bsg_deserialize_event_from_file(OLD_TEST_FILE);
   ASSERT(event != NULL);
   ASSERT(strcmp("f1ab", event->session_id) == 0);
   ASSERT(strcmp("2019-03-19T12:58:19+00:00", event->session_start) == 0);
@@ -205,10 +209,10 @@ TEST test_report_v2_migration(void) {
 
   bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v2));
-  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  strcpy(env->next_event_path, OLD_TEST_FILE);
   bsg_serialize_report_v2_to_file(env, generated_report);
 
-  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  bugsnag_event *event = bsg_deserialize_event_from_file(OLD_TEST_FILE);
   ASSERT(event != NULL);
 
   // bsg_library -> bsg_notifier
