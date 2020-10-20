@@ -7,6 +7,9 @@
 * Increase breadcrumb time precision to milliseconds
   [#954](https://github.com/bugsnag/bugsnag-android/pull/954)
 
+* Support changing NDK Event's api key in OnErrorCallback
+  [#964](https://github.com/bugsnag/bugsnag-android/pull/964)
+
 ## 5.2.2 (2020-10-19)
 
 ### Bug fixes
