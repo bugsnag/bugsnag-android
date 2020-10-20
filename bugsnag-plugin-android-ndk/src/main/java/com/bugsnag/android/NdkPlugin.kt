@@ -6,7 +6,7 @@ internal class NdkPlugin : Plugin {
 
     private companion object {
         private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
-                "not report NDK errors. See https://docs.bugsnag.com/platforms/android/ndk-link-errors"
+            "not report NDK errors. See https://docs.bugsnag.com/platforms/android/ndk-link-errors"
     }
 
     private val loader = LibraryLoader()

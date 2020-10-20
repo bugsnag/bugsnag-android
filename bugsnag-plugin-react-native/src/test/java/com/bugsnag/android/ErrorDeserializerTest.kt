@@ -28,7 +28,7 @@ class ErrorDeserializerTest {
 
     @Test
     fun deserialize() {
-        val error = ErrorDeserializer(StackframeDeserializer(), object: Logger {}).deserialize(map)
+        val error = ErrorDeserializer(StackframeDeserializer(), object : Logger {}).deserialize(map)
         assertEquals("BrowserException", error.errorClass)
         assertEquals("whoops!", error.errorMessage)
         assertEquals(ErrorType.REACTNATIVEJS, error.type)
