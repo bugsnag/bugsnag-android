@@ -114,22 +114,21 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   // populate metadata from Java layer
-  bugsnag_event event = bugsnag_env->next_event;
-  bsg_populate_event(env, &event);
+  bsg_populate_event(env, &bugsnag_env->next_event);
   time(&bugsnag_env->start_time);
-  if (event.app.in_foreground) {
+  if (bugsnag_env->next_event.app.in_foreground) {
     bugsnag_env->foreground_start_time = bugsnag_env->start_time;
   }
 
   // If set, save os build info to report info header
-  if (strlen(event.device.os_build) > 0) {
+  if (strlen(bugsnag_env->next_event.device.os_build) > 0) {
     bsg_strncpy_safe(bugsnag_env->report_header.os_build,
-                     event.device.os_build,
+                     bugsnag_env->next_event.device.os_build,
                      sizeof(bugsnag_env->report_header.os_build));
   }
 
   const char *api_key = (*env)->GetStringUTFChars(env, _api_key, 0);
-  bugsnag_event_set_api_key(&event, (char *) api_key);
+  bsg_strncpy_safe(bugsnag_env->next_event.api_key, (char *) api_key, sizeof(bugsnag_env->next_event.api_key));
   (*env)->ReleaseStringUTFChars(env, _api_key, api_key);
 
   bsg_global_env = bugsnag_env;

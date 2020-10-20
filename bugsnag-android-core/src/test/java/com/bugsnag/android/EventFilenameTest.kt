@@ -158,4 +158,17 @@ class EventFilenameTest {
                 "_683c6b92-b325-4987-80ad-77086509ca1e.json")
         assertEquals("0000111122223333aaaabbbbcccc9999", eventStore.getApiKeyFromFilename(file))
     }
+
+    @Test
+    fun apiKeyFromLegacyNdkFilename() {
+        `when`(file.name).thenReturn("1603191800142_7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
+        assertNull(eventStore.getApiKeyFromFilename(file))
+    }
+
+    @Test
+    fun apiKeyFromNdkFilename() {
+        `when`(file.name).thenReturn("1603191800142_5d1ec8bd39a74caa1267142706a7fb20_" +
+                "7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
+        assertEquals("5d1ec8bd39a74caa1267142706a7fb20", eventStore.getApiKeyFromFilename(file))
+    }
 }

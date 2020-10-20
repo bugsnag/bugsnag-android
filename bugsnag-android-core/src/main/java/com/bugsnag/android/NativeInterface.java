@@ -327,10 +327,10 @@ public class NativeInterface {
     }
 
     private static String getApiKeyFromEventPath(String eventPath, ImmutableConfig config) {
-        int start = eventPath.indexOf("_");
+        int start = eventPath.indexOf("_") + 1;
         int end = eventPath.lastIndexOf(".");
 
-        if (end > start && start != -1) {
+        if (end > start && start != 0) {
             return eventPath.substring(start, end);
         }
         return config.getApiKey();
