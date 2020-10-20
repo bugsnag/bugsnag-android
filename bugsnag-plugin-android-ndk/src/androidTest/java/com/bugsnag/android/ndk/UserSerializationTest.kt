@@ -3,7 +3,6 @@ package com.bugsnag.android.ndk
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import org.junit.runners.Parameterized.*
 
 @RunWith(Parameterized::class)
 internal class UserSerializationTest {
@@ -15,13 +14,13 @@ internal class UserSerializationTest {
         }
 
         @JvmStatic
-        @Parameters
+        @Parameterized.Parameters
         fun testCases() = (0..1)
     }
 
     external fun run(testCase: Int, expectedJson: String): Int
 
-    @Parameter
+    @Parameterized.Parameter
     lateinit var testCase: Number
 
     @Test

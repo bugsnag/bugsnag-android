@@ -27,11 +27,14 @@ internal class BugsnagReactNativeBridge(
                     MessageEvent("MetadataUpdate", client.metadata)
                 }
                 is UpdateUser -> {
-                    MessageEvent("UserUpdate", mapOf(
-                        Pair("id", arg.user.id),
-                        Pair("email", arg.user.email),
-                        Pair("name", arg.user.name)
-                    ))
+                    MessageEvent(
+                        "UserUpdate",
+                        mapOf(
+                            Pair("id", arg.user.id),
+                            Pair("email", arg.user.email),
+                            Pair("name", arg.user.name)
+                        )
+                    )
                 }
                 else -> null
             }

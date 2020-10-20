@@ -3,7 +3,20 @@ package com.bugsnag.android.ndk
 import android.os.Build
 import com.bugsnag.android.NativeInterface
 import com.bugsnag.android.StateEvent
-import com.bugsnag.android.StateEvent.*
+import com.bugsnag.android.StateEvent.AddBreadcrumb
+import com.bugsnag.android.StateEvent.AddMetadata
+import com.bugsnag.android.StateEvent.ClearMetadataSection
+import com.bugsnag.android.StateEvent.ClearMetadataValue
+import com.bugsnag.android.StateEvent.DeliverPending
+import com.bugsnag.android.StateEvent.Install
+import com.bugsnag.android.StateEvent.NotifyHandled
+import com.bugsnag.android.StateEvent.NotifyUnhandled
+import com.bugsnag.android.StateEvent.PauseSession
+import com.bugsnag.android.StateEvent.StartSession
+import com.bugsnag.android.StateEvent.UpdateContext
+import com.bugsnag.android.StateEvent.UpdateInForeground
+import com.bugsnag.android.StateEvent.UpdateOrientation
+import com.bugsnag.android.StateEvent.UpdateUser
 import java.io.File
 import java.nio.charset.Charset
 import java.util.Observable
@@ -61,7 +74,6 @@ class NativeBridge : Observer {
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
-
 
     /**
      * Creates a new native bridge for interacting with native components.
@@ -142,7 +154,11 @@ class NativeBridge : Observer {
                 logger.w("Received duplicate setup message with arg: $arg")
             } else {
                 val reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash"
-                install(reportPath, arg.autoDetectNdkCrashes, Build.VERSION.SDK_INT, is32bit,
+                install(
+                    reportPath,
+                    arg.autoDetectNdkCrashes,
+                    Build.VERSION.SDK_INT,
+                    is32bit,
                     makeSafe(arg.appVersion ?: ""),
                     makeSafe(arg.buildUuid ?: ""),
                     makeSafe(arg.releaseStage ?: "")
@@ -173,5 +189,4 @@ class NativeBridge : Observer {
         // The Android platform default charset is always UTF-8
         return String(text.toByteArray(Charset.defaultCharset()))
     }
-
 }

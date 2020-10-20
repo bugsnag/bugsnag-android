@@ -72,5 +72,4 @@ class AnrDetailsCollectorTest {
         collector.addErrorStateInfo(event, stateInfo)
         assertEquals(stateInfo.shortMsg.replace("ANR", ""), event.errors[0].errorMessage)
     }
-
 }

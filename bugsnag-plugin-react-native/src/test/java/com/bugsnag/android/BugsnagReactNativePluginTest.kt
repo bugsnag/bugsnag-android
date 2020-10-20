@@ -3,7 +3,6 @@ package com.bugsnag.android
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -30,7 +29,7 @@ internal class BugsnagReactNativePluginTest {
 
     @Test
     fun registerForMessageEvents() {
-        plugin.registerForMessageEvents {  }
+        plugin.registerForMessageEvents { }
         verify(client, times(1)).syncInitialState()
     }
 
