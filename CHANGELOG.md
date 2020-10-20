@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Increase breadcrumb time precision to milliseconds
+  [#954](https://github.com/bugsnag/bugsnag-android/pull/954)
+
 ## 5.2.2 (2020-10-19)
 
 ### Bug fixes
