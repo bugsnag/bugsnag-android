@@ -262,7 +262,7 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    command: bundle exec bugsnag-maze-runner --app=/app/build/fixture.apk --farm=bs --device=ANDROID_6_0 --username=$BROWSER_STACK_USERNAME --access-key=$BROWSER_STACK_ACCESS_KEY
+        command: ["--app=/app/build/fixture.apk", "--farm=bs", "--device=ANDROID_6_0", "--username=$BROWSER_STACK_USERNAME", "--access-key=$BROWSER_STACK_ACCESS_KEY"]
     concurrency: 10
     concurrency_group: 'browserstack-app'
 
