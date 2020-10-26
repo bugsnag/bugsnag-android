@@ -160,10 +160,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       jbyteArray jstage = (*env)->NewByteArray(env, stage_length);
       (*env)->SetByteArrayRegion(env, jstage, 0, stage_length, (jbyte *)event->app.release_stage);
 
-      jstring jevent_path = (*env)->NewStringUTF(env, event_path);
+      jstring japi_key = (*env)->NewStringUTF(env, event->api_key);
       (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
-                                   jstage, jpayload, jevent_path);
-      (*env)->DeleteLocalRef(env, jevent_path);
+                                   jstage, jpayload, japi_key);
+      (*env)->DeleteLocalRef(env, japi_key);
       (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload, 0); // <-- frees payload
       (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
       (*env)->DeleteLocalRef(env, jpayload);

@@ -299,12 +299,12 @@ public class NativeInterface {
      *                          should be discarded, based on configured release
      *                          stages
      * @param payloadBytes The raw JSON payload of the event
-     * @param eventPath The path where the event was stored
+     * @param apiKey The apiKey for the event
      */
     @SuppressWarnings("unused")
     public static void deliverReport(@Nullable byte[] releaseStageBytes,
                                      @NonNull byte[] payloadBytes,
-                                     @NonNull String eventPath) {
+                                     @NonNull String apiKey) {
         if (payloadBytes == null) {
             return;
         }
@@ -319,21 +319,10 @@ public class NativeInterface {
                 || config.shouldNotifyForReleaseStage()) {
             EventStore eventStore = client.getEventStore();
 
-            String apiKey = getApiKeyFromEventPath(eventPath, config);
             String filename = eventStore.getNdkFilename(payload, apiKey);
             eventStore.enqueueContentForDelivery(payload, filename);
             eventStore.flushAsync();
         }
-    }
-
-    private static String getApiKeyFromEventPath(String eventPath, ImmutableConfig config) {
-        int start = eventPath.indexOf("_") + 1;
-        int end = eventPath.lastIndexOf(".");
-
-        if (end > start && start != 0) {
-            return eventPath.substring(start, end);
-        }
-        return config.getApiKey();
     }
 
     /**
