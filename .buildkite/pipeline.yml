@@ -262,9 +262,12 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_6_0"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+        - "--app=/app/build/fixture.apk"
+        - "--farm=bs"
+        - "--device=ANDROID_6_0"
+        - "--username=$BROWSER_STACK_USERNAME"
+        - "--access-key=$BROWSER_STACK_ACCESS_KEY"
     concurrency: 10
     concurrency_group: 'browserstack-app'
 
@@ -276,9 +279,12 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_7_1"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
     concurrency: 10
     concurrency_group: 'browserstack-app'
 
@@ -290,9 +296,12 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_8_0"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
     concurrency: 10
     concurrency_group: 'browserstack-app'
     soft_fail:
@@ -306,9 +315,12 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_8_1"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
     concurrency: 10
     concurrency_group: 'browserstack-app'
     soft_fail:
@@ -322,9 +334,12 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_9_0"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
     concurrency: 10
     concurrency_group: 'browserstack-app'
 
@@ -336,9 +351,12 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_10_0"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_10_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
     concurrency: 10
     concurrency_group: 'browserstack-app'
     soft_fail:
@@ -352,9 +370,12 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_11_0"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_11_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
     concurrency: 10
     concurrency_group: 'browserstack-app'
     soft_fail:
