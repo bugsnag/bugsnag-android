@@ -28,9 +28,11 @@ buildscript {
         classpath 'com.android.tools.build:gradle:4.0.0'
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:5.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC16"
     }
 }
 apply plugin: 'kotlin-android'
+apply plugin: "io.gitlab.arturbosch.detekt"
 
 android {
     compileSdkVersion 29
@@ -98,7 +100,6 @@ android {
 
 dependencies {
     implementation "com.bugsnag:bugsnag-android:9.9.9"
-    implementation project(":mazerunner-scenarios")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"
 }
@@ -111,3 +112,6 @@ bugsnag {
     reportBuilds = false
     failOnUploadError = false
 }
+
+apply from: "../../../gradle/detekt.gradle"
+apply from: "../../../gradle/checkstyle.gradle"
