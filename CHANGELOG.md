@@ -7,6 +7,9 @@
 * Increase breadcrumb time precision to milliseconds
   [#954](https://github.com/bugsnag/bugsnag-android/pull/954)
 
+* Default to allowing requests when checking connectivity
+  [#970](https://github.com/bugsnag/bugsnag-android/pull/970)
+
 ## 5.2.2 (2020-10-19)
 
 ### Bug fixes
