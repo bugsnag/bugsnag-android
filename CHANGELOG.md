@@ -7,6 +7,9 @@
 * Increase breadcrumb time precision to milliseconds
   [#954](https://github.com/bugsnag/bugsnag-android/pull/954)
 
+* Default to allowing requests when checking connectivity
+  [#970](https://github.com/bugsnag/bugsnag-android/pull/970)
+
 * Support changing NDK Event's api key in OnErrorCallback
   [#964](https://github.com/bugsnag/bugsnag-android/pull/964)
 

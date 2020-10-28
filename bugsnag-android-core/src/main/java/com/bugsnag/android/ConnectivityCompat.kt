@@ -93,14 +93,11 @@ internal class ConnectivityApi24(
     callback: NetworkChangeCallback?
 ) : Connectivity {
 
-    @JvmField
-    @Volatile
-    internal var activeNetwork: Network? = null
     private val networkCallback = ConnectivityTrackerCallback(callback)
 
     override fun registerForNetworkChanges() = cm.registerDefaultNetworkCallback(networkCallback)
     override fun unregisterForNetworkChanges() = cm.unregisterNetworkCallback(networkCallback)
-    override fun hasNetworkConnection() = activeNetwork != null
+    override fun hasNetworkConnection() = cm.activeNetwork != null
 
     override fun retrieveNetworkAccessState(): String {
         val network = cm.activeNetwork
@@ -119,13 +116,11 @@ internal class ConnectivityApi24(
         ConnectivityManager.NetworkCallback() {
         override fun onUnavailable() {
             super.onUnavailable()
-            activeNetwork = null
             cb?.invoke(false, retrieveNetworkAccessState())
         }
 
         override fun onAvailable(network: Network?) {
             super.onAvailable(network)
-            activeNetwork = network
             cb?.invoke(true, retrieveNetworkAccessState())
         }
     }
