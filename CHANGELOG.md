@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.2.3 (2020-10-29)
 
 ### Bug fixes
 
