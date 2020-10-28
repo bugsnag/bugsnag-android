@@ -5,6 +5,7 @@
 #include <string.h>
 #include <android/log.h>
 #include <jni.h>
+#include <unistd.h>
 
 #include "utils/string.h"
 
@@ -27,8 +28,8 @@ static jobject obj_plugin = NULL;
 struct sigaction bsg_sigquit_sigaction_previous;
 
 
-void bsg_notify_anr_detected(JNIEnv *env) {
-  (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
+void bsg_notify_anr_detected(JNIEnv *env, siginfo_t *info, void *userContext) {
+  (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected, (jlong)info, (jlong)userContext);
 }
 
 bool bsg_configure_anr_jni(JNIEnv *env) {
@@ -41,7 +42,7 @@ bool bsg_configure_anr_jni(JNIEnv *env) {
   }
 
   jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
-  mthd_notify_anr_detected = (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
+  mthd_notify_anr_detected = (*env)->GetMethodID(env, clz, "notifyAnrDetected", "(JJ)V");
   return true;
 }
 
@@ -52,10 +53,10 @@ void bsg_handle_sigquit(int signum, siginfo_t *info, void *user_context) {
     int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **)&env, JNI_VERSION_1_4);
 
     if (result == JNI_OK) { // already attached
-      bsg_notify_anr_detected(env);
+      bsg_notify_anr_detected(env, info, user_context);
     } else if (result == JNI_EDETACHED) { // attach before calling JNI
       if ((*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL) == 0) {
-        bsg_notify_anr_detected(env);
+        bsg_notify_anr_detected(env, info, user_context);
         (*bsg_jvm)->DetachCurrentThread(bsg_jvm); // detach to restore initial condition
       }
     } // All other results are error codes

@@ -46,7 +46,8 @@ internal class AnrPlugin : Plugin {
      * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
      * with details of the ANR. Intended for internal use only.
      */
-    private fun notifyAnrDetected() {
+    @Suppress("UNUSED_PARAMETER")
+    private fun notifyAnrDetected(info: Long, userContext: Long) {
         val thread = Looper.getMainLooper().thread
 
         // generate a full report as soon as possible, then wait for extra process error info
