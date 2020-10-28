@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Flush persisted sessions on launch and on connectivity changes
+  [#973](https://github.com/bugsnag/bugsnag-android/pull/973)
+
 * Increase breadcrumb time precision to milliseconds
   [#954](https://github.com/bugsnag/bugsnag-android/pull/954)
 

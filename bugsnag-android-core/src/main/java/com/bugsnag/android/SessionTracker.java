@@ -230,6 +230,22 @@ class SessionTracker extends BaseObservable {
     }
 
     /**
+     * Asynchronously flushes any session payloads stored on disk
+     */
+    void flushAsync() {
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    flushStoredSessions();
+                }
+            });
+        } catch (RejectedExecutionException ex) {
+            logger.w("Failed to flush session reports", ex);
+        }
+    }
+
+    /**
      * Attempts to flush session payloads stored on disk
      */
     void flushStoredSessions() {
