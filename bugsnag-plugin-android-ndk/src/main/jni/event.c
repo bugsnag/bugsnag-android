@@ -158,6 +158,16 @@ void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
   event->unhandled_events = unhandled_count;
 }
 
+char *bugsnag_event_get_api_key(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  return event->api_key;
+}
+
+void bugsnag_event_set_api_key(void *event_ptr, char *value) {
+  bugsnag_event *event = (bugsnag_event *) event_ptr;
+  bsg_strncpy_safe(event->api_key, value, sizeof(event->api_key));
+}
+
 char *bugsnag_event_get_context(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *) event_ptr;
   return event->context;

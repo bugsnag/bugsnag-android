@@ -42,6 +42,7 @@ class NativeBridge : Observer {
         }
 
     external fun install(
+        apiKey: String,
         reportingDirectory: String,
         autoDetectNdkCrashes: Boolean,
         apiLevel: Int,
@@ -155,6 +156,7 @@ class NativeBridge : Observer {
             } else {
                 val reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash"
                 install(
+                    makeSafe(arg.apiKey),
                     reportPath,
                     arg.autoDetectNdkCrashes,
                     Build.VERSION.SDK_INT,

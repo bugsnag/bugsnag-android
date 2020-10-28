@@ -77,6 +77,22 @@ typedef struct {
 extern "C" {
 #endif
 
+/* Accessors for event.api_key */
+
+/**
+ * Retrieves the event api key
+ * @param event_ptr a pointer to the event supplied in an on_error callback
+ * @return the event api key, or NULL if this has not been set
+ */
+char *bugsnag_event_get_api_key(void *event_ptr);
+
+/**
+ * Sets the event api key
+ * @param event_ptr a pointer to the event supplied in an on_error callback
+ * @param value the new event api key value, which cannot be NULL
+ */
+void bugsnag_event_set_api_key(void *event_ptr, char *value);
+
 /* Accessors for event.context */
 
 /**

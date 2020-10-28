@@ -3,7 +3,7 @@
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>ComplexMethod:NativeBridge.kt$NativeBridge$override fun update(observable: Observable, arg: Any?)</ID>
-    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( reportingDirectory: String, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, appVersion: String, buildUuid: String, releaseStage: String )</ID>
+    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, appVersion: String, buildUuid: String, releaseStage: String )</ID>
     <ID>MaxLineLength:NativeBridge.kt$NativeBridge$is AddBreadcrumb -&gt; addBreadcrumb(makeSafe(msg.message), makeSafe(msg.type.toString()), makeSafe(msg.timestamp), msg.metadata)</ID>
     <ID>MaxLineLength:NativeBridge.kt$NativeBridge$is StartSession -&gt; startedSession(makeSafe(msg.id), makeSafe(msg.startedAt), msg.handledCount, msg.unhandledCount)</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>

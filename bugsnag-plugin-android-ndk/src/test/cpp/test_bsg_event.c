@@ -6,6 +6,7 @@
 
 bugsnag_event *init_event() {
     bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+    bsg_strncpy_safe(event->api_key, "5d1e5fbd39a74caa1200142706a90b20", sizeof(event->api_key));
     bsg_strncpy_safe(event->context, "Foo", sizeof(event->context));
     bsg_strncpy_safe(event->user.id, "123", sizeof(event->user.id));
     bsg_strncpy_safe(event->user.email, "jane@example.com", sizeof(event->user.email));
@@ -48,6 +49,15 @@ bugsnag_event *init_event() {
     bsg_strncpy_safe(event->error.stacktrace->filename, "Something.c", sizeof(event->error.stacktrace->filename));
     event->error.stacktrace->line_number = 58;
     return event;
+}
+
+TEST test_event_api_key(void) {
+    bugsnag_event *event = init_event();
+    ASSERT_STR_EQ("5d1e5fbd39a74caa1200142706a90b20", bugsnag_event_get_api_key(event));
+    bugsnag_event_set_api_key(event, "00fab5bd39a74caa1200142706a90b20");
+    ASSERT_STR_EQ("00fab5bd39a74caa1200142706a90b20", bugsnag_event_get_api_key(event));
+    free(event);
+    PASS();
 }
 
 TEST test_event_context(void) {
@@ -368,6 +378,7 @@ TEST test_event_stacktrace(void) {
 }
 
 SUITE(event_mutators) {
+    RUN_TEST(test_event_api_key);
     RUN_TEST(test_event_context);
     RUN_TEST(test_event_severity);
     RUN_TEST(test_event_unhandled);
