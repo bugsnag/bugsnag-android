@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+ * Support native stack traces in the ANR plugin
+   [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
+
 ## 5.2.3 (2020-11-04)
 
 ### Bug fixes
