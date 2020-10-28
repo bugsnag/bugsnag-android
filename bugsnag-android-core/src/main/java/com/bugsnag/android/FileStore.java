@@ -69,11 +69,10 @@ abstract class FileStore {
         this.storeDirectory = path;
     }
 
-    void enqueueContentForDelivery(String content) {
+    void enqueueContentForDelivery(String content, String filename) {
         if (storeDirectory == null) {
             return;
         }
-        String filename = getFilename(content);
         discardOldestFileIfNeeded();
         lock.lock();
         Writer out = null;
@@ -96,7 +95,7 @@ abstract class FileStore {
                 }
             } catch (Exception exception) {
                 logger.w(String.format("Failed to close unsent payload writer (%s) ",
-                    filename), exception);
+                        filename), exception);
             }
             lock.unlock();
         }

@@ -27,6 +27,15 @@ bool bsg_report_v2_write(bsg_report_header *header, bugsnag_report_v2 *report,
   return len == sizeof(bugsnag_report_v2);
 }
 
+bool bsg_report_v3_write(bsg_report_header *header, bugsnag_report_v3 *report,
+                         int fd) {
+    if (!bsg_report_header_write(header, fd)) {
+        return false;
+    }
+    ssize_t len = write(fd, report, sizeof(bugsnag_report_v3));
+    return len == sizeof(bugsnag_report_v3);
+}
+
 bool bsg_serialize_report_v1_to_file(bsg_environment *env, bugsnag_report_v1 *report) {
   int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
   if (fd == -1) {
@@ -43,9 +52,18 @@ bool bsg_serialize_report_v2_to_file(bsg_environment *env, bugsnag_report_v2 *re
   return bsg_report_v2_write(&env->report_header, report, fd);
 }
 
+bool bsg_serialize_report_v3_to_file(bsg_environment *env, bugsnag_report_v3 *report) {
+    int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+    if (fd == -1) {
+        return false;
+    }
+    return bsg_report_v3_write(&env->report_header, report, fd);
+}
+
 
 void generate_basic_report(bugsnag_event *event) {
   strcpy(event->grouping_hash, "foo-hash");
+  strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->context, "SomeActivity");
   strcpy(event->error.errorClass, "SIGBUS");
   strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
@@ -90,6 +108,13 @@ void generate_basic_report(bugsnag_event *event) {
   strcpy(event->notifier.url, "bugsnag.com");
   strcpy(event->notifier.name, "Test Notifier");
 }
+
+bugsnag_report_v3 *bsg_generate_report_v3(void) {
+    bugsnag_report_v3 *report = calloc(1, sizeof(bugsnag_report_v3));
+    generate_basic_report((bugsnag_event *) report);
+    return report;
+}
+
 
 bugsnag_report_v2 *bsg_generate_report_v2(void) {
   bugsnag_report_v2 *report = calloc(1, sizeof(bugsnag_report_v2));
@@ -249,6 +274,37 @@ TEST test_report_v2_migration(void) {
   PASS();
 }
 
+TEST test_report_v3_migration(void) {
+  bsg_environment *env = malloc(sizeof(bsg_environment));
+  env->report_header.version = 3;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
+
+  bugsnag_report_v3 *generated_report = bsg_generate_report_v3();
+  memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v3));
+  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  bsg_serialize_report_v3_to_file(env, generated_report);
+
+  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(event != NULL);
+
+  // api key is set to sensible default
+  ASSERT_STR_EQ("", event->api_key);
+
+  // other fields appear reasonable and are copied over
+  ASSERT_STR_EQ("Test Notifier", event->notifier.name);
+  ASSERT_STR_EQ("bugsnag.com", event->notifier.url);
+  ASSERT_STR_EQ("1.0", event->notifier.version);
+  ASSERT_STR_EQ("SIGBUS", event->error.errorClass);
+  ASSERT_STR_EQ("POSIX is serious about oncoming traffic", event->error.errorMessage);
+  ASSERT_STR_EQ("C", event->error.type);
+
+  free(generated_report);
+  free(env);
+  free(event);
+  PASS();
+}
+
 // helper function
 JSON_Value *bsg_generate_json(void) {
   bugsnag_event *event = bsg_generate_event();
@@ -379,6 +435,7 @@ SUITE(serialize_utils) {
   RUN_TEST(test_file_to_report);
   RUN_TEST(test_report_v1_migration);
   RUN_TEST(test_report_v2_migration);
+  RUN_TEST(test_report_v3_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_context_to_json);
   RUN_TEST(test_grouping_hash_to_json);
