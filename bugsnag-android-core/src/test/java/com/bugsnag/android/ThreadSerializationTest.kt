@@ -19,7 +19,7 @@ internal class ThreadSerializationTest {
                 StackTraceElement("App", "launch", "App.java", 70)
             )
 
-            val thread = Thread(24, "main-one", ThreadType.ANDROID, true, Stacktrace(
+            val thread = Thread(24, "main-one", ThreadType.ANDROID, true, Stacktrace.stacktraceFromJavaTrace(
                 stacktrace,
                 emptySet(),
                 NoopLogger
@@ -31,7 +31,7 @@ internal class ThreadSerializationTest {
                 StackTraceElement("App", "launch", "App.java", 70)
             )
 
-            val thread1 = Thread(24, "main-one", ThreadType.ANDROID, false, Stacktrace(
+            val thread1 = Thread(24, "main-one", ThreadType.ANDROID, false, Stacktrace.stacktraceFromJavaTrace(
                 stacktrace1,
                 emptySet(),
                 NoopLogger
