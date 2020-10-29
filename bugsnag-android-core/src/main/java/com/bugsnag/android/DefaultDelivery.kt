@@ -1,16 +1,11 @@
 package com.bugsnag.android
 
 import java.io.IOException
-import java.io.OutputStream
-import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
-import java.nio.charset.Charset
-import java.security.DigestOutputStream
-import java.security.MessageDigest
 
 internal class DefaultDelivery(private val connectivity: Connectivity?, val logger: Logger) : Delivery {
 
