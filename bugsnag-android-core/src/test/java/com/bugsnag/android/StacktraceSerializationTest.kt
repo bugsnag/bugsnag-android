@@ -18,10 +18,10 @@ internal class StacktraceSerializationTest {
                 "stacktrace",
 
                 // empty stacktrace element ctor
-                Stacktrace(arrayOf(), emptySet(), NoopLogger),
+                Stacktrace.stacktraceFromJavaTrace(arrayOf(), emptySet(), NoopLogger),
 
                 // empty custom frames ctor
-                Stacktrace(listOf(frame), NoopLogger),
+                Stacktrace(listOf(frame)),
 
                 // basic
                 basic(),
@@ -36,13 +36,13 @@ internal class StacktraceSerializationTest {
         }
 
         private fun basic() =
-            Stacktrace(
+                Stacktrace.stacktraceFromJavaTrace(
                 RuntimeException("Whoops").stackTrace.sliceArray(IntRange(0, 1)),
                 emptySet(),
                 NoopLogger
             )
 
-        private fun inProject() = Stacktrace(
+        private fun inProject() = Stacktrace.stacktraceFromJavaTrace(
             RuntimeException("Whoops").stackTrace.sliceArray(IntRange(0, 1)),
             setOf("com.bugsnag.android"),
             NoopLogger
@@ -52,14 +52,14 @@ internal class StacktraceSerializationTest {
             val elements = (0..999).map {
                 StackTraceElement("SomeClass", "someMethod", "someFile", it)
             }
-            return Stacktrace(elements.toTypedArray(), emptyList(), NoopLogger)
+            return Stacktrace.stacktraceFromJavaTrace(elements.toTypedArray(), emptyList(), NoopLogger)
         }
 
         private fun trimStacktraceListCtor(): Stacktrace {
             val elements = (0..999).map {
                 Stackframe("Foo", "Bar.kt", it, true)
             }
-            return Stacktrace(elements, NoopLogger)
+            return Stacktrace(elements)
         }
     }
 

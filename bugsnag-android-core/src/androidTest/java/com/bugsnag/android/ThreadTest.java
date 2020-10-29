@@ -27,7 +27,8 @@ public class ThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList(),
+        Stacktrace trace = Stacktrace.Companion.stacktraceFromJavaTrace(stacktrace,
+                Collections.<String>emptyList(),
                 NoopLogger.INSTANCE);
         Thread thread = new Thread(24, "main-one", ThreadType.ANDROID, true, trace,
                 NoopLogger.INSTANCE);
@@ -59,7 +60,8 @@ public class ThreadTest {
         };
 
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        Stacktrace trace = new Stacktrace(stacktrace, Collections.<String>emptyList(),
+        Stacktrace trace = Stacktrace.Companion.stacktraceFromJavaTrace(stacktrace,
+                Collections.<String>emptyList(),
                 NoopLogger.INSTANCE);
         Thread thread = new Thread(24, "main-one", ThreadType.ANDROID,false, trace,
                 NoopLogger.INSTANCE);
