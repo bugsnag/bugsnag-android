@@ -141,10 +141,15 @@ internal class ImmutableConfigTest {
     @Test
     fun verifyErrorApiHeaders() {
         val config = convertToImmutableConfig(seed)
-        val headers = config.getErrorApiDeliveryParams(config.apiKey).headers
+        val payload = BugsnagTestUtils.generateEventPayload(config)
+        val headers = config.getErrorApiDeliveryParams(payload).headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
+
+        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
+        val sha1Regex = "sha1 [0-9a-f]{40}".toRegex()
+        assertTrue(integrity.matches(sha1Regex))
     }
 
     @Test
@@ -154,6 +159,7 @@ internal class ImmutableConfigTest {
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
+        assertNull(headers["Bugsnag-Integrity"])
     }
 
     @Test

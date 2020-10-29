@@ -7,10 +7,8 @@
     <ID>MaxLineLength:NativeBridge.kt$NativeBridge$is AddBreadcrumb -&gt; addBreadcrumb(makeSafe(msg.message), makeSafe(msg.type.toString()), makeSafe(msg.timestamp), msg.metadata)</ID>
     <ID>MaxLineLength:NativeBridge.kt$NativeBridge$is StartSession -&gt; startedSession(makeSafe(msg.id), makeSafe(msg.startedAt), msg.handledCount, msg.unhandledCount)</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
-    <ID>NewLineAtEndOfFile:VerifyUtils.kt$com.bugsnag.android.ndk.VerifyUtils.kt</ID>
     <ID>ReturnCount:NativeBridge.kt$NativeBridge$private fun isInvalidMessage(msg: Any?): Boolean</ID>
     <ID>TooGenericExceptionCaught:NativeBridge.kt$NativeBridge$ex: Exception</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : Observer</ID>
-    <ID>WildcardImport:NativeBridge.kt$import com.bugsnag.android.StateEvent.*</ID>
   </CurrentIssues>
 </SmellBaseline>
