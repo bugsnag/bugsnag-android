@@ -11,7 +11,7 @@ class StacktraceTest {
         for (i in 1..300) {
             stackList.add(Stackframe("A", "B", i, true))
         }
-        val stacktrace = Stacktrace(stackList, NoopLogger)
+        val stacktrace = Stacktrace(stackList)
         // Confirm the length of the stackList
         assertEquals(300, stackList.size)
         assertEquals(200, stacktrace.trace.size)
