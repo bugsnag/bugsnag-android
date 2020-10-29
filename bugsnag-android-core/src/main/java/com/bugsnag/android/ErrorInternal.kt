@@ -15,7 +15,7 @@ internal class ErrorInternal @JvmOverloads internal constructor(
 
             var currentEx: Throwable? = exc
             while (currentEx != null) {
-                val trace = Stacktrace(currentEx.stackTrace, projectPackages, logger)
+                val trace = Stacktrace.stacktraceFromJavaTrace(currentEx.stackTrace, projectPackages, logger)
                 errors.add(ErrorInternal(currentEx.javaClass.name, currentEx.localizedMessage, trace))
                 currentEx = currentEx.cause
             }

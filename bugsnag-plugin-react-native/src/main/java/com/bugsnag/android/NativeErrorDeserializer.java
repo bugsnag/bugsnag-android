@@ -38,7 +38,7 @@ class NativeErrorDeserializer implements MapDeserializer<Error> {
             frames.add(deserializeStackframe(frame, projectPackages));
         }
 
-        Stacktrace trace = new Stacktrace(frames, logger);
+        Stacktrace trace = new Stacktrace(frames);
         ErrorInternal impl = new ErrorInternal(
                 jsError.getErrorClass(),
                 jsError.getErrorMessage(),
