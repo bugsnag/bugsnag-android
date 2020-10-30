@@ -30,13 +30,14 @@ internal fun errorApiHeaders(payload: EventPayload): Map<String, String?> {
  *
  * @return the HTTP headers
  */
-internal fun sessionApiHeaders(apiKey: String): Map<String, String?> = mapOf(
+internal fun sessionApiHeaders(apiKey: String, payload: Session): Map<String, String?> = mapOf(
     HEADER_API_PAYLOAD_VERSION to "1.0",
     HEADER_API_KEY to apiKey,
-    HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date())
+    HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date()),
+    HEADER_BUGSNAG_INTEGRITY to computeSha1Digest(payload)
 )
 
-internal fun computeSha1Digest(payload: EventPayload): String? {
+internal fun computeSha1Digest(payload: JsonStream.Streamable): String? {
     runCatching {
         val shaDigest = MessageDigest.getInstance("SHA-1")
         val builder = StringBuilder("sha1 ")

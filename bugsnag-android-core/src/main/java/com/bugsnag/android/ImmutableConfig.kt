@@ -45,8 +45,8 @@ internal data class ImmutableConfig(
         DeliveryParams(endpoints.notify, errorApiHeaders(payload))
 
     @JvmName("getSessionApiDeliveryParams")
-    internal fun getSessionApiDeliveryParams() =
-        DeliveryParams(endpoints.sessions, sessionApiHeaders(apiKey))
+    internal fun getSessionApiDeliveryParams(session: Session) =
+        DeliveryParams(endpoints.sessions, sessionApiHeaders(apiKey, session))
 }
 
 internal fun convertToImmutableConfig(

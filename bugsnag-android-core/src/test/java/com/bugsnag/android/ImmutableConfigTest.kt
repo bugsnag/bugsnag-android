@@ -139,30 +139,6 @@ internal class ImmutableConfigTest {
     }
 
     @Test
-    fun verifyErrorApiHeaders() {
-        val config = convertToImmutableConfig(seed)
-        val payload = BugsnagTestUtils.generateEventPayload(config)
-        val headers = config.getErrorApiDeliveryParams(payload).headers
-        assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
-        assertNotNull(headers["Bugsnag-Sent-At"])
-        assertNotNull(headers["Bugsnag-Payload-Version"])
-
-        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
-        val sha1Regex = "sha1 [0-9a-f]{40}".toRegex()
-        assertTrue(integrity.matches(sha1Regex))
-    }
-
-    @Test
-    fun verifySessionApiHeaders() {
-        val config = convertToImmutableConfig(seed)
-        val headers = config.getSessionApiDeliveryParams().headers
-        assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
-        assertNotNull(headers["Bugsnag-Sent-At"])
-        assertNotNull(headers["Bugsnag-Payload-Version"])
-        assertNull(headers["Bugsnag-Integrity"])
-    }
-
-    @Test
     fun configSanitisation() {
         `when`(context.packageName).thenReturn("com.example.foo")
         `when`(context.packageManager).thenReturn(packageManager)
