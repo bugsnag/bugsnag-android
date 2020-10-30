@@ -1,11 +1,9 @@
 # Changelog
 
-## TBD
+## 5.3.0 (TBD)
 
 * Add integrity header to verify Error API payloads have not changed
   [#978](https://github.com/bugsnag/bugsnag-android/pull/978)
-
-## 5.2.3 (2020-10-29)
 
 ### Bug fixes
 
