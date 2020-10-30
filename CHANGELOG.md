@@ -2,7 +2,7 @@
 
 ## 5.3.0 (TBD)
 
-* Add integrity header to verify Error API payloads have not changed
+* Add integrity header to verify Error and Session API payloads have not changed
   [#978](https://github.com/bugsnag/bugsnag-android/pull/978)
 
 ### Bug fixes
