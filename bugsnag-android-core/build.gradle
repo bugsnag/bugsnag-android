@@ -8,6 +8,7 @@ apply plugin: "io.gitlab.arturbosch.detekt"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
 }
 

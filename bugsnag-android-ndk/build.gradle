@@ -5,6 +5,7 @@ apply plugin: "com.android.library"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
 }
 

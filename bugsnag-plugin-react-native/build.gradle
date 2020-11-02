@@ -9,6 +9,7 @@ apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
 }
 

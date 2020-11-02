@@ -73,97 +73,82 @@ tasks.whenTaskAdded { task ->
     }
 }
 
-publishing {
+// https://developer.android.com/studio/build/maven-publish-plugin
+project.afterEvaluate {
+    publishing {
 
-    repositories {
-        maven {
-            if (VERSION_NAME.contains("SNAPSHOT")) {
-                url "https://oss.sonatype.org/content/repositories/snapshots/"
-            } else {
-                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            }
-            credentials {
-                username = project.hasProperty("NEXUS_USERNAME") ? "$NEXUS_USERNAME" : System.getenv("NEXUS_USERNAME")
-                password = project.hasProperty("NEXUS_PASSWORD") ? "$NEXUS_PASSWORD" : System.getenv("NEXUS_PASSWORD")
+        repositories {
+            maven {
+                if (VERSION_NAME.contains("SNAPSHOT")) {
+                    url "https://oss.sonatype.org/content/repositories/snapshots/"
+                } else {
+                    url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                }
+                credentials {
+                    username = project.hasProperty("NEXUS_USERNAME") ? "$NEXUS_USERNAME" : System.getenv("NEXUS_USERNAME")
+                    password = project.hasProperty("NEXUS_PASSWORD") ? "$NEXUS_PASSWORD" : System.getenv("NEXUS_PASSWORD")
+                }
             }
         }
-    }
 
-    publications {
+        publications {
 
-        SDK(MavenPublication) {
-            groupId "com.bugsnag"
-            artifactId archivesBaseName
-            version version
-            artifact(sourceJar)
-            artifact("$buildDir/outputs/aar/$archivesBaseName-release.aar")
+            SDK(MavenPublication) {
+                from components.release
+                groupId = "com.bugsnag"
+                artifactId = archivesBaseName
+                version = version
+                artifact(sourceJar)
 
-            pom.withXml {
-                Node root = asNode()
-
-                // top-level metadata
-                Node packaging = root.get("packaging").first()
-                packaging.value = project.POM_PACKAGING
-                root.appendNode("name", pomName)
-                root.appendNode("description", project.POM_DESCRIPTION)
-                root.appendNode("url", project.POM_URL)
-
-                // licenses
-                Node licenseNode = root.appendNode("licenses").appendNode("license")
-                licenseNode.appendNode("name", project.POM_LICENCE_NAME)
-                licenseNode.appendNode("url", project.POM_LICENCE_URL)
-                licenseNode.appendNode("distribution", project.POM_LICENCE_DIST)
-
-                // developers
-                Node devNode = root.appendNode("developers").appendNode("developer")
-                devNode.appendNode("id", project.POM_DEVELOPER_ID)
-                devNode.appendNode("name", project.POM_DEVELOPER_NAME)
-
-                // scm
-                Node scmNode = root.appendNode("scm")
-                scmNode.appendNode("connection", project.POM_SCM_CONNECTION)
-                scmNode.appendNode("developerConnection", project.POM_SCM_DEV_CONNECTION)
-                scmNode.appendNode("url", project.POM_SCM_URL)
-
-                def dependenciesNode = root.appendNode("dependencies")
-
-                // Iterate over the implementation dependencies (we don"t want the test ones), adding a <dependency> node for each
-                configurations.implementation.allDependencies.each {
-                    // Ensure dependencies such as fileTree are not included in the pom.
-                    if (it.name != "unspecified") {
-                        def dependencyNode = dependenciesNode.appendNode("dependency")
-                        dependencyNode.appendNode("groupId", it.group)
-                        dependencyNode.appendNode("artifactId", it.name)
-                        dependencyNode.appendNode("version", it.version)
-                        dependencyNode.appendNode("scope", "compile")
+                pom {
+                    name = pomName
+                    description = project.POM_DESCRIPTION
+                    url = project.POM_URL
+                    licenses {
+                        license {
+                            name = project.POM_LICENCE_NAME
+                            url = project.POM_LICENCE_URL
+                            distribution = project.POM_LICENCE_DIST
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = project.POM_DEVELOPER_ID
+                            name = project.POM_DEVELOPER_NAME
+                        }
+                    }
+                    scm {
+                        connection = project.POM_SCM_CONNECTION
+                        developerConnection = project.POM_SCM_DEV_CONNECTION
+                        url = project.POM_SCM_URL
                     }
                 }
             }
         }
     }
-}
 
-signing {
-    sign publishing.publications
-}
+    signing {
+        sign publishing.publications
+    }
 
-// Bintray upload
-bintray {
-    user = project.hasProperty("bintray_user") ? "$bintray_user" : System.getenv("bintray_user")
-    key = project.hasProperty("bintray_api_key") ? "$bintray_api_key" : System.getenv("bintray_api_key")
-    publications = ["SDK"]
-    configurations = ["archives"]
+    // Bintray upload
+    bintray {
+        user = project.hasProperty("bintray_user") ? "$bintray_user" : System.getenv("bintray_user")
+        key = project.hasProperty("bintray_api_key") ? "$bintray_api_key" : System.getenv("bintray_api_key")
+        publications = ["SDK"]
+        configurations = ["archives"]
 
-    pkg {
-        repo = "maven"
-        name = archivesBaseName
-        userOrg = "bugsnag"
-        licenses = ["MIT"]
-        vcsUrl = "https://github.com/bugsnag/bugsnag-android.git"
+        pkg {
+            repo = "maven"
+            name = archivesBaseName
+            userOrg = "bugsnag"
+            licenses = ["MIT"]
+            vcsUrl = "https://github.com/bugsnag/bugsnag-android.git"
 
-        version {
-            name = "${project.VERSION_NAME}"
-            vcsTag = "v${project.VERSION_NAME}"
+            version {
+                name = "${project.VERSION_NAME}"
+                vcsTag = "v${project.VERSION_NAME}"
+            }
         }
     }
 }
