@@ -5,8 +5,10 @@ apply plugin: "com.android.library"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    ndkVersion rootProject.ext.ndkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
 }
 
 dependencies {
@@ -15,5 +17,6 @@ dependencies {
     api project(':bugsnag-plugin-android-ndk')
 }
 
+apply from: "../gradle/ndk_setup.gradle"
 apply from: "../gradle/release.gradle"
 apply from: "../gradle/license-check.gradle"

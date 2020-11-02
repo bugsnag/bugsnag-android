@@ -1,0 +1,11 @@
+android {
+    // see https://developer.android.com/studio/releases/gradle-plugin#ndk-path
+    def bsgVersion = System.env.NDK_VERSION
+
+    // set a custom path to a downloaded NDK, required to test older versions (r12b) on CI
+    if (bsgVersion != null) {
+        ndkPath = "/sdk/android-ndk-$bsgVersion"
+    } else {
+        ndkVersion rootProject.ext.ndkVersion
+    }
+}

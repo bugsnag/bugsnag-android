@@ -26,6 +26,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    // adding custom jniLibs results in dupe SO files, ignore
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
 }
 
 dependencies {
@@ -42,9 +46,9 @@ if (project.hasProperty("withBugsnag")) {
     apply plugin: 'com.bugsnag.android.gradle'
 
     bugsnag {
-        ndk true
-        autoUpload false
-        autoReportBuilds false
+        uploadNdkMappings = false
+        uploadJvmMappings = false
+        reportBuilds = false
     }
 } else {
     project.logger.info("Building without Bugsnag")
