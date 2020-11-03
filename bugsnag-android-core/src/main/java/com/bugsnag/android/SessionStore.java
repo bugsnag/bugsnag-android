@@ -34,8 +34,12 @@ class SessionStore extends FileStore {
         }
     };
 
-    SessionStore(@NonNull Context appContext, @NonNull Logger logger, @Nullable Delegate delegate) {
-        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, logger, delegate);
+    SessionStore(@NonNull Context appContext,
+                 @NonNull ImmutableConfig config,
+                 @NonNull Logger logger,
+                 @Nullable Delegate delegate) {
+        super(appContext, "/bugsnag-sessions/", config.getMaxPersistedSessions(),
+                SESSION_COMPARATOR, logger, delegate);
     }
 
     @NonNull

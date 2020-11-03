@@ -26,7 +26,9 @@ internal data class ImmutableConfig(
     val persistUser: Boolean,
     val launchCrashThresholdMs: Long,
     val logger: Logger,
-    val maxBreadcrumbs: Int
+    val maxBreadcrumbs: Int,
+    val maxPersistedEvents: Int,
+    val maxPersistedSessions: Int
 ) {
 
     /**
@@ -80,6 +82,8 @@ internal fun convertToImmutableConfig(
         launchCrashThresholdMs = config.launchCrashThresholdMs,
         logger = config.logger!!,
         maxBreadcrumbs = config.maxBreadcrumbs,
+        maxPersistedEvents = config.maxPersistedEvents,
+        maxPersistedSessions = config.maxPersistedSessions,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet()
     )
 }

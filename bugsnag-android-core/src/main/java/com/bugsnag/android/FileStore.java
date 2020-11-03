@@ -103,7 +103,7 @@ abstract class FileStore {
 
     @Nullable
     String write(@NonNull JsonStream.Streamable streamable) {
-        if (storeDirectory == null) {
+        if (storeDirectory == null || maxStoreCount == 0) {
             return null;
         }
         discardOldestFileIfNeeded();
@@ -137,22 +137,24 @@ abstract class FileStore {
     }
 
     void discardOldestFileIfNeeded() {
-        // Limit number of saved errors to prevent disk space issues
-        File exceptionDir = new File(storeDirectory);
-        if (exceptionDir.isDirectory()) {
-            File[] files = exceptionDir.listFiles();
+        // Limit number of saved payloads to prevent disk space issues
+        File storageDir = new File(storeDirectory);
+        if (storageDir.isDirectory()) {
+            List<File> files = new ArrayList<>(Arrays.asList(storageDir.listFiles()));
 
-            if (files != null && files.length >= maxStoreCount) {
+            if (files != null && files.size() >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files, comparator);
+                Collections.sort(files, comparator);
 
-                for (int k = 0; k < files.length && files.length >= maxStoreCount; k++) {
-                    File oldestFile = files[k];
+                for (int k = 0; k < files.size() && files.size() >= maxStoreCount; k++) {
+                    File oldestFile = files.get(k);
 
                     if (!queuedFiles.contains(oldestFile)) {
                         logger.w(String.format("Discarding oldest error as stored "
                             + "error limit reached (%s)", oldestFile.getPath()));
                         deleteStoredFiles(Collections.singleton(oldestFile));
+                        files.remove(k);
+                        k--;
                     }
                 }
             }
