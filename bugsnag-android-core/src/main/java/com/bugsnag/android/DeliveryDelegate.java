@@ -75,7 +75,8 @@ class DeliveryDelegate extends BaseObservable {
 
     @VisibleForTesting
     DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
-        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(payload);
+        String apiKey = payload.getApiKey();
+        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(apiKey);
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
 
