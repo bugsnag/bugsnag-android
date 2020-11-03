@@ -147,7 +147,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
 
-        sessionStore = new SessionStore(appContext, logger, null);
+        sessionStore = new SessionStore(appContext, immutableConfig, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
         metadataState = copyMetadataState(configuration);

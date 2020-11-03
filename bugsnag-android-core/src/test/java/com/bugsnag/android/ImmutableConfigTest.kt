@@ -73,6 +73,8 @@ internal class ImmutableConfigTest {
             assertEquals(seed.launchCrashThresholdMs, launchCrashThresholdMs)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(seed.maxBreadcrumbs, maxBreadcrumbs)
+            assertEquals(seed.maxPersistedEvents, maxPersistedEvents)
+            assertEquals(seed.maxPersistedSessions, maxPersistedSessions)
             assertEquals(seed.persistUser, persistUser)
             assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
         }
@@ -98,6 +100,8 @@ internal class ImmutableConfigTest {
         seed.endpoints = endpoints
         seed.launchCrashThresholdMs = 7000
         seed.maxBreadcrumbs = 37
+        seed.maxPersistedEvents = 55
+        seed.maxPersistedSessions = 103
         seed.persistUser = true
         seed.enabledBreadcrumbTypes = emptySet()
 
@@ -133,6 +137,8 @@ internal class ImmutableConfigTest {
             assertEquals(7000, seed.launchCrashThresholdMs)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)
+            assertEquals(55, seed.maxPersistedEvents)
+            assertEquals(103, seed.maxPersistedSessions)
             assertTrue(seed.persistUser)
             assertTrue(seed.enabledBreadcrumbTypes!!.isEmpty())
         }

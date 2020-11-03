@@ -49,6 +49,19 @@ final class BugsnagTestUtils {
         return new JSONArray(streamableToString(streamable));
     }
 
+    static Event generateEvent() {
+        Throwable exc = new RuntimeException();
+        Event event = new Event(
+                exc,
+                BugsnagTestUtils.generateImmutableConfig(),
+                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+                NoopLogger.INSTANCE
+        );
+        event.setApp(generateAppWithState());
+        event.setDevice(generateDeviceWithState());
+        return event;
+    }
+
     static SharedPreferences getSharedPrefs(Context context) {
         return context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
     }
@@ -109,7 +122,8 @@ final class BugsnagTestUtils {
     @NonNull
     static SessionStore generateSessionStore() {
         Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(applicationContext, NoopLogger.INSTANCE, null);
+        ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
+        return new SessionStore(applicationContext, config, NoopLogger.INSTANCE, null);
     }
 
     public static Delivery generateDelivery() {
