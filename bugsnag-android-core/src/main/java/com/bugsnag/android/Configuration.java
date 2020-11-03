@@ -438,6 +438,58 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     }
 
     /**
+     * Sets the maximum number of persisted events which will be stored. Once the threshold is
+     * reached, the oldest event will be deleted.
+     *
+     * By default, 32 events are persisted.
+     */
+    public int getMaxPersistedEvents() {
+        return impl.getMaxPersistedEvents();
+    }
+
+    /**
+     * Sets the maximum number of persisted events which will be stored. Once the threshold is
+     * reached, the oldest event will be deleted.
+     *
+     * By default, 32 events are persisted.
+     */
+    public void setMaxPersistedEvents(int maxPersistedEvents) {
+        if (maxPersistedEvents >= 0) {
+            impl.setMaxPersistedEvents(maxPersistedEvents);
+        } else {
+            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+                    + "Option maxPersistedEvents should be a positive integer."
+                    + "Supplied value is %d", maxPersistedEvents));
+        }
+    }
+
+    /**
+     * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
+     * reached, the oldest session will be deleted.
+     *
+     * By default, 32 sessions are persisted.
+     */
+    public int getMaxPersistedSessions() {
+        return impl.getMaxPersistedSessions();
+    }
+
+    /**
+     * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
+     * reached, the oldest session will be deleted.
+     *
+     * By default, 32 sessions are persisted.
+     */
+    public void setMaxPersistedSessions(int maxPersistedSessions) {
+        if (maxPersistedSessions >= 0) {
+            impl.setMaxPersistedSessions(maxPersistedSessions);
+        } else {
+            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+                    + "Option maxPersistedSessions should be a positive integer."
+                    + "Supplied value is %d", maxPersistedSessions));
+        }
+    }
+
+    /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
      *

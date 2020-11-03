@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.content.Context
-import java.util.Collections
 
 internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware, UserAware {
 
@@ -31,7 +30,9 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
         }
     var delivery: Delivery? = null
     var endpoints: EndpointConfiguration = EndpointConfiguration()
-    var maxBreadcrumbs: Int = DEFAULT_MAX_SIZE
+    var maxBreadcrumbs: Int = DEFAULT_MAX_BREADCRUMBS
+    var maxPersistedEvents: Int = DEFAULT_MAX_PERSISTED_PAYLOADS
+    var maxPersistedSessions: Int = DEFAULT_MAX_PERSISTED_PAYLOADS
     var context: String? = null
 
     var redactedKeys: Set<String> = metadataState.metadata.redactedKeys
@@ -75,7 +76,8 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     }
 
     companion object {
-        private const val DEFAULT_MAX_SIZE = 25
+        private const val DEFAULT_MAX_BREADCRUMBS = 25
+        private const val DEFAULT_MAX_PERSISTED_PAYLOADS = 32
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
 
         @JvmStatic

@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Add configuration option to control maximum number of persisted events/sessions
+  [#980](https://github.com/bugsnag/bugsnag-android/pull/980)
+
 ## 5.3.0 (2020-12-02)
 
 * Add integrity header to verify Error and Session API payloads have not changed

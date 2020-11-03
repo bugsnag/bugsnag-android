@@ -30,6 +30,11 @@ final class BugsnagTestUtils {
         return new EventPayload(config.getApiKey(), generateEvent(), new Notifier());
     }
 
+    static Session generateSession() {
+        return new Session("test", new Date(), new User(), false,
+                new Notifier(), NoopLogger.INSTANCE);
+    }
+
     static Event generateEvent() {
         Throwable exc = new RuntimeException();
         Event event = new Event(

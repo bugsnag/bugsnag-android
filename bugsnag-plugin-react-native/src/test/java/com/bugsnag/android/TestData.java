@@ -26,7 +26,9 @@ class TestData {
                 true,
                 55,
                 NoopLogger.INSTANCE,
-                22
+                22,
+                32,
+                32
         );
     }
 

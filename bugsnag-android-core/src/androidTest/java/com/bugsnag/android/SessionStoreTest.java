@@ -28,7 +28,8 @@ public class SessionStoreTest {
     @Before
     public void setUp() {
         Context context = ApplicationProvider.getApplicationContext();
-        SessionStore sessionStore = new SessionStore(context, NoopLogger.INSTANCE, null);
+        ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
+        SessionStore sessionStore = new SessionStore(context, config, NoopLogger.INSTANCE, null);
         assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);
