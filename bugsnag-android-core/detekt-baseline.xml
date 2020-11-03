@@ -25,7 +25,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ProtectedMemberInFinalClass:PluginClient.kt$PluginClient$protected val plugins: Set&lt;Plugin&gt;</ID>
-    <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String&gt; ): DeliveryStatus</ID>
+    <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String?&gt; ): DeliveryStatus</ID>
     <ID>ReturnCount:DeviceDataCollector.kt$DeviceDataCollector$ private fun isRooted(): Boolean</ID>
     <ID>TooGenericExceptionCaught:AppDataCollector.kt$AppDataCollector$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:CallbackState.kt$CallbackState$ex: Throwable</ID>
