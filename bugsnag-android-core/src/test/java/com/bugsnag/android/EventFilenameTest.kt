@@ -100,7 +100,7 @@ class EventFilenameTest {
 
     @Test
     fun regularJvmEventName() {
-        val filename = eventStore.getFilename(event, "my-uuid-123", 1504255147933, "/errors/")
+        val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933, "/errors/")
         assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
     }
 
@@ -110,7 +110,7 @@ class EventFilenameTest {
     @Test
     fun startupCrashJvmEventName() {
         `when`(app.duration).thenReturn(1000)
-        val filename = eventStore.getFilename(event, "my-uuid-123", 1504255147933, "/errors/")
+        val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933, "/errors/")
         assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123_startupcrash.json", filename)
     }
 
@@ -120,14 +120,21 @@ class EventFilenameTest {
     @Test
     fun nonStartupCrashCrashJvmEventName() {
         `when`(app.duration).thenReturn(10000)
-        val filename = eventStore.getFilename(event, "my-uuid-123", 1504255147933, "/errors/")
+        val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933, "/errors/")
         assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
     }
 
     @Test
     fun ndkEventName() {
-        val filename = eventStore.getFilename("{}", "my-uuid-123", 1504255147933, "/errors/")
-        assertEquals("/errors/1504255147933_my-uuid-123not-jvm.json", filename)
+        val filename = eventStore.getFilename("{}", "my-uuid-123",
+            "0000111122223333aaaabbbbcccc9999", 1504255147933, "/errors/")
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123not-jvm.json", filename)
+    }
+
+    @Test
+    fun ndkEventNameNoApiKey() {
+        val filename = eventStore.getFilename("{}", "my-uuid-123", "", 1504255147933, "/errors/")
+        assertEquals("/errors/1504255147933_5d1ec5bd39a74caa1267142706a7fb21_my-uuid-123not-jvm.json", filename)
     }
 
     @Test
@@ -150,5 +157,18 @@ class EventFilenameTest {
         `when`(file.name).thenReturn("1504255147933_0000111122223333aaaabbbbcccc9999" +
                 "_683c6b92-b325-4987-80ad-77086509ca1e.json")
         assertEquals("0000111122223333aaaabbbbcccc9999", eventStore.getApiKeyFromFilename(file))
+    }
+
+    @Test
+    fun apiKeyFromLegacyNdkFilename() {
+        `when`(file.name).thenReturn("1603191800142_7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
+        assertNull(eventStore.getApiKeyFromFilename(file))
+    }
+
+    @Test
+    fun apiKeyFromNdkFilename() {
+        `when`(file.name).thenReturn("1603191800142_5d1ec8bd39a74caa1267142706a7fb20_" +
+                "7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
+        assertEquals("5d1ec8bd39a74caa1267142706a7fb20", eventStore.getApiKeyFromFilename(file))
     }
 }

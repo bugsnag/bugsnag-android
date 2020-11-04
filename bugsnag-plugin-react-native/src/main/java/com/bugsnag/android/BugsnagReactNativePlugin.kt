@@ -56,9 +56,11 @@ class BugsnagReactNativePlugin : Plugin {
 
     private fun ignoreJavaScriptExceptions() {
         ignoreJsExceptionCallbackAdded = true
-        this.client.addOnError(OnErrorCallback { event ->
-            event.errors[0].errorClass != "com.facebook.react.common.JavascriptException"
-        })
+        this.client.addOnError(
+            OnErrorCallback { event ->
+                event.errors[0].errorClass != "com.facebook.react.common.JavascriptException"
+            }
+        )
     }
 
     override fun unload() {}
@@ -160,8 +162,8 @@ class BugsnagReactNativePlugin : Plugin {
             threadSerializer.serialize(map, it)
             map
         }
-        info["appMetadata"] = internalHooks.getAppMetadata();
-        info["deviceMetadata"] = internalHooks.getDeviceMetadata();
+        info["appMetadata"] = internalHooks.getAppMetadata()
+        info["deviceMetadata"] = internalHooks.getDeviceMetadata()
         return info
     }
 }

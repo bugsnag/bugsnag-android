@@ -7,7 +7,7 @@ internal class AnrPlugin : Plugin {
 
     private companion object {
         private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
-                "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
+            "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
     }
 
     private val loader = LibraryLoader()
@@ -28,11 +28,13 @@ internal class AnrPlugin : Plugin {
         if (loaded) {
             // this must be run from the main thread as the SIGQUIT is sent to the main thread,
             // and if the handler is installed on a background thread instead we receive no signal
-            Handler(Looper.getMainLooper()).post(Runnable {
-                this.client = client
-                enableAnrReporting(true)
-                client.logger.i("Initialised ANR Plugin")
-            })
+            Handler(Looper.getMainLooper()).post(
+                Runnable {
+                    this.client = client
+                    enableAnrReporting(true)
+                    client.logger.i("Initialised ANR Plugin")
+                }
+            )
         } else {
             client.logger.e(LOAD_ERR_MSG)
         }
@@ -64,5 +66,4 @@ internal class AnrPlugin : Plugin {
         // is displayed
         collector.collectAnrErrorDetails(client, event)
     }
-
 }

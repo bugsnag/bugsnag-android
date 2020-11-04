@@ -35,8 +35,7 @@ class ConnectivityApi24Test {
     fun connectivityLegacyHasConnection() {
         val conn = ConnectivityApi24(cm, null)
         assertFalse(conn.hasNetworkConnection())
-
-        conn.activeNetwork = info;
+        Mockito.`when`(cm.activeNetwork).thenReturn(info)
         assertTrue(conn.hasNetworkConnection())
     }
 
