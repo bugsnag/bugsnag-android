@@ -13,5 +13,5 @@ class DeliveryParams(
     /**
      * The HTTP headers which must be attached to the request
      */
-    val headers: Map<String, String>
+    val headers: Map<String, String?>
 )

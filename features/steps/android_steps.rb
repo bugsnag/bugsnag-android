@@ -185,6 +185,7 @@ Then("the request is valid for the error reporting API version {string} for the 
     And the payload contains the payloadVersion "#{payload_version}"
     And the "Content-Type" header equals "application/json"
     And the "Bugsnag-Sent-At" header is a timestamp
+    And the "Bugsnag-Integrity" header is a SHA-1 digest
 
     And the payload field "notifier.name" equals "#{notifier_name}"
     And the payload field "notifier.url" is not null
@@ -196,6 +197,12 @@ Then("the request is valid for the error reporting API version {string} for the 
     And each element in payload field "events" has "unhandled"
     And each element in payload field "events" has "exceptions"
   }
+end
+
+Then('the {string} header is a SHA-1 digest') do |header_name|
+  header = Server.current_request[:request][header_name]
+  SHA1_REGEX = /^sha1 [0-9a-f]{40}$/
+  assert_match(SHA1_REGEX, header)
 end
 
 Then("the event has {int} breadcrumbs") do |expected_count|

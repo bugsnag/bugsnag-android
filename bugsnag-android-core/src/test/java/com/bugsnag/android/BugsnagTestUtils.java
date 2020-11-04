@@ -26,6 +26,22 @@ final class BugsnagTestUtils {
         return convert(generateConfiguration());
     }
 
+    static EventPayload generateEventPayload(ImmutableConfig config) {
+        return new EventPayload(config.getApiKey(), generateEvent(), new Notifier());
+    }
+
+    static Event generateEvent() {
+        Throwable exc = new RuntimeException();
+        Event event = new Event(
+                exc,
+                BugsnagTestUtils.generateImmutableConfig(),
+                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+                NoopLogger.INSTANCE
+        );
+        event.setApp(generateAppWithState());
+        event.setDevice(generateDeviceWithState());
+        return event;
+    }
 
     static ImmutableConfig convert(Configuration config) {
         return ImmutableConfigKt.convertToImmutableConfig(config, null);
