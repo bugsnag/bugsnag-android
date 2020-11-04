@@ -70,7 +70,7 @@ public class DeviceSerializerTest {
         assertEquals(20923423434L, map.get("freeDisk"));
         assertEquals(23409662345L, map.get("freeMemory"));
         assertEquals("portrait", map.get("orientation"));
-        assertEquals("1970-01-01T00:00:00Z", map.get("time"));
+        assertEquals("1970-01-01T00:00:00.000Z", map.get("time"));
 
         Map<String, Object> runtimeVersions = new HashMap<>();
         runtimeVersions.put("androidApiLevel", 27);

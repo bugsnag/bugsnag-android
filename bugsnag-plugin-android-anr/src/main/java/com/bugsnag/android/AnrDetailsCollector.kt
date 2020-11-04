@@ -58,19 +58,21 @@ internal class AnrDetailsCollector {
         val handler = Handler(handlerThread.looper)
         val attempts = AtomicInteger()
 
-        handler.post(object : Runnable {
-            override fun run() {
-                val anrDetails = collectAnrDetails(client.appContext)
+        handler.post(
+            object : Runnable {
+                override fun run() {
+                    val anrDetails = collectAnrDetails(client.appContext)
 
-                if (anrDetails == null) {
-                    if (attempts.getAndIncrement() < MAX_ATTEMPTS) {
-                        handler.postDelayed(this, INFO_POLL_THRESHOLD_MS)
+                    if (anrDetails == null) {
+                        if (attempts.getAndIncrement() < MAX_ATTEMPTS) {
+                            handler.postDelayed(this, INFO_POLL_THRESHOLD_MS)
+                        }
+                    } else {
+                        addErrorStateInfo(event, anrDetails)
+                        client.populateAndNotifyAndroidEvent(event, null)
                     }
-                } else {
-                    addErrorStateInfo(event, anrDetails)
-                    client.populateAndNotifyAndroidEvent(event, null)
                 }
             }
-        })
+        )
     }
 }

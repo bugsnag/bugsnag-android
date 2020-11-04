@@ -32,7 +32,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 3
+#define BUGSNAG_EVENT_VERSION 4
 
 
 #ifdef __cplusplus
@@ -206,6 +206,7 @@ typedef struct {
     int unhandled_events;
     char grouping_hash[64];
     bool unhandled;
+    char api_key[64];
 } bugsnag_event;
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,

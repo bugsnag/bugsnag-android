@@ -226,10 +226,11 @@ class EventStore extends FileStore {
     String getFilename(Object object) {
         String uuid = UUID.randomUUID().toString();
         long now = System.currentTimeMillis();
-        return getFilename(object, uuid, now, storeDirectory);
+        return getFilename(object, uuid, null, now, storeDirectory);
     }
 
-    String getFilename(Object object, String uuid, long timestamp, String storeDirectory) {
+    String getFilename(Object object, String uuid, String apiKey,
+                       long timestamp, String storeDirectory) {
         String suffix = "";
 
         if (object instanceof Event) {
@@ -239,14 +240,21 @@ class EventStore extends FileStore {
             if (duration != null && isStartupCrash(duration.longValue())) {
                 suffix = STARTUP_CRASH;
             }
-            return String.format(Locale.US, "%s%d_%s_%s%s.json",
-                    storeDirectory, timestamp, event.getApiKey(), uuid, suffix);
-
+            apiKey = event.getApiKey();
         } else { // generating a filename for an NDK event
             suffix = "not-jvm";
-            return String.format(Locale.US, "%s%d_%s%s.json",
-                    storeDirectory, timestamp, uuid, suffix);
+            if (apiKey.isEmpty()) {
+                apiKey = config.getApiKey();
+            }
         }
+        return String.format(Locale.US, "%s%d_%s_%s%s.json",
+                storeDirectory, timestamp, apiKey, uuid, suffix);
+    }
+
+    String getNdkFilename(Object object, String apiKey) {
+        String uuid = UUID.randomUUID().toString();
+        long now = System.currentTimeMillis();
+        return getFilename(object, uuid, apiKey, now, storeDirectory);
     }
 
     boolean isStartupCrash(long durationMs) {

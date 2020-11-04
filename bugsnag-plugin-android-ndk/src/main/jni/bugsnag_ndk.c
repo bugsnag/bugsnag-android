@@ -95,8 +95,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableCrashRep
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
-    JNIEnv *env, jobject _this, jstring _event_path, jboolean auto_detect_ndk_crashes,
-    jint _api_level, jboolean is32bit) {
+    JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
+    jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,
@@ -106,6 +106,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->report_header.version = BUGSNAG_EVENT_VERSION;
   const char *event_path = (*env)->GetStringUTFChars(env, _event_path, 0);
   sprintf(bugsnag_env->next_event_path, "%s", event_path);
+  (*env)->ReleaseStringUTFChars(env, _event_path, event_path);
 
   if ((bool)auto_detect_ndk_crashes) {
     bsg_handler_install_signal(bugsnag_env);
@@ -126,7 +127,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
                      sizeof(bugsnag_env->report_header.os_build));
   }
 
-  (*env)->ReleaseStringUTFChars(env, _event_path, event_path);
+  const char *api_key = (*env)->GetStringUTFChars(env, _api_key, 0);
+  bsg_strncpy_safe(bugsnag_env->next_event.api_key, (char *) api_key, sizeof(bugsnag_env->next_event.api_key));
+  (*env)->ReleaseStringUTFChars(env, _api_key, api_key);
+
   bsg_global_env = bugsnag_env;
   BUGSNAG_LOG("Initialization complete!");
 }
@@ -147,7 +151,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
           (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
       jmethodID jdeliver_method =
           (*env)->GetStaticMethodID(env, interface_class, "deliverReport",
-                                    "([B[B)V");
+                                    "([B[BLjava/lang/String;)V");
       size_t payload_length = bsg_strlen(payload);
       jbyteArray jpayload = (*env)->NewByteArray(env, payload_length);
       (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length, (jbyte *)payload);
@@ -156,8 +160,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       jbyteArray jstage = (*env)->NewByteArray(env, stage_length);
       (*env)->SetByteArrayRegion(env, jstage, 0, stage_length, (jbyte *)event->app.release_stage);
 
+      jstring japi_key = (*env)->NewStringUTF(env, event->api_key);
       (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
-                                   jstage, jpayload);
+                                   jstage, jpayload, japi_key);
+      (*env)->DeleteLocalRef(env, japi_key);
       (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload, 0); // <-- frees payload
       (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
       (*env)->DeleteLocalRef(env, jpayload);

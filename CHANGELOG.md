@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.2.3 (2020-11-04)
+
+### Bug fixes
+
+* Flush persisted sessions on launch and on connectivity changes
+  [#973](https://github.com/bugsnag/bugsnag-android/pull/973)
+
+* Increase breadcrumb time precision to milliseconds
+  [#954](https://github.com/bugsnag/bugsnag-android/pull/954)
+
+* Default to allowing requests when checking connectivity
+  [#970](https://github.com/bugsnag/bugsnag-android/pull/970)
+
+* Support changing NDK Event's api key in OnErrorCallback
+  [#964](https://github.com/bugsnag/bugsnag-android/pull/964)
+
 ## 5.2.2 (2020-10-19)
 
 ### Bug fixes

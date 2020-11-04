@@ -126,6 +126,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 leaveAutoBreadcrumb("Connectivity changed", BreadcrumbType.STATE, data);
                 if (hasConnection) {
                     eventStore.flushAsync();
+                    sessionTracker.flushAsync();
                 }
                 return null;
             }
@@ -241,9 +242,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
 
-        // Flush any on-disk errors
         connectivity.registerForNetworkChanges();
+
+        // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch();
+        sessionTracker.flushAsync();
 
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
