@@ -529,6 +529,56 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   bsg_release_env_write_lock();
 }
 
+JNIEXPORT jobject JNICALL Java_com_bugsnag_android_ndk_NativeBridge_getSignalStackTrace(
+        JNIEnv *env, jobject _this, jlong info, jlong userContext) {
+  siginfo_t *p_info = (siginfo_t *)info;
+  void *p_user_context = (void *)userContext;
+
+  jclass list_class = (*env)->FindClass(env, "java/util/LinkedList");
+  jmethodID list_init = (*env)->GetMethodID(env, list_class, "<init>", "()V");
+  jmethodID list_add  = (*env)->GetMethodID(env, list_class, "add", "(Ljava/lang/Object;)Z");
+  jclass frame_class = (*env)->FindClass(env, "com/bugsnag/android/Stackframe");
+  jmethodID frame_init = (*env)->GetMethodID(env, frame_class, "<init>",
+                                             "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/Boolean;Ljava/util/Map;Ljava/lang/Number;)V");
+  jclass int_class = (*env)->FindClass(env, "java/lang/Integer");
+  jmethodID int_init = (*env)->GetMethodID(env, int_class, "<init>", "(I)V");
+  jclass bool_class = (*env)->FindClass(env, "java/lang/Boolean");
+  jmethodID bool_init = (*env)->GetMethodID(env, bool_class, "<init>", "(Z)V");
+
+  jobject jlist = (*env)->NewObject(env, list_class, list_init);
+
+  if (bsg_global_env == NULL) {
+    BUGSNAG_LOG("Attempted to fetch stack trace without first calling install()");
+    return jlist;
+  }
+
+  jobject jfalse =  (*env)->NewObject(env, bool_class, bool_init, false);
+  bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
+          bsg_global_env->signal_unwind_style,
+          bsg_global_env->next_event.error.stacktrace, p_info, p_user_context);
+  const ssize_t frame_count = bsg_global_env->next_event.error.frame_count;
+  bugsnag_stackframe *frames = bsg_global_env->next_event.error.stacktrace;
+  for(int i = 0; i < frame_count; i++) {
+    bugsnag_stackframe *frame = frames + i;
+    jobject jmethod = (*env)->NewStringUTF(env,frame->method);
+    jobject jfilename = (*env)->NewStringUTF(env,frame->filename);
+    jobject jline_number = (*env)->NewObject(env, int_class, int_init, (jint)frame->line_number);
+    jobject jframe = (*env)->NewObject(env, frame_class, frame_init,
+                                       jmethod,
+                                       jfilename,
+                                       jline_number,
+                                       jfalse,
+                                       NULL,
+                                       NULL);
+    (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
+    (*env)->DeleteLocalRef(env, jmethod);
+    (*env)->DeleteLocalRef(env, jfilename);
+    (*env)->DeleteLocalRef(env, jline_number);
+    (*env)->DeleteLocalRef(env, jframe);
+  }
+  return jlist;
+}
+
 #ifdef __cplusplus
 }
 #endif
