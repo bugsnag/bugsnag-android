@@ -54,6 +54,19 @@ internal class AnrPlugin : Plugin {
         val exc = RuntimeException()
         exc.stackTrace = thread.stackTrace
 
+        @Suppress("UNCHECKED_CAST")
+        val clz = Class.forName("com.bugsnag.android.NdkPlugin") as Class<Plugin>
+        val ndkPlugin = client.getPlugin(clz)
+        if (ndkPlugin != null) {
+            val method = ndkPlugin.javaClass.getMethod("getSignalStackTrace", Long::class.java, Long::class.java)
+            @Suppress("UNCHECKED_CAST")
+            val list = method.invoke(ndkPlugin, info, userContext) as List<Stackframe>
+
+            for (frame in list) client.logger.e(
+                "### TODO: ANR TRACE: " + frame.file + ": " + frame.lineNumber + ": " + frame.method
+            )
+        }
+
         val event = NativeInterface.createEvent(
             exc,
             client,
