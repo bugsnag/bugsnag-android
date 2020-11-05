@@ -22,23 +22,10 @@ endif
 	 INSTRUMENTATION_DEVICES='["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]' \
 	 docker-compose up --build android-instrumentation-tests
 
-remote-integration-tests:
-ifeq ($(BROWSER_STACK_USERNAME),)
-	@$(error BROWSER_STACK_USERNAME is not defined)
-endif
-ifeq ($(BROWSER_STACK_ACCESS_KEY),)
-	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
-endif
+test-fixture:
 	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal
 	@./gradlew -p=features/fixtures/mazerunner/ assembleRelease
 	@cp features/fixtures/mazerunner/build/outputs/apk/release/mazerunner-release.apk build/fixture.apk
-	@BRANCH_NAME= docker-compose build android-maze-runner
-
-ifneq ($(TEST_FEATURE),)
-	@BRANCH_NAME= APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner features/$(TEST_FEATURE)
-else
-	@BRANCH_NAME= APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner
-endif
 
 bump:
 ifneq ($(shell git diff --staged),)
