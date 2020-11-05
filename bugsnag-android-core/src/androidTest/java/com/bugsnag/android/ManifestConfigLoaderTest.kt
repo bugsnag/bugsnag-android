@@ -46,6 +46,8 @@ class ManifestConfigLoaderTest {
 
             // misc
             assertEquals(maxBreadcrumbs, 25)
+            assertEquals(maxPersistedEvents, 32)
+            assertEquals(maxPersistedSessions, 32)
             assertEquals(launchCrashThresholdMs, 5000)
             assertEquals("android", appType)
         }
@@ -79,6 +81,8 @@ class ManifestConfigLoaderTest {
 
             // misc
             putInt("com.bugsnag.android.MAX_BREADCRUMBS", 50)
+            putInt("com.bugsnag.android.MAX_PERSISTED_EVENTS", 52)
+            putInt("com.bugsnag.android.MAX_PERSISTED_SESSIONS", 64)
             putInt("com.bugsnag.android.LAUNCH_CRASH_THRESHOLD_MS", 7000)
             putString("com.bugsnag.android.APP_TYPE", "react-native")
             putString("com.bugsnag.android.CODE_BUNDLE_ID", "123")
@@ -110,6 +114,8 @@ class ManifestConfigLoaderTest {
 
             // misc
             assertEquals(maxBreadcrumbs, 50)
+            assertEquals(maxPersistedEvents, 52)
+            assertEquals(maxPersistedSessions, 64)
             assertEquals(launchCrashThresholdMs, 7000)
             assertEquals("react-native", appType)
         }

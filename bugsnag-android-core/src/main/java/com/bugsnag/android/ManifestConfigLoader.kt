@@ -36,8 +36,9 @@ internal class ManifestConfigLoader {
 
         // misc
         private const val MAX_BREADCRUMBS = "$BUGSNAG_NS.MAX_BREADCRUMBS"
+        private const val MAX_PERSISTED_EVENTS = "$BUGSNAG_NS.MAX_PERSISTED_EVENTS"
+        private const val MAX_PERSISTED_SESSIONS = "$BUGSNAG_NS.MAX_PERSISTED_SESSIONS"
         private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"
-        private const val CODE_BUNDLE_ID = "$BUGSNAG_NS.CODE_BUNDLE_ID"
         private const val APP_TYPE = "$BUGSNAG_NS.APP_TYPE"
     }
 
@@ -73,6 +74,8 @@ internal class ManifestConfigLoader {
             // misc config
             with(config) {
                 maxBreadcrumbs = data.getInt(MAX_BREADCRUMBS, maxBreadcrumbs)
+                maxPersistedEvents = data.getInt(MAX_PERSISTED_EVENTS, maxPersistedEvents)
+                maxPersistedSessions = data.getInt(MAX_PERSISTED_SESSIONS, maxPersistedSessions)
                 launchCrashThresholdMs =
                     data.getInt(LAUNCH_CRASH_THRESHOLD_MS, launchCrashThresholdMs.toInt()).toLong()
             }

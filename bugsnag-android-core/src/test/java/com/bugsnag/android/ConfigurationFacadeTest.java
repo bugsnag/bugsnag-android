@@ -173,6 +173,30 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
+    public void maxPersistedEventsValid() {
+        config.setMaxPersistedEvents(55);
+        assertEquals(55, config.impl.getMaxPersistedEvents());
+    }
+
+    @Test
+    public void maxPersistedEventsInvalid() {
+        config.setMaxPersistedEvents(-1);
+        assertEquals(32, config.impl.getMaxPersistedEvents());
+    }
+
+    @Test
+    public void maxPersistedSessionsValid() {
+        config.setMaxPersistedSessions(55);
+        assertEquals(55, config.impl.getMaxPersistedSessions());
+    }
+
+    @Test
+    public void maxPersistedSessionsInvalid() {
+        config.setMaxPersistedSessions(-1);
+        assertEquals(32, config.impl.getMaxPersistedSessions());
+    }
+
+    @Test
     public void contextValid() {
         config.setContext("Whoops");
         assertEquals("Whoops", config.impl.getContext());

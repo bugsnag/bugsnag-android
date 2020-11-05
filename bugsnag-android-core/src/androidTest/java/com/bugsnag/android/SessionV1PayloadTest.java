@@ -40,7 +40,8 @@ public class SessionV1PayloadTest {
     @Before
     public void setUp() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        sessionStore = new SessionStore(context, NoopLogger.INSTANCE, null);
+        ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
+        sessionStore = new SessionStore(context, config, NoopLogger.INSTANCE, null);
 
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
