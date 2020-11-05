@@ -103,6 +103,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                 @Override
                 public void run() {
                     try {
+                        logger.d("InternalReportDelegate - sending internal event");
+
                         Delivery delivery = immutableConfig.getDelivery();
                         String apiKey = eventPayload.getApiKey();
                         DeliveryParams params = immutableConfig.getErrorApiDeliveryParams(apiKey);
