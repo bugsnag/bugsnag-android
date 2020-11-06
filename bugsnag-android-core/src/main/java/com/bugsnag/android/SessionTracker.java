@@ -167,8 +167,8 @@ class SessionTracker extends BaseObservable {
                         flushStoredSessions();
 
                         try {
-                            logger.d("SessionTracker#trackSessionIfNeeded() " +
-                                    "- attempting initial delivery");
+                            logger.d("SessionTracker#trackSessionIfNeeded() "
+                                + "- attempting initial delivery");
                             DeliveryStatus deliveryStatus = deliverSessionPayload(session);
 
                             switch (deliveryStatus) {
