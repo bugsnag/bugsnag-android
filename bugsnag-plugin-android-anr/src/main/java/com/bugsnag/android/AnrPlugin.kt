@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.os.Handler
 import android.os.Looper
+import java.util.LinkedList
 
 internal class AnrPlugin : Plugin {
 
@@ -42,31 +43,70 @@ internal class AnrPlugin : Plugin {
 
     override fun unload() = disableAnrReporting()
 
+    private fun getNotifyAnrDetectedIndex(stackTrace: Array<StackTraceElement>): Int {
+        for (i in 0..stackTrace.size) {
+            val frame = stackTrace[i]
+            if (frame.methodName == "notifyAnrDetected" && frame.className == "com.bugsnag.android.AnrPlugin") {
+                return i
+            }
+        }
+        return -1
+    }
+
+    private fun isNativeANR(stackTrace: Array<StackTraceElement>): Boolean {
+        // True if the frame leading to "notifyAnrDetected" is native.
+        // This is not perfect, because some JVM calls are technically native (like sleep).
+
+        val notifyIndex = getNotifyAnrDetectedIndex(stackTrace)
+        if (notifyIndex < 0) {
+            return false
+        }
+
+        return stackTrace[notifyIndex + 1].isNativeMethod
+    }
+
+    private fun mergeTraces(jvmTrace: Array<StackTraceElement>, nativeTrace: List<Stackframe>):
+        Array<StackTraceElement> {
+            val notifyIndex = getNotifyAnrDetectedIndex(jvmTrace)
+
+            val stackTrace = LinkedList<StackTraceElement>()
+            for (frame in nativeTrace) {
+                stackTrace.add(
+                    StackTraceElement(
+                        "",
+                        frame.method,
+                        frame.file,
+                        frame.lineNumber?.toInt() ?: 0
+                    )
+                )
+            }
+            for (i in notifyIndex + 1..jvmTrace.size - 1) {
+                stackTrace.add(jvmTrace[i])
+            }
+            return stackTrace.toTypedArray()
+        }
+
     /**
      * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
      * with details of the ANR. Intended for internal use only.
      */
     @Suppress("UNUSED_PARAMETER")
     private fun notifyAnrDetected(info: Long, userContext: Long) {
-        val thread = Looper.getMainLooper().thread
-
         // generate a full report as soon as possible, then wait for extra process error info
-        val exc = RuntimeException()
-        exc.stackTrace = thread.stackTrace
+        var stackTrace = Looper.getMainLooper().thread.stackTrace
 
         @Suppress("UNCHECKED_CAST")
         val clz = Class.forName("com.bugsnag.android.NdkPlugin") as Class<Plugin>
         val ndkPlugin = client.getPlugin(clz)
-        if (ndkPlugin != null) {
+        if (ndkPlugin != null && isNativeANR(stackTrace)) {
             val method = ndkPlugin.javaClass.getMethod("getSignalStackTrace", Long::class.java, Long::class.java)
             @Suppress("UNCHECKED_CAST")
-            val list = method.invoke(ndkPlugin, info, userContext) as List<Stackframe>
-
-            for (frame in list) client.logger.e(
-                "### TODO: ANR TRACE: " + frame.file + ": " + frame.lineNumber + ": " + frame.method
-            )
+            val nativeTrace = method.invoke(ndkPlugin, info, userContext) as List<Stackframe>
+            stackTrace = mergeTraces(stackTrace, nativeTrace)
         }
 
+        val exc = RuntimeException()
+        exc.stackTrace = stackTrace
         val event = NativeInterface.createEvent(
             exc,
             client,
