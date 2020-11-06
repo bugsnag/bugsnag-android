@@ -146,6 +146,8 @@ class SessionTracker extends BaseObservable {
      * @param session the session
      */
     private void trackSessionIfNeeded(final Session session) {
+        logger.d("SessionTracker#trackSessionIfNeeded() - session captured by Client");
+
         boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
 
         session.setApp(client.getAppDataCollector().generateApp());
@@ -165,6 +167,8 @@ class SessionTracker extends BaseObservable {
                         flushStoredSessions();
 
                         try {
+                            logger.d("SessionTracker#trackSessionIfNeeded() "
+                                + "- attempting initial delivery");
                             DeliveryStatus deliveryStatus = deliverSessionPayload(session);
 
                             switch (deliveryStatus) {
@@ -263,6 +267,7 @@ class SessionTracker extends BaseObservable {
     }
 
     void flushStoredSession(File storedFile) {
+        logger.d("SessionTracker#flushStoredSession() - attempting delivery");
         Session payload = new Session(storedFile, client.getNotifier(), logger);
 
         if (!payload.isV2Payload()) { // collect data here

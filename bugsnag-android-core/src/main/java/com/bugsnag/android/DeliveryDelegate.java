@@ -30,6 +30,7 @@ class DeliveryDelegate extends BaseObservable {
     }
 
     void deliver(@NonNull Event event) {
+        logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         // Build the eventPayload
         EventPayload eventPayload = new EventPayload(event.getApiKey(), event, notifier);
         Session session = event.getSession();
@@ -75,6 +76,8 @@ class DeliveryDelegate extends BaseObservable {
 
     @VisibleForTesting
     DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
+        logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
+
         String apiKey = payload.getApiKey();
         DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(apiKey);
         Delivery delivery = immutableConfig.getDelivery();

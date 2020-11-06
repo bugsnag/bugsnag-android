@@ -666,6 +666,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void notifyInternal(@NonNull Event event,
                         @Nullable OnErrorCallback onError) {
+        String type = event.impl.getSeverityReasonType();
+        logger.d("Client#notifyInternal() - event captured by Client, type=" + type);
         // Don't notify if this event class should be ignored
         if (event.shouldDiscardClass()) {
             return;
