@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -23,6 +22,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        log("Launched mazerunner fixture MainActivity")
 
         // Attempt to dismiss any system dialogs (such as "MazeRunner crashed")
         val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
@@ -54,6 +54,7 @@ class MainActivity : Activity() {
             clearStoredApiKey()
             val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
             apiKeyField.text.clear()
+            log("Cleared user data")
         }
 
         if (apiKeyStored()) {
@@ -110,13 +111,13 @@ class MainActivity : Activity() {
          * unhandled Exceptions
          */
         window.decorView.postDelayed({
+            log("Executing scenario $eventType")
             testCase.run()
         }, 1)
     }
 
     private fun loadScenario(configuration: Configuration, eventType: String, eventMetaData: String): Scenario {
-        Log.d("Bugsnag", "Received test case, executing " + eventType)
-        Log.d("Bugsnag", "Received metadata: " + eventMetaData)
+        log("Loading scenario $eventType with metadata $eventMetaData")
         this.intent.putExtra("EVENT_METADATA", eventMetaData)
         val testCase = factory.testCaseForName(eventType, configuration, this)
         testCase.eventMetaData = eventMetaData
@@ -130,7 +131,7 @@ class MainActivity : Activity() {
         val config: Configuration
         if (apiKeyField.text.isNotEmpty()) {
             val manualApiKey = apiKeyField.text.toString()
-            Log.d("Bugsnag", "Running in manual mode with API key: $manualApiKey")
+            log("Running in manual mode with API key: $manualApiKey")
             config = Configuration(manualApiKey)
             setStoredApiKey(manualApiKey)
         } else {
@@ -181,5 +182,8 @@ class MainActivity : Activity() {
             }
         }
     }
+}
 
+internal fun log(msg: String) {
+    Log.d("BugsnagMazeRunner", msg)
 }
