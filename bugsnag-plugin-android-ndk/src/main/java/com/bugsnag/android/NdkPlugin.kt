@@ -44,11 +44,11 @@ internal class NdkPlugin : Plugin {
 
     override fun unload() = disableCrashReporting()
 
-    fun getSignalStackTrace(info: Long, userContext: Long): List<Stackframe> {
+    fun getSignalStackTrace(info: Long, userContext: Long): List<NativeStackframe> {
         val bridge = nativeBridge
         if (bridge != null) {
             return bridge.getSignalStackTrace(info, userContext)
         }
-        return LinkedList<Stackframe>()
+        return LinkedList<NativeStackframe>()
     }
 }
