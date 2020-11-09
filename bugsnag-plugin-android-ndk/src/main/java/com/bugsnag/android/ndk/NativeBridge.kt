@@ -2,7 +2,7 @@ package com.bugsnag.android.ndk
 
 import android.os.Build
 import com.bugsnag.android.NativeInterface
-import com.bugsnag.android.Stackframe
+import com.bugsnag.android.NativeStackframe
 import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.AddBreadcrumb
 import com.bugsnag.android.StateEvent.AddMetadata
@@ -76,7 +76,7 @@ class NativeBridge : Observer {
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
-    external fun getSignalStackTrace(info: Long, userContext: Long): List<Stackframe>
+    external fun getSignalStackTrace(info: Long, userContext: Long): List<NativeStackframe>
 
     /**
      * Creates a new native bridge for interacting with native components.
