@@ -2,6 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>ReturnCount:AnrPlugin.kt$AnrPlugin.Companion$ internal fun getNativeANRIndex(stackTrace: Array&lt;StackTraceElement&gt;): Int</ID>
     <ID>TooGenericExceptionCaught:AnrDetailsCollector.kt$AnrDetailsCollector$exc: RuntimeException</ID>
+    <ID>TooGenericExceptionCaught:AnrPlugin.kt$AnrPlugin$exception: Exception</ID>
   </CurrentIssues>
 </SmellBaseline>
