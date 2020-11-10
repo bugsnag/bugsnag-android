@@ -1,4 +1,4 @@
-package com.bugsnag.android.mazerunner
+package com.bugsnag.android
 
 import android.content.Context
 import com.bugsnag.android.Configuration

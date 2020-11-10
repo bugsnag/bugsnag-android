@@ -1,3 +1,3 @@
-package com.bugsnag.android.mazerunner
+package com.bugsnag.android
 
 internal class SomeException : Exception()

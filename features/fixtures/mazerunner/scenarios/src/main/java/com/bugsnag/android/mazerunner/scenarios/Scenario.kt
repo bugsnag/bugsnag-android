@@ -4,8 +4,13 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.content.Context
-
-import com.bugsnag.android.*
+import com.bugsnag.android.Configuration
+import com.bugsnag.android.Delivery
+import com.bugsnag.android.DeliveryParams
+import com.bugsnag.android.DeliveryStatus
+import com.bugsnag.android.EventPayload
+import com.bugsnag.android.Session
+import com.bugsnag.android.createDefaultDelivery
 
 abstract class Scenario(
     protected val config: Configuration,
