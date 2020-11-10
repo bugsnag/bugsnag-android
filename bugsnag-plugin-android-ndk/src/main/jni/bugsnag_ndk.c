@@ -552,19 +552,37 @@ JNIEXPORT jobject JNICALL Java_com_bugsnag_android_ndk_NativeBridge_getSignalSta
     return jlist;
   }
 
+  BUGSNAG_LOG("### About to call bsg_unwind_stack");
   bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
           bsg_global_env->signal_unwind_style,
           bsg_global_env->next_event.error.stacktrace, p_info, p_user_context);
+  BUGSNAG_LOG("### After call bsg_unwind_stack");
   const ssize_t frame_count = bsg_global_env->next_event.error.frame_count;
   bugsnag_stackframe *frames = bsg_global_env->next_event.error.stacktrace;
+  BUGSNAG_LOG("### Begin frame loop");
   for(int i = 0; i < frame_count; i++) {
+    BUGSNAG_LOG("###### frane %d", i);
     bugsnag_stackframe *frame = frames + i;
     jobject jmethod = (*env)->NewStringUTF(env,frame->method);
+    BUGSNAG_LOG("#### method %s", frame->method);
     jobject jfilename = (*env)->NewStringUTF(env,frame->filename);
+    BUGSNAG_LOG("#### file %s", frame->filename);
     jobject jline_number = (*env)->NewObject(env, int_class, int_init, (jint)frame->line_number);
+    BUGSNAG_LOG("#### line %d", (int)frame->line_number);
     jobject jframe_address = (*env)->NewObject(env, long_class, long_init, (jlong)frame->frame_address);
+    BUGSNAG_LOG("#### frame %p", (void*)frame->frame_address);
     jobject jsymbol_address = (*env)->NewObject(env, long_class, long_init, (jlong)frame->symbol_address);
+    BUGSNAG_LOG("#### symbol %p", (void*)frame->symbol_address);
     jobject jload_address = (*env)->NewObject(env, long_class, long_init, (jlong)frame->load_address);
+    BUGSNAG_LOG("#### load %p", (void*)frame->load_address);
+    BUGSNAG_LOG("#### env %p, f_c %p, f_i %p, jmeth %p, jfile %p, jline %p, jaddr %p, jsym %p, jload %p",
+                env, frame_class, frame_init,
+                jmethod,
+                jfilename,
+                jline_number,
+                jframe_address,
+                jsymbol_address,
+                jload_address);
     jobject jframe = (*env)->NewObject(env, frame_class, frame_init,
                                        jmethod,
                                        jfilename,
@@ -572,6 +590,7 @@ JNIEXPORT jobject JNICALL Java_com_bugsnag_android_ndk_NativeBridge_getSignalSta
                                        jframe_address,
                                        jsymbol_address,
                                        jload_address);
+    BUGSNAG_LOG("###### Frame created");
     (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
     (*env)->DeleteLocalRef(env, jmethod);
     (*env)->DeleteLocalRef(env, jfilename);
@@ -581,6 +600,7 @@ JNIEXPORT jobject JNICALL Java_com_bugsnag_android_ndk_NativeBridge_getSignalSta
     (*env)->DeleteLocalRef(env, jload_address);
     (*env)->DeleteLocalRef(env, jframe);
   }
+  BUGSNAG_LOG("### Return to JVM");
   return jlist;
 }
 

@@ -5,7 +5,7 @@ import java.io.IOException
 /**
  * Represents a single native stackframe
  */
-class NativeStackframe internal constructor(
+class NativeStackframe constructor(
 
     /**
      * The name of the method that was being executed
