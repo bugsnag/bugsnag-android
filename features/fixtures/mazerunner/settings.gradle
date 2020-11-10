@@ -1,2 +1,2 @@
-include ':scenarios'
+include ':jvm-scenarios'
 include ':app'
