@@ -1,17 +1,5 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.AppWithState;
-import com.bugsnag.android.Configuration;
-import com.bugsnag.android.Delivery;
-import com.bugsnag.android.DeliveryParams;
-import com.bugsnag.android.DeliveryStatus;
-import com.bugsnag.android.DeviceBuildInfo;
-import com.bugsnag.android.DeviceWithState;
-import com.bugsnag.android.EventPayload;
-import com.bugsnag.android.ImmutableConfig;
-import com.bugsnag.android.ImmutableConfigKt;
-import com.bugsnag.android.NoopLogger;
-
 import androidx.annotation.NonNull;
 
 import java.util.Collections;

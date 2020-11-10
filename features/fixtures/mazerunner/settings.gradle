@@ -1,1 +1,2 @@
+include ':scenarios'
 include ':app'
