@@ -47,16 +47,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ["libs"]
-        }
-    }
     // adding custom jniLibs results in dupe SO files, ignore
     packagingOptions {
         pickFirst "**/*.so"
@@ -67,17 +57,9 @@ android {
 }
 
 dependencies {
-    implementation project(':jvm-scenarios')
+    implementation project(":jvm-scenarios")
+    implementation project(":ndk-scenarios")
     implementation "com.bugsnag:bugsnag-android:9.9.9"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"
-}
-
-apply plugin: "com.bugsnag.android.gradle"
-
-bugsnag {
-    uploadNdkMappings = false
-    uploadJvmMappings = false
-    reportBuilds = false
-    failOnUploadError = false
 }
