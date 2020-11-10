@@ -41,4 +41,11 @@ Here’s a bit about our process designing and building the Bugsnag libraries:
 * Finally, one of our goals is to ensure our libraries work reliably, even in crashy, multi-threaded environments. Oftentimes, this requires an intensive engineering design and code review process that adheres to our style and linting guidelines.
 
 
-Full details of how to develop bugsnag-android can be found in [the development guide](DEVELOPMENT.md)
+## Developing
+For information on how to build the library and develop changes see [DEVELOPMENT.md](DEVELOPMENT.md)
+
+## Testing
+For information on running the tests see [TESTING.md](TESTING.md)
+
+## Releasing
+Full details of how to release can be found in [RELEASING.md](RELEASING.md)
