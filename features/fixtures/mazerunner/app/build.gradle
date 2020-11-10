@@ -67,7 +67,7 @@ android {
 }
 
 dependencies {
-    implementation project(":scenarios")
+    implementation project(':jvm-scenarios')
     implementation "com.bugsnag:bugsnag-android:9.9.9"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"
