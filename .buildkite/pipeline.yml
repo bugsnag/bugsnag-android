@@ -223,13 +223,45 @@ steps:
     concurrency: 10
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Linter'
+  - label: ':android: Lint'
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.3.0:
           run: android-jvm
-    command: 'bash ./scripts/run-linter.sh'
+    command: './gradlew lint'
+
+  - label: ':android: Checkstyle'
+    depends_on: "android-jvm"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-jvm
+    command: './gradlew checkstyle'
+
+  - label: ':android: Detekt'
+    depends_on: "android-jvm"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-jvm
+    command: './gradlew detekt'
+
+  - label: ':android: Ktlint'
+    depends_on: "android-jvm"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-jvm
+    command: './gradlew ktlintCheck'
+
+  - label: ':android: CppCheck'
+    depends_on: "android-jvm"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-jvm
+    command: 'bash ./scripts/run-cpp-check.sh'
 
   - label: ':android: JVM tests'
     depends_on: "android-jvm"
