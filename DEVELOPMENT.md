@@ -66,6 +66,8 @@ Warnings can be suppressed by running the following task:
 ./gradlew detektBaseline
 ```
 
+This permanently disables all outstanding violations by writing to `detekt-baseline.xml`.
+
 ## Checkstyle
 
 [Checkstyle](https://github.com/checkstyle/checkstyle) runs style checks on Java code.
@@ -96,7 +98,7 @@ The example app can be found in [examples/sdk-app-example](examples/sdk-app-exam
 
 You should open `examples/sdk-app-example` as a separate Android Studio project and [run the app](https://developer.android.com/training/basics/firstapp/running-app). This will require a connected device or emulator.
 
-The app **does not use the local development version of Bugsnag**. To test local development changes, you will need to build the library locally.
+The app **does not use the local development version of Bugsnag**. To test local development changes, you will need to build the library locally with a high version number, and update the `bugsnag-android` dependency in `examples/sdk-app-example/build.gradle` to use that version.
 
 ## Building the Library locally
 
