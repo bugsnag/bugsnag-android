@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 add_library(entrypoint SHARED
-             src/main/cpp/entrypoint.cpp
-             src/main/cpp/bugsnags.cpp)
+        src/main/cpp/entrypoint.cpp
+        src/main/cpp/bugsnags.cpp)
 
 add_library(lib_bugsnag SHARED IMPORTED)
 set(BUGSNAG_LIB_DIR
