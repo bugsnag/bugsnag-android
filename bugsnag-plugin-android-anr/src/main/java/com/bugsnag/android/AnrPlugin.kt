@@ -5,9 +5,29 @@ import android.os.Looper
 
 internal class AnrPlugin : Plugin {
 
-    private companion object {
+    internal companion object {
         private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
             "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
+
+        /**
+         * Returns the index of the JVM frame that led to the native ANR, or -1 if not found.
+         */
+        internal fun getNativeANRIndex(stackTrace: Array<StackTraceElement>): Int {
+            // This is not perfect, because some JVM calls are technically native (like sleep).
+            val notifyIndex = stackTrace.indexOfFirst { frame ->
+                frame.methodName == "notifyAnrDetected" && frame.className == "com.bugsnag.android.AnrPlugin"
+            }
+            if (notifyIndex < 0) {
+                return -1
+            }
+
+            val nativeAnrIndex = notifyIndex + 1
+            if (nativeAnrIndex >= stackTrace.size || !stackTrace[nativeAnrIndex].isNativeMethod) {
+                return -1
+            }
+
+            return nativeAnrIndex
+        }
     }
 
     private val loader = LibraryLoader()
@@ -46,38 +66,48 @@ internal class AnrPlugin : Plugin {
      * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
      * with details of the ANR. Intended for internal use only.
      */
-    @Suppress("UNUSED_PARAMETER")
     private fun notifyAnrDetected(info: Long, userContext: Long) {
-        val thread = Looper.getMainLooper().thread
+        try {
+            // generate a full report as soon as possible, then wait for extra process error info
+            var stackTrace = Looper.getMainLooper().thread.stackTrace
+            var nativeTrace: List<NativeStackframe>? = null
 
-        // generate a full report as soon as possible, then wait for extra process error info
-        val exc = RuntimeException()
-        exc.stackTrace = thread.stackTrace
-
-        @Suppress("UNCHECKED_CAST")
-        val clz = Class.forName("com.bugsnag.android.NdkPlugin") as Class<Plugin>
-        val ndkPlugin = client.getPlugin(clz)
-        if (ndkPlugin != null) {
-            val method = ndkPlugin.javaClass.getMethod("getSignalStackTrace", Long::class.java, Long::class.java)
             @Suppress("UNCHECKED_CAST")
-            val list = method.invoke(ndkPlugin, info, userContext) as List<Stackframe>
+            val clz = Class.forName("com.bugsnag.android.NdkPlugin") as Class<Plugin>
+            val ndkPlugin = client.getPlugin(clz)
+            if (ndkPlugin != null) {
+                val nativeAnrIndex = getNativeANRIndex(stackTrace)
+                if (nativeAnrIndex >= 0) {
+                    val method = ndkPlugin.javaClass.getMethod(
+                        "getSignalStackTrace",
+                        Long::class.java,
+                        Long::class.java
+                    )
+                    @Suppress("UNCHECKED_CAST")
+                    nativeTrace = method.invoke(ndkPlugin, info, userContext) as List<NativeStackframe>
+                    stackTrace = stackTrace.drop(nativeAnrIndex).toTypedArray()
+                }
+            }
 
-            for (frame in list) client.logger.e(
-                "### TODO: ANR TRACE: " + frame.file + ": " + frame.lineNumber + ": " + frame.method
+            val exc = RuntimeException()
+            exc.stackTrace = stackTrace
+            val event = NativeInterface.createEvent(
+                exc,
+                client,
+                HandledState.newInstance(HandledState.REASON_ANR)
             )
+            val err = event.errors[0]
+            err.errorClass = "ANR"
+            err.errorMessage = "Application did not respond to UI input"
+            if (nativeTrace != null) {
+                err.stacktrace.addAll(0, nativeTrace.map { Stackframe(it) })
+            }
+
+            // wait and poll for error info to be collected. this occurs just before the ANR dialog
+            // is displayed
+            collector.collectAnrErrorDetails(client, event)
+        } catch (exception: Exception) {
+            client.logger.e("Internal error reporting ANR", exception)
         }
-
-        val event = NativeInterface.createEvent(
-            exc,
-            client,
-            HandledState.newInstance(HandledState.REASON_ANR)
-        )
-        val err = event.errors[0]
-        err.errorClass = "ANR"
-        err.errorMessage = "Application did not respond to UI input"
-
-        // wait and poll for error info to be collected. this occurs just before the ANR dialog
-        // is displayed
-        collector.collectAnrErrorDetails(client, event)
     }
 }
