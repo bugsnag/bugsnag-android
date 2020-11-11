@@ -47,6 +47,7 @@ class NativeStackframe internal constructor(
         writer.name("frameAddress").value(frameAddress)
         writer.name("symbolAddress").value(symbolAddress)
         writer.name("loadAddress").value(loadAddress)
+        writer.name("type").value("c")
         writer.endObject()
     }
 }
