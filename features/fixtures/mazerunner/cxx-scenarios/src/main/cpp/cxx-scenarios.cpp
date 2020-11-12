@@ -56,6 +56,16 @@ int crash_null_pointer(bool route) {
   return j;
 }
 
+volatile unsigned uint_f2wk124_dont_optimize_me_bro;
+
+int crash_anr(bool route) {
+    if (route)
+        for(unsigned i = 0; ;i++) {
+            uint_f2wk124_dont_optimize_me_bro = i;
+        }
+    return 7;
+}
+
 int crash_write_read_only_mem(int counter) {
   if (counter > 2) {
     int *pointer = (int *)&somefakefunc;
@@ -195,6 +205,13 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXNullPointerScenario_crash(JNIEn
                                                                            jobject instance) {
   int x = 38;
   printf("This one here: %ld\n", (long) crash_null_pointer(x > 0));
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXAnrScenario_crash(JNIEnv *env,
+                                                                           jobject instance) {
+  int x = 38;
+  printf("This one here: %ld\n", (long) crash_anr(x > 0));
 }
 
 JNIEXPORT void JNICALL

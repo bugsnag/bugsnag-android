@@ -20,7 +20,7 @@ internal class AppNotRespondingScenario(config: Configuration,
         super.run()
         val main = Handler(Looper.getMainLooper())
         main.postDelayed(Runnable {
-            Thread.sleep(50000) // FOREVER
+            while (true) { }
         }, 1) // A moment of delay so there is something to 'tap' onscreen
     }
 }

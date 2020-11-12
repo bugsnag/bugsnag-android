@@ -27,7 +27,7 @@ public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(50000); // Forever
+                    while (true) { }
                 } catch (Exception _ex) {
                     // Catch possible thread interruption exception
                 }
