@@ -68,12 +68,16 @@ android {
 }
 
 dependencies {
-    // only depend on NDK scenarios when ndk module included
-    if ((project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE"))) {
-        implementation project(":jvm-scenarios")
+    implementation project(":jvm-scenarios")
+    implementation project(":cxx-scenarios")
+
+    if (project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE")) {
+        // don't include NDK scenarios that require linking against bugsnag-plugin-android-ndk
     } else {
-        implementation project(":jvm-scenarios")
         implementation project(":cxx-scenarios")
+    }
+    if (!("true" == project.findProperty("MINIMAL_FIXTURE"))) {
+        implementation project(":cxx-scenarios-bugsnag")
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"

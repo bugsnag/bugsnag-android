@@ -10,8 +10,7 @@ import androidx.annotation.NonNull;
 public class CXXNativeUserInfoJavaCrashScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void activate();

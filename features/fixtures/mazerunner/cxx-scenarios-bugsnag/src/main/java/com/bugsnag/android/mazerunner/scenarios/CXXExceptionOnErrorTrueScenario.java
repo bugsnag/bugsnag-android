@@ -6,17 +6,16 @@ import androidx.annotation.NonNull;
 
 import com.bugsnag.android.Configuration;
 
-public class CXXExceptionOnErrorFalseScenario extends Scenario {
+public class CXXExceptionOnErrorTrueScenario extends Scenario {
 
     static {
         System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void crash();
 
-    public CXXExceptionOnErrorFalseScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXExceptionOnErrorTrueScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
     }

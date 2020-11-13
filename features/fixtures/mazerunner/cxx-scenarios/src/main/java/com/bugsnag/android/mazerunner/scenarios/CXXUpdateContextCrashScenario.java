@@ -11,9 +11,7 @@ import androidx.annotation.NonNull;
 public class CXXUpdateContextCrashScenario extends Scenario {
 
     static {
-        System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios");
     }
 
     public native int crash(int value);

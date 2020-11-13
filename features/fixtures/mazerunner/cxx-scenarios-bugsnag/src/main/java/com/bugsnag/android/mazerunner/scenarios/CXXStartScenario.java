@@ -1,23 +1,23 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Configuration;
 
 import android.content.Context;
 
-import com.bugsnag.android.Configuration;
-
 import androidx.annotation.NonNull;
 
-public class CXXNativeBreadcrumbNativeCrashScenario extends Scenario {
+public class CXXStartScenario extends Scenario {
+
     static {
         System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void activate();
 
-    public CXXNativeBreadcrumbNativeCrashScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXStartScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
+        config.setAutoTrackSessions(false);
     }
 
     @Override
