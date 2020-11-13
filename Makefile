@@ -25,7 +25,7 @@ endif
 test-fixture:
 	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal
 	@./gradlew -p=features/fixtures/mazerunner/ assembleRelease
-	@cp features/fixtures/mazerunner/build/outputs/apk/release/mazerunner-release.apk build/fixture.apk
+	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture.apk build/fixture.apk
 
 bump:
 ifneq ($(shell git diff --staged),)
