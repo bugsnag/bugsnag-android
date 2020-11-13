@@ -11,7 +11,7 @@ import java.lang.reflect.Array;
 
 public class CXXCustomMetadataNativeNotifyScenario extends Scenario {
     static {
-        System.loadLibrary("cxx-scenarios");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void activate();
