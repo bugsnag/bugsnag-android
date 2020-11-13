@@ -1,4 +1,4 @@
-package com.bugsnag.android;
+package com.bugsnag.android.mazerunner;
 
 import com.bugsnag.android.JsonStream;
 
