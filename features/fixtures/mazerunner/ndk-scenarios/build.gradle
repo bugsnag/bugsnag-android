@@ -31,15 +31,6 @@ android {
             path "CMakeLists.txt"
         }
     }
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ["libs"]
-        }
-    }
-    // adding custom jniLibs results in dupe SO files, ignore
-    packagingOptions {
-        pickFirst "**/*.so"
-    }
 }
 
 dependencies {
@@ -67,7 +58,6 @@ class BugsnagSoExtractionTask extends DefaultTask {
     @TaskAction
     def extractSoFiles() {
         File file = findAarFile()
-        println("Found file $file")
 
         project.copy {
             from(project.zipTree(file))
