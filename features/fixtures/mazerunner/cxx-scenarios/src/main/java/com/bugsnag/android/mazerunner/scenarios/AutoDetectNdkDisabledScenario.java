@@ -1,24 +1,25 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Configuration;
+
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.bugsnag.android.Configuration;
-
-public class CXXExceptionOnErrorTrueScenario extends Scenario {
+public class AutoDetectNdkDisabledScenario extends Scenario {
 
     static {
-        System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios");
     }
 
     public native void crash();
 
-    public CXXExceptionOnErrorTrueScenario(@NonNull Configuration config, @NonNull Context context) {
+    /**
+     */
+    public AutoDetectNdkDisabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
+        config.getEnabledErrorTypes().setNdkCrashes(false);
     }
 
     @Override

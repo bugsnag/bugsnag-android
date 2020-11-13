@@ -6,18 +6,20 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-public class CXXDivideByZeroScenario extends Scenario {
+public class AutoDetectNdkEnabledScenario extends Scenario {
+
     static {
-        System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios");
     }
 
-    public native void crash(int counter);
+    public native void crash();
 
-    public CXXDivideByZeroScenario(@NonNull Configuration config, @NonNull Context context) {
+    /**
+     */
+    public AutoDetectNdkEnabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
+        config.getEnabledErrorTypes().setNdkCrashes(true);
     }
 
     @Override
@@ -27,6 +29,6 @@ public class CXXDivideByZeroScenario extends Scenario {
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }
-        crash(0);
+        crash();
     }
 }
