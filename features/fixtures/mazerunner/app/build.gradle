@@ -73,7 +73,7 @@ dependencies {
         implementation project(":jvm-scenarios")
     } else {
         implementation project(":jvm-scenarios")
-        implementation project(":ndk-scenarios")
+        implementation project(":cxx-scenarios")
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"
