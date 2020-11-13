@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 
 public class CXXDelayedNotifyScenario extends Scenario {
     static {
-        System.loadLibrary("cxx-scenarios");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void activate();
