@@ -11,8 +11,7 @@ import java.lang.reflect.Array;
 public class CXXNativeBreadcrumbJavaCrashScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void activate();

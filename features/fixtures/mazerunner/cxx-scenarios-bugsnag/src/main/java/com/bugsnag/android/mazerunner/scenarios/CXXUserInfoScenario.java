@@ -6,23 +6,17 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-public class CXXRemoveOnErrorScenario extends Scenario {
-
+public class CXXUserInfoScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void activate();
 
-    /**
-     * 
-     */
-    public CXXRemoveOnErrorScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXUserInfoScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
-        config.setContext("CXXRemoveOnErrorScenario");
     }
 
     @Override

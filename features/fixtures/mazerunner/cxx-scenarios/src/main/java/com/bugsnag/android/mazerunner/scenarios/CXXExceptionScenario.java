@@ -9,9 +9,7 @@ import androidx.annotation.NonNull;
 public class CXXExceptionScenario extends Scenario {
 
     static {
-        System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios");
     }
 
     public native void crash();
