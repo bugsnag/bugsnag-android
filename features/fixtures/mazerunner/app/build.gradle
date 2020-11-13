@@ -54,12 +54,29 @@ android {
     lintOptions {
         tasks.lint.enabled = false
     }
+
+    // conditionally alter the filename depending on the fixture
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE")) {
+                outputFileName = "minimal-fixture.apk"
+            } else {
+                outputFileName = "fixture.apk"
+            }
+        }
+    }
 }
 
 dependencies {
-    implementation project(":jvm-scenarios")
-    implementation project(":ndk-scenarios")
-    implementation "com.bugsnag:bugsnag-android:9.9.9"
+    // only depend on NDK scenarios when ndk module included
+    if ((project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE"))) {
+        implementation project(":jvm-scenarios")
+    } else {
+        implementation project(":jvm-scenarios")
+        implementation project(":ndk-scenarios")
+    }
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.1.0"
 }
+
+apply from: "../bugsnag-dependency.gradle"
