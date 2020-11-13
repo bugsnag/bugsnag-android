@@ -3,13 +3,13 @@ steps:
     key: "android-common"
     timeout_in_minutes: 30
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           build:
             - android-common
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
           cache-from:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           push:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
 
@@ -18,13 +18,13 @@ steps:
     depends_on: "android-common"
     timeout_in_minutes: 30
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           build:
             - android-ci
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
           cache-from:
             - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           push:
             - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
 
@@ -32,7 +32,7 @@ steps:
     key: "maze-runner"
     timeout_in_minutes: 20
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           build: android-maze-runner
 
   - label: ':docker: Build Android JVM test image'
@@ -40,12 +40,12 @@ steps:
     depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           build: android-jvm
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
           cache-from:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-jvm-${BRANCH_NAME}
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           push:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-jvm-${BRANCH_NAME}
 
@@ -53,25 +53,38 @@ steps:
     key: "fixture-apk"
     depends_on: "android-ci"
     timeout_in_minutes: 30
-    artifact_paths: build/fixture.apk
+    artifact_paths: build/release/fixture.apk
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
+      MINIMAL_FIXTURE: false
+
+  - label: ':android: Build minimal fixture APK'
+    key: "minimal-fixture-apk"
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    artifact_paths: build/release/minimal-fixture.apk
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-builder
+    env:
+      MAVEN_VERSION: "3.6.1"
+      MINIMAL_FIXTURE: true
 
   - label: ':android: Android size reporting'
     depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-sizer
 
   - label: ':android: Lint'
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew lint'
 
@@ -79,7 +92,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew checkstyle'
 
@@ -87,7 +100,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew detekt'
 
@@ -95,7 +108,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew ktlintCheck'
 
@@ -103,7 +116,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: 'bash ./scripts/run-cpp-check.sh'
 
@@ -111,7 +124,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew test'
 
@@ -121,12 +134,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--username=$BROWSER_STACK_USERNAME"
@@ -141,7 +154,7 @@ steps:
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-ci
     env:
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
@@ -155,12 +168,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
           - "--username=$BROWSER_STACK_USERNAME"
@@ -175,12 +188,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
           - "--username=$BROWSER_STACK_USERNAME"
@@ -197,12 +210,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
         - "features/smoke_tests"
-        - "--app=/app/build/fixture.apk"
+        - "--app=/app/build/release/fixture.apk"
         - "--farm=bs"
         - "--device=ANDROID_6_0"
         - "--username=$BROWSER_STACK_USERNAME"
@@ -217,12 +230,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--username=$BROWSER_STACK_USERNAME"
@@ -237,12 +250,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_0"
           - "--username=$BROWSER_STACK_USERNAME"
@@ -259,12 +272,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--username=$BROWSER_STACK_USERNAME"
@@ -281,12 +294,12 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--username=$BROWSER_STACK_USERNAME"
@@ -301,14 +314,14 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.3.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
         run: android-maze-runner
         args:
             - TESTS_DIR=features/smoke_tests
         command:
           - "features/smoke_tests"
-          - "--app=/app/build/fixture.apk"
+          - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--username=$BROWSER_STACK_USERNAME"
