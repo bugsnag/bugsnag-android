@@ -1,0 +1,18 @@
+// see https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties
+
+dependencies {
+    if (project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE")) {
+        // compile with only bugsnag-android-core and the JVM scenarios.
+        // this verifies that the module is capable of functioning without
+        // add-on functionality such as NDK/ANR errors
+        project.logger.lifecycle("Compiling minimal mazerunner fixture without ANR/NDK scenarios")
+        implementation("com.bugsnag:bugsnag-android:9.9.9") {
+            exclude group: "com.bugsnag", module: "bugsnag-plugin-android-anr"
+            exclude group: "com.bugsnag", module: "bugsnag-plugin-android-ndk"
+        }
+    } else {
+        // compile with the NDK scenarios by default
+        project.logger.lifecycle("Compiling full mazerunner fixture with ANR/NDK scenarios")
+        implementation "com.bugsnag:bugsnag-android:9.9.9"
+    }
+}

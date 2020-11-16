@@ -29,6 +29,8 @@ services:
       dockerfile: dockerfiles/Dockerfile.android-builder
       args:
         BRANCH_NAME: ${BRANCH_NAME}
+    environment:
+      MINIMAL_FIXTURE:
     volumes:
       - ./build:/app/build
 

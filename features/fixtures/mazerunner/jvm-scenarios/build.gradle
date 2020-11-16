@@ -1,0 +1,33 @@
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 14
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+    lintOptions {
+        tasks.lint.enabled = false
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+apply from: "../bugsnag-dependency.gradle"
