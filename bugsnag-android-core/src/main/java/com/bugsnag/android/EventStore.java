@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -53,12 +51,14 @@ class EventStore extends FileStore {
     };
 
     EventStore(@NonNull ImmutableConfig config,
-               @NonNull Context appContext,
                @NonNull Logger logger,
                Notifier notifier,
                Delegate delegate) {
-        super(appContext, "/bugsnag-errors/", config.getMaxPersistedEvents(),
-                EVENT_COMPARATOR, logger, delegate);
+        super(new File(config.getPersistenceDirectory(), "bugsnag-errors"),
+                config.getMaxPersistedEvents(),
+                EVENT_COMPARATOR,
+                logger,
+                delegate);
         this.config = config;
         this.logger = logger;
         this.delegate = delegate;
@@ -116,10 +116,6 @@ class EventStore extends FileStore {
      * Flush any on-disk errors to Bugsnag
      */
     void flushAsync() {
-        if (storeDirectory == null) {
-            return;
-        }
-
         try {
             Async.run(new Runnable() {
                 @Override
@@ -228,11 +224,11 @@ class EventStore extends FileStore {
     String getFilename(Object object) {
         String uuid = UUID.randomUUID().toString();
         long now = System.currentTimeMillis();
-        return getFilename(object, uuid, null, now, storeDirectory);
+        return getFilename(object, uuid, null, now);
     }
 
     String getFilename(Object object, String uuid, String apiKey,
-                       long timestamp, String storeDirectory) {
+                       long timestamp) {
         String suffix = "";
 
         if (object instanceof Event) {
@@ -249,14 +245,13 @@ class EventStore extends FileStore {
                 apiKey = config.getApiKey();
             }
         }
-        return String.format(Locale.US, "%s%d_%s_%s%s.json",
-                storeDirectory, timestamp, apiKey, uuid, suffix);
+        return String.format(Locale.US, "%d_%s_%s%s.json", timestamp, apiKey, uuid, suffix);
     }
 
     String getNdkFilename(Object object, String apiKey) {
         String uuid = UUID.randomUUID().toString();
         long now = System.currentTimeMillis();
-        return getFilename(object, uuid, apiKey, now, storeDirectory);
+        return getFilename(object, uuid, apiKey, now);
     }
 
     boolean isStartupCrash(long durationMs) {

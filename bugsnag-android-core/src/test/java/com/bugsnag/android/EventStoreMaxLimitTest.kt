@@ -1,29 +1,27 @@
 package com.bugsnag.android
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
-import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 
 /**
  * Verifies that the maxPersistedEvents configuration option is respected when writing events.
  */
 class EventStoreMaxLimitTest {
 
-    private lateinit var eventStore: EventStore
     private lateinit var storageDir: File
+    private lateinit var errorDir: File
 
     @Before
     fun setUp() {
-        val ctx = ApplicationProvider.getApplicationContext<Context>()
-        storageDir = File(ctx.cacheDir, "bugsnag-errors")
+        storageDir = Files.createTempDirectory("tmp").toFile()
         storageDir.deleteRecursively()
+        errorDir = File(storageDir, "bugsnag-errors")
     }
 
     @After
@@ -33,14 +31,16 @@ class EventStoreMaxLimitTest {
 
     @Test
     fun testDefaultLimit() {
-        val config = generateImmutableConfig()
-        eventStore = createEventStore(config)
+        val config = generateConfiguration().apply {
+            persistenceDirectory = storageDir
+        }
+        val eventStore = createEventStore(convertToImmutableConfig(config))
 
         val event = generateEvent()
         repeat(40) {
             eventStore.write(event)
         }
-        val files = storageDir.list()
+        val files = errorDir.list()
         assertEquals(32, files.size)
     }
 
@@ -48,14 +48,15 @@ class EventStoreMaxLimitTest {
     fun testDifferentLimit() {
         val config = generateConfiguration().apply {
             maxPersistedEvents = 5
+            persistenceDirectory = storageDir
         }
-        eventStore = createEventStore(convertToImmutableConfig(config))
+        val eventStore = createEventStore(convertToImmutableConfig(config))
 
         val event = generateEvent()
         repeat(7) {
             eventStore.write(event)
         }
-        val files = storageDir.list()
+        val files = errorDir.list()
         assertEquals(5, files.size)
     }
 
@@ -63,20 +64,19 @@ class EventStoreMaxLimitTest {
     fun testZeroLimit() {
         val config = generateConfiguration().apply {
             maxPersistedEvents = 0
+            persistenceDirectory = storageDir
         }
-        eventStore = createEventStore(convertToImmutableConfig(config))
+        val eventStore = createEventStore(convertToImmutableConfig(config))
 
         val event = generateEvent()
         eventStore.write(event)
-        val files = storageDir.list()
+        val files = errorDir.list()
         assertEquals(0, files.size)
     }
 
     private fun createEventStore(config: ImmutableConfig): EventStore {
-        val ctx = ApplicationProvider.getApplicationContext<Context>()
         return EventStore(
             config,
-            ctx,
             NoopLogger,
             Notifier(),
             FileStore.Delegate { _, _, _ -> }

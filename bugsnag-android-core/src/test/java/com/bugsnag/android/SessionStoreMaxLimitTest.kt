@@ -1,29 +1,27 @@
 package com.bugsnag.android
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.generateSession
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 
 /**
  * Verifies that the maxPersistedSessions configuration option is respected when writing sessions.
  */
 class SessionStoreMaxLimitTest {
 
-    private lateinit var sessionStore: SessionStore
     private lateinit var storageDir: File
+    private lateinit var sessionDir: File
 
     @Before
     fun setUp() {
-        val ctx = ApplicationProvider.getApplicationContext<Context>()
-        storageDir = File(ctx.cacheDir, "bugsnag-sessions")
+        storageDir = Files.createTempDirectory("tmp").toFile()
         storageDir.deleteRecursively()
+        sessionDir = File(storageDir, "bugsnag-sessions")
     }
 
     @After
@@ -33,14 +31,16 @@ class SessionStoreMaxLimitTest {
 
     @Test
     fun testDefaultLimit() {
-        val config = generateImmutableConfig()
-        sessionStore = createSessionStore(config)
+        val config = generateConfiguration().apply {
+            persistenceDirectory = storageDir
+        }
+        val sessionStore = createSessionStore(convertToImmutableConfig(config))
 
         val session = generateSession()
         repeat(40) {
             sessionStore.write(session)
         }
-        val files = storageDir.list()
+        val files = sessionDir.list()
         assertEquals(32, files.size)
     }
 
@@ -48,14 +48,15 @@ class SessionStoreMaxLimitTest {
     fun testDifferentLimit() {
         val config = generateConfiguration().apply {
             maxPersistedSessions = 5
+            persistenceDirectory = storageDir
         }
-        sessionStore = createSessionStore(convertToImmutableConfig(config))
+        val sessionStore = createSessionStore(convertToImmutableConfig(config))
 
         val session = generateSession()
         repeat(7) {
             sessionStore.write(session)
         }
-        val files = storageDir.list()
+        val files = sessionDir.list()
         assertEquals(5, files.size)
     }
 
@@ -63,19 +64,18 @@ class SessionStoreMaxLimitTest {
     fun testZeroLimit() {
         val config = generateConfiguration().apply {
             maxPersistedSessions = 0
+            persistenceDirectory = storageDir
         }
-        sessionStore = createSessionStore(convertToImmutableConfig(config))
+        val sessionStore = createSessionStore(convertToImmutableConfig(config))
 
         val session = generateSession()
         sessionStore.write(session)
-        val files = storageDir.list()
+        val files = sessionDir.list()
         assertEquals(0, files.size)
     }
 
     private fun createSessionStore(config: ImmutableConfig): SessionStore {
-        val ctx = ApplicationProvider.getApplicationContext<Context>()
         return SessionStore(
-            ctx,
             config,
             NoopLogger,
             FileStore.Delegate { _, _, _ -> }

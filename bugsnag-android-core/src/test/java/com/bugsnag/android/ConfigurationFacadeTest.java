@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -506,6 +509,15 @@ public class ConfigurationFacadeTest {
     public void setUserValid() {
         config.setUser(null, null, null);
         assertEquals(new User(null, null, null), config.getUser());
+    }
+
+    @Test
+    public void setPersistenceDirectoryValid() throws IOException {
+        File dir = Files.createTempDirectory("foo").toFile();
+        config.setPersistenceDirectory(dir);
+        assertEquals(dir, config.getPersistenceDirectory());
+        config.setPersistenceDirectory(null);
+        assertNull(config.getPersistenceDirectory());
     }
 
     @Test

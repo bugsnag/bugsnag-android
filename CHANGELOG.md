@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Add persistenceDirectory config option for controlling event/session storage
+  [#998](https://github.com/bugsnag/bugsnag-android/pull/998)
+
 * Add configuration option to control maximum number of persisted events/sessions
   [#980](https://github.com/bugsnag/bugsnag-android/pull/980)
 
