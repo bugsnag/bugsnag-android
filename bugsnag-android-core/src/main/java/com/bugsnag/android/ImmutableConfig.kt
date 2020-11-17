@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import java.io.File
 import java.util.Date
 import java.util.HashMap
 
@@ -28,7 +29,8 @@ internal data class ImmutableConfig(
     val logger: Logger,
     val maxBreadcrumbs: Int,
     val maxPersistedEvents: Int,
-    val maxPersistedSessions: Int
+    val maxPersistedSessions: Int,
+    val persistenceDirectory: File
 ) {
 
     /**
@@ -84,7 +86,8 @@ internal fun convertToImmutableConfig(
         maxBreadcrumbs = config.maxBreadcrumbs,
         maxPersistedEvents = config.maxPersistedEvents,
         maxPersistedSessions = config.maxPersistedSessions,
-        enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet()
+        enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet(),
+        persistenceDirectory = config.persistenceDirectory!!
     )
 }
 
@@ -133,6 +136,10 @@ internal fun sanitiseConfiguration(
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
         configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
+    }
+
+    if (configuration.persistenceDirectory == null) {
+        configuration.persistenceDirectory = appContext.cacheDir
     }
     return convertToImmutableConfig(configuration, buildUuid)
 }

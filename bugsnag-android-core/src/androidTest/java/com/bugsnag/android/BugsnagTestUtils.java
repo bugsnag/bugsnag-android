@@ -10,8 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,8 +93,12 @@ final class BugsnagTestUtils {
         return convert(generateConfiguration());
     }
 
-
     static ImmutableConfig convert(Configuration config) {
+        try {
+            config.setPersistenceDirectory(File.createTempFile("tmp", null));
+        } catch (IOException ignored) {
+            // swallow
+        }
         return ImmutableConfigKt.convertToImmutableConfig(config, null);
     }
 
@@ -123,7 +129,7 @@ final class BugsnagTestUtils {
     static SessionStore generateSessionStore() {
         Context applicationContext = ApplicationProvider.getApplicationContext();
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        return new SessionStore(applicationContext, config, NoopLogger.INSTANCE, null);
+        return new SessionStore(config, NoopLogger.INSTANCE, null);
     }
 
     public static Delivery generateDelivery() {

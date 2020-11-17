@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import java.io.File
 
 internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware, UserAware {
 
@@ -45,6 +46,7 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = BreadcrumbType.values().toSet()
     var projectPackages: Set<String> = emptySet()
+    var persistenceDirectory: File? = null
 
     protected val plugins = mutableSetOf<Plugin>()
 

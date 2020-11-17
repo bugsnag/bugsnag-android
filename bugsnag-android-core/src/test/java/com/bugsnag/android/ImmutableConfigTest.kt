@@ -16,6 +16,8 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
+import java.io.File
+import java.nio.file.Files
 
 @RunWith(MockitoJUnitRunner::class)
 internal class ImmutableConfigTest {
@@ -77,6 +79,7 @@ internal class ImmutableConfigTest {
             assertEquals(seed.maxPersistedSessions, maxPersistedSessions)
             assertEquals(seed.persistUser, persistUser)
             assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
+            assertNotNull(persistenceDirectory)
         }
     }
 
@@ -141,6 +144,7 @@ internal class ImmutableConfigTest {
             assertEquals(103, seed.maxPersistedSessions)
             assertTrue(seed.persistUser)
             assertTrue(seed.enabledBreadcrumbTypes!!.isEmpty())
+            assertNotNull(persistenceDirectory)
         }
     }
 
@@ -166,7 +170,8 @@ internal class ImmutableConfigTest {
     fun configSanitisation() {
         `when`(context.packageName).thenReturn("com.example.foo")
         `when`(context.packageManager).thenReturn(packageManager)
-
+        val cacheDir = Files.createTempDirectory("foo").toFile()
+        `when`(context.cacheDir).thenReturn(cacheDir)
         val packageInfo = PackageInfo()
         @Suppress("DEPRECATION")
         packageInfo.versionCode = 55
@@ -179,7 +184,7 @@ internal class ImmutableConfigTest {
         assertEquals(setOf("com.example.foo"), config.projectPackages)
         assertEquals("production", config.releaseStage)
         assertEquals(55, config.versionCode)
-
         assertNotNull(config.delivery)
+        assertEquals(cacheDir, config.persistenceDirectory)
     }
 }

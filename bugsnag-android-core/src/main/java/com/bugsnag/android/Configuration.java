@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -188,6 +189,43 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      */
     public void setPersistUser(boolean persistUser) {
         impl.setPersistUser(persistUser);
+    }
+
+    /**
+     * Sets the directory where event and session JSON payloads should be persisted if a network
+     * request is not successful. If you use Bugsnag in multiple processes, then a unique
+     * persistenceDirectory <b>must</b> be configured for each process to prevent duplicate
+     * requests being made by each instantiation of Bugsnag.
+     * <p/>
+     * The persistenceDirectory also stores user information if {@link #getPersistUser()} has been
+     * set to true.
+     * <p/>
+     * By default, bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
+     * <p/>
+     * If the persistenceDirectory is changed between application launches, no attempt will be made
+     * to deliver events or sessions cached in the previous location.
+     */
+    @Nullable
+    public File getPersistenceDirectory() {
+        return impl.getPersistenceDirectory();
+    }
+
+    /**
+     * Sets the directory where event and session JSON payloads should be persisted if a network
+     * request is not successful. If you use Bugsnag in multiple processes, then a unique
+     * persistenceDirectory <b>must</b> be configured for each process to prevent duplicate
+     * requests being made by each instantiation of Bugsnag.
+     * <p/>
+     * The persistenceDirectory also stores user information if {@link #getPersistUser()} has been
+     * set to true.
+     * <p/>
+     * By default, bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
+     * <p/>
+     * If the persistenceDirectory is changed between application launches, no attempt will be made
+     * to deliver events or sessions cached in the previous location.
+     */
+    public void setPersistenceDirectory(@Nullable File directory) {
+        impl.setPersistenceDirectory(directory);
     }
 
     /**
