@@ -1,11 +1,13 @@
 package com.bugsnag.android;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
 class TestData {
-    static ImmutableConfig generateConfig() {
+    static ImmutableConfig generateConfig() throws IOException {
         return new ImmutableConfig(
                 "123456abcdeabcde",
                 true,
@@ -28,7 +30,8 @@ class TestData {
                 NoopLogger.INSTANCE,
                 22,
                 32,
-                32
+                32,
+                Files.createTempDirectory("foo").toFile()
         );
     }
 

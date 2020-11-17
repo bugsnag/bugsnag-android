@@ -154,7 +154,7 @@ class NativeBridge : Observer {
             if (installed.get()) {
                 logger.w("Received duplicate setup message with arg: $arg")
             } else {
-                val reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash"
+                val reportPath = File(reportDirectory, "${UUID.randomUUID()}.crash").absolutePath
                 install(
                     makeSafe(arg.apiKey),
                     reportPath,

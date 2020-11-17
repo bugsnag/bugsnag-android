@@ -147,7 +147,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
 
-        sessionStore = new SessionStore(appContext, immutableConfig, logger, null);
+        sessionStore = new SessionStore(immutableConfig, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
         metadataState = copyMetadataState(configuration);
@@ -207,7 +207,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
                 sessionTracker, notifier);
-        eventStore = new EventStore(immutableConfig, appContext, logger, notifier, delegate);
+        eventStore = new EventStore(immutableConfig, logger, notifier, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
                 immutableConfig, breadcrumbState, notifier);

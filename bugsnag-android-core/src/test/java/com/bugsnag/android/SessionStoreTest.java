@@ -2,47 +2,13 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.SessionStore.SESSION_COMPARATOR;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import android.content.Context;
-
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.filters.SmallTest;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 
-@SmallTest
 public class SessionStoreTest {
-
-    private File storageDir;
-
-    /**
-     * Generates a session store with 0 files
-     *
-     */
-    @Before
-    public void setUp() {
-        Context context = ApplicationProvider.getApplicationContext();
-        ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
-        SessionStore sessionStore = new SessionStore(context, config, NoopLogger.INSTANCE, null);
-        assertNotNull(sessionStore.storeDirectory);
-        storageDir = new File(sessionStore.storeDirectory);
-        FileUtils.clearFilesInDir(storageDir);
-    }
-
-    /**
-     * Removes any sessions in the store created during testing
-     *
-     */
-    @After
-    public void tearDown() {
-        FileUtils.clearFilesInDir(storageDir);
-    }
 
     @Test
     public void testComparator() {
