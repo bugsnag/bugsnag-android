@@ -215,6 +215,13 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXAnrScenario_crash(JNIEnv *env,
 }
 
 JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXAnrNdkDisabledScenario_crash(JNIEnv *env,
+                                                                              jobject instance) {
+  int x = 38;
+  printf("This one here: %ld\n", (long) crash_anr(x > 0));
+}
+
+JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionScenario_crash(JNIEnv *env,
                                                                          jobject instance) {
   int x = 61;

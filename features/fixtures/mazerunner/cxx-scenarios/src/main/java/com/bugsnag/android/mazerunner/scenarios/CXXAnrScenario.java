@@ -17,8 +17,6 @@ public class CXXAnrScenario extends Scenario {
     public CXXAnrScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
-        config.getEnabledErrorTypes().setAnrs(true);
-        config.getEnabledErrorTypes().setNdkCrashes(true);
     }
 
     @Override

@@ -9,8 +9,8 @@ import android.os.Handler
 /**
  * Stops the app from responding for a time period
  */
-internal class AppNotRespondingScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+internal class JvmAnrScenario(config: Configuration,
+                              context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = true

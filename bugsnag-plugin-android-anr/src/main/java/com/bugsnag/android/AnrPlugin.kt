@@ -103,12 +103,6 @@ internal class AnrPlugin : Plugin {
                 err.stacktrace.addAll(0, nativeTrace.map { Stackframe(it) })
             }
 
-            if (nativeTrace != null) {
-                for (error in event.errors) {
-                    error.type = ErrorType.C
-                }
-            }
-
             // wait and poll for error info to be collected. this occurs just before the ANR dialog
             // is displayed
             collector.collectAnrErrorDetails(client, event)
