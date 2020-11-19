@@ -11,9 +11,9 @@ import java.util.Collections;
 
 import androidx.annotation.NonNull;
 
-public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
+public class JvmAnrOutsideReleaseStagesScenario extends Scenario {
 
-    public AppNotRespondingOutsideReleaseStagesScenario(@NonNull Configuration config, @NonNull Context context) {
+    public JvmAnrOutsideReleaseStagesScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
         config.setEnabledReleaseStages(Collections.singleton("fee-fi-fo-fum"));

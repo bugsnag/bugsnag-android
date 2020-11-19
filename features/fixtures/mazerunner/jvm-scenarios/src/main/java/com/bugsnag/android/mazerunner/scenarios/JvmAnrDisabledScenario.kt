@@ -12,8 +12,8 @@ import kotlin.concurrent.schedule
 /**
  * Stops the app from responding for a time period with ANR detection disabled
  */
-internal class AppNotRespondingDisabledScenario(config: Configuration,
-                                  context: Context) : Scenario(config, context) {
+internal class JvmAnrDisabledScenario(config: Configuration,
+                                      context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = false

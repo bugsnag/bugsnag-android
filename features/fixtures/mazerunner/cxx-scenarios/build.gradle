@@ -35,7 +35,6 @@ android {
 dependencies {
     implementation project(":jvm-scenarios")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "com.bugsnag:bugsnag-android:9.9.9"
 }
 
-
+apply from: "../bugsnag-dependency.gradle"

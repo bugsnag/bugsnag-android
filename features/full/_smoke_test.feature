@@ -53,7 +53,7 @@ Scenario: Manual Session sends
 
 @skip_android_8_1
 Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs = true
-    When I run "AppNotRespondingScenario"
+    When I run "JvmAnrScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
     And I wait for 4 seconds
