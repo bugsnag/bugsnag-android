@@ -8,6 +8,8 @@ Feature: Synchronizing app/device metadata in the native layer
         And the event "app.duration" is greater than 0
         And the event "unhandled" is false
 
+    # Skip due to an issue on later Android platforms - [PLAT-5464]
+    @skip_android_10 @skip_android_11
     Scenario: Capture foreground state while in the background
         When I run "CXXDelayedNotifyScenario"
         And I send the app to the background for 10 seconds
@@ -29,6 +31,8 @@ Feature: Synchronizing app/device metadata in the native layer
         And the event "app.duration" is not null
         And the event "unhandled" is true
 
+    # Skip due to an issue on later Android platforms - [PLAT-5464]
+    @skip_android_10 @skip_android_11
     Scenario: Capture foreground state while in a background crash
         When I run "CXXDelayedCrashScenario"
         And I send the app to the background for 10 seconds

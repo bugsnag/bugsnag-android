@@ -65,6 +65,8 @@ Feature: Native crash reporting
         And the event "severity" equals "error"
         And the event "unhandled" is true
 
+    # Skip due to an issue on later Android platforms - [PLAT-5465]
+    @skip_android_10 @skip_android_11
     Scenario: Double free() allocated memory
         When I run "CXXDoubleFreeScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
