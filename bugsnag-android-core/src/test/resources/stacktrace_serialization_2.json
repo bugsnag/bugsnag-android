@@ -2,11 +2,11 @@
   {
     "method": "com.bugsnag.android.StacktraceSerializationTest$Companion.basic",
     "file": "StacktraceSerializationTest.kt",
-    "lineNumber": 40
+    "lineNumber": 41
   },
   {
     "method": "com.bugsnag.android.StacktraceSerializationTest$Companion.testCases",
     "file": "StacktraceSerializationTest.kt",
-    "lineNumber": 27
+    "lineNumber": 28
   }
 ]

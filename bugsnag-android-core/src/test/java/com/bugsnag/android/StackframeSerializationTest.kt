@@ -12,14 +12,17 @@ internal class StackframeSerializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() =
-            generateSerializationTestCases(
+        fun testCases(): Collection<Pair<Stackframe, String>> {
+            val frame = Stackframe("foo", "Bar", 55, true)
+            frame.type = ErrorType.ANDROID
+            return generateSerializationTestCases(
                 "stackframe",
-                Stackframe("foo", "Bar", 55, true),
+                frame,
                 Stackframe(NativeStackframe("aMethod", "aFile", 1, 2, 3, 4)),
                 Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null)),
                 Stackframe(NativeStackframe(null, null, null, null, null, null))
             )
+        }
     }
 
     @Parameter

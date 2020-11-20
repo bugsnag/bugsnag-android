@@ -7,6 +7,7 @@ import androidx.annotation.VisibleForTesting;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
@@ -77,9 +78,7 @@ class DeliveryDelegate extends BaseObservable {
     @VisibleForTesting
     DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
         logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
-
-        String apiKey = payload.getApiKey();
-        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(apiKey);
+        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(payload);
         Delivery delivery = immutableConfig.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
 

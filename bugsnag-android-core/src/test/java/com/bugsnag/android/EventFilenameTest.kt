@@ -10,7 +10,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
@@ -23,6 +22,12 @@ class EventFilenameTest {
 
     @Mock
     lateinit var event: Event
+
+    @Mock
+    lateinit var error: Error
+
+    @Mock
+    lateinit var frame: Stackframe
 
     @Mock
     lateinit var file: File
@@ -48,6 +53,9 @@ class EventFilenameTest {
             Notifier(),
             null
         )
+        `when`(event.errors).thenReturn(listOf(error))
+        `when`(error.stacktrace).thenReturn(listOf(frame))
+        `when`(frame.type).thenReturn(ErrorType.ANDROID)
         `when`(event.app).thenReturn(app)
         `when`(event.apiKey).thenReturn("0000111122223333aaaabbbbcccc9999")
         `when`(app.duration).thenReturn(null)
@@ -101,7 +109,7 @@ class EventFilenameTest {
     @Test
     fun regularJvmEventName() {
         val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933, "/errors/")
-        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_android_my-uuid-123_.json", filename)
     }
 
     /**
@@ -111,7 +119,8 @@ class EventFilenameTest {
     fun startupCrashJvmEventName() {
         `when`(app.duration).thenReturn(1000)
         val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933, "/errors/")
-        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123_startupcrash.json", filename)
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_" +
+                "android_my-uuid-123_startupcrash.json", filename)
     }
 
     /**
@@ -121,20 +130,20 @@ class EventFilenameTest {
     fun nonStartupCrashCrashJvmEventName() {
         `when`(app.duration).thenReturn(10000)
         val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933, "/errors/")
-        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_android_my-uuid-123_.json", filename)
     }
 
     @Test
     fun ndkEventName() {
         val filename = eventStore.getFilename("{}", "my-uuid-123",
             "0000111122223333aaaabbbbcccc9999", 1504255147933, "/errors/")
-        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123not-jvm.json", filename)
+        assertEquals("/errors/1504255147933_0000111122223333aaaabbbbcccc9999_c_my-uuid-123_not-jvm.json", filename)
     }
 
     @Test
     fun ndkEventNameNoApiKey() {
         val filename = eventStore.getFilename("{}", "my-uuid-123", "", 1504255147933, "/errors/")
-        assertEquals("/errors/1504255147933_5d1ec5bd39a74caa1267142706a7fb21_my-uuid-123not-jvm.json", filename)
+        assertEquals("/errors/1504255147933_5d1ec5bd39a74caa1267142706a7fb21_c_my-uuid-123_not-jvm.json", filename)
     }
 
     @Test
