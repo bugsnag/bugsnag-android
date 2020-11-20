@@ -99,8 +99,16 @@ internal class AnrPlugin : Plugin {
             val err = event.errors[0]
             err.errorClass = "ANR"
             err.errorMessage = "Application did not respond to UI input"
+
+            // append native stackframes to error/thread stacktrace
             if (nativeTrace != null) {
-                err.stacktrace.addAll(0, nativeTrace.map { Stackframe(it) })
+                // update error stacktrace
+                val nativeFrames = nativeTrace.map { Stackframe(it) }
+                err.stacktrace.addAll(0, nativeFrames)
+
+                // update thread stacktrace
+                val errThread = event.threads.find(Thread::getErrorReportingThread)
+                errThread?.stacktrace?.addAll(0, nativeFrames)
             }
 
             // wait and poll for error info to be collected. this occurs just before the ANR dialog

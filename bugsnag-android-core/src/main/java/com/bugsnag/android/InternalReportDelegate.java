@@ -12,8 +12,10 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 class InternalReportDelegate implements EventStore.Delegate {
@@ -21,7 +23,7 @@ class InternalReportDelegate implements EventStore.Delegate {
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
     final Logger logger;
-    final ImmutableConfig immutableConfig;
+    final ImmutableConfig config;
     final StorageManager storageManager;
 
     final AppDataCollector appDataCollector;
@@ -39,7 +41,7 @@ class InternalReportDelegate implements EventStore.Delegate {
                            SessionTracker sessionTracker,
                            Notifier notifier) {
         this.logger = logger;
-        this.immutableConfig = immutableConfig;
+        this.config = immutableConfig;
         this.storageManager = storageManager;
         this.appDataCollector = appDataCollector;
         this.deviceDataCollector = deviceDataCollector;
@@ -52,7 +54,7 @@ class InternalReportDelegate implements EventStore.Delegate {
     public void onErrorIOFailure(Exception exc, File errorFile, String context) {
         // send an internal error to bugsnag with no cache
         HandledState handledState = HandledState.newInstance(REASON_UNHANDLED_EXCEPTION);
-        Event err = new Event(exc, immutableConfig, handledState, logger);
+        Event err = new Event(exc, config, handledState, logger);
         err.setContext(context);
 
         err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());
@@ -95,7 +97,7 @@ class InternalReportDelegate implements EventStore.Delegate {
 
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
-        event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", immutableConfig.getApiKey());
+        event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", config.getApiKey());
 
         final EventPayload eventPayload = new EventPayload(null, event, notifier);
         try {
@@ -104,10 +106,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                 public void run() {
                     try {
                         logger.d("InternalReportDelegate - sending internal event");
-
-                        Delivery delivery = immutableConfig.getDelivery();
-                        String apiKey = eventPayload.getApiKey();
-                        DeliveryParams params = immutableConfig.getErrorApiDeliveryParams(apiKey);
+                        Delivery delivery = config.getDelivery();
+                        DeliveryParams params = config.getErrorApiDeliveryParams(eventPayload);
 
                         // can only modify headers if DefaultDelivery is in use
                         if (delivery instanceof DefaultDelivery) {

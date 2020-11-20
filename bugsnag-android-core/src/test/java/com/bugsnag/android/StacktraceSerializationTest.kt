@@ -5,6 +5,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
+import java.lang.IllegalStateException
 
 @RunWith(Parameterized::class)
 internal class StacktraceSerializationTest {
@@ -56,8 +57,17 @@ internal class StacktraceSerializationTest {
         }
 
         private fun trimStacktraceListCtor(): Stacktrace {
-            val elements = (0..999).map {
-                Stackframe("Foo", "Bar.kt", it, true)
+            val elements = (0..999).map { count ->
+                Stackframe("Foo", "Bar.kt", count, true).also { frame ->
+                    // set different type for each frame
+                    frame.type = when (count % 3) {
+                        0 -> ErrorType.C
+                        1 -> ErrorType.ANDROID
+                        2 -> ErrorType.REACTNATIVEJS
+                        3 -> null
+                        else -> throw IllegalStateException()
+                    }
+                }
             }
             return Stacktrace(elements)
         }

@@ -50,6 +50,15 @@ class Stackframe : JsonStream.Streamable {
      */
     var columnNumber: Number?
 
+    /**
+     * The type of the error
+     */
+    var type: ErrorType? = null
+        set(value) {
+            nativeFrame?.type = value
+            field = value
+        }
+
     @JvmOverloads
     internal constructor(method: String?, file: String?, lineNumber: Number?, inProject: Boolean?,
         code: Map<String, String?>? = null, columnNumber: Number? = null) {
@@ -65,7 +74,8 @@ class Stackframe : JsonStream.Streamable {
 
     constructor(nativeFrame: NativeStackframe): this(
         nativeFrame.method, nativeFrame.file, nativeFrame.lineNumber, false, null) {
-            this.nativeFrame = nativeFrame
+        this.nativeFrame = nativeFrame
+        this.type = nativeFrame.type
     }
 
     @Throws(IOException::class)
@@ -82,6 +92,10 @@ class Stackframe : JsonStream.Streamable {
         writer.name("lineNumber").value(lineNumber)
         writer.name("inProject").value(inProject)
         writer.name("columnNumber").value(columnNumber)
+
+        type?.let {
+            writer.name("type").value(it.desc)
+        }
 
         code?.let { map: Map<String, String?> ->
             writer.name("code")

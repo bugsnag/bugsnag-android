@@ -3,8 +3,6 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import java.util.Date
-import java.util.HashMap
 
 internal data class ImmutableConfig(
     val apiKey: String,
@@ -43,8 +41,8 @@ internal data class ImmutableConfig(
         enabledBreadcrumbTypes == null || enabledBreadcrumbTypes.contains(type)
 
     @JvmName("getErrorApiDeliveryParams")
-    internal fun getErrorApiDeliveryParams(apiKey: String) =
-        DeliveryParams(endpoints.notify, errorApiHeaders(apiKey))
+    internal fun getErrorApiDeliveryParams(payload: EventPayload) =
+        DeliveryParams(endpoints.notify, errorApiHeaders(payload))
 
     @JvmName("getSessionApiDeliveryParams")
     internal fun getSessionApiDeliveryParams() =

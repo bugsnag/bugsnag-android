@@ -38,6 +38,11 @@ class NativeStackframe internal constructor(
     var loadAddress: Long?
 ) : JsonStream.Streamable {
 
+    /**
+     * The type of the error
+     */
+    var type : ErrorType? = ErrorType.C
+
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         writer.beginObject()
@@ -47,7 +52,10 @@ class NativeStackframe internal constructor(
         writer.name("frameAddress").value(frameAddress)
         writer.name("symbolAddress").value(symbolAddress)
         writer.name("loadAddress").value(loadAddress)
-        writer.name("type").value("c")
+
+        type?.let {
+            writer.name("type").value(it.desc)
+        }
         writer.endObject()
     }
 }
