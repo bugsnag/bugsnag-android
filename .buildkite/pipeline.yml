@@ -430,8 +430,6 @@ steps:
           - "--fail-fast"
     concurrency: 10
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 11 end-to-end tests'
     depends_on: "fixture-apk"
@@ -450,5 +448,3 @@ steps:
           - "--fail-fast"
     concurrency: 10
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
