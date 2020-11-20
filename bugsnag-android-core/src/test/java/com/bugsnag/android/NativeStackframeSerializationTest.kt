@@ -7,20 +7,19 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-internal class StackframeSerializationTest {
+internal class NativeStackframeSerializationTest {
 
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases(): Collection<Pair<Stackframe, String>> {
-            val frame = Stackframe("foo", "Bar", 55, true)
-            frame.type = ErrorType.ANDROID
+        fun testCases(): Collection<Pair<NativeStackframe, String>> {
+            val last = NativeStackframe(null, null, null, null, null, null)
+            last.type = ErrorType.ANDROID
             return generateSerializationTestCases(
-                "stackframe",
-                frame,
-                Stackframe(NativeStackframe("aMethod", "aFile", 1, 2, 3, 4)),
-                Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null)),
-                Stackframe(NativeStackframe(null, null, null, null, null, null))
+                "native_stackframe",
+                NativeStackframe("aMethod", "aFile", 1, 2, 3, 4),
+                NativeStackframe("aMethod", "aFile", 1, null, null, null),
+                last
             )
         }
     }

@@ -8,6 +8,7 @@ import java.util.Date
 private const val HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version"
 private const val HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At"
 private const val HEADER_CONTENT_TYPE = "Content-Type"
+private const val HEADER_BUGSNAG_STACKTRACE_TYPES = "Bugsnag-Stacktrace-Types"
 internal const val HEADER_BUGSNAG_INTEGRITY = "Bugsnag-Integrity"
 internal const val HEADER_API_KEY = "Bugsnag-Api-Key"
 internal const val HEADER_INTERNAL_ERROR = "Bugsnag-Internal-Error"
@@ -18,12 +19,16 @@ internal const val HEADER_INTERNAL_ERROR = "Bugsnag-Internal-Error"
  * @return the HTTP headers
  */
 internal fun errorApiHeaders(payload: EventPayload): Map<String, String?> {
-    return mapOf(
+    val mutableHeaders = mutableMapOf(
         HEADER_API_PAYLOAD_VERSION to "4.0",
         HEADER_API_KEY to payload.apiKey,
         HEADER_CONTENT_TYPE to "application/json",
         HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date())
     )
+    payload.getErrorTypes()?.let { header ->
+        mutableHeaders[HEADER_BUGSNAG_STACKTRACE_TYPES] = header
+    }
+    return mutableHeaders.toMap()
 }
 
 /**

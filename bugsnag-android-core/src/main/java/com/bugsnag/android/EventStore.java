@@ -21,7 +21,7 @@ import java.util.concurrent.Semaphore;
  */
 class EventStore extends FileStore {
 
-    private static final String STARTUP_CRASH = "_startupcrash";
+    private static final String STARTUP_CRASH = "startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
@@ -230,6 +230,7 @@ class EventStore extends FileStore {
     String getFilename(Object object, String uuid, String apiKey,
                        long timestamp) {
         String suffix = "";
+        String errorTypes;
 
         if (object instanceof Event) {
             Event event = (Event) object;
@@ -239,13 +240,17 @@ class EventStore extends FileStore {
                 suffix = STARTUP_CRASH;
             }
             apiKey = event.getApiKey();
+            EventPayload payload = new EventPayload(apiKey, event, new Notifier());
+            errorTypes = payload.getErrorTypes();
         } else { // generating a filename for an NDK event
             suffix = "not-jvm";
             if (apiKey.isEmpty()) {
                 apiKey = config.getApiKey();
             }
+            errorTypes = "c";
         }
-        return String.format(Locale.US, "%d_%s_%s%s.json", timestamp, apiKey, uuid, suffix);
+        return String.format(Locale.US, "%d_%s_%s_%s_%s.json",
+                timestamp, apiKey, errorTypes, uuid, suffix);
     }
 
     String getNdkFilename(Object object, String apiKey) {
