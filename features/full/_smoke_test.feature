@@ -29,6 +29,7 @@ Scenario: Test Unhandled Java Exception with Session
     And the payload field "events.0.exceptions.0.stacktrace.0.type" is null
     And the payload field "events.0.threads.0.type" equals "android"
     And the payload field "events.0.threads.0.stacktrace.0.type" is null
+    And the exception stacktrace matches the thread stacktrace
 
 Scenario: Notifying in C
     When I run "CXXNotifyScenario"
@@ -81,3 +82,4 @@ Scenario: Sleeping the main thread with pending touch events when autoDetectAnrs
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "ANR"
     And the exception "message" starts with " Input dispatching timed out"
+    And the exception stacktrace matches the thread stacktrace
