@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.EventFilenameInfo.Companion.findErrorTypesInFilename
 import java.io.File
 import java.io.IOException
 
@@ -30,56 +31,20 @@ class EventPayload : JsonStream.Streamable {
         this.notifier = notifier
     }
 
-    fun getErrorTypes(): String? {
+    internal fun getErrorTypes(): Set<ErrorType> {
         return when {
             event != null -> getErrorTypesFromStackframes(event)
-            eventFile != null -> getErrorTypesFromFilename(eventFile)
-            else -> null
+            eventFile != null -> findErrorTypesInFilename(eventFile)
+            else -> emptySet()
         }
     }
 
-    private fun getErrorTypesFromStackframes(event: Event): String? {
+    private fun getErrorTypesFromStackframes(event: Event): Set<ErrorType> {
         val errorTypes = event.errors.mapNotNull(Error::getType).toSet()
         val frameOverrideTypes = event.errors
             .map { it.stacktrace }
             .flatMap { it.mapNotNull(Stackframe::type) }
-
-        val distinctTypes = errorTypes.plus(frameOverrideTypes)
-        return serializeErrorTypeHeader(distinctTypes)
-    }
-
-    private fun getErrorTypesFromFilename(eventFile: File): String? {
-        val name = eventFile.name
-        val end = name.lastIndexOf("_", name.lastIndexOf("_") - 1)
-        val start = name.lastIndexOf("_", end - 1) + 1
-
-        if (start < end) {
-            val errorTypes = name.substring(start, end)
-            val validValues = ErrorType.values().map { it.desc }
-
-            // validate that this only contains valid error type info
-            val valid = errorTypes.split(",").all { errorType ->
-                validValues.contains(errorType)
-            }
-            if (valid) {
-                return errorTypes
-            }
-        }
-        return null
-    }
-
-    /**
-     * Serializes the error types to a comma delimited string
-     */
-    private fun serializeErrorTypeHeader(errorTypes: Set<ErrorType>): String? {
-        return when {
-            errorTypes.isEmpty() -> null
-            else -> errorTypes
-                .map(ErrorType::desc)
-                .reduce { accumulator, str ->
-                    "$accumulator,$str"
-                }
-        }
+        return errorTypes.plus(frameOverrideTypes)
     }
 
     @Throws(IOException::class)
@@ -88,7 +53,6 @@ class EventPayload : JsonStream.Streamable {
         writer.name("apiKey").value(apiKey)
         writer.name("payloadVersion").value("4.0")
         writer.name("notifier").value(notifier)
-
         writer.name("events").beginArray()
 
         when {

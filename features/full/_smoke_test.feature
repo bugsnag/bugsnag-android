@@ -41,7 +41,7 @@ Scenario: Notifying in C
     And the "Bugsnag-Stacktrace-Types" header equals "c"
     And the payload field "events.0.exceptions.0.type" equals "c"
     And the payload field "events.0.exceptions.0.stacktrace.0.type" is null
-    And the payload field "events.0.threads.0.type" equals "c"
+    And the payload field "events.0.threads.0.type" equals "android"
     And the payload field "events.0.threads.0.stacktrace.0.type" is null
 
 Scenario: Raise SIGSEGV

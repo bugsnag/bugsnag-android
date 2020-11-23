@@ -19,10 +19,25 @@ internal fun errorApiHeaders(payload: EventPayload): Map<String, String> {
         HEADER_API_KEY to payload.apiKey!!,
         HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date())
     )
-    payload.getErrorTypes()?.let { header ->
-        mutableHeaders[HEADER_BUGSNAG_STACKTRACE_TYPES] = header
+    val errorTypes = payload.getErrorTypes()
+    if (errorTypes.isNotEmpty()) {
+        mutableHeaders[HEADER_BUGSNAG_STACKTRACE_TYPES] = serializeErrorTypeHeader(errorTypes)
     }
     return mutableHeaders.toMap()
+}
+
+/**
+ * Serializes the error types to a comma delimited string
+ */
+internal fun serializeErrorTypeHeader(errorTypes: Set<ErrorType>): String {
+    return when {
+        errorTypes.isEmpty() -> ""
+        else -> errorTypes
+            .map(ErrorType::desc)
+            .reduce { accumulator, str ->
+                "$accumulator,$str"
+            }
+    }
 }
 
 /**
