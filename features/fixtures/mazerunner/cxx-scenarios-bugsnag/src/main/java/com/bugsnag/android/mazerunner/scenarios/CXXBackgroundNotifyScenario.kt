@@ -13,7 +13,7 @@ internal class CXXBackgroundNotifyScenario(
 
     init {
         System.loadLibrary("bugsnag-ndk")
-        System.loadLibrary("entrypoint")
+        System.loadLibrary("cxx-scenarios-bugsnag")
         config.autoTrackSessions = false
     }
 
