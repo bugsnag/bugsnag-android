@@ -4,6 +4,9 @@
 
 ### Enhancements
 
+* Encode react native promise rejections as a mixed stacktrace
+   [#1006](https://github.com/bugsnag/bugsnag-android/pull/1006)
+
 * Support setting error type on individual stack frames
    [#1001](https://github.com/bugsnag/bugsnag-android/pull/1001)
 

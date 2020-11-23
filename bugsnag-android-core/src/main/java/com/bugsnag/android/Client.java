@@ -933,8 +933,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     /**
      * Retrieves an instantiated plugin of the given type, or null if none has been created
      */
+    @SuppressWarnings("rawtypes")
     @Nullable
-    Plugin getPlugin(@NonNull Class<Plugin> clz) {
+    Plugin getPlugin(@NonNull Class clz) {
         Set<Plugin> plugins = pluginClient.getPlugins();
         for (Plugin plugin : plugins) {
             if (plugin.getClass().equals(clz)) {

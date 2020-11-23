@@ -6,46 +6,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Deserializes an error from the 'nativeStack' property supplied by React Native
- *
- * This requires the original JS error, whose error message/class is used by the native error.
+ * Deserializes a stacktrace from the 'nativeStack' property supplied by React Native.
  */
-class NativeErrorDeserializer implements MapDeserializer<Error> {
+class NativeStackDeserializer implements MapDeserializer<List<Stackframe>> {
 
-    private final Error jsError;
-    private final Logger logger;
     private final Collection<String> projectPackages;
 
-    NativeErrorDeserializer(Error jsError, Collection<String> projectPackages, Logger logger) {
-        this.jsError = jsError;
+    NativeStackDeserializer(Collection<String> projectPackages) {
         this.projectPackages = projectPackages;
-        this.logger = logger;
     }
 
     /**
-     * Constructs a native error from the given payload. This assumes that 'nativeStack' contains
-     * a list of stackframes containing the methodName, class, file, and lineNumber.
+     * Constructs a native stacktrace from the given payload. This assumes that 'nativeStack'
+     * contains a list of stackframes containing the methodName, class, file, and lineNumber.
      *
      * @param map the JSON payload passed from the JS layer
-     * @return a representation of a native error
+     * @return a representation of a native stacktrace
      */
     @Override
-    public Error deserialize(Map<String, Object> map) {
+    public List<Stackframe> deserialize(Map<String, Object> map) {
         List<Map<String, Object>> nativeStack = MapUtils.getOrThrow(map, "nativeStack");
         List<Stackframe> frames = new ArrayList<>();
 
         for (Map<String, Object> frame : nativeStack) {
             frames.add(deserializeStackframe(frame, projectPackages));
         }
-
-        Stacktrace trace = new Stacktrace(frames);
-        ErrorInternal impl = new ErrorInternal(
-                jsError.getErrorClass(),
-                jsError.getErrorMessage(),
-                trace,
-                ErrorType.ANDROID
-        );
-        return new Error(impl, logger);
+        return new Stacktrace(frames).getTrace();
     }
 
     private Stackframe deserializeStackframe(Map<String, Object> map,
@@ -64,11 +50,13 @@ class NativeErrorDeserializer implements MapDeserializer<Error> {
             clz = "";
             method = methodName;
         }
-        return new Stackframe(
+        Stackframe stackframe = new Stackframe(
                 method,
                 MapUtils.<String>getOrNull(map, "file"),
                 MapUtils.<Integer>getOrNull(map, "lineNumber"),
                 Stacktrace.Companion.inProject(clz, projectPackages)
         );
+        stackframe.setType(ErrorType.ANDROID);
+        return stackframe;
     }
 }

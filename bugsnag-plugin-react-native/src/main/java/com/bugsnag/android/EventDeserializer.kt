@@ -51,13 +51,9 @@ internal class EventDeserializer(
         if (map.containsKey("nativeStack") && event.errors.isNotEmpty()) {
             runCatching {
                 val jsError = event.errors.first()
-                val nativeErrorDeserializer = NativeErrorDeserializer(
-                    jsError,
-                    projectPackages,
-                    client.logger
-                )
-                val nativeError = nativeErrorDeserializer.deserialize(map)
-                event.errors.add(nativeError)
+                val nativeStackDeserializer = NativeStackDeserializer(projectPackages)
+                val nativeStack = nativeStackDeserializer.deserialize(map)
+                jsError.stacktrace.addAll(0, nativeStack)
             }
         }
 
