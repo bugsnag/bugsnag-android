@@ -14,15 +14,15 @@ class EventErrorTypeTest {
     fun verifyStacktraceErrorType() {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val payload = BugsnagTestUtils.generateEventPayload(config)
-        assertEquals("android", payload.getErrorTypes())
+        assertEquals(setOf(ErrorType.ANDROID), payload.getErrorTypes())
 
         // alter stacktrace to contain two types
         val error = requireNotNull(payload.event!!.errors[0])
         error.stacktrace[0].type = ErrorType.C
-        assertEquals("android,c", payload.getErrorTypes())
+        assertEquals(setOf(ErrorType.ANDROID, ErrorType.C), payload.getErrorTypes())
 
         error.stacktrace[0].type = ErrorType.REACTNATIVEJS
-        assertEquals("android,reactnativejs", payload.getErrorTypes())
+        assertEquals(setOf(ErrorType.ANDROID, ErrorType.REACTNATIVEJS), payload.getErrorTypes())
     }
 
     /**
@@ -33,7 +33,7 @@ class EventErrorTypeTest {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json")
         val payload = EventPayload(config.apiKey, null, file, Notifier())
-        assertNull(payload.getErrorTypes())
+        assertEquals(emptySet<ErrorType>(), payload.getErrorTypes())
     }
 
     /**
@@ -44,7 +44,7 @@ class EventErrorTypeTest {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_android_my-uuid-123_.json")
         val payload = EventPayload(config.apiKey, null, file, Notifier())
-        assertEquals("android", payload.getErrorTypes())
+        assertEquals(setOf(ErrorType.ANDROID), payload.getErrorTypes())
     }
 
     /**
@@ -55,6 +55,6 @@ class EventErrorTypeTest {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_android,c,reactnativejs_my-uuid-123_.json")
         val payload = EventPayload(config.apiKey, null, file, Notifier())
-        assertEquals("android,c,reactnativejs", payload.getErrorTypes())
+        assertEquals(ErrorType.values().toSet(), payload.getErrorTypes())
     }
 }

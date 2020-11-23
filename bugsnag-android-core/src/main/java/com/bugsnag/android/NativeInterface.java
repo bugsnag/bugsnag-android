@@ -373,15 +373,6 @@ public class NativeInterface {
                 List<Error> errors = event.getErrors();
                 Error error = event.getErrors().get(0);
 
-                // update the thread's stacktrace and type to C
-                for (Thread thread : event.getThreads()) {
-                    if (thread.getErrorReportingThread()) {
-                        thread.setStacktrace(error.getStacktrace());
-                        thread.setType(ThreadType.C);
-                        break;
-                    }
-                }
-
                 // update the error's type to C
                 if (!errors.isEmpty()) {
                     error.setErrorClass(name);
