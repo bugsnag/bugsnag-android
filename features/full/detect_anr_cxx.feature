@@ -20,6 +20,7 @@ Scenario: ANR triggered in CXX code is captured
     And the payload field "events.0.threads.0.stacktrace.0.type" equals "c"
     And the payload field "events.0.threads.0.stacktrace.1.type" equals "c"
     And the payload field "events.0.threads.0.stacktrace.19.type" is null
+    And the exception stacktrace matches the thread stacktrace
 
 @skip_android_8_1
 Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
