@@ -2,6 +2,12 @@
 
 ## TBD
 
+* Encode react native promise rejections as a mixed stacktrace
+   [#1006](https://github.com/bugsnag/bugsnag-android/pull/1006)
+
+* Support setting error type on individual stack frames
+   [#1001](https://github.com/bugsnag/bugsnag-android/pull/1001)
+
 * Check internal JNI calls for pending exceptions and no-op
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
   [#1091](https://github.com/bugsnag/bugsnag-android/pull/1091)
