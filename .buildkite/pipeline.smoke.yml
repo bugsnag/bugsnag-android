@@ -178,8 +178,6 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v3.3.0:
         run: android-maze-runner
-        args:
-            - TESTS_DIR=features/smoke_tests
         command:
           - "features/smoke_tests"
           - "--app=/app/build/fixture.apk"
