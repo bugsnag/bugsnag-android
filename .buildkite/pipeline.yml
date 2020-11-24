@@ -60,5 +60,5 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
 
-  - label: 'Additional pipeline pipeline step'
-    command: .buildkite/pipeline.sh | buildkite-agent pipeline upload
+  - label: 'Pipeline setup step'
+    command: ./.buildkite/pipeline.sh | buildkite-agent pipeline upload
