@@ -2,11 +2,12 @@ steps:
   - label: ':docker: Build Android maze runner image'
     key: "maze-runner"
     timeout_in_minutes: 20
-    env:
-      - TESTS_DIR: features/smoke_tests
     plugins:
       - docker-compose#v3.3.0:
           build: android-maze-runner
+          args:
+            - TESTS_DIR=features/smoke_tests
+
 
   - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
     depends_on: "android-ci"
