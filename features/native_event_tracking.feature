@@ -11,8 +11,8 @@ Feature: Synchronizing app/device metadata in the native layer
     # Skip due to an issue on later Android platforms - [PLAT-5464]
     @skip_android_10 @skip_android_11
     Scenario: Capture foreground state while in the background
-        When I run "CXXDelayedNotifyScenario"
-        And I send the app to the background for 10 seconds
+        When I run "CXXBackgroundNotifyScenario"
+        And I send the app to the background for 5 seconds
         And I wait to receive a request
         Then the request payload contains a completed handled native report
         And the event "app.inForeground" is false
