@@ -10,5 +10,5 @@ else
   PIPELINE='pipeline.smoke.yml'
 fi
 
-echo $PIPELINE
+echo "./.buildkite/$PIPELINE"
 
