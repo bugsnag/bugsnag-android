@@ -61,4 +61,4 @@ steps:
       MAVEN_VERSION: "3.6.1"
 
   - label: 'Pipeline setup step'
-    command: ls -a .buildkite
+    command: sh -c .buildkite/pipeline_splitter.sh
