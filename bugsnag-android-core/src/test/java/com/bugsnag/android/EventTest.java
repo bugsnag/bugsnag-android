@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -165,21 +164,22 @@ public class EventTest {
     public void testIsAnr() {
         RuntimeException exc = new RuntimeException("Something went wrong");
         Event event = new Event(exc, config, handledState, NoopLogger.INSTANCE);
-        assertFalse(event.impl.isAnr(event));
+        assertFalse(event.getImpl().isAnr(event));
 
         // simulate ANR
         event.getErrors().get(0).setErrorClass("ANR");
-        assertTrue(event.impl.isAnr(event));
+        assertTrue(event.getImpl().isAnr(event));
 
         // clear all errors
         event.getErrors().clear();
-        assertFalse(event.impl.isAnr(event));
+        assertFalse(event.getImpl().isAnr(event));
     }
 
     @Test
     public void testSeverityReasonType() {
         RuntimeException exc = new RuntimeException("Something went wrong");
         Event event = new Event(exc, config, handledState, NoopLogger.INSTANCE);
-        assertEquals(HandledState.REASON_HANDLED_EXCEPTION, event.impl.getSeverityReasonType());
+        String severityReasonType = event.getImpl().getSeverityReasonType();
+        assertEquals(HandledState.REASON_HANDLED_EXCEPTION, severityReasonType);
     }
 }

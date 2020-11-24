@@ -32,7 +32,7 @@ public class EventPayloadTest {
         Event event = new Event(exception, config, handledState, NoopLogger.INSTANCE);
         event.setApp(generateAppWithState());
         event.setDevice(generateDeviceWithState());
-        eventPayload = new EventPayload("api-key", event, new Notifier());
+        eventPayload = new EventPayload("api-key", event, new Notifier(), config);
     }
 
     @Test

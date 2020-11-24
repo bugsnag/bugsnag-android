@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.EventFilenameInfo.Companion.findErrorTypesInFilename
 import java.io.File
 import java.io.IOException
 
@@ -16,35 +15,40 @@ class EventPayload : JsonStream.Streamable {
     private val eventFile: File?
     val event: Event?
     private val notifier: Notifier
+    private val config: ImmutableConfig
 
-    internal constructor(apiKey: String?, eventFile: File, notifier: Notifier) {
+    internal constructor(
+        apiKey: String?,
+        eventFile: File,
+        notifier: Notifier,
+        config: ImmutableConfig
+    ) {
         this.apiKey = apiKey
         this.eventFile = eventFile
         this.event = null
         this.notifier = notifier
+        this.config = config
     }
 
-    internal constructor(apiKey: String?, event: Event, notifier: Notifier) {
+    internal constructor(
+        apiKey: String?,
+        event: Event,
+        notifier: Notifier,
+        config: ImmutableConfig
+    ) {
         this.apiKey = apiKey
         this.eventFile = null
         this.event = event
         this.notifier = notifier
+        this.config = config
     }
 
     internal fun getErrorTypes(): Set<ErrorType> {
         return when {
-            event != null -> getErrorTypesFromStackframes(event)
-            eventFile != null -> findErrorTypesInFilename(eventFile)
+            event != null -> event.impl.getErrorTypesFromStackframes()
+            eventFile != null -> EventFilenameInfo.fromFile(eventFile, config).errorTypes
             else -> emptySet()
         }
-    }
-
-    private fun getErrorTypesFromStackframes(event: Event): Set<ErrorType> {
-        val errorTypes = event.errors.mapNotNull(Error::getType).toSet()
-        val frameOverrideTypes = event.errors
-            .map { it.stacktrace }
-            .flatMap { it.mapNotNull(Stackframe::type) }
-        return errorTypes.plus(frameOverrideTypes)
     }
 
     @Throws(IOException::class)

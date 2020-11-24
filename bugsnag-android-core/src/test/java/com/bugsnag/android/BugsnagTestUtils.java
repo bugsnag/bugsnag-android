@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -27,7 +26,7 @@ final class BugsnagTestUtils {
     }
 
     static EventPayload generateEventPayload(ImmutableConfig config) {
-        return new EventPayload(config.getApiKey(), generateEvent(), new Notifier());
+        return new EventPayload(config.getApiKey(), generateEvent(), new Notifier(), config);
     }
 
     static Event generateEvent() {
