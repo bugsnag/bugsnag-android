@@ -60,7 +60,6 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
 
-<<<<<<< HEAD
   - label: ':android: Android size reporting'
     depends_on: "android-ci"
     timeout_in_minutes: 10
@@ -69,9 +68,6 @@ steps:
           run: android-sizer
 
   - label: ':android: Lint'
-=======
-    - label: ':android: Lint'
->>>>>>> Tests: Refactor common steps out of individual pipelines
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
