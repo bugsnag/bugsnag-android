@@ -6,3 +6,6 @@ COPY features/support features/support
 
 ARG TESTS_DIR=features/full_tests
 COPY $TESTS_DIR $TESTS_DIR
+
+RUN env
+RUN ls features
