@@ -6,6 +6,13 @@ import java.util.UUID
 
 /**
  * Represents important information about an event which is encoded/decoded from a filename.
+ * Currently the following information is encoded:
+ *
+ * apiKey - as a user can decide to override the value on an Event
+ * uuid - to disambiguate stored error reports
+ * timestamp - to sort error reports by time of capture
+ * suffix - used to encode whether the app crashed on launch, or the report is not a JVM error
+ * errorTypes - a comma delimited string which contains the stackframe types in the error
  */
 internal data class EventFilenameInfo(
     val apiKey: String,
@@ -16,7 +23,8 @@ internal data class EventFilenameInfo(
 ) {
 
     /**
-     * Encodes event information into a filename
+     * Generates a filename for the Event in the format
+     * "[timestamp]_[apiKey]_[errorTypes]_[UUID]_[startupcrash|not-jvm].json"
      */
     fun encode(): String {
         return String.format(
@@ -36,10 +44,6 @@ internal data class EventFilenameInfo(
         private const val STARTUP_CRASH = "startupcrash"
         private const val NON_JVM_CRASH = "not-jvm"
 
-        /**
-         * Generates a filename for the Event in the format
-         * "[timestamp]_[apiKey]_[errorTypes]_[UUID]_[startupcrash|not-jvm].json"
-         */
         @JvmOverloads
         fun fromEvent(
             obj: Any,
@@ -59,7 +63,7 @@ internal data class EventFilenameInfo(
                 uuid,
                 timestamp,
                 findSuffixForEvent(obj, config),
-                findErrorTypesForEvent(obj, sanitizedApiKey)
+                findErrorTypesForEvent(obj)
             )
         }
 
@@ -81,7 +85,7 @@ internal data class EventFilenameInfo(
          * is not encoded for the given event
          */
         private fun findApiKeyInFilename(file: File, config: ImmutableConfig): String {
-            val name = file.name.replace("_startupcrash.json".toRegex(), "")
+            val name = file.name.replace("_$STARTUP_CRASH.json".toRegex(), "")
             val start = name.indexOf("_") + 1
             val end = name.indexOf("_", start)
             val apiKey = if (start == 0 || end == -1 || end <= start) {
@@ -96,7 +100,7 @@ internal data class EventFilenameInfo(
          * Retrieves the error types encoded in the filename, or an empty string if this
          * information is not encoded for the given event
          */
-        internal fun findErrorTypesInFilename(eventFile: File): Set<ErrorType> {
+        private fun findErrorTypesInFilename(eventFile: File): Set<ErrorType> {
             val name = eventFile.name
             val end = name.lastIndexOf("_", name.lastIndexOf("_") - 1)
             val start = name.lastIndexOf("_", end - 1) + 1
@@ -126,15 +130,10 @@ internal data class EventFilenameInfo(
         /**
          * Retrieves the error types for the given event
          */
-        private fun findErrorTypesForEvent(obj: Any, sanitizedApiKey: String): Set<ErrorType> {
+        private fun findErrorTypesForEvent(obj: Any): Set<ErrorType> {
             return when (obj) {
-                is Event -> {
-                    val payload = EventPayload(sanitizedApiKey, obj, null, Notifier())
-                    payload.getErrorTypes()
-                }
-                else -> {
-                    setOf(ErrorType.C)
-                }
+                is Event -> obj.impl.getErrorTypesFromStackframes()
+                else -> setOf(ErrorType.C)
             }
         }
 

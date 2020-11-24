@@ -70,7 +70,7 @@ class DeliveryHeadersTest {
     fun verifyErrorApiHeadersNoStacktrace() {
         val config = convertToImmutableConfig(generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json")
-        val payload = EventPayload(config.apiKey, null, file, Notifier())
+        val payload = EventPayload(config.apiKey, null, file, Notifier(), config)
         val headers = config.getErrorApiDeliveryParams(payload).headers
         assertNull(headers["Bugsnag-Stacktrace-Types"])
     }

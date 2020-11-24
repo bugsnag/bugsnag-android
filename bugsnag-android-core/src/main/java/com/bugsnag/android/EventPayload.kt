@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.EventFilenameInfo.Companion.findErrorTypesInFilename
 import java.io.File
 import java.io.IOException
 
@@ -14,7 +13,8 @@ class EventPayload @JvmOverloads internal constructor(
     var apiKey: String?,
     val event: Event? = null,
     private val eventFile: File? = null,
-    notifier: Notifier
+    notifier: Notifier,
+    private val config: ImmutableConfig
 ) : JsonStream.Streamable {
 
     internal val notifier = Notifier(notifier.name, notifier.version, notifier.url).apply {
@@ -23,18 +23,10 @@ class EventPayload @JvmOverloads internal constructor(
 
     internal fun getErrorTypes(): Set<ErrorType> {
         return when {
-            event != null -> getErrorTypesFromStackframes(event)
-            eventFile != null -> findErrorTypesInFilename(eventFile)
+            event != null -> event.impl.getErrorTypesFromStackframes()
+            eventFile != null -> EventFilenameInfo.fromFile(eventFile, config).errorTypes
             else -> emptySet()
         }
-    }
-
-    private fun getErrorTypesFromStackframes(event: Event): Set<ErrorType> {
-        val errorTypes = event.errors.mapNotNull(Error::getType).toSet()
-        val frameOverrideTypes = event.errors
-            .map { it.stacktrace }
-            .flatMap { it.mapNotNull(Stackframe::type) }
-        return errorTypes.plus(frameOverrideTypes)
     }
 
     @Throws(IOException::class)

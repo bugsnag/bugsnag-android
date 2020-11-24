@@ -32,7 +32,7 @@ class EventErrorTypeTest {
     fun verifyLegacyFileNameErrorType() {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json")
-        val payload = EventPayload(config.apiKey, null, file, Notifier())
+        val payload = EventPayload(config.apiKey, null, file, Notifier(), config)
         assertEquals(emptySet<ErrorType>(), payload.getErrorTypes())
     }
 
@@ -43,7 +43,7 @@ class EventErrorTypeTest {
     fun verifyFileNameDefault() {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_android_my-uuid-123_.json")
-        val payload = EventPayload(config.apiKey, null, file, Notifier())
+        val payload = EventPayload(config.apiKey, null, file, Notifier(), config)
         assertEquals(setOf(ErrorType.ANDROID), payload.getErrorTypes())
     }
 
@@ -54,7 +54,7 @@ class EventErrorTypeTest {
     fun verifyFileNameMixedTypes() {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_android,c,reactnativejs_my-uuid-123_.json")
-        val payload = EventPayload(config.apiKey, null, file, Notifier())
+        val payload = EventPayload(config.apiKey, null, file, Notifier(), config)
         assertEquals(ErrorType.values().toSet(), payload.getErrorTypes())
     }
 }
