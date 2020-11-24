@@ -6,29 +6,12 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 
-@RunWith(MockitoJUnitRunner::class)
-class EventFilenameTest {
+internal class EventFilenameTest {
 
-    @Mock
     lateinit var event: Event
-
-    @Mock
-    lateinit var error: Error
-
-    @Mock
-    lateinit var frame: Stackframe
-
-    @Mock
-    lateinit var file: File
-
-    @Mock
-    lateinit var app: AppWithState
 
     private val config = BugsnagTestUtils.generateImmutableConfig()
 
@@ -39,12 +22,9 @@ class EventFilenameTest {
      */
     @Before
     fun setUp() {
-        `when`(event.errors).thenReturn(listOf(error))
-        `when`(error.stacktrace).thenReturn(listOf(frame))
-        `when`(frame.type).thenReturn(ErrorType.ANDROID)
-        `when`(event.app).thenReturn(app)
-        `when`(event.apiKey).thenReturn("0000111122223333aaaabbbbcccc9999")
-        `when`(app.duration).thenReturn(null)
+        event = BugsnagTestUtils.generateEvent()
+        event.apiKey = "0000111122223333aaaabbbbcccc9999"
+        event.app.duration
     }
 
     @Test
@@ -114,7 +94,7 @@ class EventFilenameTest {
      */
     @Test
     fun startupCrashJvmEventName() {
-        `when`(app.duration).thenReturn(1000)
+        event.app.duration = 1000
 
         val filename = EventFilenameInfo.fromEvent(
             event,
@@ -134,7 +114,7 @@ class EventFilenameTest {
      */
     @Test
     fun nonStartupCrashCrashJvmEventName() {
-        `when`(app.duration).thenReturn(10000)
+        event.app.duration = 10000
         val filename = EventFilenameInfo.fromEvent(
             event,
             "my-uuid-123",
@@ -181,7 +161,7 @@ class EventFilenameTest {
 
     @Test
     fun apiKeyFromEmptyFilename() {
-        `when`(file.name).thenReturn("")
+        val file = File("")
         val eventInfo = EventFilenameInfo.fromFile(file, config)
         assertEquals(config.apiKey, eventInfo.apiKey)
         assertEquals("", eventInfo.uuid)
@@ -195,7 +175,7 @@ class EventFilenameTest {
      */
     @Test
     fun apiKeyFromLegacyFilename() {
-        `when`(file.name).thenReturn("1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json")
+        val file = File("1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json")
         val eventInfo = EventFilenameInfo.fromFile(file, config)
         assertEquals(config.apiKey, eventInfo.apiKey)
         assertEquals("startupcrash", eventInfo.suffix)
@@ -203,7 +183,7 @@ class EventFilenameTest {
 
     @Test
     fun apiKeyFromNewFilename() {
-        `when`(file.name).thenReturn(
+        val file = File(
             "1504255147933_ffff111122948633aaaabbbbcccc9999" +
                     "_683c6b92-b325-4987-80ad-77086509ca1e.json"
         )
@@ -213,14 +193,14 @@ class EventFilenameTest {
 
     @Test
     fun apiKeyFromLegacyNdkFilename() {
-        `when`(file.name).thenReturn("1603191800142_7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
+        val file = File("1603191800142_7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
         val eventInfo = EventFilenameInfo.fromFile(file, config)
         assertEquals(config.apiKey, eventInfo.apiKey)
     }
 
     @Test
     fun apiKeyFromNdkFilename() {
-        `when`(file.name).thenReturn(
+        val file = File(
             "1603191800142_5d1ec8bd39a74caa1267142706a7fb20_" +
                     "7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json"
         )

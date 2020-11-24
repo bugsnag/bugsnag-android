@@ -99,7 +99,7 @@ class InternalReportDelegate implements EventStore.Delegate {
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", config.getApiKey());
 
-        final EventPayload eventPayload = new EventPayload(null, event, notifier);
+        final EventPayload eventPayload = new EventPayload(null, event, notifier, config);
         try {
             Async.run(new Runnable() {
                 @Override

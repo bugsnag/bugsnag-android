@@ -144,7 +144,7 @@ class EventStore extends FileStore {
         try {
             EventFilenameInfo eventInfo = EventFilenameInfo.Companion.fromFile(eventFile, config);
             String apiKey = eventInfo.getApiKey();
-            EventPayload payload = new EventPayload(apiKey, eventFile, notifier);
+            EventPayload payload = new EventPayload(apiKey, eventFile, notifier, config);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload);
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 
@@ -189,23 +189,19 @@ class EventStore extends FileStore {
         return launchCrashes;
     }
 
-    /**
-     * Generates a filename for the Event in the format
-     * "[timestamp]_[apiKey]_[errorTypes]_[UUID]_[startupcrash|not-jvm].json"
-     */
     @NonNull
     @Override
     String getFilename(Object object) {
         EventFilenameInfo eventInfo
                 = EventFilenameInfo.Companion.fromEvent(object, null, config);
         String encodedInfo = eventInfo.encode();
-        return String.format(Locale.US, "%s%s.json", storeDirectory, encodedInfo);
+        return String.format(Locale.US, "%s%s", storeDirectory, encodedInfo);
     }
 
     String getNdkFilename(Object object, String apiKey) {
         EventFilenameInfo eventInfo
                 = EventFilenameInfo.Companion.fromEvent(object, apiKey, config);
         String encodedInfo = eventInfo.encode();
-        return String.format(Locale.US, "%s%s.json", storeDirectory, encodedInfo);
+        return String.format(Locale.US, "%s%s", storeDirectory, encodedInfo);
     }
 }

@@ -666,7 +666,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void notifyInternal(@NonNull Event event,
                         @Nullable OnErrorCallback onError) {
-        String type = event.impl.getSeverityReasonType();
+        String type = event.getImpl().getSeverityReasonType();
         logger.d("Client#notifyInternal() - event captured by Client, type=" + type);
         // Don't notify if this event class should be ignored
         if (event.shouldDiscardClass()) {
@@ -680,7 +680,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
         Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
-        Metadata eventMetadata = event.impl.getMetadata();
+        Metadata eventMetadata = event.getImpl().getMetadata();
         eventMetadata.setRedactedKeys(redactedKeys);
 
         // get session for event
