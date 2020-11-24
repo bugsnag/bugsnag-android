@@ -10,5 +10,5 @@ else
   PIPELINE='pipeline.smoke.yml'
 fi
 
-echo ".buildkite/$PIPELINE"
+buildkite-agent pipeline upload .buildkite/$PIPELINE
 
