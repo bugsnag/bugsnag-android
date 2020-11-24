@@ -49,6 +49,8 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-maze-runner
+      args:
+        - TESTS_DIR=features/full_tests
     environment:
       VERBOSE:
       DEBUG:

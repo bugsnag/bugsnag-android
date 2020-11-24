@@ -1,3 +1,8 @@
 FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli as android-maze-runner
 
-COPY features features
+COPY features/scripts features/scripts
+COPY features/steps features/steps
+COPY features/support features/support
+
+ARG TESTS_DIR=features/full_tests
+COPY $TESTS_DIR $TESTS_DIR
