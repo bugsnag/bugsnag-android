@@ -50,7 +50,7 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-maze-runner
       args:
-        - TESTS_DIR=features/full_tests
+        - TESTS_DIR=${TESTS_DIR:-features/full_tests}
     environment:
       VERBOSE:
       DEBUG:
