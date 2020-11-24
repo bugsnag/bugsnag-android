@@ -60,7 +60,7 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
 
-    - label: ':android: Lint'
+  - label: ':android: Lint'
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
