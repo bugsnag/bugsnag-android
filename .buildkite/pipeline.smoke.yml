@@ -80,7 +80,7 @@ steps:
       docker-compose#v3.3.0:
         run: android-maze-runner
         command:
-          - "features/smoke_tests"
+        - "features/smoke_tests"
         - "--app=/app/build/fixture.apk"
         - "--farm=bs"
         - "--device=ANDROID_6_0"
