@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-if [[ "$BUILDKITE_MESSAGE" == *"[QUICK CI]"* ]]; then
+if [[ "$BUILDKITE_MESSAGE" == *"[quick ci]"* ]]; then
   PIPELINE='pipeline.smoke.yml'
-elif [[ "$BUILDKITE_MESSAGE" == *"[FULL CI]"* ||
+elif [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
   "$BUILDKITE_BRANCH" == "next" ||
   "$BUILDKITE_BRANCH" == "master" ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "next" ||
