@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Create synchronized store for user information
+  [#1010](https://github.com/bugsnag/bugsnag-android/pull/1010)
+
 * Add persistenceDirectory config option for controlling event/session storage
   [#998](https://github.com/bugsnag/bugsnag-android/pull/998)
 
