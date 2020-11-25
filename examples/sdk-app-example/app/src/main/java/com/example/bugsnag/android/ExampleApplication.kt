@@ -1,9 +1,8 @@
-package com.bugsnag.android.example
+package com.example.bugsnag.android
 
 import android.app.Application
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.ErrorTypes
 
 class ExampleApplication : Application() {
 

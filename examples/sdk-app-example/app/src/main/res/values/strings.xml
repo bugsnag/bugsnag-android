@@ -19,4 +19,5 @@
   <string name="documentation">Documentation</string>
   <string name="read_the_docs">Read the Docs</string>
   <string name="app_name">Bugsnag</string>
+    <string name="trigger_err_msg">Triggered an error, check your dashboard!</string>
 </resources>
