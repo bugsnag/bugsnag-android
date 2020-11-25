@@ -1,11 +1,4 @@
 steps:
-  - label: ':docker: Build Android maze runner image'
-    key: "maze-runner"
-    timeout_in_minutes: 20
-    plugins:
-      - docker-compose#v3.3.0:
-          build: android-maze-runner
-
   - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
     depends_on: "android-ci"
     timeout_in_minutes: 30

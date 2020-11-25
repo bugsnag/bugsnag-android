@@ -28,12 +28,12 @@ steps:
           push:
             - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
 
-  - label: ':android: Android size reporting'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
+  - label: ':docker: Build Android maze runner image'
+    key: "maze-runner"
+    timeout_in_minutes: 20
     plugins:
       - docker-compose#v3.3.0:
-          run: android-sizer
+          build: android-maze-runner
 
   - label: ':docker: Build Android JVM test image'
     key: "android-jvm"
@@ -59,6 +59,13 @@ steps:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
+
+  - label: ':android: Android size reporting'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-sizer
 
   - label: ':android: Lint'
     depends_on: "android-jvm"

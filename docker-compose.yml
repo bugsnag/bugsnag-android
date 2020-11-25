@@ -47,16 +47,14 @@ services:
 
   android-maze-runner:
     build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android-maze-runner
-      args:
-        - TESTS_DIR=${TESTS_DIR:-features/full_tests}
+      image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli
     environment:
       VERBOSE:
       DEBUG:
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
+      - ./features/:/app/features/
 
 networks:
   default:
