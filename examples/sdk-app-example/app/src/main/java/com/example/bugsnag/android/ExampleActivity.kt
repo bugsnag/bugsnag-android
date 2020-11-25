@@ -1,14 +1,13 @@
-package com.bugsnag.android.example
+package com.example.bugsnag.android
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import com.bugsnag.android.*
 import com.example.foo.CrashyClass
+import com.google.android.material.snackbar.Snackbar
 import java.lang.Thread
 import java.util.*
 
@@ -35,7 +34,10 @@ class ExampleActivity : AppCompatActivity() {
         val nativeBtn: View = findViewById(R.id.btn_native_crash)
         nativeBtn.setOnClickListener { doCrash() }
 
-        findViewById<View>(R.id.btn_anr).setOnClickListener { Thread.sleep(10000) }
+        findViewById<View>(R.id.btn_anr).setOnClickListener {
+            Thread.sleep(10000)
+            showSnackbar()
+        }
     }
 
     /**
@@ -56,10 +58,11 @@ class ExampleActivity : AppCompatActivity() {
         try {
             throw RuntimeException("Non-Fatal Crash")
         } catch (e: RuntimeException) {
-            Bugsnag.notify(e)
+            Bugsnag.notify(e) {
+                showSnackbar()
+                true
+            }
         }
-
-        displayToastNotification()
     }
 
     /**
@@ -68,6 +71,7 @@ class ExampleActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun notifyNativeHandled(view: View) {
         notifyFromCXX()
+        showSnackbar()
     }
 
     /**
@@ -79,9 +83,9 @@ class ExampleActivity : AppCompatActivity() {
         val e = RuntimeException("Error Report with altered Severity")
         Bugsnag.notify(e) {
             it.severity = Severity.ERROR
+            showSnackbar()
             true
         }
-        displayToastNotification()
     }
 
     /**
@@ -92,8 +96,10 @@ class ExampleActivity : AppCompatActivity() {
     fun crashWithUserDetails(view: View) {
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         val e = RuntimeException("Error Report with User Info")
-        Bugsnag.notify(e)
-        displayToastNotification()
+        Bugsnag.notify(e) {
+            showSnackbar()
+            true
+        }
     }
 
     /**
@@ -108,9 +114,9 @@ class ExampleActivity : AppCompatActivity() {
         Bugsnag.notify(e) { event ->
             event.severity = Severity.ERROR
             event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
+            showSnackbar()
             true
         }
-        displayToastNotification()
     }
 
     /**
@@ -126,8 +132,10 @@ class ExampleActivity : AppCompatActivity() {
         Bugsnag.leaveBreadcrumb("WebAuthFailure", metadata, BreadcrumbType.ERROR)
 
         val e = RuntimeException("Error Report with Breadcrumbs")
-        Bugsnag.notify(e)
-        displayToastNotification()
+        Bugsnag.notify(e) {
+            showSnackbar()
+            true
+        }
     }
 
     /**
@@ -147,13 +155,14 @@ class ExampleActivity : AppCompatActivity() {
             event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
             event.addMetadata("CustomMetadata", "UserDetails", userDetails)
             event.addMetadata("CustomMetadata", "CompletedLevels", completedLevels)
+            showSnackbar()
             true
         }
-        displayToastNotification()
     }
 
-    private fun displayToastNotification() {
-        Toast.makeText(this, "Error Report Sent!", LENGTH_SHORT).show()
+    private fun showSnackbar() {
+        val rootView = findViewById<View>(R.id.example_root)
+        Snackbar.make(rootView, getString(R.string.trigger_err_msg), Snackbar.LENGTH_SHORT).show()
     }
 
     private fun setupToolbarLogo() {
