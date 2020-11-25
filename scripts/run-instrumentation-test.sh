@@ -4,7 +4,7 @@ timestamp() {
   date +"%T"
 }
 
-export APP_LOCATION=examples/sdk-app-example/build/outputs/apk/release/sdk-app-example-release.apk
+export APP_LOCATION=examples/sdk-app-example/app/build/outputs/apk/release/app-release.apk
 export TEST_LOCATION=bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk
 
 # First app.  This is not actually used, but must be present and different to the test app.
