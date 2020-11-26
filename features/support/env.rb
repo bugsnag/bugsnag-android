@@ -28,6 +28,10 @@ Before('@skip_below_android_8') do |scenario|
   skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version < 8
 end
 
+Before('@skip_below_android_5') do |scenario|
+  skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version < 5
+end
+
 Before('@skip_android_8_1') do |scenario|
   skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version == 8.1
 end
