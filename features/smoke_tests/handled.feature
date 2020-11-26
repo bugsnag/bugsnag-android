@@ -130,9 +130,6 @@ Scenario: Handled C functionality
     And the event "app.duration" is not null
     And the event "app.durationInForeground" is not null
     And the event "app.inForeground" is true
-    And the payload field "events.0.metaData.app.memoryUsage" is greater than 0
-    And the event "metaData.app.name" equals "MazeRunner"
-    And the event "metaData.app.lowMemory" is not null
 
     # Device data
     And the payload field "events.0.device.cpuAbi" is a non-empty array
@@ -152,15 +149,6 @@ Scenario: Handled C functionality
     And the payload field "events.0.device.freeMemory" is greater than 0
     And the event "device.orientation" equals "portrait"
     And the event "device.time" is a timestamp
-    And the event "metaData.device.locationStatus" is not null
-    And the event "metaData.device.emulator" is false
-    And the event "metaData.device.networkAccess" is not null
-    And the event "metaData.device.charging" is not null
-    And the event "metaData.device.screenDensity" is not null
-    And the event "metaData.device.dpi" is not null
-    And the event "metaData.device.screenResolution" is not null
-    And the event "metaData.device.brand" is not null
-    And the event "metaData.device.batteryLevel" is not null
 
     # User
     And the event "user.id" equals "324523"
