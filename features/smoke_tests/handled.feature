@@ -10,7 +10,7 @@ Scenario: Notify caught Java exception with default configuration
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledJavaSmokeScenario"
     And the exception "type" equals "android"
-    And the exception "stacktrace" is not null
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "warning"
     And the event "severityReason.type" equals "handledException"
@@ -80,7 +80,7 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledJavaSmokeScenario"
     And the exception "type" equals "android"
-    And the exception "stacktrace" is not null
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
@@ -115,7 +115,7 @@ Scenario: Handled C functionality
     And the exception "errorClass" equals "CXXNotifySmokeScenario"
     And the exception "message" equals "Smoke test scenario"
     And the exception "type" equals "c"
-    And the exception "stacktrace" is not null
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"

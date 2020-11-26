@@ -11,7 +11,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "UnhandledJavaLoadedConfigScenario"
     And the exception "type" equals "android"
-    And the exception "stacktrace" is not null
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "unhandledException"
@@ -75,7 +75,7 @@ Scenario: Signal exception with overwritten config
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "UnhandledJavaLoadedConfigScenario"
     And the exception "type" equals "android"
-    And the exception "stacktrace" is not null
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "unhandledException"
@@ -142,7 +142,7 @@ Scenario: ANR detection
     And the exception "errorClass" equals "ANR"
     And the exception "message" starts with " Input dispatching timed out"
     And the exception "type" equals "android"
-    And the exception "stacktrace" is not null
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "AndroidNotResponding"
