@@ -7,6 +7,10 @@ AfterConfiguration do |config|
   MazeRunner.config.enforce_bugsnag_integrity = false if MazeRunner.config.respond_to? :enforce_bugsnag_integrity=
 end
 
+Before('@skip') do |scenario|
+  skip_this_scenario("Skipping scenario")
+end
+
 Before('@skip_above_android_8') do |scenario|
   skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version >= 9
 end
