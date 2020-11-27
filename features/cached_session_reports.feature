@@ -12,6 +12,8 @@ Scenario: Sending internal error reports on API <26
     And I run "PartialSessionScenario"
     Then I should receive no requests
 
+# skip until PLAT-5488 is addressed
+@skip_below_android_5
 Scenario: If a file in the cache directory is deleted before a request completes, zero further requests should be made
     When I run "DeletedSessionScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
