@@ -16,9 +16,9 @@ end
 
 When("I clear any error dialogue") do
   sleep(3)
-  $driver.click_element("android:id/button1") if $driver.wait_for_element("android:id/button1", 1)
-  $driver.click_element("android:id/aerr_close") if $driver.wait_for_element("android:id/aerr_close", 1)
-  $driver.click_element("android:id/aerr_restart") if $driver.wait_for_element("android:id/aerr_restart", 1)
+  click_if_present 'android:id/button1'
+  click_if_present 'android:id/aerr_close'
+  click_if_present 'android:id/aerr_restart'
 end
 
 When("I configure Bugsnag for {string}") do |event_type|
@@ -35,12 +35,12 @@ When("I relaunch the app") do
 end
 
 When("I tap the screen {int} times") do |count|
-  for i in 1..count do
+  (1..count).each { |i|
     touch_action = Appium::TouchAction.new
     touch_action.tap({:x => 500, :y => 300})
     touch_action.perform
     sleep(1)
-  end
+  }
 end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
@@ -54,7 +54,7 @@ Then("the exception reflects a signal was raised") do
   value = read_key_path(Server.current_request[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]
   assert_block("The errorClass was not from a signal: #{error_class}") do
-    ["SIGFPE","SIGILL","SIGSEGV","SIGABRT","SIGTRAP","SIGBUS"].include? error_class
+    %w[SIGFPE SIGILL SIGSEGV SIGABRT SIGTRAP SIGBUS].include? error_class
   end
 end
 Then("the event {string} string is empty") do |keypath|
@@ -75,7 +75,7 @@ Then("the exception {string} equals one of:") do |keypath, possible_values|
   assert_includes(possible_values.raw.flatten, value)
 end
 
-# Checks whether the first  significant frames match several given frames
+# Checks whether the first significant frames match several given frames
 #
 # @param expected_values [Array] A table dictating the expected files and methods of the frames
 #   The first two entries are methods (enabling flexibility across SDKs), the third is the file name
@@ -203,13 +203,21 @@ Then("the event has {int} breadcrumbs") do |expected_count|
   fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
 end
 
-Then(/^the event has a "(.+)" breadcrumb with the message "(.+)"(?: for request (\d+))?$/) do |type, message, request_index|
+Then("the event has a {string} breadcrumb with the message {string}") do |type, message|
   value = read_key_path(Server.current_request[:body], "events.0.breadcrumbs")
   found = false
   value.each do |crumb|
-    if crumb["type"] == type and crumb["name"] == message then
+    if crumb["type"] == type and crumb["name"] == message
       found = true
     end
   end
   fail("No breadcrumb matched: #{value}") unless found
+end
+
+def click_if_present(element)
+  return unless MazeRunner.driver.wait_for_element(element, 1)
+
+  MazeRunner.driver.click_element(element)
+rescue Selenium::WebDriver::Error::NoSuchElementError
+  # Ignore - we have seen clicks fail like this despite having just checked for the element's presence
 end
