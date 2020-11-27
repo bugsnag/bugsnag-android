@@ -2,6 +2,11 @@
 # Set this explicitly
 $api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
 
+# TODO: Remove once the Bugsnag-Integrity header has been implemented
+AfterConfiguration do |config|
+  MazeRunner.config.enforce_bugsnag_integrity = false if MazeRunner.config.respond_to? :enforce_bugsnag_integrity=
+end
+
 Before('@skip_above_android_8') do |scenario|
   skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version >= 9
 end
