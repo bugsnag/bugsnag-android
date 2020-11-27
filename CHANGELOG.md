@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Use consistent device ID for multi process apps
+  [#1013](https://github.com/bugsnag/bugsnag-android/pull/1013)
+
 * Create synchronized store for user information
   [#1010](https://github.com/bugsnag/bugsnag-android/pull/1010)
 
