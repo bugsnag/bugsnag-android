@@ -31,10 +31,10 @@
     <ID>TooGenericExceptionCaught:CallbackState.kt$CallbackState$ex: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultDelivery.kt$DefaultDelivery$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:DeviceIdStore.kt$DeviceIdStore$exc: Exception</ID>
     <ID>TooGenericExceptionCaught:ManifestConfigLoader.kt$ManifestConfigLoader$exc: Exception</ID>
     <ID>TooGenericExceptionCaught:PluginClient.kt$PluginClient$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
-    <ID>TooGenericExceptionCaught:SynchronizedStreamableStore.kt$SynchronizedStreamableStore$exc: Throwable</ID>
     <ID>TooGenericExceptionThrown:BreadcrumbStateTest.kt$BreadcrumbStateTest$throw Exception("Oh no")</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>

@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import android.content.SharedPreferences
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -34,7 +33,7 @@ class UserRepositoryTest {
         `when`(prefs.getString(contains("user.name"), any())).thenReturn("Jane Fonda")
         `when`(prefs.getString(contains("user.email"), any())).thenReturn("test@example.com")
 
-        val repository = UserRepository(prefs, true)
+        val repository = UserRepository(prefs, true, "0asdf")
         val user = repository.load()
 
         assertEquals("jf123", user.id)
@@ -44,8 +43,7 @@ class UserRepositoryTest {
 
     @Test
     fun loadNoPersist() {
-        `when`(prefs.getString(contains("install.iud"), any())).thenReturn("device-id-123")
-        val repository = UserRepository(prefs, false)
+        val repository = UserRepository(prefs, false, "device-id-123")
         val user = repository.load()
         assertEquals("device-id-123", user.id)
         assertNull(user.email)
@@ -54,7 +52,7 @@ class UserRepositoryTest {
 
     @Test
     fun saveWithPersist() {
-        val repository = UserRepository(prefs, true)
+        val repository = UserRepository(prefs, true, "")
         repository.save(User("123", "joe@yahoo.com", "Joe Bloggs"))
         verify(editor, times(1)).putString("user.id", "123")
         verify(editor, times(1)).putString("user.email", "joe@yahoo.com")
@@ -64,28 +62,11 @@ class UserRepositoryTest {
 
     @Test
     fun saveNoPersist() {
-        val repository = UserRepository(prefs, false)
+        val repository = UserRepository(prefs, false, "")
         repository.save(User("123", "joe@yahoo.com", "Joe Bloggs"))
         verify(editor, times(1)).remove("user.id")
         verify(editor, times(1)).remove("user.email")
         verify(editor, times(1)).remove("user.name")
         verify(editor, times(1)).apply()
-    }
-
-    @Test
-    fun getDeviceIdFirstTime() {
-        `when`(prefs.getString(contains("install.iud"), any())).thenReturn(null)
-        val repository = UserRepository(prefs, false)
-        val deviceId = repository.getDeviceId()
-        assertNotNull(deviceId)
-        verify(editor, times(1)).putString(matches("install.iud"), any())
-    }
-
-    @Test
-    fun getDeviceIdExistingValue() {
-        `when`(prefs.getString(contains("install.iud"), any())).thenReturn("4a09cbe2")
-        val repository = UserRepository(prefs, false)
-        val deviceId = repository.getDeviceId()
-        assertEquals("4a09cbe2", deviceId)
     }
 }

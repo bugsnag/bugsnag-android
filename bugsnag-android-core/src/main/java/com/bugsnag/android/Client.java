@@ -18,8 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function2;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -152,29 +155,23 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 sessionStore, logger);
         metadataState = copyMetadataState(configuration);
 
-        // Set up and collect constant app and device diagnostics
-        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-
         ActivityManager am =
                 (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
 
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker, am, logger);
 
-        UserRepository userRepository = new UserRepository(sharedPrefs,
-                immutableConfig.getPersistUser());
-        userState = new UserState(userRepository);
-        User user = configuration.getUser();
+        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
-        if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
-            userState.setUser(user.getId(), user.getEmail(), user.getName());
-        }
+        // load the device + user information
+        DeviceIdStore deviceIdStore = new DeviceIdStore(appContext, logger);
+        String deviceId = deviceIdStore.loadDeviceId();
+        userState = loadUserState(configuration, deviceId);
 
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
-        String id = userRepository.getDeviceId();
-        deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
-                Environment.getDataDirectory(), logger);
+        deviceDataCollector = new DeviceDataCollector(connectivity, appContext,
+                resources, deviceId, info, Environment.getDataDirectory(), logger);
 
 
         if (appContext instanceof Application) {
@@ -251,6 +248,18 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
+    }
+
+    private UserState loadUserState(@NonNull Configuration configuration, String deviceId) {
+        boolean persistUser = immutableConfig.getPersistUser();
+        UserRepository userRepository = new UserRepository(sharedPrefs, persistUser, deviceId);
+        UserState state = new UserState(userRepository);
+        User user = configuration.getUser();
+
+        if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
+            state.setUser(user.getId(), user.getEmail(), user.getName());
+        }
+        return state;
     }
 
     @VisibleForTesting
