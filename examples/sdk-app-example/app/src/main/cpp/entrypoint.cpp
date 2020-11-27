@@ -20,16 +20,15 @@ bool my_on_error_b(void *event) {
     return true;
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_example_ExampleApplication_performNativeBugsnagSetup(JNIEnv *env, jobject instance) {
+JNIEXPORT void JNICALL Java_com_example_bugsnag_android_ExampleApplication_performNativeBugsnagSetup(JNIEnv *env, jobject instance) {
     bugsnag_add_on_error(&my_on_error_b);
 }
 
-
-JNIEXPORT void JNICALL Java_com_bugsnag_android_example_ExampleActivity_doCrash(JNIEnv *env, jobject instance) {
+JNIEXPORT void JNICALL Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX(JNIEnv *env, jobject instance) {
     crash_write_read_only();
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_example_ExampleActivity_notifyFromCXX(JNIEnv *env, jobject instance) {
+JNIEXPORT void JNICALL Java_com_example_bugsnag_android_BaseCrashyActivity_notifyFromCXX(JNIEnv *env, jobject instance) {
     // Set the current user
     bugsnag_set_user_env(env, "124323", "joe mills", "j@ex.co");
     // Leave a breadcrumb

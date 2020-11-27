@@ -1,9 +1,9 @@
-package com.bugsnag.android.example
+package com.example.bugsnag.android
 
 import android.app.Application
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.ErrorTypes
+import java.io.File
 
 class ExampleApplication : Application() {
 
@@ -22,12 +22,22 @@ class ExampleApplication : Application() {
 
     private external fun performNativeBugsnagSetup()
 
+    private val multiProcessApp = true
+
     override fun onCreate() {
         super.onCreate()
+
 
         val config = Configuration.load(this)
         config.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         config.addMetadata("user", "age", 31)
+
+        if (multiProcessApp) {
+            // alter the persistenceDirectory so that each process uses a unique directory
+//            val processName = findCurrentProcessName()
+//            config.persistenceDirectory = File(filesDir, processName)
+        }
+
         Bugsnag.start(this, config)
 
         // Initialise native callbacks
