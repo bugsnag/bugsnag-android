@@ -30,8 +30,8 @@ When("I configure Bugsnag for {string}") do |event_type|
 end
 
 When("I relaunch the app") do
-  $driver.close_app
-  $driver.launch_app
+  MazeRunner.driver.close_app
+  MazeRunner.driver.launch_app
 end
 
 When("I tap the screen {int} times") do |count|
@@ -220,4 +220,5 @@ def click_if_present(element)
   MazeRunner.driver.click_element(element)
 rescue Selenium::WebDriver::Error::NoSuchElementError
   # Ignore - we have seen clicks fail like this despite having just checked for the element's presence
+  $logger.warn 'NoSuchElementError'
 end
