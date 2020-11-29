@@ -46,6 +46,8 @@ Scenario: Automated sessions send
     And the payload field "events.0.device.id" equals the stored value "automated_user_id"
     And the event "session.id" is not null
     And the payload field "events.0.session.id" equals the stored value "automated_session_id"
+    And the event "session.events.handled" equals 1
+    And the event "session.events.unhandled" equals 0
 
 Scenario: Manual session control works
     When I run "ManualSessionSmokeScenario"
@@ -68,6 +70,8 @@ Scenario: Manual session control works
     And the exception "message" equals "ManualSessionSmokeScenario"
     And the event "unhandled" is false
     And the payload field "events.0.session.id" equals the stored value "manual_session_id"
+    And the event "session.events.handled" equals 1
+    And the event "session.events.unhandled" equals 0
     And the event "user.id" equals "123"
     And the event "user.email" equals "ABC.CBA.CA"
     And the event "user.name" equals "ManualSessionSmokeScenario"
@@ -90,6 +94,8 @@ Scenario: Manual session control works
     And the exception "message" equals "ManualSessionSmokeScenario"
     And the event "unhandled" is true
     And the payload field "events.0.session.id" equals the stored value "manual_session_id"
+    And the event "session.events.handled" equals 1
+    And the event "session.events.unhandled" equals 1
     And the event "user.id" equals "123"
     And the event "user.email" equals "ABC.CBA.CA"
     And the event "user.name" equals "ManualSessionSmokeScenario"
