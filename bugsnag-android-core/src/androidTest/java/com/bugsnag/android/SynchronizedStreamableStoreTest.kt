@@ -9,6 +9,7 @@ import org.junit.Test
 import java.io.EOFException
 import java.io.File
 import java.io.FileNotFoundException
+import java.lang.IllegalStateException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 
@@ -43,7 +44,7 @@ internal class SynchronizedStreamableStoreTest {
         assertNull(store.load(User.Companion::fromReader))
     }
 
-    @Test(expected = NotImplementedError::class)
+    @Test(expected = IllegalStateException::class)
     fun testPersistExceptionInStreamable() {
         val file = File.createTempFile("test", "json")
         val store = SynchronizedStreamableStore<CrashyStreamable>(file)
@@ -133,9 +134,9 @@ internal class ThreadTestStreamable(
 }
 
 internal class CrashyStreamable : JsonStream.Streamable {
-    override fun toStream(stream: JsonStream) = TODO("I'll handle this later...")
+    override fun toStream(stream: JsonStream) = throw IllegalStateException()
 
     companion object: JsonReadable<CrashyStreamable> {
-        override fun fromReader(reader: JsonReader) = TODO("coffee break...")
+        override fun fromReader(reader: JsonReader) = throw IllegalStateException()
     }
 }

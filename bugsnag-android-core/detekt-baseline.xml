@@ -35,6 +35,7 @@
     <ID>TooGenericExceptionCaught:ManifestConfigLoader.kt$ManifestConfigLoader$exc: Exception</ID>
     <ID>TooGenericExceptionCaught:PluginClient.kt$PluginClient$exc: Throwable</ID>
     <ID>TooGenericExceptionCaught:Stacktrace.kt$Stacktrace$lineEx: Exception</ID>
+    <ID>TooGenericExceptionCaught:UserStore.kt$UserStore$exc: Exception</ID>
     <ID>TooGenericExceptionThrown:BreadcrumbStateTest.kt$BreadcrumbStateTest$throw Exception("Oh no")</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>

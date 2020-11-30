@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import java.io.File
-import java.util.Date
-import java.util.HashMap
 
 internal data class ImmutableConfig(
     val apiKey: String,

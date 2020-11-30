@@ -18,8 +18,9 @@ import java.util.UUID
  * through the use of a [ReadWriteLock] in [SynchronizedStreamableStore].
  */
 internal class DeviceIdStore @JvmOverloads constructor(
-    private val context: Context,
+    context: Context,
     private val file: File = File(context.filesDir, "device-id"),
+    private val sharedPrefMigrator: SharedPrefMigrator,
     private val logger: Logger
 ) {
 
@@ -44,11 +45,8 @@ internal class DeviceIdStore @JvmOverloads constructor(
      * be used. If no value is present then a random UUID will be generated and persisted.
      */
     fun loadDeviceId(): String? {
-        val sharedPrefMigrator = SharedPrefMigrator(context)
-        val legacyDeviceId = sharedPrefMigrator.loadDeviceId()
-
         return loadDeviceId {
-            when (legacyDeviceId) {
+            when (val legacyDeviceId = sharedPrefMigrator.loadDeviceId()) {
                 null -> UUID.randomUUID()
                 else -> UUID.fromString(legacyDeviceId)
             }

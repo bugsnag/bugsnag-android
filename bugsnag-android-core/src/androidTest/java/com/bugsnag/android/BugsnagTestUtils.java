@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -62,10 +61,6 @@ final class BugsnagTestUtils {
         event.setApp(generateAppWithState());
         event.setDevice(generateDeviceWithState());
         return event;
-    }
-
-    static SharedPreferences getSharedPrefs(Context context) {
-        return context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
     }
 
     static Client generateClient(Configuration config) {
