@@ -273,7 +273,7 @@ steps:
 
   - label: ':android: Android 4.4 end-to-end tests'
     depends_on: "fixture-apk"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -291,7 +291,7 @@ steps:
 
   - label: ':android: Android 5 end-to-end tests'
     depends_on: "fixture-apk"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
@@ -311,7 +311,7 @@ steps:
 
   - label: ':android: Android 6 end-to-end tests'
     depends_on: "fixture-apk"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
