@@ -8,7 +8,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.os.storage.StorageManager;
@@ -18,10 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function2;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -46,8 +42,6 @@ import java.util.concurrent.RejectedExecutionException;
  */
 @SuppressWarnings({"checkstyle:JavadocTagContinuationIndentation", "ConstantConditions"})
 public class Client implements MetadataAware, CallbackAware, UserAware {
-
-    private static final String SHARED_PREF_KEY = "com.bugsnag.android";
 
     final ImmutableConfig immutableConfig;
 
@@ -78,8 +72,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private final SystemBroadcastReceiver systemBroadcastReceiver;
     private final ActivityBreadcrumbCollector activityBreadcrumbCollector;
     private final SessionLifecycleCallback sessionLifecycleCallback;
-
-    private final SharedPreferences sharedPrefs;
 
     private final Connectivity connectivity;
     private final StorageManager storageManager;
@@ -161,21 +153,20 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker, am, logger);
 
-        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-
         // load the device + user information
-        DeviceIdStore deviceIdStore = new DeviceIdStore(appContext, logger);
+        SharedPrefMigrator sharedPrefMigrator = new SharedPrefMigrator(appContext);
+        DeviceIdStore deviceIdStore = new DeviceIdStore(appContext, sharedPrefMigrator, logger);
         String deviceId = deviceIdStore.loadDeviceId();
-        userState = loadUserState(configuration, deviceId);
+        UserStore userStore = new UserStore(immutableConfig, deviceId, sharedPrefMigrator, logger);
+        userState = userStore.load(configuration.getUser());
+        sharedPrefMigrator.deleteLegacyPrefs();
 
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
         deviceDataCollector = new DeviceDataCollector(connectivity, appContext,
                 resources, deviceId, info, Environment.getDataDirectory(), logger);
 
-
         if (appContext instanceof Application) {
-
             Application application = (Application) appContext;
             sessionLifecycleCallback = new SessionLifecycleCallback(sessionTracker);
             application.registerActivityLifecycleCallbacks(sessionLifecycleCallback);
@@ -250,18 +241,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
     }
 
-    private UserState loadUserState(@NonNull Configuration configuration, String deviceId) {
-        boolean persistUser = immutableConfig.getPersistUser();
-        UserRepository userRepository = new UserRepository(sharedPrefs, persistUser, deviceId);
-        UserState state = new UserState(userRepository);
-        User user = configuration.getUser();
-
-        if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
-            state.setUser(user.getId(), user.getEmail(), user.getName());
-        }
-        return state;
-    }
-
     @VisibleForTesting
     Client(
             ImmutableConfig immutableConfig,
@@ -279,7 +258,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             SessionTracker sessionTracker,
             ActivityBreadcrumbCollector activityBreadcrumbCollector,
             SessionLifecycleCallback sessionLifecycleCallback,
-            SharedPreferences sharedPrefs,
             Connectivity connectivity,
             StorageManager storageManager,
             Logger logger,
@@ -300,7 +278,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.sessionTracker = sessionTracker;
         this.activityBreadcrumbCollector = activityBreadcrumbCollector;
         this.sessionLifecycleCallback = sessionLifecycleCallback;
-        this.sharedPrefs = sharedPrefs;
         this.connectivity = connectivity;
         this.storageManager = storageManager;
         this.logger = logger;
@@ -469,7 +446,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
-        userState.setUser(id, email, name);
+        userState.setUser(new User(id, email, name));
     }
 
     /**

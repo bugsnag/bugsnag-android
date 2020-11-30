@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Store user information in persistenceDirectory
+  [#1017](https://github.com/bugsnag/bugsnag-android/pull/1017)
+
 * Use consistent device ID for multi process apps
   [#1013](https://github.com/bugsnag/bugsnag-android/pull/1013)
 

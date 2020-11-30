@@ -16,6 +16,7 @@ internal class DeviceIdStoreTest {
     lateinit var file: File
     lateinit var storageDir: File
     lateinit var ctx: Context
+    lateinit var prefMigrator: SharedPrefMigrator
 
     private val uuidProvider = {
         UUID.fromString("ab0c1482-2ffe-11eb-adc1-0242ac120002")
@@ -27,6 +28,7 @@ internal class DeviceIdStoreTest {
     @Before
     fun setUp() {
         ctx = ApplicationProvider.getApplicationContext<Context>()
+        prefMigrator = SharedPrefMigrator(ctx)
         storageDir = ctx.cacheDir
         file = File(storageDir, "device.json")
         file.delete()
@@ -39,7 +41,7 @@ internal class DeviceIdStoreTest {
     fun nonExistentFile() {
         val nonExistentFile = File(storageDir, "foo")
         nonExistentFile.delete()
-        val store = DeviceIdStore(ctx, nonExistentFile, NoopLogger)
+        val store = DeviceIdStore(ctx, nonExistentFile, prefMigrator, NoopLogger)
         val deviceId = store.loadDeviceId(uuidProvider)
         requireNotNull(deviceId)
         assertEquals("ab0c1482-2ffe-11eb-adc1-0242ac120002", deviceId)
@@ -50,7 +52,7 @@ internal class DeviceIdStoreTest {
      */
     @Test
     fun emptyFile() {
-        val store = DeviceIdStore(ctx, file, NoopLogger)
+        val store = DeviceIdStore(ctx, file, prefMigrator, NoopLogger)
         val deviceId = store.loadDeviceId(uuidProvider)
         requireNotNull(deviceId)
         assertEquals("ab0c1482-2ffe-11eb-adc1-0242ac120002", deviceId)
@@ -61,7 +63,7 @@ internal class DeviceIdStoreTest {
      */
     @Test
     fun incorrectFileLength() {
-        val store = DeviceIdStore(ctx, file, NoopLogger)
+        val store = DeviceIdStore(ctx, file, prefMigrator, NoopLogger)
         val deviceId = store.loadDeviceId(uuidProvider)
         requireNotNull(deviceId)
         assertEquals("ab0c1482-2ffe-11eb-adc1-0242ac120002", deviceId)
@@ -73,7 +75,7 @@ internal class DeviceIdStoreTest {
     @Test
     fun invalidFileContents() {
         file.writeText("{\"hamster\": 2}")
-        val store = DeviceIdStore(ctx, file, NoopLogger)
+        val store = DeviceIdStore(ctx, file, prefMigrator, NoopLogger)
         val deviceId = store.loadDeviceId(uuidProvider)
         requireNotNull(deviceId)
         assertEquals("ab0c1482-2ffe-11eb-adc1-0242ac120002", deviceId)
@@ -85,7 +87,7 @@ internal class DeviceIdStoreTest {
     @Test
     fun validFileContents() {
         file.writeText("{\"id\": \"24c51482-2ffe-11eb-adc1-0242ac120002\"}")
-        val store = DeviceIdStore(ctx, file, NoopLogger)
+        val store = DeviceIdStore(ctx, file, prefMigrator, NoopLogger)
 
         // device ID is loaded without writing file
         assertEquals(
@@ -109,7 +111,7 @@ internal class DeviceIdStoreTest {
             createNewFile()
             setWritable(false)
         }
-        val store = DeviceIdStore(ctx, nonReadableFile, NoopLogger)
+        val store = DeviceIdStore(ctx, nonReadableFile, prefMigrator, NoopLogger)
         val deviceId = store.loadDeviceId(uuidProvider)
         assertNull(deviceId)
     }
@@ -119,7 +121,7 @@ internal class DeviceIdStoreTest {
      */
     @Test(timeout = 2000)
     fun fileLockUsed() {
-        val store = DeviceIdStore(ctx, file, NoopLogger)
+        val store = DeviceIdStore(ctx, file, prefMigrator, NoopLogger)
 
         // load the device ID on many different background threads.
         // each thread races with each other, but only one should generate a device ID
@@ -149,7 +151,7 @@ internal class DeviceIdStoreTest {
      */
     @Test
     fun sharedPrefMigration() {
-        val store = DeviceIdStore(ctx, file, NoopLogger)
+        val store = DeviceIdStore(ctx, file, prefMigrator, NoopLogger)
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         val prefs =
