@@ -51,7 +51,7 @@ Scenario: Automated sessions send
 
 Scenario: Manual session control works
     When I run "ManualSessionSmokeScenario"
-    And I wait for 5 seconds
+    And I wait for 8 seconds
     And I relaunch the app
     And I configure Bugsnag for "ManualSessionSmokeScenario"
     And I wait to receive 4 requests

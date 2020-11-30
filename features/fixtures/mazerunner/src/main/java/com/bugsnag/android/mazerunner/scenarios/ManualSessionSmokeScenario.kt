@@ -15,7 +15,7 @@ internal class ManualSessionSmokeScenario(config: Configuration,
                                           context: Context) : Scenario(config, context) {
 
     companion object {
-        private const val SLEEP_MS: Long = 100
+        private const val SLEEP_MS: Long = 300
     }
 
     init {
