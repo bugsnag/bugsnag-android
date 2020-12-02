@@ -15,7 +15,7 @@ Scenario: Automated sessions send
     And the session "startedAt" is not null
 
     # App data
-    And the payload field "app.buildUUID" is not null
+    And the payload field "app.buildUUID" equals "test-7.5.3"
     And the payload field "app.id" equals "com.bugsnag.android.mazerunner"
     And the payload field "app.releaseStage" equals "production"
     And the payload field "app.type" equals "android"
@@ -33,6 +33,7 @@ Scenario: Automated sessions send
     And the payload field "device.osName" equals "android"
     And the payload field "device.osVersion" is not null
     And the payload field "device.runtimeVersions" is not null
+    And the payload field "device.totalMemory" is greater than 0
     And I discard the oldest request
 
     # Error payload
