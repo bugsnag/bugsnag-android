@@ -16,13 +16,13 @@ Scenario: Notify caught Java exception with default configuration
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
-    And the event "exceptions.0.stacktrace.0.method" is not null
+    And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.run"
     And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
     And the event "exceptions.0.stacktrace.0.lineNumber" equals 48
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
-    And the event "app.buildUUID" is not null
+    And the event "app.buildUUID" equals "test-7.5.3"
     And the event "app.id" equals "com.bugsnag.android.mazerunner"
     And the event "app.releaseStage" equals "production"
     And the event "app.type" equals "android"
@@ -103,7 +103,7 @@ Scenario: Notify Kotlin exception with overwritten configuration
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
-    And the event "exceptions.0.stacktrace.0.method" is not null
+    And the event "exceptions.0.stacktrace.0.method" ends with "generateScenario"
     And the exception "stacktrace.0.file" equals "Scenario.kt"
     And the event "exceptions.0.stacktrace.0.lineNumber" equals 68
     And the event "exceptions.0.stacktrace.0.inProject" is true
