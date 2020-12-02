@@ -1,12 +1,13 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.Configuration
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import com.bugsnag.android.*
+import com.bugsnag.android.JavaHooks.generateDelivery
 import com.bugsnag.android.flushAllSessions
+import java.lang.Thread
 
 /**
  * Sends an exception after pausing the session
@@ -14,46 +15,51 @@ import com.bugsnag.android.flushAllSessions
 internal class ManualSessionSmokeScenario(config: Configuration,
                                           context: Context) : Scenario(config, context) {
 
-    companion object {
-        private const val SLEEP_MS: Long = 300
-    }
-
     init {
         config.autoTrackSessions = false
+        val baseDelivery = createDefaultDelivery()
+
+        class InterceptingDelivery(private val baseDelivery: Delivery,
+                                   private val callback: (state: Int) -> Unit): Delivery {
+
+            var state = 0
+
+            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                val response = baseDelivery.deliver(payload, deliveryParams)
+                Log.d("Bugsnag testing", "Event $state")
+                callback(state)
+                state++
+                return response
+            }
+
+            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
+                val response =  baseDelivery.deliver(payload, deliveryParams)
+                Log.d("Bugsnag testing", "Session $state")
+                callback(state)
+                state++
+                return response
+            }
+        }
+
+        config.delivery = InterceptingDelivery(baseDelivery) {
+            when (it) {
+                0 -> Bugsnag.notify(generateException())
+                1 -> {
+                    Bugsnag.pauseSession()
+                    Bugsnag.notify(generateException())
+                }
+                2 -> {
+                    Bugsnag.resumeSession()
+                    throw generateException()
+                }
+            }
+        }
+
     }
 
     override fun run() {
         super.run()
-        val client = Bugsnag.getClient()
-        client.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
-        val thread = HandlerThread("HandlerThread")
-        thread.start()
-
-        Handler(thread.looper).post(Runnable {
-            // send 1st exception which should include session info
-            client.startSession()
-            Log.d("Bugsnag - New", "First session started")
-            Thread.sleep(SLEEP_MS)
-            flushAllSessions()
-            Log.d("Bugsnag - New", "First session flushed")
-            Thread.sleep(SLEEP_MS)
-            client.notify(generateException())
-            Log.d("Bugsnag - New", "First exception notified")
-            Thread.sleep(SLEEP_MS)
-            // stop tracking the existing session
-            client.pauseSession()
-            Log.d("Bugsnag - New", "First session paused")
-            Thread.sleep(SLEEP_MS)
-            client.notify(generateException())
-            Log.d("Bugsnag - New", "Second exception notified")
-            Thread.sleep(SLEEP_MS)
-            client.resumeSession()
-            Log.d("Bugsnag - New", "First session resumed")
-            Thread.sleep(SLEEP_MS)
-            flushAllSessions()
-            Log.d("Bugsnag - New", "Second flushed - No payloads expected")
-            Thread.sleep(SLEEP_MS)
-            throw generateException()
-        })
+        Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
+        Bugsnag.startSession()
     }
 }
