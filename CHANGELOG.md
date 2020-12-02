@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.3.0 (2020-12-02)
+
+* Add integrity header to verify Error and Session API payloads have not changed
+  [#978](https://github.com/bugsnag/bugsnag-android/pull/978)
+
 ## 5.2.3 (2020-11-04)
 
 ### Bug fixes

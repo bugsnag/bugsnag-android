@@ -154,7 +154,7 @@ class EventStore extends FileStore {
             }
 
             EventPayload payload = new EventPayload(apiKey, eventFile, notifier);
-            DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload.getApiKey());
+            DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload);
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 
             switch (deliveryStatus) {

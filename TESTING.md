@@ -53,7 +53,6 @@ Remote tests can be run against real devices provided by BrowserStack. In order 
 A BrowserStack App Automate Username: `BROWSER_STACK_USERNAME`
 A BrowserStack App Automate Access Key: `BROWSER_STACK_ACCESS_KEY`
 A local docker and docker-compose installation.
-The `DEVICE_TYPE` environment variable should also be set to one of those supported by MazeRunner, e.g ANDROID_9_0 (see /.buildkite/pipeline.yml for further examples).
 
 ### Instrumentation tests
 
@@ -68,14 +67,22 @@ Run `make remote-test`
 ### End-to-end tests
 
 Ensure that the following environment variables are set:
+* `BROWSER_STACK_USERNAME`: Your BrowserStack App Automate Username
+* `BROWSER_STACK_ACCESS_KEY`: You BrowserStack App Automate Access Key
 
-* `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
-* `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
-* `DEVICE_TYPE`: The android version to run the tests against, one of: ANDROID_5, ANDROID_6, ANDROID_7, ANDROID_8, ANDROID_9
+See https://www.browserstack.com/local-testing/app-automate for details of the required local testing binary.
 
-Run `make remote-integration-tests`
-
-If you wish to test a single feature, set the `TEST_FEATURE` environment variable to the name of the feature file.
-For example, to test the `breadcrumb` feature, use the following command:
-
-`TEST_FEATURE=breadcrumb.feature make remote-integration-tests`
+1. Build the test fixture `make test-fixture`
+1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
+1. To run a single feature:
+    ```shell script
+    bundle exec maze-runner --app=build/fixture.apk                 \
+                            --farm=bs                               \
+                            --device=ANDROID_9_0                    \
+                            --username=$BROWSER_STACK_USERNAME      \
+                            --access-key=$BROWSER_STACK_ACCESS_KEY  \
+                            --bs-local=~/BrowserStackLocal          \
+                            features/app_version.feature
+    ```
+1. To run all features, omit the final argument.
+1. Maze Runner also supports all options that Cucumber does.  Run `bundle exec maze-runner --help` for full details.
