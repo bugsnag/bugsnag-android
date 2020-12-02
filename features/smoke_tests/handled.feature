@@ -7,13 +7,19 @@ Scenario: Notify caught Java exception with default configuration
 
     # Exception details
     And the payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
+    And the exception "errorClass" equals "java.lang.IllegalStateException"
     And the exception "message" equals "HandledJavaSmokeScenario"
     And the exception "type" equals "android"
-    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "warning"
     And the event "severityReason.type" equals "handledException"
+
+    # Stacktrace validation
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the event "exceptions.0.stacktrace.0.method" is not null
+    And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 48
+    And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
     And the event "app.buildUUID" is not null
@@ -22,12 +28,12 @@ Scenario: Notify caught Java exception with default configuration
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the event "app.duration" is not null
-    And the event "app.durationInForeground" is not null
+    And the payload field "events.0.app.duration" is an integer
+    And the payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
     And the payload field "events.0.metaData.app.memoryUsage" is greater than 0
     And the event "metaData.app.name" equals "MazeRunner"
-    And the event "metaData.app.lowMemory" is not null
+    And the event "metaData.app.lowMemory" is false
 
     # Device data
     And the payload field "events.0.device.cpuAbi" is a non-empty array
@@ -64,11 +70,22 @@ Scenario: Notify caught Java exception with default configuration
     # Breadcrumbs
     And the event has a "state" breadcrumb named "Bugsnag loaded"
     And the event has a "manual" breadcrumb named "HandledJavaSmokeScenario"
-    And the event "breadcrumbs.2.metaData.source" equals "BreadcrumbCallback"
+    # [PLAT-5534] A potential source of flakes
+    #And the event "breadcrumbs.2.metaData.source" equals "BreadcrumbCallback"
 
     # MetaData
     And the event "metaData.TestData.ClientMetadata" is true
     And the event "metaData.TestData.CallbackMetadata" is true
+
+    # Threads validation
+    And the payload field "events.0.threads" is a non-empty array
+    And the payload field "events.0.threads.0.id" is an integer
+    And the event "threads.0.name" is not null
+    And the event "threads.0.type" equals "android"
+    And the payload field "events.0.threads.0.stacktrace" is a non-empty array
+    And the event "threads.0.stacktrace.0.method" is not null
+    And the event "threads.0.stacktrace.0.file" is not null
+    And the event "threads.0.stacktrace.0.lineNumber" is not null
 
 Scenario: Notify Kotlin exception with overwritten configuration
     When I run "HandledKotlinSmokeScenario"
@@ -80,10 +97,16 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledKotlinSmokeScenario"
     And the exception "type" equals "android"
-    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
+
+    # Stacktrace validation
+    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the event "exceptions.0.stacktrace.0.method" is not null
+    And the exception "stacktrace.0.file" equals "Scenario.kt"
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 68
+    And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # Overwritten App data
     And the event "app.releaseStage" equals "HandledKotlinSmokeScenario"
@@ -98,12 +121,23 @@ Scenario: Notify Kotlin exception with overwritten configuration
 
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "HandledKotlinSmokeScenario"
-    And the event "breadcrumbs.2.metaData.Source" equals "HandledKotlinSmokeScenario"
+    # [PLAT-5534] A potential source of flakes
+    # And the event "breadcrumbs.2.metaData.Source" equals "HandledKotlinSmokeScenario"
 
     # MetaData
     And the event "metaData.TestData.Source" equals "HandledKotlinSmokeScenario"
     And the event "metaData.TestData.Callback" is true
     And the event "metaData.TestData.redacted" equals "[REDACTED]"
+
+    # Threads validation
+    And the payload field "events.0.threads" is a non-empty array
+    And the payload field "events.0.threads.0.id" is an integer
+    And the event "threads.0.name" is not null
+    And the event "threads.0.type" equals "android"
+    And the payload field "events.0.threads.0.stacktrace" is a non-empty array
+    And the event "threads.0.stacktrace.0.method" is not null
+    And the event "threads.0.stacktrace.0.file" is not null
+    And the event "threads.0.stacktrace.0.lineNumber" is not null
 
 Scenario: Handled C functionality
     When I run "CXXNotifySmokeScenario"
@@ -127,8 +161,8 @@ Scenario: Handled C functionality
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the event "app.duration" is not null
-    And the event "app.durationInForeground" is not null
+    And the payload field "events.0.app.duration" is an integer
+    And the payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
 
     # Device data
@@ -160,5 +194,12 @@ Scenario: Handled C functionality
     # MetaData
     And the event "metaData.TestData.Source" equals "ClientCallback"
 
-    # Potential issue with missing data here
-    #And the event "metaData.TestData.C++" equals "present"
+    # Threads validation
+    And the payload field "events.0.threads" is a non-empty array
+    And the payload field "events.0.threads.0.id" is an integer
+    And the event "threads.0.name" is not null
+    And the event "threads.0.type" equals "android"
+    And the payload field "events.0.threads.0.stacktrace" is a non-empty array
+    And the event "threads.0.stacktrace.0.method" is not null
+    And the event "threads.0.stacktrace.0.file" is not null
+    And the event "threads.0.stacktrace.0.lineNumber" is not null

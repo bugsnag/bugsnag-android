@@ -45,7 +45,7 @@ public class HandledJavaSmokeScenario extends Scenario {
         });
         Bugsnag.leaveBreadcrumb("HandledJavaSmokeScenario");
         try {
-            throw new RuntimeException(getClass().getSimpleName());
+            throw new IllegalStateException(getClass().getSimpleName());
         } catch (RuntimeException e) {
             Bugsnag.notify(e);
         }
