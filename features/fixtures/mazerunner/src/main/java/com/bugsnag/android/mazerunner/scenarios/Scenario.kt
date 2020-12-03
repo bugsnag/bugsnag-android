@@ -2,11 +2,17 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.app.Activity
 import android.app.Application
+import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Looper
 
 import com.bugsnag.android.*
+import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
 import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
@@ -83,10 +89,27 @@ abstract class Scenario(
 
     /**
      * Launches the [MultiProcessService] which runs in a different process. The [Intent]
-     * determines what scenario the service executes.
+     * determines what scenario the service executes. The callback is executed once the process
+     * has started.
      */
-    protected fun launchMultiProcessService(cb: (Intent) -> Unit) {
-        val intent = Intent(context, MultiProcessService::class.java).apply(cb)
+    protected fun launchMultiProcessService(
+        params: BugsnagIntentParams,
+        callback: () -> Unit = {}
+    ) {
+        val filter = IntentFilter(MultiProcessService.ACTION_LAUNCHED_MULTI_PROCESS)
+        context.registerReceiver(object: BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+
+                // explicitly post on the main thread to avoid
+                // the broadcast receiver wrapping exceptions
+                Handler(Looper.getMainLooper()).post {
+                    callback()
+                }
+            }
+        }, filter)
+
+        val intent = Intent(context, MultiProcessService::class.java)
+        params.encode(intent)
         context.startService(intent)
     }
 
@@ -100,6 +123,12 @@ abstract class Scenario(
 
     protected fun registerActivityLifecycleCallbacks() {
         (context.applicationContext as Application).registerActivityLifecycleCallbacks(this)
+    }
+
+    protected fun runOnBgThread(block: () -> Unit) {
+        val handlerThread = HandlerThread("bg-thread")
+        handlerThread.start()
+        Handler(handlerThread.looper).post(block)
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
