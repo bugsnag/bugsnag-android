@@ -179,6 +179,18 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXSigsegvScenario_crash(JNIEnv *e
 }
 
 JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalSmokeScenario_crash(JNIEnv *env,
+                                                                       jobject instance,
+                                                                       jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("That might've been one of the shortest assignments in the history of Starfleet.\n");
+  return value / x / 8;
+}
+
+JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXSigillScenario_crash(JNIEnv *env,
                                                                       jobject instance,
                                                                       jint value) {
