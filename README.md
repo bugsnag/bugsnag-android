@@ -1,3 +1,5 @@
+Fake commit
+
 # Bugsnag error monitoring & exception reporter for Android
 [![Documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](https://docs.bugsnag.com/platforms/android/)
 [![Build status](https://api.travis-ci.com/bugsnag/bugsnag-android.svg?branch=master)](https://travis-ci.com/bugsnag/bugsnag-android)
