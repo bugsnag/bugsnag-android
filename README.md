@@ -1,4 +1,4 @@
-Fake commit
+Fake commit 2
 
 # Bugsnag error monitoring & exception reporter for Android
 [![Documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](https://docs.bugsnag.com/platforms/android/)
