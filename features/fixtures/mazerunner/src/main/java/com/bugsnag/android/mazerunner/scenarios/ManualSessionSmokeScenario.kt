@@ -7,6 +7,7 @@ import android.util.Log
 import com.bugsnag.android.*
 import com.bugsnag.android.JavaHooks.generateDelivery
 import com.bugsnag.android.flushAllSessions
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 import java.lang.Thread
 
 /**
@@ -18,31 +19,9 @@ internal class ManualSessionSmokeScenario(config: Configuration,
     init {
         config.autoTrackSessions = false
         val baseDelivery = createDefaultDelivery()
-
-        class InterceptingDelivery(private val baseDelivery: Delivery,
-                                   private val callback: (state: Int) -> Unit): Delivery {
-
-            var state = 0
-
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                val response = baseDelivery.deliver(payload, deliveryParams)
-                Log.d("Bugsnag testing", "Event $state")
-                callback(state)
-                state++
-                return response
-            }
-
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                val response =  baseDelivery.deliver(payload, deliveryParams)
-                Log.d("Bugsnag testing", "Session $state")
-                callback(state)
-                state++
-                return response
-            }
-        }
-
+        var state = 0
         config.delivery = InterceptingDelivery(baseDelivery) {
-            when (it) {
+            when (state) {
                 0 -> Bugsnag.notify(generateException())
                 1 -> {
                     Bugsnag.pauseSession()
@@ -53,6 +32,7 @@ internal class ManualSessionSmokeScenario(config: Configuration,
                     throw generateException()
                 }
             }
+            state++
         }
 
     }
