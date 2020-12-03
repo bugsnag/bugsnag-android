@@ -1,6 +1,8 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -67,6 +69,12 @@ public class CXXSignalSmokeScenario extends Scenario {
     public void run() {
         super.run();
         Bugsnag.leaveBreadcrumb("CXXSignalSmokeScenario");
-        crash(2726);
+        Handler main = new Handler(Looper.getMainLooper());
+        main.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                crash(2726);
+            }
+        }, 500);
     }
 }

@@ -144,7 +144,7 @@ Scenario: Handled C functionality
     And I wait to receive a request
 
     # Exception details
-    Then the request payload contains a completed handled native report
+    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "CXXNotifySmokeScenario"
     And the exception "message" equals "Smoke test scenario"
