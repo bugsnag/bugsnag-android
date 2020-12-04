@@ -46,15 +46,14 @@ services:
       BUILDKITE_REPO:
 
   android-maze-runner:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android-maze-runner
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli
     environment:
       VERBOSE:
       DEBUG:
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
+      - ./features/:/app/features/
 
 networks:
   default:
