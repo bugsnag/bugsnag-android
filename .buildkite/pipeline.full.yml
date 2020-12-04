@@ -9,7 +9,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
       NDK_VERSION: r12b
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 9 end-to-end tests'
@@ -27,7 +27,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 7.1 Instrumentation tests'
@@ -40,7 +40,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       NDK_VERSION: r12b
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 9.0 Instrumentation tests'
@@ -53,7 +53,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       NDK_VERSION: r12b
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
@@ -66,7 +66,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
       NDK_VERSION: r16b
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
@@ -79,7 +79,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       NDK_VERSION: r16b
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
@@ -92,7 +92,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       NDK_VERSION: r16b
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 4.4 Instrumentation tests'
@@ -105,7 +105,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
       NDK_VERSION: r19
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 7.1 Instrumentation tests'
@@ -118,7 +118,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       NDK_VERSION: r19
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 9.0 Instrumentation tests'
@@ -131,7 +131,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       NDK_VERSION: r19
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 21d SDK 10.0 Instrumentation tests'
@@ -144,7 +144,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel 4-10.0"]'
       NDK_VERSION: r21d
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 21d SDK 11.0 Instrumentation tests'
@@ -157,7 +157,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel 4-11.0"]'
       NDK_VERSION: r21d
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 4.4 end-to-end tests'
@@ -175,7 +175,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 5 end-to-end tests'
@@ -193,7 +193,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
       - exit_status: "*"
@@ -213,7 +213,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
@@ -231,7 +231,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8.0 end-to-end tests'
@@ -249,7 +249,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
       - exit_status: "*"
@@ -269,7 +269,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
       - exit_status: "*"
@@ -289,7 +289,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 11 end-to-end tests'
@@ -307,5 +307,5 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
