@@ -8,8 +8,12 @@ import com.bugsnag.android.OnErrorCallback
 /**
  * Sends an unhandled exception to Bugsnag where the API key is changed in a callback
  */
-internal class UnhandledExceptionApiKeyChangeScenario(config: Configuration,
-                                                      context: Context) : Scenario(config, context) {
+internal class UnhandledExceptionApiKeyChangeScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.addOnError(OnErrorCallback { event ->
@@ -18,8 +22,8 @@ internal class UnhandledExceptionApiKeyChangeScenario(config: Configuration,
         })
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         throw generateException()
     }
 

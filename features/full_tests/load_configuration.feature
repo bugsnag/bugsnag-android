@@ -1,7 +1,7 @@
 Feature: Loading values into the configuration
 
 Scenario: Load configuration initialised from the Manifest
-    And I run "LoadConfigurationFromManifestScenario"
+    When I run "LoadConfigurationFromManifestScenario"
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "abc12312312312312312312312312312"
     And the exception "message" equals "LoadConfigurationFromManifestScenario"
@@ -16,7 +16,7 @@ Scenario: Load configuration initialised from the Manifest
     And the payload field "events.0.threads" is a non-empty array
 
 Scenario: Load configuration initialised with Kotlin
-    And I run "LoadConfigurationKotlinScenario"
+    When I run "LoadConfigurationKotlinScenario"
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "45645645645645645645645645645645"
     And the exception "message" equals "LoadConfigurationKotlinScenario"
@@ -31,7 +31,7 @@ Scenario: Load configuration initialised with Kotlin
     And the payload field "events.0.threads" is an array with 0 elements
 
 Scenario: Load configuration initialised with nulls
-    And I run "LoadConfigurationNullsScenario"
+    When I run "LoadConfigurationNullsScenario"
     Then I wait to receive a request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "12312312312312312312312312312312"
     And the exception "message" equals "LoadConfigurationNullsScenario"

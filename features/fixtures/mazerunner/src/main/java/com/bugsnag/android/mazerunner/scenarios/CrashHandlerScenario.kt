@@ -7,14 +7,18 @@ import com.bugsnag.android.Configuration
 /**
  * Sends an unhandled exception to Bugsnag, when another exception handler is installed.
  */
-internal class CrashHandlerScenario(config: Configuration,
-                                    context: Context) : Scenario(config, context) {
+internal class CrashHandlerScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
 
         Thread.setDefaultUncaughtExceptionHandler({ t, e ->

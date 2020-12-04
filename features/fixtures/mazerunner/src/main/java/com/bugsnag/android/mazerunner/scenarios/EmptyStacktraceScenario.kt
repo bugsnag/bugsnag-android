@@ -8,14 +8,18 @@ import com.bugsnag.android.Configuration
 /**
  * Attempts to deliver a handled exception with no stacktrace.
  */
-internal class EmptyStacktraceScenario(config: Configuration,
-                                       context: Context) : Scenario(config, context) {
+internal class EmptyStacktraceScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.notify(EmptyException("EmptyStacktraceScenario"))
     }
 

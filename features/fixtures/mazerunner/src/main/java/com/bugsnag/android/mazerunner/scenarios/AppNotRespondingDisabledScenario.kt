@@ -9,15 +9,19 @@ import android.content.Context
 /**
  * Stops the app from responding for a time period with ANR detection disabled
  */
-internal class AppNotRespondingDisabledScenario(config: Configuration,
-                                  context: Context) : Scenario(config, context) {
+internal class AppNotRespondingDisabledScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val main = Handler(Looper.getMainLooper())
         main.postDelayed(Runnable {
             Thread.sleep(50000) // FOREVER

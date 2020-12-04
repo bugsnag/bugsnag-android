@@ -3,13 +3,13 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.app.Activity
 import android.content.Context
 
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 internal class CXXBackgroundNotifyScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         System.loadLibrary("bugsnag-ndk")
@@ -19,8 +19,8 @@ internal class CXXBackgroundNotifyScenario(
 
     external fun activate()
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         registerActivityLifecycleCallbacks()
     }
 

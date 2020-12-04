@@ -10,8 +10,9 @@ import java.util.concurrent.Executors
 
 internal class BugsnagInitScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     companion object {
         private const val POOL_SIZE = 8
@@ -21,7 +22,7 @@ internal class BugsnagInitScenario(
         config.autoTrackSessions = false
     }
 
-    override fun run() {
+    override fun startScenario() {
         val threadPool = Executors.newFixedThreadPool(POOL_SIZE)
         val callables = mutableListOf<Callable<Client?>>()
 

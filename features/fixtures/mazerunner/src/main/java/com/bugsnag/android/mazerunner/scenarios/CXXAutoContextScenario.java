@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXAutoContextScenario extends Scenario {
 
@@ -18,14 +19,16 @@ public class CXXAutoContextScenario extends Scenario {
 
     public native void activate();
 
-    public CXXAutoContextScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXAutoContextScenario(@NonNull Configuration config,
+                                  @NonNull Context context,
+                                  @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Context context = getContext();
         registerActivityLifecycleCallbacks();
         context.startActivity(new Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"));

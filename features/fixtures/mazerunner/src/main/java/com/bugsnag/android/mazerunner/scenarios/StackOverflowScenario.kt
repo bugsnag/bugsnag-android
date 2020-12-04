@@ -6,14 +6,18 @@ import com.bugsnag.android.Configuration
 /**
  * Triggers a StackOverflow by recursing infinitely
  */
-internal class StackOverflowScenario(config: Configuration,
-                                     context: Context) : Scenario(config, context) {
+internal class StackOverflowScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         calculateValue(0)
     }
 

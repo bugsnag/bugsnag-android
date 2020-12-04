@@ -9,10 +9,14 @@ import android.content.Intent
 /**
  * Sends a manual session payload to Bugsnag.
  */
-internal class AutoSessionScenario(config: Configuration,
-                                   context: Context) : Scenario(config, context) {
-    override fun run() {
-        super.run()
+internal class AutoSessionScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
+    override fun startScenario() {
+        super.startScenario()
         config.autoTrackSessions = true
         Bugsnag.start(context, config)
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")

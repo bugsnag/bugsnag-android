@@ -7,8 +7,12 @@ import java.util.*
 /**
  * Sends a handled exception to Bugsnag, which does not include session data.
  */
-internal class HandledKotlinSmokeScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+internal class HandledKotlinSmokeScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.appType = "Overwritten"
@@ -32,8 +36,8 @@ internal class HandledKotlinSmokeScenario(config: Configuration,
         })
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.leaveBreadcrumb("HandledKotlinSmokeScenario")
         Bugsnag.notify(generateException())
     }

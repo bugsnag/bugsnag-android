@@ -1,11 +1,11 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXNativeUserInfoJavaCrashScenario extends Scenario {
     static {
@@ -17,14 +17,15 @@ public class CXXNativeUserInfoJavaCrashScenario extends Scenario {
     public native void activate();
 
     public CXXNativeUserInfoJavaCrashScenario(@NonNull Configuration config,
-                                              @NonNull Context context) {
-        super(config, context);
+                                              @NonNull Context context,
+                                              @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         activate();
         throw new RuntimeException("Oh no");
     }

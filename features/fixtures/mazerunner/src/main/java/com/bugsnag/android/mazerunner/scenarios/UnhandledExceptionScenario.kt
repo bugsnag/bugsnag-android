@@ -7,14 +7,18 @@ import com.bugsnag.android.Configuration
 /**
  * Sends an unhandled exception to Bugsnag.
  */
-internal class UnhandledExceptionScenario(config: Configuration,
-                                          context: Context) : Scenario(config, context) {
+internal class UnhandledExceptionScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         throw generateException()
     }
 
