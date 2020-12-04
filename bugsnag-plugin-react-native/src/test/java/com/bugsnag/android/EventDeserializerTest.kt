@@ -29,7 +29,7 @@ class EventDeserializerTest {
         map["unhandled"] = false
         map["context"] = "Foo"
         map["groupingHash"] = "SomeHash"
-        map["severityReason"] = mapOf(Pair("type", HandledState.REASON_HANDLED_EXCEPTION))
+        map["severityReason"] = mapOf(Pair("type", SeverityReason.REASON_HANDLED_EXCEPTION))
         map["user"] = mapOf(Pair("id", "123"))
         map["breadcrumbs"] = listOf(breadcrumbMap())
         map["threads"] = listOf(threadMap())

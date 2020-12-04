@@ -41,7 +41,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         }
 
         String severityReason = strictModeThrowable
-                ? HandledState.REASON_STRICT_MODE : HandledState.REASON_UNHANDLED_EXCEPTION;
+                ? SeverityReason.REASON_STRICT_MODE : SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
         if (strictModeThrowable) { // writes to disk on main thread
             StrictMode.ThreadPolicy originalThreadPolicy = StrictMode.getThreadPolicy();

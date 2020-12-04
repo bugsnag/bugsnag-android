@@ -2,7 +2,8 @@
   "metaData": {},
   "severity": "info",
   "severityReason": {
-    "type": "userCallbackSetSeverity"
+    "type": "userCallbackSetSeverity",
+    "unhandledOverridden": false
   },
   "unhandled": false,
   "exceptions": [],

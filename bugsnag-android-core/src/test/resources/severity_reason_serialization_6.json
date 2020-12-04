@@ -1,5 +1,6 @@
 {
   "type": "log",
+  "unhandledOverridden": false,
   "attributes": {
     "level": "warning"
   }

@@ -14,6 +14,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "unhandledException"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
@@ -166,6 +167,7 @@ Scenario: ANR detection
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "anrError"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array

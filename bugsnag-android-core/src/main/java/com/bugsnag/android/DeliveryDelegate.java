@@ -1,6 +1,6 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.HandledState.REASON_PROMISE_REJECTION;
+import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -45,7 +45,7 @@ class DeliveryDelegate extends BaseObservable {
             }
         }
 
-        if (event.isUnhandled()) {
+        if (event.impl.getOriginalUnhandled()) {
             // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
             String severityReasonType = event.impl.getSeverityReasonType();
             boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
