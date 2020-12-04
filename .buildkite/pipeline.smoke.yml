@@ -9,7 +9,7 @@ steps:
     env:
       INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
       NDK_VERSION: r16b
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 9 end-to-end tests'
@@ -28,7 +28,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 4.4 end-to-end tests'
@@ -47,7 +47,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 5 end-to-end tests'
@@ -66,7 +66,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
       - exit_status: "*"
@@ -87,7 +87,7 @@ steps:
         - "--username=$BROWSER_STACK_USERNAME"
         - "--access-key=$BROWSER_STACK_ACCESS_KEY"
         - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
@@ -106,7 +106,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8.0 end-to-end tests'
@@ -125,7 +125,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
       - exit_status: "*"
@@ -146,7 +146,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
       - exit_status: "*"
@@ -167,7 +167,7 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 11 end-to-end tests'
@@ -188,5 +188,5 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
