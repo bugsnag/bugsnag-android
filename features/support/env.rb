@@ -3,7 +3,7 @@
 $api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
 
 AfterConfiguration do |_config|
-  MazeRunner.config.receive_no_requests_wait = 10
+  MazeRunner.config.receive_no_requests_wait = 10 if MazeRunner.config.respond_to? :receive_no_requests_wait=
 end
 
 Before('@skip') do |scenario|
