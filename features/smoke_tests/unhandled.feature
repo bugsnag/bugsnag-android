@@ -67,7 +67,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "user.id" is not null
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
+    And the event has a "state" breadcrumb named "Connectivity changed"
 
     # Threads validation
     And the payload field "events.0.threads" is a non-empty array
@@ -145,7 +145,6 @@ Scenario: Signal exception with overwritten config
     And the event "user.name" equals "CXXSignalSmokeScenario"
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
 
 @skip_android_8_1
