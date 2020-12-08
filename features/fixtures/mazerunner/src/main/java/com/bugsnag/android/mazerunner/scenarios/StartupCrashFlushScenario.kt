@@ -1,6 +1,5 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import android.app.Activity
 import android.content.Context
 import android.os.Handler
 
@@ -20,26 +19,27 @@ import com.bugsnag.android.Configuration
  * 3. Send the stored reports. The startup crash should be delivered synchronously on the main thread,
  * and the normal crash asynchronously.
  */
-internal class StartupCrashFlushScenario(config: Configuration,
-                                         context: Context) : Scenario(config, context) {
+internal class StartupCrashFlushScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
-        if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            if ("CrashOfflineWithDelay" == eventMetaData || "CrashOfflineAtStartup" == eventMetaData) {
-                // Part 2 - Persist a startup crash to disk
-                disableAllDelivery(config)
-            }
+        if ("CrashOfflineWithDelay" == eventMetadata || "CrashOfflineAtStartup" == eventMetadata) {
+            // Part 2 - Persist a startup crash to disk
+            disableAllDelivery(config)
         }
     }
 
-    override fun run() {
-        super.run()
-        if ("CrashOfflineWithDelay" == eventMetaData) {
+    override fun startScenario() {
+        super.startScenario()
+        if ("CrashOfflineWithDelay" == eventMetadata) {
             Handler().postDelayed(Runnable {
             	throw RuntimeException("Regular crash")
 			}, 6000)
-        } else if ("CrashOfflineAtStartup" == eventMetaData) {
+        } else if ("CrashOfflineAtStartup" == eventMetadata) {
             throw RuntimeException("Startup crash")
         }
     }

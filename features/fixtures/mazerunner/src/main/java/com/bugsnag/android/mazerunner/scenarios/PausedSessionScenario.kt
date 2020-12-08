@@ -11,8 +11,11 @@ import android.util.Log
 /**
  * Sends an exception after pausing the session
  */
-internal class PausedSessionScenario(config: Configuration,
-                                     context: Context) : Scenario(config, context) {
+internal class PausedSessionScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     companion object {
         private const val SLEEP_MS: Long = 100
@@ -22,8 +25,8 @@ internal class PausedSessionScenario(config: Configuration,
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val client = Bugsnag.getClient()
         val thread = HandlerThread("HandlerThread")
         thread.start()

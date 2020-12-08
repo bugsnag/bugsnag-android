@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bugsnag.android.Breadcrumb;
 import com.bugsnag.android.Bugsnag;
@@ -28,8 +29,10 @@ public class CXXSignalSmokeScenario extends Scenario {
 
     public native int crash(int value);
 
-    public CXXSignalSmokeScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXSignalSmokeScenario(@NonNull Configuration config,
+                                  @NonNull Context context,
+                                  @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
         config.setAppType("Overwritten");
         config.setAppVersion("9.9.9");
@@ -66,8 +69,8 @@ public class CXXSignalSmokeScenario extends Scenario {
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Bugsnag.leaveBreadcrumb("CXXSignalSmokeScenario");
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {

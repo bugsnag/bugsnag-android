@@ -4,17 +4,31 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.content.Context
+import android.content.Intent
 
 import com.bugsnag.android.*
+import com.bugsnag.android.mazerunner.log
+import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
+import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
 
 abstract class Scenario(
     protected val config: Configuration,
-    protected val context: Context
+    protected val context: Context,
+    protected val eventMetadata: String?
 ): Application.ActivityLifecycleCallbacks {
 
-    var eventMetaData: String? = null
+    /**
+     * Initializes Bugsnag. It is possible to override this method if the scenario requires
+     * it - e.g., if the config needs to be loaded from the manifest.
+     */
+    open fun startBugsnag() {
+        Bugsnag.start(context, config)
+    }
 
-    open fun run() {
+    /**
+     * Runs code which should result in Bugsnag capturing an error or session.
+     */
+    open fun startScenario() {
 
     }
 
@@ -67,6 +81,20 @@ abstract class Scenario(
      */
     protected fun generateException(): Throwable = RuntimeException(javaClass.simpleName)
 
+    /**
+     * Launches the [MultiProcessService] which runs in a different process. The [Intent]
+     * determines what scenario the service executes.
+     */
+    protected fun launchMultiProcessService(cb: (Intent) -> Unit) {
+        val intent = Intent(context, MultiProcessService::class.java).apply(cb)
+        context.startService(intent)
+    }
+
+    /**
+     * Returns true if the scenario is running from the background service
+     */
+    protected fun isRunningFromBackgroundService() = findCurrentProcessName() ==
+            "com.example.bugsnag.android.mazerunner.multiprocess"
 
     /* Activity lifecycle callback overrides */
 
@@ -82,4 +110,24 @@ abstract class Scenario(
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {}
     override fun onActivityDestroyed(activity: Activity) {}
 
+    companion object {
+        fun load(
+            context: Context,
+            config: Configuration,
+            eventType: String,
+            eventMetaData: String?
+        ): Scenario {
+            try {
+                log("Loading scenario $eventType with metadata $eventMetaData")
+                val clz = Class.forName("com.bugsnag.android.mazerunner.scenarios.$eventType")
+                val constructor = clz.constructors[0]
+                return constructor.newInstance(config, context, eventMetaData) as Scenario
+            } catch (exc: Throwable) {
+                throw IllegalStateException(
+                    "Failed to instantiate test case for $eventType. Is it a valid JVM class?",
+                    exc
+                )
+            }
+        }
+    }
 }

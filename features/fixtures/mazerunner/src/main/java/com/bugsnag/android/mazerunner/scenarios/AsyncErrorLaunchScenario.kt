@@ -7,16 +7,19 @@ import com.bugsnag.android.*
  * Tests that only 1 request is sent in the case where stored reports are concurrently flushed,
  * in the case that a connectivity change occurs after launch.
  */
-internal class AsyncErrorLaunchScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+internal class AsyncErrorLaunchScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.delivery = createSlowDelivery()
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
 
         val event = generateEvent(Bugsnag.getClient())
         event.context = "AsyncErrorLaunchScenario"

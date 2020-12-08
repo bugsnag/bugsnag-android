@@ -11,15 +11,19 @@ import java.util.*
 /**
  * Sends a handled exception to Bugsnag, which includes manual breadcrumbs.
  */
-internal class BreadcrumbScenario(config: Configuration,
-                                  context: Context) : Scenario(config, context) {
+internal class BreadcrumbScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledBreadcrumbTypes = setOf(BreadcrumbType.MANUAL, BreadcrumbType.USER)
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.leaveBreadcrumb("Hello Breadcrumb!")
         val data = Collections.singletonMap("Foo", "Bar" as Any)
         Bugsnag.leaveBreadcrumb("Another Breadcrumb", data, BreadcrumbType.USER)

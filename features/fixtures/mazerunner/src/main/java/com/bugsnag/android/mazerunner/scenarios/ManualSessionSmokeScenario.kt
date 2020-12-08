@@ -13,8 +13,11 @@ import java.lang.Thread
 /**
  * Sends an exception after pausing the session
  */
-internal class ManualSessionSmokeScenario(config: Configuration,
-                                          context: Context) : Scenario(config, context) {
+internal class ManualSessionSmokeScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
@@ -37,8 +40,8 @@ internal class ManualSessionSmokeScenario(config: Configuration,
 
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
         Bugsnag.startSession()
     }

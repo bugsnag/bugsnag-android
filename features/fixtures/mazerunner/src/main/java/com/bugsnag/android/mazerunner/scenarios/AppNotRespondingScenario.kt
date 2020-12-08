@@ -9,15 +9,19 @@ import android.os.Handler
 /**
  * Stops the app from responding for a time period
  */
-internal class AppNotRespondingScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+internal class AppNotRespondingScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = true
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val main = Handler(Looper.getMainLooper())
         main.postDelayed(Runnable {
             Thread.sleep(50000) // FOREVER

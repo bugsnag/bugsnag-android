@@ -8,14 +8,18 @@ import android.content.Context
 /**
  * Sends a handled exception to Bugsnag, which does not include session data.
  */
-internal class HandledExceptionScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+internal class HandledExceptionScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.notify(generateException())
     }
 

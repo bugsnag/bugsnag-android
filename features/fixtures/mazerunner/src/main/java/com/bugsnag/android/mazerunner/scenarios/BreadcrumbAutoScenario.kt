@@ -6,20 +6,22 @@ import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
-import java.util.*
-
 /**
  * Sends a handled exception to Bugsnag, which includes manual breadcrumbs.
  */
-internal class BreadcrumbAutoScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class BreadcrumbAutoScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledBreadcrumbTypes = setOf(BreadcrumbType.STATE)
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.notify(generateException())
     }
 

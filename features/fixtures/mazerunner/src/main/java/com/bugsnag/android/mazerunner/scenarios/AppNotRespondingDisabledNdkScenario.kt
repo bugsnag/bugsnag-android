@@ -1,24 +1,27 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import com.bugsnag.android.Configuration
-
 import android.content.Context
-import android.os.Looper
 import android.os.Handler
+import android.os.Looper
+import com.bugsnag.android.Configuration
 
 /**
  * Stops the app from responding for a time period
  */
-internal class AppNotRespondingDisabledNdkScenario(config: Configuration,
-                                                   context: Context) : Scenario(config, context) {
+internal class AppNotRespondingDisabledNdkScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = true
         config.enabledErrorTypes.ndkCrashes = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val main = Handler(Looper.getMainLooper())
         main.postDelayed(Runnable {
             Thread.sleep(50000) // FOREVER

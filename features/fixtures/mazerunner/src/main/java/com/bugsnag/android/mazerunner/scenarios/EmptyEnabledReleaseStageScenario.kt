@@ -8,16 +8,20 @@ import com.bugsnag.android.Configuration
 /**
  * Attempts to send a handled exception to Bugsnag, when the enabledReleaseStages is empty.
  */
-internal class EmptyEnabledReleaseStageScenario(config: Configuration,
-                                               context: Context) : Scenario(config, context) {
+internal class EmptyEnabledReleaseStageScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.releaseStage = "prod"
         config.enabledReleaseStages = emptySet()
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.notify(generateException())
     }
 
