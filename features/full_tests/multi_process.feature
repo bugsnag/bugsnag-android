@@ -11,9 +11,9 @@ Scenario: Handled JVM error
     And the event "unhandled" is false
     And the payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
     And the payload field "events.0.device.id" is stored as the value "first_device_id"
-    And the payload field "events.0.user.id" equals "123"
-    And the payload field "events.0.user.name" equals "Jane"
-    And the payload field "events.0.user.email" equals "jane@example.com"
+    And the payload field "events.0.user.id" equals "2"
+    And the payload field "events.0.user.name" equals "MultiProcessHandledExceptionScenario"
+    And the payload field "events.0.user.email" equals "background@example.com"
 
     Then I discard the oldest request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -25,9 +25,9 @@ Scenario: Handled JVM error
 
     # device ID is shared between processes
     And the payload field "events.0.device.id" equals the stored value "first_device_id"
-    And the payload field "events.0.user.id" equals "456"
-    And the payload field "events.0.user.name" equals "Joe"
-    And the payload field "events.0.user.email" equals "joe@example.com"
+    And the payload field "events.0.user.id" equals "1"
+    And the payload field "events.0.user.name" equals "MultiProcessHandledExceptionScenario"
+    And the payload field "events.0.user.email" equals "foreground@example.com"
 
 Scenario: Unhandled JVM error
     And I configure the app to run in the "main-activity" state
@@ -60,8 +60,8 @@ Scenario: Handled NDK error
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the request payload contains a completed handled native report
     And the payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "Achtung!"
-    And the exception "message" equals "Das ist nicht gut"
+    And the exception "errorClass" equals "activate"
+    And the exception "message" equals "MultiProcessHandledCXXErrorScenario"
     And the event "unhandled" is false
     And the payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
     And the payload field "events.0.device.id" is stored as the value "first_device_id"
@@ -71,8 +71,8 @@ Scenario: Handled NDK error
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the request payload contains a completed handled native report
     And the payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "Achtung!"
-    And the exception "message" equals "Das ist nicht gut"
+    And the exception "errorClass" equals "activate"
+    And the exception "message" equals "MultiProcessHandledCXXErrorScenario"
     And the event "unhandled" is false
     And the payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
 
@@ -97,9 +97,9 @@ Scenario: Unhandled NDK error
     And the event "unhandled" is true
     And the payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
     And the payload field "events.0.device.id" is stored as the value "first_device_id"
-    And the payload field "events.0.user.id" equals "123"
-    And the payload field "events.0.user.name" equals "Jane"
-    And the payload field "events.0.user.email" equals "jane@example.com"
+    And the payload field "events.0.user.id" equals "2"
+    And the payload field "events.0.user.name" equals "MultiProcessUnhandledCXXErrorScenario"
+    And the payload field "events.0.user.email" equals "2@example.com"
 
     Then I discard the oldest request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -110,9 +110,9 @@ Scenario: Unhandled NDK error
     And the event "unhandled" is true
     And the payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
     And the payload field "events.0.device.id" equals the stored value "first_device_id"
-    And the payload field "events.0.user.id" equals "456"
-    And the payload field "events.0.user.name" equals "Joe"
-    And the payload field "events.0.user.email" equals "joe@example.com"
+    And the payload field "events.0.user.id" equals "1"
+    And the payload field "events.0.user.name" equals "MultiProcessUnhandledCXXErrorScenario"
+    And the payload field "events.0.user.email" equals "1@example.com"
 
 Scenario: User/device information is migrated from SharedPreferences
     When I run "SharedPrefMigrationScenario"

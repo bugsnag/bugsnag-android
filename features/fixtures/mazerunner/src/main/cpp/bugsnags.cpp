@@ -399,20 +399,20 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXGetJavaDataScenario_activate(JN
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_MultiProcessHandledCXXErrorScenario_activate(JNIEnv *env,
                                                                                            jobject instance) {
-  bugsnag_notify_env(env, (char *)"Achtung!",
-                     (char *)"Das ist nicht gut", BSG_SEVERITY_ERR);
+  bugsnag_notify_env(env, (char *)"activate",
+                     (char *)"MultiProcessHandledCXXErrorScenario", BSG_SEVERITY_ERR);
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_MultiProcessUnhandledCXXErrorScenario_user1(JNIEnv *env,
                                                                                           jobject instance) {
-  bugsnag_set_user_env(env, (char *)"456", (char *)"joe@example.com", (char *)"Joe");
+  bugsnag_set_user_env(env, (char *)"1", (char *)"1@test.com", (char *)"MultiProcessUnhandledCXXErrorScenario");
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_MultiProcessUnhandledCXXErrorScenario_user2(JNIEnv *env,
                                                                                           jobject instance) {
-  bugsnag_set_user_env(env, (char *)"123", (char *)"jane@example.com", (char *)"Jane");
+  bugsnag_set_user_env(env, (char *)"2", (char *)"2@example.com", (char *)"MultiProcessUnhandledCXXErrorScenario");
 }
 
 JNIEXPORT void JNICALL

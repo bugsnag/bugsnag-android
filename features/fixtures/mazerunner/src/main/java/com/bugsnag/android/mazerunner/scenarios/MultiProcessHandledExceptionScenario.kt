@@ -28,11 +28,11 @@ internal class MultiProcessHandledExceptionScenario(
                     eventMetadata
                 )
             ) {
-                Bugsnag.setUser("123", "jane@example.com", "Jane")
+                Bugsnag.setUser("2", "background@example.com", "MultiProcessHandledExceptionScenario")
                 Bugsnag.notify(generateException())
             }
         } else {
-            Bugsnag.setUser("456", "joe@example.com", "Joe")
+            Bugsnag.setUser("2", "foreground@example.com", "MultiProcessHandledExceptionScenario")
             Bugsnag.notify(generateException())
         }
     }
