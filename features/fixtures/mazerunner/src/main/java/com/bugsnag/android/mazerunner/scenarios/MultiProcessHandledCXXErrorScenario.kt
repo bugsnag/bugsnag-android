@@ -1,14 +1,13 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 
 /**
- * Sends handled exceptions to Bugsnag from two different processes
+ * Send a handled C error to Bugsnag from two different processes
  */
-internal class MultiProcessHandledExceptionScenario(
+internal class MultiProcessHandledCXXErrorScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String
@@ -16,7 +15,12 @@ internal class MultiProcessHandledExceptionScenario(
 
     init {
         config.autoTrackSessions = false
+        config.persistUser = true
+        System.loadLibrary("bugsnag-ndk")
+        System.loadLibrary("entrypoint")
     }
+
+    external fun activate()
 
     override fun startScenario() {
         super.startScenario()
@@ -28,13 +32,10 @@ internal class MultiProcessHandledExceptionScenario(
                     eventMetadata
                 )
             ) {
-                Bugsnag.setUser("2", "background@example.com", "MultiProcessHandledExceptionScenario")
-                Bugsnag.notify(generateException())
+                activate()
             }
         } else {
-            Bugsnag.setUser("1", "foreground@example.com", "MultiProcessHandledExceptionScenario")
-            Bugsnag.notify(generateException())
+            activate()
         }
     }
-
 }
