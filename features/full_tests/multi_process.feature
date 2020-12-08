@@ -112,7 +112,7 @@ Scenario: Unhandled NDK error
     And the payload field "events.0.device.id" equals the stored value "first_device_id"
     And the payload field "events.0.user.id" equals "1"
     And the payload field "events.0.user.name" equals "MultiProcessUnhandledCXXErrorScenario"
-    And the payload field "events.0.user.email" equals "1@example.com"
+    And the payload field "events.0.user.email" equals "1@test.com"
 
 Scenario: User/device information is migrated from SharedPreferences
     When I run "SharedPrefMigrationScenario"
@@ -125,9 +125,9 @@ Scenario: User/device information is migrated from SharedPreferences
     And the event "unhandled" is false
     And the payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
     And the payload field "events.0.device.id" equals "267160a7-5cf2-42d4-be21-969f1573ecb0"
-    And the payload field "events.0.user.id" equals "123"
-    And the payload field "events.0.user.name" equals "Jane"
-    And the payload field "events.0.user.email" equals "jane@example.com"
+    And the payload field "events.0.user.id" equals "3"
+    And the payload field "events.0.user.name" equals "SharedPrefMigrationScenario"
+    And the payload field "events.0.user.email" equals "3@example.com"
 
     Then I discard the oldest request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -139,6 +139,6 @@ Scenario: User/device information is migrated from SharedPreferences
 
     # device ID is shared between processes
     And the payload field "events.0.device.id" equals "267160a7-5cf2-42d4-be21-969f1573ecb0"
-    And the payload field "events.0.user.id" equals "456"
-    And the payload field "events.0.user.name" equals "Joe"
-    And the payload field "events.0.user.email" equals "joe@example.com"
+    And the payload field "events.0.user.id" equals "4"
+    And the payload field "events.0.user.name" equals "SharedPrefMigrationScenario"
+    And the payload field "events.0.user.email" equals "4@example.com"

@@ -53,16 +53,16 @@ internal class SharedPrefMigrationScenario(
         if (isRunningFromBackgroundService()) {
             prefs.edit()
                 .putString("install.iud", "267160a7-5cf2-42d4-be21-969f1573ecb0")
-                .putString("user.id", "456")
-                .putString("user.name", "Joe")
-                .putString("user.email", "joe@example.com")
+                .putString("user.id", "4")
+                .putString("user.name", "SharedPrefMigrationScenario")
+                .putString("user.email", "4@example.com")
                 .commit()
         } else {
             prefs.edit()
                 .putString("install.iud", "267160a7-5cf2-42d4-be21-969f1573ecb0")
-                .putString("user.id", "123")
-                .putString("user.name", "Jane")
-                .putString("user.email", "jane@example.com")
+                .putString("user.id", "3")
+                .putString("user.name", "SharedPrefMigrationScenario")
+                .putString("user.email", "3@example.com")
                 .commit()
         }
     }
