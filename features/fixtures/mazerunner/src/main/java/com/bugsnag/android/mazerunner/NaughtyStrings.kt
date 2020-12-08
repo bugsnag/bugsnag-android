@@ -6,7 +6,7 @@ fun addNaughtyStringMetadata(clz: Class<Any>) {
     val stream = clz.classLoader!!.getResourceAsStream("naughty_strings.txt")
     var count = 1
     stream.reader().forEachLine { line ->
-        Bugsnag.addMetadata("custom", "$count", line)
+        Bugsnag.addMetadata("custom", "val_$count", line)
         count += 1
     }
 }
