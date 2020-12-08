@@ -153,7 +153,7 @@ class EventStore extends FileStore {
                 apiKey = config.getApiKey();
             }
 
-            EventPayload payload = new EventPayload(apiKey, eventFile, notifier);
+            EventPayload payload = new EventPayload(apiKey, null, eventFile, notifier);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload);
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 
