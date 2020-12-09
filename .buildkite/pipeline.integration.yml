@@ -1,6 +1,198 @@
 steps:
   - label: ':android: Android 9 end-to-end tests'
+    key: 'android-9-smoke'
     depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 4.4 end-to-end tests'
+    key: 'android-4-4-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_4_4"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 5 end-to-end tests'
+    key: 'android-5-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_5_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 6 end-to-end tests'
+    key: 'android-6-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+        - "features/smoke_tests"
+        - "--app=/app/build/fixture.apk"
+        - "--farm=bs"
+        - "--device=ANDROID_6_0"
+        - "--username=$BROWSER_STACK_USERNAME"
+        - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+        - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 7 end-to-end tests'
+    key: 'android-7-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 8.0 end-to-end tests'
+    key: 'android-8-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 8.1 end-to-end tests'
+    key: 'android-8-1-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 10 end-to-end tests'
+    key: 'android-10-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_10_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 11 end-to-end tests'
+    key: 'android-11-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.3.0:
+        run: android-maze-runner
+        args:
+            - TESTS_DIR=features/smoke_tests
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_11_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - block: 'Trigger full build'
+
+  - label: ':android: Android 9 end-to-end tests'
+    depends_on:
+      - "fixture-apk"
+      - "android-9-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -148,7 +340,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 4.4 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-4-4-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -166,7 +360,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 5 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-5-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -186,7 +382,9 @@ steps:
       - exit_status: "*"
 
   - label: ':android: Android 6 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-6-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -204,7 +402,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-7-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -222,7 +422,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8.0 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-8-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -242,7 +444,9 @@ steps:
       - exit_status: "*"
 
   - label: ':android: Android 8.1 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-8-1-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -262,7 +466,9 @@ steps:
       - exit_status: "*"
 
   - label: ':android: Android 10 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-10-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -280,7 +486,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 11 end-to-end tests'
-    depends_on: "fixture-apk"
+    depends_on:
+      - "fixture-apk"
+      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -296,3 +504,4 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+

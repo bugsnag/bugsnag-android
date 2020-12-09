@@ -117,3 +117,16 @@ steps:
 
   - label: 'Trigger smoke or full end-to-end tests'
     command: sh -c .buildkite/full_pipeline_trigger.sh
+
+  - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-ci
+    env:
+      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
+      NDK_VERSION: r12b
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
