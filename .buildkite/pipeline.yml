@@ -116,6 +116,7 @@ steps:
     command: './gradlew test'
 
   - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
+    key: 'NDK-smoke-test'
     depends_on: "android-ci"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh

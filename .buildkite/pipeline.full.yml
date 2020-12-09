@@ -21,7 +21,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 7.1 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -34,7 +36,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 9.0 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -47,7 +51,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -60,7 +66,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -73,7 +81,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -86,7 +96,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 4.4 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -99,7 +111,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 7.1 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -112,7 +126,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 9.0 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -125,7 +141,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 21d SDK 10.0 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -138,7 +156,9 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 21d SDK 11.0 Instrumentation tests'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
+      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
