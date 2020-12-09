@@ -115,21 +115,7 @@ steps:
           run: android-jvm
     command: './gradlew test'
 
-  - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
-    key: 'NDK-smoke-test'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.3.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: r12b
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Android 9 end-to-end tests'
+  - label: ':android: Android 9 smoke tests'
     key: 'android-9-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -149,7 +135,21 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 4.4 end-to-end tests'
+  - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
+    key: 'NDK-smoke-test'
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+    plugins:
+      - docker-compose#v3.3.0:
+          run: android-ci
+    env:
+      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
+      NDK_VERSION: r12b
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 4.4 smoke tests'
     key: 'android-4-4-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -169,7 +169,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 5 end-to-end tests'
+  - label: ':android: Android 5 smoke tests'
     key: 'android-5-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -191,7 +191,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 6 end-to-end tests'
+  - label: ':android: Android 6 smoke tests'
     key: 'android-6-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -211,7 +211,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 7 end-to-end tests'
+  - label: ':android: Android 7 smoke tests'
     key: 'android-7-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -231,7 +231,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 8.0 end-to-end tests'
+  - label: ':android: Android 8.0 smoke tests'
     key: 'android-8-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -253,7 +253,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 8.1 end-to-end tests'
+  - label: ':android: Android 8.1 smoke tests'
     key: 'android-8-1-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -275,7 +275,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 10 end-to-end tests'
+  - label: ':android: Android 10 smoke tests'
     key: 'android-10-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -295,7 +295,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 11 end-to-end tests'
+  - label: ':android: Android 11 smoke tests'
     key: 'android-11-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
