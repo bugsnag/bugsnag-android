@@ -25,7 +25,7 @@ internal class SeverityReasonSerializationTest {
 
     @Test
     fun testPassesNativeSuite() {
-        val expectedJson = loadJson("handled_state_serialization_$testCase.json")
+        val expectedJson = loadJson("severity_reason_serialization_$testCase.json")
         verifyNativeRun(run(testCase.toInt(), expectedJson))
     }
 }

@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Make `event.unhandled` overridable for NDK errors
+  [#1037](https://github.com/bugsnag/bugsnag-android/pull/1037)
+
 * Make `event.unhandled` overridable for JVM errors
   [#1025](https://github.com/bugsnag/bugsnag-android/pull/1025)
 

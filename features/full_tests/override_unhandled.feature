@@ -27,3 +27,19 @@ Scenario: Fatal exception overridden to handled
     And the event "severityReason.unhandledOverridden" is true
     And the event "session.events.handled" equals 1
     And the event "session.events.unhandled" equals 0
+
+Scenario: CXX error overridden to handled
+    When I run "CXXHandledOverrideScenario" and relaunch the app
+    And I configure the app to run in the "non-crashy" state
+    And I configure Bugsnag for "CXXHandledOverrideScenario"
+    And I wait to receive a request
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the exception "errorClass" equals "SIGABRT"
+    And the exception "message" equals "Abort program"
+    And the event "unhandled" is false
+    And the event "severity" equals "error"
+    And the event "severityReason.type" equals "signal"
+    And the event "severityReason.attributes.signalType" equals "SIGABRT"
+    And the event "severityReason.unhandledOverridden" is true
+    And the event "session.events.handled" equals 1
+    And the event "session.events.unhandled" equals 0
