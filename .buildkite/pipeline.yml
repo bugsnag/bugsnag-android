@@ -128,7 +128,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-    - label: ':android: Android 9 end-to-end tests'
+  - label: ':android: Android 9 end-to-end tests'
     key: 'android-9-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
@@ -316,5 +316,5 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: 'Trigger smoke or full end-to-end tests'
+  - label: 'Conditionally trigger full set of tests'
     command: sh -c .buildkite/full_pipeline_trigger.sh
