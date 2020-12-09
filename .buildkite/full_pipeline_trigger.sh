@@ -11,7 +11,7 @@ elif [[ "$BUILDKITE_MESSAGE" == *"[integration ci]"* ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "next" ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "master" ]]; then
   echo "Running integration build"
-  buildkite-agent pipeline upload .buildkite/block.step.yml .buildkite/pipeline.full.yml
+  buildkite-agent pipeline upload .buildkite/block.step.yml
 else
   echo "Running quick build"
 fi

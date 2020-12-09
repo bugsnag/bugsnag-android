@@ -1,4 +1,7 @@
 steps:
   - block: 'Trigger full build'
+    key: 'trigger-full-build'
 
-  - wait
+  - label: 'Upload the full test pipeline'
+    depends-on: 'trigger-full-build'
+    command: buildkite-agent pipeline upload .buildkite/pipeline.full.yml
