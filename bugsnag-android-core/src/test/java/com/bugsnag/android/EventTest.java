@@ -9,15 +9,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class EventTest {
 
-    private final HandledState handledState
-            = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+    private final SeverityReason severityReason
+            = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION);
     private ImmutableConfig config;
     private RuntimeException testException;
     private Event event;
@@ -30,20 +29,20 @@ public class EventTest {
     public void setUp() {
         config = BugsnagTestUtils.generateImmutableConfig();
         testException = new RuntimeException("Example message");
-        HandledState handledState = this.handledState;
-        event = new Event(testException, config, handledState, NoopLogger.INSTANCE);
+        SeverityReason severityReason = this.severityReason;
+        event = new Event(testException, config, severityReason, NoopLogger.INSTANCE);
     }
 
     @Test
     public void checkExceptionMessageNullity() {
-        Event err = new Event(new RuntimeException(), config, handledState, NoopLogger.INSTANCE);
+        Event err = new Event(new RuntimeException(), config, severityReason, NoopLogger.INSTANCE);
         assertNull(err.getErrors().get(0).getErrorMessage());
     }
 
     @Test
     public void testExceptionName() {
         RuntimeException exc = new RuntimeException("whoops");
-        Event err = new Event(exc, config, handledState, NoopLogger.INSTANCE);
+        Event err = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
         err.getErrors().get(0).setErrorClass("Busgang");
         assertEquals("Busgang", err.getErrors().get(0).getErrorClass());
     }
@@ -107,7 +106,7 @@ public class EventTest {
     public void testGetOriginalError() {
         RuntimeException testRuntimeException = new RuntimeException("Something went wrong");
         Event testEvent = new Event(testRuntimeException, config,
-            handledState, NoopLogger.INSTANCE);
+                severityReason, NoopLogger.INSTANCE);
         Throwable outException = testEvent.getOriginalError();
         assertEquals(testRuntimeException, outException);
     }
@@ -115,28 +114,28 @@ public class EventTest {
     @Test
     public void testIsUnhandled() {
         final Event logEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_LOG),
+            SeverityReason.newInstance(SeverityReason.REASON_LOG),
             NoopLogger.INSTANCE);
         final Event anrEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_ANR),
+            SeverityReason.newInstance(SeverityReason.REASON_ANR),
             NoopLogger.INSTANCE);
         final Event handledEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+            SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
             NoopLogger.INSTANCE);
         final Event rejectionEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_PROMISE_REJECTION),
+            SeverityReason.newInstance(SeverityReason.REASON_PROMISE_REJECTION),
             NoopLogger.INSTANCE);
         final Event strictEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_STRICT_MODE, Severity.WARNING, "Hello"),
-            NoopLogger.INSTANCE);
+            SeverityReason.newInstance(SeverityReason.REASON_STRICT_MODE, Severity.WARNING,
+                    "Hello"), NoopLogger.INSTANCE);
         final Event unhandledEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION),
+            SeverityReason.newInstance(SeverityReason.REASON_UNHANDLED_EXCEPTION),
             NoopLogger.INSTANCE);
         final Event userEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_USER_SPECIFIED),
+            SeverityReason.newInstance(SeverityReason.REASON_USER_SPECIFIED),
             NoopLogger.INSTANCE);
         final Event callbackEvent = new Event(testException, config,
-            HandledState.newInstance(HandledState.REASON_CALLBACK_SPECIFIED),
+            SeverityReason.newInstance(SeverityReason.REASON_CALLBACK_SPECIFIED),
             NoopLogger.INSTANCE);
 
         assertFalse(logEvent.isUnhandled());
@@ -153,7 +152,7 @@ public class EventTest {
     public void testGetSetErrors() {
         RuntimeException testRuntimeException = new RuntimeException("Something went wrong");
         Event testEvent = new Event(testRuntimeException, config,
-            handledState, NoopLogger.INSTANCE);
+                severityReason, NoopLogger.INSTANCE);
         List<Error> errors = testEvent.getErrors();
 
         // First error should match the testException
@@ -164,7 +163,7 @@ public class EventTest {
     @Test
     public void testIsAnr() {
         RuntimeException exc = new RuntimeException("Something went wrong");
-        Event event = new Event(exc, config, handledState, NoopLogger.INSTANCE);
+        Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
         assertFalse(event.impl.isAnr(event));
 
         // simulate ANR
@@ -179,7 +178,7 @@ public class EventTest {
     @Test
     public void testSeverityReasonType() {
         RuntimeException exc = new RuntimeException("Something went wrong");
-        Event event = new Event(exc, config, handledState, NoopLogger.INSTANCE);
-        assertEquals(HandledState.REASON_HANDLED_EXCEPTION, event.impl.getSeverityReasonType());
+        Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
+        assertEquals(SeverityReason.REASON_HANDLED_EXCEPTION, event.impl.getSeverityReasonType());
     }
 }

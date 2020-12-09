@@ -20,7 +20,7 @@ internal class EventDeserializer(
         val severityReasonType = severityReason["type"] as String
         val severity = map["severity"] as String
         val unhandled = map["unhandled"] as Boolean
-        val handledState = HandledState(
+        val handledState = SeverityReason(
             severityReasonType,
             Severity.valueOf(severity.toUpperCase(Locale.US)),
             unhandled,

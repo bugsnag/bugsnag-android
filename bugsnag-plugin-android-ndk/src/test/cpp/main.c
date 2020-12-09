@@ -176,7 +176,7 @@ TEST test_handled_state_serialization(test_case *test_case) {
     return validate_serialized_json(test_case, event_val);
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_HandledStateSerializationTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_SeverityReasonSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
