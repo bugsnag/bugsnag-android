@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.3.1 (2020-12-09)
 
 ### Bug fixes
 
