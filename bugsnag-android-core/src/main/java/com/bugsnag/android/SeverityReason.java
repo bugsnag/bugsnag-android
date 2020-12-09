@@ -77,12 +77,17 @@ final class SeverityReason implements JsonStream.Streamable {
 
     SeverityReason(String severityReasonType, Severity currentSeverity, boolean unhandled,
                    @Nullable String attributeValue) {
+        this(severityReasonType, currentSeverity, unhandled, unhandled, attributeValue);
+    }
+
+    SeverityReason(String severityReasonType, Severity currentSeverity, boolean unhandled,
+                   boolean originalUnhandled, @Nullable String attributeValue) {
         this.severityReasonType = severityReasonType;
-        this.defaultSeverity = currentSeverity;
         this.unhandled = unhandled;
-        this.originalUnhandled = unhandled;
-        this.attributeValue = attributeValue;
+        this.originalUnhandled = originalUnhandled;
+        this.defaultSeverity = currentSeverity;
         this.currentSeverity = currentSeverity;
+        this.attributeValue = attributeValue;
     }
 
     String calculateSeverityReasonType() {
