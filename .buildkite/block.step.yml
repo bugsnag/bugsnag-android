@@ -1,0 +1,4 @@
+steps:
+  - block: 'Trigger full build'
+
+  - wait

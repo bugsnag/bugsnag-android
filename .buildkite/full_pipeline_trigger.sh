@@ -1,18 +1,18 @@
 #!/usr/bin/env sh
 
 if [[ "$BUILDKITE_MESSAGE" == *"[quick ci]"* ]]; then
-  PIPELINE='pipeline.smoke.yml'
+  echo "Running quick build due to commit message\n"
 elif [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
   "$BUILDKITE_BRANCH" == "next" ||
   "$BUILDKITE_BRANCH" == "master" ]]; then
-  PIPELINE='pipeline.full.yml'
+  echo "Running full build"
+  buildkite-agent pipeline upload .buildkite/pipeline.full.yml
 elif [[ "$BUILDKITE_MESSAGE" == *"[integration ci]"* ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "next" ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "master" ]]; then
-  PIPELINE='pipeline.integration.yml'
+  echo "Running integration build"
+  buildkite-agent pipeline upload .buildkite/block.step.yml .buildkite/pipeline.full.yml
 else
-  PIPELINE='pipeline.smoke.yml'
+  echo "Running quick build"
 fi
-
-buildkite-agent pipeline upload .buildkite/$PIPELINE
 
