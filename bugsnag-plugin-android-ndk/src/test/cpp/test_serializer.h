@@ -18,7 +18,7 @@ bsg_app_info * loadAppMetadataTestCase(jint num);
 bsg_device_info * loadDeviceTestCase(jint num);
 bugsnag_metadata * loadCustomMetadataTestCase(jint num);
 bugsnag_event * loadContextTestCase(jint num);
-bugsnag_event * loadHandledStateTestCase(jint num);
+bugsnag_event * loadSeverityReasonTestCase(jint num);
 bugsnag_event * loadSessionTestCase(jint num);
 bugsnag_event * loadBreadcrumbsTestCase(jint num);
 bugsnag_stackframe * loadStackframeTestCase(jint num);
