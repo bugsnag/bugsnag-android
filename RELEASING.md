@@ -5,6 +5,7 @@ If you are a project maintainer, you can build and release a new version of
 
 ## One-time setup
 
+-   Create a GPG key if you haven't got one already (`gpg --gen-key`). The build system requires a GPG key ring set up using GPG 1.x, but many systems now ship with GPG 2.x. As a workaround, after creating your key you can manually create the `secring.gpg` file by running `gpg --export-secret-keys >~/.gnupg/secring.gpg`
 -   Create a [Bintray](https://bintray.com/signup/oss) account, and ask a Bugsnag admin to add you to the organisation
 -   Create a [Sonatype JIRA](https://issues.sonatype.org) account
 -   Ask in the [Bugsnag Sonatype JIRA ticket](https://issues.sonatype.org/browse/OSSRH-5533) to become a contributor
