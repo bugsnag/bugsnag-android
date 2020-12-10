@@ -120,13 +120,14 @@ See https://www.browserstack.com/local-testing/app-automate for details of the r
 1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
 1. To run a single feature:
     ```shell script
+    make test-fixture && \
     bundle exec maze-runner --app=build/fixture.apk                 \
                             --farm=bs                               \
                             --device=ANDROID_9_0                    \
                             --username=$BROWSER_STACK_USERNAME      \
                             --access-key=$BROWSER_STACK_ACCESS_KEY  \
                             --bs-local=~/BrowserStackLocal          \
-                            features/app_version.feature
+                            features/smoke_tests/unhandled.feature
     ```
 1. To run all features, omit the final argument.
 1. Maze Runner also supports all options that Cucumber does.  Run `bundle exec maze-runner --help` for full details.

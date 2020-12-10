@@ -1,11 +1,4 @@
 steps:
-  - label: ':docker: Build Android maze runner image'
-    key: "maze-runner"
-    timeout_in_minutes: 20
-    plugins:
-      - docker-compose#v3.7.0:
-          build: android-maze-runner
-
   - label: ':docker: Build Android base image'
     key: "android-common"
     timeout_in_minutes: 30
@@ -35,12 +28,12 @@ steps:
           push:
             - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
 
-  - label: ':android: Android size reporting'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
+  - label: ':docker: Build Android maze runner image'
+    key: "maze-runner"
+    timeout_in_minutes: 20
     plugins:
       - docker-compose#v3.7.0:
-          run: android-sizer
+          build: android-maze-runner
 
   - label: ':docker: Build Android JVM test image'
     key: "android-jvm"
@@ -80,167 +73,18 @@ steps:
       MAVEN_VERSION: "3.6.1"
       MINIMAL_FIXTURE: true
 
-  - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
+  - label: ':android: Android size reporting'
     depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+    timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: r12b
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 12b SDK 7.1 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: r12b
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 12b SDK 9.0 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      NDK_VERSION: r12b
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: r16b
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: r16b
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: r16b
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      NDK_VERSION: r16b
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 19 SDK 4.4 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: r19
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 19 SDK 7.1 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: r19
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 19 SDK 9.0 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      NDK_VERSION: r19
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 21d SDK 10.0 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel 4-10.0"]'
-      NDK_VERSION: r21d
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 21d SDK 11.0 Instrumentation tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel 4-11.0"]'
-      NDK_VERSION: r21d
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
+          run: android-sizer
 
   - label: ':android: Lint'
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew lint'
 
@@ -248,7 +92,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew checkstyle'
 
@@ -264,7 +108,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew ktlintCheck'
 
@@ -272,7 +116,7 @@ steps:
     depends_on: "android-jvm"
     timeout_in_minutes: 10
     plugins:
-      - docker-compose#v3.3.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: 'bash ./scripts/run-cpp-check.sh'
 
@@ -284,71 +128,8 @@ steps:
           run: android-jvm
     command: './gradlew test'
 
-  - label: ':android: Android 4.4 end-to-end tests'
-    depends_on: "fixture-apk"
-    timeout_in_minutes: 90
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-          - "--app=/app/build/release/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_4_4"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-          - "--fail-fast"
-          - "features/full"
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Android 5 end-to-end tests'
-    depends_on: "fixture-apk"
-    timeout_in_minutes: 90
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-          - "--app=/app/build/release/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_5_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-          - "--fail-fast"
-          - "features/full"
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
-
-  - label: ':android: Android 6 end-to-end tests'
-    depends_on: "fixture-apk"
-    timeout_in_minutes: 90
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-        - "--app=/app/build/release/fixture.apk"
-        - "--farm=bs"
-        - "--device=ANDROID_6_0"
-        - "--username=$BROWSER_STACK_USERNAME"
-        - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-        - "--fail-fast"
-        - "features/full"
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-    #
-    # TODO: Remove as soon as possible - working around BrowserStack network problem
-    #
-    soft_fail:
-      - exit_status: "*"
-
-  - label: ':android: Android 7 end-to-end tests'
+  - label: ':android: Android 9 smoke tests'
+    key: 'android-9-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
     plugins:
@@ -357,83 +138,32 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "--app=/app/build/release/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_7_1"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-          - "--fail-fast"
-          - "features/full"
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-    #
-    # TODO: Remove as soon as possible - working around BrowserStack network problem
-    #
-    soft_fail:
-      - exit_status: "*"
-
-  - label: ':android: Android 8.0 end-to-end tests'
-    depends_on: "fixture-apk"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-          - "--app=/app/build/release/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_8_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-          - "--fail-fast"
-          - "features/full"
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
-
-  - label: ':android: Android 8.1 end-to-end tests'
-    depends_on: "fixture-apk"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-          - "--app=/app/build/release/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_8_1"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-          - "--fail-fast"
-          - "features/full"
-    concurrency: 10
-    concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
-
-  - label: ':android: Android 9 end-to-end tests'
-    depends_on: "fixture-apk"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
+          - "features/smoke_tests"
           - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-          - "features/full"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 10 end-to-end tests'
+  - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
+    key: 'NDK-smoke-test'
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-ci
+    env:
+      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
+      NDK_VERSION: r12b
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 4.4 smoke tests'
+    key: 'android-4-4-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
     plugins:
@@ -442,17 +172,144 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_4_4"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 5 smoke tests'
+    key: 'android-5-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_5_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 6 smoke tests'
+    key: 'android-6-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+        - "features/smoke_tests"
+        - "--app=/app/build/release/fixture.apk"
+        - "--farm=bs"
+        - "--device=ANDROID_6_0"
+        - "--username=$BROWSER_STACK_USERNAME"
+        - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+        - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 7 smoke tests'
+    key: 'android-7-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 8.0 smoke tests'
+    key: 'android-8-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 8.1 smoke tests'
+    key: 'android-8-1-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 10 smoke tests'
+    key: 'android-10-smoke'
+    depends_on: "fixture-apk"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
           - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-          - "features/full"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 11 end-to-end tests'
+  - label: ':android: Android 11 smoke tests'
+    key: 'android-11-smoke'
     depends_on: "fixture-apk"
     timeout_in_minutes: 60
     plugins:
@@ -460,15 +317,17 @@ steps:
         download: "build/release/fixture.apk"
       docker-compose#v3.7.0:
         run: android-maze-runner
+        args:
+            - TESTS_DIR=features/smoke_tests
         command:
+          - "features/smoke_tests"
           - "--app=/app/build/release/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-          - "features/full"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Minimal fixture end-to-end tests'
@@ -487,5 +346,8 @@ steps:
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
           - "features/minimal"
-    concurrency: 10
+    concurrency: 9
     concurrency_group: 'browserstack-app'
+
+  - label: 'Conditionally trigger full set of tests'
+    command: sh -c .buildkite/full_pipeline_trigger.sh

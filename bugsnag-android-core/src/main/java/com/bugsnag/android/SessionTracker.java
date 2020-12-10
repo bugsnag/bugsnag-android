@@ -296,7 +296,7 @@ class SessionTracker extends BaseObservable {
     }
 
     DeliveryStatus deliverSessionPayload(Session payload) {
-        DeliveryParams params = configuration.getSessionApiDeliveryParams();
+        DeliveryParams params = configuration.getSessionApiDeliveryParams(payload);
         Delivery delivery = configuration.getDelivery();
         return delivery.deliver(payload, params);
     }

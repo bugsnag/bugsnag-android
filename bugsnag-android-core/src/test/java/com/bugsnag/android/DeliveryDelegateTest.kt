@@ -88,7 +88,7 @@ internal class DeliveryDelegateTest {
 
     @Test
     fun deliverReport() {
-        val eventPayload = EventPayload("api-key", event, notifier, config)
+        val eventPayload = EventPayload("api-key", event, null, notifier, config)
         val status = deliveryDelegate.deliverPayloadInternal(eventPayload, event)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)

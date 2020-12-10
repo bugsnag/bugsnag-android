@@ -1,3 +1,0 @@
-FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli as android-maze-runner
-
-COPY features features
