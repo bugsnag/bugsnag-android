@@ -5,8 +5,18 @@
 * Make `event.unhandled` overridable for NDK errors
   [#1037](https://github.com/bugsnag/bugsnag-android/pull/1037)
 
+* Make `event.unhandled` overridable for React Native errors
+  [#1039](https://github.com/bugsnag/bugsnag-android/pull/1039)
+
 * Make `event.unhandled` overridable for JVM errors
   [#1025](https://github.com/bugsnag/bugsnag-android/pull/1025)
+
+## 5.3.1 (2020-12-09)
+
+### Bug fixes
+
+* Prevent potential SHA-1 hash mismatch in Bugsnag-Integrity header
+  [#1028](https://github.com/bugsnag/bugsnag-android/pull/1028)
 
 ## 5.3.0 (2020-12-02)
 
