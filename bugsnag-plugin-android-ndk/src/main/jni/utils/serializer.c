@@ -424,6 +424,9 @@ void bsg_serialize_severity_reason(const bugsnag_event *event, JSON_Object *even
   json_object_set_string(event_obj, "severity", bsg_severity_string(event->severity));
   bool unhandled = event->unhandled;
   json_object_dotset_boolean(event_obj, "unhandled", unhandled);
+
+  // unhandled == false always means that the state has been overridden by the user,
+  // as this codepath is only executed for unhandled native errors
   json_object_dotset_boolean(event_obj, "severityReason.unhandledOverridden", !unhandled);
   json_object_dotset_string(event_obj, "severityReason.type", "signal");
   json_object_dotset_string(event_obj, "severityReason.attributes.signalType", event->error.errorClass);
