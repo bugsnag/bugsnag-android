@@ -20,10 +20,13 @@ internal class EventDeserializer(
         val severityReasonType = severityReason["type"] as String
         val severity = map["severity"] as String
         val unhandled = map["unhandled"] as Boolean
+        val originalUnhandled = getOriginalUnhandled(map, unhandled)
+
         val handledState = SeverityReason(
             severityReasonType,
             Severity.valueOf(severity.toUpperCase(Locale.US)),
             unhandled,
+            originalUnhandled,
             null
         )
 
@@ -77,5 +80,16 @@ internal class EventDeserializer(
             event.addMetadata(it.key, it.value as Map<String, Any>)
         }
         return event
+    }
+
+    private fun getOriginalUnhandled(
+        map: MutableMap<String, Any?>,
+        unhandled: Boolean
+    ): Boolean {
+        val unhandledOverridden = map.getOrElse("unhandledOverridden", { false }) as Boolean
+        return when {
+            unhandledOverridden -> !unhandled
+            else -> unhandled
+        }
     }
 }
