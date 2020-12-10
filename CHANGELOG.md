@@ -13,6 +13,18 @@
 * Support native stack traces in the ANR plugin
    [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
 
+## 5.3.1 (2020-12-09)
+
+### Bug fixes
+
+* Prevent potential SHA-1 hash mismatch in Bugsnag-Integrity header
+  [#1028](https://github.com/bugsnag/bugsnag-android/pull/1028)
+
+## 5.3.0 (2020-12-02)
+
+* Add integrity header to verify Error and Session API payloads have not changed
+  [#978](https://github.com/bugsnag/bugsnag-android/pull/978)
+
 ## 5.2.3 (2020-11-04)
 
 ### Bug fixes

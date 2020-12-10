@@ -1,51 +1,90 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-import com.bugsnag.android.BugsnagTestUtils.generateEventPayload
+import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+import org.junit.Assert
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
-import java.util.Collections
+import java.util.Date
 
 class DeliveryHeadersTest {
 
+    private val sha1Regex = "sha1 [0-9a-f]{40}".toRegex()
+
+    @Test
+    fun computeSha1Digest() {
+        val payload = BugsnagTestUtils.generateEventPayload(generateImmutableConfig())
+        val firstSha = requireNotNull(computeSha1Digest(payload))
+        val secondSha = requireNotNull(computeSha1Digest(payload))
+
+        // the hash equals the expected value
+        assertTrue(firstSha.matches(sha1Regex))
+
+        // the hash is consistent
+        assertEquals(firstSha, secondSha)
+
+        // altering the streamable alters the hash
+        payload.event!!.device.id = "50923"
+        val differentSha = requireNotNull(computeSha1Digest(payload))
+        assertNotEquals(firstSha, differentSha)
+        assertTrue(differentSha.matches(sha1Regex))
+    }
+
     @Test
     fun verifyErrorApiHeaders() {
-        val config = convertToImmutableConfig(generateConfiguration())
-        val payload = generateEventPayload(config)
+        val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
+        val payload = BugsnagTestUtils.generateEventPayload(config)
         val headers = config.getErrorApiDeliveryParams(payload).headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
-        assertNotNull(headers["Bugsnag-Sent-At"])
-        assertNotNull(headers["Bugsnag-Payload-Version"])
-        assertNotNull(headers["Bugsnag-Stacktrace-Types"])
+        Assert.assertNotNull(headers["Bugsnag-Sent-At"])
+        Assert.assertNotNull(headers["Bugsnag-Payload-Version"])
+        Assert.assertNotNull(headers["Bugsnag-Stacktrace-Types"])
+
+        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
+        assertTrue(integrity.matches(sha1Regex))
+    }
+
+    @Test
+    fun verifySessionApiHeaders() {
+        val config = generateImmutableConfig()
+        val user = User("123", "hi@foo.com", "Li")
+        val session = Session("abc", Date(0), user, 1, 0, Notifier(), NoopLogger)
+        val headers = config.getSessionApiDeliveryParams(session).headers
+        assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
+        Assert.assertNotNull(headers["Bugsnag-Sent-At"])
+        Assert.assertNotNull(headers["Bugsnag-Payload-Version"])
+        Assert.assertNull(headers["Bugsnag-Stacktrace-Types"])
+
+        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
+        assertTrue(integrity.matches(sha1Regex))
     }
 
     @Test
     fun verifyErrorApiHeadersDefaultStacktrace() {
-        val config = convertToImmutableConfig(generateConfiguration())
-        val payload = generateEventPayload(config)
+        val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
+        val payload = BugsnagTestUtils.generateEventPayload(config)
         val headers = config.getErrorApiDeliveryParams(payload).headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
-        assertNotNull(headers["Bugsnag-Sent-At"])
+        Assert.assertNotNull(headers["Bugsnag-Sent-At"])
         assertEquals("4.0", headers["Bugsnag-Payload-Version"])
         assertEquals("android", headers["Bugsnag-Stacktrace-Types"])
     }
 
     @Test
     fun verifyErrorApiHeadersNoStacktrace() {
-        val config = convertToImmutableConfig(generateConfiguration())
+        val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json")
-        val payload = EventPayload(config.apiKey, file, Notifier(), config)
+        val payload = EventPayload(config.apiKey, null, file, Notifier(), config)
         val headers = config.getErrorApiDeliveryParams(payload).headers
-        assertNull(headers["Bugsnag-Stacktrace-Types"])
+        Assert.assertNull(headers["Bugsnag-Stacktrace-Types"])
     }
 
     @Test
     fun verifyErrorApiHeadersMultiStacktrace() {
-        val config = convertToImmutableConfig(generateConfiguration())
-        val payload = generateEventPayload(config)
+        val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
+        val payload = BugsnagTestUtils.generateEventPayload(config)
 
         // alter stacktrace to contain two types
         val error = requireNotNull(payload.event!!.errors[0])
@@ -55,4 +94,5 @@ class DeliveryHeadersTest {
         val headers = config.getErrorApiDeliveryParams(payload).headers
         assertEquals("android,c,reactnativejs", headers["Bugsnag-Stacktrace-Types"])
     }
+
 }

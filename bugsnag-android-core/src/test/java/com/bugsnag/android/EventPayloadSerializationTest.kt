@@ -22,7 +22,7 @@ internal class EventPayloadSerializationTest {
             notifier.url = "https://bugsnag.com"
             return generateSerializationTestCases(
                 "report",
-                EventPayload("api-key", File(""), notifier, config)
+                EventPayload("api-key", null, File(""), notifier, config)
             )
         }
     }

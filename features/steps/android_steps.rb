@@ -185,6 +185,7 @@ Then("the request is valid for the error reporting API version {string} for the 
     And the payload contains the payloadVersion "#{payload_version}"
     And the "Content-Type" header equals "application/json"
     And the "Bugsnag-Sent-At" header is a timestamp
+    And the Bugsnag-Integrity header is valid
 
     And the payload field "notifier.name" equals "#{notifier_name}"
     And the payload field "notifier.url" is not null

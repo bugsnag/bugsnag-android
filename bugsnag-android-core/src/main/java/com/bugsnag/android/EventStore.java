@@ -144,7 +144,7 @@ class EventStore extends FileStore {
         try {
             EventFilenameInfo eventInfo = EventFilenameInfo.Companion.fromFile(eventFile, config);
             String apiKey = eventInfo.getApiKey();
-            EventPayload payload = new EventPayload(apiKey, eventFile, notifier, config);
+            EventPayload payload = new EventPayload(apiKey, null, eventFile, notifier, config);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload);
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 
