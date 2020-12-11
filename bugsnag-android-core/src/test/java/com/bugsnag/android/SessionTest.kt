@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -94,6 +95,21 @@ class SessionTest {
             Notifier(),
             NoopLogger
         ).isV2Payload)
+    }
+
+    @Test
+    fun testCloneNotifier() {
+        val original = Notifier()
+        val dep = Notifier("bugsnag-cobol")
+        original.dependencies = listOf(dep)
+        val payload = Session(null, original, NoopLogger)
+        val copy = payload.notifier
+        assertNotSame(original, copy)
+        assertNotSame(original.dependencies, copy.dependencies)
+        assertEquals(original.dependencies, copy.dependencies)
+        assertEquals(original.name, copy.name)
+        assertEquals(original.url, copy.url)
+        assertEquals(original.version, copy.version)
     }
 
     private fun validateSessionCopied(copy: Session) {
