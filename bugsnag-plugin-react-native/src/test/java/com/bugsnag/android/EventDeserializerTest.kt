@@ -90,7 +90,23 @@ class EventDeserializerTest {
 
     @Test
     fun deserializeUnhandledOverridden() {
-        map["unhandledOverridden"] = true
+        val map: MutableMap<String, Any?> = hashMapOf(
+            "unhandled" to false,
+            "severityReason" to hashMapOf(
+                "type" to "unhandledException",
+                "unhandledOverridden" to true
+            )
+        )
+        map["severity"] = "info"
+        map["user"] = mapOf(Pair("id", "123"))
+        map["breadcrumbs"] = listOf(breadcrumbMap())
+        map["threads"] = listOf(threadMap())
+        map["errors"] = listOf(errorMap())
+        map["metadata"] = metadataMap()
+        map["app"] = mapOf(Pair("id", "app-id"))
+        map["device"] =
+            mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
+
         val event = EventDeserializer(client, emptyList()).deserialize(map)
         assertFalse(event.isUnhandled)
         assertTrue(TestHooks.getUnhandledOverridden(event))
