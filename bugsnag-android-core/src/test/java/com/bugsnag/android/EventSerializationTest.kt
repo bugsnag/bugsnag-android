@@ -64,7 +64,7 @@ internal class EventSerializationTest {
             val event = Event(
                 null,
                 generateImmutableConfig(),
-                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
                 NoopLogger
             )
             event.threads.clear()

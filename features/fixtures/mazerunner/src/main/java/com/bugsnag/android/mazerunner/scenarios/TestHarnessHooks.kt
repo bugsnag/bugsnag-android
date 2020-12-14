@@ -80,7 +80,7 @@ fun generateEvent(client: Client): Event {
     val event = NativeInterface.createEvent(
         RuntimeException(),
         client,
-        HandledState.newInstance(HandledState.REASON_ANR)
+        SeverityReason.newInstance(SeverityReason.REASON_ANR)
     )
     event.app = generateAppWithState()
     event.device = generateDeviceWithState()

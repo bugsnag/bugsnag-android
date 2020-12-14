@@ -29,14 +29,15 @@ class EventDeserializerTest {
         map["unhandled"] = false
         map["context"] = "Foo"
         map["groupingHash"] = "SomeHash"
-        map["severityReason"] = mapOf(Pair("type", HandledState.REASON_HANDLED_EXCEPTION))
+        map["severityReason"] = mapOf(Pair("type", SeverityReason.REASON_HANDLED_EXCEPTION))
         map["user"] = mapOf(Pair("id", "123"))
         map["breadcrumbs"] = listOf(breadcrumbMap())
         map["threads"] = listOf(threadMap())
         map["errors"] = listOf(errorMap())
         map["metadata"] = metadataMap()
         map["app"] = mapOf(Pair("id", "app-id"))
-        map["device"] = mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
+        map["device"] =
+            mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
 
         `when`(client.config).thenReturn(TestData.generateConfig())
         `when`(client.getLogger()).thenReturn(object : Logger {})
@@ -75,6 +76,7 @@ class EventDeserializerTest {
         assertNotNull(event)
         assertEquals(Severity.INFO, event.severity)
         assertFalse(event.isUnhandled)
+        assertFalse(TestHooks.getUnhandledOverridden(event))
         assertEquals("Foo", event.context)
         assertEquals("SomeHash", event.groupingHash)
         assertEquals("123", event.getUser().id)
@@ -84,5 +86,29 @@ class EventDeserializerTest {
         assertEquals("app-id", event.app.id)
         assertEquals("device-id", event.device.id)
         assertEquals("123", event.getMetadata("custom", "id"))
+    }
+
+    @Test
+    fun deserializeUnhandledOverridden() {
+        val map: MutableMap<String, Any?> = hashMapOf(
+            "unhandled" to false,
+            "severityReason" to hashMapOf(
+                "type" to "unhandledException",
+                "unhandledOverridden" to true
+            )
+        )
+        map["severity"] = "info"
+        map["user"] = mapOf(Pair("id", "123"))
+        map["breadcrumbs"] = listOf(breadcrumbMap())
+        map["threads"] = listOf(threadMap())
+        map["errors"] = listOf(errorMap())
+        map["metadata"] = metadataMap()
+        map["app"] = mapOf(Pair("id", "app-id"))
+        map["device"] =
+            mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
+
+        val event = EventDeserializer(client, emptyList()).deserialize(map)
+        assertFalse(event.isUnhandled)
+        assertTrue(TestHooks.getUnhandledOverridden(event))
     }
 }

@@ -417,12 +417,17 @@ void bsg_serialize_grouping_hash(const bugsnag_event *event, JSON_Object *event_
   }
 }
 
-void bsg_serialize_handled_state(const bugsnag_event *event, JSON_Object *event_obj) {
+void bsg_serialize_severity_reason(const bugsnag_event *event, JSON_Object *event_obj) {
   // FUTURE(dm): severityReason/unhandled attributes are currently
   // over-optimized for signal handling. in the future we may want to handle
   // C++ exceptions, etc as well.
   json_object_set_string(event_obj, "severity", bsg_severity_string(event->severity));
-  json_object_dotset_boolean(event_obj, "unhandled", event->unhandled);
+  bool unhandled = event->unhandled;
+  json_object_dotset_boolean(event_obj, "unhandled", unhandled);
+
+  // unhandled == false always means that the state has been overridden by the user,
+  // as this codepath is only executed for unhandled native errors
+  json_object_dotset_boolean(event_obj, "severityReason.unhandledOverridden", !unhandled);
   json_object_dotset_string(event_obj, "severityReason.type", "signal");
   json_object_dotset_string(event_obj, "severityReason.attributes.signalType", event->error.errorClass);
 }
@@ -622,7 +627,7 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
   {
     bsg_serialize_context(event, event_obj);
     bsg_serialize_grouping_hash(event, event_obj);
-    bsg_serialize_handled_state(event, event_obj);
+    bsg_serialize_severity_reason(event, event_obj);
     bsg_serialize_app(event->app, event_obj);
     bsg_serialize_app_metadata(event->app, event_obj);
     bsg_serialize_device(event->device, event_obj);

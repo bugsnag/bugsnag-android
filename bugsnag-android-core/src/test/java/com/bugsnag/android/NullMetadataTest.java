@@ -33,15 +33,17 @@ public class NullMetadataTest {
 
     @Test
     public void testErrorDefaultMetadata() {
-        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
-        Event event = new Event(throwable, config, handledState, NoopLogger.INSTANCE);
+        SeverityReason severityReason
+                = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(throwable, config, severityReason, NoopLogger.INSTANCE);
         validateDefaultMetadata(event);
     }
 
     @Test
     public void testSecondErrorDefaultMetadata() {
-        HandledState handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
-        Event event = new Event(new RuntimeException(), config, handledState, NoopLogger.INSTANCE);
+        SeverityReason reason
+                = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION);
+        Event event = new Event(new RuntimeException(), config, reason, NoopLogger.INSTANCE);
         List<String> projectPackages = Collections.emptyList();
         Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages,
                 NoopLogger.INSTANCE);

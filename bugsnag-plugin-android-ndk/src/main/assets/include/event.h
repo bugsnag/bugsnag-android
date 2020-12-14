@@ -240,7 +240,31 @@ void bugsnag_event_set_severity(void *event_ptr, bugsnag_severity value);
 /* Accessors for event.unhandled */
 
 
+/**
+ * Whether the event was a crash (i.e. unhandled) or handled error in which the system
+ * continued running.
+ *
+ * Unhandled errors count towards your stability score. If you don't want certain errors
+ * to count towards your stability score, you can alter this property through
+ * bugsnag_add_on_error.
+ *
+ * @param event_ptr a pointer to the event supplied in a bsg_on_error callback
+ * @return whether the event is unhandled or not
+ */
 bool bugsnag_event_is_unhandled(void *event_ptr);
+
+/**
+ * Whether the event was a crash (i.e. unhandled) or handled error in which the system
+ * continued running.
+ *
+ * Unhandled errors count towards your stability score. If you don't want certain errors
+ * to count towards your stability score, you can alter this property through
+ * bugsnag_add_on_error.
+ *
+ * @param event_ptr a pointer to the event supplied in a bsg_on_error callback
+ * @param value the new unhandled value
+ */
+void bugsnag_event_set_unhandled(void *event_ptr, bool value);
 
 
 /* Accessors for event.groupingHash */
