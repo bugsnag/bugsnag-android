@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.4.0 (2020-12-14)
 
 * Make `event.unhandled` overridable for NDK errors
   [#1037](https://github.com/bugsnag/bugsnag-android/pull/1037)
