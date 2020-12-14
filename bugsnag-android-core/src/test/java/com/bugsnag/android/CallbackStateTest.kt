@@ -24,7 +24,8 @@ class CallbackStateTest {
     @Mock
     lateinit var session: Session
 
-    private val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+    private val handledState = SeverityReason.newInstance(
+        SeverityReason.REASON_HANDLED_EXCEPTION)
     private val event = Event(RuntimeException(), generateImmutableConfig(), handledState, NoopLogger)
     private val breadcrumb = Breadcrumb("", NoopLogger)
 

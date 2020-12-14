@@ -13,17 +13,14 @@ import java.util.Date
 internal class SessionSerializationTest {
 
     companion object {
-        private val notifier = Notifier()
+        private val notifier = Notifier("AndroidBugsnagNotifier", "9.9.9", "https://bugsnag.com")
 
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<Any, String>> {
             val session = Session("123", Date(0), User(null, null, null), 1, 0, notifier, NoopLogger)
-            notifier.version = "9.9.9"
-            notifier.name = "AndroidBugsnagNotifier"
-            notifier.url = "https://bugsnag.com"
-            session.setApp(generateApp())
-            session.setDevice(generateDevice())
+            session.app = generateApp()
+            session.device = generateDevice()
             return generateSerializationTestCases("session", session)
         }
     }

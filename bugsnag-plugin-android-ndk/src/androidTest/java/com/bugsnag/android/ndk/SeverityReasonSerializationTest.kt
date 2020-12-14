@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-internal class HandledStateSerializationTest {
+internal class SeverityReasonSerializationTest {
 
     companion object {
         init {
@@ -25,7 +25,7 @@ internal class HandledStateSerializationTest {
 
     @Test
     fun testPassesNativeSuite() {
-        val expectedJson = loadJson("handled_state_serialization_$testCase.json")
+        val expectedJson = loadJson("severity_reason_serialization_$testCase.json")
         verifyNativeRun(run(testCase.toInt(), expectedJson))
     }
 }

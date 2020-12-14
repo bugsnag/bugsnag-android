@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.DeliveryHeadersKt.HEADER_INTERNAL_ERROR;
-import static com.bugsnag.android.HandledState.REASON_UNHANDLED_EXCEPTION;
+import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -51,8 +51,8 @@ class InternalReportDelegate implements EventStore.Delegate {
     @Override
     public void onErrorIOFailure(Exception exc, File errorFile, String context) {
         // send an internal error to bugsnag with no cache
-        HandledState handledState = HandledState.newInstance(REASON_UNHANDLED_EXCEPTION);
-        Event err = new Event(exc, immutableConfig, handledState, logger);
+        SeverityReason severityReason = SeverityReason.newInstance(REASON_UNHANDLED_EXCEPTION);
+        Event err = new Event(exc, immutableConfig, severityReason, logger);
         err.setContext(context);
 
         err.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "canRead", errorFile.canRead());

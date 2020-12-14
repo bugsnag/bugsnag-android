@@ -106,7 +106,7 @@ bugsnag_event * loadContextTestCase(jint num) {
     return data;
 }
 
-bugsnag_event * loadHandledStateTestCase(jint num) {
+bugsnag_event * loadSeverityReasonTestCase(jint num) {
     bugsnag_event *data = malloc(sizeof(bugsnag_event));
     data->unhandled = true;
     data->severity = BSG_SEVERITY_ERR;

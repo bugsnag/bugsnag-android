@@ -12,6 +12,7 @@ import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Event;
 import com.bugsnag.android.OnBreadcrumbCallback;
 import com.bugsnag.android.OnErrorCallback;
+import com.bugsnag.android.Session;
 import com.bugsnag.android.Severity;
 
 import java.util.HashSet;
@@ -63,11 +64,13 @@ public class CXXSignalSmokeScenario extends Scenario {
                 return true;
             }
         });
+        disableSessionDelivery(config);
     }
 
     @Override
     public void run() {
         super.run();
+        Bugsnag.startSession();
         Bugsnag.leaveBreadcrumb("CXXSignalSmokeScenario");
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {

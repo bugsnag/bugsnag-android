@@ -396,4 +396,18 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXGetJavaDataScenario_activate(JN
     __builtin_trap();
 }
 
+bool override_unhandled(void *event_ptr) {
+  if (bugsnag_event_is_unhandled(event_ptr)) {
+    bugsnag_event_set_unhandled(event_ptr, false);
+  }
+  return !bugsnag_event_is_unhandled(event_ptr);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXHandledOverrideScenario_activate(JNIEnv *env,
+                                                                                  jobject instance) {
+  bugsnag_add_on_error(&override_unhandled);
+  abort();
+}
+
 }

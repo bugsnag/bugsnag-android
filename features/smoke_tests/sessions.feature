@@ -49,6 +49,7 @@ Scenario: Automated sessions send
     And the payload field "events.0.session.id" equals the stored value "automated_session_id"
     And the event "session.events.handled" equals 1
     And the event "session.events.unhandled" equals 0
+    And the event "severityReason.unhandledOverridden" is false
 
 Scenario: Manual session control works
     When I run "ManualSessionSmokeScenario"
@@ -73,6 +74,7 @@ Scenario: Manual session control works
     And the payload field "events.0.session.id" equals the stored value "manual_session_id"
     And the event "session.events.handled" equals 1
     And the event "session.events.unhandled" equals 0
+    And the event "severityReason.unhandledOverridden" is false
     And the event "user.id" equals "123"
     And the event "user.email" equals "ABC.CBA.CA"
     And the event "user.name" equals "ManualSessionSmokeScenario"
@@ -97,6 +99,7 @@ Scenario: Manual session control works
     And the payload field "events.0.session.id" equals the stored value "manual_session_id"
     And the event "session.events.handled" equals 1
     And the event "session.events.unhandled" equals 1
+    And the event "severityReason.unhandledOverridden" is false
     And the event "user.id" equals "123"
     And the event "user.email" equals "ABC.CBA.CA"
     And the event "user.name" equals "ManualSessionSmokeScenario"
