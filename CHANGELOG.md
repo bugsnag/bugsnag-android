@@ -11,6 +11,11 @@
 * Make `event.unhandled` overridable for JVM errors
   [#1025](https://github.com/bugsnag/bugsnag-android/pull/1025)
 
+### Bug fixes
+
+* Prevent potential SHA-1 hash mismatch in Bugsnag-Integrity header for session requests
+  [#1043](https://github.com/bugsnag/bugsnag-android/pull/1043)
+
 ## 5.3.1 (2020-12-09)
 
 ### Bug fixes
