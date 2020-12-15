@@ -286,14 +286,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXNotifySmokeScenario_activate(JN
   (char *)"Smoke test scenario", BSG_SEVERITY_ERR);
 }
 
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXGetJavaDataScenario_activate(JNIEnv *env, jobject instance) {
-  bugsnag_add_on_error(&add_java_data);
-  int x = 47;
-  if (x > 0)
-    __builtin_trap();
-}
-
 bool override_unhandled(void *event_ptr) {
   if (bugsnag_event_is_unhandled(event_ptr)) {
     bugsnag_event_set_unhandled(event_ptr, false);

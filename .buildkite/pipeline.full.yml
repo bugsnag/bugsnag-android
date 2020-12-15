@@ -1,4 +1,23 @@
 steps:
+  - label: ':android: Minimal fixture end-to-end tests'
+    depends_on: "minimal-fixture-apk"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/minimal-fixture.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "--app=/app/build/release/minimal-fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--username=$BROWSER_STACK_USERNAME"
+          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--fail-fast"
+          - "features/full_tests/unhandled.feature"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
   - label: ':android: Android 9 end-to-end tests'
     depends_on:
       - "fixture-apk"
@@ -341,24 +360,5 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Minimal fixture end-to-end tests'
-    depends_on: "minimal-fixture-apk"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/minimal-fixture.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-          - "--app=/app/build/release/minimal-fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_9_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-          - "--fail-fast"
-          - "features/minimal"
     concurrency: 9
     concurrency_group: 'browserstack-app'

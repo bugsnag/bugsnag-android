@@ -1,30 +1,28 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.OnSessionCallback
+import com.bugsnag.android.mazerunner.addNaughtyStringMetadata
 
-internal class CXXHandledOverrideScenario(
+internal class CXXNaughtyStringsScenario(
     config: Configuration,
     context: Context
 ) : Scenario(config, context) {
 
     init {
-        System.loadLibrary("entrypoint")
+        System.loadLibrary("cxx-scenarios")
         config.autoTrackSessions = false
-        disableSessionDelivery(config)
     }
 
-    external fun activate()
+    external fun crash()
 
     override fun run() {
         super.run()
+        addNaughtyStringMetadata(javaClass)
+        Thread.sleep(200) // allow metadata to sync across JNI layer
 
         if (eventMetaData != "non-crashy") {
-            Bugsnag.startSession()
-            activate()
+            crash()
         }
     }
 }

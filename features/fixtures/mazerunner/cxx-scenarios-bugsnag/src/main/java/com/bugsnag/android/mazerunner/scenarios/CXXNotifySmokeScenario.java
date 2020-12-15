@@ -12,8 +12,7 @@ import com.bugsnag.android.OnErrorCallback;
 public class CXXNotifySmokeScenario extends Scenario {
     static {
         System.loadLibrary("bugsnag-ndk");
-        System.loadLibrary("monochrome");
-        System.loadLibrary("entrypoint");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void activate();
