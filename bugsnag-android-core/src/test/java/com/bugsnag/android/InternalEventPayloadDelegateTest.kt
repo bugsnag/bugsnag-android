@@ -37,7 +37,9 @@ internal class InternalEventPayloadDelegateTest {
         `when`(this.appDataCollector.generateAppWithState()).thenReturn(app)
         app.durationInForeground = 500L
         app.inForeground = true
-        `when`(deviceDataCollector.generateDeviceWithState(ArgumentMatchers.anyLong())).thenReturn(generateDeviceWithState())
+        `when`(deviceDataCollector
+            .generateDeviceWithState(ArgumentMatchers.anyLong()))
+            .thenReturn(generateDeviceWithState())
 
         val config = generateImmutableConfig()
         val delegate = InternalReportDelegate(

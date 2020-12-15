@@ -1,0 +1,32 @@
+# Overrides the default detekt behaviour.
+# see: https://detekt.github.io/detekt/configurations.html
+
+# The default number of functions is 10, which is too low given
+# some of the APIs we are required to implement
+complexity:
+  active: true
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 21
+    thresholdInClasses: 21
+    thresholdInObjects: 21
+
+# There are some cases where Bugsnag prefers to swallow exceptions rather than crashing,
+# so disable this check
+exceptions:
+  active: true
+  TooGenericExceptionCaught:
+    active: false
+
+# allow performing no action in overridden functions
+empty-blocks:
+  EmptyFunctionBlock:
+    active: true
+    ignoreOverridden: true
+
+# default for return count is excessively low - increased to allow for use of early returns
+style:
+  active: true
+  ReturnCount:
+    active: true
+    max: 4

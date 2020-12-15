@@ -97,14 +97,30 @@ class NativeBridge : Observer {
             DeliverPending -> deliverPendingReports()
             is AddMetadata -> handleAddMetadata(msg)
             is ClearMetadataSection -> clearMetadataTab(makeSafe(msg.section))
-            is ClearMetadataValue -> removeMetadata(makeSafe(msg.section), makeSafe(msg.key ?: ""))
-            is AddBreadcrumb -> addBreadcrumb(makeSafe(msg.message), makeSafe(msg.type.toString()), makeSafe(msg.timestamp), msg.metadata)
+            is ClearMetadataValue -> removeMetadata(
+                makeSafe(msg.section),
+                makeSafe(msg.key ?: "")
+            )
+            is AddBreadcrumb -> addBreadcrumb(
+                makeSafe(msg.message),
+                makeSafe(msg.type.toString()),
+                makeSafe(msg.timestamp),
+                msg.metadata
+            )
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
             PauseSession -> pausedSession()
-            is StartSession -> startedSession(makeSafe(msg.id), makeSafe(msg.startedAt), msg.handledCount, msg.unhandledCount)
+            is StartSession -> startedSession(
+                makeSafe(msg.id),
+                makeSafe(msg.startedAt),
+                msg.handledCount,
+                msg.unhandledCount
+            )
             is UpdateContext -> updateContext(makeSafe(msg.context ?: ""))
-            is UpdateInForeground -> updateInForeground(msg.inForeground, makeSafe(msg.contextActivity ?: ""))
+            is UpdateInForeground -> updateInForeground(
+                msg.inForeground,
+                makeSafe(msg.contextActivity ?: "")
+            )
             is UpdateOrientation -> updateOrientation(msg.orientation ?: "")
             is UpdateUser -> {
                 updateUserId(makeSafe(msg.user.id ?: ""))
