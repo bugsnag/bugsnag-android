@@ -7,16 +7,10 @@ Commands can be run on the entire project, or on an individual module:
 ./gradlew bugsnag-plugin-android-anr:build // builds bugsnag-plugin-android-anr module only
 ```
 
-## Static analysis
-
-```shell
-./gradlew lint checkstyle detekt
-```
-
 ## Running Tests Locally
 
 Running the full test suite requires a connected android device or emulator. JVM tests can be run
-in isolation by only running the `check` task.
+in isolation by only running the `check` task. The `check` task also runs all static analysis checks:
 
 ```shell
 ./gradlew check connectedCheck
