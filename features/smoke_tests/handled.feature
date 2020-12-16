@@ -69,7 +69,7 @@ Scenario: Notify caught Java exception with default configuration
     And the payload field "events.0.user.id" equals the stored value "device_id"
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
+    And the event has a "state" breadcrumb named "Connectivity changed"
     And the event has a "manual" breadcrumb named "HandledJavaSmokeScenario"
     # [PLAT-5534] A potential source of flakes
     #And the event "breadcrumbs.2.metaData.source" equals "BreadcrumbCallback"

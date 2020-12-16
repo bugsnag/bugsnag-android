@@ -8,6 +8,8 @@ import android.os.Looper
 import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 
 /**
  * Sends an automated session payload to Bugsnag.
@@ -15,16 +17,20 @@ import com.bugsnag.android.Configuration
 internal class AutoSessionSmokeScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
 
-    override fun onActivityResumed(activity: Activity) {
-        super.onActivityResumed(activity)
-        if (activity.intent.action == "com.bugsnag.android.mazerunner.UPDATE_CONTEXT") {
-            Bugsnag.notify(generateException())
+    init {
+        val baseDelivery = createDefaultDelivery()
+        var intercept = true
+        config.delivery = InterceptingDelivery(baseDelivery) {
+            if (intercept) {
+                intercept = false
+                Bugsnag.notify(generateException())
+            }
         }
+
     }
 
     override fun run() {
         super.run()
-        registerActivityLifecycleCallbacks()
         context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }
 
