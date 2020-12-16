@@ -47,7 +47,7 @@ internal class ExceptionHandlerTest {
         verify(client, times(1)).notifyUnhandledException(
             eq(exc),
             any(),
-            eq(HandledState.REASON_UNHANDLED_EXCEPTION),
+            eq(SeverityReason.REASON_UNHANDLED_EXCEPTION),
             eq(null)
         )
     }

@@ -13,6 +13,7 @@ Scenario: Notify caught Java exception with default configuration
     And the event "unhandled" is false
     And the event "severity" equals "warning"
     And the event "severityReason.type" equals "handledException"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
@@ -100,6 +101,7 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
@@ -153,6 +155,7 @@ Scenario: Handled C functionality
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
+    And the event "severityReason.unhandledOverridden" is false
 
     # App data
     And the event "app.buildUUID" is not null

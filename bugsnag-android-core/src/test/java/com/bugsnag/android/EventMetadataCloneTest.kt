@@ -3,8 +3,6 @@ package com.bugsnag.android
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test
-import java.util.Collections
-import java.util.HashMap
 
 class EventMetadataCloneTest {
 
@@ -13,7 +11,8 @@ class EventMetadataCloneTest {
         val data = Metadata()
         data.addMetadata("test_section", "foo", "bar")
 
-        val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+        val handledState = SeverityReason.newInstance(
+            SeverityReason.REASON_HANDLED_EXCEPTION)
         val config = BugsnagTestUtils.generateImmutableConfig()
         val event = Event(RuntimeException(), config, handledState, data, NoopLogger)
         event.addMetadata("test_section", "second", "another value")

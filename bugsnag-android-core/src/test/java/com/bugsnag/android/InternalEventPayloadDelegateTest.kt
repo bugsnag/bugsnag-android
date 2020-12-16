@@ -37,7 +37,9 @@ internal class InternalEventPayloadDelegateTest {
         `when`(this.appDataCollector.generateAppWithState()).thenReturn(app)
         app.durationInForeground = 500L
         app.inForeground = true
-        `when`(deviceDataCollector.generateDeviceWithState(ArgumentMatchers.anyLong())).thenReturn(generateDeviceWithState())
+        `when`(deviceDataCollector
+            .generateDeviceWithState(ArgumentMatchers.anyLong()))
+            .thenReturn(generateDeviceWithState())
 
         val config = generateImmutableConfig()
         val delegate = InternalReportDelegate(
@@ -51,7 +53,8 @@ internal class InternalEventPayloadDelegateTest {
             Notifier()
         )
 
-        val handledState = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+        val handledState = SeverityReason.newInstance(
+            SeverityReason.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException(), config, handledState, NoopLogger)
         delegate.reportInternalBugsnagError(event)
 

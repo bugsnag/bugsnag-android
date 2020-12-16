@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -35,7 +34,7 @@ final class BugsnagTestUtils {
         Event event = new Event(
                 exc,
                 BugsnagTestUtils.generateImmutableConfig(),
-                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
                 NoopLogger.INSTANCE
         );
         event.setApp(generateAppWithState());

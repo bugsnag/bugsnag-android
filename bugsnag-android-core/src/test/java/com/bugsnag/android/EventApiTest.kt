@@ -22,7 +22,7 @@ internal class EventApiTest {
         event = Event(
             RuntimeException(),
             generateImmutableConfig(),
-            HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+            SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
             NoopLogger
         )
         event.setUser("1", "fred@example.com", "Fred")

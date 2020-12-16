@@ -7,16 +7,10 @@ Commands can be run on the entire project, or on an individual module:
 ./gradlew bugsnag-plugin-android-anr:build // builds bugsnag-plugin-android-anr module only
 ```
 
-## Static analysis
-
-```shell
-./gradlew lint checkstyle detekt
-```
-
 ## Running Tests Locally
 
 Running the full test suite requires a connected android device or emulator. JVM tests can be run
-in isolation by only running the `check` task.
+in isolation by only running the `check` task. The `check` task also runs all static analysis checks:
 
 ```shell
 ./gradlew check connectedCheck
@@ -76,13 +70,14 @@ See https://www.browserstack.com/local-testing/app-automate for details of the r
 1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
 1. To run a single feature:
     ```shell script
+    make test-fixture && \
     bundle exec maze-runner --app=build/fixture.apk                 \
                             --farm=bs                               \
                             --device=ANDROID_9_0                    \
                             --username=$BROWSER_STACK_USERNAME      \
                             --access-key=$BROWSER_STACK_ACCESS_KEY  \
                             --bs-local=~/BrowserStackLocal          \
-                            features/app_version.feature
+                            features/smoke_tests/unhandled.feature
     ```
 1. To run all features, omit the final argument.
 1. Maze Runner also supports all options that Cucumber does.  Run `bundle exec maze-runner --help` for full details.

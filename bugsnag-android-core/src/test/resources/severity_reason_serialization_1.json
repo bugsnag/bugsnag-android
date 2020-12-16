@@ -1,5 +1,6 @@
 {
   "type": "strictMode",
+  "unhandledOverridden": false,
   "attributes": {
     "violationType": "diskRead"
   }

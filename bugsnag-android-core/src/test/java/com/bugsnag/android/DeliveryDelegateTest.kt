@@ -2,10 +2,8 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +22,8 @@ internal class DeliveryDelegateTest {
     val breadcrumbState = BreadcrumbState(50, CallbackState(), NoopLogger)
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
-    val handledState = HandledState.newInstance(HandledState.REASON_UNHANDLED_EXCEPTION)
+    val handledState = SeverityReason.newInstance(
+        SeverityReason.REASON_UNHANDLED_EXCEPTION)
     val event = Event(RuntimeException("Whoops!"), config, handledState, NoopLogger)
 
     @Before
@@ -52,7 +51,8 @@ internal class DeliveryDelegateTest {
 
     @Test
     fun generateHandledReport() {
-        val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+        val state = SeverityReason.newInstance(
+            SeverityReason.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
         event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
 
@@ -72,7 +72,8 @@ internal class DeliveryDelegateTest {
 
     @Test
     fun generateEmptyReport() {
-        val state = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION)
+        val state = SeverityReason.newInstance(
+            SeverityReason.REASON_HANDLED_EXCEPTION)
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
         event.errors.clear()
 

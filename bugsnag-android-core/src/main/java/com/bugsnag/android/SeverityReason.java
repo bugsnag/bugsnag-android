@@ -8,14 +8,13 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-final class HandledState implements JsonStream.Streamable {
-
+final class SeverityReason implements JsonStream.Streamable {
 
     @StringDef({REASON_UNHANDLED_EXCEPTION, REASON_STRICT_MODE, REASON_HANDLED_EXCEPTION,
         REASON_USER_SPECIFIED, REASON_CALLBACK_SPECIFIED, REASON_PROMISE_REJECTION,
         REASON_LOG, REASON_SIGNAL, REASON_ANR})
     @Retention(RetentionPolicy.SOURCE)
-    @interface SeverityReason {
+    @interface SeverityReasonType {
     }
 
     static final String REASON_UNHANDLED_EXCEPTION = "unhandledException";
@@ -28,7 +27,7 @@ final class HandledState implements JsonStream.Streamable {
     static final String REASON_LOG = "log";
     static final String REASON_ANR = "anrError";
 
-    @SeverityReason
+    @SeverityReasonType
     private final String severityReasonType;
 
     @Nullable
@@ -37,20 +36,21 @@ final class HandledState implements JsonStream.Streamable {
     private final Severity defaultSeverity;
     private Severity currentSeverity;
     private boolean unhandled;
+    final boolean originalUnhandled;
 
-    static HandledState newInstance(@SeverityReason String severityReasonType) {
+    static SeverityReason newInstance(@SeverityReasonType String severityReasonType) {
         return newInstance(severityReasonType, null, null);
     }
 
-    static HandledState newInstance(@SeverityReason String severityReasonType,
-                                    @Nullable Severity severity,
-                                    @Nullable String attributeValue) {
+    static SeverityReason newInstance(@SeverityReasonType String severityReasonType,
+                                      @Nullable Severity severity,
+                                      @Nullable String attrVal) {
 
-        if (severityReasonType.equals(REASON_STRICT_MODE) && Intrinsics.isEmpty(attributeValue)) {
+        if (severityReasonType.equals(REASON_STRICT_MODE) && Intrinsics.isEmpty(attrVal)) {
             throw new IllegalArgumentException("No reason supplied for strictmode");
         }
         if (!(severityReasonType.equals(REASON_STRICT_MODE)
-            || severityReasonType.equals(REASON_LOG)) && !Intrinsics.isEmpty(attributeValue)) {
+            || severityReasonType.equals(REASON_LOG)) && !Intrinsics.isEmpty(attrVal)) {
             throw new IllegalArgumentException("attributeValue should not be supplied");
         }
 
@@ -58,16 +58,16 @@ final class HandledState implements JsonStream.Streamable {
             case REASON_UNHANDLED_EXCEPTION:
             case REASON_PROMISE_REJECTION:
             case REASON_ANR:
-                return new HandledState(severityReasonType, Severity.ERROR, true, null);
+                return new SeverityReason(severityReasonType, Severity.ERROR, true, null);
             case REASON_STRICT_MODE:
-                return new HandledState(severityReasonType, Severity.WARNING, true, attributeValue);
+                return new SeverityReason(severityReasonType, Severity.WARNING, true, attrVal);
             case REASON_HANDLED_EXCEPTION:
-                return new HandledState(severityReasonType, Severity.WARNING, false, null);
+                return new SeverityReason(severityReasonType, Severity.WARNING, false, null);
             case REASON_USER_SPECIFIED:
             case REASON_CALLBACK_SPECIFIED:
-                return new HandledState(severityReasonType, severity, false, null);
+                return new SeverityReason(severityReasonType, severity, false, null);
             case REASON_LOG:
-                return new HandledState(severityReasonType, severity, false, attributeValue);
+                return new SeverityReason(severityReasonType, severity, false, attrVal);
             default:
                 String msg = String.format("Invalid argument '%s' for severityReason",
                     severityReasonType);
@@ -75,13 +75,19 @@ final class HandledState implements JsonStream.Streamable {
         }
     }
 
-    HandledState(String severityReasonType, Severity currentSeverity, boolean unhandled,
-                         @Nullable String attributeValue) {
+    SeverityReason(String severityReasonType, Severity currentSeverity, boolean unhandled,
+                   @Nullable String attributeValue) {
+        this(severityReasonType, currentSeverity, unhandled, unhandled, attributeValue);
+    }
+
+    SeverityReason(String severityReasonType, Severity currentSeverity, boolean unhandled,
+                   boolean originalUnhandled, @Nullable String attributeValue) {
         this.severityReasonType = severityReasonType;
-        this.defaultSeverity = currentSeverity;
         this.unhandled = unhandled;
-        this.attributeValue = attributeValue;
+        this.originalUnhandled = originalUnhandled;
+        this.defaultSeverity = currentSeverity;
         this.currentSeverity = currentSeverity;
+        this.attributeValue = attributeValue;
     }
 
     String calculateSeverityReasonType() {
@@ -92,8 +98,20 @@ final class HandledState implements JsonStream.Streamable {
         return currentSeverity;
     }
 
-    public boolean isUnhandled() {
+    boolean getUnhandled() {
         return unhandled;
+    }
+
+    void setUnhandled(boolean unhandled) {
+        this.unhandled = unhandled;
+    }
+
+    boolean getUnhandledOverridden() {
+        return unhandled != originalUnhandled;
+    }
+
+    boolean isOriginalUnhandled() {
+        return originalUnhandled;
     }
 
     @Nullable
@@ -111,7 +129,9 @@ final class HandledState implements JsonStream.Streamable {
 
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
-        writer.beginObject().name("type").value(calculateSeverityReasonType());
+        writer.beginObject()
+                .name("type").value(calculateSeverityReasonType())
+                .name("unhandledOverridden").value(getUnhandledOverridden());
 
         if (attributeValue != null) {
             String attributeKey = null;

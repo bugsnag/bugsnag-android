@@ -161,7 +161,7 @@ class BreadcrumbStateTest {
     fun testOnBreadcrumbCallbackException() {
         val breadcrumb = Breadcrumb("Whoops", NoopLogger)
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
-            throw Exception("Oh no")
+            throw IllegalStateException("Oh no")
         })
         breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
             givenBreadcrumb.metadata?.put("callback", "second")
