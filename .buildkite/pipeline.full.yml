@@ -14,9 +14,17 @@ steps:
           - "--username=$BROWSER_STACK_USERNAME"
           - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-          - "features/full_tests/unhandled.feature"
+          - "features/full_tests/handled_exception.feature"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+
+  - label: ':android: Build Example App'
+    depends_on: "android-ci"
+    timeout_in_minutes: 5
+    command: 'cd examples/sdk-app-example && ./gradlew assembleRelease'
+    plugins:
+      docker-compose#v3.3.0:
+        run: android-ci
 
   - label: ':android: Android 9 end-to-end tests'
     depends_on:
