@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Increase kotlin dependency version to 1.3.72
+  [#1050](https://github.com/bugsnag/bugsnag-android/pull/1050)
+
 ## 5.4.0 (2020-12-14)
 
 * Make `event.unhandled` overridable for NDK errors
