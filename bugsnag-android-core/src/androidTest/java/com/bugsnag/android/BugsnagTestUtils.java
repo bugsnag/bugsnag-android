@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 final class BugsnagTestUtils {
 
@@ -33,10 +32,6 @@ final class BugsnagTestUtils {
         JsonStream jsonStream = new JsonStream(writer);
         streamable.toStream(jsonStream);
         return writer.toString();
-    }
-
-    static JSONObject mapToJson(Map<String, Object> map) {
-        return new JSONObject(map);
     }
 
     static JSONObject streamableToJson(JsonStream.Streamable streamable)
@@ -83,16 +78,6 @@ final class BugsnagTestUtils {
         return ImmutableConfigKt.convertToImmutableConfig(config, null);
     }
 
-    static SessionTracker generateSessionTracker() {
-        Configuration config = generateConfiguration();
-        return new SessionTracker(convert(config), config.impl.callbackState,
-                BugsnagTestUtils.generateClient(), generateSessionStore(), NoopLogger.INSTANCE);
-    }
-
-    static Connectivity generateConnectivity() {
-        return new ConnectivityCompat(ApplicationProvider.getApplicationContext(), null);
-    }
-
     static Device generateDevice() {
         DeviceBuildInfo buildInfo = DeviceBuildInfo.Companion.defaultInfo();
         return new Device(buildInfo, new String[]{}, null, null, null,
@@ -104,12 +89,6 @@ final class BugsnagTestUtils {
         return new DeviceWithState(buildInfo, null, null, null,
                 109230923452L, runtimeVersions, 22234423124L, 92340255592L,
                 "portrait", new Date(0));
-    }
-
-    @NonNull
-    static SessionStore generateSessionStore() {
-        Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(applicationContext, NoopLogger.INSTANCE, null);
     }
 
     public static Delivery generateDelivery() {

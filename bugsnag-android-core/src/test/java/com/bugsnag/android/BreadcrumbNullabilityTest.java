@@ -3,12 +3,10 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import androidx.test.filters.SmallTest;
 import org.junit.Test;
 
 import java.util.Date;
 
-@SmallTest
 public class BreadcrumbNullabilityTest {
 
     @Test
