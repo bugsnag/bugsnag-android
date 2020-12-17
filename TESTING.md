@@ -54,7 +54,6 @@ Ensure that the following environment variables are set:
 
 * `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
 * `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
-* `NDK_VERSION`: The version of NDK that should be used to build the app
 
 Run `make remote-test`
 

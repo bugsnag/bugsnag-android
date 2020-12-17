@@ -8,6 +8,7 @@ apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -16,6 +17,17 @@ android {
             ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"]
     }
     externalNativeBuild.cmake.path = "CMakeLists.txt"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+    packagingOptions {
+        pickFirst "**/*.so"
+    }
 }
 
 dependencies {
