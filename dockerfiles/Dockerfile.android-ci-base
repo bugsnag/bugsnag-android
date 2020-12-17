@@ -1,14 +1,11 @@
 FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest as android
 
-RUN echo Building CI image for NDK version r16b
+RUN echo Building CI image
 
 RUN apt-get clean
 RUN apt-get install maven
 
 WORKDIR /app
-
-ENV ANDROID_NDK_HOME="${ANDROID_HOME}/android-ndk-r16b"
-ENV PATH="${ANDROID_NDK_HOME}:${PATH}"
 
 # Force download of gradle zip early to avoid repeating
 # if Docker cache is invalidated by branch changes.
@@ -30,7 +27,7 @@ COPY build.gradle settings.gradle /app/
 
 # Build the example app - needed for Espresso tests
 COPY examples/ examples/
-RUN ./gradlew -p examples/sdk-app-example assembleRelease
+RUN cd examples/sdk-app-example && ./gradlew assembleRelease
 
 # Branch specifics
 COPY bugsnag-android/ bugsnag-android/

@@ -22,9 +22,10 @@ endif
 	 INSTRUMENTATION_DEVICES='["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]' \
 	 docker-compose up --build android-instrumentation-tests
 
+TEST_FIXTURE_NDK_VERSION ?= 16.1.4479499
 test-fixture:
 	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal
-	@./gradlew -p=features/fixtures/mazerunner/ assembleRelease
+	@./gradlew -PTEST_FIXTURE_NDK_VERSION=$(TEST_FIXTURE_NDK_VERSION) -p=features/fixtures/mazerunner/ assembleRelease
 	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture.apk build/fixture.apk
 
 bump:

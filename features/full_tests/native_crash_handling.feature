@@ -72,11 +72,12 @@ Scenario: Dereference a null pointer
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXDoubleFreeScenario"
         And I wait to receive a request
-        And the exception "errorClass" equals "SIGSEGV"
-        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
+        # Fix as part of PLAT-5643
+        # And the exception "errorClass" equals "SIGSEGV"
+        # And the exception "message" equals "Segmentation violation (invalid memory reference)"
 
     Scenario: Improper object type cast
         When I run "CXXImproperTypecastScenario" and relaunch the app
