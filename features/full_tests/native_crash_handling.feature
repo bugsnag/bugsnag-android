@@ -1,6 +1,6 @@
 Feature: Native crash reporting
 
-    Scenario: Dereference a null pointer
+Scenario: Dereference a null pointer
         When I run "CXXNullPointerScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNullPointerScenario"
@@ -133,4 +133,4 @@ Feature: Native crash reporting
         And the exception "type" equals "c"
         And the first significant stack frame methods and files should match:
             | something_innocuous | | libmonochrome.so |
-            | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | | libentrypoint.so |
+            | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | | libcxx-scenarios.so |

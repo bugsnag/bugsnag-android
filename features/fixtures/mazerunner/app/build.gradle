@@ -1,0 +1,86 @@
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+
+android {
+    compileSdkVersion 29
+    ndkVersion "16.1.4479499"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode 34
+        versionName "1.1.14"
+        manifestPlaceholders = [
+                // omit any of the following placeholders to use the default values
+                bugsnagApiKey: "abc12312312312312312312312312312",
+                bugsnagAppType: "test",
+                bugsnagAppVersion: "7.5.3",
+                bugsnagAutoDetectErrors: true,
+                bugsnagAutoTrackSessions: false,
+                bugsnagBuildUuid: "test-7.5.3",
+                bugsnagDiscardClasses: "com.domain.ClassName,com.domain.SecondClassName",
+                bugsnagEnabledReleaseStages: "production,development,testing",
+                bugsnagEndpoint: "http://bs-local.com:9339",
+                bugsnagEndpointSessions: "http://bs-local.com:9339",
+                bugsnagLaunchCrashThresholdMs: 10000,
+                bugsnagMaxBreadcrumbs: 1,
+                bugsnagPersistUser: false,
+                bugsnagProjectPackages: "java.net.UnknownHostException,com.example.Custom",
+                bugsnagRedactedKeys: "filter_me",
+                bugsnagReleaseStage: "testing",
+                bugsnagSendThreads: "always",
+                bugsnagVersionCode: 753,
+        ]
+    }
+    signingConfigs {
+        release {
+            keyAlias "password"
+            keyPassword "password"
+            storeFile file("../../fakekeys.jks")
+            storePassword "password"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true // obfuscation disabled to simplify maze
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
+        }
+    }
+    // adding custom jniLibs results in dupe SO files, ignore
+    packagingOptions {
+        pickFirst "**/*.so"
+    }
+    lintOptions {
+        tasks.lint.enabled = false
+    }
+
+    // conditionally alter the filename depending on the fixture
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE")) {
+                outputFileName = "minimal-fixture.apk"
+            } else {
+                outputFileName = "fixture.apk"
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(":jvm-scenarios")
+    implementation project(":cxx-scenarios")
+
+    if (project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE")) {
+        // don't include NDK scenarios that require linking against bugsnag-plugin-android-ndk
+    } else {
+        implementation project(":cxx-scenarios")
+    }
+    if (!("true" == project.findProperty("MINIMAL_FIXTURE"))) {
+        implementation project(":cxx-scenarios-bugsnag")
+    }
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.annotation:annotation:1.1.0"
+}
+
+apply from: "../bugsnag-dependency.gradle"
