@@ -36,7 +36,47 @@ internal class ThreadSerializationTest {
                 emptySet(),
                 NoopLogger
             ), NoopLogger)
-            return generateSerializationTestCases("thread", thread, thread1)
+            return generateSerializationTestCases(
+                "thread",
+                thread,
+                thread1,
+                createErrorHandlingThread(),
+                createNonErrorHandlingThread()
+            )
+        }
+
+        private fun createErrorHandlingThread(): Thread {
+            val stacktrace =
+                arrayOf(
+                    StackTraceElement("", "run_func", "librunner.so", 5038),
+                    StackTraceElement("Runner", "runFunc", "Runner.java", 14),
+                    StackTraceElement("App", "launch", "App.java", 70)
+                )
+            val trace = Stacktrace(
+                stacktrace, emptyList(),
+                NoopLogger
+            )
+            return Thread(
+                24, "main-one", ThreadType.ANDROID, true, trace,
+                NoopLogger
+            )
+        }
+
+        private fun createNonErrorHandlingThread(): Thread {
+            val stacktrace =
+                arrayOf(
+                    StackTraceElement("", "run_func", "librunner.so", 5038),
+                    StackTraceElement("Runner", "runFunc", "Runner.java", 14),
+                    StackTraceElement("App", "launch", "App.java", 70)
+                )
+            val trace = Stacktrace(
+                stacktrace, emptyList(),
+                NoopLogger
+            )
+            return Thread(
+                24, "main-one", ThreadType.ANDROID, false, trace,
+                NoopLogger
+            )
         }
     }
 
