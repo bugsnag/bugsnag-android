@@ -26,6 +26,14 @@ steps:
       docker-compose#v3.3.0:
         run: android-ci
 
+  - label: ':android: Build Scan'
+    depends_on: "android-jvm"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-jvm
+    command: './gradlew clean assembleRelease check --scan'
+
   - label: ':android: Android 9 end-to-end tests'
     depends_on:
       - "fixture-apk"
