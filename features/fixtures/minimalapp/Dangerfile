@@ -23,7 +23,7 @@ def buildOutputs(bugsnag: false, minified: false)
   `./gradlew assembleRelease #{opts}`
   `./gradlew bundleRelease #{opts}`
 
-  `java -jar bundletool.jar build-apks \
+  `java -jar /sdk/bundletool.jar build-apks \
     --bundle=#{BUNDLE_DIR + RELEASE_BUNDLE} \
     --output=#{BUNDLE_DIR + UNBUNDLED_RELEASE} \
     --ks=app/fakekeys.jks \
