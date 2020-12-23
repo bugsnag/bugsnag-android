@@ -34,8 +34,4 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 apply from: "../bugsnag-dependency.gradle"
-
-detekt {
-    input = files("src/main/java")
-    baseline = file("detekt-baseline.xml")
-}
+apply from: "../../../../gradle/detekt.gradle"

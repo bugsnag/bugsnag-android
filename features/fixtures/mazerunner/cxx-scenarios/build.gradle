@@ -41,8 +41,5 @@ dependencies {
 }
 
 apply from: "../bugsnag-dependency.gradle"
+apply from: "../../../../gradle/detekt.gradle"
 
-detekt {
-    input = files("src/main/java")
-    baseline = file("detekt-baseline.xml")
-}

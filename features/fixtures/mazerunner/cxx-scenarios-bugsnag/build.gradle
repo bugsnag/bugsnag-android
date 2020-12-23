@@ -41,10 +41,8 @@ dependencies {
     implementation "com.bugsnag:bugsnag-android:9.9.9"
 }
 
-detekt {
-    input = files("src/main/java")
-    baseline = file("detekt-baseline.xml")
-}
+apply from: "../../../../gradle/detekt.gradle"
+
 
 
 // extract SO files from the bugsnag AARs.

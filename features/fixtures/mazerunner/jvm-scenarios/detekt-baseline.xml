@@ -2,8 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>EmptyFunctionBlock:CustomPluginExample.kt$CustomPluginExample${}</ID>
-    <ID>EmptyFunctionBlock:Scenario.kt$Scenario${}</ID>
     <ID>MagicNumber:AppNotRespondingDisabledNdkScenario.kt$AppNotRespondingDisabledNdkScenario$50000</ID>
     <ID>MagicNumber:AppNotRespondingDisabledScenario.kt$AppNotRespondingDisabledScenario$50000</ID>
     <ID>MagicNumber:AppNotRespondingScenario.kt$AppNotRespondingScenario$50000</ID>
@@ -21,6 +19,5 @@
     <ID>TooGenericExceptionThrown:ReportCacheScenario.kt$ReportCacheScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Regular crash")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Startup crash")</ID>
-    <ID>TooManyFunctions:Scenario.kt$Scenario : ActivityLifecycleCallbacks</ID>
   </CurrentIssues>
 </SmellBaseline>
