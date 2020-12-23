@@ -1,12 +1,13 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-
 import com.bugsnag.android.Configuration
 import java.io.File
 
-internal class EmptyCacheFileScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class EmptyCacheFileScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.autoTrackSessions = false

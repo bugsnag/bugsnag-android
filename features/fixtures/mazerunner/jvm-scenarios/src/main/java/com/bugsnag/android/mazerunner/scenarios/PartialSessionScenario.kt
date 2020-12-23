@@ -5,13 +5,14 @@ import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 import com.bugsnag.android.Bugsnag
-
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.flushAllSessions
 import java.io.File
 
-internal class PartialSessionScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class PartialSessionScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.autoTrackSessions = false
@@ -39,8 +40,10 @@ internal class PartialSessionScenario(config: Configuration,
         val thread = HandlerThread("HandlerThread")
         thread.start()
 
-        Handler(thread.looper).post(Runnable {
-            flushAllSessions()
-        })
+        Handler(thread.looper).post(
+            Runnable {
+                flushAllSessions()
+            }
+        )
     }
 }

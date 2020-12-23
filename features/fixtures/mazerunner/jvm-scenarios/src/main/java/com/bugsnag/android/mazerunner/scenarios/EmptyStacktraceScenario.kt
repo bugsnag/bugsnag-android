@@ -8,8 +8,10 @@ import com.bugsnag.android.Configuration
 /**
  * Attempts to deliver a handled exception with no stacktrace.
  */
-internal class EmptyStacktraceScenario(config: Configuration,
-                                       context: Context) : Scenario(config, context) {
+internal class EmptyStacktraceScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }
@@ -21,5 +23,4 @@ internal class EmptyStacktraceScenario(config: Configuration,
 
     @SuppressLint("NewApi")
     class EmptyException(message: String?) : Throwable(message, null, true, false)
-
 }

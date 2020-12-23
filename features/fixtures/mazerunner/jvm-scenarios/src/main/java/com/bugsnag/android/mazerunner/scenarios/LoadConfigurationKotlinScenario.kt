@@ -1,18 +1,12 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.util.Log
-
-import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.Client
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.EndpointConfiguration
-import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.ThreadSendPolicy
 import java.lang.RuntimeException
-
 
 internal class LoadConfigurationKotlinScenario(
     config: Configuration,
@@ -23,7 +17,7 @@ internal class LoadConfigurationKotlinScenario(
         super.run()
         var testConfig = Configuration("78978978978978978978978978978978")
         testConfig.apiKey = "45645645645645645645645645645645"
-        testConfig.appVersion  = "0.9.8"
+        testConfig.appVersion = "0.9.8"
         testConfig.appType = "kotlin"
         testConfig.autoDetectErrors = true
         testConfig.autoTrackSessions = false
@@ -38,11 +32,13 @@ internal class LoadConfigurationKotlinScenario(
         testConfig.releaseStage = "kotlin"
         testConfig.sendThreads = ThreadSendPolicy.NEVER
         testConfig.versionCode = 98
-        testConfig.addOnError(OnErrorCallback { event ->
-            event.addMetadata("test", "filter_me", "bar")
-            event.addMetadata("test", "filter_me_two", "foobar")
-            true
-        })
+        testConfig.addOnError(
+            OnErrorCallback { event ->
+                event.addMetadata("test", "filter_me", "bar")
+                event.addMetadata("test", "filter_me_two", "foobar")
+                true
+            }
+        )
 
         Bugsnag.start(this.context, testConfig)
 

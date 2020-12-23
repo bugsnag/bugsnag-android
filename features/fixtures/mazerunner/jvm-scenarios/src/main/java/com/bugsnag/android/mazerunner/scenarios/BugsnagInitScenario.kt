@@ -38,5 +38,4 @@ internal class BugsnagInitScenario(
         bugsnag.addMetadata("client", "count", uniqueClients.size)
         bugsnag.notify(RuntimeException())
     }
-
 }

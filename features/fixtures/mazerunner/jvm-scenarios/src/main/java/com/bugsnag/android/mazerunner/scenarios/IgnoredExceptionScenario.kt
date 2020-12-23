@@ -7,8 +7,10 @@ import com.bugsnag.android.Configuration
  * Attempts to send an ignored handled exception to Bugsnag, which should not result
  * in any operation.
  */
-internal class IgnoredExceptionScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+internal class IgnoredExceptionScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
         config.discardClasses = setOf("java.lang.RuntimeException")
@@ -18,5 +20,4 @@ internal class IgnoredExceptionScenario(config: Configuration,
         super.run()
         throw RuntimeException("Should never appear")
     }
-
 }

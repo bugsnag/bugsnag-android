@@ -8,8 +8,10 @@ import com.bugsnag.android.flushAllSessions
 /**
  * Sends a manual session payload to Bugsnag.
  */
-internal class ManualSessionScenario(config: Configuration,
-                                     context: Context) : Scenario(config, context) {
+internal class ManualSessionScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }
@@ -20,5 +22,4 @@ internal class ManualSessionScenario(config: Configuration,
         Bugsnag.startSession()
         flushAllSessions()
     }
-
 }

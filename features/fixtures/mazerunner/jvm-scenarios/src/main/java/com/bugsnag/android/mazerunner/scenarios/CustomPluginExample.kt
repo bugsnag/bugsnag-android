@@ -7,10 +7,12 @@ import com.bugsnag.android.Plugin
 class CustomPluginExample : Plugin {
 
     override fun load(client: Client) {
-        client.addOnError(OnErrorCallback { event ->
-            event.context = "Foo Handler Library"
-            true
-        })
+        client.addOnError(
+            OnErrorCallback { event ->
+                event.context = "Foo Handler Library"
+                true
+            }
+        )
     }
 
     override fun unload() {}

@@ -2,8 +2,8 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.app.Activity
 import android.app.Application
-import android.os.Bundle
 import android.content.Context
+import android.os.Bundle
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
@@ -15,12 +15,11 @@ import com.bugsnag.android.createDefaultDelivery
 abstract class Scenario(
     protected val config: Configuration,
     protected val context: Context
-): Application.ActivityLifecycleCallbacks {
+) : Application.ActivityLifecycleCallbacks {
 
     var eventMetaData: String? = null
 
     open fun run() {
-
     }
 
     /**
@@ -28,7 +27,7 @@ abstract class Scenario(
      */
     protected fun disableSessionDelivery(config: Configuration) {
         val baseDelivery = createDefaultDelivery()
-        config.delivery = object: Delivery {
+        config.delivery = object : Delivery {
             override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                 return baseDelivery.deliver(payload, deliveryParams)
             }
@@ -44,7 +43,7 @@ abstract class Scenario(
      */
     protected fun disableReportDelivery(config: Configuration) {
         val baseDelivery = createDefaultDelivery()
-        config.delivery = object: Delivery {
+        config.delivery = object : Delivery {
             override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED
             }
@@ -56,7 +55,7 @@ abstract class Scenario(
     }
 
     protected fun disableAllDelivery(config: Configuration) {
-        config.delivery = object: Delivery {
+        config.delivery = object : Delivery {
             override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                 return DeliveryStatus.UNDELIVERED
             }
@@ -72,7 +71,6 @@ abstract class Scenario(
      */
     protected fun generateException(): Throwable = RuntimeException(javaClass.simpleName)
 
-
     /* Activity lifecycle callback overrides */
 
     protected fun registerActivityLifecycleCallbacks() {
@@ -86,5 +84,4 @@ abstract class Scenario(
     override fun onActivityStopped(activity: Activity) {}
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
     override fun onActivityDestroyed(activity: Activity) {}
-
 }

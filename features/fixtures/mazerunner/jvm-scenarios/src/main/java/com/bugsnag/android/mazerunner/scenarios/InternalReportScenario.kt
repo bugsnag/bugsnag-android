@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.storage.StorageManager
-
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import java.io.File
@@ -12,8 +11,10 @@ import java.io.File
 /**
  * Sends a handled exception to Bugsnag, which does not include session data.
  */
-internal class InternalReportScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class InternalReportScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.autoTrackSessions = false

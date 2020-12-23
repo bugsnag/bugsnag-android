@@ -9,8 +9,10 @@ import com.bugsnag.android.mazerunner.InterceptingDelivery
 /**
  * Sends an exception after pausing the session
  */
-internal class ManualSessionSmokeScenario(config: Configuration,
-                                          context: Context) : Scenario(config, context) {
+internal class ManualSessionSmokeScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.autoTrackSessions = false
@@ -30,7 +32,6 @@ internal class ManualSessionSmokeScenario(config: Configuration,
             }
             state++
         }
-
     }
 
     override fun run() {

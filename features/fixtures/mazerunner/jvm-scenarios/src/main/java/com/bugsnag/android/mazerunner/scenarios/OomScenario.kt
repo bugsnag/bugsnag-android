@@ -2,13 +2,15 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Configuration
-import java.util.*
+import java.util.LinkedList
 
 /**
  * Triggers an OutOfMemoryError by allocating new Strings and retaining references
  */
-internal class OomScenario(config: Configuration,
-                           context: Context) : Scenario(config, context) {
+internal class OomScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }
@@ -18,14 +20,16 @@ internal class OomScenario(config: Configuration,
     override fun run() {
         super.run()
         while (true) {
-            val array = Array(Int.MAX_VALUE, {
-                val input = "It's Supercalifragilisticexpialidocious! \n" +
+            val array = Array(
+                Int.MAX_VALUE,
+                {
+                    val input = "It's Supercalifragilisticexpialidocious! \n" +
                         "Even though the memory allocation\n" +
                         "Is really quite atrocious "
-                String(input.toByteArray()) // ensures new object created
-            })
+                    String(input.toByteArray()) // ensures new object created
+                }
+            )
             queue.add(array)
         }
     }
-
 }

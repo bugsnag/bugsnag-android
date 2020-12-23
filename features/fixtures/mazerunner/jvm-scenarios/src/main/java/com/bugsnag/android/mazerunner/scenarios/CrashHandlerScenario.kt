@@ -7,8 +7,10 @@ import com.bugsnag.android.Configuration
 /**
  * Sends an unhandled exception to Bugsnag, when another exception handler is installed.
  */
-internal class CrashHandlerScenario(config: Configuration,
-                                    context: Context) : Scenario(config, context) {
+internal class CrashHandlerScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }
@@ -23,6 +25,4 @@ internal class CrashHandlerScenario(config: Configuration,
         })
         throw RuntimeException("CrashHandlerScenario")
     }
-
 }
-

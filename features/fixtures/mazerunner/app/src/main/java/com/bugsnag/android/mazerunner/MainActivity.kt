@@ -73,7 +73,7 @@ class MainActivity : Activity() {
 
     private fun setStoredApiKey(apiKey: String) {
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
-        with (sharedPref.edit()) {
+        with(sharedPref.edit()) {
             putString(apiKeyKey, apiKey)
             commit()
         }
@@ -81,7 +81,7 @@ class MainActivity : Activity() {
 
     private fun clearStoredApiKey() {
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
-        with (sharedPref.edit()) {
+        with(sharedPref.edit()) {
             remove(apiKeyKey)
             commit()
         }
@@ -111,10 +111,13 @@ class MainActivity : Activity() {
          * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
          * unhandled Exceptions
          */
-        window.decorView.postDelayed({
-            log("Executing scenario $eventType")
-            testCase.run()
-        }, 1)
+        window.decorView.postDelayed(
+            {
+                log("Executing scenario $eventType")
+                testCase.run()
+            },
+            1
+        )
     }
 
     private fun loadScenario(configuration: Configuration, eventType: String, eventMetaData: String): Scenario {
@@ -137,8 +140,10 @@ class MainActivity : Activity() {
             setStoredApiKey(manualApiKey)
         } else {
             config = Configuration("a35a2a72bd230ac0aa0f52715bbdc6aa")
-            config.endpoints = EndpointConfiguration(notifyEndpointField.text.toString(),
-                                                     sessionEndpointField.text.toString())
+            config.endpoints = EndpointConfiguration(
+                notifyEndpointField.text.toString(),
+                sessionEndpointField.text.toString()
+            )
         }
         config.enabledErrorTypes.ndkCrashes = true
         config.enabledErrorTypes.anrs = true
@@ -147,7 +152,7 @@ class MainActivity : Activity() {
     }
 
     private fun getBugsnagLogger(): Logger {
-        return object: Logger {
+        return object : Logger {
             private val TAG = "Bugsnag"
 
             override fun e(msg: String) {

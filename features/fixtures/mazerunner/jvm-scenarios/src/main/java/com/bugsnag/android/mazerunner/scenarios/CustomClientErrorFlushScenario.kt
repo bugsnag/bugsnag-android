@@ -9,8 +9,10 @@ import com.bugsnag.android.createCustomHeaderDelivery
  * Sends an unhandled exception which is cached on disk to Bugsnag, then sent on a separate launch,
  * using a custom API client which modifies the request.
  */
-internal class CustomClientErrorFlushScenario(config: Configuration,
-                                              context: Context) : Scenario(config, context) {
+internal class CustomClientErrorFlushScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
         if (context is Activity) {

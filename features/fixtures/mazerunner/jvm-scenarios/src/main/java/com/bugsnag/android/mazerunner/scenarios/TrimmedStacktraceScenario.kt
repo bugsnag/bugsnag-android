@@ -8,8 +8,10 @@ import com.bugsnag.android.Configuration
  * Sends an exception with a long stacktrace to Bugsnag, which should trim the stack frames so that
  * the request can be sent
  */
-internal class TrimmedStacktraceScenario(config: Configuration,
-                                         context: Context) : Scenario(config, context) {
+internal class TrimmedStacktraceScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }
@@ -19,17 +21,22 @@ internal class TrimmedStacktraceScenario(config: Configuration,
         val stacktrace = mutableListOf<StackTraceElement>()
 
         for (lineNumber in 1..100000) {
-            stacktrace.add(StackTraceElement("SomeClass",
-                "someRecursiveMethod", "Foo.kt", lineNumber))
+            stacktrace.add(
+                StackTraceElement(
+                    "SomeClass",
+                    "someRecursiveMethod",
+                    "Foo.kt",
+                    lineNumber
+                )
+            )
         }
         val exc = RuntimeException()
         exc.stackTrace = stacktrace.toTypedArray()
 
-        Bugsnag.notify(exc){
+        Bugsnag.notify(exc) {
             it.errors[0].errorClass = "CustomException"
             it.errors[0].errorMessage = "foo"
             true
         }
     }
-
 }

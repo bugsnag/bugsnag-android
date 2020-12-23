@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import android.content.Context
-import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class TestCaseFactory {
@@ -11,5 +10,4 @@ class TestCaseFactory {
         val constructor = clz.constructors[0]
         return constructor.newInstance(config, context) as Scenario
     }
-
 }

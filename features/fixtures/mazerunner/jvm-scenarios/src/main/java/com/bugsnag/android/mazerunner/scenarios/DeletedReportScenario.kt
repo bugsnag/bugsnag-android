@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.app.Activity
 import android.content.Context
 import com.bugsnag.android.Bugsnag
-
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
@@ -13,8 +12,10 @@ import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 import java.io.File
 
-internal class DeletedReportScenario(config: Configuration,
-                                     context: Context) : Scenario(config, context) {
+internal class DeletedReportScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.autoTrackSessions = false
@@ -28,7 +29,7 @@ internal class DeletedReportScenario(config: Configuration,
                 val baseDelivery = createDefaultDelivery()
                 val errDir = File(context.cacheDir, "bugsnag-errors")
 
-                config.delivery = object: Delivery {
+                config.delivery = object : Delivery {
                     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
                         return baseDelivery.deliver(payload, deliveryParams)
                     }

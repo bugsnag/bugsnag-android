@@ -13,8 +13,10 @@ import com.bugsnag.android.writeErrorToStore
  * Tests that only 1 request is sent in the case where stored reports are concurrently flushed,
  * in the case that a connectivity change occurs before launch.
  */
-internal class AsyncErrorConnectivityScenario(config: Configuration,
-                                              context: Context) : Scenario(config, context) {
+internal class AsyncErrorConnectivityScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         val delivery = createSlowDelivery()
@@ -30,5 +32,4 @@ internal class AsyncErrorConnectivityScenario(config: Configuration,
         flushErrorStoreAsync(Bugsnag.getClient())
         flushErrorStoreOnLaunch(Bugsnag.getClient())
     }
-
 }

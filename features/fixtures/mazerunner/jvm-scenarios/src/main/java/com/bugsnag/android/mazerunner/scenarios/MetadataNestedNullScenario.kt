@@ -15,7 +15,6 @@ internal class MetadataNestedNullScenario(
 
     init {
         config.autoTrackSessions = false
-
     }
 
     override fun run() {
@@ -32,5 +31,4 @@ internal class MetadataNestedNullScenario(
             true
         }
     }
-
 }

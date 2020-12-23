@@ -8,8 +8,10 @@ import com.bugsnag.android.createCustomHeaderDelivery
 /**
  * Sends a session using a custom API client which modifies the request.
  */
-internal class CustomClientSessionScenario(config: Configuration,
-                                           context: Context) : Scenario(config, context) {
+internal class CustomClientSessionScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.delivery = createCustomHeaderDelivery()
@@ -20,5 +22,4 @@ internal class CustomClientSessionScenario(config: Configuration,
         super.run()
         Bugsnag.startSession()
     }
-
 }
