@@ -3,6 +3,9 @@ plugins {
     id "kotlin-android"
 }
 
+apply plugin: "io.gitlab.arturbosch.detekt"
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+
 android {
     compileSdkVersion 30
 
@@ -36,6 +39,11 @@ dependencies {
     implementation project(":jvm-scenarios")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.bugsnag:bugsnag-android:9.9.9"
+}
+
+detekt {
+    input = files("src/main/java")
+    baseline = file("detekt-baseline.xml")
 }
 
 
