@@ -22,21 +22,19 @@ class ExampleApplication : Application() {
 
     private external fun performNativeBugsnagSetup()
 
-    private val multiProcessApp = true
-
     override fun onCreate() {
         super.onCreate()
-
 
         val config = Configuration.load(this)
         config.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         config.addMetadata("user", "age", 31)
 
-        if (multiProcessApp) {
-            // alter the persistenceDirectory so that each process uses a unique directory
-//            val processName = findCurrentProcessName()
+        // Configure the persistence directory when running MultiProcessActivity in a separate
+        // process to ensure the two Bugsnag clients are independent
+//        val processName = findCurrentProcessName()
+//        if (processName.endsWith("secondaryprocess")) {
 //            config.persistenceDirectory = File(filesDir, processName)
-        }
+//        }
 
         Bugsnag.start(this, config)
 
