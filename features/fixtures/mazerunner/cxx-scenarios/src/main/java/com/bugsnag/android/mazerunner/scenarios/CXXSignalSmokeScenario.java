@@ -26,7 +26,10 @@ public class CXXSignalSmokeScenario extends Scenario {
 
     public native int crash(int value);
 
-    CXXSignalSmokeScenario(@NonNull Configuration config, @NonNull Context context) {
+    /**
+     *
+     */
+    public CXXSignalSmokeScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
         config.setAppType("Overwritten");

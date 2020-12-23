@@ -42,11 +42,11 @@ internal class NewSessionScenario(
                 client.notify(generateException())
                 Log.d("Bugsnag - New", "First exception notified")
                 Thread.sleep(SLEEP_MS)
-// stop tracking the existing session
+                // stop tracking the existing session
                 client.pauseSession()
                 Log.d("Bugsnag - New", "First session paused")
                 Thread.sleep(SLEEP_MS)
-// send 2nd exception which should contain new session info
+                // send 2nd exception which should contain new session info
                 client.startSession()
                 Log.d("Bugsnag - New", "Second session started")
                 Thread.sleep(SLEEP_MS)

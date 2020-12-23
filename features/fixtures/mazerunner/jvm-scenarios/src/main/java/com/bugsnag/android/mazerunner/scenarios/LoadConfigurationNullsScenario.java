@@ -15,7 +15,10 @@ public class LoadConfigurationNullsScenario extends Scenario {
     private String notifyEndpoint;
     private String sessionEndpoint;
 
-    LoadConfigurationNullsScenario(@NonNull Configuration config, @NonNull Context context) {
+    /**
+     *
+     */
+    public LoadConfigurationNullsScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         this.context = context;
         this.notifyEndpoint = config.getEndpoints().getNotify();

@@ -15,7 +15,10 @@ public class CXXTrapOutsideReleaseStagesScenario extends Scenario {
 
     public native void crash();
 
-    CXXTrapOutsideReleaseStagesScenario(@NonNull Configuration config,
+    /**
+     *
+     */
+    public CXXTrapOutsideReleaseStagesScenario(@NonNull Configuration config,
                                                @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);

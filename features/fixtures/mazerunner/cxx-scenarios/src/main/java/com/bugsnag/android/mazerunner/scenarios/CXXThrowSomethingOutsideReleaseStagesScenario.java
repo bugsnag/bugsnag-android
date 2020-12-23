@@ -15,7 +15,10 @@ public class CXXThrowSomethingOutsideReleaseStagesScenario extends Scenario {
 
     public native void crash(int num);
 
-    CXXThrowSomethingOutsideReleaseStagesScenario(@NonNull Configuration config,
+    /**
+     * Sets custom enabled release stages.
+     */
+    public CXXThrowSomethingOutsideReleaseStagesScenario(@NonNull Configuration config,
                                                   @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);

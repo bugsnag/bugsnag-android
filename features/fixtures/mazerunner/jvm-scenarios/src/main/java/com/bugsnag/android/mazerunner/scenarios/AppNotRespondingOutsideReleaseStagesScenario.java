@@ -11,7 +11,10 @@ import java.util.Collections;
 
 public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
 
-    AppNotRespondingOutsideReleaseStagesScenario(@NonNull Configuration config,
+    /**
+     *
+     */
+    public AppNotRespondingOutsideReleaseStagesScenario(@NonNull Configuration config,
                                                  @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);

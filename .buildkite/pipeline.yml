@@ -116,6 +116,14 @@ steps:
           run: android-ci
     command: 'bash ./scripts/run-cpp-check.sh'
 
+  - label: ':android: Lint mazerunner scenarios'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-builder
+    command: 'cd features/fixtures/mazerunner && ./gradlew ktlintCheck detekt checkstyle'
+
   - label: ':android: JVM tests'
     depends_on: "android-ci"
     timeout_in_minutes: 10
