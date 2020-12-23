@@ -1,14 +1,17 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.*
-import java.util.*
+import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
+import com.bugsnag.android.OnBreadcrumbCallback
+import com.bugsnag.android.OnErrorCallback
+import com.bugsnag.android.Severity
 
 /**
  * Sends a handled exception to Bugsnag, which does not include session data.
  */
 internal class HandledKotlinSmokeScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+                                          context: Context) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
         config.appType = "Overwritten"

@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>MagicNumber:CXXNaughtyStringsScenario.kt$CXXNaughtyStringsScenario$200</ID>
+  </CurrentIssues>
+</SmellBaseline>

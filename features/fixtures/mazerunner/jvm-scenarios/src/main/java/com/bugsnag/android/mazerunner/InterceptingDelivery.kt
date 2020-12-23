@@ -1,6 +1,10 @@
 package com.bugsnag.android.mazerunner
 
-import com.bugsnag.android.*
+import com.bugsnag.android.Delivery
+import com.bugsnag.android.DeliveryParams
+import com.bugsnag.android.DeliveryStatus
+import com.bugsnag.android.EventPayload
+import com.bugsnag.android.Session
 
 class InterceptingDelivery(private val baseDelivery: Delivery,
                            private val callback: () -> Unit): Delivery {
