@@ -42,4 +42,4 @@ dependencies {
 
 apply from: "../bugsnag-dependency.gradle"
 apply from: "../../../../gradle/detekt.gradle"
-
+apply from: "../../../../gradle/checkstyle.gradle"
