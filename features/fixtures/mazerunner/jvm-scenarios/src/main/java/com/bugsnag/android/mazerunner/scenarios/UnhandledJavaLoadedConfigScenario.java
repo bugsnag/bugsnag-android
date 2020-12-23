@@ -1,19 +1,18 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.OnErrorCallback;
+
+import android.content.Context;
+import androidx.annotation.NonNull;
 
 /**
  * Sends an unhandled exception to Bugsnag.
  */
 public class UnhandledJavaLoadedConfigScenario extends Scenario {
 
-    public UnhandledJavaLoadedConfigScenario(@NonNull Configuration config, @NonNull Context context) {
+    public UnhandledJavaLoadedConfigScenario(@NonNull Configuration config,
+                                             @NonNull Context context) {
         super(config, context);
     }
 

@@ -8,6 +8,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 public class CXXJavaBreadcrumbNativeCrashScenario extends Scenario {
+
     static {
         System.loadLibrary("cxx-scenarios");
     }

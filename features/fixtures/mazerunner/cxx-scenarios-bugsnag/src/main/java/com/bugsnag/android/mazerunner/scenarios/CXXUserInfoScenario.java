@@ -7,6 +7,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 public class CXXUserInfoScenario extends Scenario {
+
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("cxx-scenarios-bugsnag");

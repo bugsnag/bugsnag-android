@@ -7,6 +7,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 public class CXXExternalStackElementScenario extends Scenario {
+
     static {
         System.loadLibrary("monochrome");
         System.loadLibrary("cxx-scenarios");
