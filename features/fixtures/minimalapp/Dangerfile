@@ -19,7 +19,6 @@ MINIFIED_PROP = "-P minified=true"
 
 def buildOutputs(bugsnag: false, minified: false)
   opts = "#{bugsnag ? BUGSNAG_PROP : ''} #{minified ? MINIFIED_PROP : ''}"
-  `./gradlew clean`
   `./gradlew assembleRelease #{opts}`
   `./gradlew bundleRelease #{opts}`
 

@@ -9,5 +9,5 @@ COPY features/ /app/features
 CMD ./gradlew -p=${FIXTURE_PROJECT} assembleRelease \
   -PMINIMAL_FIXTURE=${MINIMAL_FIXTURE} \
   -PTEST_FIXTURE_NDK_VERSION=${TEST_FIXTURE_NDK_VERSION} \
-  -PTEST_FIXTURE_NAME=${TEST_FIXTURE_NAME} \
+  -PTEST_FIXTURE_NAME=${TEST_FIXTURE_NAME} --scan \
   && cp -R ${FIXTURE_PROJECT}/app/build/outputs/apk/release /app/build

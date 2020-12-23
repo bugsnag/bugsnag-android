@@ -80,7 +80,7 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
-    command: './gradlew lint'
+    command: './gradlew lint --scan'
 
   - label: ':android: Checkstyle'
     depends_on: "android-ci"
@@ -88,7 +88,7 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
-    command: './gradlew checkstyle'
+    command: './gradlew checkstyle --scan'
 
   - label: ':android: Detekt'
     depends_on: "android-ci"
@@ -96,7 +96,7 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
-    command: './gradlew detekt'
+    command: './gradlew detekt --scan'
 
   - label: ':android: Ktlint'
     depends_on: "android-ci"
@@ -104,7 +104,7 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
-    command: './gradlew ktlintCheck'
+    command: './gradlew ktlintCheck --scan'
 
   - label: ':android: CppCheck'
     depends_on: "android-ci"
@@ -120,7 +120,7 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
-    command: './gradlew test'
+    command: './gradlew test --scan'
 
   - label: ':android: Android 4.4 Instrumentation tests'
     key: 'NDK-smoke-test'
