@@ -13,20 +13,13 @@ RUN unzip -q sdk-tools-linux-4333796.zip
 
 ENV PATH="${PATH}:/sdk/tools:/sdk/tools/bin"
 ENV PATH="${PATH}:/sdk/platform-tools"
-ENV LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64"
 
 RUN yes | sdkmanager "platform-tools" > /dev/null
-
-# Download and expand all NDK versions that might be used.
-# ANDROID_NDK_HOME is then set on-demand.
-RUN wget -q https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip
-RUN wget -q https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
-RUN wget -q https://dl.google.com/android/repository/android-ndk-r19-linux-x86_64.zip
-RUN wget -q https://dl.google.com/android/repository/android-ndk-r21d-linux-x86_64.zip
-
-# Unzip all NDKs
-RUN unzip -q 'android-ndk-*-linux-x86_64.zip'
-
-# Clean up downloaded files
-RUN rm android-ndk-*-linux-x86_64.zip
-RUN rm sdk-tools-linux-4333796.zip
+RUN yes | sdkmanager "ndk;16.1.4479499" > /dev/null
+RUN yes | sdkmanager "ndk;19.2.5345600" > /dev/null
+RUN yes | sdkmanager "ndk;21.3.6528147" > /dev/null
+RUN yes | sdkmanager "cmake;3.10.2.4988404" > /dev/null
+RUN yes | sdkmanager "platforms;android-28" > /dev/null
+RUN yes | sdkmanager "platforms;android-30" > /dev/null
+RUN yes | sdkmanager "build-tools;28.0.3" > /dev/null
+RUN yes | sdkmanager "build-tools;29.0.2" > /dev/null

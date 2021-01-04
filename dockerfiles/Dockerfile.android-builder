@@ -10,4 +10,8 @@ COPY features/ /app/features
 
 ENV FIXTURE_PROJECT=/app/features/fixtures/mazerunner
 
-CMD ./gradlew -p=${FIXTURE_PROJECT} assembleRelease -PMINIMAL_FIXTURE=${MINIMAL_FIXTURE} && cp -R ${FIXTURE_PROJECT}/app/build/outputs/apk/release /app/build
+CMD ./gradlew -p=${FIXTURE_PROJECT} assembleRelease \
+  -PMINIMAL_FIXTURE=${MINIMAL_FIXTURE} \
+  -PTEST_FIXTURE_NDK_VERSION=${TEST_FIXTURE_NDK_VERSION} \
+  -PTEST_FIXTURE_NAME=${TEST_FIXTURE_NAME} \
+  && cp -R ${FIXTURE_PROJECT}/app/build/outputs/apk/release /app/build
