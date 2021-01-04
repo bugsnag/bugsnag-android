@@ -121,6 +121,14 @@ steps:
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
+          run: android-ci
+    command: 'bash ./scripts/run-clang-format-ci-check.sh'
+
+  - label: ':android: ClangFormat'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
           run: android-builder
     command: 'cd features/fixtures/mazerunner && ./gradlew ktlintCheck detekt checkstyle'
 
