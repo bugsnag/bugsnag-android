@@ -1,7 +1,7 @@
-#include "build.h"
 #include "stack_unwinder_libunwind.h"
-#include <malloc.h>
+#include "build.h"
 #include <event.h>
+#include <malloc.h>
 #include <unwind.h>
 
 #if defined(__arm__)
@@ -40,9 +40,9 @@ bsg_libunwind_callback(struct _Unwind_Context *context, void *arg) __asyncsafe {
 }
 
 #if defined(__arm__)
-ssize_t
-bsg_unwind_stack_libunwind_arm32(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
-                                 siginfo_t *info, void *user_context) __asyncsafe {
+ssize_t bsg_unwind_stack_libunwind_arm32(
+    bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX], siginfo_t *info,
+    void *user_context) __asyncsafe {
   unw_cursor_t cursor;
   unw_context_t uc;
   int index = 0;

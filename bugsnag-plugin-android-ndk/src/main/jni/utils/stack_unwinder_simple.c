@@ -1,10 +1,11 @@
-#include "string.h"
 #include "stack_unwinder_simple.h"
+#include "string.h"
 #include <stdlib.h>
 #include <ucontext.h>
 
-ssize_t bsg_unwind_stack_simple(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
-                                siginfo_t *info, void *user_context) {
+ssize_t
+bsg_unwind_stack_simple(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                        siginfo_t *info, void *user_context) {
   if (user_context != NULL) {
     // program counter / instruction pointer
     uintptr_t ip = 0;
