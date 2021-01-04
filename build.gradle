@@ -74,6 +74,13 @@ private void configureAndroidProject(Project proj) {
         testOptions {
             unitTests.returnDefaultValues = true
         }
+        buildFeatures {
+            aidl = false
+            renderScript = false
+            shaders = false
+            resValues = false
+            buildConfig = false
+        }
     }
 }
 
