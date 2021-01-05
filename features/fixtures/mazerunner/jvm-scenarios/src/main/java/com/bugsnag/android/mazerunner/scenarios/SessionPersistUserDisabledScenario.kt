@@ -1,6 +1,5 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import android.app.Activity
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
@@ -8,8 +7,10 @@ import com.bugsnag.android.Configuration
 /**
  * Sends a session which is cached on disk to Bugsnag, then sent on a separate launch.
  */
-internal class SessionPersistUserDisabledScenario(config: Configuration,
-                                   context: Context) : Scenario(config, context) {
+internal class SessionPersistUserDisabledScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
         config.persistUser = false
@@ -22,5 +23,4 @@ internal class SessionPersistUserDisabledScenario(config: Configuration,
         }
         Bugsnag.startSession()
     }
-
 }

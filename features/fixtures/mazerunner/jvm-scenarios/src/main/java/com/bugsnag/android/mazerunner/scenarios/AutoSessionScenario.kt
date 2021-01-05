@@ -1,16 +1,17 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.Configuration
-
 import android.content.Context
 import android.content.Intent
+import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
 
 /**
  * Sends a manual session payload to Bugsnag.
  */
-internal class AutoSessionScenario(config: Configuration,
-                                   context: Context) : Scenario(config, context) {
+internal class AutoSessionScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     override fun run() {
         super.run()
         config.autoTrackSessions = true
@@ -18,5 +19,4 @@ internal class AutoSessionScenario(config: Configuration,
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
         context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }
-
 }

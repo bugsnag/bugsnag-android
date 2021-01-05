@@ -1,18 +1,13 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import com.bugsnag.android.BreadcrumbType;
 import com.bugsnag.android.Bugsnag;
-import com.bugsnag.android.Client;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.EndpointConfiguration;
 import com.bugsnag.android.Event;
 import com.bugsnag.android.OnErrorCallback;
 
 import android.content.Context;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 
 public class LoadConfigurationNullsScenario extends Scenario {
 
@@ -20,6 +15,9 @@ public class LoadConfigurationNullsScenario extends Scenario {
     private String notifyEndpoint;
     private String sessionEndpoint;
 
+    /**
+     *
+     */
     public LoadConfigurationNullsScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         this.context = context;
@@ -34,7 +32,7 @@ public class LoadConfigurationNullsScenario extends Scenario {
         // Setup
         testConfig.setAutoDetectErrors(true);
         testConfig.setAutoTrackSessions(false);
-        testConfig.setEndpoints(new EndpointConfiguration(this.notifyEndpoint, this.sessionEndpoint));
+        testConfig.setEndpoints(new EndpointConfiguration(notifyEndpoint, sessionEndpoint));
 
         // Nullable options
         testConfig.setAppType(null);

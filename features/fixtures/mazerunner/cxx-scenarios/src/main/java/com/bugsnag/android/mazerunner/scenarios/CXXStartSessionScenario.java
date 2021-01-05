@@ -10,6 +10,7 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 
 public class CXXStartSessionScenario extends Scenario {
+
     static {
         System.loadLibrary("cxx-scenarios");
     }

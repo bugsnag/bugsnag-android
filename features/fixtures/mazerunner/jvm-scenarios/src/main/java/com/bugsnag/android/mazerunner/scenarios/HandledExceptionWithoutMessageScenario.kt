@@ -8,8 +8,10 @@ import com.bugsnag.android.mazerunner.SomeException
 /**
  * Sends a handled exception to Bugsnag, which does not include session data.
  */
-internal class HandledExceptionWithoutMessageScenario(config: Configuration,
-                                                      context: Context) : Scenario(config, context) {
+internal class HandledExceptionWithoutMessageScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }

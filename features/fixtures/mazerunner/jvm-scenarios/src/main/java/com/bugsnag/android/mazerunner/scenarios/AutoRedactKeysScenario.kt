@@ -7,8 +7,10 @@ import com.bugsnag.android.Configuration
 /**
  * Sends a handled exception to Bugsnag, which contains metadata that should be filtered
  */
-internal class AutoRedactKeysScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class AutoRedactKeysScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }
@@ -20,5 +22,4 @@ internal class AutoRedactKeysScenario(config: Configuration,
         Bugsnag.addMetadata("custom", "foo", "hunter2")
         Bugsnag.notify(generateException())
     }
-
 }

@@ -8,6 +8,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 public class CXXCustomMetadataNativeCrashScenario extends Scenario {
+
     static {
         System.loadLibrary("cxx-scenarios");
     }

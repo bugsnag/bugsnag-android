@@ -15,10 +15,12 @@ internal class OverrideToHandledExceptionScenario(
 ) : Scenario(config, context) {
     init {
         config.autoTrackSessions = true
-        config.addOnError(OnErrorCallback {
-            it.isUnhandled = false
-            true
-        })
+        config.addOnError(
+            OnErrorCallback {
+                it.isUnhandled = false
+                true
+            }
+        )
         config.addOnSession(OnSessionCallback { false })
     }
 

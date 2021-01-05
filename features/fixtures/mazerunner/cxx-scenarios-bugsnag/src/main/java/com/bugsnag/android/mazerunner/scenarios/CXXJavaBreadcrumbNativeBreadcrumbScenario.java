@@ -1,15 +1,15 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Bugsnag;
+import com.bugsnag.android.Configuration;
 
 import android.content.Context;
 import android.os.Handler;
 
-import com.bugsnag.android.Bugsnag;
-import com.bugsnag.android.Configuration;
-
 import androidx.annotation.NonNull;
 
 public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
+
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("cxx-scenarios-bugsnag");
@@ -19,7 +19,8 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
 
     private Handler handler = new Handler();
 
-    public CXXJavaBreadcrumbNativeBreadcrumbScenario(@NonNull Configuration config, @NonNull Context context) {
+    public CXXJavaBreadcrumbNativeBreadcrumbScenario(@NonNull Configuration config,
+                                                     @NonNull Context context) {
         super(config, context);
     }
 

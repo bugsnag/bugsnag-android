@@ -7,6 +7,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 public class CXXExtraordinaryLongStringScenario extends Scenario {
+
     static {
         System.loadLibrary("cxx-scenarios");
     }

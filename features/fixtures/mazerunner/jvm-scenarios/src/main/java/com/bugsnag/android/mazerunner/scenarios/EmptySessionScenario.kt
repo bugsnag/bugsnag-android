@@ -10,8 +10,10 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.flushAllSessions
 import java.io.File
 
-internal class EmptySessionScenario(config: Configuration,
-                                    context: Context) : Scenario(config, context) {
+internal class EmptySessionScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.autoTrackSessions = false
@@ -24,7 +26,7 @@ internal class EmptySessionScenario(config: Configuration,
                 disableAllDelivery(config)
             } else {
                 val files = dir.listFiles()
-                Log.d("Bugsnag", "Empty sessions: ${files}")
+                Log.d("Bugsnag", "Empty sessions: $files")
                 files.forEach { it.writeText("") }
             }
         }
@@ -40,8 +42,10 @@ internal class EmptySessionScenario(config: Configuration,
         val thread = HandlerThread("HandlerThread")
         thread.start()
 
-        Handler(thread.looper).post(Runnable {
-            flushAllSessions()
-        })
+        Handler(thread.looper).post(
+            Runnable {
+                flushAllSessions()
+            }
+        )
     }
 }

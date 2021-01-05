@@ -1,19 +1,21 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Configuration;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-
-import com.bugsnag.android.Bugsnag;
-import com.bugsnag.android.Configuration;
+import androidx.annotation.NonNull;
 
 import java.util.Collections;
 
-import androidx.annotation.NonNull;
-
 public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
 
-    public AppNotRespondingOutsideReleaseStagesScenario(@NonNull Configuration config, @NonNull Context context) {
+    /**
+     *
+     */
+    public AppNotRespondingOutsideReleaseStagesScenario(@NonNull Configuration config,
+                                                 @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);
         config.setEnabledReleaseStages(Collections.singleton("fee-fi-fo-fum"));
@@ -28,7 +30,7 @@ public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
             public void run() {
                 try {
                     Thread.sleep(50000); // Forever
-                } catch (Exception _ex) {
+                } catch (Exception exc) {
                     // Catch possible thread interruption exception
                 }
             }

@@ -8,8 +8,10 @@ import com.bugsnag.android.createCustomHeaderDelivery
 /**
  * Sends a handled exception to Bugsnag using a custom API client which modifies the request.
  */
-internal class CustomClientErrorScenario(config: Configuration,
-                                         context: Context) : Scenario(config, context) {
+internal class CustomClientErrorScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
 
     init {
         config.delivery = createCustomHeaderDelivery()
@@ -21,5 +23,4 @@ internal class CustomClientErrorScenario(config: Configuration,
         super.run()
         Bugsnag.notify(RuntimeException("Hello"))
     }
-
 }

@@ -1,19 +1,18 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-
-import androidx.annotation.NonNull;
-
 import com.bugsnag.android.Breadcrumb;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Event;
 import com.bugsnag.android.OnBreadcrumbCallback;
 import com.bugsnag.android.OnErrorCallback;
-import com.bugsnag.android.Session;
 import com.bugsnag.android.Severity;
+
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.annotation.NonNull;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -27,6 +26,9 @@ public class CXXSignalSmokeScenario extends Scenario {
 
     public native int crash(int value);
 
+    /**
+     *
+     */
     public CXXSignalSmokeScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
         config.setAutoTrackSessions(false);

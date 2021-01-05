@@ -8,8 +8,10 @@ import com.bugsnag.android.Configuration
 /**
  * Sends a session which is cached on disk to Bugsnag, then sent on a separate launch.
  */
-internal class SessionCacheScenario(config: Configuration,
-                                   context: Context) : Scenario(config, context) {
+internal class SessionCacheScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
         if (context is Activity) {
@@ -25,5 +27,4 @@ internal class SessionCacheScenario(config: Configuration,
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
         Bugsnag.startSession()
     }
-
 }

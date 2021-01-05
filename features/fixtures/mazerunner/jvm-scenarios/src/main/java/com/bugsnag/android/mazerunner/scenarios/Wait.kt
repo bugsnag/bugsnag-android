@@ -12,8 +12,10 @@ internal class Wait(config: Configuration, context: Context) : Scenario(config, 
         super.run()
         val thread = HandlerThread("HandlerThread")
         thread.start()
-        Handler(thread.looper).post(Runnable {
-            flushAllSessions()
-        })
+        Handler(thread.looper).post(
+            Runnable {
+                flushAllSessions()
+            }
+        )
     }
 }

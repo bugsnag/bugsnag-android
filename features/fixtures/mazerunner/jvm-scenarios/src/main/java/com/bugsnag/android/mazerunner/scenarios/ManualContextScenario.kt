@@ -7,8 +7,10 @@ import com.bugsnag.android.Configuration
 /**
  * Sends a handled exception to Bugsnag, which includes manual context.
  */
-internal class ManualContextScenario(config: Configuration,
-                                     context: Context) : Scenario(config, context) {
+internal class ManualContextScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }
@@ -18,5 +20,4 @@ internal class ManualContextScenario(config: Configuration,
         Bugsnag.setContext("FooContext")
         Bugsnag.notify(generateException())
     }
-
 }

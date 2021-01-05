@@ -1,15 +1,16 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-
-import android.content.Context
 
 /**
  * Sends a handled exception to Bugsnag where the API key is changed in a callback
  */
-internal class HandledExceptionApiKeyChangeScenario(config: Configuration,
-                                                    context: Context) : Scenario(config, context) {
+internal class HandledExceptionApiKeyChangeScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
     init {
         config.autoTrackSessions = false
     }

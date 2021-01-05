@@ -1,14 +1,14 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-
 import com.bugsnag.android.Configuration;
+
+import android.content.Context;
+import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
 public class CXXDelayedNotifyScenario extends Scenario {
+
     static {
         System.loadLibrary("cxx-scenarios-bugsnag");
     }
