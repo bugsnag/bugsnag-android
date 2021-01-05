@@ -172,9 +172,6 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    # temp workaround browserstack network issue where 400 status codes fail the tests
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 5 NDK r16 smoke tests'
     key: 'android-5-smoke'
@@ -217,9 +214,6 @@ steps:
         - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    # temp workaround browserstack network issue where 400 status codes fail the tests
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 7 NDK r19 smoke tests'
     key: 'android-7-smoke'
@@ -240,9 +234,6 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    # temp workaround browserstack network issue where 400 status codes fail the tests
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 8.0 NDK r19 smoke tests'
     key: 'android-8-smoke'
