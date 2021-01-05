@@ -15,13 +15,6 @@ services:
       BROWSER_STACK_ACCESS_KEY:
       INSTRUMENTATION_DEVICES:
 
-  android-jvm:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android-jvm
-      args:
-        BRANCH_NAME: ${BRANCH_NAME}
-
   android-builder:
     build:
       context: .

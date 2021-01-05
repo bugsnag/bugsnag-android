@@ -1,4 +1,5 @@
 steps:
+  # downloads the Android toolchain
   - label: ':docker: Build Android base image'
     key: "android-common"
     timeout_in_minutes: 30
@@ -13,6 +14,7 @@ steps:
           push:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
 
+  # assembles the bugsnag-android SDK
   - label: ':docker: Build Android base CI image'
     key: "android-ci"
     depends_on: "android-common"
@@ -34,20 +36,6 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           build: android-maze-runner
-
-  - label: ':docker: Build Android JVM test image'
-    key: "android-jvm"
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          build: android-jvm
-          image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
-          cache-from:
-            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-jvm-${BRANCH_NAME}
-      - docker-compose#v3.7.0:
-          push:
-            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-jvm-${BRANCH_NAME}
 
   - label: ':android: Build fixture APK r16'
     key: "fixture-r16"
@@ -88,59 +76,52 @@ steps:
       TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
       TEST_FIXTURE_NAME: "fixture-r21.apk"
 
-  - label: ':android: Android size reporting'
+  - label: ':android: Lint'
     depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
-          run: android-sizer
-
-  - label: ':android: Lint'
-    depends_on: "android-jvm"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-jvm
+          run: android-ci
     command: './gradlew lint'
 
   - label: ':android: Checkstyle'
-    depends_on: "android-jvm"
+    depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
-          run: android-jvm
+          run: android-ci
     command: './gradlew checkstyle'
 
   - label: ':android: Detekt'
-    depends_on: "android-jvm"
+    depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
-          run: android-jvm
+          run: android-ci
     command: './gradlew detekt'
 
   - label: ':android: Ktlint'
-    depends_on: "android-jvm"
+    depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
-          run: android-jvm
+          run: android-ci
     command: './gradlew ktlintCheck'
 
   - label: ':android: CppCheck'
-    depends_on: "android-jvm"
+    depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
-          run: android-jvm
+          run: android-ci
     command: 'bash ./scripts/run-cpp-check.sh'
 
   - label: ':android: JVM tests'
-    depends_on: "android-jvm"
+    depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
-          run: android-jvm
+          run: android-ci
     command: './gradlew test'
 
   - label: ':android: Android 4.4 Instrumentation tests'
