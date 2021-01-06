@@ -1,8 +1,8 @@
-FROM openjdk:11-jdk-buster
+FROM ubuntu:20.04
 
-RUN apt-get update
-RUN apt-get install -y wget maven gnupg1 cppcheck libncurses5 jq
-RUN apt-get clean
+RUN apt-get update > /dev/null
+RUN apt-get install -y wget maven gnupg1 cppcheck libncurses5 jq clang-format unzip curl git > /dev/null
+RUN apt-get clean > /dev/null
 
 ENV ANDROID_SDK_ROOT="/sdk"
 ENV ANDROID_CMDLINE_TOOLS="${ANDROID_SDK_ROOT}/cmdline-tools/latest"
