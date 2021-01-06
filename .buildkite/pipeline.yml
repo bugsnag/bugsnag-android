@@ -50,19 +50,6 @@ steps:
       TEST_FIXTURE_NDK_VERSION: "16.1.4479499"
       TEST_FIXTURE_NAME: "fixture-r16.apk"
 
-  - label: ':android: Build fixture APK r19'
-    key: "fixture-r19"
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    artifact_paths: build/release/fixture-r19.apk
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-builder
-    env:
-      MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "19.2.5345600"
-      TEST_FIXTURE_NAME: "fixture-r19.apk"
-
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
     depends_on: "android-ci"
