@@ -32,6 +32,9 @@ elif [[ "$BUILDKITE_MESSAGE" == *"[quick ci]"* ]]; then
   echo "End-to-end smoke tests will be run on all supported Android versions"
   buildkite-agent pipeline upload .buildkite/pipeline.quick.yml
 else
-  echo "Running quick build"
+  echo "Running barebones build by default"
+  echo "Unit and static tests will be run"
+  echo "Minimal instrumentation tests will be run"
+  echo "End-to-end smoke tests will be run on minimum and maximum supported Android versions"
 fi
 
